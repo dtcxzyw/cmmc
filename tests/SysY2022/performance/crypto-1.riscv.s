@@ -25,9 +25,9 @@ main:
 	mv s3, a0
 	li a0, 161
 	jal _sysy_starttime
-	mv a4, s2
 pcrel487:
 	auipc a1, %pcrel_hi(buffer)
+	mv a4, s2
 	sw zero, 328(sp)
 	addi a0, a1, %pcrel_lo(pcrel487)
 	sw zero, 332(sp)

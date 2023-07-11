@@ -27,8 +27,8 @@ main:
 	bl getarray
 	mov r0, #62
 	bl _sysy_starttime
-	movw r10, #:lower16:temp
 	mov r0, #0
+	movw r10, #:lower16:temp
 	movw r2, #:lower16:dst
 	movt r10, #:upper16:temp
 	movt r2, #:upper16:dst
@@ -399,21 +399,6 @@ label144:
 	b label20
 label234:
 	mov r2, #0
-	b label5
-label10:
-	add r0, r0, #1
-	ldr r9, [sp, #8]
-	cmp r9, r0
-	ble label60
-	mov r1, #0
-	mov r2, #0
-	movwle r1, #1
-	cmp r0, #0
-	movwlt r2, #1
-	cmp r9, #0
-	orr r1, r1, r2
-	ble label10
-	b label234
 label5:
 	cmp r2, #0
 	mov r3, #0
@@ -447,6 +432,20 @@ label22:
 	add r6, r6, #1
 	str r6, [sp, #12]
 	b label11
+label10:
+	add r0, r0, #1
+	ldr r9, [sp, #8]
+	cmp r9, r0
+	ble label60
+	mov r1, #0
+	mov r2, #0
+	movwle r1, #1
+	cmp r0, #0
+	movwlt r2, #1
+	cmp r9, #0
+	orr r1, r1, r2
+	ble label10
+	b label234
 label17:
 	ldr r10, [sp, #4]
 	ldr r1, [r10, r0, lsl #2]

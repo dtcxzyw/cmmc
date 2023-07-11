@@ -25,9 +25,9 @@ main:
 	push { r4, r5, r6, r7, r8, r9, r10, lr }
 	sub sp, sp, #16
 	bl getch
-	mov r1, #0
 	cmp r0, #62
 	mov r2, #0
+	mov r1, #0
 	movwne r1, #1
 	cmp r0, #60
 	movwne r2, #1
@@ -63,9 +63,9 @@ main:
 	beq label3
 label2:
 	bl getch
-	cmp r0, #62
 	mov r2, #0
 	mov r1, #0
+	cmp r0, #62
 	movwne r1, #1
 	cmp r0, #60
 	movwne r2, #1

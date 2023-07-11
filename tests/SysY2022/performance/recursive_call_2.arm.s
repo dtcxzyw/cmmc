@@ -7,8 +7,8 @@
 func:
 	push { r4, r5, r6, lr }
 	vpush { s16, s17 }
-	mov r4, r1
-	cmp r1, #0
+	cmp r0, #0
+	mov r4, r0
 	vmov.f32 s16, s0
 	bge label4
 	mov r0, #0
@@ -33,11 +33,11 @@ label4:
 label9:
 	sub r4, r4, #2
 	vmov.f32 s0, s16
-	mov r1, r4
+	mov r0, r4
 	bl func
 	vadd.f32 s17, s16, s0
 	vmov.f32 s0, s17
-	mov r1, r4
+	mov r0, r4
 	bl func
 	vsub.f32 s0, s17, s0
 	vsub.f32 s0, s16, s0
@@ -45,11 +45,11 @@ label9:
 label10:
 	sub r5, r4, #2
 	vmov.f32 s0, s16
-	mov r1, r5
+	mov r0, r5
 	bl func
 	vadd.f32 s17, s16, s0
 	vmov.f32 s0, s17
-	mov r1, r5
+	mov r0, r5
 	bl func
 	vsub.f32 s0, s17, s0
 	vadd.f32 s16, s16, s0
@@ -66,7 +66,6 @@ main:
 	movw r1, #8389
 	movt r1, #16256
 	vmov s0, r1
-	mov r1, r0
 	bl func
 	vcmp.f32 s0, #0
 	vmrs APSR_nzcv, FPSCR

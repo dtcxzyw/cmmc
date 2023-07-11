@@ -27,8 +27,8 @@ main:
 	sd s4, 8(sp)
 	sd ra, 0(sp)
 	jal getch
-	xori a2, a0, 62
 	xori a3, a0, 60
+	xori a2, a0, 62
 	sltu a1, zero, a2
 	sltu a2, zero, a3
 	xori a3, a0, 43
@@ -103,8 +103,8 @@ label5:
 	sh2add a1, s2, s0
 	sw a0, 0(a1)
 	jal getch
-	xori a2, a0, 62
 	xori a3, a0, 60
+	xori a2, a0, 62
 	sltu a1, zero, a2
 	sltu a2, zero, a3
 	xori a3, a0, 43
@@ -132,8 +132,8 @@ label5:
 	beq a1, zero, label8
 label10:
 	jal getch
-	xori a4, a0, 44
 	xori a3, a0, 62
+	xori a4, a0, 44
 	xori a2, a0, 60
 	sltu a1, zero, a3
 	sltu a3, zero, a2

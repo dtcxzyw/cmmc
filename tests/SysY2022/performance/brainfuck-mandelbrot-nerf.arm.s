@@ -25,9 +25,9 @@ main:
 	push { r4, r5, r6, r7, r8, r9, r10, lr }
 	sub sp, sp, #16
 	bl getch
-	mov r2, #0
 	mov r1, #0
 	cmp r0, #62
+	mov r2, #0
 	movwne r1, #1
 	cmp r0, #60
 	movwne r2, #1
@@ -63,8 +63,8 @@ main:
 	beq label3
 label2:
 	bl getch
-	mov r2, #0
 	mov r1, #0
+	mov r2, #0
 	cmp r0, #62
 	movwne r1, #1
 	cmp r0, #60
@@ -162,8 +162,8 @@ label8:
 label10:
 	bl getch
 	mov r1, #0
-	cmp r0, #62
 	mov r2, #0
+	cmp r0, #62
 	movwne r1, #1
 	cmp r0, #60
 	movwne r2, #1
@@ -407,7 +407,7 @@ label35:
 label36:
 	cmp r8, #44
 	bne label52
-	cmp r4, r2
+	cmp r4, r6
 	bgt label39
 	mov r8, #0
 	str r8, [r1, r3, lsl #2]
@@ -446,8 +446,8 @@ label36:
 	b label547
 label39:
 	ldr r8, [sp, #4]
-	ldr r8, [r8, r2, lsl #2]
-	add r2, r2, #1
+	ldr r8, [r8, r6, lsl #2]
+	add r6, r6, #1
 	str r8, [r1, r3, lsl #2]
 	add r7, r7, #1
 	ldr r8, [sp, #8]
@@ -647,8 +647,8 @@ label33:
 	ldr r8, [r1, r3, lsl #2]
 	cmp r8, #0
 	beq label286
-	str r7, [r0, r6, lsl #2]
-	add r6, r6, #1
+	str r7, [r0, r2, lsl #2]
+	add r2, r2, #1
 	add r7, r7, #1
 	ldr r8, [sp, #8]
 	cmp r8, r7
@@ -688,7 +688,7 @@ label34:
 	ldr r8, [r1, r3, lsl #2]
 	cmp r8, #0
 	bne label42
-	sub r6, r6, #1
+	sub r2, r2, #1
 	add r7, r7, #1
 	ldr r8, [sp, #8]
 	cmp r8, r7
@@ -723,7 +723,7 @@ label34:
 	bne label29
 	b label547
 label42:
-	sub r7, r6, #1
+	sub r7, r2, #1
 	ldr r7, [r0, r7, lsl #2]
 	add r7, r7, #1
 	ldr r8, [sp, #8]

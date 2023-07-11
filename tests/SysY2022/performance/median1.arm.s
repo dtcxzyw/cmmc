@@ -22,8 +22,8 @@ main:
 	asr r6, r0, #1
 	mov r0, #59
 	bl _sysy_starttime
-	mov r1, r7
 	mov r2, #0
+	mov r1, r7
 	mov r0, r8
 	ldr r3, [r7, #0]
 	add r7, r8, #1

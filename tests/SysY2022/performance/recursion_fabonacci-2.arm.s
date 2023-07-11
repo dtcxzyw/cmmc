@@ -76,8 +76,8 @@ label10:
 takFP:
 	push { lr }
 	vpush { s16, s17, s18, s19, s20, s21, s22, s23, s24, s25 }
-	vmov.f32 s17, s1
 	vmov.f32 s18, s0
+	vmov.f32 s17, s1
 	sub sp, sp, #4
 	vmov.f32 s16, s2
 	vcmp.f32 s1, s0

@@ -367,8 +367,8 @@ label142:
 	lw a1, 0(t1)
 	mv a0, t0
 	jal multiply
-	addw a3, t3, a0
 	li a1, 288737297
+	addw a3, t3, a0
 	mul a2, a3, a1
 	srli t5, a2, 63
 	srai t4, a2, 58
@@ -418,29 +418,36 @@ pcrel458:
 	ble s1, a1, label395
 	li a0, 1
 	slliw a0, a0, 1
-	ble s1, a0, label433
+	ble s1, a0, label400
 	slliw a0, a0, 1
-	ble s1, a0, label433
+	ble s1, a0, label400
 	slliw a0, a0, 1
-	ble s1, a0, label433
+	ble s1, a0, label400
 	slliw a0, a0, 1
-	ble s1, a0, label433
+	ble s1, a0, label400
 	slliw a0, a0, 1
-	ble s1, a0, label433
+	ble s1, a0, label400
 	slliw a0, a0, 1
-	ble s1, a0, label433
+	ble s1, a0, label400
 	slliw a0, a0, 1
-	ble s1, a0, label433
+	ble s1, a0, label400
 	slliw a0, a0, 1
-	ble s1, a0, label433
+	ble s1, a0, label400
 	slliw a0, a0, 1
-	ble s1, a0, label433
+	ble s1, a0, label400
 	slliw a0, a0, 1
-	ble s1, a0, label433
-	j label383
+	ble s1, a0, label400
+	j label374
 label395:
 	li t6, 1
+	j label376
 label374:
+	slliw a0, a0, 1
+	ble s1, a0, label400
+	j label374
+label400:
+	mv t6, a0
+label376:
 	lui a1, 243712
 	li a0, 3
 	divw a6, a1, t6
@@ -457,9 +464,9 @@ label374:
 	mv a2, t6
 	mv a3, a7
 	jal fft
-	ble t6, zero, label378
+	ble t6, zero, label380
 	mv a5, zero
-label376:
+label378:
 	sh2add t0, a5, s0
 	sh2add a2, a5, s2
 	lw a0, 0(t0)
@@ -467,16 +474,9 @@ label376:
 	jal multiply
 	addiw a5, a5, 1
 	sw a0, 0(t0)
-	ble t6, a5, label378
-	j label376
-label433:
-	mv t6, a0
-	j label374
-label383:
-	slliw a0, a0, 1
-	ble s1, a0, label433
-	j label383
-label378:
+	ble t6, a5, label380
+	j label378
+label380:
 	lui a2, 243712
 	li a0, 3
 	subw a1, a2, a6
@@ -486,22 +486,22 @@ label378:
 	mv a0, s0
 	mv a2, t6
 	jal fft
-	ble t6, zero, label382
+	ble t6, zero, label384
 	mv a0, t6
 	li a1, 998244351
 	jal power
 	mv t0, zero
 	mv a5, a0
-label380:
+label382:
 	sh2add t1, t0, s0
 	lw a0, 0(t1)
 	mv a1, a5
 	jal multiply
 	addiw t0, t0, 1
 	sw a0, 0(t1)
-	ble t6, t0, label382
-	j label380
-label382:
+	ble t6, t0, label384
+	j label382
+label384:
 	li a0, 79
 	jal _sysy_stoptime
 	mv a0, s1

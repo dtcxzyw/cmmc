@@ -27,8 +27,8 @@ main:
 	sd s4, 8(sp)
 	sd ra, 0(sp)
 	jal getch
-	xori a2, a0, 62
 	xori a3, a0, 60
+	xori a2, a0, 62
 	sltu a1, zero, a2
 	sltu a2, zero, a3
 	xori a3, a0, 43
@@ -132,6 +132,7 @@ label5:
 	beq a1, zero, label8
 label10:
 	jal getch
+	xori a4, a0, 44
 	xori a3, a0, 62
 	xori a2, a0, 60
 	sltu a1, zero, a3
@@ -147,13 +148,12 @@ label10:
 	sltu a3, zero, a2
 	xori a2, a0, 93
 	and a1, a1, a3
-	sltu a4, zero, a2
-	xori a3, a0, 46
-	and a1, a1, a4
-	sltu a2, zero, a3
-	xori a3, a0, 44
-	and a1, a1, a2
-	sltu a2, zero, a3
+	sltu a3, zero, a2
+	xori a2, a0, 46
+	and a1, a1, a3
+	sltu a3, zero, a2
+	sltu a2, zero, a4
+	and a1, a1, a3
 	xori a3, a0, 35
 	and a1, a1, a2
 	sltu a2, zero, a3
@@ -271,7 +271,7 @@ label34:
 	sh2add t0, a3, a1
 	lw t1, 0(t0)
 	bne t1, zero, label42
-	addiw a2, a2, -1
+	addiw a4, a4, -1
 	addiw a5, a5, 1
 	ble s2, a5, label24
 	sh2add t2, a5, s0
@@ -432,7 +432,7 @@ pcrel592:
 label36:
 	li t1, 44
 	bne t0, t1, label52
-	bgt s3, a4, label39
+	bgt s3, a2, label39
 	sh2add t0, a3, a1
 	sw zero, 0(t0)
 	addiw a5, a5, 1
@@ -462,9 +462,9 @@ label527:
 	ble s2, a5, label24
 	j label525
 label39:
-	sh2add t1, a4, s1
+	sh2add t1, a2, s1
 	sh2add t2, a3, a1
-	addiw a4, a4, 1
+	addiw a2, a2, 1
 	lw t0, 0(t1)
 	sw t0, 0(t2)
 	addiw a5, a5, 1
@@ -544,8 +544,8 @@ label33:
 	sh2add t1, a3, a1
 	lw t0, 0(t1)
 	beq t0, zero, label286
-	sh2add t1, a2, a0
-	addiw a2, a2, 1
+	sh2add t1, a4, a0
+	addiw a4, a4, 1
 	sw a5, 0(t1)
 	addiw a5, a5, 1
 	ble s2, a5, label24
@@ -564,7 +564,7 @@ label33:
 	ble s2, a5, label24
 	j label525
 label42:
-	addiw t0, a2, -1
+	addiw t0, a4, -1
 	sh2add t1, t0, a0
 	lw a5, 0(t1)
 	addiw a5, a5, 1
