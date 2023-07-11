@@ -90,6 +90,11 @@
       "parent": "4879ee3b9e8e13bac01a62a89051b394eae37ace",
       "time": "2023-07-04 18:45:19 +0800"
     },
+    "2a4c1220efbc358e9291b1cff96acbddb07bfa83": {
+      "message": "test: add tests for valueinset",
+      "parent": "304702475ec3089296ae1c56dfb27da64b7d2763",
+      "time": "2023-07-12 01:55:19 +0800"
+    },
     "2a8d4a9919993d68163f8deca8328c69c80db012": {
       "message": "feat(codegen): optimize constant multiplication with shifts and arithmetics",
       "parent": "fd09d81a7f01e2eea69cfec9e186c92b254fc584",
@@ -99,6 +104,11 @@
       "message": "fix(codegen): fix bug that divided by zero",
       "parent": "6f138f87fa3ea11c75c258342c4a49a897c2b7cb",
       "time": "2023-07-02 00:07:09 +0800"
+    },
+    "304702475ec3089296ae1c56dfb27da64b7d2763": {
+      "message": "feat(analysis): add pointer base analysis",
+      "parent": "ebcab252f2e50b0331c759413a9ccb383fc581c5",
+      "time": "2023-07-12 01:24:59 +0800"
     },
     "31b662379aa1db01ecb8bda98ee1e81ac76921d4": {
       "message": "feat(codegen): add post-RA scheduler for riscv",
@@ -284,6 +294,11 @@
       "message": "ci: fix typo",
       "parent": "7723c3f8edd1fa9c76bcbdca70e504aecd661775",
       "time": "2023-07-02 17:59:31 +0800"
+    },
+    "710e6f419cac2dacc695d65b4a281fa83c064346": {
+      "message": "feat(transform): forward branch",
+      "parent": "330d08bc3362040b0b07f22319057a3ed8378fa2",
+      "time": "2023-07-12 01:24:58 +0800"
     },
     "722eb895c5ff9ec49b2ffa12de20846c1425c4fa": {
       "message": "fix(transform): fix lut2expr",
@@ -575,6 +590,11 @@
       "parent": "00e6cd2b13e3b99ff19815f49db801e9cc1d7db7",
       "time": "2023-07-03 22:26:57 +0800"
     },
+    "ebcab252f2e50b0331c759413a9ccb383fc581c5": {
+      "message": "feat(codegen): fold more insts with zero on riscv",
+      "parent": "710e6f419cac2dacc695d65b4a281fa83c064346",
+      "time": "2023-07-12 01:24:59 +0800"
+    },
     "ee9bfa4ff796c33883811cb7dc142ee64e4f8042": {
       "message": "ci: use sudo to set CPU frequency policy",
       "parent": "fa954375b25c648c0d9469b2f5ce25015248317f",
@@ -611,5 +631,5 @@
       "time": "2023-07-06 01:05:50 +0800"
     }
   },
-  "head": "330d08bc3362040b0b07f22319057a3ed8378fa2"
+  "head": "2a4c1220efbc358e9291b1cff96acbddb07bfa83"
 }
