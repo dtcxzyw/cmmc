@@ -50,6 +50,11 @@
       "parent": "8a4d1036a3eecea8e3fbd9346076680e12e3a425",
       "time": "2023-07-06 19:29:22 +0800"
     },
+    "1654538e58af217874fbe577dbcbb7be8c2d6b5d": {
+      "message": "feat(transform): add intrinsic fabs",
+      "parent": "7c2223de642e44e968c41c21da9c9915d2339e8f",
+      "time": "2023-07-11 04:05:05 +0800"
+    },
     "169ca45c333c980ad64271f0522d6f9a82c220cc": {
       "message": "feat(analysis): add basic integer range analysis",
       "parent": "1292361bcc4707b210683cac907bbcdc03ca0e14",
@@ -300,6 +305,11 @@
       "parent": "464e8e1230c6a1aa3473ad0935c5b4bcc78ef76a",
       "time": "2023-07-10 23:27:38 +0800"
     },
+    "7a2e69d433cec97066e8d5e11b8549f2efd3233c": {
+      "message": "misc: remove unused fallthrough",
+      "parent": "1654538e58af217874fbe577dbcbb7be8c2d6b5d",
+      "time": "2023-07-11 04:05:05 +0800"
+    },
     "7aede7c6d709e297c4656116f21caeeec62fa9ab": {
       "message": "feat(codegen): allow copying branches when the size of BTB is large enough",
       "parent": "3e248a8ab400477fc93e1fcc384824d4347a3217",
@@ -309,6 +319,11 @@
       "message": "feat(codegen): optimize comparison with zero for arm",
       "parent": "17da56a33ceef5f2b4cabdb4a6cbccd43f8c9d41",
       "time": "2023-07-02 21:53:19 +0800"
+    },
+    "7c2223de642e44e968c41c21da9c9915d2339e8f": {
+      "message": "feat(transform): fold icmp eq with sdiv into range check",
+      "parent": "a91e65b0fca3872769dbf87485e5f29b11066c21",
+      "time": "2023-07-11 04:05:04 +0800"
     },
     "80d6e89e289ec70a1f33edcd9a24c093f2a50a25": {
       "message": "feat(transform): merge blocks with phi insts",
@@ -365,6 +380,11 @@
       "parent": "1a70f2f04fced16774cb9c947638742a1066ff32",
       "time": "2023-07-07 01:11:58 +0800"
     },
+    "98d40c9aa973da4a6748299c716e7cc0401bcfb5": {
+      "message": "feat(transform): optimize multi selects",
+      "parent": "7a2e69d433cec97066e8d5e11b8549f2efd3233c",
+      "time": "2023-07-11 04:53:37 +0800"
+    },
     "99c96ab3877598e40db347786b94293026922ee6": {
       "message": "ci: support collecting multiple commits at one push",
       "parent": "77647bb276d3cd17b652e9f52f197a2963439072",
@@ -384,6 +404,11 @@
       "message": "feat(transform): move large allocas to global",
       "parent": "791d799938ed2429ceaf4f7f52e5a38e47e055e0",
       "time": "2023-07-02 14:55:49 +0800"
+    },
+    "a91e65b0fca3872769dbf87485e5f29b11066c21": {
+      "message": "ci: fix RISC-V perf events",
+      "parent": "79d0c32350816fb89f5c807773c6ab5a17fc8c4b",
+      "time": "2023-07-11 02:37:13 +0800"
     },
     "aab1a0a63041678fdafb3988b7e797ea536758ec": {
       "message": "ci: record historical summary data",
@@ -444,6 +469,16 @@
       "message": "ci: install libgtest-dev",
       "parent": "4cf8f417f2ab41a89ca4b3870a2da71d2a403b45",
       "time": "2023-07-05 17:38:34 +0800"
+    },
+    "c48895059df4199823303f514c98f3560d46218b": {
+      "message": "ci: fix commit information",
+      "parent": "c58d6e3fcf2833166cd5a77a4339ea219c222756",
+      "time": "2023-07-11 13:47:22 +0800"
+    },
+    "c58d6e3fcf2833166cd5a77a4339ea219c222756": {
+      "message": "fix(transform): don't emit ult for tac",
+      "parent": "f6a0c7c82f287a6ab73b0fba501e12f6b73922c8",
+      "time": "2023-07-11 06:23:01 +0800"
     },
     "c9c373ab7eefd99835ddc5441c452517ef6c17ad": {
       "message": "feat(codegen): remove unused loads from stack",
@@ -520,6 +555,11 @@
       "parent": "dd9b2f32d438b1ffef8fbfaa80e9fbf25e2cd104",
       "time": "2023-07-02 13:27:49 +0800"
     },
+    "f6a0c7c82f287a6ab73b0fba501e12f6b73922c8": {
+      "message": "feat(codegen): fix WAW hazards",
+      "parent": "98d40c9aa973da4a6748299c716e7cc0401bcfb5",
+      "time": "2023-07-11 06:09:00 +0800"
+    },
     "fa954375b25c648c0d9469b2f5ce25015248317f": {
       "message": "ci: tweak benchmarking environment",
       "parent": "7bae69aa5a88f0f49632223013714fa862acab9d",
@@ -536,5 +576,5 @@
       "time": "2023-07-06 01:05:50 +0800"
     }
   },
-  "head": "79d0c32350816fb89f5c807773c6ab5a17fc8c4b"
+  "head": "c48895059df4199823303f514c98f3560d46218b"
 }
