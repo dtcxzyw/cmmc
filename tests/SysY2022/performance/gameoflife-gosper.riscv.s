@@ -70,7 +70,6 @@ pcrel298:
 	bne a0, zero, label206
 	mv a3, s3
 	mv a5, s3
-	bne a0, zero, label208
 	j label249
 label67:
 	li s4, 1
@@ -114,7 +113,6 @@ label19:
 	bne a0, zero, label206
 	mv a3, s3
 	mv a5, s3
-	bne a0, zero, label208
 	j label249
 label16:
 	addiw t4, t3, -1

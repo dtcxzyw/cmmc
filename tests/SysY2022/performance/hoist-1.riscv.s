@@ -13,7 +13,7 @@ main:
 	ble s0, zero, label14
 	mv a1, zero
 	mv a2, zero
-	addiw a0, zero, 4
+	li a0, 4
 	ble s0, a0, label6
 	j label5
 label14:

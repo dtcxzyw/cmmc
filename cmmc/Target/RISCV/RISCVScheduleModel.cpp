@@ -20,6 +20,7 @@
 #include <deque>
 #include <iostream>
 #include <iterator>
+#include <vector>
 
 CMMC_TARGET_NAMESPACE_BEGIN
 
@@ -312,6 +313,78 @@ static bool branch2jump(MIRFunction& func, const CodeGenContext& ctx) {
     return modified;
 }
 
+static bool removeDeadBranch(MIRFunction& func, const CodeGenContext& ctx) {
+    if(ctx.flags.endsWithTerminator)
+        return false;
+    bool modified = false;
+    for(auto& block : func.blocks()) {
+        std::list<MIRInst*> branches;
+
+        auto invalidateBranches = [&](const MIRInst& inst) {
+            auto& instInfo = ctx.instInfo.getInstInfo(inst);
+            if(requireOneFlag(instInfo.getInstFlag(), InstFlagCall))
+                branches.clear();
+            for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
+                if(instInfo.getOperandFlag(idx) & OperandFlagDef) {
+                    auto& op = inst.getOperand(idx);
+                    branches.remove_if(
+                        [&](const MIRInst* branch) { return branch->getOperand(0) == op || branch->getOperand(1) == op; });
+                }
+            }
+        };
+
+        for(auto iter = block->instructions().begin(); iter != block->instructions().end();) {
+            auto& inst = *iter;
+            auto next = std::next(iter);
+
+            invalidateBranches(inst);
+
+            auto isBranch = [](uint32_t opcode) {
+                switch(opcode) {
+                    case BEQ:
+                    case BNE:
+                    case BLT:
+                    case BLE:
+                    case BGT:
+                    case BGE:
+                    case BLTU:
+                    case BLEU:
+                    case BGTU:
+                    case BGEU:
+                        return true;
+                    default:
+                        return false;
+                }
+            };
+
+            auto isSameBranch = [](MIRInst& lhs, MIRInst& rhs) {
+                if(lhs.opcode() != rhs.opcode())
+                    return false;
+                for(uint32_t idx = 0; idx < 2; ++idx)
+                    if(lhs.getOperand(idx) != rhs.getOperand(idx))
+                        return false;
+                return true;
+            };
+
+            if(isBranch(inst.opcode())) {
+                bool remove = false;
+                for(auto rhs : branches)
+                    if(isSameBranch(inst, *rhs))
+                        remove = true;
+                if(remove) {
+                    block->instructions().erase(iter);
+                    modified = true;
+                } else {
+                    branches.push_back(&inst);
+                }
+            }
+
+            iter = next;
+        }
+    }
+    return modified;
+}
+
 static bool largeImmMaterialize(MIRBasicBlock& block) {
     constexpr uint32_t windowSize = 4;
     std::deque<std::pair<intmax_t, MIROperand>> immQueue;
@@ -411,6 +484,107 @@ static bool foldStoreZero(MIRFunction& func, MIRBasicBlock& block) {
     return modified;
 }
 
+static bool simplifyOpWithZero(MIRFunction& func, const CodeGenContext&) {
+    bool modified = false;
+    for(auto& block : func.blocks())
+        for(auto& inst : block->instructions()) {
+            auto isZero = [&](uint32_t idx) {
+                auto& op = inst.getOperand(idx);
+                return op.isReg() && op.reg() == X0;
+            };
+            auto getZero = [](const MIROperand& op) { return MIROperand::asISAReg(X0, op.type()); };
+            auto resetToZero = [&] {
+                inst = MIRInst{ MoveGPR }.setOperand<0>(inst.getOperand(0)).setOperand<1>(getZero(inst.getOperand(0)));
+                modified = true;
+            };
+            auto resetToCopy = [&](uint32_t idx) {
+                inst = MIRInst{ MoveGPR }.setOperand<0>(inst.getOperand(0)).setOperand<1>(inst.getOperand(idx));
+                modified = true;
+            };
+            auto resetToSignExtend = [&](uint32_t idx) {
+                inst = MIRInst{ SEXT_W }.setOperand<0>(inst.getOperand(0)).setOperand<1>(inst.getOperand(idx));
+                modified = true;
+            };
+            auto resetToLoadImm = [&](uint32_t idx) {
+                inst = MIRInst{ LoadImm12 }.setOperand<0>(inst.getOperand(0)).setOperand<1>(inst.getOperand(idx));
+                modified = true;
+            };
+            auto resetToImm = [&](intmax_t imm) {
+                assert(imm);
+                inst = MIRInst{ LoadImm12 }
+                           .setOperand<0>(inst.getOperand(0))
+                           .setOperand<1>(MIROperand::asImm(imm, inst.getOperand(0).type()));
+                modified = true;
+            };
+
+            switch(inst.opcode()) {
+                case MUL:
+                case MULW: {
+                    if(isZero(1) || isZero(2))
+                        resetToZero();
+                    break;
+                }
+                case ADDI:
+                case ADDIW: {
+                    if(isZero(1))
+                        resetToLoadImm(2);
+                    break;
+                }
+                case SLLI:
+                case SLLIW:
+                case SRLI:
+                case SRLIW:
+                case SRAI:
+                case SRAIW: {
+                    if(isZero(1))
+                        resetToZero();
+                    break;
+                }
+                case SH1ADD:
+                case SH2ADD:
+                case SH3ADD: {
+                    if(isZero(1)) {
+                        resetToCopy(2);
+                    }
+                    // TODO: fold into SLLI when isZero(2)
+                    break;
+                }
+                case ADD: {
+                    if(isZero(1))
+                        resetToCopy(2);
+                    else if(isZero(2))
+                        resetToCopy(1);
+
+                    break;
+                }
+                case ADDW: {
+                    if(isZero(1))
+                        resetToSignExtend(2);
+                    else if(isZero(2))
+                        resetToSignExtend(1);
+                    break;
+                }
+                case ANDI: {
+                    if(isZero(1))
+                        resetToZero();
+                    break;
+                }
+                case SLTI: {
+                    if(isZero(1)) {
+                        if(0 < inst.getOperand(2).imm())
+                            resetToImm(1);
+                        else
+                            resetToZero();
+                    }
+                    break;
+                }
+                default:
+                    break;
+            }
+        }
+    return modified;
+}
+
 bool RISCVScheduleModel_sifive_u74::peepholeOpt(MIRFunction& func, const CodeGenContext& ctx) const {
     bool modified = false;
     if(ctx.flags.preRA) {
@@ -422,6 +596,8 @@ bool RISCVScheduleModel_sifive_u74::peepholeOpt(MIRFunction& func, const CodeGen
             modified |= foldStoreZero(func, *block);
     }
     modified |= branch2jump(func, ctx);
+    modified |= removeDeadBranch(func, ctx);
+    modified |= simplifyOpWithZero(func, ctx);
     return modified;
 }
 

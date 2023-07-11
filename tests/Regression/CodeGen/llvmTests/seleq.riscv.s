@@ -53,7 +53,6 @@ pcrel130:
 pcrel131:
 	auipc a3, %pcrel_hi(z1)
 	sw a0, %pcrel_lo(pcrel131)(a3)
-	bne a1, a2, label16
 pcrel132:
 	auipc a2, %pcrel_hi(f)
 	lw a0, %pcrel_lo(pcrel132)(a2)
@@ -70,7 +69,6 @@ pcrel135:
 pcrel136:
 	auipc a3, %pcrel_hi(z3)
 	sw a0, %pcrel_lo(pcrel136)(a3)
-	bne a1, a2, label59
 	j label125
 label17:
 	auipc a3, %pcrel_hi(t)
@@ -95,7 +93,6 @@ pcrel141:
 pcrel142:
 	auipc a3, %pcrel_hi(z3)
 	sw a0, %pcrel_lo(pcrel142)(a3)
-	bne a1, a2, label59
 	j label125
 label9:
 	auipc a3, %pcrel_hi(f)
@@ -132,5 +129,4 @@ pcrel146:
 pcrel147:
 	auipc a3, %pcrel_hi(z3)
 	sw a0, %pcrel_lo(pcrel147)(a3)
-	bne a1, a2, label59
 	j label125

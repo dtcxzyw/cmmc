@@ -39,7 +39,7 @@ pcrel236:
 	lw t1, 0(t0)
 	ble a3, t1, label8
 	ble a4, zero, label15
-	addiw a5, zero, 1
+	li a5, 1
 	sh2add t0, a5, s0
 	lw t1, 0(t0)
 	bgt a3, t1, label11

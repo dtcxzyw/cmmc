@@ -27,8 +27,8 @@ main:
 	sd s4, 8(sp)
 	sd ra, 0(sp)
 	jal getch
-	xori a2, a0, 62
 	xori a3, a0, 60
+	xori a2, a0, 62
 	sltu a1, zero, a2
 	sltu a2, zero, a3
 	xori a3, a0, 43
@@ -216,12 +216,12 @@ label17:
 	mv a3, zero
 	mv a5, zero
 	ble s2, zero, label24
-	sh2add t2, zero, s0
+	mv t2, s0
 	li t1, 62
-	lw t0, 0(t2)
+	lw t0, 0(s0)
 	bne t0, t1, label29
-	addiw a3, zero, 1
-	addiw a5, zero, 1
+	li a3, 1
+	li a5, 1
 	ble s2, a5, label24
 	sh2add t2, a5, s0
 	lw t0, 0(t2)

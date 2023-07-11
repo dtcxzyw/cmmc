@@ -64,12 +64,12 @@ pcrel739:
 	mv a3, zero
 	li a2, 100000
 	bge zero, a2, label132
-	addiw a4, zero, 3
-	addiw a5, zero, 2
-	addiw a2, zero, 1
+	li a4, 3
+	li a5, 2
+	li a2, 1
 	li t0, 100000
 	bge zero, t0, label12
-	addiw t0, zero, 4
+	li t0, 4
 	li t2, 100000
 	bge t0, t2, label19
 	j label18
@@ -81,7 +81,7 @@ label132:
 	bge zero, a3, label210
 	li a4, 100000
 	bge zero, a4, label39
-	addiw a5, zero, 4
+	li a5, 4
 	bge a5, a3, label220
 	j label720
 label18:
@@ -143,12 +143,12 @@ label210:
 	mv a3, zero
 	li a4, 100000
 	bge zero, a4, label294
-	addiw a4, zero, 3
-	addiw a5, zero, 2
-	addiw a2, zero, 1
+	li a4, 3
+	li a5, 2
+	li a2, 1
 	li t0, 100000
 	bge zero, t0, label89
-	addiw t0, zero, 4
+	li t0, 4
 	li t2, 100000
 	bge t0, t2, label96
 	j label95
@@ -158,8 +158,7 @@ label294:
 	mv a2, zero
 	li a3, 100000
 	bge zero, a3, label50
-	bge zero, a3, label85
-	addiw a5, zero, 4
+	li a5, 4
 	bge a5, a3, label74
 	j label713
 label50:
@@ -171,12 +170,12 @@ label50:
 	mv a3, zero
 	li a2, 100000
 	bge zero, a2, label132
-	addiw a4, zero, 3
-	addiw a5, zero, 2
-	addiw a2, zero, 1
+	li a4, 3
+	li a5, 2
+	li a2, 1
 	li t0, 100000
 	bge zero, t0, label12
-	addiw t0, zero, 4
+	li t0, 4
 	li t2, 100000
 	bge t0, t2, label19
 	j label18
@@ -500,7 +499,7 @@ label51:
 	jal _sysy_stoptime
 	mv a1, zero
 	fmv.w.x f10, zero
-	addiw a0, zero, 4
+	li a0, 4
 	li a2, 100000
 	bge a0, a2, label55
 	j label71
@@ -518,7 +517,7 @@ label55:
 label323:
 	fmv.w.x f11, zero
 	mv a1, zero
-	addiw a0, zero, 4
+	li a0, 4
 	li a2, 100000
 	bge a0, a2, label61
 label70:

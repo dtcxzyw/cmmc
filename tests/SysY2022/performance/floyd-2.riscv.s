@@ -36,21 +36,20 @@ pcrel446:
 	mv a1, zero
 	ble s0, zero, label60
 	slt a2, zero, s0
-	slti a4, zero, 0
+	mv a4, zero
 	xori a3, a2, 1
-	or a2, a3, a4
-	ble s0, zero, label10
+	or a2, a3, zero
 	mv a3, zero
-	slti a5, zero, 0
+	mv a5, zero
 	slt t0, zero, s0
-	or a4, a2, a5
+	or a4, a2, zero
 	xori t1, t0, 1
-	mulw t0, s0, zero
+	mv t0, zero
 	or a5, a4, t1
-	addw a4, zero, t0
+	sext.w a4, zero
 	beq a5, zero, label7
 	li a5, -1
-	addiw a3, zero, 1
+	li a3, 1
 	sh2add a4, a4, a0
 	sw a5, 0(a4)
 	ble s0, a3, label10
@@ -60,7 +59,7 @@ pcrel446:
 	xori t1, t0, 1
 	mulw t0, s0, a3
 	or a5, a4, t1
-	addw a4, zero, t0
+	sext.w a4, t0
 	beq a5, zero, label7
 	li a5, -1
 	addiw a3, a3, 1
@@ -71,29 +70,25 @@ pcrel446:
 label60:
 	mv a4, zero
 	slt a2, zero, s0
-	slti a5, zero, 0
-	mulw a3, s0, zero
-	xori a1, a2, 1
-	or a2, a1, a5
-	ble s0, zero, label13
 	mv a5, zero
-	slti a1, zero, 0
-	slt t1, zero, s0
-	or t0, a2, a1
-	xori t3, t1, 1
-	mulw t1, s0, zero
-	or t0, t0, t3
-	addw t2, zero, t1
-	or t3, a1, t3
-	ble s0, zero, label22
+	mv a3, zero
+	xori a1, a2, 1
+	or a2, a1, zero
+	ble s0, zero, label13
 	mv a1, zero
-	ble s0, zero, label48
+	slt t1, zero, s0
+	or t0, a2, zero
+	xori t3, t1, 1
+	mv t1, zero
+	or t0, t0, t3
+	sext.w t2, zero
+	or t3, zero, t3
 	beq t0, zero, label26
 	li t4, -1
 	blt t4, zero, label154
-	slti a6, zero, 0
+	mv a6, zero
 	slt a7, zero, s0
-	or t5, a2, a6
+	or t5, a2, zero
 	xori a6, a7, 1
 	or t6, t5, a6
 	beq t6, zero, label45
@@ -105,7 +100,7 @@ label13:
 	mulw s0, s0, s0
 	ble s0, zero, label14
 	mv a2, zero
-	addiw a1, zero, 4
+	li a1, 4
 	ble s0, a1, label17
 label19:
 	sh2add a3, a2, a0
@@ -142,23 +137,21 @@ label22:
 	or a2, a1, a5
 	ble s0, a4, label13
 	mv a5, zero
-	slti a1, zero, 0
-	slt t1, zero, s0
-	or t0, a2, a1
-	xori t3, t1, 1
-	mulw t1, s0, zero
-	or t0, t0, t3
-	addw t2, a4, t1
-	or t3, a1, t3
-	ble s0, zero, label22
 	mv a1, zero
-	ble s0, zero, label48
+	slt t1, zero, s0
+	or t0, a2, zero
+	xori t3, t1, 1
+	mv t1, zero
+	or t0, t0, t3
+	sext.w t2, a4
+	or t3, zero, t3
+	ble s0, zero, label22
 	beq t0, zero, label26
 	li t4, -1
 	blt t4, zero, label154
-	slti a6, zero, 0
+	mv a6, zero
 	slt a7, zero, s0
-	or t5, a2, a6
+	or t5, a2, zero
 	xori a6, a7, 1
 	or t6, t5, a6
 	beq t6, zero, label45
@@ -183,9 +176,9 @@ label48:
 	beq t0, zero, label26
 	li t4, -1
 	blt t4, zero, label154
-	slti a6, zero, 0
+	mv a6, zero
 	slt a7, zero, s0
-	or t5, a2, a6
+	or t5, a2, zero
 	xori a6, a7, 1
 	or t6, t5, a6
 	beq t6, zero, label45
@@ -193,9 +186,9 @@ label48:
 	li t6, -1
 	slt t5, t6, t5
 	beq t5, zero, label31
-	slti a6, zero, 0
+	mv a6, zero
 	slt t6, zero, s0
-	or t5, t3, a6
+	or t5, t3, zero
 	xori a7, t6, 1
 	or a6, t5, a7
 	beq a6, zero, label33
@@ -500,16 +493,16 @@ label10:
 	or a2, a3, a4
 	ble s0, zero, label10
 	mv a3, zero
-	slti a5, zero, 0
+	mv a5, zero
 	slt t0, zero, s0
-	or a4, a2, a5
+	or a4, a2, zero
 	xori t1, t0, 1
-	mulw t0, s0, zero
+	mv t0, zero
 	or a5, a4, t1
-	addw a4, a1, t0
+	sext.w a4, a1
 	beq a5, zero, label7
 	li a5, -1
-	addiw a3, zero, 1
+	li a3, 1
 	sh2add a4, a4, a0
 	sw a5, 0(a4)
 	ble s0, a3, label10

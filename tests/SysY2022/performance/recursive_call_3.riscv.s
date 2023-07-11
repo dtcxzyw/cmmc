@@ -35,7 +35,6 @@ label4:
 	bge s2, zero, label10
 	fmv.w.x f10, zero
 	fadd.s f8, f8, f10
-	bge s2, zero, label9
 	j label52
 label9:
 	addiw s0, s0, -2

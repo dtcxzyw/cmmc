@@ -29,10 +29,10 @@ label35:
 	subw a5, zero, a1
 	mv a3, a1
 	mv a4, zero
-	mulw t0, a5, zero
-	addw a2, a2, t0
+	mv t0, zero
+	sext.w a2, a2
 	bge a1, a2, label10
 	subw a2, a2, a1
-	addiw a4, zero, 1
+	li a4, 1
 	bne a1, a2, label7
 	j label47

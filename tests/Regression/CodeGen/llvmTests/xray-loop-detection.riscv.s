@@ -9,7 +9,7 @@ foo:
 	j label2
 label9:
 	mv a0, zero
-	addiw a0, zero, 1
+	li a0, 1
 	bne a1, a0, label4
 label2:
 	ret

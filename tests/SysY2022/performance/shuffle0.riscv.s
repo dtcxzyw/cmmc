@@ -78,10 +78,10 @@ pcrel319:
 	ble s4, zero, label14
 	mv t0, zero
 	mv a5, zero
-	sh2add t1, zero, s3
-	sh2add t5, zero, s5
-	lw t2, 0(t1)
-	lw t1, 0(t5)
+	mv t1, s3
+	mv t5, s5
+	lw t2, 0(s3)
+	lw t1, 0(s5)
 	remw t3, t2, s0
 	sh2add t4, t3, a3
 	lw t4, 0(t4)
@@ -189,8 +189,8 @@ pcrel320:
 	auipc t0, %pcrel_hi(ans)
 	addi a5, t0, %pcrel_lo(pcrel320)
 	mv t0, zero
-	sh2add t1, zero, s2
-	lw t2, 0(t1)
+	mv t1, s2
+	lw t2, 0(s2)
 	remw t4, t2, s0
 	sh2add t3, t4, a3
 	lw t1, 0(t3)
@@ -198,12 +198,11 @@ pcrel320:
 	sh2add t4, t1, a2
 	lw t3, 0(t4)
 	bne t2, t3, label27
-	beq t1, zero, label148
 	mv t2, zero
 	sh2add t3, t1, a0
 	lw t4, 0(t3)
 	sh2add t3, t1, a1
-	addw t2, zero, t4
+	sext.w t2, t4
 	lw t1, 0(t3)
 	beq t1, zero, label20
 	sh2add t3, t1, a0
@@ -271,12 +270,11 @@ label27:
 	sh2add t4, t1, a2
 	lw t3, 0(t4)
 	bne t2, t3, label27
-	beq t1, zero, label148
 	mv t2, zero
 	sh2add t3, t1, a0
 	lw t4, 0(t3)
 	sh2add t3, t1, a1
-	addw t2, zero, t4
+	sext.w t2, t4
 	lw t1, 0(t3)
 	beq t1, zero, label20
 	sh2add t3, t1, a0
@@ -324,61 +322,6 @@ label278:
 	lw t1, 0(t3)
 	beq t1, zero, label20
 	j label289
-label148:
-	mv t2, zero
-	addiw t1, t0, 1
-	sh2add t0, t0, a5
-	sw zero, 0(t0)
-	ble s1, t1, label28
-	mv t0, t1
-	sh2add t1, t1, s2
-	lw t2, 0(t1)
-	remw t4, t2, s0
-	sh2add t3, t4, a3
-	lw t1, 0(t3)
-	beq t1, zero, label131
-	sh2add t4, t1, a2
-	lw t3, 0(t4)
-	bne t2, t3, label27
-	beq t1, zero, label148
-	mv t2, zero
-	sh2add t3, t1, a0
-	lw t4, 0(t3)
-	sh2add t3, t1, a1
-	addw t2, zero, t4
-	lw t1, 0(t3)
-	beq t1, zero, label20
-	sh2add t3, t1, a0
-	lw t4, 0(t3)
-	sh2add t3, t1, a1
-	addw t2, t2, t4
-	lw t1, 0(t3)
-	beq t1, zero, label20
-	sh2add t3, t1, a0
-	lw t4, 0(t3)
-	sh2add t3, t1, a1
-	addw t2, t2, t4
-	lw t1, 0(t3)
-	beq t1, zero, label20
-	sh2add t3, t1, a0
-	lw t4, 0(t3)
-	sh2add t3, t1, a1
-	addw t2, t2, t4
-	lw t1, 0(t3)
-	beq t1, zero, label20
-	sh2add t3, t1, a0
-	lw t4, 0(t3)
-	sh2add t3, t1, a1
-	addw t2, t2, t4
-	lw t1, 0(t3)
-	beq t1, zero, label20
-	sh2add t3, t1, a0
-	lw t4, 0(t3)
-	sh2add t3, t1, a1
-	addw t2, t2, t4
-	lw t1, 0(t3)
-	beq t1, zero, label20
-	j label278
 label131:
 	mv t2, zero
 label20:
@@ -396,12 +339,11 @@ label20:
 	sh2add t4, t1, a2
 	lw t3, 0(t4)
 	bne t2, t3, label27
-	beq t1, zero, label148
 	mv t2, zero
 	sh2add t3, t1, a0
 	lw t4, 0(t3)
 	sh2add t3, t1, a1
-	addw t2, zero, t4
+	sext.w t2, t4
 	lw t1, 0(t3)
 	beq t1, zero, label20
 	sh2add t3, t1, a0
