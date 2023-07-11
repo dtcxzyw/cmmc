@@ -1028,6 +1028,23 @@ class ArithmeticReduce final : public TransformPass<Function> {
                 return builder.makeOp<SelectInst>(builder.makeOp<BinaryInst>(InstructionID::And, v1, v2), v3, v4);
             }
 
+            if(select(any(v1), zext(any(v2)), cint_(0))(matchCtx) && v2->getType()->isBoolean()) {
+                return builder.makeOp<CastInst>(InstructionID::ZExt, inst->getType(),
+                                                builder.makeOp<BinaryInst>(InstructionID::And, v1, v2));
+            }
+            if(select(any(v1), zext(any(v2)), cint_(1))(matchCtx) && v2->getType()->isBoolean()) {
+                return builder.makeOp<CastInst>(InstructionID::ZExt, inst->getType(),
+                                                builder.makeOp<BinaryInst>(InstructionID::Or, makeNot(v1), v2));
+            }
+            if(select(any(v1), cint_(0), zext(any(v2)))(matchCtx) && v2->getType()->isBoolean()) {
+                return builder.makeOp<CastInst>(InstructionID::ZExt, inst->getType(),
+                                                builder.makeOp<BinaryInst>(InstructionID::And, makeNot(v1), v2));
+            }
+            if(select(any(v1), cint_(1), zext(any(v2)))(matchCtx) && v2->getType()->isBoolean()) {
+                return builder.makeOp<CastInst>(InstructionID::ZExt, inst->getType(),
+                                                builder.makeOp<BinaryInst>(InstructionID::Or, v1, v2));
+            }
+
             return nullptr;
         });
         return ret || modified;

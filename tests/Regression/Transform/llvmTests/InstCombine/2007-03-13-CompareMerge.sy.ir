@@ -16,8 +16,8 @@ func @test_logical(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoS
     i32 %1 = strunc i32 %var1 to i32;
     i1 %2 = icmp slt i32 %0, i32 %1;
     i1 %3 = icmp eq i32 %var0, i32 %var1;
-    i32 %4 = zext i1 %3 to i32;
-    i32 %5 = select i1 %2 ? i32 1 : i32 %4;
+    i1 %4 = or i1 %2, i1 %3;
+    i32 %5 = zext i1 %4 to i32;
     i32 %6 = ztrunc i32 %5 to i32;
     ret i32 %6;
 }

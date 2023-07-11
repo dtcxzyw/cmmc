@@ -499,7 +499,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i1 %390 = fcmp ogt f32 %389, f32 1e-06;
     i1 %391 = fcmp olt f32 %389, f32 -1e-06;
     i1 %392 = or i1 %390, i1 %391;
-    cbr i1 %392(prob = 0.97), ^while.body15, ^b6;
+    cbr i1 %392(prob = 0.98), ^while.body15, ^b6;
   ^while.body15:
     f32 %393 = phi [^b5, f32 %388] [^while.body15, f32 %397];
     f32 %394 = phi [^b5, f32 1] [^while.body15, f32 %396];
@@ -510,7 +510,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i1 %399 = fcmp ogt f32 %398, f32 1e-06;
     i1 %400 = fcmp olt f32 %398, f32 -1e-06;
     i1 %401 = or i1 %399, i1 %400;
-    cbr i1 %401(prob = 0.97), ^while.body15, ^b6;
+    cbr i1 %401(prob = 0.98), ^while.body15, ^b6;
   ^b6:
     f32 %402 = phi [^b5, f32 1] [^while.body15, f32 %396];
     f32 %403 = fsub f32 %402, f32 1;

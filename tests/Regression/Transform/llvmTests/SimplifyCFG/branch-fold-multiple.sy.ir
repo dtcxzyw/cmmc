@@ -37,12 +37,12 @@ func @test2(i32 %var0, i32 %var1, i32 %var2, i32 %var3) -> i32 { NoMemoryRead No
     i32 %4 = phi [^entry, i32 0] [^if.else, i32 0] [^if.else1, i32 %10];
     ret i32 %4;
   ^if.else1:
-    i32 %5 = strunc i32 %var3 to i32;
+    i32 %5 = strunc i32 %var2 to i32;
     i1 %6 = icmp sle i32 %5, i32 0;
-    i32 %7 = zext i1 %6 to i32;
-    i32 %8 = strunc i32 %var2 to i32;
-    i1 %9 = icmp sgt i32 %8, i32 0;
-    i32 %10 = select i1 %9 ? i32 0 : i32 %7;
+    i32 %7 = strunc i32 %var3 to i32;
+    i1 %8 = icmp sle i32 %7, i32 0;
+    i1 %9 = and i1 %6, i1 %8;
+    i32 %10 = zext i1 %9 to i32;
     ubr ^b;
 }
 func @test3(i32 %var0, i32 %var1, i32 %var2, i32 %var3) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
@@ -63,11 +63,11 @@ func @test3(i32 %var0, i32 %var1, i32 %var2, i32 %var3) -> i32 { NoMemoryRead No
     i32 %9 = phi [^entry, i32 0] [^if.else, i32 0] [^if.else1, i32 %15];
     ret i32 %9;
   ^if.else1:
-    i32 %10 = strunc i32 %var3 to i32;
+    i32 %10 = strunc i32 %var2 to i32;
     i1 %11 = icmp sle i32 %10, i32 0;
-    i32 %12 = zext i1 %11 to i32;
-    i32 %13 = strunc i32 %var2 to i32;
-    i1 %14 = icmp sgt i32 %13, i32 0;
-    i32 %15 = select i1 %14 ? i32 0 : i32 %12;
+    i32 %12 = strunc i32 %var3 to i32;
+    i1 %13 = icmp sle i32 %12, i32 0;
+    i1 %14 = and i1 %11, i1 %13;
+    i32 %15 = zext i1 %14 to i32;
     ubr ^b;
 }
