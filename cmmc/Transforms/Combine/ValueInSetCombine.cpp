@@ -33,57 +33,57 @@ static bool isEligibleAndInst(Instruction* inst) {
     return true;
 }
 
-class State {
-    std::unordered_set<Value*> beingCompared{};
-    std::unordered_set<Value*> unsolvedValue{};
-    std::optional<Value*> rootValue{};
-    Value* targetValue;
+class State final {
+    std::unordered_set<Value*> mBeingCompared;
+    std::unordered_set<Value*> mUnsolvedValue;
+    std::optional<Value*> mRootValue;
+    Value* mTargetValue;
 
 public:
-    State(Value* target) : targetValue(target) {
-        unsolvedValue.insert(target);
+    State(Value* target) : mTargetValue(target) {
+        mUnsolvedValue.insert(target);
     }
 
     bool finished() const noexcept {
-        return unsolvedValue.empty() && rootValue.has_value();
+        return mUnsolvedValue.empty() && mRootValue.has_value();
     }
 
     std::unordered_set<Value*>& getBeingCompared() noexcept {
-        return beingCompared;
+        return mBeingCompared;
     }
 
     Value* getRootValue() noexcept {
-        return rootValue.value();
+        return mRootValue.value();
     }
 
     Value* getTargetValue() noexcept {
-        return targetValue;
+        return mTargetValue;
     }
 
     bool visitCompare(Instruction* inst) {
-        if(!unsolvedValue.erase(inst))
+        if(!mUnsolvedValue.erase(inst))
             return false;
 
         auto lhs = inst->getOperand(0);
         auto rhs = inst->getOperand(1);
 
-        if(rootValue.has_value()) {
-            if(rootValue.value() != lhs)
+        if(mRootValue.has_value()) {
+            if(mRootValue.value() != lhs)
                 return false;
         } else {
-            rootValue = lhs;
+            mRootValue = lhs;
         }
 
-        beingCompared.insert(rhs);
+        mBeingCompared.insert(rhs);
         return true;
     }
 
     bool visitAnd(Instruction* inst) {
-        if(!unsolvedValue.erase(inst) || !isEligibleAndInst(inst))
+        if(!mUnsolvedValue.erase(inst) || !isEligibleAndInst(inst))
             return false;
 
         for(auto operand : inst->operands())
-            unsolvedValue.insert(operand);
+            mUnsolvedValue.insert(operand);
         return true;
     }
 };
@@ -101,7 +101,7 @@ class ValueInSetCombine final : public TransformPass<Function> {
         intmax_t max = *std::max_element(constants.begin(), constants.end());
         intmax_t min = *std::min_element(constants.begin(), constants.end());
 
-        uintmax_t sections = (max - min + 1 - 1) / registerLength + 1;
+        uintmax_t sections = static_cast<uintmax_t>(max - min) / registerLength + 1;
         if(constants.size() <= sections * 3)
             return false;
 
@@ -112,20 +112,22 @@ class ValueInSetCombine final : public TransformPass<Function> {
         Value* result = builder.getTrue();
         for(uintmax_t i = 0; i < sections; i++) {
             uintmax_t mask = 0;
-            const intmax_t section_offset = min + i * registerLength;
+            const intmax_t sectionOffset = min + static_cast<intmax_t>(i * registerLength);
             for(auto constant : constants)
-                if(constant >= section_offset && constant < section_offset + registerLength)
-                    mask |= 1ULL << (constant - section_offset);
+                if(constant >= sectionOffset && constant < sectionOffset + registerLength)
+                    mask |= 1ULL << (constant - sectionOffset);
 
-            Instruction* fixed = builder.makeOp<BinaryInst>(InstructionID::Sub, root, rootInt(section_offset));
+            const auto delta = builder.makeOp<BinaryInst>(InstructionID::Sub, root, rootInt(sectionOffset));
+            Instruction* fixed = delta;
             if(registerLength != root->getType()->as<IntegerType>()->getBitwidth())
                 fixed = builder.makeOp<CastInst>(InstructionID::SExt, IntegerType::get(registerLength), fixed);
             const auto shifted = builder.makeOp<BinaryInst>(InstructionID::Shl, cint(1), fixed);
-            const auto and_ = builder.makeOp<BinaryInst>(InstructionID::And, shifted, cint(mask));
-            const auto localResult = builder.makeOp<CompareInst>(InstructionID::ICmp, CompareOp::ICmpEqual, and_, cint(0));
+            const auto maskedVal = builder.makeOp<BinaryInst>(InstructionID::And, shifted, cint(static_cast<intmax_t>(mask)));
+            const auto localResult = builder.makeOp<CompareInst>(InstructionID::ICmp, CompareOp::ICmpEqual, maskedVal, cint(0));
 
-            const auto cond = builder.makeOp<CompareInst>(InstructionID::ICmp, CompareOp::ICmpSignedGreaterEqual, root,
-                                                          rootInt(section_offset));
+            // TODO: check overflow?
+            const auto cond =
+                builder.makeOp<CompareInst>(InstructionID::ICmp, CompareOp::ICmpSignedGreaterEqual, delta, rootInt(0));
             result = builder.makeOp<SelectInst>(cond, localResult, result);
         }
 

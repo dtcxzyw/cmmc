@@ -1,0 +1,18 @@
+int basic_3(int x) {
+    return x != 0 && x != 1 && x != 2;
+}
+int basic_5(int x) {
+    return x != 0 && x != 1 && x != 2 && x != 3 && x != 4;
+}
+int cross_64_with_9(int x) {
+    return x != 62 && x != 60 && x != 43 && x != 45 && x != 91 && x != 93 && x != 46 && x != 44 && x != 35;
+}
+// int cross_64_with_12(int x) {
+//     return x != 62 && x != 60 && x != 43 && x != 45 && x != 91 && x != 93 && x != 46 && x != 44 && x != 35 && x != 63 && x != 61 && x != 58;
+// }
+int cross_32_with_5(int x) {
+    return x != 43 && x != 45 && x != 46 && x != 44 && x != 35;
+}
+int negative_5(int x) {
+    return x != -1 && x != -3 && x != 3 && x != 5 && x != -7;
+}

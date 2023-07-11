@@ -13,8 +13,8 @@
 */
 
 #pragma once
-#include "cmmc/CodeGen/DataLayout.hpp"
 #include <cmmc/Analysis/AnalysisPass.hpp>
+#include <cmmc/CodeGen/DataLayout.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/Function.hpp>
 #include <cmmc/IR/Instruction.hpp>
