@@ -578,6 +578,20 @@ static bool simplifyOpWithZero(MIRFunction& func, const CodeGenContext&) {
                     }
                     break;
                 }
+                case OR: {
+                    if(isZero(1)) {
+                        resetToCopy(2);
+                    } else if(isZero(2)) {
+                        resetToCopy(1);
+                    }
+                    break;
+                }
+                case SEXT_W: {
+                    if(isZero(1)) {
+                        resetToZero();
+                    }
+                    break;
+                }
                 default:
                     break;
             }

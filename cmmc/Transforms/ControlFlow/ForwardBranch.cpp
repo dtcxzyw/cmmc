@@ -33,33 +33,43 @@ class ForwardBranch final : public TransformPass<Function> {
         if(target == block)
             return false;
 
-        if(target->instructions().size() != 2)
+        Block* directTarget = nullptr;
+        Instruction* phi = nullptr;
+        if(target->instructions().size() == 1) {
+            auto terminator = target->instructions().front();
+            if(terminator->getInstID() != InstructionID::ConditionalBranch)
+                return false;
+            const auto branch = terminator->as<BranchInst>();
+            if(branch->getOperand(0) != cond)
+                return false;
+            directTarget = direction ? branch->getTrueTarget() : branch->getFalseTarget();
+        } else if(target->instructions().size() == 2) {
+            phi = target->instructions().front();
+            if(phi->getInstID() != InstructionID::Phi)
+                return false;
+            if(!phi->hasExactlyOneUse())
+                return false;
+            if(!phi->getType()->isBoolean())
+                return false;
+            const auto val = phi->as<PhiInst>()->incomings().at(block);
+            std::optional<bool> dir;
+            if(val->value == cond) {
+                dir = direction;
+            } else if(val->value->is<ConstantInteger>()) {
+                dir = (val->value->as<ConstantInteger>()->getSignExtended() != 0);
+            }
+            if(!dir.has_value())
+                return false;
+            auto terminator = target->instructions().back();
+            if(terminator->getInstID() != InstructionID::ConditionalBranch)
+                return false;
+            if(terminator->getOperand(0) != phi)
+                return false;
+            const auto branch = terminator->as<BranchInst>();
+            directTarget = *dir ? branch->getTrueTarget() : branch->getFalseTarget();
+        } else
             return false;
-        // TODO: without phi?
-        auto phi = target->instructions().front();
-        if(phi->getInstID() != InstructionID::Phi)
-            return false;
-        if(!phi->hasExactlyOneUse())
-            return false;
-        if(!phi->getType()->isBoolean())
-            return false;
-        const auto val = phi->as<PhiInst>()->incomings().at(block);
-        std::optional<bool> dir;
-        if(val->value == cond) {
-            dir = direction;
-        } else if(val->value->is<ConstantInteger>()) {
-            dir = (val->value->as<ConstantInteger>()->getSignExtended() != 0);
-        }
-        if(!dir.has_value())
-            return false;
-        auto terminator = target->instructions().back();
-        if(terminator->getInstID() != InstructionID::ConditionalBranch)
-            return false;
-        if(terminator->getOperand(0) != phi)
-            return false;
-        const auto branch = terminator->as<BranchInst>();
 
-        const auto directTarget = *dir ? branch->getTrueTarget() : branch->getFalseTarget();
         // target -> direct target
         if(target == directTarget)
             return false;
@@ -68,7 +78,8 @@ class ForwardBranch final : public TransformPass<Function> {
             return false;
 
         target = directTarget;
-        phi->as<PhiInst>()->removeSource(block);
+        if(phi)
+            phi->as<PhiInst>()->removeSource(block);
         return true;
     }
 
