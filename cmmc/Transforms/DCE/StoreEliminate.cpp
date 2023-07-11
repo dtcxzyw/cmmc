@@ -19,6 +19,7 @@
 // ==>
 // int* a = alloc int;
 
+#include "cmmc/Analysis/PointerBaseAnalysis.hpp"
 #include <cmmc/Analysis/AliasAnalysis.hpp>
 #include <cmmc/Analysis/DominateAnalysis.hpp>
 #include <cmmc/Analysis/PointerAddressSpaceAnalysis.hpp>
@@ -148,24 +149,35 @@ class StoreEliminate final : public TransformPass<Function> {
         return insts.size() != size;
     }
 
-    // TODO: cross-block store only
-    static bool removeStoreOnlyAlloca(Function& func) {
+    static bool removeStoreOnlyAlloca(Function& func, const PointerBaseAnalysisResult& pointerBase) {
         std::unordered_map<Value*, std::vector<Instruction*>> interested;
         for(auto block : func.blocks()) {
             for(auto& inst : block->instructions()) {
                 if(inst.getInstID() == InstructionID::Store) {
                     auto storeAddr = inst.getOperand(0);
-                    if(auto alloca = dynamic_cast<StackAllocInst*>(storeAddr)) {
+                    auto base = pointerBase.lookup(storeAddr);
+                    if(!base)
+                        continue;
+                    if(auto alloca = dynamic_cast<StackAllocInst*>(base)) {
                         interested[alloca].push_back(&inst);
                     }
                 }
             }
         }
+
         for(auto block : func.blocks()) {
             for(auto& inst : block->instructions()) {
                 if(inst.getInstID() == InstructionID::Store) {
                     if(inst.getOperand(1)->getType()->isPointer())
                         interested.erase(inst.getOperand(1));
+                } else if(inst.getInstID() == InstructionID::GetElementPtr) {
+                    const auto base = pointerBase.lookup(&inst);
+                    if(base && interested.count(base))
+                        for(auto user : inst.users())
+                            if(user->getInstID() != InstructionID::Store && user->getInstID() != InstructionID::GetElementPtr) {
+                                interested.erase(base);
+                                break;
+                            }
                 } else {
                     for(auto operand : inst.operands())
                         if(operand->getType()->isPointer())
@@ -179,7 +191,7 @@ class StoreEliminate final : public TransformPass<Function> {
         std::unordered_map<Block*, std::unordered_set<Value*>> deletedInstructions;
 
         for(auto& [alloca, deletedInsts] : interested) {
-            deletedInstructions[alloca->getBlock()].insert(alloca);
+            // deletedInstructions[alloca->getBlock()].insert(alloca);
             for(auto inst : deletedInsts)
                 deletedInstructions[inst->getBlock()].insert(inst);
             std::vector<Instruction*> empty;
@@ -207,7 +219,7 @@ public:
         auto& dom = analysis.get<DominateAnalysis>(func);
         auto& pointerBase = analysis.get<PointerBaseAnalysis>(func);
 
-        bool modified = removeStoreOnlyAlloca(func);
+        bool modified = removeStoreOnlyAlloca(func, pointerBase);
         for(auto block : func.blocks()) {
             modified |= runOnBlock(*block, aliasSet, dom, addressSpace, leak, pointerBase);
         }

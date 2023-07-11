@@ -353,6 +353,7 @@ std::shared_ptr<PassManager<Module>> PassManager<Module>::get(OptimizationLevel 
             "BlockEliminate",       // clean up
             // Load/Store
             "LoadReduce",             //
+            "LUT2Expr",               //
             "StoreEliminate",         //
             "PhiEliminate",           // clean up
             "NoSideEffectEliminate",  // clean up
