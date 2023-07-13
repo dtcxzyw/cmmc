@@ -480,7 +480,7 @@ std::shared_ptr<PassManager<Module>> PassManager<Module>::get(OptimizationLevel 
                 "FuncInlining",        //
             }))
             perFuncWithInline->addPass(pass);
-        perFuncWithInline->addPass(iter);
+        perFuncWithInline->addPass(perFunc);
     }
 
     root->addPass(globalOpt);
