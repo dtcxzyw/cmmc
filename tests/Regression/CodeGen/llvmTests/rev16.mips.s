@@ -58,8 +58,8 @@ extra_maskop_uses2:
 	and $t0, $t0, $t1
 	srl $t1, $a0, 8
 	li $t2, 16711935
-	and $t1, $t1, $t2
-	or $t2, $t0, $t1
+	and $t2, $t1, $t2
+	or $t1, $t0, $t2
 	mult $t0, $t2
 	mflo $t0
 	mult $t1, $t0
@@ -68,17 +68,17 @@ extra_maskop_uses2:
 	nop
 .globl f2
 f2:
-	sll $t0, $a0, 8
-	andi $t1, $t0, 65280
-	li $t2, -16777216
-	and $t0, $t0, $t2
-	or $t0, $t1, $t0
-	srl $t1, $a0, 8
-	andi $t2, $t1, 255
-	li $t3, 16711680
+	sll $t1, $a0, 8
+	andi $t2, $t1, 65280
+	srl $t0, $a0, 8
+	andi $t3, $t0, 255
+	or $t2, $t2, $t3
+	li $t3, -16777216
 	and $t1, $t1, $t3
 	or $t1, $t2, $t1
-	or $v0, $t0, $t1
+	li $t2, 16711680
+	and $t0, $t0, $t2
+	or $v0, $t1, $t0
 	jr $ra
 	nop
 .globl not_rev16

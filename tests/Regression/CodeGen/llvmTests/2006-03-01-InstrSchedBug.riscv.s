@@ -3,8 +3,10 @@
 .text
 .globl f
 f:
-	sh1add a3, a0, a1
-	mulw a2, a1, a3
-	mulw a1, a0, a0
+	mulw a3, a0, a0
+	mulw a4, a1, a1
+	addw a2, a3, a4
+	slliw a3, a0, 1
+	mulw a1, a1, a3
 	addw a0, a2, a1
 	ret

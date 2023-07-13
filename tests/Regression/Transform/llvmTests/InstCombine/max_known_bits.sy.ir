@@ -5,10 +5,9 @@ func @foo(i16 %var0) -> i16 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless 
     i32 %2 = ztrunc i32 %1 to i32;
     i1 %3 = icmp ult i32 %2, i32 255;
     i32 %4 = select i1 %3 ? i32 %2 : i32 255;
-    i32 %5 = and i32 %4, i32 65535;
-    i32 %6 = and i32 %5, i32 255;
-    i16 %7 = ztrunc i32 %6 to i16;
-    ret i16 %7;
+    i32 %5 = and i32 %4, i32 255;
+    i16 %6 = ztrunc i32 %5 to i16;
+    ret i16 %6;
 }
 func @llvm_smax_i16() -> i16 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:

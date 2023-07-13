@@ -14,10 +14,10 @@ internal func @dfs(i32 %a, i32 %b, i32 %c, i32 %d, i32 %e, i32 %last) -> i32 {
     i1 %8 = icmp neq i32 %7, i32 -1;
     cbr i1 %8(prob = 0.5), ^b2, ^b1;
   ^b1:
-    i32 %9 = add i32 %a, i32 %c;
-    i32 %10 = add i32 %e, i32 %9;
-    i32 %11 = add i32 %b, i32 %d;
-    i32 %12 = add i32 %10, i32 %11;
+    i32 %9 = add i32 %a, i32 %b;
+    i32 %10 = add i32 %c, i32 %9;
+    i32 %11 = add i32 %d, i32 %10;
+    i32 %12 = add i32 %e, i32 %11;
     i1 %13 = icmp eq i32 %12, i32 0;
     cbr i1 %13(prob = 0.5), ^b2, ^b3;
   ^b2:

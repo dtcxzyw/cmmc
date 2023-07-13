@@ -155,9 +155,9 @@ func @main() -> i32 { NoRecurse Entry } {
     ubr ^entry9;
   ^b7:
     i1 %81 = icmp eq i32 %68, i32 42;
-    i1 %82 = icmp eq i32 %68, i32 37;
+    i1 %82 = icmp eq i32 %68, i32 47;
     i1 %83 = or i1 %81, i1 %82;
-    i1 %84 = icmp eq i32 %68, i32 47;
+    i1 %84 = icmp eq i32 %68, i32 37;
     i1 %85 = or i1 %83, i1 %84;
     i32 %86 = select i1 %85 ? i32 20 : i32 0;
     ubr ^b8;
@@ -305,12 +305,12 @@ func @main() -> i32 { NoRecurse Entry } {
     cbr i1 %164(prob = 0.97), ^entry25, ^entry23;
   ^b12:
     i1 %165 = icmp eq i32 %151, i32 42;
-    i1 %166 = icmp eq i32 %151, i32 37;
+    i1 %166 = icmp eq i32 %151, i32 47;
     i1 %167 = or i1 %165, i1 %166;
-    i1 %168 = icmp eq i32 %151, i32 47;
-    i1 %169 = icmp sle i32 %87, i32 0;
-    i1 %170 = or i1 %168, i1 %169;
-    i1 %171 = or i1 %167, i1 %170;
+    i1 %168 = icmp eq i32 %151, i32 37;
+    i1 %169 = or i1 %167, i1 %168;
+    i1 %170 = icmp sle i32 %87, i32 0;
+    i1 %171 = or i1 %169, i1 %170;
     cbr i1 %171(prob = 0.97), ^entry25, ^entry23;
   ^b13:
     i1 %172 = icmp eq i32 %134, i32 42;

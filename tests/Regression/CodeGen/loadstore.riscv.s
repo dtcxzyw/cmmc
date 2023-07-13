@@ -60,13 +60,13 @@ gep2:
 .globl gepseq
 gepseq:
 	sh2add a2, a1, a0
-	lw a0, 0(a2)
-	lw a3, 4(a2)
-	lw a1, 8(a2)
-	addw a1, a0, a1
-	lw a4, 12(a2)
-	addw a2, a3, a4
-	addw a0, a2, a1
+	lw a3, 0(a2)
+	lw a1, 4(a2)
+	addw a0, a3, a1
+	lw a3, 8(a2)
+	lw a2, 12(a2)
+	addw a1, a0, a3
+	addw a0, a1, a2
 	ret
 .globl lb
 lb:

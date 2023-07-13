@@ -24,14 +24,14 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
   ^prebody:
     i32 %7 = add i32 %2, i32 %3;
     i32 %8 = srem i32 %7, i32 536854529;
-    i32 %9 = add i32 %8, i32 1;
-    i32 %10 = add i32 %2, i32 %9;
+    i32 %9 = add i32 %2, i32 1;
+    i32 %10 = add i32 %8, i32 %9;
     i32 %11 = srem i32 %10, i32 536854529;
-    i32 %12 = add i32 %11, i32 2;
-    i32 %13 = add i32 %2, i32 %12;
+    i32 %12 = add i32 %2, i32 2;
+    i32 %13 = add i32 %11, i32 %12;
     i32 %14 = srem i32 %13, i32 536854529;
-    i32 %15 = add i32 %14, i32 3;
-    i32 %16 = add i32 %2, i32 %15;
+    i32 %15 = add i32 %2, i32 3;
+    i32 %16 = add i32 %14, i32 %15;
     i32 %17 = srem i32 %16, i32 536854529;
     ubr ^super.header;
   ^prebody1:

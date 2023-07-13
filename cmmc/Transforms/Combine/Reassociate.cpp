@@ -107,8 +107,8 @@ class Reassociate final : public TransformPass<Function> {
                 } else
                     ref = val;
 
-                if(inst->hasExactlyOneUse() && (++pointer) == parallelCount)
-                    pointer = 0;
+                // if(inst->hasExactlyOneUse() && (++pointer) == parallelCount)
+                //     pointer = 0;
             };
 
             const auto pow = [&](Value* val, uint32_t c) {

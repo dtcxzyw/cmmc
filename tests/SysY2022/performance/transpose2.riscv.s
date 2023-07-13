@@ -104,9 +104,9 @@ label20:
 	addw t3, a5, a4
 	sh2add t1, t2, a2
 	addiw a4, a4, 1
-	sh2add t2, t3, a2
-	lw t4, 0(t2)
-	sw t4, 0(t1)
+	sh2add t4, t3, a2
+	lw t2, 0(t4)
+	sw t2, 0(t1)
 	ble a1, a4, label17
 	bge a0, a4, label20
 	addiw a4, a4, 1
@@ -151,27 +151,27 @@ label102:
 	mv s0, zero
 	j label22
 label31:
-	sh2add a5, a1, a0
+	sh2add a4, a1, a0
 	addiw t1, a1, 1
-	lw a4, 0(a5)
+	mulw t3, a1, a1
+	lw a5, 0(a4)
 	mulw t2, t1, t1
-	lw t0, 4(a5)
-	addiw t1, a1, 3
-	mulw t3, t0, t2
-	addw t0, a3, t3
-	mulw t3, t1, t1
-	lw a3, 8(a5)
-	lw a5, 12(a5)
-	mulw t2, a5, t3
-	addw a5, t0, t2
+	lw t0, 4(a4)
+	mulw a5, a5, t3
+	mulw t0, t0, t2
+	addw t1, a3, a5
+	lw a5, 8(a4)
+	addw a3, t0, t1
+	lw a4, 12(a4)
 	addiw t0, a1, 2
-	mulw a1, a1, a1
+	addiw a1, a1, 3
 	mulw t1, t0, t0
-	mulw t0, a4, a1
-	mulw a3, a3, t1
+	mulw a5, a5, t1
+	addw a3, a3, a5
+	mulw a5, a1, a1
 	mv a1, a2
-	addw a4, a3, t0
-	addw a3, a5, a4
+	mulw a4, a4, a5
+	addw a3, a3, a4
 	addiw a2, a2, 4
 	ble s0, a2, label28
 	j label31

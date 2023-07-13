@@ -13,10 +13,10 @@ test2:
 	nop
 	addiu $t0, $a0, -5
 	srl $t0, $t0, 2
-	addiu $t0, $t0, 1
 	sll $t0, $t0, 2
 	subu $t0, $zero, $t0
-	addu $v0, $a0, $t0
+	addiu $t1, $a0, -4
+	addu $v0, $t0, $t1
 	b label7
 	nop
 label13:

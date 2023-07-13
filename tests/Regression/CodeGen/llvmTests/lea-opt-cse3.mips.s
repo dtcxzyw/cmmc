@@ -2,25 +2,23 @@
 .text
 .globl foo
 foo:
-	sll $t0, $a1, 1
-	addiu $t0, $t0, 4
-	addu $t0, $a0, $t0
-	sll $t1, $a1, 2
-	addiu $t1, $t1, 4
-	addu $t1, $a0, $t1
-	mult $t0, $t1
+	addiu $t0, $a0, 4
+	sll $t1, $a1, 1
+	addu $t1, $t0, $t1
+	sll $t2, $a1, 2
+	addu $t0, $t0, $t2
+	mult $t1, $t0
 	mflo $v0
 	jr $ra
 	nop
 .globl foo1
 foo1:
-	sll $t0, $a1, 2
-	addiu $t0, $t0, 4
-	addu $t0, $a0, $t0
-	sll $t1, $a1, 3
-	addiu $t1, $t1, 4
-	addu $t1, $a0, $t1
-	mult $t0, $t1
+	addiu $t0, $a0, 4
+	sll $t1, $a1, 2
+	addu $t1, $t0, $t1
+	sll $t2, $a1, 3
+	addu $t0, $t0, $t2
+	mult $t1, $t0
 	mflo $v0
 	jr $ra
 	nop
@@ -30,17 +28,17 @@ foo1_mult_basic_blocks:
 	sll $t1, $a1, 2
 	addu $t1, $t0, $t1
 	li $t2, 10
-	beq $t1, $t2, label38
+	beq $t1, $t2, label36
 	nop
 	sll $t2, $a1, 3
 	addu $t0, $t0, $t2
 	mult $t0, $t1
 	mflo $v0
-	b label29
+	b label27
 	nop
-label38:
+label36:
 	move $v0, $zero
-label29:
+label27:
 	jr $ra
 	nop
 .globl foo1_mult_basic_blocks_illegal_scale
@@ -49,16 +47,16 @@ foo1_mult_basic_blocks_illegal_scale:
 	sll $t1, $a1, 1
 	addu $t1, $t0, $t1
 	li $t2, 10
-	beq $t1, $t2, label59
+	beq $t1, $t2, label57
 	nop
 	sll $t2, $a1, 3
 	addu $t0, $t0, $t2
 	mult $t0, $t1
 	mflo $v0
-	b label50
+	b label48
 	nop
-label59:
+label57:
 	move $v0, $zero
-label50:
+label48:
 	jr $ra
 	nop

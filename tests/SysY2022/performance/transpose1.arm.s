@@ -216,23 +216,22 @@ label21:
 	cmp r5, r2
 	ble label26
 label29:
-	add r6, r1, r0, lsl #2
-	ldr r4, [r1, r0, lsl #2]
+	add r4, r1, r0, lsl #2
+	ldr r6, [r1, r0, lsl #2]
 	add r8, r0, #1
+	mul r9, r0, r0
+	ldr r7, [r4, #4]
 	mla r8, r8, r0, r8
-	ldr r7, [r6, #4]
-	mla r7, r7, r8, r3
-	add r8, r0, #3
-	ldr r3, [r6, #8]
-	mul r8, r8, r8
-	ldr r6, [r6, #12]
-	mla r6, r6, r8, r7
+	mla r3, r6, r9, r3
+	ldr r6, [r4, #8]
+	mla r3, r7, r8, r3
+	ldr r4, [r4, #12]
 	add r7, r0, #2
-	mul r0, r0, r0
+	add r0, r0, #3
 	mul r7, r7, r7
-	mul r3, r3, r7
-	mla r0, r4, r0, r3
-	add r3, r6, r0
+	mul r0, r0, r0
+	mla r3, r6, r7, r3
+	mla r3, r4, r0, r3
 	mov r0, r2
 	add r2, r2, #4
 	cmp r5, r2

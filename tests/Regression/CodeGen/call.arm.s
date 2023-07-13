@@ -129,9 +129,9 @@ callee11_cmmc_noinline:
 	bx lr
 .globl callee12_cmmc_noinline
 callee12_cmmc_noinline:
-	add r0, r0, r2
-	add r0, r1, r0
+	add r0, r0, r1
 	movw r1, #:lower16:touch
+	add r0, r2, r0
 	movt r1, #:upper16:touch
 	str r0, [r1, #0]
 	bx lr

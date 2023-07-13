@@ -8,9 +8,9 @@ func @test1(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffe
 }
 func @test2(i32 %var0, i32 %var1, i32 %var2, i32 %var3) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i32 %0 = add i32 %var0, i32 %var2;
-    i32 %1 = add i32 %var1, i32 12;
-    i32 %2 = add i32 %0, i32 %1;
+    i32 %0 = add i32 %var0, i32 12;
+    i32 %1 = add i32 %var1, i32 %0;
+    i32 %2 = add i32 %var2, i32 %1;
     i32 %3 = sub i32 %var3, i32 %2;
     i32 %4 = add i32 %3, i32 12;
     ret i32 %4;

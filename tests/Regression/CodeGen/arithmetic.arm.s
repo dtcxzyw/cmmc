@@ -293,8 +293,8 @@ fp_imm1:
 	bx lr
 .globl and_trunc
 and_trunc:
-	and r1, r1, #1
-	and r0, r0, r1
+	and r0, r0, #1
+	and r0, r1, r0
 	bx lr
 .globl ucmp1
 ucmp1:

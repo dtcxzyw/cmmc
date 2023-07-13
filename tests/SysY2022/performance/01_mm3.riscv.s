@@ -130,15 +130,15 @@ label80:
 	sh2add t2, t3, t0
 	sh2add t3, t3, a2
 	lw t4, 0(t2)
-	lw a6, 0(t3)
-	mulw t5, a5, a6
-	addw t6, t4, t5
-	sw t6, 0(t2)
+	lw t6, 0(t3)
+	mulw t5, a5, t6
+	addw a6, t4, t5
+	sw a6, 0(t2)
 	lw t4, 4(t2)
 	lw t6, 4(t3)
-	mulw a6, a5, t6
-	addw t5, t4, a6
-	sw t5, 4(t2)
+	mulw t5, a5, t6
+	addw a6, t4, t5
+	sw a6, 4(t2)
 	lw t4, 8(t2)
 	lw t5, 8(t3)
 	mulw t6, a5, t5
@@ -190,8 +190,8 @@ label268:
 	mv a0, zero
 	ble s0, zero, label71
 	mv a2, zero
-	mv a4, zero
 	mv a3, zero
+	mv a4, zero
 	mv a1, s1
 	li a2, 4
 	ble s0, a2, label65
@@ -294,9 +294,9 @@ label39:
 	sh2add t2, t3, t0
 	sh2add t3, t3, a2
 	lw t4, 0(t2)
-	lw a6, 0(t3)
-	mulw t6, a5, a6
-	addw t5, t4, t6
+	lw t6, 0(t3)
+	mulw a6, a5, t6
+	addw t5, t4, a6
 	sw t5, 0(t2)
 	lw t4, 4(t2)
 	lw t6, 4(t3)
@@ -304,9 +304,9 @@ label39:
 	addw t5, t4, a6
 	sw t5, 4(t2)
 	lw t4, 8(t2)
-	lw t5, 8(t3)
-	mulw t6, a5, t5
-	addw a6, t4, t6
+	lw t6, 8(t3)
+	mulw t5, a5, t6
+	addw a6, t4, t5
 	sw a6, 8(t2)
 	lw t4, 12(t2)
 	lw t5, 12(t3)
@@ -320,12 +320,12 @@ label39:
 	j label39
 label37:
 	sh2add t2, t1, t0
-	sh2add t6, t1, a2
+	sh2add t5, t1, a2
 	lw t3, 0(t2)
 	addiw t1, t1, 1
-	lw t5, 0(t6)
-	mulw t4, a5, t5
-	addw t3, t3, t4
+	lw t4, 0(t5)
+	mulw t6, a5, t4
+	addw t3, t3, t6
 	sw t3, 0(t2)
 	ble s0, t1, label42
 	j label37
@@ -444,33 +444,33 @@ label26:
 	ble s0, a5, label22
 	j label26
 label68:
-	sh2add a5, a4, a1
-	lw a4, 0(a5)
-	lw t1, 4(a5)
-	addw t0, a3, t1
-	lw a3, 8(a5)
-	lw t1, 12(a5)
-	addw a5, t0, t1
-	addw t0, a4, a3
-	mv a4, a2
-	addw a3, a5, t0
+	sh2add a3, a3, a1
+	lw a5, 0(a3)
+	lw t1, 4(a3)
+	addw a4, a4, a5
+	addw t0, a4, t1
+	lw a4, 8(a3)
+	addw a5, t0, a4
+	lw t0, 12(a3)
+	mv a3, a2
+	addw a4, a5, t0
 	addiw a2, a2, 4
 	ble s0, a2, label65
 	j label68
 label65:
-	sh2add a5, a4, a1
-	addiw a4, a4, 1
+	sh2add a5, a3, a1
+	addiw a3, a3, 1
 	lw a2, 0(a5)
-	addw a3, a3, a2
-	ble s0, a4, label291
+	addw a4, a4, a2
+	ble s0, a3, label291
 	j label65
 label291:
-	mv s2, a3
+	mv s2, a4
 	addiw a0, a0, 1
 	ble s0, a0, label71
 	ble s0, zero, label69
 	slli a2, a0, 12
-	mv a4, zero
+	mv a3, zero
 	add a1, s1, a2
 	li a2, 4
 	ble s0, a2, label65
@@ -490,8 +490,8 @@ label69:
 	ble s0, a0, label71
 	ble s0, zero, label69
 	slli a2, a0, 12
-	mv a4, zero
-	mv a3, s2
+	mv a3, zero
+	mv a4, s2
 	add a1, s1, a2
 	li a2, 4
 	ble s0, a2, label65

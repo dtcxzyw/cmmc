@@ -236,18 +236,17 @@ label51:
 	ble label22
 	b label464
 label254:
-	mov r7, #0
-	mov r0, r7
+	mov r4, #0
+	mov r0, r4
 	ldr r6, [sp, #0]
-	cmp r6, r7
+	cmp r6, r4
 	ble label66
 	cmp r6, #0
 	ble label56
 	ldr r5, [sp, #4]
-	mov r4, #0
-	mov r3, r7
-	add r1, r5, r7, lsl #12
-	add r2, r4, #4
+	mov r3, #0
+	add r1, r5, r4, lsl #12
+	add r2, r3, #4
 	cmp r6, r2
 	ble label63
 	b label62
@@ -879,33 +878,33 @@ label22:
 	ble label17
 	b label22
 label62:
-	add r5, r1, r4, lsl #2
-	ldr r4, [r1, r4, lsl #2]
-	ldr r6, [r5, #4]
-	add r3, r3, r6
-	ldr r6, [r5, #8]
-	ldr r5, [r5, #12]
-	add r4, r4, r6
-	add r3, r3, r5
+	add r5, r1, r3, lsl #2
+	ldr r3, [r1, r3, lsl #2]
+	add r3, r4, r3
+	ldr r4, [r5, #4]
 	add r3, r3, r4
-	mov r4, r2
+	ldr r4, [r5, #8]
+	add r3, r3, r4
+	ldr r4, [r5, #12]
+	add r4, r3, r4
+	mov r3, r2
 	add r2, r2, #4
 	ldr r6, [sp, #0]
 	cmp r6, r2
 	ble label63
 	b label62
 label648:
-	mov r3, r2
+	mov r4, r2
 label63:
-	ldr r2, [r1, r4, lsl #2]
+	ldr r2, [r1, r3, lsl #2]
 	ldr r6, [sp, #0]
-	add r4, r4, #1
-	add r2, r3, r2
-	cmp r6, r4
+	add r3, r3, #1
+	add r2, r4, r2
+	cmp r6, r3
 	ble label291
 	b label648
 label291:
-	mov r7, r2
+	mov r4, r2
 	add r0, r0, #1
 	ldr r6, [sp, #0]
 	cmp r6, r0
@@ -913,10 +912,9 @@ label291:
 	cmp r6, #0
 	ble label56
 	ldr r5, [sp, #4]
-	mov r4, #0
-	mov r3, r2
+	mov r3, #0
 	add r1, r5, r0, lsl #12
-	add r2, r4, #4
+	add r2, r3, #4
 	cmp r6, r2
 	ble label63
 	b label62
@@ -928,10 +926,9 @@ label56:
 	cmp r6, #0
 	ble label56
 	ldr r5, [sp, #4]
-	mov r4, #0
-	mov r3, r7
+	mov r3, #0
 	add r1, r5, r0, lsl #12
-	add r2, r4, #4
+	add r2, r3, #4
 	cmp r6, r2
 	ble label63
 	b label62
@@ -980,7 +977,7 @@ label8:
 label66:
 	mov r0, #84
 	bl _sysy_stoptime
-	mov r0, r7
+	mov r0, r4
 	bl putint
 	mov r0, #10
 	bl putch

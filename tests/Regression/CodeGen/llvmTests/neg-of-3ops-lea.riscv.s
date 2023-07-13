@@ -21,7 +21,7 @@ t2:
 	ret
 .globl t3
 t3:
-	addiw a2, a1, -32
-	addw a3, a0, a2
+	addiw a2, a0, -32
+	addw a3, a1, a2
 	subw a0, zero, a3
 	ret

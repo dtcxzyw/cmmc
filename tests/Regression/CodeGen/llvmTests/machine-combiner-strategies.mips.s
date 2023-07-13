@@ -9,9 +9,9 @@ test_local_strategy:
 	subu $v0, $t2, $a2
 	bne $v0, $zero, label3
 	nop
-	addu $t0, $t0, $v0
-	addu $t1, $a3, $t1
-	addu $v0, $t0, $t1
+	addu $t0, $a3, $t0
+	addu $t0, $t1, $t0
+	addu $v0, $t0, $v0
 label3:
 	jr $ra
 	nop

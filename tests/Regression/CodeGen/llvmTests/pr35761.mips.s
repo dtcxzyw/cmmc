@@ -24,8 +24,6 @@ PR35761:
 	andi $t0, $t0, 255
 	or $t0, $t1, $t0
 	andi $t0, $t0, 255
-	li $t1, 4194303
-	and $t0, $t0, $t1
 	lui $t1, %hi(z)
 	sw $t0, %lo(z)($t1)
 	jr $ra

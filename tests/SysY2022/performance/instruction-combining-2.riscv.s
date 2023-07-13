@@ -27,26 +27,26 @@ label5:
 	srai t0, a3, 59
 	li a3, 536854529
 	add a5, t1, t0
+	addiw t1, a0, 1
 	mulw t0, a5, a3
 	subw a5, a4, t0
-	addiw t1, a5, 1
-	addw a4, a0, t1
+	addw a4, a5, t1
 	mul a5, a4, a2
 	srli t3, a5, 63
 	srai t0, a5, 59
 	add t1, t3, t0
+	addiw t0, a0, 2
 	mulw t2, t1, a3
 	subw a5, a4, t2
-	addiw t0, a5, 2
-	addw a4, a0, t0
+	addw a4, a5, t0
 	mul a5, a4, a2
 	srli t1, a5, 63
 	srai t0, a5, 59
 	add a5, t1, t0
 	mulw t0, a5, a3
+	addiw a5, a0, 3
 	subw a4, a4, t0
-	addiw a5, a4, 3
-	addw a0, a0, a5
+	addw a0, a4, a5
 	mul a2, a0, a2
 	srli t0, a2, 63
 	srai a4, a2, 59

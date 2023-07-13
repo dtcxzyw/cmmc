@@ -32,12 +32,12 @@ main:
 	addiw a1, a0, -35
 	sll a2, a3, a1
 	and a3, a2, a4
-	li a4, 93
-	sltiu a2, a3, 1
-	slt a3, a4, a0
 	slti a4, a1, 0
-	or a2, a2, a3
+	sltiu a2, a3, 1
 	or a1, a2, a4
+	li a2, 93
+	slt a3, a2, a0
+	or a1, a1, a3
 	beq a1, zero, label3
 	j label2
 label350:
@@ -61,12 +61,12 @@ label5:
 	addiw a1, a0, -35
 	sll a2, a4, a1
 	and a4, a2, a3
-	li a3, 93
-	sltiu a2, a4, 1
-	slt a4, a3, a0
 	slti a3, a1, 0
-	or a2, a2, a4
+	sltiu a2, a4, 1
+	li a4, 93
 	or a1, a2, a3
+	slt a2, a4, a0
+	or a1, a1, a2
 	beq a1, zero, label9
 	j label8
 label9:
@@ -76,33 +76,33 @@ label9:
 	j label5
 label8:
 	jal getch
-	li a3, 360287970357415681
-	li a4, 1
+	li a4, 360287970357415681
+	li a3, 1
 	addiw a1, a0, -35
-	sll a2, a4, a1
-	and a4, a2, a3
+	sll a2, a3, a1
+	and a3, a2, a4
+	slti a4, a1, 0
+	sltiu a2, a3, 1
 	li a3, 93
-	sltiu a2, a4, 1
-	slt a4, a3, a0
-	slti a3, a1, 0
-	or a2, a2, a4
-	or a1, a2, a3
+	or a1, a2, a4
+	slt a2, a3, a0
+	or a1, a1, a2
 	beq a1, zero, label9
 	j label8
 label2:
 	jal getch
-	li a5, 360287970357415681
+	li a4, 360287970357415681
 	li a3, 1
 	addiw a1, a0, -35
 	sll a2, a3, a1
-	slti a1, a1, 0
+	and a3, a2, a4
+	slti a4, a1, 0
+	sltiu a2, a3, 1
 	li a3, 93
-	and a4, a2, a5
-	sltiu a2, a4, 1
-	slt a4, a3, a0
-	or a2, a2, a4
-	or a3, a2, a1
-	beq a3, zero, label3
+	or a1, a2, a4
+	slt a2, a3, a0
+	or a1, a1, a2
+	beq a1, zero, label3
 	j label2
 label11:
 	jal getch

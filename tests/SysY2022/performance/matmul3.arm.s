@@ -119,10 +119,10 @@ label16:
 	ldr r11, [r11, r0, lsl #2]
 	mul r10, r10, r11
 	mla r8, r8, r9, r10
-	ldr r9, [r7, #8]
-	add r10, r6, #8000
-	ldr r10, [r10, r0, lsl #2]
-	mla r8, r9, r10, r8
+	ldr r10, [r7, #8]
+	add r9, r6, #8000
+	ldr r9, [r9, r0, lsl #2]
+	mla r8, r10, r9, r8
 	movw r9, #12000
 	add r9, r6, r9
 	ldr r6, [r7, #12]
@@ -287,20 +287,20 @@ label36:
 	add r0, r0, #1
 	ldr r1, [r1, r2, lsl #2]
 	ldr r2, [r4, #4]
-	add r3, r3, r2
-	ldr r2, [r4, #8]
-	ldr r5, [r4, #12]
-	add r1, r1, r2
-	add r5, r3, r5
-	ldr r3, [r4, #16]
-	ldr r6, [r4, #20]
 	add r1, r3, r1
-	add r6, r5, r6
-	ldr r5, [r4, #24]
-	ldr r4, [r4, #28]
-	add r1, r5, r1
-	add r4, r6, r4
-	add r5, r4, r1
+	add r1, r1, r2
+	ldr r2, [r4, #8]
+	add r1, r1, r2
+	ldr r2, [r4, #12]
+	add r1, r1, r2
+	ldr r2, [r4, #16]
+	add r1, r1, r2
+	ldr r2, [r4, #20]
+	add r1, r1, r2
+	ldr r2, [r4, #24]
+	add r1, r1, r2
+	ldr r2, [r4, #28]
+	add r5, r1, r2
 	cmp r0, #1000
 	bge label31
 	b label616

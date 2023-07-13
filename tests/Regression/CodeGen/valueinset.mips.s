@@ -3,10 +3,10 @@
 .globl basic_3
 basic_3:
 	sltu $t0, $zero, $a0
-	xori $t1, $a0, 2
+	xori $t1, $a0, 1
 	sltu $t1, $zero, $t1
 	and $t0, $t0, $t1
-	xori $t1, $a0, 1
+	xori $t1, $a0, 2
 	sltu $t1, $zero, $t1
 	and $v0, $t0, $t1
 	jr $ra
@@ -17,10 +17,10 @@ basic_5:
 	sllv $t0, $t0, $a0
 	andi $t0, $t0, 31
 	sltiu $t0, $t0, 1
+	slti $t1, $a0, 0
+	or $t0, $t0, $t1
 	li $t1, 4
 	slt $t1, $t1, $a0
-	or $t0, $t0, $t1
-	slti $t1, $a0, 0
 	or $v0, $t0, $t1
 	jr $ra
 	nop
@@ -54,11 +54,11 @@ cross_32_with_5:
 	sllv $t1, $t1, $t0
 	andi $t1, $t1, 3841
 	sltiu $t1, $t1, 1
-	li $t2, 46
-	slt $t2, $t2, $a0
-	or $t1, $t1, $t2
 	slti $t0, $t0, 0
-	or $v0, $t1, $t0
+	or $t0, $t1, $t0
+	li $t1, 46
+	slt $t1, $t1, $a0
+	or $v0, $t0, $t1
 	jr $ra
 	nop
 .globl negative_5
@@ -68,10 +68,10 @@ negative_5:
 	sllv $t1, $t1, $t0
 	andi $t1, $t1, 5201
 	sltiu $t1, $t1, 1
-	li $t2, 5
-	slt $t2, $t2, $a0
-	or $t1, $t1, $t2
 	slti $t0, $t0, 0
-	or $v0, $t1, $t0
+	or $t0, $t1, $t0
+	li $t1, 5
+	slt $t1, $t1, $a0
+	or $v0, $t0, $t1
 	jr $ra
 	nop

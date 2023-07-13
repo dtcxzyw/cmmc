@@ -23,8 +23,8 @@ t2:
 	nop
 .globl t3
 t3:
-	addiu $t0, $a1, -32
-	addu $t0, $a0, $t0
+	addiu $t0, $a0, -32
+	addu $t0, $a1, $t0
 	subu $v0, $zero, $t0
 	jr $ra
 	nop
