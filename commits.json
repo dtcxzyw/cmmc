@@ -280,6 +280,11 @@
       "parent": "3628affbb0d62df57fec2147a4efcb473f1db33e",
       "time": "2023-07-09 21:49:55 +0800"
     },
+    "62ce6e90349d4d8d7b262a67b7f0f7f59d071607": {
+      "message": "fix(transform): revert parallel reassociation",
+      "parent": "d3a7f546540e264c70b455207ad10d54f4d4f580",
+      "time": "2023-07-14 02:02:19 +0800"
+    },
     "682c6b62948d7cc72a528aa33d7a04cdf1f53502": {
       "message": "fix(transform): fix re-unrolling",
       "parent": "3b456200e42e06bf7b9c01045913353124de379f",
@@ -646,5 +651,5 @@
       "time": "2023-07-06 01:05:50 +0800"
     }
   },
-  "head": "d3a7f546540e264c70b455207ad10d54f4d4f580"
+  "head": "62ce6e90349d4d8d7b262a67b7f0f7f59d071607"
 }
