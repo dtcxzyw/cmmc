@@ -10,9 +10,9 @@ basic_3:
 	mov r1, #0
 	mov r2, #0
 	movwne r1, #1
-	cmp r0, #1
-	movwne r2, #1
 	cmp r0, #2
+	movwne r2, #1
+	cmp r0, #1
 	and r1, r1, r2
 	mov r0, #0
 	movwne r0, #1
@@ -21,16 +21,16 @@ basic_3:
 .globl basic_5
 basic_5:
 	mov r1, #1
-	cmp r0, #0
+	cmp r0, #4
 	mov r2, #0
 	lsl r1, r1, r0
-	movwlt r2, #1
+	movwgt r2, #1
 	and r1, r1, #31
-	cmp r0, #4
+	cmp r0, #0
 	clz r1, r1
 	mov r0, #0
 	lsr r1, r1, #5
-	movwgt r0, #1
+	movwlt r0, #1
 	orr r1, r1, r2
 	orr r0, r1, r0
 	bx lr
@@ -67,34 +67,34 @@ cross_32_with_5:
 	sub r1, r0, #35
 	mov r2, #1
 	movw r3, #3841
-	cmp r1, #0
-	lsl r2, r2, r1
-	mov r1, #0
-	and r2, r3, r2
-	movwlt r1, #1
-	clz r2, r2
 	cmp r0, #46
-	lsr r2, r2, #5
+	lsl r2, r2, r1
 	mov r0, #0
-	orr r1, r2, r1
+	and r2, r3, r2
 	movwgt r0, #1
-	orr r0, r1, r0
+	clz r2, r2
+	cmp r1, #0
+	lsr r2, r2, #5
+	mov r1, #0
+	orr r0, r2, r0
+	movwlt r1, #1
+	orr r0, r0, r1
 	bx lr
 .globl negative_5
 negative_5:
 	add r1, r0, #7
 	mov r2, #1
 	movw r3, #5201
-	cmp r1, #0
-	lsl r2, r2, r1
-	mov r1, #0
-	and r2, r3, r2
-	movwlt r1, #1
-	clz r2, r2
 	cmp r0, #5
-	lsr r2, r2, #5
+	lsl r2, r2, r1
 	mov r0, #0
-	orr r1, r2, r1
+	and r2, r3, r2
 	movwgt r0, #1
-	orr r0, r1, r0
+	clz r2, r2
+	cmp r1, #0
+	lsr r2, r2, #5
+	mov r1, #0
+	orr r0, r2, r0
+	movwlt r1, #1
+	orr r0, r0, r1
 	bx lr

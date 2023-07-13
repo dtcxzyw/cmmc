@@ -12,6 +12,7 @@
     limitations under the License.
 */
 
+#include <array>
 #include <cmmc/Analysis/AnalysisPass.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/Function.hpp>
@@ -95,12 +96,19 @@ class Reassociate final : public TransformPass<Function> {
             }
             args.erase(std::next(last), args.end());
 
-            Value* reduction = nullptr;
+            const uint32_t parallelCount = 2;
+            std::array<Value*, parallelCount> reductionStorage{};
+            uint32_t pointer = 0;
             const auto reduce = [&](Value* val) {
-                if(reduction) {
-                    reduction = builder.makeOp<BinaryInst>(inst->getInstID(), reduction, val);
+                auto& ref = reductionStorage[pointer];
+
+                if(ref) {
+                    ref = builder.makeOp<BinaryInst>(inst->getInstID(), ref, val);
                 } else
-                    reduction = val;
+                    ref = val;
+
+                if((++pointer) == parallelCount)
+                    pointer = 0;
             };
 
             const auto pow = [&](Value* val, uint32_t c) {
@@ -145,12 +153,25 @@ class Reassociate final : public TransformPass<Function> {
                         if(c % 2)
                             reduce(v);
                     }
-                    if(reduction == nullptr)
-                        reduction = ConstantInteger::get(inst->getType(), 0);
                 } break;
                 default:
                     reportUnreachable(CMMC_LOCATION());
             }
+
+            Value* reduction = nullptr;
+
+            for(auto val : reductionStorage) {
+                if(!val)
+                    continue;
+                if(reduction) {
+                    reduction = builder.makeOp<BinaryInst>(inst->getInstID(), reduction, val);
+                } else
+                    reduction = val;
+            }
+
+            if(!reduction && inst->getInstID() == InstructionID::Xor)
+                reduction = ConstantInteger::get(inst->getType(), 0);
+
             assert(reduction);
             assert(reduction != inst);
             if(reduction->isInstruction() && !map.count(reduction)) {

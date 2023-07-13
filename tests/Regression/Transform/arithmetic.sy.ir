@@ -491,8 +491,8 @@ func @foo99(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless N
 }
 func @foo100(i32 %x, i32 %y) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i32 %0 = and i32 %x, i32 1;
-    i32 %1 = and i32 %y, i32 %0;
+    i32 %0 = and i32 %y, i32 1;
+    i32 %1 = and i32 %x, i32 %0;
     ret i32 %1;
 }
 func @foo101(i32 %x, i32 %y) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {

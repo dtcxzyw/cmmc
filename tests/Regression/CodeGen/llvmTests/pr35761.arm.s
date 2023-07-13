@@ -30,8 +30,11 @@ PR35761:
 	ldrb r1, [r1, #0]
 	eor r0, r2, r0
 	orr r0, r0, r1
-	movw r1, #:lower16:z
+	movw r1, #65535
 	and r0, r0, #255
+	movt r1, #63
+	and r0, r0, r1
+	movw r1, #:lower16:z
 	movt r1, #:upper16:z
 	str r0, [r1, #0]
 	bx lr

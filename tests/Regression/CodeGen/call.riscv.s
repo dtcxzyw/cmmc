@@ -117,10 +117,10 @@ pcrel112:
 	ret
 .globl callee12_cmmc_noinline
 callee12_cmmc_noinline:
-	addw a3, a0, a1
+	addw a3, a0, a2
+	addw a0, a1, a3
 pcrel123:
 	auipc a1, %pcrel_hi(touch)
-	addw a0, a2, a3
 	sw a0, %pcrel_lo(pcrel123)(a1)
 	ret
 .globl callee15_cmmc_noinline

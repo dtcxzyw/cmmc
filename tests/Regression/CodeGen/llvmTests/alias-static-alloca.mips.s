@@ -2,8 +2,8 @@
 .text
 .globl foo
 foo:
-	addu $t0, $a0, $a1
-	addu $t0, $t0, $a2
-	addu $v0, $t0, $a3
+	addu $t0, $a0, $a2
+	addu $t1, $a1, $a3
+	addu $v0, $t0, $t1
 	jr $ra
 	nop

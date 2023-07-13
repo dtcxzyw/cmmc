@@ -21,7 +21,7 @@ t2:
 	bx lr
 .globl t3
 t3:
-	sub r0, r0, #32
-	add r0, r1, r0
+	sub r1, r1, #32
+	add r0, r0, r1
 	rsb r0, r0, #0
 	bx lr

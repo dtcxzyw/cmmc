@@ -141,8 +141,8 @@ callee11_cmmc_noinline:
 	nop
 .globl callee12_cmmc_noinline
 callee12_cmmc_noinline:
-	addu $t0, $a0, $a1
-	addu $t0, $a2, $t0
+	addu $t0, $a0, $a2
+	addu $t0, $a1, $t0
 	lui $t1, %hi(touch)
 	sw $t0, %lo(touch)($t1)
 	jr $ra

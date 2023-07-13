@@ -6,41 +6,53 @@
 .fpu vfpv4
 .globl foo
 foo:
-	add r0, r0, #4
-	add r2, r0, r1, lsl #1
-	add r0, r0, r1, lsl #2
+	lsl r2, r1, #1
+	lsl r1, r1, #2
+	add r2, r2, #4
+	add r1, r1, #4
+	add r2, r0, r2
+	add r0, r0, r1
 	mul r0, r2, r0
 	bx lr
 .globl foo1
 foo1:
-	add r0, r0, #4
-	add r2, r0, r1, lsl #2
-	add r0, r0, r1, lsl #3
+	lsl r2, r1, #2
+	lsl r1, r1, #3
+	add r2, r2, #4
+	add r1, r1, #4
+	add r2, r0, r2
+	add r0, r0, r1
 	mul r0, r2, r0
 	bx lr
 .globl foo1_mult_basic_blocks
 foo1_mult_basic_blocks:
-	add r0, r0, #4
-	add r2, r0, r1, lsl #2
+	lsl r2, r1, #2
+	add r2, r2, #4
+	add r2, r0, r2
 	cmp r2, #10
-	beq label36
-	add r0, r0, r1, lsl #3
+	beq label38
+	lsl r1, r1, #3
+	add r1, r1, #4
+	add r0, r0, r1
 	mul r0, r0, r2
-	b label27
-label36:
+	b label29
+label38:
 	mov r0, #0
-label27:
+label29:
 	bx lr
 .globl foo1_mult_basic_blocks_illegal_scale
 foo1_mult_basic_blocks_illegal_scale:
-	add r0, r0, #4
-	add r2, r0, r1, lsl #1
+	lsl r2, r1, #1
+	add r2, r2, #4
+	add r2, r0, r2
 	cmp r2, #10
-	beq label57
-	add r0, r0, r1, lsl #3
+	beq label60
+	lsl r1, r1, #3
+	add r1, r1, #4
+	add r0, r0, r1
 	mul r0, r0, r2
-	b label48
-label57:
+	b label51
+label60:
 	mov r0, #0
-label48:
+label51:
 	bx lr

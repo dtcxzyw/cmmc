@@ -127,8 +127,8 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurs
     cbr i1 %27(prob = 0.5), ^if.then3, ^b1;
   ^b1:
     i32 %28 = phi [^if.then2, i32 %26] [^if.else1, i32 0] [^if.then3, i32 %36];
-    i32 %29 = add i32 %0, i32 %12;
-    i32 %30 = add i32 %28, i32 %29;
+    i32 %29 = add i32 %0, i32 %28;
+    i32 %30 = add i32 %12, i32 %29;
     i32 %31 = add i32 %2, i32 -1;
     i1 %32 = icmp eq i32 %1, i32 0;
     cbr i1 %32(prob = 0.5), ^if.then4, ^if.else2;

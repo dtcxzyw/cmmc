@@ -3,6 +3,7 @@
 .text
 .globl test1
 test1:
-	addiw a2, a1, -5
-	sh2add a0, a0, a2
+	slliw a2, a0, 2
+	addiw a3, a2, -5
+	addw a0, a1, a3
 	ret

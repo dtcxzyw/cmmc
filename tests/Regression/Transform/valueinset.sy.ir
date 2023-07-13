@@ -1,9 +1,9 @@
 func @basic_3(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i1 %0 = icmp neq i32 %x, i32 0;
-    i1 %1 = icmp neq i32 %x, i32 1;
+    i1 %1 = icmp neq i32 %x, i32 2;
     i1 %2 = and i1 %0, i1 %1;
-    i1 %3 = icmp neq i32 %x, i32 2;
+    i1 %3 = icmp neq i32 %x, i32 1;
     i1 %4 = and i1 %2, i1 %3;
     i32 %5 = zext i1 %4 to i32;
     ret i32 %5;
@@ -13,9 +13,9 @@ func @basic_5(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless
     i32 %0 = shl i32 1, i32 %x;
     i32 %1 = and i32 %0, i32 31;
     i1 %2 = icmp eq i32 %1, i32 0;
-    i1 %3 = icmp slt i32 %x, i32 0;
+    i1 %3 = icmp sgt i32 %x, i32 4;
     i1 %4 = or i1 %2, i1 %3;
-    i1 %5 = icmp sgt i32 %x, i32 4;
+    i1 %5 = icmp slt i32 %x, i32 0;
     i1 %6 = or i1 %4, i1 %5;
     i32 %7 = zext i1 %6 to i32;
     ret i32 %7;
@@ -64,9 +64,9 @@ func @cross_32_with_5(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect S
     i32 %1 = shl i32 1, i32 %0;
     i32 %2 = and i32 %1, i32 3841;
     i1 %3 = icmp eq i32 %2, i32 0;
-    i1 %4 = icmp slt i32 %0, i32 0;
+    i1 %4 = icmp sgt i32 %x, i32 46;
     i1 %5 = or i1 %3, i1 %4;
-    i1 %6 = icmp sgt i32 %x, i32 46;
+    i1 %6 = icmp slt i32 %0, i32 0;
     i1 %7 = or i1 %5, i1 %6;
     i32 %8 = zext i1 %7 to i32;
     ret i32 %8;
@@ -77,9 +77,9 @@ func @negative_5(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Statel
     i32 %1 = shl i32 1, i32 %0;
     i32 %2 = and i32 %1, i32 5201;
     i1 %3 = icmp eq i32 %2, i32 0;
-    i1 %4 = icmp slt i32 %0, i32 0;
+    i1 %4 = icmp sgt i32 %x, i32 5;
     i1 %5 = or i1 %3, i1 %4;
-    i1 %6 = icmp sgt i32 %x, i32 5;
+    i1 %6 = icmp slt i32 %0, i32 0;
     i1 %7 = or i1 %5, i1 %6;
     i32 %8 = zext i1 %7 to i32;
     ret i32 %8;

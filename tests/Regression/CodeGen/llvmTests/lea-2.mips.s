@@ -3,7 +3,7 @@
 .globl test1
 test1:
 	sll $t0, $a0, 2
-	addiu $t1, $a1, -5
-	addu $v0, $t0, $t1
+	addiu $t0, $t0, -5
+	addu $v0, $a1, $t0
 	jr $ra
 	nop
