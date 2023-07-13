@@ -1,0 +1,18 @@
+int test(int x, int y, int z) {
+    int v1 = x % 65537;
+    int v2 = y % 65537;
+    int v3 = z % 65537;
+    int x1 = (v1 + v2) % 65537;
+    int x2 = (v2 + v3) % 65537;
+    int x3 = (v1 + v3) % 65537;
+    return (x1 + x2 + x3) % 65537;
+}
+int test_overflow(int x, int y, int z) {
+    int v1 = x % 65536;
+    int v2 = y % 65536;
+    int v3 = z % 65536;
+    int x1 = (v1 + v2) % 65536;
+    int x2 = (v2 + v3) % 65536;
+    int x3 = (v1 + v3) % 65536;
+    return (x1 + x2 + x3) % 65536;
+}

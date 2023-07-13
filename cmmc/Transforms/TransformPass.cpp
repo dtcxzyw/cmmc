@@ -334,6 +334,7 @@ std::shared_ptr<PassManager<Module>> PassManager<Module>::get(OptimizationLevel 
             "ArithmeticReduce",          //
             "RangeAwareArithReduce",     //
             "ExtGEPCombine",             //
+            "ModuloOpt",                 //
             "NoSideEffectEliminate",     // clean up
             // Loop
             "LoopRotate",               //

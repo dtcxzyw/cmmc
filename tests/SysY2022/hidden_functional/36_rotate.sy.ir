@@ -59,9 +59,9 @@ func @main() -> i32 { NoRecurse Entry } {
   ^b3:
     i32 %12 = call () -> i32 @getint();
     i1 %13 = icmp neq i32 %12, i32 255;
-    i32 %14 = sdiv i32 %9, i32 2;
+    i32 %14 = sdiv i32 %7, i32 2;
     f32 %15 = s2f i32 %14 to f32;
-    i32 %16 = sdiv i32 %7, i32 2;
+    i32 %16 = sdiv i32 %9, i32 2;
     f32 %17 = s2f i32 %16 to f32;
     i1 %18 = icmp sgt i32 %7, i32 0;
     [1048576 * i32]* %19 = ptrcast [1048576 * i32]* @image to [1048576 * i32]*;
@@ -136,7 +136,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i1 %64 = icmp sgt i32 %7, i32 %63;
     cbr i1 %64(prob = 0.97), ^while.body, ^b4;
   ^while.header3:
-    i32 %65 = sub i32 %57, i32 %14;
+    i32 %65 = sub i32 %57, i32 %16;
     f32 %66 = s2f i32 %65 to f32;
     f32 %67 = fmul f32 %66, f32 %38;
     f32 %68 = fmul f32 %66, f32 %54;
@@ -147,18 +147,18 @@ func @main() -> i32 { NoRecurse Entry } {
     ubr ^while.header2;
   ^while.body1:
     i32 %70 = phi [^while.header3, i32 0] [^b6, i32 %87];
-    i32 %71 = sub i32 %70, i32 %16;
+    i32 %71 = sub i32 %70, i32 %14;
     f32 %72 = s2f i32 %71 to f32;
     f32 %73 = fmul f32 %72, f32 %38;
     f32 %74 = fsub f32 %73, f32 %68;
-    f32 %75 = fadd f32 %74, f32 %17;
+    f32 %75 = fadd f32 %74, f32 %15;
     i32 %76 = f2s f32 %75 to i32;
     i1 %77 = icmp sle i32 %7, i32 %76;
     i1 %78 = icmp slt i32 %76, i32 0;
     i1 %79 = or i1 %77, i1 %78;
     f32 %80 = fmul f32 %72, f32 %54;
     f32 %81 = fadd f32 %80, f32 %67;
-    f32 %82 = fadd f32 %81, f32 %15;
+    f32 %82 = fadd f32 %81, f32 %17;
     i32 %83 = f2s f32 %82 to i32;
     i1 %84 = icmp slt i32 %83, i32 0;
     i1 %85 = or i1 %79, i1 %84;
