@@ -455,10 +455,20 @@
       "parent": "53380379f6f03d5950eb3de091380278c20ee681",
       "time": "2023-07-05 23:43:19 +0800"
     },
+    "ac1939c61f3cf4a0e1861db0bca0263a46625c31": {
+      "message": "feat(codegen): add more hints to load/store/sdiv/srem",
+      "parent": "2a4c1220efbc358e9291b1cff96acbddb07bfa83",
+      "time": "2023-07-13 22:01:16 +0800"
+    },
     "ad894f668c6480d476152947b318ab84f45bb804": {
       "message": "misc: update arm ref",
       "parent": "cbef3bea2dd3ff904d69f41b8bda4cb71719af57",
       "time": "2023-07-06 19:29:21 +0800"
+    },
+    "adb1a382266085011a02ab6a647049c4904380c6": {
+      "message": "feat(associate): parallel sum",
+      "parent": "ac1939c61f3cf4a0e1861db0bca0263a46625c31",
+      "time": "2023-07-13 22:46:46 +0800"
     },
     "aeac1e66c11f6efbdcde8214496b70e6d6b171ca": {
       "message": "fix(transform): filter out scalar allocs used by phi nodes",
@@ -631,5 +641,5 @@
       "time": "2023-07-06 01:05:50 +0800"
     }
   },
-  "head": "2a4c1220efbc358e9291b1cff96acbddb07bfa83"
+  "head": "adb1a382266085011a02ab6a647049c4904380c6"
 }
