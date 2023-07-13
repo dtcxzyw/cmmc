@@ -600,4 +600,12 @@ bool selectSDiv32ByPowerOf2(const MIROperand& rhs, MIROperand& shift) {
     return true;
 }
 
+MIROperand getSDivHint(const MIROperand& hint) {
+    const auto imm = hint.imm();
+    const auto signDividend = imm & 0b100;
+    const auto signDivisor = imm & 0b010;
+    const auto newCode = signDividend | signDivisor | (signDividend && signDivisor ? 0b001 : 0);
+    return MIROperand::asImm(newCode, OperandType::Int32);
+}
+
 CMMC_MIR_NAMESPACE_END

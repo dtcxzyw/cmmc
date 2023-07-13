@@ -1017,6 +1017,9 @@ InstSelection:
         Dst: $Dst
         Lhs: $Lhs
         Rhs: $Rhs
+        LogDividend: $LogDividend
+        LogDivisor: $LogDivisor
+        NonNegativeHint: $NonNegativeHint
         $Predicate: isOperandI32($Dst) && isOperandIReg($Lhs) && isOperandImm($Rhs)
     Replace:
       SUBW:
@@ -1030,6 +1033,9 @@ InstSelection:
                 Dst: getVRegAs(ctx, $Dst)
                 Lhs: $Lhs
                 Rhs: $Rhs
+                LogDividend: $LogDividend
+                LogDivisor: $LogDivisor
+                NonNegativeHint: getSDivHint($NonNegativeHint)
             Rhs: $Rhs
 
   - Pattern:

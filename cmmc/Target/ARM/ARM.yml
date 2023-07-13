@@ -711,6 +711,9 @@ InstSelection:
         Dst: $Dst
         Lhs: $Lhs
         Rhs: $Rhs
+        LogDividend: $LogDividend
+        LogDivisor: $LogDivisor
+        NonNegativeHint: $NonNegativeHint
         $Predicate: isOperandIReg($Lhs) && isOperandImm($Rhs) && buildIRegShift(ctx, $Rhs, [$RegRhs], [$Shift])
     Replace:
       SUB_Fused:
@@ -721,6 +724,9 @@ InstSelection:
             Dst: getVRegAs(ctx, $Dst)
             Lhs: $Lhs
             Rhs: $Rhs
+            LogDividend: $LogDividend
+            LogDivisor: $LogDivisor
+            NonNegativeHint: getSDivHint($NonNegativeHint)
         Op: MIROperand::asImm(LSL, OperandType::ShiftType)
         Sh: $Shift
 
@@ -729,6 +735,9 @@ InstSelection:
         Dst: $Dst
         Lhs: $Lhs
         Rhs: $Rhs
+        LogDividend: $LogDividend
+        LogDivisor: $LogDivisor
+        NonNegativeHint: $NonNegativeHint
         $Predicate: isOperandIReg($Lhs) && isOperandImm($Rhs) && buildIReg(ctx, $Rhs, [$RegRhs])
     Replace:
       MLS:
@@ -739,6 +748,9 @@ InstSelection:
             Dst: getVRegAs(ctx, $Dst)
             Lhs: $Lhs
             Rhs: $Rhs
+            LogDividend: $LogDividend
+            LogDivisor: $LogDivisor
+            NonNegativeHint: getSDivHint($NonNegativeHint)
         Rz: $RegRhs
 
   - Pattern:

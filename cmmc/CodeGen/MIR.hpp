@@ -242,8 +242,6 @@ enum MIRGenericInst : uint32_t {
     InstAdd,
     InstSub,
     InstMul,
-    InstSDiv,
-    InstSRem,
     InstUDiv,
     InstURem,
     // Bitwise
@@ -253,6 +251,9 @@ enum MIRGenericInst : uint32_t {
     InstShl,
     InstLShr,
     InstAShr,
+    // Signed Div/Rem
+    InstSDiv,
+    InstSRem,
     // MinMax
     InstSMin,
     InstSMax,

@@ -15,6 +15,7 @@
 #include <Generic/InstInfoDecl.hpp>
 #include <cmmc/CodeGen/InstInfo.hpp>
 #include <cmmc/CodeGen/MIR.hpp>
+#include <cmmc/Support/Bits.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/Dispatch.hpp>
 #include <cmmc/Support/StaticReflection.hpp>
@@ -122,6 +123,10 @@ static bool isOperandFlag(const MIROperand& operand) {
     return operand.isImm() && operand.type() == OperandType::Special;
 }
 
+static bool isOperandAlign(const MIROperand& operand) {
+    return operand.isImm() && operand.type() == OperandType::Special && isPowerOf2(static_cast<size_t>(operand.imm()));
+}
+
 using mir::isOperandBoolReg;
 using mir::isOperandImm;
 using mir::isOperandIReg;
@@ -170,8 +175,6 @@ const InstInfo& TargetInstInfo::getInstInfo(uint32_t opcode) const {
     CMMC_ASSERT_OFFSET(Add);
     CMMC_ASSERT_OFFSET(Sub);
     CMMC_ASSERT_OFFSET(Mul);
-    CMMC_ASSERT_OFFSET(SDiv);
-    CMMC_ASSERT_OFFSET(SRem);
     CMMC_ASSERT_OFFSET(UDiv);
     CMMC_ASSERT_OFFSET(URem);
     CMMC_ASSERT_OFFSET(And);
@@ -180,6 +183,8 @@ const InstInfo& TargetInstInfo::getInstInfo(uint32_t opcode) const {
     CMMC_ASSERT_OFFSET(Shl);
     CMMC_ASSERT_OFFSET(LShr);
     CMMC_ASSERT_OFFSET(AShr);
+    CMMC_ASSERT_OFFSET(SDiv);
+    CMMC_ASSERT_OFFSET(SRem);
     CMMC_ASSERT_OFFSET(SMin);
     CMMC_ASSERT_OFFSET(SMax);
     CMMC_ASSERT_OFFSET(Neg);

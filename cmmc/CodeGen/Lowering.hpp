@@ -55,6 +55,7 @@ class LoweringContext final {
     FloatingPointConstantPool& mFPConstantPool;
     std::unordered_map<const MIRBasicBlock*, std::unordered_map<ConstantFloatingPoint*, MIROperand>> mFPLoadedConstantCache;
     std::unordered_map<Value*, MIROperand>& mValueMap;
+    const class PointerAlignmentAnalysisResult& mPointerAlignment;
 
     MIRBasicBlock* mCurrentBasicBlock = nullptr;
     OperandType mPtrType;
@@ -62,7 +63,7 @@ class LoweringContext final {
 public:
     LoweringContext(MIRModule& module, CodeGenContext& codeGenCtx, std::unordered_map<Block*, MIRBasicBlock*>& blockMap,
                     std::unordered_map<GlobalValue*, MIRGlobal*>& globalMap, FloatingPointConstantPool& fpConstantPool,
-                    std::unordered_map<Value*, MIROperand>& valueMap);
+                    std::unordered_map<Value*, MIROperand>& valueMap, const PointerAlignmentAnalysisResult& alignment);
     [[nodiscard]] const DataLayout& getDataLayout() const noexcept {
         return mDataLayout;
     }

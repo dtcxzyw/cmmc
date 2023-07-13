@@ -9,10 +9,10 @@ InstInfo:
     Format: Unreachable
     Flag: [Terminator, NoFallthrough]
   Load:
-    Format: Load $Dst:VReg[Def], $Addr:VReg[Use]
+    Format: Load $Dst:VReg[Def], $Addr:VReg[Use], $Alignment:Align[Metadata]
     Flag: [Load]
   Store:
-    Format: Store $Addr:VReg[Use], $Src:Val[Use]
+    Format: Store $Addr:VReg[Use], $Src:Val[Use], $Alignment:Align[Metadata]
     Flag: [Store]
   IntegerArithmetic:
     Format: $Op:Template $Dst:IReg[Def], $Lhs:IVal[Use], $Rhs:IVal[Use]
@@ -25,10 +25,6 @@ InstInfo:
       Mul:
         Op: Mul
         Flag: [Commutative]
-      SDiv:
-        Op: SDiv
-      SRem:
-        Op: SRem
       UDiv:
         Op: UDiv
       URem:
@@ -48,6 +44,13 @@ InstInfo:
         Op: LShr
       AShr:
         Op: AShr
+  IntegerArithmeticSDivRem:
+    Format: $Op:Template $Dst:IReg[Def], $Lhs:IVal[Use], $Rhs:IVal[Use], $LogDividend:Imm[Metadata], $LogDivisor:Imm[Metadata], $NonNegativeHint:Imm[Metadata] # Dividend, Divisor, Result
+    Instances:
+      SDiv:
+        Op: SDiv
+      SRem:
+        Op: SRem
   MinMax:
     Format: $Op:Template $Dst:IReg[Def], $Lhs:IVal[Use], $Rhs:IVal[Use]
     Flag: [Commutative]

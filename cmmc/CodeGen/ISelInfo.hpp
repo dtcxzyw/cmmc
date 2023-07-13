@@ -88,12 +88,13 @@ intmax_t getMaxSignedValue(OperandType type);
 intmax_t getMinSignedValue(OperandType type);
 uintmax_t getMaxUnsignedValue(OperandType type);
 uintmax_t getUnsignedImm(const MIROperand& imm);
-MIROperand getTruncShift(const OperandType type);
+MIROperand getTruncShift(OperandType type);
 
 bool isPowerOf2Divisor(const MIROperand& rhs);
 bool selectSDiv32ByPowerOf2(const MIROperand& rhs, MIROperand& shift);
 bool isOperandSDiv32ByConstantDivisor(const MIROperand& rhs);
 bool selectSDiv32ByConstant(const MIROperand& rhs, MIROperand& magic, MIROperand& shift, MIROperand& factor);
+MIROperand getSDivHint(const MIROperand& hint);
 
 constexpr MIROperand getNeg(const MIROperand& operand) {
     return MIROperand::asImm(-operand.imm(), operand.type());

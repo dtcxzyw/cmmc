@@ -17,6 +17,8 @@
 #include <cmmc/Analysis/BlockTripCountEstimation.hpp>
 #include <cmmc/Analysis/CallGraphSCC.hpp>
 #include <cmmc/Analysis/DominateAnalysis.hpp>
+#include <cmmc/Analysis/IntegerRangeAnalysis.hpp>
+#include <cmmc/Analysis/PointerAlignmentAnalysis.hpp>
 #include <cmmc/CodeGen/CodeGenUtils.hpp>
 #include <cmmc/CodeGen/ISelInfo.hpp>
 #include <cmmc/CodeGen/InstInfo.hpp>
@@ -93,9 +95,11 @@ static OperandType getOperandType(const Type* type, OperandType ptrType) {
 LoweringContext::LoweringContext(MIRModule& module, CodeGenContext& codeGenCtx,
                                  std::unordered_map<Block*, MIRBasicBlock*>& blockMap,
                                  std::unordered_map<GlobalValue*, MIRGlobal*>& globalMap,
-                                 FloatingPointConstantPool& fpConstantPool, std::unordered_map<Value*, MIROperand>& valueMap)
+                                 FloatingPointConstantPool& fpConstantPool, std::unordered_map<Value*, MIROperand>& valueMap,
+                                 const PointerAlignmentAnalysisResult& alignment)
     : mModule{ module }, mDataLayout{ module.getTarget().getDataLayout() }, mCodeGenCtx{ codeGenCtx }, mBlockMap{ blockMap },
-      mGlobalMap{ globalMap }, mFPConstantPool{ fpConstantPool }, mValueMap{ valueMap }, mCurrentBasicBlock{ nullptr } {
+      mGlobalMap{ globalMap }, mFPConstantPool{ fpConstantPool }, mValueMap{ valueMap }, mPointerAlignment{ alignment },
+      mCurrentBasicBlock{ nullptr } {
     const auto ptrSize = module.getTarget().getDataLayout().getPointerSize();
     if(ptrSize == 4)
         mPtrType = OperandType::Int32;
@@ -137,7 +141,8 @@ MIROperand FloatingPointConstantPool::getFPConstant(class LoweringContext& ctx, 
     const auto addr = ctx.newVReg(ptrType);
     ctx.emitInst(MIRInst{ InstAdd }.setOperand<0>(addr).setOperand<1>(base).setOperand<2>(MIROperand::asImm(offset, ptrType)));
     const auto dst = ctx.newVReg(val->getType());
-    ctx.emitInst(MIRInst{ InstLoad }.setOperand<0>(dst).setOperand<1>(addr));
+    ctx.emitInst(MIRInst{ InstLoad }.setOperand<0>(dst).setOperand<1>(addr).setOperand<2>(
+        MIROperand::asImm(val->getType()->getAlignment(ctx.getDataLayout()), OperandType::Special)));
     return dst;
 }
 MIROperand LoweringContext::mapOperand(Value* operand) {
@@ -198,20 +203,23 @@ void LoweringContext::addOperand(Value* value, MIROperand reg) {
     mValueMap.emplace(value, reg);
 }
 
-static void lowerInst(Instruction* inst, LoweringContext& ctx);
+static void lowerInst(Instruction* inst, LoweringContext& ctx, const PointerAlignmentAnalysisResult& alignment,
+                      const IntegerRangeAnalysisResult& range, const DominateAnalysisResult& dom);
 static void lowerToMachineFunction(MIRFunction& mfunc, Function* func, CodeGenContext& codeGenCtx, MIRModule& machineModule,
                                    std::unordered_map<GlobalValue*, MIRGlobal*>& globalMap,
                                    FloatingPointConstantPool& fpConstantPool, AnalysisPassManager& analysis) {
     auto& blockTripCount = analysis.get<BlockTripCountEstimation>(*func);
+    auto& alignment = analysis.get<PointerAlignmentAnalysis>(*func);
+    auto& range = analysis.get<IntegerRangeAnalysis>(*func);
+    auto& dom = analysis.get<DominateAnalysis>(*func);
 
     std::unordered_map<Block*, MIRBasicBlock*> blockMap;
     std::unordered_map<Value*, MIROperand> valueMap;
     std::unordered_map<Value*, MIROperand> storageMap;
-    LoweringContext ctx{ machineModule, codeGenCtx, blockMap, globalMap, fpConstantPool, valueMap };
+    LoweringContext ctx{ machineModule, codeGenCtx, blockMap, globalMap, fpConstantPool, valueMap, alignment };
 
     auto& target = machineModule.getTarget();
     auto& dataLayout = target.getDataLayout();
-    auto& dom = analysis.get<DominateAnalysis>(*func);
 
     for(auto block : dom.blocks()) {
         const auto tripCount = blockTripCount.isAvailable() ? blockTripCount.query(block) : 1.0;
@@ -259,7 +267,7 @@ static void lowerToMachineFunction(MIRFunction& mfunc, Function* func, CodeGenCo
         ctx.setCurrentBasicBlock(mblock);
         for(auto& inst : block->instructions()) {
             if(!codeGenCtx.iselInfo.lowerInst(&inst, ctx))
-                lowerInst(&inst, ctx);
+                lowerInst(&inst, ctx, alignment, range, dom);
         }
     }
 
@@ -565,12 +573,8 @@ static void lower(BinaryInst* inst, LoweringContext& ctx) {
                 return InstSub;
             case InstructionID::Mul:
                 return InstMul;
-            case InstructionID::SDiv:
-                return InstSDiv;
             case InstructionID::UDiv:
                 return InstUDiv;
-            case InstructionID::SRem:
-                return InstSRem;
             case InstructionID::URem:
                 return InstURem;
             case InstructionID::And:
@@ -606,6 +610,47 @@ static void lower(BinaryInst* inst, LoweringContext& ctx) {
                      .setOperand<0>(ret)
                      .setOperand<1>(ctx.mapOperand(inst->getOperand(0)))
                      .setOperand<2>(ctx.mapOperand(inst->getOperand(1))));
+    ctx.addOperand(inst, ret);
+}
+static void lowerSDivRem(BinaryInst* inst, LoweringContext& ctx, const IntegerRangeAnalysisResult& range,
+                         const DominateAnalysisResult& dom) {
+    const auto id = [instID = inst->getInstID()] {
+        switch(instID) {
+            case InstructionID::SDiv:
+                return InstSDiv;
+            case InstructionID::SRem:
+                return InstSRem;
+            default:
+                reportUnreachable(CMMC_LOCATION());
+        }
+    }();
+    constexpr uint32_t depth = 5;
+    const auto rangeLhs = range.query(inst->getOperand(0), dom, inst, depth);
+    const auto rangeRhs = range.query(inst->getOperand(1), dom, inst, depth);
+    const auto rangeResult = range.query(inst, dom, inst, depth);
+
+    const auto ilog2Floor = [](intmax_t x) {
+        if(x <= 1)
+            return 0;
+        return 63 - __builtin_clzll(static_cast<uint64_t>(x));
+    };
+
+    const auto log2Dividend = ilog2Floor(rangeLhs.abs().maxSignedValue());
+    const auto log2Divisor = ilog2Floor(rangeLhs.abs().minSignedValue());
+
+    const auto signDividend = rangeLhs.isNonNegative();
+    const auto signDivisor = rangeRhs.isNonNegative();
+    const auto signRes = rangeResult.isNonNegative();
+    const auto signEncode = (signDividend ? 0b100 : 0) | (signDivisor ? 0b010 : 0) | (signRes ? 0b001 : 0);
+
+    const auto ret = ctx.newVReg(inst->getType());
+    ctx.emitInst(MIRInst{ id }
+                     .setOperand<0>(ret)
+                     .setOperand<1>(ctx.mapOperand(inst->getOperand(0)))
+                     .setOperand<2>(ctx.mapOperand(inst->getOperand(1)))
+                     .setOperand<3>(MIROperand::asImm(log2Dividend, OperandType::Int32))
+                     .setOperand<4>(MIROperand::asImm(log2Divisor, OperandType::Int32))
+                     .setOperand<5>(MIROperand::asImm(signEncode, OperandType::Int32)));
     ctx.addOperand(inst, ret);
 }
 static void lower(CompareInst* inst, LoweringContext& ctx) {
@@ -684,16 +729,20 @@ static void lower(CastInst* inst, LoweringContext& ctx) {
 
     ctx.addOperand(inst, dst);
 }
-static void lower(LoadInst* inst, LoweringContext& ctx) {
+static void lower(LoadInst* inst, LoweringContext& ctx, const PointerAlignmentAnalysisResult& alignment) {
     const auto ret = ctx.newVReg(inst->getType());
     const auto ptr = ctx.mapOperand(inst->getOperand(0));
-    ctx.emitInst(MIRInst{ InstLoad }.setOperand<0>(ret).setOperand<1>(ptr));
+    const auto align = alignment.lookup(inst->getOperand(0), ctx.getDataLayout());
+    ctx.emitInst(
+        MIRInst{ InstLoad }.setOperand<0>(ret).setOperand<1>(ptr).setOperand<2>(MIROperand::asImm(align, OperandType::Special)));
     ctx.addOperand(inst, ret);
 }
-static void lower(StoreInst* inst, LoweringContext& ctx) {
+static void lower(StoreInst* inst, LoweringContext& ctx, const PointerAlignmentAnalysisResult& alignment) {
+    const auto align = alignment.lookup(inst->getOperand(0), ctx.getDataLayout());
     ctx.emitInst(MIRInst{ InstStore }
                      .setOperand<0>(ctx.mapOperand(inst->getOperand(0)))
-                     .setOperand<1>(ctx.mapOperand(inst->getOperand(1))));
+                     .setOperand<1>(ctx.mapOperand(inst->getOperand(1)))
+                     .setOperand<2>(MIROperand::asImm(align, OperandType::Special)));
 }
 static void emitBranch(Block* dstBlock, Block* srcBlock, LoweringContext& ctx) {
     std::vector<MIROperand> dst;
@@ -934,14 +983,13 @@ static void lower(ReturnInst* inst, LoweringContext& ctx) {
 static void lower(FunctionCallInst* inst, LoweringContext& ctx) {
     ctx.getCodeGenContext().frameInfo.emitCall(inst, ctx);
 }
-static void lowerInst(Instruction* inst, LoweringContext& ctx) {
+static void lowerInst(Instruction* inst, LoweringContext& ctx, const PointerAlignmentAnalysisResult& alignment,
+                      const IntegerRangeAnalysisResult& range, const DominateAnalysisResult& dom) {
     switch(inst->getInstID()) {
         case InstructionID::Add:
         case InstructionID::Sub:
         case InstructionID::Mul:
-        case InstructionID::SDiv:
         case InstructionID::UDiv:
-        case InstructionID::SRem:
         case InstructionID::URem:
         case InstructionID::And:
         case InstructionID::Or:
@@ -956,6 +1004,10 @@ static void lowerInst(Instruction* inst, LoweringContext& ctx) {
         case InstructionID::FMul:
         case InstructionID::FDiv:
             lower(inst->as<BinaryInst>(), ctx);
+            break;
+        case InstructionID::SDiv:
+        case InstructionID::SRem:
+            lowerSDivRem(inst->as<BinaryInst>(), ctx, range, dom);
             break;
         case InstructionID::Neg:
         case InstructionID::Abs:
@@ -978,10 +1030,10 @@ static void lowerInst(Instruction* inst, LoweringContext& ctx) {
             lower(inst->as<UnreachableInst>(), ctx);
             break;
         case InstructionID::Load:
-            lower(inst->as<LoadInst>(), ctx);
+            lower(inst->as<LoadInst>(), ctx, alignment);
             break;
         case InstructionID::Store:
-            lower(inst->as<StoreInst>(), ctx);
+            lower(inst->as<StoreInst>(), ctx, alignment);
             break;
         case InstructionID::SExt:
         case InstructionID::ZExt:
