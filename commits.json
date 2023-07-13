@@ -545,6 +545,11 @@
       "parent": "39c5773d449d4403551d874c601e2cf3041610fa",
       "time": "2023-07-06 19:29:21 +0800"
     },
+    "d3a7f546540e264c70b455207ad10d54f4d4f580": {
+      "message": "feat(support): add deterministic mem alloc",
+      "parent": "adb1a382266085011a02ab6a647049c4904380c6",
+      "time": "2023-07-14 00:28:17 +0800"
+    },
     "d59c49feebe67bdca8b7a92cca1d865c892253fb": {
       "message": "test: remove flaky tests",
       "parent": "c48895059df4199823303f514c98f3560d46218b",
@@ -641,5 +646,5 @@
       "time": "2023-07-06 01:05:50 +0800"
     }
   },
-  "head": "adb1a382266085011a02ab6a647049c4904380c6"
+  "head": "d3a7f546540e264c70b455207ad10d54f4d4f580"
 }
