@@ -191,8 +191,8 @@ func @main() -> i32 { NoRecurse Entry } {
     ret i32 0;
   ^b5:
     i32 %122 = phi [^if.then, i32 %104] [^if.then1, i32 %104] [^if.then2, i32 %104] [^if.then3, i32 %104] [^if.then5, i32 %104] [^while.header1, i32 %104] [^if.then7, i32 %104] [^if.else6, i32 %104] [^if.then8, i32 %168] [^if.else7, i32 %104] [^if.then10, i32 %104] [^if.else8, i32 %104];
-    i32 %123 = phi [^if.then, i32 %105] [^if.then1, i32 %105] [^if.then2, i32 %105] [^if.then3, i32 %105] [^if.then5, i32 %143] [^while.header1, i32 %105] [^if.then7, i32 %151] [^if.else6, i32 %105] [^if.then8, i32 %105] [^if.else7, i32 %105] [^if.then10, i32 %105] [^if.else8, i32 %105];
-    i32 %124 = phi [^if.then, i32 %106] [^if.then1, i32 %106] [^if.then2, i32 %106] [^if.then3, i32 %106] [^if.then5, i32 %106] [^while.header1, i32 %106] [^if.then7, i32 %106] [^if.else6, i32 %106] [^if.then8, i32 %106] [^if.else7, i32 %106] [^if.then10, i32 %106] [^if.else8, i32 %175];
+    i32 %123 = phi [^if.then, i32 %105] [^if.then1, i32 %105] [^if.then2, i32 %105] [^if.then3, i32 %105] [^if.then5, i32 %105] [^while.header1, i32 %105] [^if.then7, i32 %105] [^if.else6, i32 %105] [^if.then8, i32 %105] [^if.else7, i32 %105] [^if.then10, i32 %105] [^if.else8, i32 %175];
+    i32 %124 = phi [^if.then, i32 %106] [^if.then1, i32 %106] [^if.then2, i32 %106] [^if.then3, i32 %106] [^if.then5, i32 %143] [^while.header1, i32 %106] [^if.then7, i32 %151] [^if.else6, i32 %106] [^if.then8, i32 %106] [^if.else7, i32 %106] [^if.then10, i32 %106] [^if.else8, i32 %106];
     i32 %125 = phi [^if.then, i32 %115] [^if.then1, i32 %128] [^if.then2, i32 %107] [^if.then3, i32 %107] [^if.then5, i32 %107] [^while.header1, i32 %107] [^if.then7, i32 %107] [^if.else6, i32 %107] [^if.then8, i32 %107] [^if.else7, i32 %107] [^if.then10, i32 %107] [^if.else8, i32 %107];
     i32 %126 = phi [^if.then, i32 %108] [^if.then1, i32 %108] [^if.then2, i32 %108] [^if.then3, i32 %108] [^if.then5, i32 %108] [^while.header1, i32 %147] [^if.then7, i32 %108] [^if.else6, i32 %163] [^if.then8, i32 %108] [^if.else7, i32 %108] [^if.then10, i32 %108] [^if.else8, i32 %108];
     i32 %127 = add i32 %126, i32 1;
@@ -230,9 +230,9 @@ func @main() -> i32 { NoRecurse Entry } {
     i1 %141 = icmp eq i32 %111, i32 93;
     cbr i1 %141(prob = 0.5), ^if.then6, ^if.else5;
   ^if.then5:
-    i32* %142 = getelementptr &([512 * i32]* %56)[i64 0][i32 %105];
+    i32* %142 = getelementptr &([512 * i32]* %56)[i64 0][i32 %106];
     store i32* %142 with i32 %108;
-    i32 %143 = add i32 %105, i32 1;
+    i32 %143 = add i32 %106, i32 1;
     ubr ^b5;
   ^if.then6:
     i32* %144 = getelementptr &([65536 * i32]* %103)[i64 0][i32 %107];
@@ -248,7 +248,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i1 %150 = icmp eq i32 %111, i32 46;
     cbr i1 %150(prob = 0.5), ^if.then8, ^if.else7;
   ^if.then7:
-    i32 %151 = add i32 %105, i32 -1;
+    i32 %151 = add i32 %106, i32 -1;
     ubr ^b5;
   ^while.body6:
     i32 %152 = add i32 %147, i32 1;
@@ -262,7 +262,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i32 %160 = add i32 %157, i32 %159;
     ubr ^while.header1;
   ^if.else6:
-    i32 %161 = add i32 %105, i32 -1;
+    i32 %161 = add i32 %106, i32 -1;
     i32* %162 = getelementptr &([512 * i32]* %56)[i64 0][i32 %161];
     i32 %163 = load i32* %162;
     ubr ^b5;
@@ -278,18 +278,18 @@ func @main() -> i32 { NoRecurse Entry } {
     i1 %169 = icmp eq i32 %111, i32 44;
     cbr i1 %169(prob = 0.5), ^if.then9, ^b5;
   ^if.then9:
-    i1 %170 = icmp sle i32 %55, i32 %106;
+    i1 %170 = icmp sle i32 %55, i32 %105;
     cbr i1 %170(prob = 0.5), ^if.then10, ^if.else8;
   ^if.then10:
     i32* %171 = getelementptr &([65536 * i32]* %103)[i64 0][i32 %107];
     store i32* %171 with i32 0;
     ubr ^b5;
   ^if.else8:
-    i32* %172 = getelementptr &([65536 * i32]* %33)[i64 0][i32 %106];
+    i32* %172 = getelementptr &([65536 * i32]* %33)[i64 0][i32 %105];
     i32 %173 = load i32* %172;
     i32* %174 = getelementptr &([65536 * i32]* %103)[i64 0][i32 %107];
     store i32* %174 with i32 %173;
-    i32 %175 = add i32 %106, i32 1;
+    i32 %175 = add i32 %105, i32 1;
     ubr ^b5;
 }
 internal [512 * i32]* @return_a;

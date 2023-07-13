@@ -96,7 +96,7 @@ class Reassociate final : public TransformPass<Function> {
             }
             args.erase(std::next(last), args.end());
 
-            const uint32_t parallelCount = 2;
+            constexpr uint32_t parallelCount = 2;
             std::array<Value*, parallelCount> reductionStorage{};
             uint32_t pointer = 0;
             const auto reduce = [&](Value* val) {
@@ -107,7 +107,7 @@ class Reassociate final : public TransformPass<Function> {
                 } else
                     ref = val;
 
-                if((++pointer) == parallelCount)
+                if(inst->hasExactlyOneUse() && (++pointer) == parallelCount)
                     pointer = 0;
             };
 

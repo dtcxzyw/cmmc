@@ -27,9 +27,9 @@ main:
 	li a0, 22
 	jal _sysy_starttime
 	fmv.w.x f11, zero
+	mv a4, zero
 pcrel224:
 	auipc a2, %pcrel_hi(y)
-	mv a4, zero
 pcrel225:
 	auipc a1, %pcrel_hi(x)
 	fmv.s f8, f11
@@ -42,17 +42,17 @@ pcrel225:
 	bge zero, a3, label8
 label13:
 	li t0, 1717986919
-	li t1, 10
 	mul a3, a2, t0
 	srli t0, a3, 63
 	srai a5, a3, 34
 	add a3, t0, a5
+	li a5, 10
+	mulw t0, a3, a5
+	subw t1, a2, t0
 pcrel226:
 	auipc t0, %pcrel_hi(__cmmc_fp_constant_pool)
-	mulw a5, a3, t1
-	subw t2, a2, a5
+	sltu a3, zero, t1
 	addi a5, t0, %pcrel_lo(pcrel226)
-	sltu a3, zero, t2
 	lui t0, 260096
 	flw f13, 12(a5)
 	fadd.s f12, f10, f13
@@ -187,21 +187,18 @@ pcrel227:
 	fle.s a1, f10, f11
 	fle.s a2, f12, f10
 	or a0, a1, a2
-	beq a0, zero, label9
-	j label12
-label10:
+	beq a0, zero, label12
+	mv a0, zero
+	jal putint
+	mv a0, zero
+label9:
 	ld ra, 0(sp)
 	flw f8, 8(sp)
 	ld s0, 16(sp)
 	addi sp, sp, 24
 	ret
 label12:
-	mv a0, zero
-	jal putint
-	mv a0, zero
-	j label10
-label9:
 	li a0, 1
 	jal putint
 	li a0, 1
-	j label10
+	j label9

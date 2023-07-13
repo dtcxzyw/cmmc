@@ -18,9 +18,9 @@ func @main() -> i32 { NoRecurse } {
     i32 %11 = shl i32 %10, i32 16;
     i32 %12 = lshr i32 %11, i32 16;
     i32 %13 = strunc i32 %12 to i32;
-    i32 %14 = strunc i32 %9 to i32;
-    i32 %15 = add i32 %5, i32 %14;
-    i32 %16 = add i32 %13, i32 %15;
+    i32 %14 = add i32 %5, i32 %13;
+    i32 %15 = strunc i32 %9 to i32;
+    i32 %16 = add i32 %14, i32 %15;
     i32 %17 = ztrunc i32 %16 to i32;
     store i32* %7 with i32 0;
     store i32* %6 with i32 %17;

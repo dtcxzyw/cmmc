@@ -325,13 +325,13 @@ label350:
 	ble s0, a4, label31
 	j label369
 label29:
-	sh2add t2, a4, s1
+	sh2add t1, a4, s1
 	sh2add t0, a2, a0
-	lw t1, 0(t0)
-	lw t2, 0(t2)
-	mulw a5, a5, t2
-	addw t1, t1, a5
-	sw t1, 0(t0)
+	lw t2, 0(t0)
+	lw t1, 0(t1)
+	mulw t3, a5, t1
+	addw a5, t2, t3
+	sw a5, 0(t0)
 	addiw a4, a4, 1
 	ble s0, a4, label31
 	sh2add t0, a4, a3
@@ -393,13 +393,13 @@ label369:
 	bne a5, zero, label29
 	j label350
 label39:
-	sh2add t2, a4, a0
+	sh2add t1, a4, a0
 	sh2add t0, a2, s1
-	lw t1, 0(t0)
-	lw t2, 0(t2)
-	mulw a5, a5, t2
-	addw t1, t1, a5
-	sw t1, 0(t0)
+	lw t2, 0(t0)
+	lw t1, 0(t1)
+	mulw a5, a5, t1
+	addw t2, t2, a5
+	sw t2, 0(t0)
 	addiw a4, a4, 1
 	ble s0, a4, label36
 	sh2add t0, a4, a3
@@ -465,22 +465,22 @@ label11:
 	sw a0, 0(a1)
 	ble s0, s3, label13
 	j label11
-label8:
+label5:
 	addiw s1, s1, 1
 	ble s0, s1, label9
-	ble s0, zero, label8
+	ble s0, zero, label5
 label209:
 	li a0, 8040
 	mv s4, zero
 	mul a1, s1, a0
 	add s3, s2, a1
-label6:
+label7:
 	jal getint
 	sh2add a1, s4, s3
 	addiw s4, s4, 1
 	sw a0, 0(a1)
-	ble s0, s4, label8
-	j label6
+	ble s0, s4, label5
+	j label7
 label33:
 	li a0, 67
 	jal _sysy_stoptime

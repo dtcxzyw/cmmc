@@ -33,20 +33,20 @@ label5:
 	asr r7, r6, #27
 	add r6, r7, r6, lsr #31
 	mls r5, r6, r2, r5
-	add r6, r0, #1
-	add r5, r5, r6
+	add r5, r5, #1
+	add r5, r0, r5
 	smmul r6, r5, r3
 	asr r7, r6, #27
 	add r6, r7, r6, lsr #31
 	mls r5, r6, r2, r5
-	add r6, r0, #2
-	add r0, r0, #3
-	add r5, r5, r6
+	add r5, r5, #2
+	add r5, r0, r5
 	smmul r6, r5, r3
 	asr r7, r6, #27
 	add r6, r7, r6, lsr #31
 	mls r5, r6, r2, r5
-	add r0, r5, r0
+	add r5, r5, #3
+	add r0, r0, r5
 	smmul r3, r0, r3
 	asr r5, r3, #27
 	add r3, r5, r3, lsr #31

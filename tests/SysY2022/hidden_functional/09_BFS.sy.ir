@@ -139,9 +139,9 @@ func @main() -> i32 { NoRecurse Entry } {
     store i32* %79 with i32 -1;
     ubr ^while.header2;
   ^while.header2:
-    i32 %80 = phi [^while.body5, i32 0] [^b7, i32 %207] [^if.then, i32 %80];
-    i32 %81 = phi [^while.body5, i32 %39] [^b7, i32 %208] [^if.then, i32 %232];
-    i1 %82 = icmp neq i32 %81, i32 0;
+    i32 %80 = phi [^while.body5, i32 %39] [^b7, i32 %208] [^if.then, i32 %232];
+    i32 %81 = phi [^while.body5, i32 0] [^b7, i32 %207] [^if.then, i32 %81];
+    i1 %82 = icmp neq i32 %80, i32 0;
     cbr i1 %82(prob = 0.97), ^while.body6, ^b2;
   ^while.body6:
     i32 %83 = call () -> i32 @getch();
@@ -301,23 +301,23 @@ func @main() -> i32 { NoRecurse Entry } {
     i1 %195 = icmp neq i32 %178, i32 0;
     i32 %196 = neg i32 %194;
     i32 %197 = select i1 %195 ? i32 %196 : i32 %194;
-    i32* %198 = getelementptr &([5005 * i32]* %8)[i64 0][i32 %80];
+    i32* %198 = getelementptr &([5005 * i32]* %8)[i64 0][i32 %81];
     store i32* %198 with i32 %197;
     i32* %199 = getelementptr &([1005 * i32]* %7)[i64 0][i32 %156];
     i32 %200 = load i32* %199;
-    i32* %201 = getelementptr &([5005 * i32]* %9)[i64 0][i32 %80];
+    i32* %201 = getelementptr &([5005 * i32]* %9)[i64 0][i32 %81];
     store i32* %201 with i32 %200;
     i32* %202 = getelementptr &([1005 * i32]* %7)[i64 0][i32 %197];
-    store i32* %199 with i32 %80;
+    store i32* %199 with i32 %81;
     i32* %203 = getelementptr &(i32* %198)[i64 1];
     store i32* %203 with i32 %156;
     i32 %204 = load i32* %202;
     i32* %205 = getelementptr &(i32* %201)[i64 1];
     store i32* %205 with i32 %204;
-    i32 %206 = add i32 %80, i32 1;
+    i32 %206 = add i32 %81, i32 1;
     store i32* %202 with i32 %206;
-    i32 %207 = add i32 %80, i32 2;
-    i32 %208 = add i32 %81, i32 -1;
+    i32 %207 = add i32 %81, i32 2;
+    i32 %208 = add i32 %80, i32 -1;
     ubr ^while.header2;
   ^while.body15:
     i32 %209 = phi [^while.header6, i32 %177] [^while.body15, i32 %211];
@@ -330,13 +330,13 @@ func @main() -> i32 { NoRecurse Entry } {
     i32 %216 = add i32 %209, i32 %215;
     cbr i1 %213(prob = 0.97), ^while.body15, ^b7;
   ^while.header7:
-    i32 %217 = phi [^b6, i32 0] [^while.header9, i32 %221];
-    i32 %218 = phi [^b6, i32 1] [^while.header9, i32 %229];
+    i32 %217 = phi [^b6, i32 1] [^while.header9, i32 %229];
+    i32 %218 = phi [^b6, i32 0] [^while.header9, i32 %221];
     i32 %219 = phi [^b6, i32 0] [^while.header9, i32 %225];
-    i1 %220 = icmp slt i32 %217, i32 %218;
+    i1 %220 = icmp sgt i32 %217, i32 %218;
     cbr i1 %220(prob = 0.97), ^entry3, ^while.header8;
   ^entry3:
-    i32 %221 = add i32 %217, i32 1;
+    i32 %221 = add i32 %218, i32 1;
     i32* %222 = getelementptr &([1005 * i32]* %4)[i64 0][i32 %221];
     i32 %223 = load i32* %222;
     i1 %224 = icmp eq i32 %184, i32 %223;
@@ -345,17 +345,17 @@ func @main() -> i32 { NoRecurse Entry } {
     i32 %227 = load i32* %226;
     ubr ^while.header9;
   ^while.header8:
-    i1 %228 = icmp sgt i32 %218, i32 -1;
+    i1 %228 = icmp sgt i32 %217, i32 -1;
     cbr i1 %228(prob = 0.97), ^while.body16, ^if.then;
   ^while.header9:
-    i32 %229 = phi [^entry3, i32 %218] [^b8, i32 %246];
+    i32 %229 = phi [^entry3, i32 %217] [^b8, i32 %246];
     i32 %230 = phi [^entry3, i32 %227] [^b8, i32 %248];
     i1 %231 = icmp neq i32 %230, i32 -1;
     cbr i1 %231(prob = 0.97), ^while.body17, ^while.header7;
   ^if.then:
     call (i32) -> void @putint(i32 %219);
     call (i32) -> void @putch(i32 10);
-    i32 %232 = add i32 %81, i32 -1;
+    i32 %232 = add i32 %80, i32 -1;
     ubr ^while.header2;
   ^while.body16:
     i32 %233 = phi [^while.header8, i32 0] [^while.body16, i32 %237];
@@ -364,7 +364,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i32* %236 = getelementptr &([1005 * i32]* %6)[i64 0][i32 %235];
     store i32* %236 with i32 0;
     i32 %237 = add i32 %233, i32 1;
-    i1 %238 = icmp sge i32 %218, i32 %237;
+    i1 %238 = icmp sge i32 %217, i32 %237;
     cbr i1 %238(prob = 0.97), ^while.body16, ^if.then;
   ^while.body17:
     i32* %239 = getelementptr &([5005 * i32]* %8)[i64 0][i32 %230];

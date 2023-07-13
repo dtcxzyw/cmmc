@@ -86,8 +86,15 @@ add_backend(MIPS)
 add_backend(ARM)
 
 option(CMMC_LLVM_SUPPORT "Enable LLVM support" ON)
+option(CMMC_DETERMINISTIC "Enable Deterministic" ON)
 if(${CMAKE_BUILD_TYPE} MATCHES Debug)
   set(CMMC_LLVM_SUPPORT OFF)
+else()
+  if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+    if(${CMMC_DETERMINISTIC})
+      add_compile_definitions(CMMC_ENABLE_DETERMINISTIC)
+    endif()
+  endif()
 endif()
 
 if(${CMMC_LLVM_SUPPORT})
@@ -151,6 +158,7 @@ COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/educg/*.cpp ${CMMC_ED
 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/educg/*.hpp ${CMMC_EDUCG_SUBMIT_DIR}/cmmc/Driver/
 COMMAND ${CMAKE_COMMAND} -E rm -rf ${CMMC_EDUCG_SUBMIT_DIR}/cmmc/Conversion/ ${CMMC_EDUCG_SUBMIT_DIR}/cmmc/ExecutionEngine/LLVMOrcJIT.cpp
 COMMAND ${CMAKE_COMMAND} -E rm -rf ${CMMC_EDUCG_SUBMIT_DIR}/cmmc/Transforms/Verify.cpp
+COMMAND ${CMAKE_COMMAND} -E rm -rf ${CMMC_EDUCG_SUBMIT_DIR}/cmmc/Support/Deterministic.cpp
 COMMAND ${CMAKE_COMMAND} -E rm -rf ${CMMC_EDUCG_SUBMIT_DIR}/MIPS ${CMMC_EDUCG_SUBMIT_DIR}/TAC
 COMMAND ${CMAKE_COMMAND} -E rm -rf ${CMMC_EDUCG_SUBMIT_DIR}/cmmc/Target/LLVM ${CMMC_EDUCG_SUBMIT_DIR}/cmmc/Target/MIPS ${CMMC_EDUCG_SUBMIT_DIR}/cmmc/Target/Sim ${CMMC_EDUCG_SUBMIT_DIR}/cmmc/Target/TAC ${CMMC_EDUCG_SUBMIT_DIR}/cmmc/Target/Old ${CMMC_EDUCG_SUBMIT_DIR}/cmmc/Target/Template ${CMMC_EDUCG_SUBMIT_DIR}/cmmc/Target/Generic
 COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_LIST_DIR}/educg/cmmc_header_fix.py ${CMMC_EDUCG_SUBMIT_DIR}

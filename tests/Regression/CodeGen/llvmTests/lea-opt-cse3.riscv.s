@@ -27,16 +27,13 @@ foo1:
 	ret
 .globl foo1_mult_basic_blocks
 foo1_mult_basic_blocks:
-	slliw a4, a1, 2
-	addiw a3, a4, 4
-	li a4, 10
-	addw a2, a0, a3
-	beq a2, a4, label40
-	slliw a1, a1, 3
-	addiw a3, a1, 4
-	addw a0, a0, a3
-	mulw a1, a0, a2
+	addiw a2, a0, 4
+	li a3, 10
+	sh2add a0, a1, a2
+	beq a0, a3, label40
+	sh3add a3, a1, a2
 	li a2, 4294967295
+	mulw a1, a3, a0
 	and a0, a1, a2
 	j label31
 label40:
@@ -45,19 +42,16 @@ label31:
 	ret
 .globl foo1_mult_basic_blocks_illegal_scale
 foo1_mult_basic_blocks_illegal_scale:
-	slliw a4, a1, 1
-	addiw a3, a4, 4
-	li a4, 10
-	addw a2, a0, a3
-	beq a2, a4, label63
-	slliw a1, a1, 3
-	addiw a3, a1, 4
-	addw a0, a0, a3
-	mulw a1, a0, a2
+	addiw a2, a0, 4
+	li a3, 10
+	sh1add a0, a1, a2
+	beq a0, a3, label62
+	sh3add a3, a1, a2
 	li a2, 4294967295
+	mulw a1, a3, a0
 	and a0, a1, a2
-	j label54
-label63:
+	j label53
+label62:
 	mv a0, zero
-label54:
+label53:
 	ret

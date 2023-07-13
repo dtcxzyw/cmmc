@@ -95,8 +95,8 @@ memset_impl:
 	mv a1, zero
 label97:
 	sh2add a2, a1, a0
-	sw zero, 0(a2)
 	addiw a1, a1, 16
+	sw zero, 0(a2)
 	sw zero, 4(a2)
 	sw zero, 8(a2)
 	sw zero, 12(a2)

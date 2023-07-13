@@ -399,8 +399,8 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i32* %320 = getelementptr &([10000 * i32]* %2)[i64 0][i32 %277];
     i32 %321 = load i32* %190;
     i32 %322 = load i32* %320;
-    i32 %323 = add i32 %276, i32 %321;
-    i32 %324 = add i32 %322, i32 %323;
+    i32 %323 = add i32 %276, i32 %322;
+    i32 %324 = add i32 %321, i32 %323;
     i32 %325 = srem i32 %324, i32 13333;
     i32 %326 = add i32 %277, i32 2;
     ubr ^while.header1;
