@@ -52,16 +52,8 @@ label6:
 	bge a5, t1, label15
 	and t1, t0, a3
 	andi t0, t1, 1
-	beq t0, zero, label813
-	sh2add t0, a5, s0
-	lw t1, 0(t0)
-	addw a2, a2, t1
-	srliw t1, a3, 31
-	addiw a5, a5, 1
-	add t0, a3, t1
-	sraiw a3, t0, 1
-	mv t0, zero
-	j label6
+	beq t0, zero, label12
+	j label812
 label109:
 	li a1, 32767
 	ble a0, a1, label110
@@ -126,9 +118,9 @@ label105:
 label112:
 	li t3, 16
 	bge t1, t3, label121
-	and t3, t2, t0
-	andi t2, t3, 1
-	beq t2, zero, label1021
+	and t2, t2, t0
+	andi t3, t2, 1
+	beq t3, zero, label1021
 	sh2add t3, t1, s0
 	lw t2, 0(t3)
 	addw a3, a3, t2
@@ -140,11 +132,11 @@ label112:
 	j label112
 label1105:
 	lw a4, 4(sp)
-	lui t0, 16
-	lw t1, 60(sp)
+	lui t1, 16
+	lw t0, 60(sp)
 	divw a1, a1, a4
-	addw a4, a1, t0
-	subw a1, a4, t1
+	addw a4, a1, t1
+	subw a1, a4, t0
 	mv a4, a5
 	mv a5, a3
 	j label105
@@ -171,9 +163,10 @@ label130:
 	beq t4, zero, label135
 	andi t4, t1, 1
 	bne t4, zero, label1048
-	sh2add t5, t2, s0
-	lw t4, 0(t5)
-	addw a3, a3, t4
+label1047:
+	sh2add t4, t2, s0
+	lw t5, 0(t4)
+	addw a3, a3, t5
 	srliw t4, t3, 31
 	addiw t2, t2, 1
 	add t5, t3, t4
@@ -220,17 +213,7 @@ label1048:
 label135:
 	andi t4, t1, 1
 	beq t4, zero, label1048
-	sh2add t4, t2, s0
-	lw t5, 0(t4)
-	addw a3, a3, t5
-	srliw t4, t3, 31
-	addiw t2, t2, 1
-	add t5, t3, t4
-	srliw t4, t1, 31
-	sraiw t3, t5, 1
-	add t5, t1, t4
-	sraiw t1, t5, 1
-	j label125
+	j label1047
 label1021:
 	srliw t2, t0, 31
 	addiw t1, t1, 1
@@ -253,12 +236,12 @@ label1074:
 	mv t0, t2
 	j label122
 label148:
-	and t4, a5, t1
-	andi t3, t4, 1
-	beq t3, zero, label1079
-	sh2add t3, t0, s0
-	lw t4, 0(t3)
-	addw t2, t2, t4
+	and t3, a5, t1
+	andi t4, t3, 1
+	beq t4, zero, label1079
+	sh2add t4, t0, s0
+	lw t3, 0(t4)
+	addw t2, t2, t3
 	srliw t4, t1, 31
 	addiw t0, t0, 1
 	add t3, t1, t4
@@ -311,9 +294,9 @@ label169:
 label176:
 	li t3, 16
 	bge a5, t3, label1148
-	and t3, t0, t1
-	andi t4, t3, 1
-	beq t4, zero, label1153
+	and t4, t0, t1
+	andi t3, t4, 1
+	beq t3, zero, label1153
 	sh2add t4, a5, s0
 	lw t3, 0(t4)
 	addw t2, t2, t3
@@ -348,13 +331,13 @@ label192:
 	sraiw a5, t3, 1
 	j label186
 label170:
-	srliw t5, t3, 31
+	srliw t4, t3, 31
 	addiw t2, t2, 1
-	add t4, t3, t5
-	srliw t5, t1, 31
-	sraiw t3, t4, 1
-	add t4, t1, t5
-	sraiw t1, t4, 1
+	add t5, t3, t4
+	srliw t4, t1, 31
+	sraiw t3, t5, 1
+	add t5, t1, t4
+	sraiw t1, t5, 1
 	j label164
 label1153:
 	srliw t3, t1, 31
@@ -368,11 +351,11 @@ label1153:
 label174:
 	andi t4, t1, 1
 	beq t4, zero, label170
-	j label1131
+	j label1139
 label1171:
-	sh2add t4, t0, s0
-	lw t3, 0(t4)
-	addw t2, t2, t3
+	sh2add t3, t0, s0
+	lw t4, 0(t3)
+	addw t2, t2, t4
 	srliw t4, t1, 31
 	addiw t0, t0, 1
 	add t3, t1, t4
@@ -381,17 +364,29 @@ label1171:
 	add t3, a5, t4
 	sraiw a5, t3, 1
 	j label186
-label1131:
+label1139:
 	sh2add t5, t2, s0
 	lw t4, 0(t5)
 	addw a4, a4, t4
-	srliw t5, t3, 31
+	srliw t4, t3, 31
 	addiw t2, t2, 1
-	add t4, t3, t5
-	srliw t5, t1, 31
-	sraiw t3, t4, 1
-	add t4, t1, t5
-	sraiw t1, t4, 1
+	add t5, t3, t4
+	srliw t4, t1, 31
+	sraiw t3, t5, 1
+	add t5, t1, t4
+	sraiw t1, t5, 1
+	j label164
+label1131:
+	sh2add t4, t2, s0
+	lw t5, 0(t4)
+	addw a4, a4, t5
+	srliw t4, t3, 31
+	addiw t2, t2, 1
+	add t5, t3, t4
+	srliw t4, t1, 31
+	sraiw t3, t5, 1
+	add t5, t1, t4
+	sraiw t1, t5, 1
 	j label164
 label1148:
 	lw t0, 4(sp)
@@ -410,7 +405,7 @@ label1106:
 	mv a5, a3
 	divw a1, a1, t0
 	j label105
-label813:
+label12:
 	srliw t1, a3, 31
 	addiw a5, a5, 1
 	add t0, a3, t1
@@ -477,12 +472,12 @@ label50:
 	lw t3, 0(t4)
 	addw t1, t1, t3
 	srliw t3, t2, 31
-	srliw t5, t0, 31
 	addiw a5, a5, 1
 	add t4, t2, t3
-	add t3, t0, t5
+	srliw t3, t0, 31
 	sraiw t2, t4, 1
-	sraiw t0, t3, 1
+	add t4, t0, t3
+	sraiw t0, t4, 1
 	j label50
 label60:
 	li t3, 16
@@ -496,9 +491,9 @@ label65:
 	and t4, a5, t1
 	andi t3, t4, 1
 	beq t3, zero, label920
-	sh2add t4, t0, s0
-	lw t3, 0(t4)
-	addw t2, t2, t3
+	sh2add t3, t0, s0
+	lw t4, 0(t3)
+	addw t2, t2, t4
 	srliw t3, t1, 31
 	addiw t0, t0, 1
 	add t4, t1, t3
@@ -527,12 +522,12 @@ label877:
 	j label38
 label901:
 	srliw t3, t2, 31
-	srliw t5, t0, 31
 	addiw a5, a5, 1
 	add t4, t2, t3
-	add t3, t0, t5
+	srliw t3, t0, 31
 	sraiw t2, t4, 1
-	sraiw t0, t3, 1
+	add t4, t0, t3
+	sraiw t0, t4, 1
 	j label50
 label69:
 	beq t0, zero, label931
@@ -560,7 +555,7 @@ label77:
 	beq t4, zero, label78
 	andi t4, t1, 1
 	bne t4, zero, label943
-	j label954
+	j label942
 label84:
 	li t3, 16
 	bge a5, t3, label89
@@ -604,9 +599,9 @@ label96:
 	sraiw a5, t3, 1
 	j label90
 label99:
-	and t4, t0, t2
-	andi t3, t4, 1
-	beq t3, zero, label100
+	and t3, t0, t2
+	andi t4, t3, 1
+	beq t4, zero, label100
 	j label986
 label943:
 	srliw t5, t3, 31
@@ -633,17 +628,7 @@ label48:
 label78:
 	andi t4, t1, 1
 	beq t4, zero, label943
-	sh2add t4, t2, s0
-	lw t5, 0(t4)
-	addw a2, a2, t5
-	srliw t5, t3, 31
-	addiw t2, t2, 1
-	add t4, t3, t5
-	srliw t5, t1, 31
-	sraiw t3, t4, 1
-	add t4, t1, t5
-	sraiw t1, t4, 1
-	j label72
+	j label942
 label986:
 	sh2add t4, a5, s0
 	lw t3, 0(t4)
@@ -668,7 +653,7 @@ label887:
 	add t4, t1, t5
 	sraiw t1, t4, 1
 	j label38
-label954:
+label942:
 	sh2add t5, t2, s0
 	lw t4, 0(t5)
 	addw a2, a2, t4
@@ -687,6 +672,16 @@ label896:
 	mulw t1, t1, t0
 	mv t0, zero
 	j label60
+label812:
+	sh2add t0, a5, s0
+	lw t1, 0(t0)
+	addw a2, a2, t1
+	srliw t1, a3, 31
+	addiw a5, a5, 1
+	add t0, a3, t1
+	sraiw a3, t0, 1
+	mv t0, zero
+	j label6
 label853:
 	lw a4, 4(sp)
 	lui t1, 16
@@ -836,30 +831,30 @@ label250:
 	lw t4, 0(t3)
 	addw t2, t2, t4
 	srliw t3, t1, 31
-	srliw t4, a5, 31
 	addiw t0, t0, 1
-	add t5, t1, t3
-	add t3, a5, t4
-	sraiw t1, t5, 1
-	sraiw a5, t3, 1
+	add t4, t1, t3
+	srliw t3, a5, 31
+	sraiw t1, t4, 1
+	add t4, a5, t3
+	sraiw a5, t4, 1
 	j label245
 label1274:
 	srliw t3, t1, 31
-	srliw t4, a5, 31
 	addiw t0, t0, 1
-	add t5, t1, t3
-	add t3, a5, t4
-	sraiw t1, t5, 1
-	sraiw a5, t3, 1
+	add t4, t1, t3
+	srliw t3, a5, 31
+	sraiw t1, t4, 1
+	add t4, a5, t3
+	sraiw a5, t4, 1
 	j label245
 label229:
 	srliw t4, t3, 31
-	srliw t6, t1, 31
 	addiw t2, t2, 1
 	add t5, t3, t4
-	add t4, t1, t6
+	srliw t4, t1, 31
 	sraiw t3, t5, 1
-	sraiw t1, t4, 1
+	add t5, t1, t4
+	sraiw t1, t5, 1
 	j label223
 label1255:
 	srliw t3, t1, 31
@@ -875,12 +870,12 @@ label1232:
 	lw t4, 0(t5)
 	addw a2, a2, t4
 	srliw t4, t3, 31
-	srliw t6, t1, 31
 	addiw t2, t2, 1
 	add t5, t3, t4
-	add t4, t1, t6
+	srliw t4, t1, 31
 	sraiw t3, t5, 1
-	sraiw t1, t4, 1
+	add t5, t1, t4
+	sraiw t1, t5, 1
 	j label223
 label295:
 	beq a1, zero, label299
@@ -1184,11 +1179,11 @@ label1204:
 	sraiw a2, t3, 1
 	j label210
 label386:
-	srliw t1, a2, 31
+	srliw t0, a2, 31
 	addiw a3, a3, 1
-	add t0, a2, t1
-	sraiw a2, t0, 1
+	add t1, a2, t0
 	mv t0, zero
+	sraiw a2, t1, 1
 	j label200
 label1214:
 	mv a2, a5
@@ -1328,11 +1323,11 @@ label1551:
 	sh2add t1, a3, s0
 	lw t0, 0(t1)
 	addw a5, a5, t0
-	srliw t1, a2, 31
+	srliw t0, a2, 31
 	addiw a3, a3, 1
-	add t0, a2, t1
-	sraiw a2, t0, 1
+	add t1, a2, t0
 	mv t0, zero
+	sraiw a2, t1, 1
 	j label200
 label299:
 	li a1, 32767
@@ -1489,19 +1484,19 @@ label2000:
 	mv t2, zero
 	j label633
 label628:
-	and t4, t0, t1
-	andi t3, t4, 1
-	beq t3, zero, label2005
+	and t3, t0, t1
+	andi t4, t3, 1
+	beq t4, zero, label2005
 	sh2add t4, a5, s0
 	lw t3, 0(t4)
 	addw t2, t2, t3
 	srliw t3, t1, 31
-	srliw t5, t0, 31
 	addiw a5, a5, 1
 	add t4, t1, t3
-	add t3, t0, t5
+	srliw t3, t0, 31
 	sraiw t1, t4, 1
-	sraiw t0, t3, 1
+	add t4, t0, t3
+	sraiw t0, t4, 1
 	j label623
 label633:
 	li t3, 16
@@ -1512,9 +1507,9 @@ label2019:
 	mv t0, t2
 	j label615
 label638:
-	and t3, a5, t1
-	andi t4, t3, 1
-	beq t4, zero, label2024
+	and t4, a5, t1
+	andi t3, t4, 1
+	beq t3, zero, label2024
 	sh2add t4, t0, s0
 	lw t3, 0(t4)
 	addw t2, t2, t3
@@ -1557,12 +1552,12 @@ label645:
 	j label2038
 label2005:
 	srliw t3, t1, 31
-	srliw t5, t0, 31
 	addiw a5, a5, 1
 	add t4, t1, t3
-	add t3, t0, t5
+	srliw t3, t0, 31
 	sraiw t1, t4, 1
-	sraiw t0, t3, 1
+	add t4, t0, t3
+	sraiw t0, t4, 1
 	j label623
 label2039:
 	srliw t4, t3, 31
@@ -1669,19 +1664,19 @@ label2262:
 label754:
 	li t3, 16
 	bge a5, t3, label759
-	and t3, t0, t1
-	andi t4, t3, 1
-	beq t4, zero, label2290
-	sh2add t4, a5, s0
-	lw t3, 0(t4)
-	addw t2, t2, t3
-	srliw t4, t1, 31
+	and t4, t0, t1
+	andi t3, t4, 1
+	beq t3, zero, label2290
+	sh2add t3, a5, s0
+	lw t4, 0(t3)
+	addw t2, t2, t4
+	srliw t3, t1, 31
 	addiw a5, a5, 1
-	add t3, t1, t4
-	srliw t4, t0, 31
-	sraiw t1, t3, 1
-	add t3, t0, t4
-	sraiw t0, t3, 1
+	add t4, t1, t3
+	srliw t3, t0, 31
+	sraiw t1, t4, 1
+	add t4, t0, t3
+	sraiw t0, t4, 1
 	j label754
 label773:
 	andi t4, t3, 1
@@ -1694,13 +1689,13 @@ label2307:
 	sh2add t5, t2, s0
 	lw t4, 0(t5)
 	addw a3, a3, t4
-	srliw t5, t3, 31
+	srliw t4, t3, 31
 	addiw t2, t2, 1
-	add t4, t3, t5
-	srliw t5, t1, 31
-	sraiw t3, t4, 1
-	add t4, t1, t5
-	sraiw t1, t4, 1
+	add t5, t3, t4
+	srliw t4, t1, 31
+	sraiw t3, t5, 1
+	add t5, t1, t4
+	sraiw t1, t5, 1
 	j label749
 label778:
 	andi t4, t1, 1
@@ -1740,69 +1735,69 @@ label2230:
 	mv t0, t2
 	j label709
 label738:
-	and t4, a5, t1
-	andi t3, t4, 1
-	beq t3, zero, label739
+	and t3, a5, t1
+	andi t4, t3, 1
+	beq t4, zero, label739
 	j label2234
 label739:
-	srliw t3, t1, 31
-	srliw t5, a5, 31
+	srliw t4, t1, 31
 	addiw t0, t0, 1
-	add t4, t1, t3
-	add t3, a5, t5
-	sraiw t1, t4, 1
+	add t3, t1, t4
+	srliw t4, a5, 31
+	sraiw t1, t3, 1
+	add t3, a5, t4
 	sraiw a5, t3, 1
 	j label733
 label742:
-	and t3, t0, t1
-	andi t4, t3, 1
-	beq t4, zero, label743
-	sh2add t4, a5, s0
-	lw t3, 0(t4)
-	addw t2, t2, t3
-	srliw t4, t1, 31
+	and t4, t0, t1
+	andi t3, t4, 1
+	beq t3, zero, label743
+	sh2add t3, a5, s0
+	lw t4, 0(t3)
+	addw t2, t2, t4
+	srliw t3, t1, 31
+	srliw t5, t0, 31
 	addiw a5, a5, 1
-	add t3, t1, t4
-	srliw t4, t0, 31
-	sraiw t1, t3, 1
-	add t3, t0, t4
+	add t4, t1, t3
+	add t3, t0, t5
+	sraiw t1, t4, 1
 	sraiw t0, t3, 1
 	j label727
 label721:
-	srliw t5, t3, 31
+	srliw t4, t3, 31
 	addiw t2, t2, 1
-	add t4, t3, t5
-	srliw t5, t1, 31
-	sraiw t3, t4, 1
-	add t4, t1, t5
-	sraiw t1, t4, 1
+	add t5, t3, t4
+	srliw t4, t1, 31
+	sraiw t3, t5, 1
+	add t5, t1, t4
+	sraiw t1, t5, 1
 	j label715
 label743:
-	srliw t4, t1, 31
+	srliw t3, t1, 31
+	srliw t5, t0, 31
 	addiw a5, a5, 1
-	add t3, t1, t4
-	srliw t4, t0, 31
-	sraiw t1, t3, 1
-	add t3, t0, t4
+	add t4, t1, t3
+	add t3, t0, t5
+	sraiw t1, t4, 1
 	sraiw t0, t3, 1
 	j label727
 label774:
-	srliw t5, t3, 31
+	srliw t4, t3, 31
 	addiw t2, t2, 1
-	add t4, t3, t5
-	srliw t5, t1, 31
-	sraiw t3, t4, 1
-	add t4, t1, t5
-	sraiw t1, t4, 1
+	add t5, t3, t4
+	srliw t4, t1, 31
+	sraiw t3, t5, 1
+	add t5, t1, t4
+	sraiw t1, t5, 1
 	j label749
 label2290:
-	srliw t4, t1, 31
+	srliw t3, t1, 31
 	addiw a5, a5, 1
-	add t3, t1, t4
-	srliw t4, t0, 31
-	sraiw t1, t3, 1
-	add t3, t0, t4
-	sraiw t0, t3, 1
+	add t4, t1, t3
+	srliw t3, t0, 31
+	sraiw t1, t4, 1
+	add t4, t0, t3
+	sraiw t0, t4, 1
 	j label754
 label725:
 	andi t4, t1, 1
@@ -1810,37 +1805,37 @@ label725:
 	sh2add t4, t2, s0
 	lw t5, 0(t4)
 	addw a4, a4, t5
-	srliw t5, t3, 31
+	srliw t4, t3, 31
 	addiw t2, t2, 1
-	add t4, t3, t5
-	srliw t5, t1, 31
-	sraiw t3, t4, 1
-	add t4, t1, t5
-	sraiw t1, t4, 1
+	add t5, t3, t4
+	srliw t4, t1, 31
+	sraiw t3, t5, 1
+	add t5, t1, t4
+	sraiw t1, t5, 1
 	j label715
 label2234:
-	sh2add t4, t0, s0
-	lw t3, 0(t4)
-	addw t2, t2, t3
-	srliw t3, t1, 31
-	srliw t5, a5, 31
+	sh2add t3, t0, s0
+	lw t4, 0(t3)
+	addw t2, t2, t4
+	srliw t4, t1, 31
 	addiw t0, t0, 1
-	add t4, t1, t3
-	add t3, a5, t5
-	sraiw t1, t4, 1
+	add t3, t1, t4
+	srliw t4, a5, 31
+	sraiw t1, t3, 1
+	add t3, a5, t4
 	sraiw a5, t3, 1
 	j label733
 label2206:
 	sh2add t5, t2, s0
 	lw t4, 0(t5)
 	addw a4, a4, t4
-	srliw t5, t3, 31
+	srliw t4, t3, 31
 	addiw t2, t2, 1
-	add t4, t3, t5
-	srliw t5, t1, 31
-	sraiw t3, t4, 1
-	add t4, t1, t5
-	sraiw t1, t4, 1
+	add t5, t3, t4
+	srliw t4, t1, 31
+	sraiw t3, t5, 1
+	add t5, t1, t4
+	sraiw t1, t5, 1
 	j label715
 label732:
 	lw a5, 4(sp)
@@ -1874,9 +1869,9 @@ label765:
 	and t4, a5, t1
 	andi t3, t4, 1
 	beq t3, zero, label766
-	sh2add t4, t0, s0
-	lw t3, 0(t4)
-	addw t2, t2, t3
+	sh2add t3, t0, s0
+	lw t4, 0(t3)
+	addw t2, t2, t4
 	srliw t4, t1, 31
 	addiw t0, t0, 1
 	add t3, t1, t4
@@ -2131,17 +2126,7 @@ label472:
 	beq t5, zero, label475
 	andi t5, t2, 1
 	bne t5, zero, label473
-	sh2add t6, t3, s0
-	lw t5, 0(t6)
-	addw a4, a4, t5
-	srliw t6, t4, 31
-	addiw t3, t3, 1
-	add t5, t4, t6
-	srliw t6, t2, 31
-	sraiw t4, t5, 1
-	add t5, t2, t6
-	sraiw t2, t5, 1
-	j label467
+	j label1714
 label479:
 	li t4, 16
 	bge t0, t4, label484
@@ -2151,12 +2136,12 @@ label479:
 	sh2add t4, t0, s0
 	lw t5, 0(t4)
 	addw t3, t3, t5
-	srliw t4, t2, 31
-	srliw t5, t1, 31
+	srliw t5, t2, 31
 	addiw t0, t0, 1
-	add t6, t2, t4
+	add t4, t2, t5
+	srliw t5, t1, 31
+	sraiw t2, t4, 1
 	add t4, t1, t5
-	sraiw t2, t6, 1
 	sraiw t1, t4, 1
 	j label479
 label427:
@@ -2192,26 +2177,16 @@ label438:
 	beq t5, zero, label439
 	andi t5, t2, 1
 	bne t5, zero, label1645
-	sh2add t6, t3, s0
-	lw t5, 0(t6)
-	addw a5, a5, t5
-	srliw t5, t4, 31
-	addiw t3, t3, 1
-	add t6, t4, t5
-	srliw t5, t2, 31
-	sraiw t4, t6, 1
-	add t6, t2, t5
-	sraiw t2, t6, 1
-	j label433
+	j label1644
 label445:
 	li t4, 16
 	bge t0, t4, label1665
 	and t5, t1, t3
 	andi t4, t5, 1
 	beq t4, zero, label451
-	sh2add t5, t0, s0
-	lw t4, 0(t5)
-	addw t2, t2, t4
+	sh2add t4, t0, s0
+	lw t5, 0(t4)
+	addw t2, t2, t5
 	srliw t5, t3, 31
 	addiw t0, t0, 1
 	add t4, t3, t5
@@ -2229,28 +2204,28 @@ label1684:
 	mv t1, t3
 	j label427
 label460:
-	and t4, t0, t2
-	andi t5, t4, 1
-	beq t5, zero, label1689
+	and t5, t0, t2
+	andi t4, t5, 1
+	beq t4, zero, label1689
 	sh2add t5, t1, s0
 	lw t4, 0(t5)
 	addw t3, t3, t4
-	srliw t5, t2, 31
+	srliw t4, t2, 31
 	addiw t1, t1, 1
-	add t4, t2, t5
-	srliw t5, t0, 31
-	sraiw t2, t4, 1
-	add t4, t0, t5
-	sraiw t0, t4, 1
+	add t5, t2, t4
+	srliw t4, t0, 31
+	sraiw t2, t5, 1
+	add t5, t0, t4
+	sraiw t0, t5, 1
 	j label455
 label1689:
-	srliw t5, t2, 31
+	srliw t4, t2, 31
 	addiw t1, t1, 1
-	add t4, t2, t5
-	srliw t5, t0, 31
-	sraiw t2, t4, 1
-	add t4, t0, t5
-	sraiw t0, t4, 1
+	add t5, t2, t4
+	srliw t4, t0, 31
+	sraiw t2, t5, 1
+	add t5, t0, t4
+	sraiw t0, t5, 1
 	j label455
 label1645:
 	srliw t5, t4, 31
@@ -2273,6 +2248,7 @@ label451:
 label439:
 	andi t5, t2, 1
 	beq t5, zero, label1645
+label1644:
 	sh2add t5, t3, s0
 	lw t6, 0(t5)
 	addw a5, a5, t6
@@ -2294,20 +2270,21 @@ label473:
 	sraiw t2, t5, 1
 	j label467
 label495:
-	srliw t4, t2, 31
-	srliw t5, t1, 31
+	srliw t5, t2, 31
 	addiw t0, t0, 1
-	add t6, t2, t4
+	add t4, t2, t5
+	srliw t5, t1, 31
+	sraiw t2, t4, 1
 	add t4, t1, t5
-	sraiw t2, t6, 1
 	sraiw t1, t4, 1
 	j label479
 label475:
 	andi t5, t2, 1
 	beq t5, zero, label473
-	sh2add t5, t3, s0
-	lw t6, 0(t5)
-	addw a4, a4, t6
+label1714:
+	sh2add t6, t3, s0
+	lw t5, 0(t6)
+	addw a4, a4, t5
 	srliw t6, t4, 31
 	addiw t3, t3, 1
 	add t5, t4, t6
@@ -2345,12 +2322,12 @@ label1739:
 	mv t1, t3
 	j label464
 label490:
-	and t4, t0, t2
-	andi t5, t4, 1
-	beq t5, zero, label1744
-	sh2add t4, t1, s0
-	lw t5, 0(t4)
-	addw t3, t3, t5
+	and t5, t0, t2
+	andi t4, t5, 1
+	beq t4, zero, label1744
+	sh2add t5, t1, s0
+	lw t4, 0(t5)
+	addw t3, t3, t4
 	srliw t5, t2, 31
 	addiw t1, t1, 1
 	add t4, t2, t5
@@ -2424,21 +2401,21 @@ label680:
 	beq t4, zero, label681
 	j label2116
 label681:
-	srliw t3, t1, 31
-	srliw t5, a5, 31
+	srliw t4, t1, 31
 	addiw t0, t0, 1
-	add t4, t1, t3
-	add t3, a5, t5
-	sraiw t1, t4, 1
+	add t3, t1, t4
+	srliw t4, a5, 31
+	sraiw t1, t3, 1
+	add t3, a5, t4
 	sraiw a5, t3, 1
 	j label675
 label684:
 	and t4, t0, t2
 	andi t3, t4, 1
 	beq t3, zero, label2129
-	sh2add t3, a5, s0
-	lw t4, 0(t3)
-	addw t1, t1, t4
+	sh2add t4, a5, s0
+	lw t3, 0(t4)
+	addw t1, t1, t3
 	srliw t4, t2, 31
 	addiw a5, a5, 1
 	add t3, t2, t4
@@ -2448,13 +2425,13 @@ label684:
 	sraiw t0, t3, 1
 	j label669
 label663:
-	srliw t5, t3, 31
+	srliw t4, t3, 31
 	addiw t2, t2, 1
-	add t4, t3, t5
-	srliw t5, t1, 31
-	sraiw t3, t4, 1
-	add t4, t1, t5
-	sraiw t1, t4, 1
+	add t5, t3, t4
+	srliw t4, t1, 31
+	sraiw t3, t5, 1
+	add t5, t1, t4
+	sraiw t1, t5, 1
 	j label657
 label2129:
 	srliw t4, t2, 31
@@ -2469,37 +2446,37 @@ label2116:
 	sh2add t4, t0, s0
 	lw t3, 0(t4)
 	addw t2, t2, t3
-	srliw t3, t1, 31
-	srliw t5, a5, 31
+	srliw t4, t1, 31
 	addiw t0, t0, 1
-	add t4, t1, t3
-	add t3, a5, t5
-	sraiw t1, t4, 1
+	add t3, t1, t4
+	srliw t4, a5, 31
+	sraiw t1, t3, 1
+	add t3, a5, t4
 	sraiw a5, t3, 1
 	j label675
 label2096:
 	sh2add t4, t2, s0
 	lw t5, 0(t4)
 	addw a4, a4, t5
-	srliw t5, t3, 31
+	srliw t4, t3, 31
 	addiw t2, t2, 1
-	add t4, t3, t5
-	srliw t5, t1, 31
-	sraiw t3, t4, 1
-	add t4, t1, t5
-	sraiw t1, t4, 1
+	add t5, t3, t4
+	srliw t4, t1, 31
+	sraiw t3, t5, 1
+	add t5, t1, t4
+	sraiw t1, t5, 1
 	j label657
 label2087:
 	sh2add t5, t2, s0
 	lw t4, 0(t5)
 	addw a4, a4, t4
-	srliw t5, t3, 31
+	srliw t4, t3, 31
 	addiw t2, t2, 1
-	add t4, t3, t5
-	srliw t5, t1, 31
-	sraiw t3, t4, 1
-	add t4, t1, t5
-	sraiw t1, t4, 1
+	add t5, t3, t4
+	srliw t4, t1, 31
+	sraiw t3, t5, 1
+	add t5, t1, t4
+	sraiw t1, t5, 1
 	j label657
 label674:
 	lw t0, 4(sp)
@@ -2576,19 +2553,19 @@ label568:
 label570:
 	li t4, 16
 	bge t0, t4, label1914
-	and t5, t1, t2
-	andi t4, t5, 1
-	beq t4, zero, label1919
+	and t4, t1, t2
+	andi t5, t4, 1
+	beq t5, zero, label1919
 	sh2add t4, t0, s0
 	lw t5, 0(t4)
 	addw t3, t3, t5
 	srliw t4, t2, 31
+	srliw t5, t1, 31
 	addiw t0, t0, 1
-	add t5, t2, t4
-	srliw t4, t1, 31
-	sraiw t2, t5, 1
-	add t5, t1, t4
-	sraiw t1, t5, 1
+	add t6, t2, t4
+	add t4, t1, t5
+	sraiw t2, t6, 1
+	sraiw t1, t4, 1
 	j label570
 label580:
 	li t4, 16
@@ -2599,9 +2576,9 @@ label1933:
 	mv t1, t3
 	j label552
 label585:
-	and t4, t0, t2
-	andi t5, t4, 1
-	beq t5, zero, label1938
+	and t5, t0, t2
+	andi t4, t5, 1
+	beq t4, zero, label1938
 	sh2add t5, t1, s0
 	lw t4, 0(t5)
 	addw t3, t3, t4
@@ -2633,12 +2610,12 @@ label564:
 	j label558
 label1919:
 	srliw t4, t2, 31
+	srliw t5, t1, 31
 	addiw t0, t0, 1
-	add t5, t2, t4
-	srliw t4, t1, 31
-	sraiw t2, t5, 1
-	add t5, t1, t4
-	sraiw t1, t5, 1
+	add t6, t2, t4
+	add t4, t1, t5
+	sraiw t2, t6, 1
+	sraiw t1, t4, 1
 	j label570
 label1914:
 	lw t1, 4(sp)

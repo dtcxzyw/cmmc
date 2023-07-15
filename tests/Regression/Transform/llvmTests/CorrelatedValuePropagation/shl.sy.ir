@@ -204,9 +204,8 @@ func @test8(i8 %var0) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless 
 func @test9(i8 %var0) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = zext i8 %var0 to i32;
-    i32 %1 = shl i32 -1, i32 %0;
-    i8 %2 = ztrunc i32 %1 to i8;
-    i1 %3 = icmp eq i32 %0, i32 0;
-    i8 %4 = select i1 %3 ? i8 %2 : i8 0;
-    ret i8 %4;
+    i1 %1 = icmp eq i32 %0, i32 0;
+    i8 %2 = zext i1 %1 to i8;
+    i8 %3 = neg i8 %2;
+    ret i8 %3;
 }

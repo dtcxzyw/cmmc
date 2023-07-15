@@ -70,19 +70,17 @@ func @sge_zext(i8 %var0, i16 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEf
     i32 %15 = ztrunc i32 %14 to i32;
     ubr ^b;
   ^if.else:
-    i1 %16 = icmp sle i32 %2, i32 %4;
+    i1 %16 = icmp sge i32 %2, i32 10;
     i32 %17 = zext i1 %16 to i32;
-    i1 %18 = icmp sge i32 %2, i32 10;
-    i32 %19 = zext i1 %18 to i32;
-    i32 %20 = xor i32 %17, i32 %19;
-    i1 %21 = icmp sle i32 %2, i32 10;
-    i32 %22 = zext i1 %21 to i32;
-    i32 %23 = xor i32 %20, i32 %22;
-    i32 %24 = ztrunc i32 %23 to i32;
+    i32 %18 = xor i32 %17, i32 1;
+    i1 %19 = icmp sle i32 %2, i32 10;
+    i32 %20 = zext i1 %19 to i32;
+    i32 %21 = xor i32 %18, i32 %20;
+    i32 %22 = ztrunc i32 %21 to i32;
     ubr ^b;
   ^b:
-    i32 %25 = phi [^if.then, i32 %15] [^if.else, i32 %24];
-    ret i32 %25;
+    i32 %23 = phi [^if.then, i32 %15] [^if.else, i32 %22];
+    ret i32 %23;
 }
 func @test_pr58009_const_zext() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^b:
@@ -156,19 +154,17 @@ func @uge_zext(i8 %var0, i16 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEf
     i32 %13 = ztrunc i32 %12 to i32;
     ubr ^b;
   ^if.else:
-    i1 %14 = icmp sle i32 %1, i32 %2;
+    i1 %14 = icmp sge i32 %1, i32 10;
     i32 %15 = zext i1 %14 to i32;
-    i1 %16 = icmp sge i32 %1, i32 10;
-    i32 %17 = zext i1 %16 to i32;
-    i32 %18 = xor i32 %15, i32 %17;
-    i1 %19 = icmp sle i32 %1, i32 10;
-    i32 %20 = zext i1 %19 to i32;
-    i32 %21 = xor i32 %18, i32 %20;
-    i32 %22 = ztrunc i32 %21 to i32;
+    i32 %16 = xor i32 %15, i32 1;
+    i1 %17 = icmp sle i32 %1, i32 10;
+    i32 %18 = zext i1 %17 to i32;
+    i32 %19 = xor i32 %16, i32 %18;
+    i32 %20 = ztrunc i32 %19 to i32;
     ubr ^b;
   ^b:
-    i32 %23 = phi [^if.then, i32 %13] [^if.else, i32 %22];
-    ret i32 %23;
+    i32 %21 = phi [^if.then, i32 %13] [^if.else, i32 %20];
+    ret i32 %21;
 }
 func @uge_zext_add(i8 %var0, i16 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:

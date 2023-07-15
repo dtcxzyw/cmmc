@@ -326,7 +326,11 @@ IntegerRangeAnalysisResult IntegerRangeAnalysis::run(Function& func, AnalysisPas
                     const auto rhsRange = getRange(rhs, inst);
 
                     switch(op) {
-                        case CompareOp::ICmpEqual:
+                        case CompareOp::ICmpEqual: {
+                            updateFunc(lhs, rhsRange);
+                            updateFunc(rhs, lhsRange);
+                            break;
+                        }
                         case CompareOp::ICmpNotEqual: {
                             break;
                         }

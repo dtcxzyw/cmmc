@@ -24,3 +24,11 @@ func @foo5([16 * i32]* %a, i32 %b) -> i32 { NoMemoryWrite NoSideEffect NoRecurse
     i32 %2 = load i32* %1;
     ret i32 %2;
 }
+func @dynamic_range_check(i32 %x, i32 %y) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = icmp ult i32 %x, i32 %y;
+    i32 %1 = zext i1 %0 to i32;
+    i1 %2 = icmp sgt i32 %y, i32 -1;
+    i32 %3 = select i1 %2 ? i32 %1 : i32 %x;
+    ret i32 %3;
+}

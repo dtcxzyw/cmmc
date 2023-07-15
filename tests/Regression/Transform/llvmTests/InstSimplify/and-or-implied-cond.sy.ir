@@ -12,23 +12,13 @@ func @and_implied(i8 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSid
     i32 %9 = ztrunc i32 %8 to i32;
     ret i32 %9;
 }
-func @and_implied_comm1(i8 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @and_implied_comm1(i8 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = zext i8 %var0 to i32;
     i1 %1 = icmp eq i32 %0, i32 1;
-    cbr i1 %1(prob = 0.5), ^b, ^b1;
-  ^b:
-    i1 %2 = icmp neq i32 %0, i32 0;
-    i32 %3 = zext i1 %2 to i32;
-    i32 %4 = ztrunc i32 %3 to i32;
-    i32 %5 = or i32 %var1, i32 %4;
-    i1 %6 = icmp neq i32 %5, i32 0;
-    ubr ^b1;
-  ^b1:
-    i1 %7 = phi [^entry, i1 false] [^b, i1 %6];
-    i32 %8 = zext i1 %7 to i32;
-    i32 %9 = ztrunc i32 %8 to i32;
-    ret i32 %9;
+    i32 %2 = zext i1 %1 to i32;
+    i32 %3 = ztrunc i32 %2 to i32;
+    ret i32 %3;
 }
 func @and_implied_comm2(i8 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:

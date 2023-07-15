@@ -2,12 +2,10 @@ func @f(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless No
   ^entry:
     i32 %0 = strunc i32 %var0 to i32;
     i32 %1 = ashr i32 7, i32 %0;
-    i1 %2 = icmp sgt i32 %0, i32 %1;
-    i1 %3 = icmp slt i32 %0, i32 0;
-    i1 %4 = or i1 %2, i1 %3;
-    i32 %5 = zext i1 %4 to i32;
-    i32 %6 = ztrunc i32 %5 to i32;
-    ret i32 %6;
+    i1 %2 = icmp ugt i32 %0, i32 %1;
+    i32 %3 = zext i1 %2 to i32;
+    i32 %4 = ztrunc i32 %3 to i32;
+    ret i32 %4;
 }
 func @f2(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:

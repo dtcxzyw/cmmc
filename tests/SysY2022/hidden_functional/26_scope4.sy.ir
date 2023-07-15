@@ -3,10 +3,10 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
   ^entry:
     ubr ^while.header;
   ^while.header:
-    i32 %0 = phi [^entry, i32 49] [^entry2, i32 %28] [^entry3, i32 %39];
-    i32 %1 = phi [^entry, i32 1352] [^entry2, i32 %27] [^entry3, i32 %38];
-    i32 %2 = phi [^entry, i32 2] [^entry2, i32 %2] [^entry3, i32 %39];
-    i32 %3 = phi [^entry, i32 0] [^entry2, i32 %29] [^entry3, i32 %40];
+    i32 %0 = phi [^entry, i32 49] [^entry2, i32 %28] [^entry3, i32 %38];
+    i32 %1 = phi [^entry, i32 1352] [^entry2, i32 %27] [^entry3, i32 %37];
+    i32 %2 = phi [^entry, i32 2] [^entry2, i32 %2] [^entry3, i32 %38];
+    i32 %3 = phi [^entry, i32 0] [^entry2, i32 2] [^entry3, i32 %39];
     i1 %4 = icmp slt i32 %3, i32 3;
     cbr i1 %4(prob = 0.97), ^entry1, ^b;
   ^entry1:
@@ -39,19 +39,18 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i32 %26 = mul i32 %25, i32 3;
     i32 %27 = add i32 %24, i32 %26;
     i32 %28 = add i32 %0, i32 13;
-    i32 %29 = add i32 %3, i32 1;
     ubr ^while.header;
   ^entry3:
-    i32 %30 = add i32 %0, i32 7;
-    i32 %31 = mul i32 %30, i32 2;
-    i32 %32 = add i32 %5, i32 %14;
-    i32 %33 = add i32 %31, i32 %32;
-    i32 %34 = mul i32 %15, i32 2;
-    i32 %35 = add i32 %33, i32 %34;
-    i32 %36 = add i32 %0, i32 9;
-    i32 %37 = mul i32 %36, i32 3;
-    i32 %38 = add i32 %35, i32 %37;
-    i32 %39 = add i32 %0, i32 13;
-    i32 %40 = add i32 %3, i32 1;
+    i32 %29 = add i32 %0, i32 7;
+    i32 %30 = mul i32 %29, i32 2;
+    i32 %31 = add i32 %5, i32 %14;
+    i32 %32 = add i32 %30, i32 %31;
+    i32 %33 = mul i32 %15, i32 2;
+    i32 %34 = add i32 %32, i32 %33;
+    i32 %35 = add i32 %0, i32 9;
+    i32 %36 = mul i32 %35, i32 3;
+    i32 %37 = add i32 %34, i32 %36;
+    i32 %38 = add i32 %0, i32 13;
+    i32 %39 = add i32 %3, i32 1;
     ubr ^while.header;
 }

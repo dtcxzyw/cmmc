@@ -7,63 +7,17 @@
 .globl main
 main:
 	mov r1, #0
-	mov r0, r1
-	cmp r1, #100
-	bge label8
+	mov r2, r1
+label2:
+	add r0, r1, r2
 	cmp r1, #50
-	bne label7
-	add r0, r1, #1
-	cmp r0, #100
-	bge label8
-	cmp r0, #50
-	bne label7
-	add r0, r0, #1
-	cmp r0, #100
-	bge label8
-	cmp r0, #50
-	bne label7
-	add r0, r0, #1
-	cmp r0, #100
-	bge label8
-	cmp r0, #50
-	bne label7
-	b label52
-label8:
-	mov r0, r1
+	add r1, r1, #1
+	moveq r0, r2
+	mov r2, #51
+	moveq r1, r2
+	cmp r1, #100
+	bge label5
+	mov r2, r0
+	b label2
+label5:
 	bx lr
-label57:
-	cmp r0, #50
-	bne label7
-	b label52
-label7:
-	add r1, r1, r0
-	add r0, r0, #1
-	cmp r0, #100
-	bge label8
-	cmp r0, #50
-	bne label7
-	add r0, r0, #1
-	cmp r0, #100
-	bge label8
-	cmp r0, #50
-	bne label7
-	add r0, r0, #1
-	cmp r0, #100
-	bge label8
-	cmp r0, #50
-	bne label7
-	add r0, r0, #1
-	cmp r0, #100
-	bge label8
-	cmp r0, #50
-	bne label7
-	add r0, r0, #1
-	cmp r0, #100
-	bge label8
-	cmp r0, #50
-	bne label7
-label52:
-	add r0, r0, #1
-	cmp r0, #100
-	bge label8
-	b label57

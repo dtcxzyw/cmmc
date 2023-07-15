@@ -1,0 +1,12 @@
+int test1(int x, int y) {
+    if(!(x < y)) {
+        if(!(x > y))
+            return x == y;
+    }
+    return 1;
+}
+int test2(int x) {
+    if(x < 0)
+        return x >= 0;
+    return 0;
+}

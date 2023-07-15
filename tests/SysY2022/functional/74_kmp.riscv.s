@@ -14,15 +14,15 @@ dst:
 .globl main
 main:
 	addi sp, sp, -40
-pcrel204:
+pcrel206:
 	auipc a0, %pcrel_hi(dst)
 	sd s0, 32(sp)
-	addi s0, a0, %pcrel_lo(pcrel204)
+	addi s0, a0, %pcrel_lo(pcrel206)
 	sd s1, 24(sp)
-pcrel205:
+pcrel207:
 	auipc a0, %pcrel_hi(next)
 	sd s2, 16(sp)
-	addi s1, a0, %pcrel_lo(pcrel205)
+	addi s1, a0, %pcrel_lo(pcrel207)
 	mv s2, zero
 	sd s3, 8(sp)
 	sd ra, 0(sp)
@@ -38,10 +38,10 @@ label34:
 	j label2
 label33:
 	sh2add a1, s2, s0
-pcrel206:
+pcrel208:
 	auipc a0, %pcrel_hi(src)
 	mv s3, zero
-	addi s2, a0, %pcrel_lo(pcrel206)
+	addi s2, a0, %pcrel_lo(pcrel208)
 	sw zero, 0(a1)
 label5:
 	jal getch
@@ -92,14 +92,14 @@ label5:
 	sh2add a3, a1, s0
 	lw a2, 0(a3)
 	beq a2, zero, label55
-	j label187
+	j label189
 label7:
 	addiw s3, s3, 1
 	j label5
-label187:
+label189:
 	li a3, -1
 	bne a0, a3, label22
-	j label180
+	j label182
 label55:
 	mv a1, zero
 	mv a0, zero
@@ -119,7 +119,7 @@ label12:
 label62:
 	li a0, -1
 	j label15
-label180:
+label182:
 	addiw a1, a1, 1
 	addiw a0, a0, 1
 	sh2add a2, a1, s1
@@ -127,11 +127,52 @@ label180:
 	sh2add a3, a1, s0
 	lw a2, 0(a3)
 	beq a2, zero, label55
-	j label187
-label191:
+	j label189
+label23:
+	sh2add a2, a0, s1
+	lw a0, 0(a2)
+	sh2add a3, a1, s0
+	lw a2, 0(a3)
+	beq a2, zero, label55
 	li a3, -1
 	bne a0, a3, label22
-	j label180
+	addiw a1, a1, 1
+	addiw a0, a0, 1
+	sh2add a2, a1, s1
+	sw a0, 0(a2)
+	sh2add a3, a1, s0
+	lw a2, 0(a3)
+	beq a2, zero, label55
+	li a3, -1
+	bne a0, a3, label22
+	addiw a1, a1, 1
+	addiw a0, a0, 1
+	sh2add a2, a1, s1
+	sw a0, 0(a2)
+	sh2add a3, a1, s0
+	lw a2, 0(a3)
+	beq a2, zero, label55
+	li a3, -1
+	bne a0, a3, label22
+	addiw a1, a1, 1
+	addiw a0, a0, 1
+	sh2add a2, a1, s1
+	sw a0, 0(a2)
+	sh2add a3, a1, s0
+	lw a2, 0(a3)
+	beq a2, zero, label55
+	li a3, -1
+	bne a0, a3, label22
+	addiw a1, a1, 1
+	addiw a0, a0, 1
+	sh2add a2, a1, s1
+	sw a0, 0(a2)
+	sh2add a3, a1, s0
+	lw a2, 0(a3)
+	beq a2, zero, label55
+	li a3, -1
+	bne a0, a3, label22
+	j label182
 label22:
 	sh2add a4, a0, s0
 	lw a3, 0(a4)
@@ -179,52 +220,9 @@ label22:
 	sh2add a3, a1, s0
 	lw a2, 0(a3)
 	beq a2, zero, label55
-	j label191
-label23:
-	sh2add a2, a0, s1
-	lw a0, 0(a2)
-	sh2add a3, a1, s0
-	lw a2, 0(a3)
-	beq a2, zero, label55
 	li a3, -1
 	bne a0, a3, label22
-	addiw a1, a1, 1
-	addiw a0, a0, 1
-	sh2add a2, a1, s1
-	sw a0, 0(a2)
-	sh2add a3, a1, s0
-	lw a2, 0(a3)
-	beq a2, zero, label55
-	li a3, -1
-	bne a0, a3, label22
-	addiw a1, a1, 1
-	addiw a0, a0, 1
-	sh2add a2, a1, s1
-	sw a0, 0(a2)
-	sh2add a3, a1, s0
-	lw a2, 0(a3)
-	beq a2, zero, label55
-	li a3, -1
-	bne a0, a3, label22
-	addiw a1, a1, 1
-	addiw a0, a0, 1
-	sh2add a2, a1, s1
-	sw a0, 0(a2)
-	sh2add a3, a1, s0
-	lw a2, 0(a3)
-	beq a2, zero, label55
-	li a3, -1
-	bne a0, a3, label22
-	addiw a1, a1, 1
-	addiw a0, a0, 1
-	sh2add a2, a1, s1
-	sw a0, 0(a2)
-	sh2add a3, a1, s0
-	lw a2, 0(a3)
-	beq a2, zero, label55
-	li a3, -1
-	bne a0, a3, label22
-	j label180
+	j label182
 label15:
 	jal putint
 	li a0, 10
@@ -238,12 +236,15 @@ label15:
 	addi sp, sp, 40
 	ret
 label18:
-	sh2add a2, a1, s1
-	lw a1, 0(a2)
-	xori a3, a1, -1
-	sltiu a2, a3, 1
-	addw a0, a0, a2
-	addw a1, a1, a2
+	sh2add a1, a1, s1
+	lw a2, 0(a1)
+	mv a1, zero
+	xori a4, a2, -1
+	sltiu a3, a4, 1
+	bne a3, zero, label120
+	mv a1, a2
+label120:
+	addw a0, a0, a3
 	sh2add a3, a0, s2
 	lw a2, 0(a3)
 	beq a2, zero, label62

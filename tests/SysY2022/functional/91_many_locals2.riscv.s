@@ -3,39 +3,16 @@
 .text
 .globl main
 main:
-	addi sp, sp, -16
+	addi sp, sp, -24
+	sd s1, 16(sp)
 	sd s0, 8(sp)
 	sd ra, 0(sp)
 	jal getint
-	li a1, 5
-	bne a0, a1, label9
-	addiw a0, a0, 1
-	bne a0, a1, label9
-	addiw a0, a0, 1
-	bne a0, a1, label9
-	addiw a0, a0, 1
-	bne a0, a1, label9
-	addiw a0, a0, 1
-	bne a0, a1, label9
-	addiw a0, a0, 1
-	bne a0, a1, label9
-	addiw a0, a0, 1
-	bne a0, a1, label9
-	addiw a0, a0, 1
-	bne a0, a1, label9
-	addiw a0, a0, 1
-	bne a0, a1, label9
-	addiw a0, a0, 1
-	bne a0, a1, label9
-	addiw a0, a0, 1
-	bne a0, a1, label9
-label2:
-	addiw a0, a0, 1
-	li a1, 5
-	bne a0, a1, label9
-	j label2
-label9:
+	li s0, 6
+	li s1, 5
+	beq a0, s1, label8
 	mv s0, a0
+label8:
 	mv a0, zero
 	jal putint
 	li a0, 1
@@ -46,7 +23,7 @@ label9:
 	jal putint
 	li a0, 4
 	jal putint
-	li a0, 5
+	mv a0, s1
 	jal putint
 	li a0, 6
 	jal putint
@@ -105,5 +82,6 @@ label9:
 	ld ra, 0(sp)
 	li a0, 25
 	ld s0, 8(sp)
-	addi sp, sp, 16
+	ld s1, 16(sp)
+	addi sp, sp, 24
 	ret

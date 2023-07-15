@@ -157,11 +157,11 @@ pcrel285:
 	addi a0, a1, %pcrel_lo(pcrel285)
 	mv a1, zero
 	li a2, 4
-	ble s0, a2, label29
-	j label28
+	ble s0, a2, label27
+	j label26
 label102:
 	mv s0, zero
-label22:
+label30:
 	li a0, 47
 	jal _sysy_stoptime
 	subw a1, zero, s0
@@ -181,12 +181,12 @@ label262:
 	j label250
 label19:
 	mulw t2, a3, a4
-	addw t3, a0, t2
-	addw t2, a5, a4
-	sh2add t1, t3, a2
+	addw t3, a5, a4
+	addw t4, a0, t2
 	addiw a4, a4, 1
-	sh2add t3, t2, a2
-	lw t4, 0(t3)
+	sh2add t2, t3, a2
+	sh2add t1, t4, a2
+	lw t4, 0(t2)
 	sw t4, 0(t1)
 	ble a1, a4, label17
 	bge a0, a4, label19
@@ -203,7 +203,7 @@ label19:
 	ble a1, a4, label17
 	bge a0, a4, label19
 	j label250
-label28:
+label26:
 	sh2add a4, a1, a0
 	addiw t1, a1, 1
 	lw a5, 0(a4)
@@ -226,17 +226,17 @@ label28:
 	mulw a4, a4, a5
 	addw a3, a3, a4
 	addiw a2, a2, 4
-	ble s0, a2, label29
-	j label28
-label29:
+	ble s0, a2, label27
+	j label26
+label27:
 	sh2add a4, a1, a0
 	mulw a5, a1, a1
 	lw a2, 0(a4)
 	addiw a1, a1, 1
 	mulw a4, a2, a5
 	addw a3, a3, a4
-	ble s0, a1, label145
-	j label29
-label145:
+	ble s0, a1, label144
+	j label27
+label144:
 	mv s0, a3
-	j label22
+	j label30

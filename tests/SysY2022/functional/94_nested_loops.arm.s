@@ -98,9 +98,9 @@ label2:
 	mov r1, #2880
 	mla r2, r0, r1, r2
 	str r2, [sp, #208]
-	bge label6
+	bge label103
 	b label464
-label6:
+label103:
 	ldr r1, [sp, #20]
 	add r1, r1, #1
 	str r1, [sp, #20]
@@ -125,7 +125,7 @@ label167:
 label464:
 	mov r0, #0
 	str r0, [sp, #204]
-label7:
+label6:
 	ldr r1, [sp, #216]
 	ldr r0, [sp, #204]
 	add r0, r1, r0
@@ -136,13 +136,13 @@ label7:
 	cmp r0, #3
 	mla r3, r0, r1, r2
 	str r3, [sp, #192]
-	bge label16
+	bge label15
 	mov r1, #0
 	str r1, [sp, #184]
 	cmp r1, #4
-	bge label115
-	b label11
-label16:
+	bge label114
+	b label10
+label15:
 	ldr r0, [sp, #0]
 	add r0, r0, #1
 	str r0, [sp, #0]
@@ -154,9 +154,9 @@ label16:
 	mov r1, #2880
 	mla r2, r0, r1, r2
 	str r2, [sp, #208]
-	bge label6
+	bge label103
 	b label464
-label11:
+label10:
 	ldr r0, [sp, #44]
 	mov r2, #240
 	ldr r1, [sp, #184]
@@ -203,7 +203,7 @@ label11:
 	ldr r1, [sp, #184]
 	mla r1, r1, r2, r3
 	mov r2, #0
-label12:
+label11:
 	mov r3, #48
 	ldr r5, [sp, #172]
 	mul r4, r2, r3
@@ -234,20 +234,15 @@ label12:
 	add r2, r2, #1
 	str r4, [r3, #44]
 	cmp r2, #5
-	bge label14
-	b label12
-label14:
+	bge label13
+	b label11
+label13:
 	ldr r1, [sp, #184]
 	add r1, r1, #1
 	str r1, [sp, #184]
 	cmp r1, #4
-	bge label115
-	b label11
-label115:
-	ldr r0, [sp, #204]
-	add r0, r0, #1
-	str r0, [sp, #204]
-	b label7
+	bge label114
+	b label10
 label166:
 	mov r0, #0
 	str r0, [sp, #116]
@@ -281,6 +276,20 @@ label22:
 	str r2, [sp, #112]
 	bge label167
 	b label166
+label27:
+	ldr r0, [sp, #148]
+	add r0, r0, #1
+	str r0, [sp, #148]
+	mov r1, #1792
+	ldr r2, [sp, #136]
+	cmp r0, #3
+	mla r10, r0, r1, r2
+	str r10, [sp, #152]
+	bge label31
+	mov r1, #0
+	cmp r1, #2
+	bge label27
+	b label28
 label31:
 	ldr r0, [sp, #116]
 	add r0, r0, #1
@@ -297,20 +306,6 @@ label31:
 	mov r0, #0
 	str r0, [sp, #148]
 	mov r1, #1792
-	cmp r0, #3
-	mla r10, r0, r1, r2
-	str r10, [sp, #152]
-	bge label31
-	mov r1, #0
-	cmp r1, #2
-	bge label27
-	b label28
-label27:
-	ldr r0, [sp, #148]
-	add r0, r0, #1
-	str r0, [sp, #148]
-	mov r1, #1792
-	ldr r2, [sp, #136]
 	cmp r0, #3
 	mla r10, r0, r1, r2
 	str r10, [sp, #152]
@@ -406,6 +401,11 @@ label263:
 	cmp r8, #2
 	bge label27
 	b label28
+label114:
+	ldr r0, [sp, #204]
+	add r0, r0, #1
+	str r0, [sp, #204]
+	b label6
 label32:
 	mov r1, #5760
 	ldr r2, [sp, #92]

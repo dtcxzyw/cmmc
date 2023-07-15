@@ -295,10 +295,10 @@ main:
 	sw zero, 108(sp)
 	sw zero, 112(sp)
 	sw a0, 116(sp)
-pcrel423:
+pcrel421:
 	auipc a0, %pcrel_hi(a)
 	sw zero, 120(sp)
-	addi s0, a0, %pcrel_lo(pcrel423)
+	addi s0, a0, %pcrel_lo(pcrel421)
 	sw a1, 124(sp)
 	sw zero, 72(sp)
 	sw zero, 56(sp)
@@ -313,7 +313,76 @@ label238:
 	mv a0, zero
 	li a1, 30
 	bge zero, a1, label288
-label243:
+	j label259
+label288:
+	li s6, 1
+	lw a0, 76(sp)
+	li a1, 120
+	mul a2, s6, a1
+	add s7, s0, a2
+	bgt s6, a0, label258
+	li s8, 1
+	lw a0, 80(sp)
+	bgt s8, a0, label257
+	j label251
+label258:
+	mv a0, s10
+	li a2, 1
+	mv a1, s9
+	mv a3, s5
+	mv a4, s4
+	mv a5, s3
+	mv a6, s2
+	mv a7, s1
+	jal search
+	mv a1, a0
+	li a2, 11
+	blt a0, a2, label395
+	li a1, -1
+label395:
+	mv a0, a1
+	jal putint
+	li a0, 10
+	jal putch
+	j label238
+label251:
+	jal getint
+	li a1, 2
+	sh2add a2, s8, s7
+	sw a0, 0(a2)
+	bne a0, a1, label255
+	mv s9, s8
+	mv s10, s6
+	addiw s8, s8, 1
+	lw a0, 80(sp)
+	bgt s8, a0, label257
+	j label251
+label255:
+	li a1, 3
+	bne a0, a1, label252
+	sw s6, 72(sp)
+	sw s8, 56(sp)
+	addiw s8, s8, 1
+	lw a0, 80(sp)
+	bgt s8, a0, label257
+	j label251
+label257:
+	addiw s6, s6, 1
+	lw a0, 76(sp)
+	li a1, 120
+	mul a2, s6, a1
+	add s7, s0, a2
+	bgt s6, a0, label258
+	li s8, 1
+	lw a0, 80(sp)
+	bgt s8, a0, label257
+	j label251
+label252:
+	addiw s8, s8, 1
+	lw a0, 80(sp)
+	bgt s8, a0, label257
+	j label251
+label259:
 	li a2, 120
 	mul a3, a0, a2
 	addiw a0, a0, 1
@@ -351,74 +420,7 @@ label243:
 	sw a2, 116(a1)
 	li a1, 30
 	bge a0, a1, label288
-	j label243
-label259:
-	mv a0, s10
-	li a2, 1
-	mv a1, s9
-	mv a3, s5
-	mv a4, s4
-	mv a5, s3
-	mv a6, s2
-	mv a7, s1
-	jal search
-	mv a1, a0
-	li a2, 11
-	blt a0, a2, label395
-	li a1, -1
-label395:
-	mv a0, a1
-	jal putint
-	li a0, 10
-	jal putch
-	j label238
-label288:
-	li s6, 1
-	lw a1, 76(sp)
-	li a2, 120
-	mul a0, s6, a2
-	add s7, s0, a0
-	bgt s6, a1, label259
-	li s8, 1
-	lw a0, 80(sp)
-	bgt s8, a0, label258
-label252:
-	jal getint
-	li a2, 2
-	sh2add a1, s8, s7
-	sw a0, 0(a1)
-	bne a0, a2, label256
-	mv s9, s8
-	mv s10, s6
-	addiw s8, s8, 1
-	lw a0, 80(sp)
-	bgt s8, a0, label258
-	j label252
-label253:
-	addiw s8, s8, 1
-	lw a0, 80(sp)
-	bgt s8, a0, label258
-	j label252
-label256:
-	li a1, 3
-	bne a0, a1, label253
-	sw s6, 72(sp)
-	sw s8, 56(sp)
-	addiw s8, s8, 1
-	lw a0, 80(sp)
-	bgt s8, a0, label258
-	j label252
-label258:
-	addiw s6, s6, 1
-	lw a1, 76(sp)
-	li a2, 120
-	mul a0, s6, a2
-	add s7, s0, a0
-	bgt s6, a1, label259
-	li s8, 1
-	lw a0, 80(sp)
-	bgt s8, a0, label258
-	j label252
+	j label259
 label260:
 	mv a0, zero
 	ld ra, 136(sp)

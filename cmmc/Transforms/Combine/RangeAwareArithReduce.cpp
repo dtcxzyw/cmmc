@@ -209,6 +209,38 @@ class RangeAwareArithReduce final : public TransformPass<Function> {
                 }
             }
 
+            CompareOp cmp1, cmp2;
+            intmax_t i1;
+            if(and_(icmp(cmp1, any(v1), int_(i1)), icmp(cmp2, any(v2), any(v3)))(matchCtx)) {
+                if((i1 == 0 && cmp1 == CompareOp::ICmpSignedGreaterEqual) ||
+                   (i1 == -1 && cmp1 == CompareOp::ICmpSignedGreaterThan)) {
+                    if(v1 == v3) {
+                        cmp2 = getReversedOp(cmp2);
+                        std::swap(v2, v3);
+                    }
+                    if(v1 == v2 && rangeAnalysis.query(v3, dom, inst, depth).isNonNegative()) {
+                        if(cmp2 == CompareOp::ICmpSignedLessEqual)
+                            return builder.makeOp<CompareInst>(InstructionID::ICmp, CompareOp::ICmpUnsignedLessEqual, v2, v3);
+                        if(cmp2 == CompareOp::ICmpSignedLessThan)
+                            return builder.makeOp<CompareInst>(InstructionID::ICmp, CompareOp::ICmpUnsignedLessThan, v2, v3);
+                    }
+                }
+            }
+            if(or_(icmp(cmp1, any(v1), int_(i1)), icmp(cmp2, any(v2), any(v3)))(matchCtx)) {
+                if((i1 == 0 && cmp1 == CompareOp::ICmpSignedLessThan) || (i1 == -1 && cmp1 == CompareOp::ICmpSignedLessEqual)) {
+                    if(v1 == v3) {
+                        cmp2 = getReversedOp(cmp2);
+                        std::swap(v2, v3);
+                    }
+                    if(v1 == v2 && rangeAnalysis.query(v3, dom, inst, depth).isNonNegative()) {
+                        if(cmp2 == CompareOp::ICmpSignedGreaterEqual)
+                            return builder.makeOp<CompareInst>(InstructionID::ICmp, CompareOp::ICmpUnsignedGreaterEqual, v2, v3);
+                        if(cmp2 == CompareOp::ICmpSignedGreaterThan)
+                            return builder.makeOp<CompareInst>(InstructionID::ICmp, CompareOp::ICmpUnsignedGreaterThan, v2, v3);
+                    }
+                }
+            }
+
             return nullptr;
         });
         return ret || modified;

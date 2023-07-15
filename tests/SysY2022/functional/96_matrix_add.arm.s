@@ -51,8 +51,8 @@ main:
 	vstr s0, [r0, #8]
 	add r1, r7, #4
 	cmp r1, #3
-	bge label4
-label15:
+	bge label5
+label4:
 	ldr r2, [sp, #0]
 	add r10, r0, r7, lsl #2
 	add r2, r2, r7, lsl #2
@@ -121,9 +121,9 @@ label15:
 	mov r7, r1
 	add r1, r1, #4
 	cmp r1, #3
-	bge label4
-	b label15
-label4:
+	bge label5
+	b label4
+label5:
 	ldr r2, [sp, #0]
 	add r1, r2, r7, lsl #2
 	vldr s0, [r1, #0]
@@ -155,11 +155,11 @@ label4:
 	add r7, r7, #1
 	cmp r7, #3
 	vstr s0, [r1, #0]
-	bge label87
-	b label4
-label87:
+	bge label168
+	b label5
+label168:
 	mov r4, #0
-label6:
+label7:
 	ldr r5, [sp, #120]
 	add r0, r5, r4, lsl #2
 	vldr s0, [r0, #0]
@@ -168,13 +168,13 @@ label6:
 	bl putint
 	add r4, r4, #1
 	cmp r4, #3
-	bge label8
-	b label6
-label8:
+	bge label9
+	b label7
+label9:
 	mov r0, #10
 	bl putch
 	mov r4, #0
-label9:
+label10:
 	ldr r8, [sp, #4]
 	add r0, r8, r4, lsl #2
 	vldr s0, [r0, #0]
@@ -183,13 +183,13 @@ label9:
 	bl putint
 	add r4, r4, #1
 	cmp r4, #3
-	bge label11
-	b label9
-label11:
+	bge label12
+	b label10
+label12:
 	mov r0, #10
 	bl putch
 	mov r4, #0
-label12:
+label13:
 	ldr r11, [sp, #104]
 	add r0, r11, r4, lsl #2
 	vldr s0, [r0, #0]
@@ -198,9 +198,9 @@ label12:
 	bl putint
 	add r4, r4, #1
 	cmp r4, #3
-	bge label14
-	b label12
-label14:
+	bge label15
+	b label13
+label15:
 	mov r0, #10
 	bl putch
 	add sp, sp, #156

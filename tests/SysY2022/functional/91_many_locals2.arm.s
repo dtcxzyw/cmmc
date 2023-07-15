@@ -6,47 +6,13 @@
 .fpu vfpv4
 .globl main
 main:
-	push { r4, lr }
+	push { r4, r5, lr }
+	sub sp, sp, #4
 	bl getint
 	cmp r0, #5
-	bne label9
-	add r0, r0, #1
-	cmp r0, #5
-	bne label9
-	add r0, r0, #1
-	cmp r0, #5
-	bne label9
-	add r0, r0, #1
-	cmp r0, #5
-	bne label9
-	add r0, r0, #1
-	cmp r0, #5
-	bne label9
-	add r0, r0, #1
-	cmp r0, #5
-	bne label9
-	add r0, r0, #1
-	cmp r0, #5
-	bne label9
-	add r0, r0, #1
-	cmp r0, #5
-	bne label9
-	add r0, r0, #1
-	cmp r0, #5
-	bne label9
-	add r0, r0, #1
-	cmp r0, #5
-	bne label9
-	add r0, r0, #1
-	cmp r0, #5
-	bne label9
-label2:
-	add r0, r0, #1
-	cmp r0, #5
-	bne label9
-	b label2
-label9:
+	mov r5, #6
 	mov r4, r0
+	moveq r4, r5
 	mov r0, #0
 	bl putint
 	mov r0, #1
@@ -59,7 +25,7 @@ label9:
 	bl putint
 	mov r0, #5
 	bl putint
-	mov r0, #6
+	mov r0, r5
 	bl putint
 	mov r0, #7
 	bl putint
@@ -113,5 +79,6 @@ label9:
 	bl putint
 	mov r0, #10
 	bl putch
+	add sp, sp, #4
 	mov r0, #25
-	pop { r4, pc }
+	pop { r4, r5, pc }

@@ -17,3 +17,9 @@ int foo4(int a[10], int b) {
 int foo5(int a[16], int b) {
     return a[b % 16];
 }
+int dynamic_range_check(int x, int y) {
+    if(y >= 0) {
+        return 0 <= x && x < y;
+    }
+    return x;
+}
