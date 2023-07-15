@@ -98,8 +98,8 @@ label61:
 	b label61
 label62:
 	bl getch
-	cmp r0, #48
 	mov r1, #0
+	cmp r0, #48
 	mov r4, r0
 	mov r0, #0
 	movwlt r0, #1
@@ -121,16 +121,17 @@ label408:
 	b label122
 label63:
 	bl getch
-	mov r1, #0
 	mov r2, #0
+	mov r1, #0
 	cmp r0, #48
 	movwlt r1, #1
 	cmp r0, #57
 	movwgt r2, #1
 	cmp r4, #45
-	orrs r1, r1, r2
+	orr r1, r1, r2
 	mov r2, #1
 	moveq r5, r2
+	cmp r1, #0
 	beq label164
 	mov r4, r0
 	b label63
@@ -242,9 +243,10 @@ label98:
 	cmp r0, #57
 	movwgt r2, #1
 	cmp r9, #45
-	orrs r1, r1, r2
+	orr r1, r1, r2
 	mov r2, #1
 	moveq r10, r2
+	cmp r1, #0
 	beq label280
 	mov r9, r0
 	b label98
@@ -263,9 +265,10 @@ label101:
 	cmp r0, #57
 	movwgt r2, #1
 	cmp r9, #45
-	orrs r1, r1, r2
+	orr r1, r1, r2
 	mov r2, #1
 	moveq r10, r2
+	cmp r1, #0
 	beq label289
 	mov r9, r0
 	b label101
@@ -284,9 +287,10 @@ label104:
 	cmp r0, #57
 	movwgt r2, #1
 	cmp r9, #45
-	orrs r1, r1, r2
+	orr r1, r1, r2
 	mov r2, #1
 	moveq r10, r2
+	cmp r1, #0
 	beq label298
 	mov r9, r0
 	b label104

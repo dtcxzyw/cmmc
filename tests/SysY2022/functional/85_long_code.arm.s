@@ -230,13 +230,13 @@ label21:
 .globl main
 main:
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
-	mov r5, #26
 	mov r4, #89
+	mov r5, #26
 	mov r2, #7
 	movw r6, #282
 	sub sp, sp, #364
-	mov r1, #23
 	mov r11, #254
+	mov r1, #23
 	mov r7, #39
 	mov r8, #28
 	mov r9, #1

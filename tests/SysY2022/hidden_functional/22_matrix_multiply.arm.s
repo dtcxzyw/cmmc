@@ -21,8 +21,8 @@ main:
 	bl getint
 	str r0, [sp, #0]
 	bl getint
-	mov r4, #0
 	movw r7, #:lower16:b
+	mov r4, #0
 	str r0, [sp, #8]
 	mov r6, r0
 	movw r1, #:lower16:a

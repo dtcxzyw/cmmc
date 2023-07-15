@@ -139,9 +139,10 @@ label109:
 	cmp r0, #57
 	movwgt r2, #1
 	cmp r5, #45
-	orrs r1, r1, r2
+	orr r1, r1, r2
 	mov r2, #1
 	moveq r6, r2
+	cmp r1, #0
 	beq label213
 	mov r5, r0
 	b label109
@@ -163,10 +164,11 @@ label118:
 	cmp r6, #57
 	movwgt r1, #1
 	cmp r5, #0
-	orrs r0, r0, r1
+	orr r0, r0, r1
 	mov r5, r7
 	rsb r1, r7, #0
 	movne r5, r1
+	cmp r0, #0
 	beq label240
 	mov r7, #0
 	b label120
@@ -193,9 +195,10 @@ label120:
 	cmp r0, #57
 	movwgt r2, #1
 	cmp r6, #45
-	orrs r1, r1, r2
+	orr r1, r1, r2
 	mov r2, #1
 	moveq r7, r2
+	cmp r1, #0
 	beq label249
 	mov r6, r0
 	b label120
@@ -380,10 +383,11 @@ label168:
 	cmp r9, #57
 	movwgt r1, #1
 	cmp r8, #0
-	orrs r0, r0, r1
+	orr r0, r0, r1
 	mov r8, r10
 	rsb r1, r10, #0
 	movne r8, r1
+	cmp r0, #0
 	beq label426
 	mov r10, #0
 	b label181
@@ -455,9 +459,10 @@ label181:
 	cmp r0, #57
 	movwgt r2, #1
 	cmp r9, #45
-	orrs r1, r1, r2
+	orr r1, r1, r2
 	mov r2, #1
 	moveq r10, r2
+	cmp r1, #0
 	beq label466
 	mov r9, r0
 	b label181
@@ -476,9 +481,10 @@ label184:
 	cmp r0, #57
 	movwgt r2, #1
 	cmp r8, #45
-	orrs r1, r1, r2
+	orr r1, r1, r2
 	mov r2, #1
 	moveq r9, r2
+	cmp r1, #0
 	beq label475
 	mov r8, r0
 	b label184
@@ -501,9 +507,10 @@ label158:
 	cmp r0, #57
 	movwgt r2, #1
 	cmp r8, #45
-	orrs r1, r1, r2
+	orr r1, r1, r2
 	mov r2, #1
 	moveq r9, r2
+	cmp r1, #0
 	beq label393
 	mov r8, r0
 	b label158
@@ -560,10 +567,11 @@ label142:
 	cmp r9, #57
 	movwgt r1, #1
 	cmp r8, #0
-	orrs r0, r0, r1
+	orr r0, r0, r1
 	mov r8, r10
 	rsb r1, r10, #0
 	movne r8, r1
+	cmp r0, #0
 	beq label330
 	mov r10, #0
 	b label144
@@ -586,9 +594,10 @@ label144:
 	cmp r0, #57
 	movwgt r2, #1
 	cmp r9, #45
-	orrs r1, r1, r2
+	orr r1, r1, r2
 	mov r2, #1
 	moveq r10, r2
+	cmp r1, #0
 	beq label339
 	mov r9, r0
 	b label144
@@ -616,7 +625,7 @@ label150:
 	cmp r9, #0
 	rsb r1, r11, #0
 	ldr r2, [sp, #4]
-	subs r6, r6, #1
+	sub r6, r6, #1
 	mov r0, r11
 	movne r0, r1
 	str r0, [r2, r7, lsl #2]
@@ -632,6 +641,7 @@ label150:
 	add r1, r7, #1
 	add r7, r7, #2
 	str r1, [r4, r0, lsl #2]
+	cmp r6, #0
 	beq label134
 	b label135
 label134:

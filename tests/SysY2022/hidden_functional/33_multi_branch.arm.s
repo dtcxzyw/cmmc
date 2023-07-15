@@ -15,8 +15,8 @@ main:
 	ble label105
 label4:
 	bl getint
-	mov r1, #0
 	mov r2, #0
+	mov r1, #0
 	cmp r0, #0
 	movwgt r1, #1
 	cmp r0, #100

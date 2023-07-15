@@ -9,14 +9,14 @@ main:
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
 	mov r11, #9
 	mov r9, #8
-	sub sp, sp, #372
-	mov r10, #5
-	mov r6, #4
-	mov r2, #0
-	mov r8, #7
-	mov r4, #1
 	mov r3, #2
+	mov r10, #5
+	mov r2, #0
 	mov r5, #3
+	mov r6, #4
+	sub sp, sp, #372
+	mov r4, #1
+	mov r8, #7
 	add r0, sp, #264
 	add r1, sp, #164
 	mov r7, sp

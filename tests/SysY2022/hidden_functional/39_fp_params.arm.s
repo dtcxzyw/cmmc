@@ -512,12 +512,12 @@ label788:
 	b label786
 params_fa40:
 	push { r4, r5, r6, r7, r8, r9, r10, lr }
-	mov r6, r3
-	mov r7, r2
-	mov r5, r0
 	sub sp, sp, #344
+	mov r7, r2
 	mov r9, r1
+	mov r5, r0
 	str r1, [sp, #308]
+	mov r6, r3
 	str r2, [sp, #304]
 	str r3, [sp, #300]
 	ldr r8, [sp, #376]
@@ -859,12 +859,12 @@ label450:
 params_mix:
 	push { r4, r5, r6, r7, r8, r9, r10, lr }
 	vpush { s16, s17, s18, s19, s20, s21, s22 }
-	sub sp, sp, #428
-	mov r7, r3
 	mov r9, r1
 	mov r5, r0
-	str r1, [sp, #244]
 	mov r10, r2
+	mov r7, r3
+	sub sp, sp, #428
+	str r1, [sp, #244]
 	str r3, [sp, #248]
 	ldr r0, [sp, #488]
 	ldr r1, [sp, #492]

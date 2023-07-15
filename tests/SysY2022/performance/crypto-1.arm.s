@@ -22,11 +22,11 @@ main:
 	mov r5, r0
 	mov r0, #161
 	bl _sysy_starttime
-	movw r6, #:lower16:buffer
 	mov r0, #0
+	movw r6, #:lower16:buffer
 	mov r3, r4
-	movt r6, #:upper16:buffer
 	str r0, [sp, #324]
+	movt r6, #:upper16:buffer
 	ldr r1, [sp, #348]
 	str r0, [r1, #4]
 	str r0, [r1, #8]

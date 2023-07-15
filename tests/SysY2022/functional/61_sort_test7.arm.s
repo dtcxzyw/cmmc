@@ -27,8 +27,8 @@ label3:
 	mov r1, r4
 	bl merge_sort
 	mov r7, r5
-	mov r3, r5
 	mov r2, r6
+	mov r3, r5
 	movw r1, #:lower16:buf
 	movt r1, #:upper16:buf
 	mov r0, r1

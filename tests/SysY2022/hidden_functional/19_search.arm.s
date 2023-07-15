@@ -11,13 +11,13 @@ a:
 search:
 	push { r4, r5, r6, r7, r8, r9, lr }
 	cmp r2, #10
-	movw r6, #:lower16:a
+	sub sp, sp, #52
 	mov r5, r0
 	mov r8, r1
-	sub sp, sp, #52
-	movt r6, #:upper16:a
 	str r1, [sp, #40]
+	movw r6, #:lower16:a
 	str r2, [sp, #36]
+	movt r6, #:upper16:a
 	str r3, [sp, #16]
 	ldr r3, [sp, #80]
 	str r3, [sp, #20]
@@ -311,16 +311,16 @@ label12:
 .globl main
 main:
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
-	movw r4, #:lower16:a
 	mvn r1, #0
 	sub sp, sp, #84
+	movw r4, #:lower16:a
 	mov r11, #0
-	movt r4, #:upper16:a
 	add r5, sp, #32
 	add r0, sp, #20
 	add r6, sp, #16
-	mov r10, r11
+	movt r4, #:upper16:a
 	str r0, [sp, #72]
+	mov r10, r11
 	add r0, sp, #24
 	str r0, [sp, #68]
 	add r0, sp, #28

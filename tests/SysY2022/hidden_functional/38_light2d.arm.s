@@ -133,11 +133,11 @@ label54:
 	movs r6, r2
 	add r0, r2, r0
 	movlt r6, r0
-	movw r2, #4059
 	movw r0, #48161
+	movw r2, #4059
 	vmov s0, r6
-	movt r2, #49353
 	movt r0, #19646
+	movt r2, #49353
 	vmov s1, r0
 	movw r0, #4059
 	movt r0, #16585

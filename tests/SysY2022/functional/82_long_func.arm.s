@@ -9,8 +9,8 @@ main:
 	push { r4, r5, r6, r7, r8, r9, r10, lr }
 	mov r0, #4
 	mov r4, #1
-	mov r1, #2
 	sub sp, sp, #80
+	mov r1, #2
 	mov r5, sp
 	str r5, [sp, #64]
 	str r4, [sp, #0]

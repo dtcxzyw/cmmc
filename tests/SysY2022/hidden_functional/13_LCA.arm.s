@@ -143,9 +143,9 @@ main:
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
 	sub sp, sp, #28
 	bl getch
+	movw r6, #:lower16:dep
 	cmp r0, #48
 	mov r1, #0
-	movw r6, #:lower16:dep
 	mov r4, r0
 	movw r3, #:lower16:next
 	movt r6, #:upper16:dep
@@ -188,10 +188,11 @@ label90:
 	cmp r5, #57
 	movwgt r1, #1
 	cmp r4, #0
-	orrs r0, r0, r1
+	orr r0, r0, r1
 	mov r4, r6
 	rsb r1, r6, #0
 	movne r4, r1
+	cmp r0, #0
 	beq label214
 	mov r6, #0
 	b label169
@@ -267,9 +268,10 @@ label169:
 	cmp r0, #57
 	movwgt r2, #1
 	cmp r5, #45
-	orrs r1, r1, r2
+	orr r1, r1, r2
 	mov r2, #1
 	moveq r6, r2
+	cmp r1, #0
 	beq label522
 	mov r5, r0
 	b label169
@@ -322,9 +324,10 @@ label163:
 	cmp r0, #57
 	movwgt r2, #1
 	cmp r8, #45
-	orrs r1, r1, r2
+	orr r1, r1, r2
 	mov r2, #1
 	moveq r9, r2
+	cmp r1, #0
 	beq label502
 	mov r8, r0
 	b label163
@@ -391,18 +394,19 @@ label106:
 	b label106
 label109:
 	bl getch
-	mov r1, #0
 	cmp r0, #48
+	mov r1, #0
 	mov r6, r0
 	mov r0, #0
 	movwlt r0, #1
 	cmp r6, #57
 	movwgt r1, #1
 	cmp r5, #0
-	orrs r0, r0, r1
+	orr r0, r0, r1
 	mov r5, r7
 	rsb r1, r7, #0
 	movne r5, r1
+	cmp r0, #0
 	beq label274
 	mov r7, #0
 	b label134
@@ -422,9 +426,10 @@ label137:
 	cmp r0, #57
 	movwgt r2, #1
 	cmp r5, #45
-	orrs r1, r1, r2
+	orr r1, r1, r2
 	mov r2, #1
 	moveq r6, r2
+	cmp r1, #0
 	beq label417
 	mov r5, r0
 	b label137
@@ -450,9 +455,10 @@ label134:
 	cmp r0, #57
 	movwgt r2, #1
 	cmp r6, #45
-	orrs r1, r1, r2
+	orr r1, r1, r2
 	mov r2, #1
 	moveq r7, r2
+	cmp r1, #0
 	beq label408
 	mov r6, r0
 	b label134
@@ -612,10 +618,11 @@ label150:
 	cmp r9, #57
 	movwgt r1, #1
 	cmp r8, #0
-	orrs r0, r0, r1
+	orr r0, r0, r1
 	mov r8, r10
 	rsb r1, r10, #0
 	movne r8, r1
+	cmp r0, #0
 	beq label450
 	mov r10, #0
 	b label160
@@ -642,9 +649,10 @@ label160:
 	cmp r0, #57
 	movwgt r2, #1
 	cmp r9, #45
-	orrs r1, r1, r2
+	orr r1, r1, r2
 	mov r2, #1
 	moveq r10, r2
+	cmp r1, #0
 	beq label493
 	mov r9, r0
 	b label160
@@ -704,9 +712,10 @@ label84:
 	cmp r0, #57
 	movwgt r2, #1
 	cmp r4, #45
-	orrs r1, r1, r2
+	orr r1, r1, r2
 	mov r2, #1
 	moveq r5, r2
+	cmp r1, #0
 	beq label199
 	mov r4, r0
 	b label84

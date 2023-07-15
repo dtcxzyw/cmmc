@@ -10,16 +10,16 @@ dp:
 .fpu vfpv4
 dfs:
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
+	sub sp, sp, #12
 	mov r5, r0
 	mov r6, r1
-	sub sp, sp, #12
 	mov r7, r2
-	mov r8, r3
-	movw r0, #:lower16:dp
 	ldr r10, [sp, #48]
+	movw r0, #:lower16:dp
+	mov r8, r3
+	ldr r9, [sp, #52]
 	movw r1, #55744
 	movt r0, #:upper16:dp
-	ldr r9, [sp, #52]
 	movt r1, #44
 	mla r0, r5, r1, r0
 	movw r1, #32224
@@ -88,11 +88,11 @@ label11:
 	mov r1, r6
 	mov r2, r7
 	bl dfs
-	movw r1, #51719
 	movw r2, #12185
+	movw r1, #51719
 	mla r0, r10, r0, r4
-	movt r1, #15258
 	movt r2, #17592
+	movt r1, #15258
 	smmul r2, r0, r2
 	asr r3, r2, #28
 	add r2, r3, r2, lsr #31

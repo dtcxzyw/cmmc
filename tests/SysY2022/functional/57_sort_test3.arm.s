@@ -6,9 +6,9 @@
 .fpu vfpv4
 QuickSort:
 	push { r4, r5, r6, r7, r8, r9, lr }
+	mov r7, #0
 	mov r5, r2
 	mov r4, r0
-	mov r7, #0
 	sub sp, sp, #4
 	mov r6, r7
 	cmp r2, r1

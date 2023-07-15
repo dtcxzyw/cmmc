@@ -20,21 +20,21 @@ line2:
 f:
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
 	mov r6, #1
-	movw r8, #:lower16:line2
-	mov r10, r0
 	sub sp, sp, #20
-	mov r11, r2
 	movw r5, #:lower16:ans
+	movw r8, #:lower16:line2
 	str r0, [sp, #8]
-	movw r4, #:lower16:row
+	mov r11, r2
 	movw r7, #:lower16:line1
 	str r2, [sp, #4]
-	movt r8, #:upper16:line2
-	movt r5, #:upper16:ans
+	mov r10, r0
+	movw r4, #:lower16:row
 	str r1, [sp, #0]
+	movt r5, #:upper16:ans
+	movt r8, #:upper16:line2
+	movt r7, #:upper16:line1
 	add r0, r0, #1
 	movt r4, #:upper16:row
-	movt r7, #:upper16:line1
 	str r0, [sp, #12]
 	ldr r0, [r2, #0]
 	cmp r6, r0

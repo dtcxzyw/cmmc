@@ -161,10 +161,10 @@ label54:
 	vmrs APSR_nzcv, FPSCR
 	vmovmi.f32 s0, s1
 	bl my_sin_impl
-	mov r0, #0
+	mov r1, #0
 	vcmp.f32 s19, s3
 	vmov.f32 s1, s19
-	mov r1, #0
+	mov r0, #0
 	vmov.f32 s18, s0
 	vmrs APSR_nzcv, FPSCR
 	vdiv.f32 s0, s19, s3
@@ -178,8 +178,8 @@ label54:
 	vmul.f32 s0, s0, s3
 	vsub.f32 s0, s19, s0
 	vmovne.f32 s1, s0
-	vcmp.f32 s1, s5
 	vsub.f32 s2, s1, s3
+	vcmp.f32 s1, s5
 	vmov.f32 s0, s1
 	vmrs APSR_nzcv, FPSCR
 	vmovgt.f32 s0, s2

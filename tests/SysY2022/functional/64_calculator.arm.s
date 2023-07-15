@@ -22,17 +22,17 @@ main:
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
 	sub sp, sp, #4
 	bl getch
-	movw r4, #:lower16:get2
-	movw r7, #:lower16:get
 	cmp r0, #13
+	movw r7, #:lower16:get
 	mov r1, #0
-	mov r2, #0
 	movw r6, #:lower16:chas
+	mov r2, #0
+	movw r4, #:lower16:get2
 	movw r5, #:lower16:ints
-	movt r4, #:upper16:get2
 	movt r7, #:upper16:get
 	movwne r1, #1
 	movt r6, #:upper16:chas
+	movt r4, #:upper16:get2
 	movt r5, #:upper16:ints
 	cmp r0, #10
 	movwne r2, #1

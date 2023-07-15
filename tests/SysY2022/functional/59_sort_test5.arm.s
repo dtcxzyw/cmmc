@@ -7,9 +7,9 @@
 .globl main
 main:
 	push { r4, r5, r6, lr }
-	mov r1, #3
 	sub sp, sp, #40
 	mov r0, #4
+	mov r1, #3
 	mov r4, sp
 	str r0, [sp, #0]
 	str r1, [r4, #4]

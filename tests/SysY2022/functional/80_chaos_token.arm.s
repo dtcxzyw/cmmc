@@ -127,10 +127,10 @@ saY_HeI10_To:
 .globl main
 main:
 	push { r4, r5, r6, r7, r8, r9, r10, lr }
-	sub sp, sp, #24
 	mov r0, #10
-	mov r4, sp
+	sub sp, sp, #24
 	str r0, [sp, #0]
+	mov r4, sp
 	mov r0, #0
 	str r0, [r4, #4]
 	str r0, [r4, #8]

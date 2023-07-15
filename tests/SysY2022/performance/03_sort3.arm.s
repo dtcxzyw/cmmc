@@ -13,8 +13,8 @@ radixSort:
 	sub sp, sp, #204
 	add r7, r0, #1
 	mov r4, r1
-	add r6, sp, #64
 	add r5, sp, #128
+	add r6, sp, #64
 	mov r9, sp
 	clz r7, r7
 	add r1, r2, #1

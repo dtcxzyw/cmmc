@@ -65,8 +65,8 @@ label5:
 	movne r6, r3
 	ldr r3, [r5, #24]
 	ldr r8, [sp, #60]
-	cmp r3, #0
 	add r7, r6, r3
+	cmp r3, #0
 	add r9, r8, r0
 	moveq r7, r6
 	cmp r8, #0

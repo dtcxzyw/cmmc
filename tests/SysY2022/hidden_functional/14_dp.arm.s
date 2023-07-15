@@ -24,8 +24,8 @@ main:
 	mov r4, r0
 	str r2, [sp, #0]
 	bl getint
-	movw r6, #:lower16:t
 	cmp r5, #0
+	movw r6, #:lower16:t
 	str r0, [sp, #4]
 	mov r8, r0
 	movt r6, #:upper16:t

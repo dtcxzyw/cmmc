@@ -22,8 +22,8 @@ main:
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
 	sub sp, sp, #4
 	bl getch
-	mov r1, #0
 	cmp r0, #48
+	mov r1, #0
 	mov r4, r0
 	mov r0, #0
 	movwlt r0, #1
@@ -52,9 +52,10 @@ label2:
 	cmp r0, #57
 	movwgt r2, #1
 	cmp r4, #45
-	orrs r1, r1, r2
+	orr r1, r1, r2
 	mov r2, #1
 	moveq r5, r2
+	cmp r1, #0
 	beq label86
 	mov r4, r0
 	b label2
@@ -116,16 +117,17 @@ label370:
 	b label69
 label61:
 	bl getch
-	mov r1, #0
 	mov r2, #0
+	mov r1, #0
 	cmp r0, #48
 	movwlt r1, #1
 	cmp r0, #57
 	movwgt r2, #1
 	cmp r9, #45
-	orrs r1, r1, r2
+	orr r1, r1, r2
 	mov r2, #1
 	moveq r10, r2
+	cmp r1, #0
 	beq label299
 	mov r9, r0
 	b label61

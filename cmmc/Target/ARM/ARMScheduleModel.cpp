@@ -12,10 +12,10 @@
     limitations under the License.
 */
 
-#include "cmmc/CodeGen/Target.hpp"
 #include <ARM/InstInfoDecl.hpp>
 #include <cmmc/CodeGen/InstInfo.hpp>
 #include <cmmc/CodeGen/MIR.hpp>
+#include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/Target/ARM/ARM.hpp>
 #include <cstdint>
 #include <iostream>
@@ -219,6 +219,7 @@ static bool optimizeFusedCompareWithZero(MIRBasicBlock& block, const CodeGenCont
     bool modified = false;
     auto& insts = block.instructions();
     std::unordered_map<uint32_t, MIRInst*> lastDef;
+    std::unordered_set<uint32_t> ccCmpWithZero;
 
     for(auto iter = insts.begin(); iter != insts.end();) {
         auto next = std::next(iter);
@@ -250,43 +251,47 @@ static bool optimizeFusedCompareWithZero(MIRBasicBlock& block, const CodeGenCont
             auto cc = curInst.getOperand(2);
 
             bool changed = false;
-            auto prev = lastDef.find(src.reg());
-            if(prev != lastDef.end()) {
-                auto& prevInst = *prev->second;
-                if(defCC(prevInst.opcode())) {
-                    changed = true;
-                } else {
-                    switch(prevInst.opcode()) {
-                        case ADD:
-                        case SUB:
-                        case AND:
-                        case ORR:
-                        case EOR:
-                        case ORN:
-                        case BIC:
-                        case RSB: {
-                            assert(dst == src);
-                            prevInst.setOpcode(prevInst.opcode() - ADD + ADDS);
-                            prevInst.setOperand<3>(cc);
-                            changed = true;
-                            break;
+            if(ccCmpWithZero.count(src.reg()))
+                changed = true;
+            else {
+                auto prev = lastDef.find(src.reg());
+                if(prev != lastDef.end()) {
+                    auto& prevInst = *prev->second;
+                    if(defCC(prevInst.opcode())) {
+                        changed = true;
+                    } else {
+                        switch(prevInst.opcode()) {
+                            case ADD:
+                            case SUB:
+                            case AND:
+                            case ORR:
+                            case EOR:
+                            case ORN:
+                            case BIC:
+                            case RSB: {
+                                assert(dst == src);
+                                prevInst.setOpcode(prevInst.opcode() - ADD + ADDS);
+                                prevInst.setOperand<3>(cc);
+                                changed = true;
+                                break;
+                            }
+                            case MOV:
+                            case MVN: {
+                                assert(dst == src);
+                                prevInst.setOpcode(prevInst.opcode() - MOV + MOVS);
+                                prevInst.setOperand<2>(cc);
+                                changed = true;
+                                break;
+                            }
+                            case MoveGPR: {
+                                prevInst.setOpcode(MOVS);
+                                prevInst.setOperand<2>(cc);
+                                changed = true;
+                                break;
+                            }
+                            default:
+                                break;
                         }
-                        case MOV:
-                        case MVN: {
-                            assert(dst == src);
-                            prevInst.setOpcode(prevInst.opcode() - MOV + MOVS);
-                            prevInst.setOperand<2>(cc);
-                            changed = true;
-                            break;
-                        }
-                        case MoveGPR: {
-                            prevInst.setOpcode(MOVS);
-                            prevInst.setOperand<2>(cc);
-                            changed = true;
-                            break;
-                        }
-                        default:
-                            break;
                     }
                 }
             }
@@ -301,16 +306,59 @@ static bool optimizeFusedCompareWithZero(MIRBasicBlock& block, const CodeGenCont
         }
 
         auto& instInfo = ctx.instInfo.getInstInfo(curInst);
-        if(defCC(curInst.opcode()) || requireFlag(instInfo.getInstFlag(), InstFlagCall))
+        if(defCC(curInst.opcode()))
             lastDef.clear();
+        if(requireFlag(instInfo.getInstFlag(), InstFlagCall)) {
+            lastDef.clear();
+            ccCmpWithZero.clear();
+        }
 
+        if(!lastDef.empty()) {
+            for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
+                if(instInfo.getOperandFlag(idx) & OperandFlagUse) {
+                    auto& op = curInst.getOperand(idx);
+                    if(isOperandCC(op)) {
+                        lastDef.clear();
+                        break;
+                    }
+                }
+            }
+        }
         for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
             if(instInfo.getOperandFlag(idx) & OperandFlagDef) {
                 auto& op = curInst.getOperand(idx);
                 if(isOperandGPR(op)) {
                     lastDef[op.reg()] = &curInst;
+                    ccCmpWithZero.erase(op.reg());
                 }
             }
+        }
+        switch(curInst.opcode()) {
+            case ADDS:
+            case SUBS:
+            case ANDS:
+            case ORRS:
+            case EORS:
+            case ORNS:
+            case BICS:
+            case RSBS:
+            case MOVS:
+            case MVNS:
+                ccCmpWithZero = { curInst.getOperand(0).reg() };
+                break;
+            case CMP:
+                if(isZero(curInst.getOperand(1))) {
+                    ccCmpWithZero = { curInst.getOperand(0).reg() };
+                } else {
+                    ccCmpWithZero.clear();
+                }
+                break;
+            case CMN:
+            case TRANSFER_FPSCR_FLAG:
+                ccCmpWithZero.clear();
+                break;
+            default:
+                break;
         }
 
         if(curInst.opcode() == MoveGPR) {

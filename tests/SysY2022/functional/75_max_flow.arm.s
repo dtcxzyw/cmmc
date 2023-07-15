@@ -16,11 +16,11 @@ rev:
 .fpu vfpv4
 dfs:
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
+	cmp r0, r1
 	mov r8, r3
 	mov r5, r2
-	mov r7, r1
 	mov r6, r0
-	cmp r0, r1
+	mov r7, r1
 	sub sp, sp, #20
 	ldr r9, [sp, #56]
 	bne label2
@@ -199,8 +199,8 @@ label11:
 .globl main
 main:
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
-	mov r9, #0
 	sub sp, sp, #100
+	mov r9, #0
 	add r4, sp, #48
 	add r3, sp, #8
 	str r3, [sp, #88]
@@ -310,10 +310,10 @@ label182:
 	bl getint
 	mov r9, r0
 	bl getint
-	mov r11, #0
 	mov r2, r0
-	mov r1, #40
+	mov r11, #0
 	subs r8, r8, #1
+	mov r1, #40
 	ldr r0, [r4, r10, lsl #2]
 	mla r3, r10, r1, r5
 	str r9, [r3, r0, lsl #2]

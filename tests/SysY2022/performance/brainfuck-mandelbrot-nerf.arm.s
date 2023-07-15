@@ -125,10 +125,10 @@ label4:
 label7:
 	bl getch
 	mov r1, #1
-	subs r2, r0, #35
 	movw r3, #3841
-	lsl r2, r1, r2
+	subs r2, r0, #35
 	movt r3, #2560
+	lsl r2, r1, r2
 	and r2, r3, r2
 	mov r3, #0
 	clz r2, r2
