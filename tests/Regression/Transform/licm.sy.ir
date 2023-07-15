@@ -157,26 +157,11 @@ func @licm5(i32 %i) -> i32 { NoRecurse } {
     i32* %4 = getelementptr &([123 * i32]* %3)[i64 0][i32 %i];
     i32 %5 = load i32* %4;
     i1 %6 = icmp slt i32 %2, i32 %5;
-    cbr i1 %6(prob = 0.97), ^super.header, ^b;
-  ^super.header:
-    i32 %7 = phi [^entry, i32 %2] [^super.header, i32 %8];
-    i32 %8 = add i32 %7, i32 16;
-    i1 %9 = icmp sgt i32 %5, i32 %8;
-    cbr i1 %9(prob = 0.89), ^super.header, ^super.header1;
-  ^b:
-    i32 %10 = phi [^entry, i32 %2] [^postbody, i32 %15];
-    ret i32 %10;
-  ^super.header1:
-    i32 %11 = phi [^super.header, i32 %7] [^super.header1, i32 %12];
-    i32 %12 = add i32 %11, i32 4;
-    i1 %13 = icmp sgt i32 %5, i32 %12;
-    cbr i1 %13(prob = 0.75), ^super.header1, ^while.body;
+    cbr i1 %6(prob = 0.97), ^while.body, ^b;
   ^while.body:
-    i32 %14 = phi [^super.header1, i32 %11] [^while.body, i32 %15];
-    i32 %15 = add i32 %14, i32 1;
-    i1 %16 = icmp sgt i32 %5, i32 %15;
-    cbr i1 %16(prob = 0.75), ^while.body, ^postbody;
-  ^postbody:
-    store i32* %1 with i32 %15;
+    store i32* %1 with i32 %5;
     ubr ^b;
+  ^b:
+    i32 %7 = phi [^entry, i32 %2] [^while.body, i32 %5];
+    ret i32 %7;
 }

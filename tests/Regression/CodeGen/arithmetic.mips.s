@@ -147,6 +147,14 @@ divNeg30:
 	mflo $v0
 	jr $ra
 	nop
+.globl div_shl
+div_shl:
+	li $t0, 1
+	sllv $t0, $t0, $a1
+	div $zero, $a0, $t0
+	mflo $v0
+	jr $ra
+	nop
 .globl div_reg
 div_reg:
 	div $zero, $a0, $a1

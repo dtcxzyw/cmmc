@@ -1,0 +1,5 @@
+func @test(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = smax i32 %x, i32 0;
+    ret i32 %0;
+}

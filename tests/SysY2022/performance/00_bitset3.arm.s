@@ -82,10 +82,13 @@ label4:
 	add r4, r5, r4, lsr #31
 	add r7, r9, r7, lsr #31
 	ldr r5, [r0, r4, lsl #2]
-	mls r6, r7, r8, r6
-	mov r7, #1
-	lsl r6, r7, r6
-	sdiv r7, r5, r6
+	mls r7, r7, r8, r6
+	mov r6, #1
+	asr r8, r5, #31
+	rsb r9, r7, #32
+	lsl r6, r6, r7
+	add r8, r5, r8, lsr r9
+	asr r7, r8, r7
 	add r8, r7, r7, lsr #31
 	asr r8, r8, #1
 	sub r8, r7, r8, lsl #1

@@ -119,6 +119,13 @@ divNeg30:
 	asr r1, r0, #4
 	add r0, r1, r0, lsr #31
 	bx lr
+.globl div_shl
+div_shl:
+	asr r2, r0, #31
+	rsb r3, r1, #32
+	add r0, r0, r2, lsr r3
+	asr r0, r0, r1
+	bx lr
 .globl div_reg
 div_reg:
 	sdiv r0, r0, r1

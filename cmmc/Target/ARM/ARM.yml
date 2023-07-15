@@ -672,6 +672,35 @@ InstSelection:
       InstSDiv:
         Dst: $Dst
         Lhs: $Lhs
+        Rhs:
+          InstShl:
+            Lhs: $One
+            Rhs: $Shift
+        $Predicate: isOperandIReg($Dst) && isOperandIReg($Lhs) && isOne($One)
+    Replace:
+      ASR:
+        Rd: $Dst
+        Rm:
+          ADD_Fused:
+            Rd: getVRegAs(ctx, $Dst)
+            Rn: $Lhs
+            Rm:
+              ASR:
+                Rd: getVRegAs(ctx, $Dst)
+                Rm: $Lhs
+                Sh: MIROperand::asImm(31, OperandType::Int32)
+            Op: MIROperand::asImm(LSR, OperandType::ShiftType)
+            Sh:
+              InstSub:
+                Dst: getVRegAs(ctx, $Dst)
+                Lhs: MIROperand::asImm(32, OperandType::Int32)
+                Rhs: $Shift
+        Sh: $Shift
+
+  - Pattern:
+      InstSDiv:
+        Dst: $Dst
+        Lhs: $Lhs
         Rhs: $Rhs
         $Predicate: isOperandIReg($Dst) && isOperandIReg($Lhs) && selectSDiv32ByConstant($Rhs, [$Magic], [$Shift], [$Factor]) && buildMulHiImm(ctx, $Lhs, $Magic, $Factor, [$Out]) && buildASR(ctx, $Out, $Shift, [$ASROut])
     Replace:

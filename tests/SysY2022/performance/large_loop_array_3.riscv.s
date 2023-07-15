@@ -71,10 +71,9 @@ label201:
 	ble s0, a4, label77
 	addiw a3, a4, 4
 	ble s0, a3, label133
-	j label26
+	j label28
 label77:
 	mv a3, a4
-label14:
 	ble s0, zero, label80
 	fmv.w.x f12, zero
 	mv t0, zero
@@ -90,7 +89,41 @@ label16:
 	li a3, 100000
 	bge a2, a3, label8
 	j label13
-label26:
+label24:
+	sh2add a5, t0, a0
+	sh2add t0, t0, a1
+	flw f13, 0(a5)
+	flw f15, 0(t0)
+	fmul.s f14, f13, f15
+	flw f13, 4(a5)
+	flw f15, 4(t0)
+	fadd.s f12, f12, f14
+	fmul.s f14, f13, f15
+	flw f13, 8(a5)
+	fadd.s f12, f12, f14
+	flw f14, 8(t0)
+	fmul.s f15, f13, f14
+	flw f13, 12(a5)
+	flw f14, 12(t0)
+	mv t0, a4
+	fadd.s f12, f12, f15
+	fmul.s f15, f13, f14
+	fadd.s f12, f12, f15
+	addiw a4, a4, 4
+	ble s0, a4, label21
+	j label24
+label133:
+	mv a3, a4
+	j label26
+label145:
+	mv a3, s0
+	ble s0, zero, label80
+	fmv.w.x f12, zero
+	mv t0, zero
+	li a4, 4
+	ble s0, a4, label21
+	j label24
+label28:
 	fcvt.s.w f12, a4
 	addiw t1, a4, 1
 	sh2add a5, a4, a0
@@ -117,34 +150,11 @@ label26:
 	fsw f13, 12(a5)
 	addiw a5, a3, 4
 	fsw f12, 12(t0)
-	ble s0, a5, label29
+	ble s0, a5, label26
 	mv a4, a3
 	mv a3, a5
-	j label26
-label24:
-	sh2add a5, t0, a0
-	sh2add t0, t0, a1
-	flw f13, 0(a5)
-	flw f15, 0(t0)
-	fmul.s f14, f13, f15
-	flw f13, 4(a5)
-	flw f15, 4(t0)
-	fadd.s f12, f12, f14
-	fmul.s f14, f13, f15
-	flw f13, 8(a5)
-	fadd.s f12, f12, f14
-	flw f14, 8(t0)
-	fmul.s f15, f13, f14
-	flw f13, 12(a5)
-	fadd.s f12, f12, f15
-	flw f15, 12(t0)
-	mv t0, a4
-	fmul.s f14, f13, f15
-	fadd.s f12, f12, f14
-	addiw a4, a4, 4
-	ble s0, a4, label21
-	j label24
-label29:
+	j label28
+label26:
 	fcvt.s.w f12, a3
 	sh2add a4, a3, a0
 	fadd.s f13, f11, f12
@@ -153,8 +163,8 @@ label29:
 	sh2add a4, a3, a1
 	addiw a3, a3, 1
 	fsw f12, 0(a4)
-	ble s0, a3, label14
-	j label29
+	ble s0, a3, label145
+	j label26
 label21:
 	sh2add a4, t0, a0
 	sh2add a5, t0, a1
@@ -165,99 +175,6 @@ label21:
 	fadd.s f12, f12, f13
 	ble s0, t0, label16
 	j label21
-label133:
-	mv a3, a4
-	fcvt.s.w f12, a4
-	sh2add a4, a4, a0
-	fadd.s f13, f11, f12
-	fadd.s f12, f10, f12
-	fsw f13, 0(a4)
-	sh2add a4, a3, a1
-	addiw a3, a3, 1
-	fsw f12, 0(a4)
-	ble s0, a3, label14
-	fcvt.s.w f12, a3
-	sh2add a4, a3, a0
-	fadd.s f13, f11, f12
-	fadd.s f12, f10, f12
-	fsw f13, 0(a4)
-	sh2add a4, a3, a1
-	addiw a3, a3, 1
-	fsw f12, 0(a4)
-	ble s0, a3, label14
-	fcvt.s.w f12, a3
-	sh2add a4, a3, a0
-	fadd.s f13, f11, f12
-	fadd.s f12, f10, f12
-	fsw f13, 0(a4)
-	sh2add a4, a3, a1
-	addiw a3, a3, 1
-	fsw f12, 0(a4)
-	ble s0, a3, label14
-	fcvt.s.w f12, a3
-	sh2add a4, a3, a0
-	fadd.s f13, f11, f12
-	fadd.s f12, f10, f12
-	fsw f13, 0(a4)
-	sh2add a4, a3, a1
-	addiw a3, a3, 1
-	fsw f12, 0(a4)
-	ble s0, a3, label14
-	fcvt.s.w f12, a3
-	sh2add a4, a3, a0
-	fadd.s f13, f11, f12
-	fadd.s f12, f10, f12
-	fsw f13, 0(a4)
-	sh2add a4, a3, a1
-	addiw a3, a3, 1
-	fsw f12, 0(a4)
-	ble s0, a3, label14
-	fcvt.s.w f12, a3
-	sh2add a4, a3, a0
-	fadd.s f13, f11, f12
-	fadd.s f12, f10, f12
-	fsw f13, 0(a4)
-	sh2add a4, a3, a1
-	addiw a3, a3, 1
-	fsw f12, 0(a4)
-	ble s0, a3, label14
-	fcvt.s.w f12, a3
-	sh2add a4, a3, a0
-	fadd.s f13, f11, f12
-	fadd.s f12, f10, f12
-	fsw f13, 0(a4)
-	sh2add a4, a3, a1
-	addiw a3, a3, 1
-	fsw f12, 0(a4)
-	ble s0, a3, label14
-	fcvt.s.w f12, a3
-	sh2add a4, a3, a0
-	fadd.s f13, f11, f12
-	fadd.s f12, f10, f12
-	fsw f13, 0(a4)
-	sh2add a4, a3, a1
-	addiw a3, a3, 1
-	fsw f12, 0(a4)
-	ble s0, a3, label14
-	fcvt.s.w f12, a3
-	sh2add a4, a3, a0
-	fadd.s f13, f11, f12
-	fadd.s f12, f10, f12
-	fsw f13, 0(a4)
-	sh2add a4, a3, a1
-	addiw a3, a3, 1
-	fsw f12, 0(a4)
-	ble s0, a3, label14
-	fcvt.s.w f12, a3
-	sh2add a4, a3, a0
-	fadd.s f13, f11, f12
-	fadd.s f12, f10, f12
-	fsw f13, 0(a4)
-	sh2add a4, a3, a1
-	addiw a3, a3, 1
-	fsw f12, 0(a4)
-	ble s0, a3, label14
-	j label29
 label8:
 	li a0, 39
 	jal _sysy_stoptime

@@ -19,40 +19,39 @@ main:
 	sd s1, 8(sp)
 	sd ra, 0(sp)
 	jal getint
-pcrel430:
+pcrel429:
 	auipc a1, %pcrel_hi(w)
 	mv s0, a0
-	addi a0, a1, %pcrel_lo(pcrel430)
+	addi a0, a1, %pcrel_lo(pcrel429)
 	mv s2, a0
 	jal getarray
 	li a0, 62
 	jal _sysy_starttime
-pcrel431:
+pcrel430:
 	auipc a1, %pcrel_hi(dst)
-	addi s1, a1, %pcrel_lo(pcrel431)
-pcrel432:
+	addi s1, a1, %pcrel_lo(pcrel430)
+pcrel431:
 	auipc a1, %pcrel_hi(temp)
-	addi a0, a1, %pcrel_lo(pcrel432)
+	addi a0, a1, %pcrel_lo(pcrel431)
 	mv a1, zero
 	ble s0, zero, label52
-	slt a5, zero, s0
-	mv a4, zero
-	xori a3, a5, 1
+	slt a4, zero, s0
+	mv a5, zero
+	xori a3, a4, 1
 	mv a2, a3
 	mv a3, zero
-	mv a5, zero
 	slt t0, zero, s0
 	mv a4, a2
 	xori t1, t0, 1
 	mv t0, zero
 	or a5, a2, t1
 	mv a4, zero
-	beq a5, zero, label37
+	beq a5, zero, label38
 	li a5, -1
 	li a3, 1
 	mv a4, a0
 	sw a5, 0(a0)
-	ble s0, a3, label40
+	ble s0, a3, label35
 	slti a5, a3, 0
 	slt t0, a3, s0
 	or a4, a2, a5
@@ -60,12 +59,12 @@ pcrel432:
 	mulw t0, s0, a3
 	or a5, a4, t1
 	sext.w a4, t0
-	beq a5, zero, label37
+	beq a5, zero, label38
 	li a5, -1
 	addiw a3, a3, 1
 	sh2add a4, a4, a0
 	sw a5, 0(a4)
-	ble s0, a3, label40
+	ble s0, a3, label35
 	slti a5, a3, 0
 	slt t0, a3, s0
 	or a4, a2, a5
@@ -73,8 +72,13 @@ pcrel432:
 	mulw t0, s0, a3
 	or a5, a4, t1
 	sext.w a4, t0
-	beq a5, zero, label37
-	j label338
+	beq a5, zero, label38
+	li a5, -1
+	addiw a3, a3, 1
+	sh2add a4, a4, a0
+	sw a5, 0(a4)
+	ble s0, a3, label35
+	j label364
 label52:
 	mv a3, zero
 	slt a1, zero, s0
@@ -90,17 +94,17 @@ label52:
 	mv t0, zero
 	or a5, a1, t3
 	mv t1, zero
-	beq a5, zero, label24
+	beq a5, zero, label11
 	li t4, -1
-	blt t4, zero, label23
+	blt t4, zero, label24
 	mv t5, zero
 	slt a7, zero, s0
 	mv t6, a1
 	xori a6, a7, 1
-	or t6, a1, a6
-	beq t6, zero, label22
+	or a7, a1, a6
+	beq a7, zero, label23
 	li t6, -1
-	blt t6, zero, label23
+	blt t6, zero, label24
 	j label339
 label27:
 	mulw s0, s0, s0
@@ -109,78 +113,6 @@ label27:
 	li a1, 4
 	ble s0, a1, label31
 	j label33
-label17:
-	addw a7, t0, t2
-	sh2add a6, a7, a0
-	lw t5, 0(a6)
-	bge t5, zero, label20
-	addw a6, t0, t2
-	addw t4, t4, t6
-	sh2add t5, a6, a0
-	sw t4, 0(t5)
-	addiw t2, t2, 1
-	ble s0, t2, label25
-	beq a5, zero, label24
-	li t4, -1
-	blt t4, zero, label23
-	slti t5, t2, 0
-	slt a7, t2, s0
-	or t6, a1, t5
-	xori a6, a7, 1
-	or t6, t6, a6
-	beq t6, zero, label22
-	li t6, -1
-	blt t6, zero, label23
-	or t5, t5, a6
-	or a6, t3, t5
-	beq a6, zero, label17
-	li t5, -1
-	bge t5, zero, label20
-	j label381
-label22:
-	addw a7, a2, t2
-	sh2add s2, a7, a0
-	lw t6, 0(s2)
-	blt t6, zero, label23
-	or t5, t5, a6
-	or a6, t3, t5
-	beq a6, zero, label17
-	li t5, -1
-	bge t5, zero, label20
-	addw a6, t0, t2
-	addw t4, t4, t6
-	sh2add t5, a6, a0
-	sw t4, 0(t5)
-	addiw t2, t2, 1
-	ble s0, t2, label25
-	beq a5, zero, label24
-	li t4, -1
-	blt t4, zero, label23
-	slti t5, t2, 0
-	slt a7, t2, s0
-	or t6, a1, t5
-	xori a6, a7, 1
-	or t6, t6, a6
-	beq t6, zero, label22
-	li t6, -1
-	blt t6, zero, label23
-	j label329
-label223:
-	beq a5, zero, label24
-	j label251
-label329:
-	or t5, t5, a6
-	or a6, t3, t5
-	beq a6, zero, label17
-	j label355
-label381:
-	addw a6, t0, t2
-	addw t4, t4, t6
-	sh2add t5, a6, a0
-	sw t4, 0(t5)
-	addiw t2, t2, 1
-	ble s0, t2, label25
-	j label223
 label25:
 	addiw a4, a4, 1
 	slti t2, a4, 0
@@ -194,71 +126,37 @@ label25:
 	ble s0, a4, label26
 	mv t2, zero
 	ble s0, zero, label25
-	beq a5, zero, label24
+	beq a5, zero, label11
 	li t4, -1
-	blt t4, zero, label23
+	blt t4, zero, label24
 	mv t5, zero
 	slt a7, zero, s0
 	mv t6, a1
 	xori a6, a7, 1
-	or t6, a1, a6
-	beq t6, zero, label22
+	or a7, a1, a6
+	beq a7, zero, label23
 	li t6, -1
-	blt t6, zero, label23
+	blt t6, zero, label24
 	mv t5, a6
 	or a6, t3, a6
-	beq a6, zero, label17
+	beq a6, zero, label18
 	li t5, -1
-	bge t5, zero, label20
+	bge t5, zero, label22
+	j label391
+label339:
+	or t5, t5, a6
+	or a6, t3, t5
+	beq a6, zero, label18
+	j label365
 label391:
 	addw a6, t0, t2
 	addw t4, t4, t6
 	sh2add t5, a6, a0
 	sw t4, 0(t5)
-	j label23
-label339:
-	or t5, t5, a6
-	or a6, t3, t5
-	beq a6, zero, label17
-	j label365
-label23:
-	addiw t2, t2, 1
-	ble s0, t2, label25
-	j label223
-label251:
-	li t4, -1
-	blt t4, zero, label23
-	j label277
-label24:
-	sh2add t5, t1, a0
-	lw t4, 0(t5)
-	blt t4, zero, label23
-	slti t5, t2, 0
-	slt a7, t2, s0
-	or t6, a1, t5
-	xori a6, a7, 1
-	or t6, t6, a6
-	beq t6, zero, label22
-	li t6, -1
-	blt t6, zero, label23
-	or t5, t5, a6
-	or a6, t3, t5
-	beq a6, zero, label17
-	li t5, -1
-	bge t5, zero, label20
-	addw a6, t0, t2
-	addw t4, t4, t6
-	sh2add t5, a6, a0
-	sw t4, 0(t5)
-	addiw t2, t2, 1
-	ble s0, t2, label25
-	beq a5, zero, label24
-	li t4, -1
-	blt t4, zero, label23
-	j label277
+	j label24
 label365:
 	li t5, -1
-	bge t5, zero, label20
+	bge t5, zero, label22
 	j label391
 label26:
 	addiw a3, a3, 1
@@ -277,66 +175,176 @@ label26:
 	or a5, a1, t3
 	sext.w t1, a3
 	ble s0, zero, label26
-	beq a5, zero, label24
+	beq a5, zero, label11
 	li t4, -1
-	blt t4, zero, label23
+	blt t4, zero, label24
 	mv t5, zero
 	slt a7, zero, s0
 	mv t6, a1
 	xori a6, a7, 1
-	or t6, a1, a6
-	beq t6, zero, label22
+	or a7, a1, a6
+	beq a7, zero, label23
 	li t6, -1
-	blt t6, zero, label23
+	blt t6, zero, label24
 	mv t5, a6
 	or a6, t3, a6
-	beq a6, zero, label17
+	beq a6, zero, label18
 	j label365
-label20:
-	addw a6, t0, t2
-	sh2add a7, a6, a0
-	addw a6, t4, t6
-	lw t5, 0(a7)
-	ble t5, a6, label23
+label23:
+	addw t6, a2, t2
+	sh2add a7, t6, a0
+	lw t6, 0(a7)
+	blt t6, zero, label24
+	or t5, t5, a6
+	or a6, t3, t5
+	beq a6, zero, label18
+	li t5, -1
+	bge t5, zero, label22
 	addw a6, t0, t2
 	addw t4, t4, t6
 	sh2add t5, a6, a0
 	sw t4, 0(t5)
 	addiw t2, t2, 1
 	ble s0, t2, label25
-	beq a5, zero, label24
+	beq a5, zero, label11
 	li t4, -1
-	blt t4, zero, label23
+	blt t4, zero, label24
 	slti t5, t2, 0
 	slt a7, t2, s0
 	or t6, a1, t5
 	xori a6, a7, 1
-	or t6, t6, a6
-	beq t6, zero, label22
+	or a7, t6, a6
+	beq a7, zero, label23
 	li t6, -1
-	blt t6, zero, label23
+	blt t6, zero, label24
+label330:
 	or t5, t5, a6
 	or a6, t3, t5
-	beq a6, zero, label17
-	li t5, -1
-	bge t5, zero, label20
-	j label381
-label277:
+	beq a6, zero, label18
+	j label356
+label342:
+	addw a6, t0, t2
+	addw t4, t4, t6
+	sh2add t5, a6, a0
+	sw t4, 0(t5)
+	addiw t2, t2, 1
+	ble s0, t2, label25
+label224:
+	beq a5, zero, label11
+	li t4, -1
+	blt t4, zero, label24
+	j label278
+label11:
+	sh2add t5, t1, a0
+	lw t4, 0(t5)
+	blt t4, zero, label24
 	slti t5, t2, 0
 	slt a7, t2, s0
 	or t6, a1, t5
 	xori a6, a7, 1
-	or t6, t6, a6
-	beq t6, zero, label22
-	j label303
-label355:
-	li t5, -1
-	bge t5, zero, label20
-	j label381
-label303:
+	or a7, t6, a6
+	beq a7, zero, label23
 	li t6, -1
-	blt t6, zero, label23
-	j label329
+	blt t6, zero, label24
+	or t5, t5, a6
+	or a6, t3, t5
+	beq a6, zero, label18
+	li t5, -1
+	bge t5, zero, label22
+	addw a6, t0, t2
+	addw t4, t4, t6
+	sh2add t5, a6, a0
+	sw t4, 0(t5)
+	addiw t2, t2, 1
+	ble s0, t2, label25
+	beq a5, zero, label11
+	li t4, -1
+	blt t4, zero, label24
+	j label278
+label24:
+	addiw t2, t2, 1
+	ble s0, t2, label25
+	j label224
+label278:
+	slti t5, t2, 0
+	slt a7, t2, s0
+	or t6, a1, t5
+	xori a6, a7, 1
+	or a7, t6, a6
+	beq a7, zero, label23
+	j label304
+label22:
+	addw a6, t0, t2
+	sh2add a7, a6, a0
+	addw a6, t4, t6
+	lw t5, 0(a7)
+	ble t5, a6, label24
+	addw a6, t0, t2
+	addw t4, t4, t6
+	sh2add t5, a6, a0
+	sw t4, 0(t5)
+	addiw t2, t2, 1
+	ble s0, t2, label25
+	beq a5, zero, label11
+	li t4, -1
+	blt t4, zero, label24
+	slti t5, t2, 0
+	slt a7, t2, s0
+	or t6, a1, t5
+	xori a6, a7, 1
+	or a7, t6, a6
+	beq a7, zero, label23
+	li t6, -1
+	blt t6, zero, label24
+	or t5, t5, a6
+	or a6, t3, t5
+	beq a6, zero, label18
+	li t5, -1
+	bge t5, zero, label22
+	j label342
+label18:
+	addw a7, t0, t2
+	sh2add a6, a7, a0
+	lw t5, 0(a6)
+	bge t5, zero, label22
+	addw a6, t0, t2
+	addw t4, t4, t6
+	sh2add t5, a6, a0
+	sw t4, 0(t5)
+	addiw t2, t2, 1
+	ble s0, t2, label25
+	beq a5, zero, label11
+	li t4, -1
+	blt t4, zero, label24
+	slti t5, t2, 0
+	slt a7, t2, s0
+	or t6, a1, t5
+	xori a6, a7, 1
+	or a7, t6, a6
+	beq a7, zero, label23
+	li t6, -1
+	blt t6, zero, label24
+	or t5, t5, a6
+	or a6, t3, t5
+	beq a6, zero, label18
+	li t5, -1
+	bge t5, zero, label22
+label382:
+	addw a6, t0, t2
+	addw t4, t4, t6
+	sh2add t5, a6, a0
+	sw t4, 0(t5)
+	addiw t2, t2, 1
+	ble s0, t2, label25
+	j label224
+label356:
+	li t5, -1
+	bge t5, zero, label22
+	j label382
+label304:
+	li t6, -1
+	blt t6, zero, label24
+	j label330
 label364:
 	slti a5, a3, 0
 	slt t0, a3, s0
@@ -345,12 +353,12 @@ label364:
 	mulw t0, s0, a3
 	or a5, a4, t1
 	addw a4, a1, t0
-	beq a5, zero, label37
+	beq a5, zero, label38
 	li a5, -1
 	addiw a3, a3, 1
 	sh2add a4, a4, a0
 	sw a5, 0(a4)
-	ble s0, a3, label40
+	ble s0, a3, label35
 label387:
 	slti a5, a3, 0
 	slt t0, a3, s0
@@ -359,22 +367,77 @@ label387:
 	mulw t0, s0, a3
 	or a5, a4, t1
 	addw a4, a1, t0
-	beq a5, zero, label37
+	beq a5, zero, label38
+	j label388
+label38:
+	sh2add t0, a4, s2
+	lw a5, 0(t0)
+	addiw a3, a3, 1
+	sh2add a4, a4, a0
+	sw a5, 0(a4)
+	ble s0, a3, label35
+	slti a5, a3, 0
+	slt t0, a3, s0
+	or a4, a2, a5
+	xori t1, t0, 1
+	mulw t0, s0, a3
+	or a5, a4, t1
+	addw a4, a1, t0
+	beq a5, zero, label38
+	li a5, -1
+	addiw a3, a3, 1
+	sh2add a4, a4, a0
+	sw a5, 0(a4)
+	ble s0, a3, label35
+	slti a5, a3, 0
+	slt t0, a3, s0
+	or a4, a2, a5
+	xori t1, t0, 1
+	mulw t0, s0, a3
+	or a5, a4, t1
+	addw a4, a1, t0
+	beq a5, zero, label38
+	li a5, -1
+	addiw a3, a3, 1
+	sh2add a4, a4, a0
+	sw a5, 0(a4)
+	ble s0, a3, label35
+	slti a5, a3, 0
+	slt t0, a3, s0
+	or a4, a2, a5
+	xori t1, t0, 1
+	mulw t0, s0, a3
+	or a5, a4, t1
+	addw a4, a1, t0
+	beq a5, zero, label38
+	li a5, -1
+	addiw a3, a3, 1
+	sh2add a4, a4, a0
+	sw a5, 0(a4)
+	ble s0, a3, label35
+	slti a5, a3, 0
+	slt t0, a3, s0
+	or a4, a2, a5
+	xori t1, t0, 1
+	mulw t0, s0, a3
+	or a5, a4, t1
+	addw a4, a1, t0
+	beq a5, zero, label38
 label388:
 	li a5, -1
 	addiw a3, a3, 1
 	sh2add a4, a4, a0
 	sw a5, 0(a4)
-	ble s0, a3, label40
+	ble s0, a3, label35
 	j label387
-label40:
+label35:
 	addiw a1, a1, 1
 	ble s0, a1, label52
-	slt a5, a1, s0
-	slti a4, a1, 0
-	xori a3, a5, 1
-	or a2, a3, a4
-	ble s0, zero, label40
+	slt a4, a1, s0
+	slti a5, a1, 0
+	xori a3, a4, 1
+	or a2, a3, a5
+	ble s0, zero, label35
 	mv a3, zero
 	mv a5, zero
 	slt t0, zero, s0
@@ -383,12 +446,12 @@ label40:
 	mv t0, zero
 	or a5, a2, t1
 	sext.w a4, a1
-	beq a5, zero, label37
+	beq a5, zero, label38
 	li a5, -1
 	li a3, 1
 	sh2add a4, a4, a0
 	sw a5, 0(a4)
-	ble s0, a3, label40
+	ble s0, a3, label35
 	slti a5, a3, 0
 	slt t0, a3, s0
 	or a4, a2, a5
@@ -396,12 +459,12 @@ label40:
 	mulw t0, s0, a3
 	or a5, a4, t1
 	addw a4, a1, t0
-	beq a5, zero, label37
+	beq a5, zero, label38
 	li a5, -1
 	addiw a3, a3, 1
 	sh2add a4, a4, a0
 	sw a5, 0(a4)
-	ble s0, a3, label40
+	ble s0, a3, label35
 	slti a5, a3, 0
 	slt t0, a3, s0
 	or a4, a2, a5
@@ -409,75 +472,13 @@ label40:
 	mulw t0, s0, a3
 	or a5, a4, t1
 	addw a4, a1, t0
-	beq a5, zero, label37
+	beq a5, zero, label38
 	li a5, -1
 	addiw a3, a3, 1
 	sh2add a4, a4, a0
 	sw a5, 0(a4)
-	ble s0, a3, label40
+	ble s0, a3, label35
 	j label364
-label338:
-	li a5, -1
-	addiw a3, a3, 1
-	sh2add a4, a4, a0
-	sw a5, 0(a4)
-	ble s0, a3, label40
-	j label364
-label37:
-	sh2add t0, a4, s2
-	lw a5, 0(t0)
-	addiw a3, a3, 1
-	sh2add a4, a4, a0
-	sw a5, 0(a4)
-	ble s0, a3, label40
-	slti a5, a3, 0
-	slt t0, a3, s0
-	or a4, a2, a5
-	xori t1, t0, 1
-	mulw t0, s0, a3
-	or a5, a4, t1
-	addw a4, a1, t0
-	beq a5, zero, label37
-	li a5, -1
-	addiw a3, a3, 1
-	sh2add a4, a4, a0
-	sw a5, 0(a4)
-	ble s0, a3, label40
-	slti a5, a3, 0
-	slt t0, a3, s0
-	or a4, a2, a5
-	xori t1, t0, 1
-	mulw t0, s0, a3
-	or a5, a4, t1
-	addw a4, a1, t0
-	beq a5, zero, label37
-	li a5, -1
-	addiw a3, a3, 1
-	sh2add a4, a4, a0
-	sw a5, 0(a4)
-	ble s0, a3, label40
-	slti a5, a3, 0
-	slt t0, a3, s0
-	or a4, a2, a5
-	xori t1, t0, 1
-	mulw t0, s0, a3
-	or a5, a4, t1
-	addw a4, a1, t0
-	beq a5, zero, label37
-	li a5, -1
-	addiw a3, a3, 1
-	sh2add a4, a4, a0
-	sw a5, 0(a4)
-	ble s0, a3, label40
-	slti a5, a3, 0
-	slt t0, a3, s0
-	or a4, a2, a5
-	xori t1, t0, 1
-	mulw t0, s0, a3
-	or a5, a4, t1
-	addw a4, a1, t0
-	beq a5, zero, label37
-	j label388
 label33:
 	sh2add a3, a2, a0
 	sh2add a2, a2, s1

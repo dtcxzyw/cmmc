@@ -1045,6 +1045,20 @@ class ArithmeticReduce final : public TransformPass<Function> {
                                                 builder.makeOp<BinaryInst>(InstructionID::Or, v1, v2));
             }
 
+            if(neg(oneUse(add(oneUse(sub(any(v1), any(v2))), any(v3))))(matchCtx)) {
+                return builder.makeOp<BinaryInst>(InstructionID::Sub, v2, builder.makeOp<BinaryInst>(InstructionID::Add, v1, v3));
+            }
+
+            // if(s2f(zext(boolean(v1)))(matchCtx)) {
+            //     return builder.makeOp<SelectInst>(v1, make<ConstantFloatingPoint>(inst->getType(), 1.0),
+            //                                       make<ConstantFloatingPoint>(inst->getType(), 0.0));
+            // }
+
+            if(sub(oneUse(select(any(v1), any(v2), cint_(0))), any(v3))(matchCtx)) {
+                return builder.makeOp<SelectInst>(v1, builder.makeOp<BinaryInst>(InstructionID::Sub, v2, v3),
+                                                  builder.makeOp<UnaryInst>(InstructionID::Neg, v3));
+            }
+
             return nullptr;
         });
         return ret || modified;

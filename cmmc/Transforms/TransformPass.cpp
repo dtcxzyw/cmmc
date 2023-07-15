@@ -339,6 +339,7 @@ std::shared_ptr<PassManager<Module>> PassManager<Module>::get(OptimizationLevel 
             // Loop
             "LoopRotate",               //
             "LoopCanonicalize",         //
+            "FinalValueReplacement",    //
             "LoopBranchProbFix",        //
             "LoopEliminate",            //
             "LICMMemory",               //

@@ -12,7 +12,7 @@ func @main() -> i32 { NoRecurse Entry } {
     [32768 * i32]* %2 = ptrcast [32768 * i32]* @program to [32768 * i32]*;
     ubr ^while.body;
   ^b:
-    i32 %3 = phi [^entry, i32 0] [^while.body, i32 %11];
+    i32 %3 = phi [^entry, i32 0] [^while.body, i32 %0];
     [32768 * i32]* %4 = ptrcast [32768 * i32]* @program to [32768 * i32]*;
     i32* %5 = getelementptr &([32768 * i32]* %4)[i64 0][i32 %3];
     store i32* %5 with i32 0;

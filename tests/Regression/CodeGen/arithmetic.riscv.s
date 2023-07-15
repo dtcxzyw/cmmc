@@ -131,6 +131,15 @@ divNeg30:
 	sraiw a1, a0, 4
 	add a0, a2, a1
 	ret
+.globl div_shl
+div_shl:
+	slli a2, a0, 1
+	li a3, 64
+	subw a4, a3, a1
+	srl a2, a2, a4
+	add a3, a0, a2
+	sraw a0, a3, a1
+	ret
 .globl div_reg
 div_reg:
 	divw a0, a0, a1
@@ -298,9 +307,9 @@ fp_imm0:
 	ret
 .globl fp_imm1
 fp_imm1:
-pcrel251:
+pcrel262:
 	auipc a0, %pcrel_hi(__cmmc_fp_constant_pool)
-	addi a1, a0, %pcrel_lo(pcrel251)
+	addi a1, a0, %pcrel_lo(pcrel262)
 	flw f10, 0(a1)
 	ret
 .globl and_trunc

@@ -92,6 +92,10 @@ int divNeg30(int x) {
     return x / -30;
 }
 
+int div_shl(int x, int y) {
+    return x / (1 << y);
+}
+
 int div_reg(int x, int y) {
     return x / y;
 }

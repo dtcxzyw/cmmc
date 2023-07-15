@@ -446,3 +446,12 @@ int ml_select(int x, int y, int z) {
     int w = y == 0 ? 10 : 0;
     return x == 0 ? w : 0;
 }
+int sub_add2(int x, int y, int z) {
+    return -(x + (y - z));
+}
+float zext_s2f(int x) {
+    return x == 0;
+}
+int select_trunc_sub(int x, int y) {
+    return (x ? y : 0) - y;
+}

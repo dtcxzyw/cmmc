@@ -760,3 +760,23 @@ func @ml_select(i32 %x, i32 %y) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect
     i32 %2 = select i1 %1 ? i32 10 : i32 0;
     ret i32 %2;
 }
+func @sub_add2(i32 %x, i32 %y, i32 %z) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = add i32 %x, i32 %y;
+    i32 %1 = sub i32 %z, i32 %0;
+    ret i32 %1;
+}
+func @zext_s2f(i32 %x) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = icmp eq i32 %x, i32 0;
+    i32 %1 = zext i1 %0 to i32;
+    f32 %2 = s2f i32 %1 to f32;
+    ret f32 %2;
+}
+func @select_trunc_sub(i32 %x, i32 %y) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = icmp neq i32 %x, i32 0;
+    i32 %1 = neg i32 %y;
+    i32 %2 = select i1 %0 ? i32 0 : i32 %1;
+    ret i32 %2;
+}
