@@ -51,15 +51,10 @@ label87:
 	cmp r8, #2
 	bge label10
 	str r8, [sp, #12]
-	bge label14
 	str r8, [sp, #16]
-	bge label63
 	str r8, [sp, #20]
-	bge label62
 	str r8, [sp, #24]
-	bge label24
 	str r8, [sp, #28]
-	bge label28
 	mov r1, r0
 	cmp r0, #2
 	bge label32
@@ -92,13 +87,9 @@ label14:
 	cmp r8, #2
 	bge label14
 	str r8, [sp, #16]
-	bge label63
 	str r8, [sp, #20]
-	bge label62
 	str r8, [sp, #24]
-	bge label24
 	str r8, [sp, #28]
-	bge label28
 	mov r1, r0
 	mov r0, #0
 	cmp r0, #2
@@ -192,15 +183,10 @@ label10:
 	cmp r8, #2
 	bge label10
 	str r8, [sp, #12]
-	bge label14
 	str r8, [sp, #16]
-	bge label63
 	str r8, [sp, #20]
-	bge label62
 	str r8, [sp, #24]
-	bge label24
 	str r8, [sp, #28]
-	bge label28
 	mov r1, r0
 	mov r0, #0
 	cmp r0, #2
@@ -224,9 +210,7 @@ label62:
 	cmp r8, #2
 	bge label62
 	str r8, [sp, #24]
-	bge label24
 	str r8, [sp, #28]
-	bge label28
 	mov r1, r0
 	mov r0, #0
 	cmp r0, #2
@@ -260,11 +244,8 @@ label63:
 	cmp r8, #2
 	bge label63
 	str r8, [sp, #20]
-	bge label62
 	str r8, [sp, #24]
-	bge label24
 	str r8, [sp, #28]
-	bge label28
 	mov r1, r0
 	mov r0, #0
 	cmp r0, #2
@@ -306,7 +287,6 @@ label24:
 	cmp r8, #2
 	bge label24
 	str r8, [sp, #28]
-	bge label28
 	mov r1, r0
 	mov r0, #0
 	cmp r0, #2

@@ -27,7 +27,6 @@ label4:
 	mov r0, #0
 	vmov s0, r0
 	vadd.f32 s16, s16, s0
-	bge label9
 	b label46
 label9:
 	sub r4, r4, #2

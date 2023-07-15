@@ -40,9 +40,7 @@ label17:
 	ldr r0, [sp, #0]
 	add r0, r6, r0
 	str r0, [sp, #0]
-	bne label95
 	add r8, r6, r8
-	bne label32
 	ldr r0, [sp, #0]
 	sub r9, r0, r6
 	cmp r8, #5
@@ -77,7 +75,6 @@ label22:
 	str r0, [sp, #0]
 	bne label95
 	add r8, r6, r8
-	bne label32
 	ldr r0, [sp, #0]
 	sub r9, r0, r6
 	cmp r8, #5
@@ -100,7 +97,6 @@ label6:
 	cmp r4, #0
 	bne label56
 	add r0, r5, #1
-	bne label60
 	ldr r1, [sp, #0]
 	add r5, r0, r1
 	ldr r0, [r7, #4]

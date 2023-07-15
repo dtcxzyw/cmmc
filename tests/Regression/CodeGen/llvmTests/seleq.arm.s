@@ -57,7 +57,6 @@ calc_seleq:
 	movw r3, #:lower16:z1
 	movt r3, #:upper16:z1
 	str r0, [r3, #0]
-	bne label16
 label34:
 	movw r0, #:lower16:f
 	movt r0, #:upper16:f
@@ -76,7 +75,6 @@ label34:
 	movw r3, #:lower16:z3
 	movt r3, #:upper16:z3
 	str r0, [r3, #0]
-	bne label59
 	b label85
 label17:
 	movw r0, #:lower16:t
@@ -130,5 +128,4 @@ label16:
 	movw r3, #:lower16:z3
 	movt r3, #:upper16:z3
 	str r0, [r3, #0]
-	bne label59
 	b label85

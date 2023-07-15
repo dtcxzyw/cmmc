@@ -148,7 +148,6 @@ label10:
 	mov r3, r5
 	mov r8, r1
 	sub r2, r0, #1
-	ble label10
 	cmp r1, r5
 	bge label15
 	ldr r9, [r4, r5, lsl #2]

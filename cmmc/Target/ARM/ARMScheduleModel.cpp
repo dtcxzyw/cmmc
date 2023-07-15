@@ -415,6 +415,34 @@ static bool removeUnusedDefCC(MIRBasicBlock& block, const CodeGenContext& ctx) {
     return modified;
 }
 
+bool removeDeadBranch(MIRBasicBlock& block, const CodeGenContext& ctx) {
+    bool modified = false;
+
+    auto& insts = block.instructions();
+    std::unordered_set<intmax_t> condFields;
+
+    for(auto iter = insts.begin(); iter != insts.end();) {
+        auto next = std::next(iter);
+        if(iter->opcode() == B_Cond) {
+            const auto cf = iter->getOperand(0).imm();
+            if(!condFields.insert(cf).second) {
+                insts.erase(iter);
+                modified = true;
+            }
+        } else {
+            auto& instInfo = ctx.instInfo.getInstInfo(*iter);
+            for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
+                if(isOperandCC(iter->getOperand(idx)) && (instInfo.getOperandFlag(idx) & OperandFlagDef)) {
+                    condFields.clear();
+                }
+            }
+        }
+        iter = next;
+    }
+
+    return modified;
+}
+
 bool ARMScheduleModel_cortex_a72::peepholeOpt(MIRFunction& func, const CodeGenContext& ctx) const {
     // CMMC_UNUSED(func);
     bool modified = false;
@@ -423,6 +451,8 @@ bool ARMScheduleModel_cortex_a72::peepholeOpt(MIRFunction& func, const CodeGenCo
         //     modified |= optimizeConditionalCopyOfComputationalInst(*block);
         modified |= optimizeFusedCompareWithZero(*block, ctx);
         modified |= removeUnusedDefCC(*block, ctx);
+        if(!ctx.flags.endsWithTerminator)
+            modified |= removeDeadBranch(*block, ctx);
     }
     return modified;
 }
