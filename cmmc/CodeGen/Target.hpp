@@ -111,6 +111,7 @@ struct MIRFlags final {
     bool preRA = true;
     bool postSA = false;
     bool dontForward = false;
+    bool postLegal = false;
 };
 
 struct CodeGenContext final {

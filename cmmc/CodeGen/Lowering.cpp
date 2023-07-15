@@ -543,6 +543,9 @@ static void lowerToMachineModule(MIRModule& machineModule, Module& module, Analy
             // Stage 13: post legalization
             Stage stage{ "Post legalization"sv };
             postLegalizeFunc(mfunc, ctx);
+            ctx.flags.postLegal = true;
+            while(genericPeepholeOpt(mfunc, ctx))
+                ;
             // dumpFunc(mfunc);
             assert(mfunc.verify(std::cerr, ctx));
         }

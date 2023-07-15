@@ -419,7 +419,7 @@ label35:
 	orr r3, r1, r3
 	cmp r9, r2
 	movwle r5, #1
-	orrs r5, r3, r5
+	orrs r3, r3, r5
 	mla r3, r9, r2, r0
 	beq label37
 	mvn r5, #0

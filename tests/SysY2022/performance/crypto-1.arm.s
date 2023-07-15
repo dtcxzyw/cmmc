@@ -22,20 +22,19 @@ main:
 	mov r5, r0
 	mov r0, #161
 	bl _sysy_starttime
-	mov r0, #0
 	movw r6, #:lower16:buffer
+	mov r0, #0
 	mov r3, r4
-	str r0, [sp, #324]
 	movt r6, #:upper16:buffer
+	str r0, [sp, #324]
 	ldr r1, [sp, #348]
 	str r0, [r1, #4]
 	str r0, [r1, #8]
 	str r0, [r1, #12]
 	str r0, [r1, #16]
-	mov r0, r5
+	movs r0, r5
 	str r6, [sp, #356]
 	str r5, [sp, #360]
-	cmp r5, #0
 	ble label41
 label55:
 	mov r0, #0
@@ -175,9 +174,8 @@ label21:
 	str r0, [r1, #16]
 	ldr r0, [sp, #360]
 	ldr r3, [sp, #364]
-	sub r0, r0, #1
+	subs r0, r0, #1
 	str r0, [sp, #360]
-	cmp r0, #0
 	ble label41
 	b label55
 label140:

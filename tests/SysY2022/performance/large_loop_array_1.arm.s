@@ -163,8 +163,7 @@ label29:
 	ble label175
 	b label29
 label175:
-	mov r3, r4
-	cmp r4, #0
+	movs r3, r4
 	ble label77
 	mov r7, #0
 	vmov s2, r7

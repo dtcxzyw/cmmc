@@ -668,7 +668,7 @@ if generate_ref:
             test(f"SysY regression {target}", tests_path +"/Regression/CodeGen", ".sy", lambda x: sysy_regression_ref_codegen(x, target))
     if 'perf' in test_cases:
         for target in targets & test_cases:
-            test(f"SysY performance {target}", tests_path +"/SysY2022/performance", ".sy", lambda x: sysy_perf_ref_codegen(x, target))
+            test(f"SysY performance {target}", tests_path +"/SysY2022/", ".sy", lambda x: sysy_perf_ref_codegen(x, target))
 
 end = time.perf_counter()
 

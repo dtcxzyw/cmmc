@@ -57,16 +57,16 @@ main:
 	mov r2, r0
 	mov r0, #78
 	bl _sysy_starttime
-	cmp r5, #0
 	movw r9, #:lower16:head
+	movw r0, #:lower16:nextvalue
 	movw r11, #:lower16:key
 	movw r8, #:lower16:value
-	movw r0, #:lower16:nextvalue
+	cmp r5, #0
 	movt r9, #:upper16:head
-	movt r11, #:upper16:key
-	movt r8, #:upper16:value
-	str r9, [sp, #12]
 	movt r0, #:upper16:nextvalue
+	movt r11, #:upper16:key
+	str r9, [sp, #12]
+	movt r8, #:upper16:value
 	str r11, [sp, #16]
 	movw r11, #:lower16:next
 	str r8, [sp, #20]
@@ -339,8 +339,7 @@ label8:
 	beq label8
 	b label256
 label115:
-	mov r10, r9
-	cmp r9, #0
+	movs r10, r9
 	beq label25
 	ldr r11, [sp, #16]
 	ldr r11, [r11, r9, lsl #2]

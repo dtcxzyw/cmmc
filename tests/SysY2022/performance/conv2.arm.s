@@ -84,8 +84,7 @@ label6:
 	cmp r2, #0
 	movwlt r4, #1
 	orr r3, r3, r4
-	mov r4, r0
-	cmp r0, #0
+	movs r4, r0
 	mov r6, #0
 	movwlt r6, #1
 	orr r6, r3, r6
@@ -190,8 +189,7 @@ label142:
 	cmp r2, #0
 	movwlt r4, #1
 	orr r3, r3, r4
-	mov r4, r0
-	cmp r0, #0
+	movs r4, r0
 	mov r6, #0
 	ldr r7, [sp, #24]
 	movwlt r6, #1
@@ -398,8 +396,7 @@ label134:
 	cmp r2, #0
 	movwlt r4, #1
 	orr r3, r3, r4
-	mov r4, r0
-	cmp r0, #0
+	movs r4, r0
 	mov r6, #0
 	ldr r7, [sp, #24]
 	movwlt r6, #1

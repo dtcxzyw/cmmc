@@ -25,25 +25,24 @@ main:
 	push { r4, r5, r6, r7, r8, r9, r10, lr }
 	sub sp, sp, #16
 	bl getch
-	sub r2, r0, #35
+	subs r2, r0, #35
+	movw r3, #3841
 	mov r1, #1
-	movw r4, #3841
-	cmp r2, #0
-	lsl r3, r1, r2
-	movt r4, #2560
-	mov r2, #0
-	and r3, r4, r3
-	movwlt r2, #1
-	clz r3, r3
-	lsr r3, r3, #5
-	orr r2, r3, r2
+	movt r3, #2560
+	lsl r2, r1, r2
+	and r2, r3, r2
+	mov r3, #0
+	clz r2, r2
+	movwlt r3, #1
+	lsr r2, r2, #5
+	orr r2, r2, r3
 	subs r3, r0, #67
 	lsl r1, r1, r3
 	and r1, r1, #83886080
 	clz r1, r1
-	lsr r4, r1, #5
+	lsr r3, r1, #5
 	mov r1, r2
-	movge r1, r4
+	movge r1, r3
 	mov r2, #0
 	cmp r0, #93
 	movwgt r2, #1
@@ -51,25 +50,24 @@ main:
 	beq label2
 label61:
 	bl getch
-	sub r2, r0, #35
+	subs r2, r0, #35
 	mov r1, #1
-	movw r4, #3841
-	cmp r2, #0
-	lsl r3, r1, r2
-	movt r4, #2560
-	mov r2, #0
-	and r3, r4, r3
-	movwlt r2, #1
-	clz r3, r3
-	lsr r3, r3, #5
-	orr r2, r3, r2
+	movw r3, #3841
+	lsl r2, r1, r2
+	movt r3, #2560
+	and r2, r3, r2
+	mov r3, #0
+	clz r2, r2
+	movwlt r3, #1
+	lsr r2, r2, #5
+	orr r2, r2, r3
 	subs r3, r0, #67
 	lsl r1, r1, r3
 	and r1, r1, #83886080
 	clz r1, r1
-	lsr r4, r1, #5
+	lsr r3, r1, #5
 	mov r1, r2
-	movge r1, r4
+	movge r1, r3
 	mov r2, #0
 	cmp r0, #93
 	movwgt r2, #1
@@ -101,25 +99,24 @@ label4:
 	ldr r9, [sp, #0]
 	str r0, [r9, r4, lsl #2]
 	bl getch
-	sub r2, r0, #35
+	subs r2, r0, #35
 	mov r1, #1
-	movw r5, #3841
-	cmp r2, #0
-	lsl r3, r1, r2
-	movt r5, #2560
-	mov r2, #0
-	and r3, r5, r3
-	movwlt r2, #1
-	clz r3, r3
-	lsr r3, r3, #5
-	orr r2, r3, r2
+	movw r3, #3841
+	lsl r2, r1, r2
+	movt r3, #2560
+	and r2, r3, r2
+	mov r3, #0
+	clz r2, r2
+	movwlt r3, #1
+	lsr r2, r2, #5
+	orr r2, r2, r3
 	subs r3, r0, #67
 	lsl r1, r1, r3
 	and r1, r1, #83886080
 	clz r1, r1
-	lsr r5, r1, #5
+	lsr r3, r1, #5
 	mov r1, r2
-	movge r1, r5
+	movge r1, r3
 	mov r2, #0
 	cmp r0, #93
 	movwgt r2, #1
@@ -127,25 +124,24 @@ label4:
 	beq label8
 label7:
 	bl getch
-	sub r2, r0, #35
 	mov r1, #1
-	movw r5, #3841
-	cmp r2, #0
-	lsl r3, r1, r2
-	movt r5, #2560
-	mov r2, #0
-	and r3, r5, r3
-	movwlt r2, #1
-	clz r3, r3
-	lsr r3, r3, #5
-	orr r2, r3, r2
+	subs r2, r0, #35
+	movw r3, #3841
+	lsl r2, r1, r2
+	movt r3, #2560
+	and r2, r3, r2
+	mov r3, #0
+	clz r2, r2
+	movwlt r3, #1
+	lsr r2, r2, #5
+	orr r2, r2, r3
 	subs r3, r0, #67
 	lsl r1, r1, r3
 	and r1, r1, #83886080
 	clz r1, r1
-	lsr r5, r1, #5
+	lsr r3, r1, #5
 	mov r1, r2
-	movge r1, r5
+	movge r1, r3
 	mov r2, #0
 	cmp r0, #93
 	movwgt r2, #1

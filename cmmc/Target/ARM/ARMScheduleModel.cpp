@@ -12,10 +12,12 @@
     limitations under the License.
 */
 
+#include "cmmc/CodeGen/Target.hpp"
 #include <ARM/InstInfoDecl.hpp>
 #include <cmmc/CodeGen/InstInfo.hpp>
 #include <cmmc/CodeGen/MIR.hpp>
 #include <cmmc/Target/ARM/ARM.hpp>
+#include <cstdint>
 #include <iostream>
 #include <iterator>
 
@@ -129,11 +131,11 @@ public:
         auto& src = inst.getOperand(1);
         if(isOperandIReg(dst) && isOperandIReg(src)) {
             return mIntegerArithmetic.schedule(state, inst, instInfo);
-        } else if(isOperandFPR(dst) && isOperandFPR(src)) {
-            return mFPArithmetic.schedule(state, inst, instInfo);
-        } else {
-            reportUnreachable(CMMC_LOCATION());
         }
+        if(isOperandFPR(dst) && isOperandFPR(src)) {
+            return mFPArithmetic.schedule(state, inst, instInfo);
+        }
+        reportUnreachable(CMMC_LOCATION());
     }
 };
 
@@ -213,46 +215,106 @@ CMMC_TARGET_NAMESPACE_BEGIN
     return modified;
 }
 
-static bool optimizeFusedCompareWithZero(MIRBasicBlock& block) {
+static bool optimizeFusedCompareWithZero(MIRBasicBlock& block, const CodeGenContext& ctx) {
     bool modified = false;
     auto& insts = block.instructions();
+    std::unordered_map<uint32_t, MIRInst*> lastDef;
 
     for(auto iter = insts.begin(); iter != insts.end();) {
         auto next = std::next(iter);
-        if(iter == insts.begin()) {
-            iter = next;
-            continue;
-        }
-        auto& curInst = *iter;
-        if(curInst.opcode() != CMP || !isZero(curInst.getOperand(1))) {
-            iter = next;
-            continue;
-        }
-        auto src = curInst.getOperand(0);
-        auto cc = curInst.getOperand(2);
 
-        auto prev = std::prev(iter);
-        switch(prev->opcode()) {
-            case ADD:
-            case SUB:
-            case AND:
-            case ORR:
-            case EOR:
-            case ORN:
-            case BIC:
-            case RSB: {
-                auto& prevInst = *prev;
-                auto& dst = prevInst.getOperand(0);
-                if(dst == src) {
-                    prevInst.setOpcode(prevInst.opcode() - ADD + ADDS);
-                    prevInst.setOperand<3>(cc);
-                    insts.erase(iter);
-                    modified = true;
-                }
-                break;
+        auto defCC = [](uint32_t opcode) {
+            switch(opcode) {
+                case ADDS:
+                case SUBS:
+                case ANDS:
+                case ORRS:
+                case EORS:
+                case ORNS:
+                case BICS:
+                case RSBS:
+                case MOVS:
+                case MVNS:
+                case CMP:
+                case CMN:
+                case TRANSFER_FPSCR_FLAG:
+                    return true;
+                default:
+                    return false;
             }
-            default:
-                break;
+        };
+
+        auto& curInst = *iter;
+        if(curInst.opcode() == CMP && isZero(curInst.getOperand(1))) {
+            auto src = curInst.getOperand(0);
+            auto cc = curInst.getOperand(2);
+
+            bool changed = false;
+            auto prev = lastDef.find(src.reg());
+            if(prev != lastDef.end()) {
+                auto& prevInst = *prev->second;
+                if(defCC(prevInst.opcode())) {
+                    changed = true;
+                } else {
+                    switch(prevInst.opcode()) {
+                        case ADD:
+                        case SUB:
+                        case AND:
+                        case ORR:
+                        case EOR:
+                        case ORN:
+                        case BIC:
+                        case RSB: {
+                            assert(dst == src);
+                            prevInst.setOpcode(prevInst.opcode() - ADD + ADDS);
+                            prevInst.setOperand<3>(cc);
+                            changed = true;
+                            break;
+                        }
+                        case MOV:
+                        case MVN: {
+                            assert(dst == src);
+                            prevInst.setOpcode(prevInst.opcode() - MOV + MOVS);
+                            prevInst.setOperand<2>(cc);
+                            changed = true;
+                            break;
+                        }
+                        case MoveGPR: {
+                            prevInst.setOpcode(MOVS);
+                            prevInst.setOperand<2>(cc);
+                            changed = true;
+                            break;
+                        }
+                        default:
+                            break;
+                    }
+                }
+            }
+
+            if(changed) {
+                insts.erase(iter);
+                lastDef.clear();
+                modified = true;
+                iter = next;
+                continue;
+            }
+        }
+
+        auto& instInfo = ctx.instInfo.getInstInfo(curInst);
+        if(defCC(curInst.opcode()) || requireFlag(instInfo.getInstFlag(), InstFlagCall))
+            lastDef.clear();
+
+        for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
+            if(instInfo.getOperandFlag(idx) & OperandFlagDef) {
+                auto& op = curInst.getOperand(idx);
+                if(isOperandGPR(op)) {
+                    lastDef[op.reg()] = &curInst;
+                }
+            }
+        }
+
+        if(curInst.opcode() == MoveGPR) {
+            lastDef[curInst.getOperand(1).reg()] = &curInst;
         }
 
         iter = next;
@@ -263,15 +325,13 @@ static bool optimizeFusedCompareWithZero(MIRBasicBlock& block) {
 
 bool ARMScheduleModel_cortex_a72::peepholeOpt(MIRFunction& func, const CodeGenContext& ctx) const {
     // CMMC_UNUSED(func);
-    CMMC_UNUSED(ctx);
     bool modified = false;
     for(auto& block : func.blocks()) {
         // if(ctx.flags.preRA)
         //     modified |= optimizeConditionalCopyOfComputationalInst(*block);
-        modified |= optimizeFusedCompareWithZero(*block);
+        modified |= optimizeFusedCompareWithZero(*block, ctx);
     }
     return modified;
-    return false;
 }
 
 const MicroarchitectureInfo& ARMScheduleModel_cortex_a72::getInfo() const {

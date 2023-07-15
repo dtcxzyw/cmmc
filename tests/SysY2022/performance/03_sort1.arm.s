@@ -10,20 +10,20 @@ a:
 .fpu vfpv4
 radixSort:
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
-	mov r4, r1
-	add r7, r0, #1
 	sub sp, sp, #204
-	add r1, r2, #1
-	clz r7, r7
-	add r5, sp, #128
+	add r7, r0, #1
+	mov r4, r1
 	add r6, sp, #64
+	add r5, sp, #128
 	mov r9, sp
-	cmp r3, r1
-	lsr r7, r7, #5
+	clz r7, r7
+	add r1, r2, #1
 	str r9, [sp, #192]
+	lsr r7, r7, #5
+	cmp r3, r1
 	mov r1, #0
 	movwle r1, #1
-	orrs r7, r1, r7
+	orrs r1, r1, r7
 	mov r1, #0
 	str r1, [sp, #128]
 	str r1, [r5, #4]
@@ -562,8 +562,7 @@ label505:
 label456:
 	mov r0, #102
 	bl _sysy_stoptime
-	mov r0, r4
-	cmp r4, #0
+	movs r0, r4
 	rsbmi r0, r4, #0
 	bl putint
 	mov r0, #10

@@ -12,8 +12,7 @@ X:
 .fpu vfpv4
 .globl foo
 foo:
-	mov r1, r0
-	cmp r0, #0
+	movs r1, r0
 	ble label11
 	movw r0, #:lower16:X
 	mov r3, #0

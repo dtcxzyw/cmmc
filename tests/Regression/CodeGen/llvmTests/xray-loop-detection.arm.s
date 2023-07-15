@@ -6,8 +6,7 @@
 .fpu vfpv4
 .globl foo
 foo:
-	mov r1, r0
-	cmp r0, #0
+	movs r1, r0
 	bne label9
 	mov r0, #0
 	b label2

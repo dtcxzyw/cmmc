@@ -280,8 +280,7 @@ label28:
 label22:
 	mov r0, #47
 	bl _sysy_stoptime
-	mov r0, r4
-	cmp r4, #0
+	movs r0, r4
 	rsbmi r0, r4, #0
 	bl putint
 	mov r0, #10

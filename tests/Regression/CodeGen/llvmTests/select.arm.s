@@ -96,9 +96,8 @@ select_or:
 	bx lr
 .globl select_or_1
 select_or_1:
-	and r2, r2, #1
+	ands r2, r2, #1
 	orr r1, r0, r1
-	cmp r2, #0
 	moveq r1, r0
 	mov r0, r1
 	bx lr
@@ -127,9 +126,8 @@ select_or_2b:
 	bx lr
 .globl select_or_3
 select_or_3:
-	and r2, r2, #1
+	ands r2, r2, #1
 	orr r1, r0, r1
-	cmp r2, #0
 	moveq r0, r1
 	bx lr
 .globl select_or_3b

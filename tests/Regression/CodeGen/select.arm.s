@@ -203,10 +203,9 @@ select_cross_fpr:
 	mov r0, #0
 	movwlt r0, #1
 	cmp r1, r2
-	mov r3, r0
+	movs r3, r0
 	bge label221
 	mov r1, #1065353216
-	cmp r0, #0
 	vmov s1, r1
 	movw r1, #0
 	movt r1, #16672

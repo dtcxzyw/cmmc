@@ -40,7 +40,7 @@ main:
 	uxth r2, r1
 	strh r2, [r0, #0]
 	movw r0, #65535
-	ands r3, r1, r0
+	ands r0, r1, r0
 	movw r1, #:lower16:d
 	movt r1, #:upper16:d
 	ldrsb r2, [r1, #0]

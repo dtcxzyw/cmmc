@@ -133,6 +133,15 @@ InstInfo:
       MVN:
         Mnemonic: mvn
 
+  Move_FlagSet:
+    Format: "$Mnemonic:Template $Rd:GPR[Def], $Op2:Op2[Use] @ Implicit Def: $CC:CC[Def]"
+    Flag: [MultiDef]
+    Instances:
+      MOVS:
+        Mnemonic: movs
+      MVNS:
+        Mnemonic: mvns
+
   CLZ:
     Format: clz $Rd:GPR[Def], $Rm:GPR[Use]
 

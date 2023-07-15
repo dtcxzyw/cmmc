@@ -15,9 +15,8 @@ g1:
 .fpu vfpv4
 .globl test1
 test1:
-	mov r1, r0
+	movs r1, r0
 	movw r2, #:lower16:g0
-	cmp r0, #0
 	movt r2, #:upper16:g0
 	mov r0, r2
 	ldr r2, [r2, #0]

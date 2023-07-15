@@ -111,8 +111,7 @@ label11:
 	b label6
 power:
 	push { r4, r5, lr }
-	cmp r1, #0
-	mov r5, r1
+	movs r5, r1
 	mov r4, r0
 	sub sp, sp, #4
 	bne label262
@@ -136,15 +135,15 @@ label264:
 fft:
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
 	cmp r2, #1
-	sub sp, sp, #36
 	mov r6, r0
 	mov r7, r1
-	str r2, [sp, #16]
 	mov r5, r2
+	sub sp, sp, #36
 	movw r6, #:lower16:temp
-	str r3, [sp, #8]
 	mov r1, r3
+	str r2, [sp, #16]
 	movt r6, #:upper16:temp
+	str r3, [sp, #8]
 	str r0, [sp, #4]
 	add r0, r2, r2, lsr #31
 	str r7, [sp, #0]
@@ -279,8 +278,8 @@ label105:
 	ldr r1, [r6, r7, lsl #2]
 	mov r0, r5
 	bl multiply
-	mov r1, r0
 	add r3, r9, r0
+	mov r1, r0
 	movw r2, #51217
 	sub r1, r9, r0
 	movw r0, #1
