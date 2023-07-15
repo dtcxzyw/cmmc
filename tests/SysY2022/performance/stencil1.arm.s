@@ -137,7 +137,6 @@ label5:
 	ldr r8, [r8, #4]
 	sub r7, r7, r9
 	sub r7, r7, r8
-	cmp r7, #255
 	usat r7, #8, r7
 	str r7, [r5, r2, lsl #2]
 	movw r2, #1023

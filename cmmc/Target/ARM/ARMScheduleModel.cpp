@@ -12,6 +12,7 @@
     limitations under the License.
 */
 
+#include "cmmc/Support/Diagnostics.hpp"
 #include <ARM/InstInfoDecl.hpp>
 #include <cmmc/CodeGen/InstInfo.hpp>
 #include <cmmc/CodeGen/MIR.hpp>
@@ -371,6 +372,49 @@ static bool optimizeFusedCompareWithZero(MIRBasicBlock& block, const CodeGenCont
     return modified;
 }
 
+static bool removeUnusedDefCC(MIRBasicBlock& block, const CodeGenContext& ctx) {
+    bool modified = false;
+
+    auto& insts = block.instructions();
+    auto lastDef = insts.end();
+
+    auto useCC = [&] { lastDef = insts.end(); };
+    auto resetCC = [&] {
+        if(lastDef == insts.end())
+            return;
+
+        switch(lastDef->opcode()) {
+            case CMP:
+            case CMN:
+            case TRANSFER_FPSCR_FLAG: {
+                insts.erase(lastDef);
+                lastDef = insts.end();
+                break;
+            }
+            default:
+                reportUnreachable(CMMC_LOCATION());
+        }
+    };
+
+    for(auto iter = insts.begin(); iter != insts.end(); ++iter) {
+        auto& instInfo = ctx.instInfo.getInstInfo(*iter);
+        for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
+            if(isOperandCC(iter->getOperand(idx))) {
+                if(instInfo.getOperandFlag(idx) & OperandFlagUse)
+                    useCC();
+                else {
+                    resetCC();
+                    lastDef = iter;
+                }
+            }
+        }
+        if(requireFlag(instInfo.getInstFlag(), InstFlagCall))
+            resetCC();
+    }
+
+    return modified;
+}
+
 bool ARMScheduleModel_cortex_a72::peepholeOpt(MIRFunction& func, const CodeGenContext& ctx) const {
     // CMMC_UNUSED(func);
     bool modified = false;
@@ -378,6 +422,7 @@ bool ARMScheduleModel_cortex_a72::peepholeOpt(MIRFunction& func, const CodeGenCo
         // if(ctx.flags.preRA)
         //     modified |= optimizeConditionalCopyOfComputationalInst(*block);
         modified |= optimizeFusedCompareWithZero(*block, ctx);
+        modified |= removeUnusedDefCC(*block, ctx);
     }
     return modified;
 }

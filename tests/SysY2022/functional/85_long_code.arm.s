@@ -230,19 +230,19 @@ label21:
 .globl main
 main:
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
+	movw r6, #282
+	sub sp, sp, #364
 	mov r4, #89
 	mov r5, #26
 	mov r2, #7
-	movw r6, #282
-	sub sp, sp, #364
 	mov r11, #254
 	mov r1, #23
 	mov r7, #39
 	mov r8, #28
 	mov r9, #1
 	movw r10, #290
-	add r3, sp, #92
 	add r0, sp, #228
+	add r3, sp, #92
 	str r3, [sp, #220]
 	str r0, [sp, #68]
 	str r2, [sp, #228]
@@ -659,33 +659,29 @@ label267:
 	ldr r5, [r3, r5, lsl #2]
 	ldr r3, [sp, #224]
 	ldr r6, [r3, r5, lsl #2]
-	add r9, r6, #1
-	mov r6, r4
-	cmp r4, r9
-	str r9, [r3, r5, lsl #2]
-	movle r6, r9
-	ldr r7, [r1, #4]
-	ldr r8, [r3, r7, lsl #2]
-	add r8, r8, #1
-	str r8, [r3, r7, lsl #2]
-	cmp r6, r8
-	cmp r4, r9
+	add r6, r6, #1
+	cmp r4, r6
+	str r6, [r3, r5, lsl #2]
 	movlt r2, r5
-	cmp r6, r8
-	mov r4, r2
-	movlt r4, r7
-	mov r2, r6
-	movle r2, r8
-	ldr r6, [r1, #8]
-	ldr r5, [r3, r6, lsl #2]
-	add r7, r5, #1
+	movle r4, r6
+	ldr r6, [r1, #4]
+	mov r5, r2
+	ldr r7, [r3, r6, lsl #2]
+	add r7, r7, #1
 	str r7, [r3, r6, lsl #2]
-	mov r5, r4
+	cmp r4, r7
+	movlt r5, r6
+	ldr r6, [r1, #8]
+	mov r2, r4
+	movle r2, r7
+	ldr r4, [r3, r6, lsl #2]
+	add r7, r4, #1
+	str r7, [r3, r6, lsl #2]
+	mov r4, r2
 	cmp r2, r7
 	ldr r1, [r1, #12]
-	movlt r5, r6
-	mov r4, r2
 	movle r4, r7
+	movlt r5, r6
 	ldr r2, [r3, r1, lsl #2]
 	add r6, r2, #1
 	str r6, [r3, r1, lsl #2]
