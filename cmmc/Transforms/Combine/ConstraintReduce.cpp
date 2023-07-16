@@ -13,6 +13,7 @@
 */
 
 #include <algorithm>
+#include <bitset>
 #include <cmmc/Analysis/CFGAnalysis.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
@@ -33,6 +34,8 @@
 #include <vector>
 
 CMMC_NAMESPACE_BEGIN
+
+constexpr size_t kMaxValues = 256;
 
 struct VarPair final {
     Value *v1, *v2;
@@ -104,6 +107,116 @@ struct KnownRelations final {
 
 class ConstraintReduce final : public TransformPass<Function> {
     using CondSet = std::unordered_map<VarPair, KnownRelations, VarPairHasher>;
+    using MatrixRow = std::bitset<kMaxValues>;
+    using Matrix = std::array<MatrixRow, kMaxValues>;
+
+    static Matrix matrixMultiply(const size_t size, const Matrix& lhs, const Matrix& rhs) {
+        Matrix transpose{};
+        for(size_t i = 0; i < size; ++i)
+            for(size_t j = 0; j < size; ++j)
+                transpose[i][j] = rhs[j][i];
+
+        Matrix res{};
+        for(size_t i = 0; i < size; ++i)
+            for(size_t j = 0; j < size; ++j)
+                res[i][j] = (lhs[i] & transpose[j]).any();
+        return res;
+    }
+
+    static void calcTransitiveClosure(CondSet& set) {
+        std::vector<Value*> values;
+        for(auto& [pair, relations] : set) {
+            values.push_back(pair.v1);
+            values.push_back(pair.v2);
+        }
+        std::sort(values.begin(), values.end());
+        values.erase(std::unique(values.begin(), values.end()), values.end());
+
+        if(values.size() > kMaxValues) {
+            std::cerr << "Too many values: " << values.size() << std::endl;
+            return;
+        }
+
+        const auto& getValueIdx = [&values](Value* v) {
+            return std::distance(values.begin(), std::lower_bound(values.begin(), values.end(), v));
+        };
+
+        const auto& invertRelation = [](KnownRelation rel) {
+            switch(rel) {
+                case KnownRelation::True:
+                    return KnownRelation::False;
+                case KnownRelation::False:
+                    return KnownRelation::True;
+                default:
+                    return KnownRelation::Unknown;
+            }
+        };
+
+        bool modified = false;
+        auto workRelation = [&](bool symmetric, std::function<KnownRelation(const KnownRelations&)> getter,
+                                std::function<bool(intmax_t, intmax_t)> constantCmp) mutable {
+            Matrix mat{};
+            // known relations
+            for(auto& [pair, relations] : set) {
+                mat[getValueIdx(pair.v1)][getValueIdx(pair.v2)] = getter(relations) == KnownRelation::True;
+                mat[getValueIdx(pair.v2)][getValueIdx(pair.v1)] = symmetric && getter(relations) == KnownRelation::False;
+            }
+            // reflexive
+            for(size_t i = 0; i < kMaxValues; ++i)
+                mat[i][i] = true;
+            // constant relations
+            for(size_t i = 0; i < values.size(); i++)
+                if(auto value = dynamic_cast<ConstantInteger*>(values[i]))
+                    for(size_t j = 0; j < values.size(); j++)
+                        if(auto value2 = dynamic_cast<ConstantInteger*>(values[j]))
+                            mat[i][j] = constantCmp(value->getSignExtended(), value2->getSignExtended());
+
+            Matrix oldMat = mat;
+            for(size_t i = 0; (1ULL << i) < values.size(); ++i)
+                mat = matrixMultiply(values.size(), mat, mat);
+
+            if(mat != oldMat)
+                modified = true;
+            return mat;
+        };
+
+        Matrix eqMat = workRelation(
+            false, [](auto& r) { return r.equal; }, std::equal_to<intmax_t>{});
+        Matrix ltMat = workRelation(
+            true, [](auto& r) { return r.lessThan; }, std::less<intmax_t>{});
+        Matrix gtMat = workRelation(
+            true, [](auto& r) { return r.greaterThan; }, std::greater<intmax_t>{});
+        Matrix ltMatInv = workRelation(
+            true, [&](auto& r) { return invertRelation(r.lessThan); }, std::greater_equal<intmax_t>{});
+        Matrix gtMatInv = workRelation(
+            true, [&](auto& r) { return invertRelation(r.greaterThan); }, std::less_equal<intmax_t>{});
+        if(!modified)
+            return;
+
+        // TODO: a == b != c == d -> a != d
+
+        for(size_t i = 0; i < values.size(); i++)
+            for(size_t j = i + 1; j < values.size(); j++) {
+                if(eqMat[i][j] || ltMat[i][j] || gtMat[i][j] || ltMatInv[i][j] || gtMatInv[i][j]) {
+                    VarPair pair{ values[i], values[j] };
+                    KnownRelations relations{};
+                    if(eqMat[i][j])
+                        relations.equal = KnownRelation::True;
+                    if(ltMat[i][j])
+                        relations.lessThan = KnownRelation::True;
+                    if(gtMat[i][j])
+                        relations.greaterThan = KnownRelation::True;
+                    if(ltMatInv[i][j])
+                        relations.lessThan = KnownRelation::False;
+                    if(gtMatInv[i][j])
+                        relations.greaterThan = KnownRelation::False;
+
+                    set[pair].update(relations);
+                    set[pair].localInfer();
+                }
+            }
+    }
+
     static CondSet mergeSets(std::vector<CondSet> sets) {
         if(sets.empty())
             return {};
@@ -125,7 +238,7 @@ class ConstraintReduce final : public TransformPass<Function> {
         }
         for(auto& [pair, relations] : res)
             relations.localInfer();
-        // TODO: transitive relation?
+        calcTransitiveClosure(res);
         return res;
     }
 
@@ -294,6 +407,7 @@ public:
                 for(auto& [pair, rel] : edgeSets[u][preds.front()]) {
                     addToSet(dst, pair.v1, pair.v2, rel);
                 }
+                calcTransitiveClosure(dst);
                 if(oldDst != dst) {
                     updateBlock(u);
                 }

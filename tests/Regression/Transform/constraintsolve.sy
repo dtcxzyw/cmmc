@@ -10,3 +10,18 @@ int test2(int x) {
         return x >= 0;
     return 0;
 }
+int test3(int x, int y, int z) {
+    if (x < y && y < z)
+        return x < z;
+    return 1;
+}
+int test4(int x, int y, int z) {
+    if (x <= y && y <= z)
+        return x <= z;
+    return 1;
+}
+int test5(int x, int y) {
+    if (x < 4 && 5 < y)
+        return x < y;
+    return 1;
+}

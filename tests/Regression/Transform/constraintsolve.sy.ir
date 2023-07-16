@@ -6,3 +6,15 @@ func @test2() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecur
   ^entry:
     ret i32 0;
 }
+func @test3() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret i32 1;
+}
+func @test4() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret i32 1;
+}
+func @test5() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret i32 1;
+}
