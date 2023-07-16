@@ -14,21 +14,22 @@ graphColoring:
 	sd ra, 0(sp)
 	bne a2, a0, label25
 	mv a2, zero
-	mv a1, zero
+	mv a0, zero
+	li a1, 4
 	mv a3, s0
-	bge zero, a0, label31
+	bge zero, a1, label31
 	li a0, 1
 	mv a1, a0
 	li a4, 4
 	bge a0, a4, label36
-	sh2add a5, a0, s0
-	lw a4, 0(a5)
-	beq a4, zero, label10
+	sh2add a4, a0, s0
+	lw a5, 0(a4)
+	beq a5, zero, label9
 	sh2add a5, a0, s1
 	mv t0, s1
 	lw a4, 0(a5)
 	lw a5, 0(s1)
-	bne a4, a5, label10
+	bne a4, a5, label9
 	j label116
 label25:
 	li s3, 1
@@ -37,53 +38,40 @@ label25:
 	j label17
 label116:
 	mv a0, zero
-	j label2
-label31:
-	mv s0, zero
-	j label12
+	j label13
 label36:
 	mv a2, a0
-	slliw a1, a0, 4
-	li a0, 4
-	add a3, s0, a1
-	bge a2, a0, label31
+	slliw a0, a0, 4
+	li a1, 4
+	add a3, s0, a0
+	bge a2, a1, label31
 	addiw a0, a2, 1
 	mv a1, a0
 	li a4, 4
 	bge a0, a4, label36
-	sh2add a5, a0, a3
-	lw a4, 0(a5)
-	beq a4, zero, label10
+	sh2add a4, a0, a3
+	lw a5, 0(a4)
+	beq a5, zero, label9
 	sh2add a5, a0, s1
 	sh2add t0, a2, s1
 	lw a4, 0(a5)
 	lw a5, 0(t0)
-	bne a4, a5, label10
+	bne a4, a5, label9
 	j label116
-label12:
-	sh2add a1, s0, s1
-	lw a0, 0(a1)
-	jal putint
-	li a0, 32
-	jal putch
-	li a0, 4
-	addiw s0, s0, 1
-	bge s0, a0, label14
-	j label12
-label10:
+label9:
 	addiw a1, a1, 1
 	li a4, 4
 	bge a1, a4, label36
-	sh2add a5, a1, a3
-	lw a4, 0(a5)
-	beq a4, zero, label10
+	sh2add a4, a1, a3
+	lw a5, 0(a4)
+	beq a5, zero, label9
 	sh2add a5, a1, s1
 	sh2add t0, a2, s1
 	lw a4, 0(a5)
 	lw a5, 0(t0)
-	bne a4, a5, label10
+	bne a4, a5, label9
 	j label116
-label2:
+label13:
 	ld ra, 0(sp)
 	ld s3, 8(sp)
 	ld s1, 16(sp)
@@ -101,7 +89,19 @@ label17:
 	jal graphColoring
 	beq a0, zero, label18
 	li a0, 1
-	j label2
+	j label13
+label31:
+	mv s0, zero
+label10:
+	sh2add a2, s0, s1
+	lw a0, 0(a2)
+	jal putint
+	li a0, 32
+	jal putch
+	li a0, 4
+	addiw s0, s0, 1
+	bge s0, a0, label12
+	j label10
 label18:
 	sh2add a0, s2, s1
 	addiw s3, s3, 1
@@ -109,11 +109,11 @@ label18:
 	li a1, 4
 	bge s3, a1, label116
 	j label17
-label14:
+label12:
 	li a0, 10
 	jal putch
 	li a0, 1
-	j label2
+	j label13
 .globl main
 main:
 	addi sp, sp, -88

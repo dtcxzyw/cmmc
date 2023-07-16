@@ -519,4 +519,18 @@ auto oneUse(Matcher matcher) noexcept {
     return OneUseMatcher{ matcher };
 }
 
+class ExactlyMatcher final {
+    Value*& mVal;
+
+public:
+    explicit ExactlyMatcher(Value*& val) noexcept : mVal{ val } {}
+    bool operator()(const MatchContext<Value>& ctx) const noexcept {
+        return ctx.value == mVal;
+    }
+};
+
+inline auto exactly(Value*& val) noexcept {
+    return ExactlyMatcher{ val };
+}
+
 CMMC_NAMESPACE_END

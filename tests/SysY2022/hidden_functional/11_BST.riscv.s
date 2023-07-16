@@ -20,27 +20,9 @@ insert:
 	sd s2, 16(sp)
 	sd s3, 8(sp)
 	sd ra, 0(sp)
-	bne s0, a0, label5
-	lw a0, 0(a2)
-pcrel112:
-	auipc a3, %pcrel_hi(value)
-	addi a5, a3, %pcrel_lo(pcrel112)
-	sh2add a4, a0, a5
-	sw a1, 0(a4)
-pcrel113:
-	auipc a1, %pcrel_hi(left_child)
-	addi a4, a1, %pcrel_lo(pcrel113)
-	li a1, -1
-	sh2add a3, a0, a4
-pcrel114:
-	auipc a4, %pcrel_hi(right_child)
-	sw a1, 0(a3)
-	addi a5, a4, %pcrel_lo(pcrel114)
-	sh2add a3, a0, a5
-	sw a1, 0(a3)
-	addiw a1, a0, 1
-	sw a1, 0(a2)
-label3:
+	bne s0, a0, label4
+	j label7
+label2:
 	ld ra, 0(sp)
 	ld s3, 8(sp)
 	ld s2, 16(sp)
@@ -48,60 +30,83 @@ label3:
 	ld s0, 32(sp)
 	addi sp, sp, 40
 	ret
-label5:
+label4:
 	auipc a3, %pcrel_hi(value)
-	addi a4, a3, %pcrel_lo(label5)
-	sh2add a5, s0, a4
-pcrel115:
-	auipc a4, %pcrel_hi(right_child)
-	lw a0, 0(a5)
-	addi a3, a4, %pcrel_lo(pcrel115)
-pcrel116:
-	auipc a5, %pcrel_hi(left_child)
+pcrel112:
+	auipc t0, %pcrel_hi(right_child)
+	addi a5, a3, %pcrel_lo(label4)
+	addi a3, t0, %pcrel_lo(pcrel112)
+	sh2add a4, s0, a5
 	mv s1, a3
-	addi a4, a5, %pcrel_lo(pcrel116)
+pcrel113:
+	auipc a5, %pcrel_hi(left_child)
+	lw a0, 0(a4)
+	addi a4, a5, %pcrel_lo(pcrel113)
 	bgt a1, a0, label101
 	mv s1, a4
 label101:
 	sh2add a0, s0, s1
 	li a3, -1
 	lw s2, 0(a0)
-	bne s2, a3, label7
+	bne s2, a3, label6
 	lw a0, 0(a2)
-pcrel117:
-	auipc a5, %pcrel_hi(value)
-	addi a3, a5, %pcrel_lo(pcrel117)
-pcrel118:
-	auipc a5, %pcrel_hi(right_child)
-	sh2add a4, a0, a3
-	sw a1, 0(a4)
-pcrel119:
+pcrel114:
+	auipc a4, %pcrel_hi(value)
+	addi a5, a4, %pcrel_lo(pcrel114)
+	sh2add a3, a0, a5
+	sw a1, 0(a3)
+pcrel115:
 	auipc a1, %pcrel_hi(left_child)
-	addi a4, a1, %pcrel_lo(pcrel119)
+	addi a4, a1, %pcrel_lo(pcrel115)
 	li a1, -1
 	sh2add a3, a0, a4
+pcrel116:
+	auipc a4, %pcrel_hi(right_child)
 	sw a1, 0(a3)
-	addi a3, a5, %pcrel_lo(pcrel118)
+	addi a3, a4, %pcrel_lo(pcrel116)
+	sh2add a5, a0, a3
+	addiw a3, a0, 1
+	sw a1, 0(a5)
+	sh2add a1, s0, s1
+	sw a3, 0(a2)
+	sw a0, 0(a1)
+	mv a0, s0
+	j label2
+label6:
+	auipc a4, %pcrel_hi(value)
+	addi a3, a4, %pcrel_lo(label6)
+pcrel117:
+	auipc a4, %pcrel_hi(right_child)
+	sh2add a5, s2, a3
+	addi a3, a4, %pcrel_lo(pcrel117)
+	lw a0, 0(a5)
+pcrel118:
+	auipc a5, %pcrel_hi(left_child)
+	addi a4, a5, %pcrel_lo(pcrel118)
+	bgt a1, a0, label103
+	j label110
+label7:
+	lw a0, 0(a2)
+pcrel119:
+	auipc a5, %pcrel_hi(value)
+	addi a3, a5, %pcrel_lo(pcrel119)
 	sh2add a4, a0, a3
 	sw a1, 0(a4)
+pcrel120:
+	auipc a1, %pcrel_hi(left_child)
+	addi a4, a1, %pcrel_lo(pcrel120)
+	li a1, -1
+	sh2add a3, a0, a4
+pcrel121:
+	auipc a4, %pcrel_hi(right_child)
+	sw a1, 0(a3)
+	addi a3, a4, %pcrel_lo(pcrel121)
+	sh2add a5, a0, a3
+	sw a1, 0(a5)
 	addiw a1, a0, 1
 	sw a1, 0(a2)
-	sh2add a2, s0, s1
-	sw a0, 0(a2)
-	mv a0, s0
-	j label3
-label7:
-	auipc a3, %pcrel_hi(value)
-	addi a4, a3, %pcrel_lo(label7)
-	sh2add a5, s2, a4
-pcrel120:
-	auipc a4, %pcrel_hi(right_child)
-	lw a0, 0(a5)
-	addi a3, a4, %pcrel_lo(pcrel120)
-pcrel121:
-	auipc a5, %pcrel_hi(left_child)
-	addi a4, a5, %pcrel_lo(pcrel121)
-	bgt a1, a0, label103
+	j label2
+label110:
 	mv a3, a4
 label103:
 	sh2add s3, s2, a3
@@ -111,7 +116,7 @@ label103:
 	sw a0, 0(s3)
 	mv a0, s0
 	sw s2, 0(a1)
-	j label3
+	j label2
 delete:
 	addi sp, sp, -24
 	li a2, -1

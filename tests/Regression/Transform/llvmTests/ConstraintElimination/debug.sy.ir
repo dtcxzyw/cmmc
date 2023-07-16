@@ -1,46 +1,18 @@
-func @test_and_ugt(i8 %var0, i8 %var1, i8 %var2) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @test_and_ugt(i8 %var0, i8 %var2) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = zext i8 %var0 to i32;
-    i32 %1 = zext i8 %var1 to i32;
-    i1 %2 = icmp sgt i32 %0, i32 %1;
-    i32 %3 = zext i8 %var2 to i32;
-    i1 %4 = icmp sgt i32 %1, i32 %3;
-    i1 %5 = and i1 %2, i1 %4;
-    cbr i1 %5(prob = 0.5), ^if.then, ^if.else;
-  ^if.then:
-    i1 %6 = icmp sle i32 %0, i32 %3;
-    i32 %7 = zext i1 %6 to i32;
-    i32 %8 = ztrunc i32 %7 to i32;
-    ubr ^b;
-  ^if.else:
-    i1 %9 = icmp sle i32 %0, i32 %3;
-    i32 %10 = zext i1 %9 to i32;
-    i32 %11 = ztrunc i32 %10 to i32;
-    ubr ^b;
-  ^b:
-    i32 %12 = phi [^if.then, i32 %8] [^if.else, i32 %11];
-    ret i32 %12;
-}
-func @test_and_ule(i8 %var0, i8 %var1, i8 %var2) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
-  ^entry:
-    i32 %0 = zext i8 %var0 to i32;
-    i32 %1 = zext i8 %var1 to i32;
+    i32 %1 = zext i8 %var2 to i32;
     i1 %2 = icmp sle i32 %0, i32 %1;
-    i32 %3 = zext i8 %var2 to i32;
-    i1 %4 = icmp sle i32 %1, i32 %3;
-    i1 %5 = and i1 %2, i1 %4;
-    cbr i1 %5(prob = 0.5), ^if.then, ^if.else;
-  ^if.then:
-    i1 %6 = icmp sle i32 %0, i32 %3;
-    i32 %7 = zext i1 %6 to i32;
-    i32 %8 = ztrunc i32 %7 to i32;
-    ubr ^b;
-  ^if.else:
-    i1 %9 = icmp sle i32 %0, i32 %3;
-    i32 %10 = zext i1 %9 to i32;
-    i32 %11 = ztrunc i32 %10 to i32;
-    ubr ^b;
-  ^b:
-    i32 %12 = phi [^if.then, i32 %8] [^if.else, i32 %11];
-    ret i32 %12;
+    i32 %3 = zext i1 %2 to i32;
+    i32 %4 = ztrunc i32 %3 to i32;
+    ret i32 %4;
+}
+func @test_and_ule(i8 %var0, i8 %var2) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = zext i8 %var0 to i32;
+    i32 %1 = zext i8 %var2 to i32;
+    i1 %2 = icmp sle i32 %0, i32 %1;
+    i32 %3 = zext i1 %2 to i32;
+    i32 %4 = ztrunc i32 %3 to i32;
+    ret i32 %4;
 }

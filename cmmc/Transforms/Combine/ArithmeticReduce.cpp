@@ -97,9 +97,9 @@ class ArithmeticReduce final : public TransformPass<Function> {
             if(fsub(cfp_(0.0), any(v1))(matchCtx))
                 return builder.makeOp<UnaryInst>(InstructionID::FNeg, v1);
             // a - a -> 0
-            if(sub(any(v1), any(v2))(matchCtx) && v1 == v2)
+            if(sub(any(v1), exactly(v1))(matchCtx))
                 return makeIntLike(0, inst);
-            if(fsub(any(v1), any(v2))(matchCtx) && v1 == v2)
+            if(fsub(any(v1), exactly(v1))(matchCtx))
                 return make<ConstantFloatingPoint>(inst->getType(), 0.0);
             // a * 0 -> 0
             if(mul(any(v1), cint_(0))(matchCtx))
@@ -129,9 +129,9 @@ class ArithmeticReduce final : public TransformPass<Function> {
             if(fdiv(cfp_(0.0), any(v1))(matchCtx))
                 return make<ConstantFloatingPoint>(inst->getType(), 0.0);
             // a / a -> 1
-            if((sdiv(any(v1), any(v2))(matchCtx) || udiv(any(v1), any(v2))(matchCtx)) && v1 == v2)
+            if(sdiv(any(v1), exactly(v1))(matchCtx) || udiv(any(v1), exactly(v1))(matchCtx))
                 return ConstantInteger::get(inst->getType(), 1);
-            if(fdiv(any(v1), any(v2))(matchCtx) && v1 == v2)
+            if(fdiv(any(v1), exactly(v1))(matchCtx))
                 return make<ConstantFloatingPoint>(inst->getType(), 1.0);
             // a / 1 -> a
             if(sdiv(any(v1), cint_(1))(matchCtx) || udiv(any(v1), cuint_(1))(matchCtx))
@@ -144,14 +144,14 @@ class ArithmeticReduce final : public TransformPass<Function> {
             if(fdiv(any(v1), cfp_(1.0))(matchCtx))
                 return builder.makeOp<UnaryInst>(InstructionID::FNeg, v1);
             // a / -a -> -1
-            if(sdiv(any(v1), neg(any(v2)))(matchCtx) && v1 == v2)
+            if(sdiv(any(v1), neg(exactly(v1)))(matchCtx))
                 return makeIntLike(-1, inst);
-            if(fdiv(any(v1), fneg(any(v2)))(matchCtx) && v1 == v2)
+            if(fdiv(any(v1), fneg(exactly(v1)))(matchCtx))
                 return make<ConstantFloatingPoint>(inst->getType(), -1.0);
             // -a / a -> -1
-            if(sdiv(neg(any(v1)), any(v2))(matchCtx) && v1 == v2)
+            if(sdiv(neg(any(v1)), exactly(v1))(matchCtx))
                 return makeIntLike(-1, inst);
-            if(fdiv(fneg(any(v1)), any(v2))(matchCtx) && v1 == v2)
+            if(fdiv(fneg(any(v1)), exactly(v1))(matchCtx))
                 return make<ConstantFloatingPoint>(inst->getType(), -1.0);
             // a / (2^k) -> a * (2^(-k))
             auto isPowerOf2FP = [](double x) {
@@ -180,7 +180,7 @@ class ArithmeticReduce final : public TransformPass<Function> {
             if(srem(cint_(0), any(v1))(matchCtx) || urem(cuint_(0), any(v1))(matchCtx))
                 return makeIntLike(0, inst);
             // a % a -> 0
-            if((srem(any(v1), any(v2))(matchCtx) || urem(any(v1), any(v2))(matchCtx)) && v1 == v2)
+            if(srem(any(v1), exactly(v1))(matchCtx) || urem(any(v1), exactly(v1))(matchCtx))
                 return makeIntLike(0, inst);
             // a % 1 -> 0
             if(srem(any(v1), cint_(1))(matchCtx) || urem(any(v1), cuint_(1))(matchCtx))
@@ -246,7 +246,7 @@ class ArithmeticReduce final : public TransformPass<Function> {
                 return builder.makeOp<BinaryInst>(InstructionID::Add, v1, v2);
             }
             // select c?a:a -> a
-            if(select(any(v1), any(v2), any(v3))(matchCtx) && v2 == v3) {
+            if(select(any(v1), any(v2), exactly(v2))(matchCtx)) {
                 return v2;
             }
             uintmax_t u1;
@@ -255,19 +255,12 @@ class ArithmeticReduce final : public TransformPass<Function> {
             }
             // FIXME:
             // a + a -> 2 * a
-            if(add(any(v1), any(v2))(matchCtx) && v1 == v2)
-                return builder.makeOp<BinaryInst>(InstructionID::Mul, makeIntLike(2, inst), v1);
+            if(add(any(v1), exactly(v1))(matchCtx))
+                return builder.makeOp<BinaryInst>(InstructionID::Mul, v1, makeIntLike(2, inst));
             // b * a + a -> (b+1) * a
-            if(add(mul(any(v1), any(v2)), any(v3))(matchCtx)) {
-                Value *a = nullptr, *b = nullptr;
-                if(v1 == v3) {
-                    a = v1, b = v2;
-                } else if(v2 == v3) {
-                    a = v2, b = v1;
-                }
-                if(a && b)
-                    return builder.makeOp<BinaryInst>(InstructionID::Mul,
-                                                      builder.makeOp<BinaryInst>(InstructionID::Add, b, makeIntLike(1, inst)), a);
+            if(add(any(v1), oneUse(mul(exactly(v1), any(v2))))(matchCtx)) {
+                return builder.makeOp<BinaryInst>(InstructionID::Mul,
+                                                  builder.makeOp<BinaryInst>(InstructionID::Add, v2, makeIntLike(1, inst)), v1);
             }
             // b * a + c * a -> (b + c) * a
             if(add(oneUse(mul(any(v1), any(v2))), oneUse(mul(any(v3), any(v4))))(matchCtx)) {
@@ -408,7 +401,7 @@ class ArithmeticReduce final : public TransformPass<Function> {
 
             // a >/</!= a -> false
             // a >=/<=/== a -> true
-            if(icmp(cmp, any(v1), any(v2))(matchCtx) && v1 == v2) {
+            if(icmp(cmp, any(v1), exactly(v1))(matchCtx)) {
                 switch(cmp) {
                     case CompareOp::ICmpEqual:
                     case CompareOp::ICmpSignedLessEqual:
@@ -623,16 +616,16 @@ class ArithmeticReduce final : public TransformPass<Function> {
 
             // x >/>= c1 ? c1 : smax(x, c2) where c1 > c2 -> clamp(x, c2, c1)
             Value* v5;
-            if(select(icmp(cmp, any(v1), capture(int_(i1), v2)), any(v3), capture(smax(any(v4), int_(i2)), v5))(matchCtx)) {
-                if((cmp == CompareOp::ICmpSignedGreaterThan || cmp == CompareOp::ICmpSignedGreaterEqual) && v2 == v3 &&
-                   v1 == v4 && i1 > i2) {
+            if(select(icmp(cmp, any(v1), capture(int_(i1), v2)), exactly(v2),
+                      capture(smax(exactly(v1), int_(i2)), v5))(matchCtx)) {
+                if((cmp == CompareOp::ICmpSignedGreaterThan || cmp == CompareOp::ICmpSignedGreaterEqual) && i1 > i2) {
                     return builder.makeOp<BinaryInst>(InstructionID::SMin, v5, v2);
                 }
             }
             // x </<= c1 ? c1 : smin(x, c2) where c1 < c2 -> clamp(x, c1, c2)
-            if(select(icmp(cmp, any(v1), capture(int_(i1), v2)), any(v3), capture(smin(any(v4), int_(i2)), v5))(matchCtx)) {
-                if((cmp == CompareOp::ICmpSignedLessThan || cmp == CompareOp::ICmpSignedLessEqual) && v2 == v3 && v1 == v4 &&
-                   i1 < i2) {
+            if(select(icmp(cmp, any(v1), capture(int_(i1), v2)), exactly(v2),
+                      capture(smin(exactly(v1), int_(i2)), v5))(matchCtx)) {
+                if((cmp == CompareOp::ICmpSignedLessThan || cmp == CompareOp::ICmpSignedLessEqual) && i1 < i2) {
                     return builder.makeOp<BinaryInst>(InstructionID::SMax, v5, v2);
                 }
             }
@@ -701,8 +694,7 @@ class ArithmeticReduce final : public TransformPass<Function> {
             }
 
             // (x | y) - (x & y) -> x ^ y
-            if(sub(or_(any(v1), any(v2)), and_(any(v3), any(v4)))(matchCtx) &&
-               ((v1 == v3 && v2 == v4) || (v1 == v4 && v2 == v3))) {
+            if(sub(or_(any(v1), any(v2)), and_(exactly(v1), exactly(v2)))(matchCtx)) {
                 return builder.makeOp<BinaryInst>(InstructionID::Xor, v1, v2);
             }
 
@@ -798,7 +790,7 @@ class ArithmeticReduce final : public TransformPass<Function> {
 
             // x >s 0 ? x : -x -> abs(x)
             if(target.isNativeSupported(InstructionID::Abs)) {
-                if(select(icmp(cmp, any(v1), cint_(0)), any(v2), neg(any(v3)))(matchCtx) && v1 == v2 && v1 == v3) {
+                if(select(icmp(cmp, any(v1), cint_(0)), exactly(v1), neg(exactly(v1)))(matchCtx)) {
                     if(cmp == CompareOp::ICmpSignedGreaterThan || cmp == CompareOp::ICmpSignedGreaterEqual) {
                         return builder.makeOp<UnaryInst>(InstructionID::Abs, v1);
                     }
@@ -806,7 +798,7 @@ class ArithmeticReduce final : public TransformPass<Function> {
                         return makeNeg(builder.makeOp<UnaryInst>(InstructionID::Abs, v1));
                     }
                 }
-                if(select(icmp(cmp, any(v1), cint_(0)), neg(any(v2)), any(v3))(matchCtx) && v1 == v2 && v1 == v3) {
+                if(select(icmp(cmp, any(v1), cint_(0)), neg(exactly(v1)), exactly(v1))(matchCtx)) {
                     if(cmp == CompareOp::ICmpSignedGreaterThan || cmp == CompareOp::ICmpSignedGreaterEqual) {
                         return makeNeg(builder.makeOp<UnaryInst>(InstructionID::Abs, v1));
                     }
@@ -814,22 +806,22 @@ class ArithmeticReduce final : public TransformPass<Function> {
                         return builder.makeOp<UnaryInst>(InstructionID::Abs, v1);
                     }
                 }
-                if(select(icmp(cmp, any(v1), cint_(1)), any(v2), neg(any(v3)))(matchCtx) && v1 == v2 && v1 == v3) {
+                if(select(icmp(cmp, any(v1), cint_(1)), exactly(v1), neg(exactly(v1)))(matchCtx)) {
                     if(cmp == CompareOp::ICmpSignedLessThan) {
                         return makeNeg(builder.makeOp<UnaryInst>(InstructionID::Abs, v1));
                     }
                 }
-                if(select(icmp(cmp, any(v1), cint_(1)), neg(any(v2)), any(v3))(matchCtx) && v1 == v2 && v1 == v3) {
+                if(select(icmp(cmp, any(v1), cint_(1)), neg(exactly(v1)), exactly(v1))(matchCtx)) {
                     if(cmp == CompareOp::ICmpSignedLessThan) {
                         return builder.makeOp<UnaryInst>(InstructionID::Abs, v1);
                     }
                 }
-                if(select(icmp(cmp, any(v1), cint_(-1)), any(v2), neg(any(v3)))(matchCtx) && v1 == v2 && v1 == v3) {
+                if(select(icmp(cmp, any(v1), cint_(-1)), exactly(v1), neg(exactly(v1)))(matchCtx)) {
                     if(cmp == CompareOp::ICmpSignedGreaterThan) {
                         return builder.makeOp<UnaryInst>(InstructionID::Abs, v1);
                     }
                 }
-                if(select(icmp(cmp, any(v1), cint_(-1)), neg(any(v2)), any(v3))(matchCtx) && v1 == v2 && v1 == v3) {
+                if(select(icmp(cmp, any(v1), cint_(-1)), neg(exactly(v1)), exactly(v1))(matchCtx)) {
                     if(cmp == CompareOp::ICmpSignedGreaterThan) {
                         return makeNeg(builder.makeOp<UnaryInst>(InstructionID::Abs, v1));
                     }
@@ -895,14 +887,14 @@ class ArithmeticReduce final : public TransformPass<Function> {
             }
 
             // b - (a + b) -> -a
-            if(sub(any(v1), add(any(v2), any(v3)))(matchCtx) && (v1 == v2 || v1 == v3)) {
-                return makeNeg(v1 == v2 ? v3 : v2);
+            if(sub(any(v1), add(any(v2), exactly(v1)))(matchCtx)) {
+                return makeNeg(v2);
             }
 
             // a == b ? a : smax(a, b) -> smax(a, b)
             Value* v6;
-            if(select(icmp(cmp, any(v1), any(v2)), any(v3), capture(smax(any(v4), any(v5)), v6))(matchCtx)) {
-                if(cmp == CompareOp::ICmpEqual && v1 == v3 && v1 == v4 && v2 == v5) {
+            if(select(icmp(cmp, any(v1), any(v2)), exactly(v1), capture(smax(exactly(v1), exactly(v2)), v6))(matchCtx)) {
+                if(cmp == CompareOp::ICmpEqual) {
                     return v6;
                 }
             }
@@ -938,8 +930,7 @@ class ArithmeticReduce final : public TransformPass<Function> {
                 return builder.makeOp<CastInst>(InstructionID::SignedTrunc, inst->getType(), v1);
             }
 
-            if(or_(capture(icmp(cmp1, any(v1), any(v2)), v5), capture(icmp(cmp2, any(v3), any(v4)), v6))(matchCtx) && v1 == v3 &&
-               v2 == v4) {
+            if(or_(capture(icmp(cmp1, any(v1), any(v2)), v5), capture(icmp(cmp2, exactly(v1), exactly(v2)), v6))(matchCtx)) {
                 // (x < y) || (x != y) -> x != y
                 if(cmp1 == CompareOp::ICmpSignedLessThan && cmp2 == CompareOp::ICmpNotEqual) {
                     return v6;
@@ -962,7 +953,7 @@ class ArithmeticReduce final : public TransformPass<Function> {
                 }
             }
 
-            if(select(any(v1), add(any(v2), cint_(1)), any(v3))(matchCtx) && v2 == v3) {
+            if(select(any(v1), add(any(v2), cint_(1)), exactly(v2))(matchCtx)) {
                 return builder.makeOp<BinaryInst>(InstructionID::Add, v2,
                                                   builder.makeOp<CastInst>(InstructionID::ZExt, v2->getType(), v1));
             }
@@ -1012,19 +1003,19 @@ class ArithmeticReduce final : public TransformPass<Function> {
             }
 
             // TODO: nan and negative zero?
-            if(select(fcmp(cmp, any(v1), cfp_(0.0)), fneg(any(v2)), any(v3))(matchCtx) &&
-               (cmp == CompareOp::FCmpOrderedLessThan || cmp == CompareOp::FCmpOrderedLessEqual) && v1 == v2 && v1 == v3) {
+            if(select(fcmp(cmp, any(v1), cfp_(0.0)), fneg(exactly(v1)), exactly(v1))(matchCtx) &&
+               (cmp == CompareOp::FCmpOrderedLessThan || cmp == CompareOp::FCmpOrderedLessEqual)) {
                 return builder.makeOp<UnaryInst>(InstructionID::FAbs, v1);
             }
-            if(select(fcmp(cmp, any(v1), cfp_(0.0)), any(v2), fneg(any(v3)))(matchCtx) &&
-               (cmp == CompareOp::FCmpOrderedGreaterEqual || cmp == CompareOp::FCmpOrderedGreaterThan) && v1 == v2 && v1 == v3) {
+            if(select(fcmp(cmp, any(v1), cfp_(0.0)), exactly(v1), fneg(exactly(v1)))(matchCtx) &&
+               (cmp == CompareOp::FCmpOrderedGreaterEqual || cmp == CompareOp::FCmpOrderedGreaterThan)) {
                 return builder.makeOp<UnaryInst>(InstructionID::FAbs, v1);
             }
 
             if(fabs(capture(fabs(any(v1)), v2))(matchCtx))
                 return v2;
 
-            if(select(any(v1), oneUse(select(any(v2), any(v3), any(v4))), any(v5))(matchCtx) && v4 == v5) {
+            if(select(any(v1), oneUse(select(any(v2), any(v3), any(v4))), exactly(v4))(matchCtx)) {
                 return builder.makeOp<SelectInst>(builder.makeOp<BinaryInst>(InstructionID::And, v1, v2), v3, v4);
             }
 
@@ -1057,6 +1048,19 @@ class ArithmeticReduce final : public TransformPass<Function> {
             if(sub(oneUse(select(any(v1), any(v2), cint_(0))), any(v3))(matchCtx)) {
                 return builder.makeOp<SelectInst>(v1, builder.makeOp<BinaryInst>(InstructionID::Sub, v2, v3),
                                                   builder.makeOp<UnaryInst>(InstructionID::Neg, v3));
+            }
+
+            if(and_(any(v1), or_(exactly(v1), any(v2)))(matchCtx)) {
+                return v1;
+            }
+            if(and_(any(v1), not_(or_(exactly(v1), any(v2))))(matchCtx)) {
+                return makeIntLike(0, inst);
+            }
+            if(or_(any(v1), and_(exactly(v1), any(v2)))(matchCtx)) {
+                return v1;
+            }
+            if(or_(any(v1), not_(and_(exactly(v1), any(v2))))(matchCtx)) {
+                return makeIntLike(-1, inst);
             }
 
             return nullptr;

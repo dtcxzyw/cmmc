@@ -8,8 +8,8 @@ internal func @search(i32 %x, i32 %y, i32 %n, [4 * [2 * i32]]* %0, i32* %1, i32*
     [30 * [30 * i32]]* %6 = ptrcast [30 * [30 * i32]]* @a to [30 * [30 * i32]]*;
     cbr i1 %5(prob = 0.5), ^b, ^while.header;
   ^while.header:
-    i32 %7 = phi [^entry, i32 1073741824] [^if.then, i32 %7] [^if.then1, i32 %7] [^b10, i32 %55];
-    i32 %8 = phi [^entry, i32 0] [^if.then, i32 %37] [^if.then1, i32 %39] [^b10, i32 %56];
+    i32 %7 = phi [^entry, i32 1073741824] [^if.then, i32 %7] [^b9, i32 %55];
+    i32 %8 = phi [^entry, i32 0] [^if.then, i32 %39] [^b9, i32 %56];
     [2 * i32]* %9 = getelementptr &([4 * [2 * i32]]* %0)[i64 0][i32 %8];
     i32* %10 = getelementptr &([2 * i32]* %9)[i64 0][i64 0];
     i32* %11 = getelementptr &([2 * i32]* %9)[i64 0][i64 1];
@@ -56,29 +56,25 @@ internal func @search(i32 %x, i32 %y, i32 %n, [4 * [2 * i32]]* %0, i32* %1, i32*
     cbr i1 %35(prob = 0.5), ^b, ^b6;
   ^b6:
     i1 %36 = icmp slt i32 %16, i32 2;
-    cbr i1 %36(prob = 0.5), ^if.then, ^b7;
+    i1 %37 = icmp eq i32 %18, i32 0;
+    i1 %38 = or i1 %36, i1 %37;
+    cbr i1 %38(prob = 0.75), ^if.then, ^b7;
   ^if.then:
-    i32 %37 = add i32 %8, i32 1;
-    ubr ^while.header;
-  ^b7:
-    i1 %38 = icmp eq i32 %18, i32 0;
-    cbr i1 %38(prob = 0.5), ^if.then1, ^b8;
-  ^if.then1:
     i32 %39 = add i32 %8, i32 1;
     ubr ^while.header;
-  ^b8:
+  ^b7:
     i32 %40 = load i32* %2;
     i32 %41 = add i32 %40, i32 1;
     i1 %42 = icmp eq i32 %18, i32 %41;
     i1 %43 = icmp eq i32 %17, i32 0;
     i1 %44 = or i1 %42, i1 %43;
-    cbr i1 %44(prob = 0.5), ^if.then1, ^b9;
-  ^b9:
+    cbr i1 %44(prob = 0.5), ^if.then, ^b8;
+  ^b8:
     i32 %45 = load i32* %1;
     i32 %46 = add i32 %45, i32 1;
     i1 %47 = icmp eq i32 %17, i32 %46;
-    cbr i1 %47(prob = 0.5), ^if.then1, ^b10;
-  ^b10:
+    cbr i1 %47(prob = 0.5), ^if.then, ^b9;
+  ^b9:
     store i32* %20 with i32 0;
     i32 %48 = load i32* %10;
     i32 %49 = sub i32 %18, i32 %48;

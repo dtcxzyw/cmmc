@@ -49,6 +49,17 @@ class BlockOutliner final : public TransformPass<Function> {
 
             lhsOperands[&lhsInst] = rhsOperands[&rhsInst] = ++alloc;
         }
+
+        auto isSame = [&](Value* lhsOperand, Value* rhsOperand) {
+            if(lhsOperand->getBlock() == lhs && rhsOperand->getBlock() == rhs) {
+                if(lhsOperands.at(lhsOperand) != rhsOperands.at(rhsOperand))
+                    return false;
+            } else if(lhsOperand != rhsOperand) {  // globals/constants/other values
+                return false;
+            }
+            return true;
+        };
+
         for(auto lhsIter = lhs->instructions().begin(), rhsIter = rhs->instructions().begin();
             lhsIter != lhs->instructions().end(); ++lhsIter, ++rhsIter) {
             auto& lhsInst = *lhsIter;
@@ -62,12 +73,9 @@ class BlockOutliner final : public TransformPass<Function> {
             for(uint32_t idx = 0; idx < lhsInst.operands().size(); ++idx) {
                 const auto lhsOperand = lhsInst.getOperand(idx);
                 const auto rhsOperand = rhsInst.getOperand(idx);
-                if(lhsOperand->getBlock() == lhs && rhsOperand->getBlock() == rhs) {
-                    if(lhsOperands.at(lhsOperand) != rhsOperands.at(rhsOperand))
-                        return false;
-                } else if(lhsOperand != rhsOperand) {  // globals/constants/other values
+
+                if(!isSame(lhsOperand, rhsOperand))
                     return false;
-                }
             }
         }
 
@@ -78,7 +86,7 @@ class BlockOutliner final : public TransformPass<Function> {
                 if(inst.getInstID() == InstructionID::Phi) {
                     const auto phi = inst.as<PhiInst>();
                     auto& incomings = phi->incomings();
-                    if(incomings.at(lhs) != incomings.at(rhs))
+                    if(!isSame(incomings.at(lhs)->value, incomings.at(rhs)->value))
                         return false;
                 } else
                     break;

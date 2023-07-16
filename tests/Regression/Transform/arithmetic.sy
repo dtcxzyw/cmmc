@@ -455,3 +455,15 @@ float zext_s2f(int x) {
 int select_trunc_sub(int x, int y) {
     return (x ? y : 0) - y;
 }
+int and_or1(int x, int y) {
+    return x & (x | y);
+}
+int and_or2(int x, int y) {
+    return x & ~(x | y);
+}
+int and_or3(int x, int y) {
+    return x | (x & y);
+}
+int and_or4(int x, int y) {
+    return x | ~(x & y);
+}
