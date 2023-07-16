@@ -50,6 +50,11 @@
       "parent": "1f59ecf03b60013c8fede43a47937e42df1bfca6",
       "time": "2023-07-04 23:09:07 +0800"
     },
+    "135b238b0776b7504d31c84e4071edb1e760f91c": {
+      "message": "feat(transform): replace outer use of loop vars with final value",
+      "parent": "48fc6979e4aa331d1f9c9ea955cc0134c53f3938",
+      "time": "2023-07-15 21:44:09 +0800"
+    },
     "15c54ccbc7f3ccee2471389b56e2dd6b6b8b2996": {
       "message": "fix(codegen): fix orn folding",
       "parent": "8a4d1036a3eecea8e3fbd9346076680e12e3a425",
@@ -130,10 +135,20 @@
       "parent": "dabfc3a1c89344fa298928384e4e5a0a72ce1506",
       "time": "2023-07-10 19:22:24 +0800"
     },
+    "360138283d7fae4207c4eeb1d560de05678a955f": {
+      "message": "feat(transform): add constraints solver",
+      "parent": "924ac36d895ccd7dc7befd4da99cde0ea6427c1c",
+      "time": "2023-07-16 07:30:37 +0800"
+    },
     "3628affbb0d62df57fec2147a4efcb473f1db33e": {
       "message": "feat(transform): fix branch prob of scalar blocks",
       "parent": "e064c2c26c0e93124b57a73b09a98f08bbfd077a",
       "time": "2023-07-08 23:51:42 +0800"
+    },
+    "373fa4f01d49fa3afbaa2d45c39a7a77b9c561b3": {
+      "message": "feat(codegen): remove unused cmp",
+      "parent": "4548ddbcf2a290f8ffe247223f30ac26121e9de0",
+      "time": "2023-07-15 23:46:58 +0800"
     },
     "377826e4b87e1b09d4f811708c15375e9d09a15f": {
       "message": "ci: fix typos",
@@ -189,6 +204,11 @@
       "message": "test: fix flaky test",
       "parent": "e03e3c83399238f730406314e82a701c4971d4a5",
       "time": "2023-07-09 23:35:37 +0800"
+    },
+    "4548ddbcf2a290f8ffe247223f30ac26121e9de0": {
+      "message": "fix(codegen): fix cmp with zero folding",
+      "parent": "87086b928542a06962fd01d27cb2f028c9ade88a",
+      "time": "2023-07-15 23:32:24 +0800"
     },
     "464e8e1230c6a1aa3473ad0935c5b4bcc78ef76a": {
       "message": "ci: add risc-v perf test",
@@ -390,6 +410,11 @@
       "parent": "e08641d29e96a13eb5410e28160018520c77dfcb",
       "time": "2023-07-05 23:26:48 +0800"
     },
+    "87086b928542a06962fd01d27cb2f028c9ade88a": {
+      "message": "feat(codegen): fold arm cmp with zero",
+      "parent": "135b238b0776b7504d31c84e4071edb1e760f91c",
+      "time": "2023-07-15 22:49:09 +0800"
+    },
     "881628785826c53f9f768396459a25913a196c7d": {
       "message": "test: add sccp tests",
       "parent": "97cc72f856cc319dc4b12d569da66b09a1abf5ea",
@@ -404,6 +429,11 @@
       "message": "misc: update riscv ref",
       "parent": "b099c5645c68f0df070ef9fe2173fd5d01d93e00",
       "time": "2023-07-06 19:29:22 +0800"
+    },
+    "924ac36d895ccd7dc7befd4da99cde0ea6427c1c": {
+      "message": "feat(codegen): remove dead branches",
+      "parent": "373fa4f01d49fa3afbaa2d45c39a7a77b9c561b3",
+      "time": "2023-07-16 03:24:47 +0800"
     },
     "9281299f68c3f217140406e04f046824bfe4bd33": {
       "message": "feat(codegen): don't apply tail duplication for target blocks that end with conditional branches",
@@ -565,6 +595,11 @@
       "parent": "adb1a382266085011a02ab6a647049c4904380c6",
       "time": "2023-07-14 00:28:17 +0800"
     },
+    "d40d138db693f396a43e7c1ff30dda6468ceb38b": {
+      "message": "misc: fix headers",
+      "parent": "d857c0af64ca4a9b0dab6ca3480388b7e87711ff",
+      "time": "2023-07-16 08:14:01 +0800"
+    },
     "d59c49feebe67bdca8b7a92cca1d865c892253fb": {
       "message": "test: remove flaky tests",
       "parent": "c48895059df4199823303f514c98f3560d46218b",
@@ -574,6 +609,11 @@
       "message": "feat(transform): add range-aware arith reduce",
       "parent": "169ca45c333c980ad64271f0522d6f9a82c220cc",
       "time": "2023-07-05 17:19:34 +0800"
+    },
+    "d857c0af64ca4a9b0dab6ca3480388b7e87711ff": {
+      "message": "feat(transform): fold and/or chain",
+      "parent": "360138283d7fae4207c4eeb1d560de05678a955f",
+      "time": "2023-07-16 08:11:36 +0800"
     },
     "dab395f5471c2e2abcc130aed1055c5f889f99a1": {
       "message": "feat(transform): add more optimizations for arithmetic reduce",
@@ -661,5 +701,5 @@
       "time": "2023-07-06 01:05:50 +0800"
     }
   },
-  "head": "48fc6979e4aa331d1f9c9ea955cc0134c53f3938"
+  "head": "d40d138db693f396a43e7c1ff30dda6468ceb38b"
 }
