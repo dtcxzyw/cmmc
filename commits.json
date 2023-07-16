@@ -35,6 +35,11 @@
       "parent": "ba8d0441b4ccfd5968fa774ec920241e88008dbc",
       "time": "2023-07-04 03:02:32 +0800"
     },
+    "0d03d7e241b13c4f24d6f18a5934e5b906da2fdd": {
+      "message": "feat(transform): support transitive in constraint reduce",
+      "parent": "d40d138db693f396a43e7c1ff30dda6468ceb38b",
+      "time": "2023-07-16 23:36:47 +0800"
+    },
     "113483ade1c34ea82f3db51a354e1176dad083e4": {
       "message": "feat(codegen): remove scratch register for rv/mips",
       "parent": "a398fc69ea29911ee35d3ef481e077fc10e79317",
@@ -701,5 +706,5 @@
       "time": "2023-07-06 01:05:50 +0800"
     }
   },
-  "head": "d40d138db693f396a43e7c1ff30dda6468ceb38b"
+  "head": "0d03d7e241b13c4f24d6f18a5934e5b906da2fdd"
 }
