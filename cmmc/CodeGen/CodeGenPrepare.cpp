@@ -98,11 +98,11 @@ public:
         // TODO: common base opt
         for(auto block : func.blocks()) {
             std::unordered_map<Instruction*, uint64_t> instId;
-            const auto increasement = std::numeric_limits<uint64_t>::max() / 2 / (block->instructions().size() + 2);
-            uint64_t idx = increasement;
+            const auto increment = std::numeric_limits<uint64_t>::max() / 2 / (block->instructions().size() + 2);
+            uint64_t idx = increment;
             for(auto& inst : block->instructions()) {
                 instId[&inst] = idx;
-                idx += increasement;
+                idx += increment;
             }
 
             for(auto& inst : block->instructions()) {

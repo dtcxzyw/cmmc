@@ -89,3 +89,7 @@ func @foo2(i32* %a, i32 %n) -> void { NoMemoryRead NoRecurse } {
     i1 %36 = icmp sgt i32 %n, i32 %35;
     cbr i1 %36(prob = 0.75), ^for.body1, ^b;
 }
+func @foo3(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret i32 %x;
+}

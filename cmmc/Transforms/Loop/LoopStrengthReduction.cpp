@@ -12,26 +12,32 @@
     limitations under the License.
 */
 
-#pragma once
+#include <cmmc/Analysis/CFGAnalysis.hpp>
 #include <cmmc/Analysis/LoopAnalysis.hpp>
+#include <cmmc/Analysis/SCEVAnalysis.hpp>
+#include <cmmc/IR/ConstantValue.hpp>
+#include <cmmc/IR/IRBuilder.hpp>
 #include <cmmc/IR/Instruction.hpp>
-#include <cstdint>
-#include <vector>
-
-// SCalar EVolution
-// References:
-// https://baziotis.cs.illinois.edu/compilers/introduction-to-scalar-evolution.html
-// https://www.youtube.com/watch?v=AmjliNp0_00
+#include <cmmc/Transforms/TransformPass.hpp>
+#include <iterator>
 
 CMMC_NAMESPACE_BEGIN
 
-enum class SCEVInstID { Constant, AddRec };
+class LoopStrengthReduction final : public TransformPass<Function> {
+public:
+    bool run(Function& func, AnalysisPassManager& analysis) const override {
+        auto& loopInfo = analysis.get<LoopAnalysis>(func);
+        auto& scev = analysis.get<SCEVAnalysis>(func);
+        CMMC_UNUSED(loopInfo);
+        CMMC_UNUSED(scev);
+        return false;
+    }
 
-struct SCEV final {
-    std::vector<SCEV*> operands;
-    intmax_t constant;
-    SCEVInstID instID;
-    const Loop* loop;
+    [[nodiscard]] std::string_view name() const noexcept override {
+        return "LoopStrengthReduction"sv;
+    }
 };
+
+CMMC_TRANSFORM_PASS(LoopStrengthReduction);
 
 CMMC_NAMESPACE_END

@@ -18,12 +18,19 @@
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/Function.hpp>
 #include <cmmc/IR/Instruction.hpp>
+#include <memory>
+#include <ostream>
 
 CMMC_NAMESPACE_BEGIN
 
 class SCEVAnalysisResult final {
+    mutable std::vector<std::unique_ptr<SCEV>> mPool;
+    mutable std::unordered_map<Value*, SCEV*> mStorage;
+
 public:
-    SCEV* query(Value* value);
+    SCEV* addSCEV(Value* val, std::unique_ptr<SCEV> scev) const;
+    SCEV* query(Value* value) const;
+    void dumpSystem(std::ostream& out) const;
 };
 
 class SCEVAnalysis final : public FuncAnalysisPassWrapper<SCEVAnalysis, SCEVAnalysisResult> {

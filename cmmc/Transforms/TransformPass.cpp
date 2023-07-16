@@ -339,8 +339,10 @@ std::shared_ptr<PassManager<Module>> PassManager<Module>::get(OptimizationLevel 
             "NoSideEffectEliminate",     // clean up
             // Loop
             "LoopRotate",               //
+            "ConstantPropagation",      // clean up
             "LoopCanonicalize",         //
             "FinalValueReplacement",    //
+            "LoopStrengthReduction",    //
             "LoopBranchProbFix",        //
             "LoopEliminate",            //
             "LICMMemory",               //

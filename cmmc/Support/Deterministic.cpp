@@ -48,6 +48,7 @@ static void* allocate(std::size_t count, std::size_t alignment) {
         const auto res = address;
         address = static_cast<char*>(address) + count;
         space -= count;
+        // printf("rem %zu\n", space);
         return res;
     }
     return nullptr;

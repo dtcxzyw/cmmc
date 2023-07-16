@@ -175,7 +175,7 @@ class InstReorder final : public TransformPass<Function> {
 
     // static bool hoist(Block* block) {
     //     uint64_t instIdCount = 1;
-    //     const auto increasement = (std::numeric_limits<uint64_t>::max() / 2) / (block->instructions().size() + 1);
+    //     const auto increment = (std::numeric_limits<uint64_t>::max() / 2) / (block->instructions().size() + 1);
     //     std::unordered_map<Instruction*, uint64_t> instID;
     //     Instruction* latestAllocOrPhi = nullptr;
     //     bool modified = false;
@@ -183,7 +183,7 @@ class InstReorder final : public TransformPass<Function> {
     //     auto& instructions = block->instructions();
     //     for(auto& inst : instructions) {
     //         instID[&inst] = instIdCount;
-    //         instIdCount += increasement;
+    //         instIdCount += increment;
     //         if(inst.getInstID() == InstructionID::Alloc || inst.getInstID() == InstructionID::Phi)
     //             latestAllocOrPhi = &inst;
     //     }
@@ -225,14 +225,14 @@ class InstReorder final : public TransformPass<Function> {
 
     // static bool sink(Block* block) {
     //     uint64_t instIdCount = 1;
-    //     const auto increasement = (std::numeric_limits<uint64_t>::max() / 2) / (block->instructions().size() + 1);
+    //     const auto increment = (std::numeric_limits<uint64_t>::max() / 2) / (block->instructions().size() + 1);
     //     std::unordered_map<Instruction*, uint64_t> instID;
     //     bool modified = false;
 
     //     auto& instructions = block->instructions();
     //     for(auto& inst : instructions) {
     //         instID[&inst] = instIdCount;
-    //         instIdCount += increasement;
+    //         instIdCount += increment;
     //     }
 
     //     for(auto iter = instructions.rbegin(); iter != instructions.rend();) {
