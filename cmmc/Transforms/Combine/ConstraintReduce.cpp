@@ -12,14 +12,13 @@
     limitations under the License.
 */
 
-#include "cmmc/Support/Diagnostics.hpp"
-#include "cmmc/Support/StaticReflection.hpp"
 #include <algorithm>
 #include <cmmc/Analysis/CFGAnalysis.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/IRBuilder.hpp>
 #include <cmmc/IR/Instruction.hpp>
+#include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/Graph.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <cmmc/Transforms/Util/BlockUtil.hpp>

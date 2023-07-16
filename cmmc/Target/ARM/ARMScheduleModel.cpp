@@ -12,11 +12,11 @@
     limitations under the License.
 */
 
-#include "cmmc/Support/Diagnostics.hpp"
 #include <ARM/InstInfoDecl.hpp>
 #include <cmmc/CodeGen/InstInfo.hpp>
 #include <cmmc/CodeGen/MIR.hpp>
 #include <cmmc/CodeGen/Target.hpp>
+#include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Target/ARM/ARM.hpp>
 #include <cstdint>
 #include <iostream>
