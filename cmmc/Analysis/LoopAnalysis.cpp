@@ -113,24 +113,21 @@ LoopAnalysisResult LoopAnalysis::run(Function& func, AnalysisPassManager& analys
         loops.push_back({ header, block, indvar, next, initial, bound, step });
     }
 
-    /*
-    func.dump(std::cerr);
-    for(auto& loop : loops) {
-        std::cerr << "header: ";
-        loop.header->dumpAsTarget(std::cerr);
-        std::cerr << "\nlatch: ";
-        loop.latch->dumpAsTarget(std::cerr);
-        std::cerr << "\nindvar: ";
-        loop.inductionVar->dumpAsOperand(std::cerr);
-        std::cerr << "\nnext: ";
-        loop.next->dumpAsOperand(std::cerr);
-        std::cerr << "\ninitial: ";
-        loop.initial->dumpAsOperand(std::cerr);
-        std::cerr << "\nbound: ";
-        loop.bound->dumpAsOperand(std::cerr);
-        std::cerr << "\nstep: " << loop.step << '\n';
-    }
-    */
+    // for(auto& loop : loops) {
+    //     std::cerr << "header: ";
+    //     loop.header->dumpAsTarget(std::cerr);
+    //     std::cerr << "\nlatch: ";
+    //     loop.latch->dumpAsTarget(std::cerr);
+    //     std::cerr << "\nindvar: ";
+    //     loop.inductionVar->dumpAsOperand(std::cerr);
+    //     std::cerr << "\nnext: ";
+    //     loop.next->dumpAsOperand(std::cerr);
+    //     std::cerr << "\ninitial: ";
+    //     loop.initial->dumpAsOperand(std::cerr);
+    //     std::cerr << "\nbound: ";
+    //     loop.bound->dumpAsOperand(std::cerr);
+    //     std::cerr << "\nstep: " << loop.step << '\n';
+    // }
 
     return { std::move(loops) };
 }

@@ -82,7 +82,7 @@ IntegerRange IntegerRangeAnalysisResult::query(Value* val, const DominateAnalysi
 IntegerRangeAnalysisResult IntegerRangeAnalysis::run(Function& func, AnalysisPassManager& analysis) {
     auto& dom = analysis.get<DominateAnalysis>(func);
     auto& cfg = analysis.get<CFGAnalysis>(func);
-    // auto& scev = analysis.get<SCEVAnalysis>(func);
+    auto& scev = analysis.get<SCEVAnalysis>(func);
     IntegerRangeAnalysisResult ret;
     auto& ranges = ret.storage();
     auto& contextualRanges = ret.contextualStorage();
@@ -173,47 +173,47 @@ IntegerRangeAnalysisResult IntegerRangeAnalysis::run(Function& func, AnalysisPas
         q.pop();
         inQueue.erase(inst);
 
-        // if(auto scevInfo = scev.query(inst)) {
-        //     auto getLoopTripCount = [&](const Loop* loop) -> std::optional<IntegerRange> {
-        //         if(loop->step == 1) {
-        //             return getRange(loop->bound, inst) - getRange(loop->initial, inst);
-        //         }
-        //         return std::nullopt;
-        //     };
+        if(auto scevInfo = scev.query(inst)) {
+            auto getLoopTripCount = [&](const Loop* loop) -> std::optional<IntegerRange> {
+                if(loop->step == 1) {
+                    return getRange(loop->bound, inst) - getRange(loop->initial, inst);
+                }
+                return std::nullopt;
+            };
 
-        //     switch(scevInfo->instID) {
-        //         case SCEVInstID::Constant: {
-        //             update(inst, IntegerRange{ scevInfo->constant });
-        //             break;
-        //         }
-        //         case SCEVInstID::AddRec: {
-        //             // FIXME
-        //             if(scevInfo->operands.size() == 2 && scevInfo->loop) {
-        //                 const auto initial = scevInfo->operands[0];
-        //                 const auto step = scevInfo->operands[1];
-        //                 // FIXME
-        //                 if(initial->instID == SCEVInstID::Constant && step->instID == SCEVInstID::Constant) {
-        //                     if(auto range = getLoopTripCount(scevInfo->loop); range.has_value()) {
-        //                         const auto end = IntegerRange{ initial->constant } + IntegerRange{ step->constant } * *range;
-        //                         if(end.isNoSignedOverflow()) {
-        //                             auto addRecRange = IntegerRange{ initial->constant }.unionSet(end);
-        //                             addRecRange.setKnownBits(0, 0);
-        //                             addRecRange.setUnsignedRange(0, std::numeric_limits<uint32_t>::max());
-        //                             addRecRange.sync();
+            switch(scevInfo->instID) {
+                case SCEVInstID::Constant: {
+                    update(inst, IntegerRange{ scevInfo->constant });
+                    break;
+                }
+                case SCEVInstID::AddRec: {
+                    // FIXME
+                    if(scevInfo->operands.size() == 2 && scevInfo->loop) {
+                        const auto initial = scevInfo->operands[0];
+                        const auto step = scevInfo->operands[1];
+                        // FIXME
+                        if(initial->instID == SCEVInstID::Constant && step->instID == SCEVInstID::Constant) {
+                            if(auto range = getLoopTripCount(scevInfo->loop); range.has_value()) {
+                                const auto end = IntegerRange{ initial->constant } + IntegerRange{ step->constant } * *range;
+                                if(end.isNoSignedOverflow()) {
+                                    auto addRecRange = IntegerRange{ initial->constant }.unionSet(end);
+                                    addRecRange.setKnownBits(0, 0);
+                                    addRecRange.setUnsignedRange(0, std::numeric_limits<uint32_t>::max());
+                                    addRecRange.sync();
 
-        //                             // inst->dumpInst(std::cerr);
-        //                             // std::cerr << " ->\n";
-        //                             // addRecRange.print(std::cerr);
-        //                             // std::cerr << '\n';
-        //                             update(inst, addRecRange);
-        //                         }
-        //                     }
-        //                 }
-        //             }
-        //             break;
-        //         }
-        //     }
-        // }
+                                    // inst->dumpInst(std::cerr);
+                                    // std::cerr << " ->\n";
+                                    // addRecRange.print(std::cerr);
+                                    // std::cerr << '\n';
+                                    update(inst, addRecRange);
+                                }
+                            }
+                        }
+                    }
+                    break;
+                }
+            }
+        }
 
         auto getOperandRange = [&](uint32_t idx) { return getRange(inst->getOperand(idx), inst); };
 

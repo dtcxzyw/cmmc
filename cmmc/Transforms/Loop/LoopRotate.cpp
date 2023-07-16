@@ -35,11 +35,15 @@ CMMC_NAMESPACE_BEGIN
 //          |
 //  ----> header ---> exiting
 //  |       |
+//  |      xxx
+//  |       |
 //  ----< body
 //  =>
 //        entering
 //           |
 //         header ---> exiting
+//           |            |
+//          xxx           |
 //           |            |
 //   -> body + header ---->
 //   |       |
