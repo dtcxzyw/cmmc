@@ -295,6 +295,11 @@
       "parent": "3e4564a6705cbe0a844e11403b448d3a25fd763c",
       "time": "2023-07-01 22:12:31 +0800"
     },
+    "595c7daef141f61de457cf8e66a861437dddbb34": {
+      "message": "feat(support): add mimalloc support",
+      "parent": "cae14d83d374b5e515f1d88de99ae22c47600b6c",
+      "time": "2023-07-17 04:06:35 +0800"
+    },
     "5b63fc5dd7525b10e8fde57012f4b83cb0e82697": {
       "message": "misc: update perf ref",
       "parent": "9b2d702f4dd7429a9c9cf9cbf42e4e024133e2a5",
@@ -495,6 +500,11 @@
       "parent": "79d0c32350816fb89f5c807773c6ab5a17fc8c4b",
       "time": "2023-07-11 02:37:13 +0800"
     },
+    "aa05eb489c6e9d3f9571430738c789da72fcf3b8": {
+      "message": "perf(transform): improve performance of constraint solver",
+      "parent": "cfc5994fab038a4bff09d9bdd6bf38b4dab836ba",
+      "time": "2023-07-17 00:59:02 +0800"
+    },
     "aab1a0a63041678fdafb3988b7e797ea536758ec": {
       "message": "ci: record historical summary data",
       "parent": "53380379f6f03d5950eb3de091380278c20ee681",
@@ -585,6 +595,11 @@
       "parent": "5b63fc5dd7525b10e8fde57012f4b83cb0e82697",
       "time": "2023-07-06 22:37:50 +0800"
     },
+    "cae14d83d374b5e515f1d88de99ae22c47600b6c": {
+      "message": "feat(analysis): enable scev-based range analysis",
+      "parent": "aa05eb489c6e9d3f9571430738c789da72fcf3b8",
+      "time": "2023-07-17 01:58:55 +0800"
+    },
     "cb2bacbaa905b3a86d42ec948cba23be3058ae1f": {
       "message": "test(perf): add summary",
       "parent": "3c9bfc69a8452250b22638e3e6231f85e7f64a85",
@@ -594,6 +609,11 @@
       "message": "refactor(codegen): refactor compare predicates for backends",
       "parent": "39c5773d449d4403551d874c601e2cf3041610fa",
       "time": "2023-07-06 19:29:21 +0800"
+    },
+    "cfc5994fab038a4bff09d9bdd6bf38b4dab836ba": {
+      "message": "feat(transform): add basic SCEV implementation",
+      "parent": "0d03d7e241b13c4f24d6f18a5934e5b906da2fdd",
+      "time": "2023-07-16 23:49:54 +0800"
     },
     "d3a7f546540e264c70b455207ad10d54f4d4f580": {
       "message": "feat(support): add deterministic mem alloc",
@@ -706,5 +726,5 @@
       "time": "2023-07-06 01:05:50 +0800"
     }
   },
-  "head": "0d03d7e241b13c4f24d6f18a5934e5b906da2fdd"
+  "head": "595c7daef141f61de457cf8e66a861437dddbb34"
 }
