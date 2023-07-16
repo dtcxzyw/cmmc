@@ -81,9 +81,9 @@ main:
 	fsw f18, 24(sp)
 	sd s6, 0(sp)
 	fsw f9, 8(sp)
-	sd s4, 96(sp)
-	fsw f21, 92(sp)
-	fsw f8, 88(sp)
+	fsw f21, 100(sp)
+	fsw f8, 96(sp)
+	sd s4, 88(sp)
 	sd s2, 80(sp)
 	sd s3, 72(sp)
 	sd s1, 64(sp)
@@ -119,17 +119,17 @@ label62:
 	j label88
 label63:
 	jal getint
-	srliw a1, s0, 31
-	add a2, s0, a1
 	srliw a1, s2, 31
-	sraiw s3, a2, 1
 	add a2, s2, a1
-	fcvt.s.w f8, s3
+	srliw a1, s0, 31
+	sraiw s4, a2, 1
+	add a2, s0, a1
+	fcvt.s.w f8, s4
 pcrel282:
 	auipc a1, %pcrel_hi(image)
-	sraiw s4, a2, 1
+	sraiw s3, a2, 1
 	addi s1, a1, %pcrel_lo(pcrel282)
-	fcvt.s.w f9, s4
+	fcvt.s.w f9, s3
 	li a1, 255
 	beq a0, a1, label114
 	j label88
@@ -147,9 +147,9 @@ label82:
 	ld s1, 64(sp)
 	ld s3, 72(sp)
 	ld s2, 80(sp)
-	flw f8, 88(sp)
-	flw f21, 92(sp)
-	ld s4, 96(sp)
+	ld s4, 88(sp)
+	flw f8, 96(sp)
+	flw f21, 100(sp)
 	flw f9, 8(sp)
 	ld s6, 0(sp)
 	flw f18, 24(sp)
@@ -253,14 +253,14 @@ label70:
 	fmul.s f12, f10, f18
 	fmul.s f10, f10, f19
 	fsub.s f13, f12, f21
-	fadd.s f11, f13, f8
+	fadd.s f11, f13, f9
 	fcvt.w.s a0, f11, rtz
 	fadd.s f11, f10, f20
 	slti a3, a0, 0
 	slt a1, a0, s0
 	xori a2, a1, 1
 	or a1, a2, a3
-	fadd.s f12, f11, f9
+	fadd.s f12, f11, f8
 	fcvt.w.s a2, f12, rtz
 	slti a3, a2, 0
 	or a1, a1, a3

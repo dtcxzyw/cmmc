@@ -144,6 +144,10 @@ add_dependencies(cmmc ${CMMC_GENERATED_TARGETS})
 set_source_files_properties(${CMMC_SRC} PROPERTIES COMPILE_FLAGS "-Wconversion -Wshadow -Wno-psabi")
 target_include_directories(cmmc PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/generated ${CMAKE_CURRENT_LIST_DIR})
 target_link_libraries(cmmc PRIVATE ${LLVM_LIBRARIES})
+if(${CMMC_DETERMINISTIC})
+  add_subdirectory(cmmc/Support/mimalloc)
+  target_link_libraries(cmmc PRIVATE mimalloc-static)
+endif()
 
 set(CMMC_EDUCG_SUBMIT_DIR ${CMAKE_CURRENT_BINARY_DIR}/educg_submit)
 
@@ -159,6 +163,7 @@ COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/educg/*.hpp ${CMMC_ED
 COMMAND ${CMAKE_COMMAND} -E rm -rf ${CMMC_EDUCG_SUBMIT_DIR}/cmmc/Conversion/ ${CMMC_EDUCG_SUBMIT_DIR}/cmmc/ExecutionEngine/LLVMOrcJIT.cpp
 COMMAND ${CMAKE_COMMAND} -E rm -rf ${CMMC_EDUCG_SUBMIT_DIR}/cmmc/Transforms/Verify.cpp
 COMMAND ${CMAKE_COMMAND} -E rm -rf ${CMMC_EDUCG_SUBMIT_DIR}/cmmc/Support/Deterministic.cpp
+COMMAND ${CMAKE_COMMAND} -E rm -rf ${CMMC_EDUCG_SUBMIT_DIR}/cmmc/Support/mimalloc
 COMMAND ${CMAKE_COMMAND} -E rm -rf ${CMMC_EDUCG_SUBMIT_DIR}/MIPS ${CMMC_EDUCG_SUBMIT_DIR}/TAC
 COMMAND ${CMAKE_COMMAND} -E rm -rf ${CMMC_EDUCG_SUBMIT_DIR}/cmmc/Target/LLVM ${CMMC_EDUCG_SUBMIT_DIR}/cmmc/Target/MIPS ${CMMC_EDUCG_SUBMIT_DIR}/cmmc/Target/Sim ${CMMC_EDUCG_SUBMIT_DIR}/cmmc/Target/TAC ${CMMC_EDUCG_SUBMIT_DIR}/cmmc/Target/Old ${CMMC_EDUCG_SUBMIT_DIR}/cmmc/Target/Template ${CMMC_EDUCG_SUBMIT_DIR}/cmmc/Target/Generic
 COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_LIST_DIR}/educg/cmmc_header_fix.py ${CMMC_EDUCG_SUBMIT_DIR}

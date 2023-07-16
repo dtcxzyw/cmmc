@@ -153,8 +153,8 @@ label10:
 	subw t6, t5, t0
 	sh1add t2, t6, t1
 	lw t1, 236(sp)
-	lw s2, 240(sp)
 	sh1add t3, t1, t1
+	lw s2, 240(sp)
 	slliw t5, t3, 4
 	slliw t3, s2, 2
 	subw t6, t5, t1

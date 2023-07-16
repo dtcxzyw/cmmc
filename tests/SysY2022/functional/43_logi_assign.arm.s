@@ -10,8 +10,8 @@ main:
 	bl getint
 	mov r4, r0
 	bl getint
-	cmp r4, #3
 	mov r1, #0
+	cmp r4, #3
 	sub r0, r4, r0
 	movwne r1, #1
 	clz r0, r0

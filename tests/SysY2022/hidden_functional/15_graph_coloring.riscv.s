@@ -119,9 +119,9 @@ main:
 	addi sp, sp, -88
 	li a1, 1
 	mv a2, zero
-	addi a3, sp, 0
 	addi a0, sp, 16
 	sd ra, 80(sp)
+	addi a3, sp, 0
 	sw zero, 16(sp)
 	sw a1, 20(sp)
 	sw a1, 24(sp)

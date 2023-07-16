@@ -13,8 +13,8 @@ edges:
 .fpu vfpv4
 maxCliques:
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
-	movw r8, #:lower16:graph
 	mov r9, #1
+	movw r8, #:lower16:graph
 	mov r10, #0
 	add r5, r0, #1
 	mov r7, r2
@@ -124,11 +124,11 @@ label17:
 .globl main
 main:
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
-	sub sp, sp, #132
 	mov r0, #0
+	sub sp, sp, #132
+	str r0, [sp, #4]
 	add r4, sp, #4
 	mov r5, sp
-	str r0, [sp, #4]
 	str r0, [r4, #4]
 	str r0, [r4, #8]
 	str r0, [r4, #12]

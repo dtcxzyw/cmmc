@@ -1103,8 +1103,8 @@ label10:
 	movwgt r0, #1
 	rsb r0, r0, #100
 	bl putch
-	mov r0, #111
 	cmp r4, #0
+	mov r0, #111
 	mov r1, #97
 	movgt r0, r1
 	bl putch

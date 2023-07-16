@@ -135,8 +135,8 @@ callee16_cmmc_noinline:
 .globl calling_convention
 calling_convention:
 	addi sp, sp, -56
-	addi a2, sp, 0
 	fsw f8, 48(sp)
+	addi a2, sp, 0
 	sd ra, 40(sp)
 	jal callee1_cmmc_noinline
 	li a0, 1

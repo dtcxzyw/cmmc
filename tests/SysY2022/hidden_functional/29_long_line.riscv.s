@@ -39,8 +39,8 @@ label2:
 	ret
 label4:
 	ld s1, 656(sp)
-	srliw a1, s1, 31
 	slli a3, s1, 1
+	srliw a1, s1, 31
 	add a0, s1, a1
 	sraiw a2, a0, 1
 	andi s2, a2, 1
@@ -99,9 +99,9 @@ label4:
 	slli a1, s1, 1
 	sraiw a3, a2, 6
 	andi t0, a3, 1
-	srli a3, a1, 57
 	andn a2, a0, t0
 	xori t1, t0, 1
+	srli a3, a1, 57
 	or a0, t0, a2
 	sd t0, 536(sp)
 	sd t1, 552(sp)
@@ -143,8 +143,8 @@ label4:
 	srli a5, t0, 53
 	andi t4, a4, 1
 	add t1, s1, a5
-	andn a3, a3, t4
 	xori t5, t4, 1
+	andn a3, a3, t4
 	sd t4, 128(sp)
 	sraiw t0, t1, 11
 	or a4, t4, a3
@@ -189,8 +189,8 @@ label4:
 	sraiw t3, t5, 15
 	sd a7, 16(sp)
 	andi a7, t3, 1
-	andn t2, t2, a7
 	xori a6, a7, 1
+	andn t2, t2, a7
 	sd a7, 216(sp)
 	or t3, t1, a6
 	sd a6, 208(sp)
@@ -424,13 +424,12 @@ label4:
 	sh1add a1, a0, s3
 	sh1add a0, a1, a2
 	jal fib
-	slli t6, s0, 1
 	mv t1, a0
-	sd a0, 200(sp)
 	slli a4, s0, 1
+	slli t6, s0, 1
+	sd a0, 200(sp)
 	srli a6, t6, 52
 	srliw a0, a0, 31
-	ld t1, 200(sp)
 	add a1, t1, a0
 	sraiw a2, a1, 1
 	ld a1, 304(sp)

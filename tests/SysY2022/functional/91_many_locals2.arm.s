@@ -9,9 +9,9 @@ main:
 	push { r4, r5, lr }
 	sub sp, sp, #4
 	bl getint
-	cmp r0, #5
-	mov r5, #6
 	mov r4, r0
+	mov r5, #6
+	cmp r0, #5
 	moveq r4, r5
 	mov r0, #0
 	bl putint

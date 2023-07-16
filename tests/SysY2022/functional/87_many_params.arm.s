@@ -8,8 +8,8 @@
 main:
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
 	sub sp, sp, #548
-	add r4, sp, #64
 	add r0, sp, #140
+	add r4, sp, #64
 	str r4, [sp, #440]
 	str r0, [sp, #132]
 	bl getint

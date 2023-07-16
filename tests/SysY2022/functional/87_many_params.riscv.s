@@ -6,8 +6,8 @@ main:
 	addi sp, sp, -608
 	addi a3, sp, 224
 	sd s0, 80(sp)
-	addi s0, sp, 496
 	sd s5, 136(sp)
+	addi s0, sp, 496
 	sd s1, 168(sp)
 	sd s6, 216(sp)
 	sd s3, 144(sp)
@@ -27,8 +27,8 @@ main:
 	mv t3, a0
 	sd a0, 592(sp)
 	jal getint
-	mv t4, a0
 	sd a0, 584(sp)
+	mv t4, a0
 	jal getint
 	mv t5, a0
 	sd a0, 576(sp)
@@ -66,8 +66,8 @@ main:
 	sd a0, 208(sp)
 	mv s9, a0
 	jal getint
-	sd a0, 600(sp)
 	mv s10, a0
+	sd a0, 600(sp)
 	ld t2, 64(sp)
 	sw t2, 496(sp)
 	ld t3, 592(sp)

@@ -136,8 +136,8 @@ label10:
 	sub r2, r8, #1
 	mov r0, r4
 	bl QuickSort
-	mov r0, #0
 	add r1, r8, #1
+	mov r0, #0
 	cmp r7, #0
 	mov r7, #1
 	movne r0, r6
@@ -235,12 +235,12 @@ label23:
 .globl main
 main:
 	push { r4, r5, lr }
-	mov r0, #4
 	sub sp, sp, #44
-	mov r2, #9
 	mov r1, #0
-	str r0, [sp, #0]
+	mov r0, #4
+	mov r2, #9
 	mov r4, sp
+	str r0, [sp, #0]
 	mov r0, #3
 	str r0, [r4, #4]
 	mov r0, #2

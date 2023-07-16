@@ -161,8 +161,8 @@ calling_convention:
 	mov r0, #1
 	vmov.f32 s0, s3
 	bl callee5_cmmc_noinline
-	vmov.f32 s0, s3
 	mov r0, #1
+	vmov.f32 s0, s3
 	bl callee6_cmmc_noinline
 	mov r1, #1
 	mov r0, #1

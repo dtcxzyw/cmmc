@@ -20,51 +20,20 @@ main:
 	mov r4, r0
 	mov r0, #22
 	bl _sysy_starttime
-	movw r1, #:lower16:y
 	mov r3, #1065353216
 	mov r2, #0
+	movw r1, #:lower16:y
 	movw r0, #:lower16:x
 	vmov s0, r3
-	movt r1, #:upper16:y
 	mov r5, r2
 	vmov s1, r2
+	movt r1, #:upper16:y
 	movt r0, #:upper16:x
 	vmov.f32 s16, s1
 	movw r3, #41248
 	movt r3, #7
 	cmp r2, r3
 	bge label8
-	b label13
-label8:
-	mov r0, #39
-	bl _sysy_stoptime
-	movw r0, #39768
-	movw r1, #14269
-	movt r0, #23074
-	movt r1, #46470
-	vmov s0, r0
-	movw r0, #14269
-	movt r0, #13702
-	vmov s1, r0
-	mov r0, #0
-	vsub.f32 s0, s16, s0
-	vcmp.f32 s0, s1
-	vmov s1, r1
-	mov r1, #0
-	vmrs APSR_nzcv, FPSCR
-	movwls r0, #1
-	vcmp.f32 s0, s1
-	vmrs APSR_nzcv, FPSCR
-	movwge r1, #1
-	orrs r0, r0, r1
-	beq label9
-	mov r0, #0
-	bl putint
-	mov r0, #0
-label11:
-	add sp, sp, #4
-	vpop { s16 }
-	pop { r4, r5, r6, r7, r8, pc }
 label13:
 	mov r3, #10
 	movw r6, #26215
@@ -102,8 +71,8 @@ label74:
 	vmov s2, r7
 	add r5, r7, #4
 	cmp r4, r5
-	ble label28
-	b label27
+	ble label27
+	b label30
 label125:
 	mov r5, #0
 	vmov s2, r5
@@ -118,28 +87,7 @@ label22:
 	b label13
 label79:
 	mov r3, r5
-label15:
-	vmov s2, r3
-	add r5, r0, r3, lsl #2
-	vcvt.f32.s32 s2, s2
-	vadd.f32 s3, s1, s2
-	vadd.f32 s2, s0, s2
-	vstr s3, [r5, #0]
-	add r5, r1, r3, lsl #2
-	add r3, r3, #1
-	vstr s2, [r5, #0]
-	cmp r4, r3
-	ble label91
 	b label15
-label91:
-	movs r3, r4
-	ble label125
-	mov r7, #0
-	vmov s2, r7
-	add r5, r7, #4
-	cmp r4, r5
-	ble label28
-	b label27
 label17:
 	vmov s2, r5
 	add r6, r0, r5, lsl #2
@@ -176,7 +124,7 @@ label17:
 	mov r5, r3
 	mov r3, r6
 	b label17
-label27:
+label30:
 	add r6, r0, r7, lsl #2
 	add r7, r1, r7, lsl #2
 	vldr s3, [r6, #0]
@@ -198,9 +146,31 @@ label27:
 	vadd.f32 s2, s2, s3
 	add r5, r5, #4
 	cmp r4, r5
-	ble label28
-	b label27
-label28:
+	ble label27
+	b label30
+label15:
+	vmov s2, r3
+	add r5, r0, r3, lsl #2
+	vcvt.f32.s32 s2, s2
+	vadd.f32 s3, s1, s2
+	vadd.f32 s2, s0, s2
+	vstr s3, [r5, #0]
+	add r5, r1, r3, lsl #2
+	add r3, r3, #1
+	vstr s2, [r5, #0]
+	cmp r4, r3
+	ble label91
+	b label15
+label91:
+	movs r3, r4
+	ble label125
+	mov r7, #0
+	vmov s2, r7
+	add r5, r7, #4
+	cmp r4, r5
+	ble label27
+	b label30
+label27:
 	add r5, r0, r7, lsl #2
 	vldr s3, [r5, #0]
 	add r5, r1, r7, lsl #2
@@ -210,9 +180,42 @@ label28:
 	vmul.f32 s3, s3, s4
 	vadd.f32 s2, s2, s3
 	ble label22
-	b label28
+	b label27
+label8:
+	mov r0, #39
+	bl _sysy_stoptime
+	movw r0, #39768
+	movw r1, #14269
+	movt r0, #23074
+	movt r1, #46470
+	vmov s0, r0
+	movw r0, #14269
+	movt r0, #13702
+	vmov s1, r0
+	mov r0, #0
+	vsub.f32 s0, s16, s0
+	vcmp.f32 s0, s1
+	vmov s1, r1
+	mov r1, #0
+	vmrs APSR_nzcv, FPSCR
+	movwls r0, #1
+	vcmp.f32 s0, s1
+	vmrs APSR_nzcv, FPSCR
+	movwge r1, #1
+	orrs r0, r0, r1
+	beq label9
+	b label12
+label10:
+	add sp, sp, #4
+	vpop { s16 }
+	pop { r4, r5, r6, r7, r8, pc }
+label12:
+	mov r0, #0
+	bl putint
+	mov r0, #0
+	b label10
 label9:
 	mov r0, #1
 	bl putint
 	mov r0, #1
-	b label11
+	b label10

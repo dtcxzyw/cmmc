@@ -439,8 +439,8 @@ label4:
 	add r0, r7, r0, lsl #1
 	add r0, r1, r0, lsl #1
 	bl fib
-	mov r3, r0
 	str r0, [sp, #88]
+	mov r3, r0
 	ldr r1, [sp, #356]
 	add r0, r0, r0, lsr #31
 	asr r0, r0, #1

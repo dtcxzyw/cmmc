@@ -10,13 +10,13 @@ a:
 .fpu vfpv4
 search:
 	push { r4, r5, r6, r7, r8, r9, lr }
-	cmp r2, #10
 	movw r6, #:lower16:a
 	sub sp, sp, #52
-	mov r4, r0
 	mov r8, r1
-	movt r6, #:upper16:a
+	cmp r2, #10
 	str r1, [sp, #40]
+	mov r4, r0
+	movt r6, #:upper16:a
 	str r2, [sp, #36]
 	str r3, [sp, #20]
 	ldr r3, [sp, #80]

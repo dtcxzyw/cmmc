@@ -15,9 +15,9 @@ c:
 main:
 	push { r4, r5, lr }
 	sub sp, sp, #4
+	mov r2, #0
 	movw r0, #:lower16:c
 	mov r1, #1
-	mov r2, #0
 	movt r0, #:upper16:c
 	str r1, [r0, #0]
 	mov r4, r0

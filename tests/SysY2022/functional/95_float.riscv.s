@@ -85,9 +85,9 @@ main:
 	mv s1, a0
 label2:
 	jal getfloat
+	fcvt.w.s a0, f10, rtz
 pcrel64:
 	auipc a1, %pcrel_hi(__cmmc_fp_constant_pool)
-	fcvt.w.s a0, f10, rtz
 	addi a2, a1, %pcrel_lo(pcrel64)
 	flw f11, 0(a2)
 	fcvt.s.w f12, a0

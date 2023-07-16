@@ -13,12 +13,14 @@
 */
 
 #include <bit>
+#include <cassert>
 #include <cmmc/Config.hpp>
 #include <cstddef>
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
 #include <memory>
+#include <mimalloc.h>
 #include <new>
 #include <sys/mman.h>
 
@@ -33,6 +35,7 @@ constexpr uintptr_t baseAddress =
 #endif
     ;
 
+#if 0
 static void* allocate(std::size_t count, std::size_t alignment) {
     static void* address = nullptr;  // NOLINT
     static size_t space = preAllocatedSize;
@@ -53,15 +56,53 @@ static void* allocate(std::size_t count, std::size_t alignment) {
     }
     return nullptr;
 }
+static void deallocate(void*) {}
+#endif
+
+static mi_heap_t* heap = nullptr;
+static mi_heap_t* getHeap() {
+    if(!heap) {
+        mi_thread_init();
+        mi_option_enable(mi_option_limit_os_alloc);
+        auto address = mmap(reinterpret_cast<void*>(baseAddress), preAllocatedSize, PROT_READ | PROT_WRITE,
+                            MAP_PRIVATE | MAP_ANONYMOUS | MAP_FIXED, -1, 0);
+        if(!address)
+            std::abort();
+
+        mi_arena_id_t arenaId;
+        if(!mi_manage_os_memory_ex(address, preAllocatedSize, false, false, true, -1, false, &arenaId))
+            std::abort();
+
+        heap = mi_heap_new_in_arena(arenaId);
+        if(!heap)
+            std::abort();
+    }
+    return heap;
+}
+static void deallocate(void* p) {
+    assert(mi_is_in_heap_region(p));
+    mi_free(p);
+}
+static void* allocate(std::size_t count, std::size_t alignment) {
+    return mi_heap_malloc_aligned(getHeap(), count, alignment);
+}
 static void* allocate(std::size_t count) {
     return allocate(count, alignof(std::max_align_t));
 }
 
 // make_unique/shared
-void operator delete(void*) noexcept {};
-void operator delete[](void*) noexcept {};
-void operator delete(void*, const std::nothrow_t&) noexcept {}
-void operator delete[](void*, const std::nothrow_t&) noexcept {}
+void operator delete(void* p) noexcept {
+    deallocate(p);
+};
+void operator delete[](void* p) noexcept {
+    deallocate(p);
+};
+void operator delete(void* p, const std::nothrow_t&) noexcept {
+    deallocate(p);
+}
+void operator delete[](void* p, const std::nothrow_t&) noexcept {
+    deallocate(p);
+}
 
 void* operator new(std::size_t n) noexcept(false) {
     return allocate(n);
@@ -77,17 +118,33 @@ void* operator new[](std::size_t n, const std::nothrow_t&) noexcept {
 }
 
 #if(__cplusplus >= 201402L)
-void operator delete(void*, std::size_t) noexcept {};
-void operator delete[](void*, std::size_t) noexcept {};
+void operator delete(void* p, std::size_t) noexcept {
+    deallocate(p);
+};
+void operator delete[](void* p, std::size_t) noexcept {
+    deallocate(p);
+};
 #endif
 
 #if(__cplusplus > 201402L || defined(__cpp_aligned_new))
-void operator delete(void*, std::align_val_t) noexcept {}
-void operator delete[](void*, std::align_val_t) noexcept {}
-void operator delete(void*, std::size_t, std::align_val_t) noexcept {};
-void operator delete[](void*, std::size_t, std::align_val_t) noexcept {};
-void operator delete(void*, std::align_val_t, const std::nothrow_t&) noexcept {}
-void operator delete[](void*, std::align_val_t, const std::nothrow_t&) noexcept {}
+void operator delete(void* p, std::align_val_t) noexcept {
+    deallocate(p);
+}
+void operator delete[](void* p, std::align_val_t) noexcept {
+    deallocate(p);
+}
+void operator delete(void* p, std::size_t, std::align_val_t) noexcept {
+    deallocate(p);
+};
+void operator delete[](void* p, std::size_t, std::align_val_t) noexcept {
+    deallocate(p);
+};
+void operator delete(void* p, std::align_val_t, const std::nothrow_t&) noexcept {
+    deallocate(p);
+}
+void operator delete[](void* p, std::align_val_t, const std::nothrow_t&) noexcept {
+    deallocate(p);
+}
 
 void* operator new(std::size_t n, std::align_val_t al) noexcept(false) {
     return allocate(n, static_cast<size_t>(al));
@@ -106,6 +163,17 @@ void* operator new[](std::size_t n, std::align_val_t al, const std::nothrow_t&) 
 void* aligned_alloc(size_t alignment, size_t size) {
     return allocate(size, alignment);
 }
-void free(void*) {}
+void* malloc(size_t size) {
+    return allocate(size);
+}
+void* calloc(size_t size, size_t n) {
+    return mi_heap_calloc(getHeap(), n, size);
+}
+void* realloc(void* p, size_t newsize) {
+    return mi_heap_realloc(getHeap(), p, newsize);
+}
+void free(void* p) {
+    deallocate(p);
+}
 
 #endif

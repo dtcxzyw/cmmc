@@ -7,10 +7,10 @@
 .globl main
 main:
 	push { r4, r5, r6, r7, r8, r9, lr }
-	mov r0, #1
-	mov r5, #2
-	mov r6, #0
 	sub sp, sp, #84
+	mov r0, #1
+	mov r6, #0
+	mov r5, #2
 	str r0, [sp, #0]
 	mov r4, sp
 	str r5, [r4, #4]

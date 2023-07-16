@@ -21,12 +21,12 @@ main:
 	bl getarray
 label2:
 	cmp r6, #0
-	beq label38
+	beq label4
 	ldr r9, [sp, #0]
 	cmp r9, #5
-	bge label27
+	bge label28
 	mov r8, r9
-label5:
+label6:
 	mov r0, r5
 	bl putint
 	mov r0, r8
@@ -36,7 +36,7 @@ label5:
 	mov r0, r9
 	bl putint
 	cmp r4, #0
-	bne label8
+	bne label10
 	ldr r0, [sp, #0]
 	add r0, r6, r0
 	str r0, [sp, #0]
@@ -45,54 +45,54 @@ label5:
 	sub r9, r0, r6
 	cmp r8, #5
 	str r9, [sp, #0]
-	bge label27
-	b label5
-label8:
+	bge label28
+	b label6
+label10:
 	ldr r0, [sp, #0]
 	mov r1, r4
-label9:
+label11:
 	subs r1, r1, #1
 	lsl r0, r0, #1
-	bne label9
+	bne label11
 	add r0, r6, r0
 	cmp r4, #0
 	str r0, [sp, #0]
-	bne label67
+	bne label68
 	add r8, r6, r8
 	ldr r0, [sp, #0]
 	sub r9, r0, r6
 	cmp r8, #5
 	str r9, [sp, #0]
-	bge label27
-	b label5
-label67:
+	bge label28
+	b label6
+label68:
 	mov r0, r4
-label14:
+label16:
 	subs r0, r0, #1
 	lsl r8, r8, #1
-	bne label14
+	bne label16
 	add r8, r6, r8
 	cmp r4, #0
-	bne label22
+	bne label21
 	ldr r0, [sp, #0]
 	sub r9, r0, r6
 	cmp r8, #5
 	str r9, [sp, #0]
-	bge label27
-	b label5
-label22:
+	bge label28
+	b label6
+label21:
 	ldr r0, [sp, #0]
 	mov r1, r4
-label23:
+label22:
 	subs r1, r1, #1
 	lsl r0, r0, #1
-	bne label23
+	bne label22
 	sub r9, r0, r6
 	cmp r8, #5
 	str r9, [sp, #0]
-	bge label27
-	b label5
-label27:
+	bge label28
+	b label6
+label28:
 	cmp r4, #0
 	bne label94
 	add r0, r5, #1
@@ -101,36 +101,48 @@ label27:
 	ldr r0, [r7, #4]
 	cmp r5, r0
 	bne label2
-	b label38
-label94:
-	mov r0, r4
-label28:
-	subs r0, r0, #1
-	lsl r5, r5, #1
-	bne label28
-	add r0, r5, #1
-	cmp r4, #0
-	bne label104
+	b label4
+label98:
+	mov r1, r4
+label31:
+	subs r1, r1, #1
+	lsl r0, r0, #1
+	bne label31
 	ldr r1, [sp, #0]
 	add r5, r0, r1
 	ldr r0, [r7, #4]
 	cmp r5, r0
 	bne label2
-label38:
+label4:
 	mov r0, #10
 	bl putch
 	add sp, sp, #12
 	mov r0, #0
 	pop { r4, r5, r6, r7, r8, r9, pc }
-label104:
-	mov r1, r4
-label33:
-	subs r1, r1, #1
-	lsl r0, r0, #1
-	bne label33
+label94:
+	mov r0, r4
+	subs r0, r4, #1
+	lsl r5, r5, #1
+	bne label36
+	add r0, r5, #1
+	cmp r4, #0
+	bne label98
 	ldr r1, [sp, #0]
 	add r5, r0, r1
 	ldr r0, [r7, #4]
 	cmp r5, r0
 	bne label2
-	b label38
+	b label4
+label36:
+	subs r0, r0, #1
+	lsl r5, r5, #1
+	bne label36
+	add r0, r5, #1
+	cmp r4, #0
+	bne label98
+	ldr r1, [sp, #0]
+	add r5, r0, r1
+	ldr r0, [r7, #4]
+	cmp r5, r0
+	bne label2
+	b label4

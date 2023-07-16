@@ -159,8 +159,8 @@ func @main() -> i32 { NoRecurse Entry } {
     ret i32 0;
   ^b3:
     i32 %90 = phi [^if.then, i32 %72] [^if.then1, i32 %72] [^if.then2, i32 %72] [^if.then3, i32 %72] [^if.then5, i32 %72] [^while.header1, i32 %72] [^if.then7, i32 %72] [^if.else6, i32 %72] [^if.then8, i32 %136] [^if.else7, i32 %72] [^if.then10, i32 %72] [^if.else8, i32 %72];
-    i32 %91 = phi [^if.then, i32 %73] [^if.then1, i32 %73] [^if.then2, i32 %73] [^if.then3, i32 %73] [^if.then5, i32 %73] [^while.header1, i32 %73] [^if.then7, i32 %73] [^if.else6, i32 %73] [^if.then8, i32 %73] [^if.else7, i32 %73] [^if.then10, i32 %73] [^if.else8, i32 %143];
-    i32 %92 = phi [^if.then, i32 %74] [^if.then1, i32 %74] [^if.then2, i32 %74] [^if.then3, i32 %74] [^if.then5, i32 %111] [^while.header1, i32 %74] [^if.then7, i32 %119] [^if.else6, i32 %74] [^if.then8, i32 %74] [^if.else7, i32 %74] [^if.then10, i32 %74] [^if.else8, i32 %74];
+    i32 %91 = phi [^if.then, i32 %73] [^if.then1, i32 %73] [^if.then2, i32 %73] [^if.then3, i32 %73] [^if.then5, i32 %111] [^while.header1, i32 %73] [^if.then7, i32 %119] [^if.else6, i32 %73] [^if.then8, i32 %73] [^if.else7, i32 %73] [^if.then10, i32 %73] [^if.else8, i32 %73];
+    i32 %92 = phi [^if.then, i32 %74] [^if.then1, i32 %74] [^if.then2, i32 %74] [^if.then3, i32 %74] [^if.then5, i32 %74] [^while.header1, i32 %74] [^if.then7, i32 %74] [^if.else6, i32 %74] [^if.then8, i32 %74] [^if.else7, i32 %74] [^if.then10, i32 %74] [^if.else8, i32 %143];
     i32 %93 = phi [^if.then, i32 %83] [^if.then1, i32 %96] [^if.then2, i32 %75] [^if.then3, i32 %75] [^if.then5, i32 %75] [^while.header1, i32 %75] [^if.then7, i32 %75] [^if.else6, i32 %75] [^if.then8, i32 %75] [^if.else7, i32 %75] [^if.then10, i32 %75] [^if.else8, i32 %75];
     i32 %94 = phi [^if.then, i32 %76] [^if.then1, i32 %76] [^if.then2, i32 %76] [^if.then3, i32 %76] [^if.then5, i32 %76] [^while.header1, i32 %115] [^if.then7, i32 %76] [^if.else6, i32 %131] [^if.then8, i32 %76] [^if.else7, i32 %76] [^if.then10, i32 %76] [^if.else8, i32 %76];
     i32 %95 = add i32 %94, i32 1;
@@ -198,9 +198,9 @@ func @main() -> i32 { NoRecurse Entry } {
     i1 %109 = icmp eq i32 %79, i32 93;
     cbr i1 %109(prob = 0.5), ^if.then6, ^if.else5;
   ^if.then5:
-    i32* %110 = getelementptr &([512 * i32]* %25)[i64 0][i32 %74];
+    i32* %110 = getelementptr &([512 * i32]* %25)[i64 0][i32 %73];
     store i32* %110 with i32 %76;
-    i32 %111 = add i32 %74, i32 1;
+    i32 %111 = add i32 %73, i32 1;
     ubr ^b3;
   ^if.then6:
     i32* %112 = getelementptr &([65536 * i32]* %71)[i64 0][i32 %75];
@@ -216,7 +216,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i1 %118 = icmp eq i32 %79, i32 46;
     cbr i1 %118(prob = 0.5), ^if.then8, ^if.else7;
   ^if.then7:
-    i32 %119 = add i32 %74, i32 -1;
+    i32 %119 = add i32 %73, i32 -1;
     ubr ^b3;
   ^while.body7:
     i32 %120 = add i32 %115, i32 1;
@@ -230,7 +230,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i32 %128 = add i32 %125, i32 %127;
     ubr ^while.header1;
   ^if.else6:
-    i32 %129 = add i32 %74, i32 -1;
+    i32 %129 = add i32 %73, i32 -1;
     i32* %130 = getelementptr &([512 * i32]* %25)[i64 0][i32 %129];
     i32 %131 = load i32* %130;
     ubr ^b3;
@@ -246,18 +246,18 @@ func @main() -> i32 { NoRecurse Entry } {
     i1 %137 = icmp eq i32 %79, i32 44;
     cbr i1 %137(prob = 0.5), ^if.then9, ^b3;
   ^if.then9:
-    i1 %138 = icmp sle i32 %24, i32 %73;
+    i1 %138 = icmp sle i32 %24, i32 %74;
     cbr i1 %138(prob = 0.5), ^if.then10, ^if.else8;
   ^if.then10:
     i32* %139 = getelementptr &([65536 * i32]* %71)[i64 0][i32 %75];
     store i32* %139 with i32 0;
     ubr ^b3;
   ^if.else8:
-    i32* %140 = getelementptr &([65536 * i32]* %17)[i64 0][i32 %73];
+    i32* %140 = getelementptr &([65536 * i32]* %17)[i64 0][i32 %74];
     i32 %141 = load i32* %140;
     i32* %142 = getelementptr &([65536 * i32]* %71)[i64 0][i32 %75];
     store i32* %142 with i32 %141;
-    i32 %143 = add i32 %73, i32 1;
+    i32 %143 = add i32 %74, i32 1;
     ubr ^b3;
 }
 internal [512 * i32]* @return_a;

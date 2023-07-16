@@ -18,9 +18,9 @@ dfs:
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
 	cmp r0, r1
 	mov r7, r3
-	mov r4, r2
 	mov r6, r1
 	mov r5, r0
+	mov r4, r2
 	sub sp, sp, #20
 	ldr r9, [sp, #56]
 	bne label4
@@ -202,8 +202,8 @@ label10:
 .globl main
 main:
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
-	sub sp, sp, #100
 	mov r9, #0
+	sub sp, sp, #100
 	add r4, sp, #48
 	add r3, sp, #8
 	str r3, [sp, #88]

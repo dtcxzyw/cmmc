@@ -86,9 +86,9 @@ label60:
 	str r0, [r4, #64]
 	str r0, [r4, #68]
 	cmp r7, #10
-	bge label64
-	b label66
-label64:
+	bge label97
+	b label64
+label97:
 	cmp r7, #0
 	bne label58
 	mvn r0, #0
@@ -98,24 +98,39 @@ label64:
 	cmp r5, #0
 	beq label99
 	b label60
-label66:
+label64:
 	bl getint
 	mov r8, r0
 	bl getint
 	cmp r7, #0
 	mov r2, r0
-	bne label97
+	bne label65
 	sub r0, r8, #1
 	cmp r8, #1
 	add r1, r2, r0, lsl #2
 	str r1, [r4, r1, lsl #2]
-	bne label70
-	b label68
-label70:
-	cmp r8, #4
-	bne label73
-	b label71
-label83:
+	bne label68
+	b label95
+label208:
+	mov r0, #0
+	cmp r0, #0
+	beq label214
+	b label88
+label214:
+	mov r0, #0
+	cmp r0, #0
+	beq label65
+label87:
+	add r0, r6, #1
+	bl putint
+	mov r0, #10
+	bl putch
+	mov r7, #1
+	add r6, r6, #1
+	cmp r6, #10
+	bge label97
+	b label64
+label88:
 	mov r0, #0
 	bl findfa
 	mov r1, r0
@@ -125,108 +140,79 @@ label83:
 	clz r0, r0
 	lsr r0, r0, #5
 	cmp r0, #0
-	beq label97
-label86:
-	add r0, r6, #1
-	bl putint
-	mov r0, #10
-	bl putch
-	mov r7, #1
+	beq label65
+	b label87
+label65:
 	add r6, r6, #1
 	cmp r6, #10
-	bge label64
-	b label66
-label97:
-	add r6, r6, #1
-	cmp r6, #10
-	bge label64
-	b label66
-label203:
-	mov r0, #0
-	cmp r0, #0
-	beq label206
-	b label83
-label206:
-	mov r0, #0
-	cmp r0, #0
-	beq label97
-	b label86
-label73:
+	bge label97
+	b label64
+label68:
+	cmp r8, #4
+	bne label71
+	b label69
+label71:
 	cmp r2, #4
-	bge label74
+	bge label75
 	add r3, r1, #1
 	ldr r0, [r4, r3, lsl #2]
 	cmn r0, #1
-	beq label74
-	b label95
-label74:
+	beq label75
+	b label73
+label75:
 	cmp r2, #1
-	ble label75
+	ble label76
 	sub r2, r1, #1
 	ldr r0, [r4, r2, lsl #2]
 	cmn r0, #1
-	beq label75
-	b label92
-label75:
-	cmp r8, #4
-	bge label76
-	add r2, r1, #4
-	ldr r0, [r4, r2, lsl #2]
-	cmn r0, #1
 	beq label76
-	b label89
+	b label93
 label76:
-	cmp r8, #1
-	ble label80
-	sub r2, r1, #4
+	cmp r8, #4
+	bge label80
+	add r2, r1, #4
 	ldr r0, [r4, r2, lsl #2]
 	cmn r0, #1
 	beq label80
 	b label78
 label80:
-	ldr r0, [r4, #0]
+	cmp r8, #1
+	ble label81
+	sub r2, r1, #4
+	ldr r0, [r4, r2, lsl #2]
 	cmn r0, #1
-	beq label203
-	ldr r0, [r4, #68]
-	cmn r0, #1
-	mov r0, #0
-	movwne r0, #1
-	cmp r0, #0
-	beq label206
-	b label83
-label78:
+	beq label81
+label90:
 	mov r0, r1
 	bl findfa
 	mov r1, r0
 	mov r0, r2
 	bl findfa
 	cmp r1, r0
-	beq label80
+	beq label81
 	str r0, [r4, r1, lsl #2]
 	ldr r0, [r4, #0]
 	cmn r0, #1
-	beq label203
+	beq label208
 	ldr r0, [r4, #68]
 	cmn r0, #1
 	mov r0, #0
 	movwne r0, #1
 	cmp r0, #0
-	beq label206
-	b label83
-label68:
-	mov r9, #0
-	str r9, [r4, #0]
-	mov r0, r1
-	bl findfa
-	mov r3, r0
-	mov r0, r9
-	bl findfa
-	cmp r3, r0
-	beq label70
-	str r0, [r4, r3, lsl #2]
-	cmp r8, #4
-	bne label73
-label71:
+	beq label214
+	b label88
+label81:
+	ldr r0, [r4, #0]
+	cmn r0, #1
+	beq label208
+	ldr r0, [r4, #68]
+	cmn r0, #1
+	mov r0, #0
+	movwne r0, #1
+	cmp r0, #0
+	beq label214
+	b label88
+label69:
 	mov r9, #17
 	str r9, [r4, #68]
 	mov r0, r1
@@ -235,16 +221,46 @@ label71:
 	mov r0, r9
 	bl findfa
 	cmp r3, r0
-	beq label73
+	beq label71
 	str r0, [r4, r3, lsl #2]
 	cmp r2, #4
-	bge label74
+	bge label75
 	add r3, r1, #1
 	ldr r0, [r4, r3, lsl #2]
 	cmn r0, #1
-	beq label74
-	b label95
-label89:
+	beq label75
+	b label73
+label95:
+	mov r9, #0
+	str r9, [r4, #0]
+	mov r0, r1
+	bl findfa
+	mov r3, r0
+	mov r0, r9
+	bl findfa
+	cmp r3, r0
+	beq label68
+	str r0, [r4, r3, lsl #2]
+	cmp r8, #4
+	bne label71
+	b label69
+label78:
+	mov r0, r1
+	bl findfa
+	mov r3, r0
+	mov r0, r2
+	bl findfa
+	cmp r3, r0
+	beq label80
+	str r0, [r4, r3, lsl #2]
+	cmp r8, #1
+	ble label81
+	sub r2, r1, #4
+	ldr r0, [r4, r2, lsl #2]
+	cmn r0, #1
+	beq label81
+	b label90
+label93:
 	mov r0, r1
 	bl findfa
 	mov r3, r0
@@ -253,45 +269,29 @@ label89:
 	cmp r3, r0
 	beq label76
 	str r0, [r4, r3, lsl #2]
-	cmp r8, #1
-	ble label80
-	sub r2, r1, #4
+	cmp r8, #4
+	bge label80
+	add r2, r1, #4
 	ldr r0, [r4, r2, lsl #2]
 	cmn r0, #1
 	beq label80
 	b label78
-label92:
-	mov r0, r1
-	bl findfa
-	mov r3, r0
-	mov r0, r2
-	bl findfa
-	cmp r3, r0
-	beq label75
-	str r0, [r4, r3, lsl #2]
-	cmp r8, #4
-	bge label76
-	add r2, r1, #4
-	ldr r0, [r4, r2, lsl #2]
-	cmn r0, #1
-	beq label76
-	b label89
-label95:
+label73:
 	mov r0, r1
 	bl findfa
 	mov r9, r0
 	mov r0, r3
 	bl findfa
 	cmp r9, r0
-	beq label74
+	beq label75
 	str r0, [r4, r9, lsl #2]
 	cmp r2, #1
-	ble label75
+	ble label76
 	sub r2, r1, #1
 	ldr r0, [r4, r2, lsl #2]
 	cmn r0, #1
-	beq label75
-	b label92
+	beq label76
+	b label93
 label99:
 	mov r0, #0
 	add sp, sp, #4

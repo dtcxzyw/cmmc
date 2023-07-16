@@ -16,22 +16,22 @@ main:
 	sd s0, 8(sp)
 	sd ra, 0(sp)
 	jal getint
-pcrel282:
+pcrel276:
 	auipc a1, %pcrel_hi(a)
 	mv s1, a0
-	addi a0, a1, %pcrel_lo(pcrel282)
+	addi a0, a1, %pcrel_lo(pcrel276)
 	mv s2, a0
 	jal getarray
 	mv s0, a0
 	li a0, 28
 	jal _sysy_starttime
-	ble s1, zero, label8
-pcrel283:
+	ble s1, zero, label2
+pcrel277:
 	auipc a1, %pcrel_hi(matrix)
-	addi a0, a1, %pcrel_lo(pcrel283)
+	addi a0, a1, %pcrel_lo(pcrel277)
 	mv a1, zero
 	li a2, 4
-	ble s1, a2, label5
+	ble s1, a2, label30
 	mv a3, a0
 	li a4, 1
 	li a5, 2
@@ -42,7 +42,7 @@ pcrel283:
 	mv a1, a2
 	sw a4, 12(a0)
 	addiw a2, a2, 4
-	ble s1, a2, label5
+	ble s1, a2, label30
 	sh2add a3, a1, a0
 	addiw a4, a1, 1
 	addiw a5, a1, 2
@@ -53,7 +53,7 @@ pcrel283:
 	mv a1, a2
 	sw a4, 12(a3)
 	addiw a2, a2, 4
-	ble s1, a2, label5
+	ble s1, a2, label30
 	sh2add a3, a1, a0
 	addiw a4, a1, 1
 	addiw a5, a1, 2
@@ -64,7 +64,7 @@ pcrel283:
 	mv a1, a2
 	sw a4, 12(a3)
 	addiw a2, a2, 4
-	ble s1, a2, label5
+	ble s1, a2, label30
 	sh2add a3, a1, a0
 	addiw a4, a1, 1
 	addiw a5, a1, 2
@@ -75,135 +75,100 @@ pcrel283:
 	mv a1, a2
 	sw a4, 12(a3)
 	addiw a2, a2, 4
-	ble s1, a2, label5
-	j label44
-label3:
-	addiw a2, a1, 4
-	ble s1, a2, label5
-label44:
-	sh2add a3, a1, a0
-	addiw a4, a1, 1
-	addiw a5, a1, 2
-	sw a1, 0(a3)
-	sw a4, 4(a3)
-	addiw a4, a1, 3
-	sw a5, 8(a3)
-	mv a1, a2
-	sw a4, 12(a3)
-	j label3
-label5:
-	sh2add a2, a1, a0
-	sw a1, 0(a2)
-	addiw a1, a1, 1
-	ble s1, a1, label8
-	j label5
-label8:
-	ble s0, zero, label21
-pcrel284:
+	ble s1, a2, label30
+	j label129
+label2:
+	ble s0, zero, label15
+pcrel278:
 	auipc a0, %pcrel_hi(matrix)
 	mv t0, zero
-	addi a2, a0, %pcrel_lo(pcrel284)
+	addi a2, a0, %pcrel_lo(pcrel278)
 	mv a0, s2
 	lw a1, 0(s2)
 	mv a0, zero
 	divw a3, s1, a1
 	mv a5, zero
-	ble a3, zero, label14
+	ble a3, zero, label8
 	mv a4, zero
-	ble a1, zero, label17
-	j label19
-label14:
+	ble a1, zero, label11
+	j label13
+label11:
+	addiw a0, a0, 1
+	mulw a5, a1, a0
+	ble a3, a0, label8
+	mv a4, zero
+	ble a1, zero, label11
+	bge a0, zero, label13
+	li a4, 1
+	ble a1, a4, label11
+	bge a0, a4, label13
+	addiw a4, a4, 1
+	ble a1, a4, label11
+	bge a0, a4, label13
+	addiw a4, a4, 1
+	ble a1, a4, label11
+	bge a0, a4, label13
+	addiw a4, a4, 1
+	ble a1, a4, label11
+	j label232
+label8:
 	addiw t0, t0, 1
-	ble s0, t0, label21
+	ble s0, t0, label15
 	sh2add a0, t0, s2
 	lw a1, 0(a0)
 	mv a0, zero
 	divw a3, s1, a1
 	mv a5, zero
-	ble a3, zero, label14
+	ble a3, zero, label8
 	mv a4, zero
-	ble a1, zero, label17
-	j label19
-label238:
-	bge a0, a4, label19
-label250:
-	addiw a4, a4, 1
-	ble a1, a4, label17
-	j label262
-label17:
-	addiw a0, a0, 1
-	mulw a5, a1, a0
-	ble a3, a0, label14
-	mv a4, zero
-	ble a1, zero, label17
-	bge a0, zero, label19
-	li a4, 1
-	ble a1, a4, label17
-	bge a0, a4, label19
-	addiw a4, a4, 1
-	ble a1, a4, label17
-	bge a0, a4, label19
-	addiw a4, a4, 1
-	ble a1, a4, label17
-	bge a0, a4, label19
-	addiw a4, a4, 1
-	ble a1, a4, label17
-	j label238
-label21:
-	ble s0, zero, label102
-pcrel285:
+	ble a1, zero, label11
+	j label13
+label232:
+	bge a0, a4, label13
+	j label244
+label15:
+	ble s0, zero, label80
+pcrel279:
 	auipc a1, %pcrel_hi(matrix)
 	mv a3, zero
-	addi a0, a1, %pcrel_lo(pcrel285)
+	addi a0, a1, %pcrel_lo(pcrel279)
 	mv a1, zero
 	li a2, 4
-	ble s0, a2, label27
-	j label26
-label102:
-	mv s0, zero
-label30:
-	li a0, 47
-	jal _sysy_stoptime
-	subw a1, zero, s0
-	max a0, a1, s0
-	jal putint
-	li a0, 10
-	jal putch
-	ld ra, 0(sp)
-	mv a0, zero
-	ld s0, 8(sp)
-	ld s2, 16(sp)
-	ld s1, 24(sp)
-	addi sp, sp, 32
-	ret
-label262:
-	bge a0, a4, label19
-	j label250
-label19:
+	ble s0, a2, label20
+	j label23
+label244:
+	addiw a4, a4, 1
+	ble a1, a4, label11
+	bge a0, a4, label13
+	j label244
+label13:
 	mulw t2, a3, a4
-	addw t3, a5, a4
-	addw t4, a0, t2
+	addw t3, a0, t2
+	addw t2, a5, a4
+	sh2add t1, t3, a2
 	addiw a4, a4, 1
-	sh2add t2, t3, a2
-	sh2add t1, t4, a2
-	lw t4, 0(t2)
-	sw t4, 0(t1)
-	ble a1, a4, label17
-	bge a0, a4, label19
+	sh2add t4, t2, a2
+	lw t3, 0(t4)
+	sw t3, 0(t1)
+	ble a1, a4, label11
+	bge a0, a4, label13
 	addiw a4, a4, 1
-	ble a1, a4, label17
-	bge a0, a4, label19
+	ble a1, a4, label11
+	bge a0, a4, label13
 	addiw a4, a4, 1
-	ble a1, a4, label17
-	bge a0, a4, label19
+	ble a1, a4, label11
+	bge a0, a4, label13
 	addiw a4, a4, 1
-	ble a1, a4, label17
-	bge a0, a4, label19
+	ble a1, a4, label11
+	bge a0, a4, label13
 	addiw a4, a4, 1
-	ble a1, a4, label17
-	bge a0, a4, label19
-	j label250
-label26:
+	ble a1, a4, label11
+	bge a0, a4, label13
+	j label244
+label80:
+	mv s0, zero
+	j label24
+label23:
 	sh2add a4, a1, a0
 	addiw t1, a1, 1
 	lw a5, 0(a4)
@@ -226,17 +191,51 @@ label26:
 	mulw a4, a4, a5
 	addw a3, a3, a4
 	addiw a2, a2, 4
-	ble s0, a2, label27
-	j label26
+	ble s0, a2, label20
+	j label23
 label27:
-	sh2add a4, a1, a0
-	mulw a5, a1, a1
-	lw a2, 0(a4)
-	addiw a1, a1, 1
-	mulw a4, a2, a5
-	addw a3, a3, a4
-	ble s0, a1, label144
+	addiw a2, a1, 4
+	ble s1, a2, label30
+label129:
+	sh2add a3, a1, a0
+	addiw a4, a1, 1
+	addiw a5, a1, 2
+	sw a1, 0(a3)
+	sw a4, 4(a3)
+	addiw a4, a1, 3
+	sw a5, 8(a3)
+	mv a1, a2
+	sw a4, 12(a3)
 	j label27
-label144:
+label20:
+	sh2add a5, a1, a0
+	mulw a4, a1, a1
+	lw a2, 0(a5)
+	addiw a1, a1, 1
+	mulw a5, a2, a4
+	addw a3, a3, a5
+	ble s0, a1, label98
+	j label20
+label98:
 	mv s0, a3
+label24:
+	li a0, 47
+	jal _sysy_stoptime
+	subw a1, zero, s0
+	max a0, a1, s0
+	jal putint
+	li a0, 10
+	jal putch
+	ld ra, 0(sp)
+	mv a0, zero
+	ld s0, 8(sp)
+	ld s2, 16(sp)
+	ld s1, 24(sp)
+	addi sp, sp, 32
+	ret
+label30:
+	sh2add a2, a1, a0
+	sw a1, 0(a2)
+	addiw a1, a1, 1
+	ble s1, a1, label2
 	j label30

@@ -117,16 +117,16 @@ label16:
 	add r0, r2, #3
 	add r5, r0, r0, lsl #1
 	cmn r5, #1
-	ble label19
-label17:
+	ble label17
+label18:
 	ldr r0, [r4, r5, lsl #2]
 	bl putint
 	mov r0, #32
 	bl putch
 	sub r5, r5, #1
 	cmn r5, #1
-	ble label19
-	b label17
+	ble label17
+	b label18
 label26:
 	add r2, r5, r3, lsl #2
 	movw r7, #63339
@@ -184,7 +184,7 @@ label23:
 	cmp r3, #10
 	bge label16
 	b label23
-label19:
+label17:
 	mov r0, #10
 	bl putch
 	add sp, sp, #12
