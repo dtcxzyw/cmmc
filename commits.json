@@ -205,6 +205,11 @@
       "parent": "4ca44d60cea852b643949c0a3c123f214077684b",
       "time": "2023-07-08 23:25:52 +0800"
     },
+    "43be4d9f3b3a4ab02e68f04af9d41f3b417f4758": {
+      "message": "feat(transform): handle N-sat",
+      "parent": "e87901f1931b3bbb5175bd3035309c5db03280ad",
+      "time": "2023-07-19 05:53:09 +0800"
+    },
     "44b16c8abb617d0b7e4d6e519c88f9b46f248b7b": {
       "message": "refactor(codegen): rename for style",
       "parent": "11b5dd1333286ce15e75aad7dda613c2d560d589",
@@ -741,5 +746,5 @@
       "time": "2023-07-06 01:05:50 +0800"
     }
   },
-  "head": "e87901f1931b3bbb5175bd3035309c5db03280ad"
+  "head": "43be4d9f3b3a4ab02e68f04af9d41f3b417f4758"
 }
