@@ -200,8 +200,8 @@ label657:
 	j label747
 label659:
 	jal my_sin_impl
-	mv t1, zero
 	sh2add a0, a3, a2
+	mv t1, zero
 	fmv.s f0, f10
 	flw f1, 0(a0)
 	j label135

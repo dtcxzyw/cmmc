@@ -467,3 +467,21 @@ int and_or3(int x, int y) {
 int and_or4(int x, int y) {
     return x | ~(x & y);
 }
+int square_eq_with_zero(int x) {
+    return x * x == 0;
+}
+int square_neq_with_zero(int x) {
+    return x * x != 0;
+}
+int square_slt_with_zero(int x) {
+    return x * x < 0;
+}
+int square_sle_with_zero(int x) {
+    return x * x <= 0;
+}
+int square_sgt_with_zero(int x) {
+    return x * x > 0;
+}
+int square_sge_with_zero(int x) {
+    return x * x >= 0;
+}

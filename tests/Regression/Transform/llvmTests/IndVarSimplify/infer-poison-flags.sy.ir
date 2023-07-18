@@ -1,15 +1,6 @@
-func @add_cr_none() -> void { NoMemoryRead NoRecurse } {
+func @add_cr_none() -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoReturn NoRecurse } {
   ^entry:
-    i32* %0 = ptrcast i32* @A to i32*;
-    ubr ^if.then;
-  ^if.then:
-    i32 %1 = phi [^entry, i32 11] [^if.then, i32 %2];
-    store i32* %0 with i32 %1;
-    i32 %2 = add i32 %1, i32 1;
-    i1 %3 = icmp neq i32 %2, i32 0;
-    cbr i1 %3(prob = 0.5), ^if.then, ^if.else;
-  ^if.else:
-    ret;
+    unreachable;
 }
 func @add_cr_nsw() -> void { NoMemoryRead NoRecurse } {
   ^entry:
@@ -23,18 +14,9 @@ func @add_cr_nsw_nuw() -> void { NoMemoryRead NoRecurse } {
     store i32* %0 with i32 999;
     ret;
 }
-func @add_cr_nuw() -> void { NoMemoryRead NoRecurse } {
+func @add_cr_nuw() -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoReturn NoRecurse } {
   ^entry:
-    i32* %0 = ptrcast i32* @A to i32*;
-    ubr ^if.then;
-  ^if.then:
-    i32 %1 = phi [^entry, i32 1] [^if.then, i32 %2];
-    store i32* %0 with i32 %1;
-    i32 %2 = add i32 %1, i32 1;
-    i1 %3 = icmp neq i32 %2, i32 -1;
-    cbr i1 %3(prob = 0.5), ^if.then, ^if.else;
-  ^if.else:
-    ret;
+    unreachable;
 }
 func @add_unknown_none(i32 %var0) -> void { NoMemoryRead NoRecurse } {
   ^entry:

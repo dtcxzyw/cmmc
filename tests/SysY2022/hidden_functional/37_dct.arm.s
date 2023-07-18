@@ -228,8 +228,8 @@ label119:
 	vmrs APSR_nzcv, FPSCR
 	vmovmi.f32 s0, s1
 	bl my_sin_impl
-	mov r10, #0
 	add r0, r1, r2, lsl #2
+	mov r10, #0
 	vmov.f32 s5, s0
 	vldr s6, [r0, #0]
 label121:

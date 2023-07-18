@@ -1062,6 +1062,23 @@ class ArithmeticReduce final : public TransformPass<Function> {
             if(or_(any(v1), not_(and_(exactly(v1), any(v2))))(matchCtx)) {
                 return makeIntLike(-1, inst);
             }
+            if(icmp(cmp, mul(any(v1), exactly(v1)), cint_(0))(matchCtx)) {
+                switch(cmp) {
+                    case CompareOp::ICmpEqual:
+                    case CompareOp::ICmpNotEqual:
+                        return builder.makeOp<CompareInst>(InstructionID::ICmp, cmp, v1, makeIntLike(0, v1));
+                    case CompareOp::ICmpSignedLessThan:
+                        return builder.getFalse();
+                    case CompareOp::ICmpSignedLessEqual:
+                        return builder.makeOp<CompareInst>(InstructionID::ICmp, CompareOp::ICmpEqual, v1, makeIntLike(0, v1));
+                    case CompareOp::ICmpSignedGreaterThan:
+                        return builder.makeOp<CompareInst>(InstructionID::ICmp, CompareOp::ICmpNotEqual, v1, makeIntLike(0, v1));
+                    case CompareOp::ICmpSignedGreaterEqual:
+                        return builder.getTrue();
+                    default:
+                        break;
+                }
+            }
 
             return nullptr;
         });

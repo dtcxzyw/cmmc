@@ -3,184 +3,73 @@
 .text
 .globl main
 main:
-	addi sp, sp, -184
+	addi sp, sp, -96
 	fmv.w.x f10, zero
-	lui t0, 260096
-	addi a0, sp, 96
-	addi a1, sp, 108
-	addi a2, sp, 120
-	addi a3, sp, 48
-	addi a4, sp, 144
-	addi a5, sp, 168
-	sd s0, 16(sp)
-	addi s0, sp, 24
-	sd s1, 40(sp)
-	addi s1, sp, 60
-	sd s2, 0(sp)
-	addi s2, sp, 72
-	sd s3, 136(sp)
-	mv s3, zero
-	sd s4, 8(sp)
-	sd ra, 160(sp)
-	fsw f10, 168(sp)
-	fsw f10, 144(sp)
+	lui a0, 262144
+	sd s0, 40(sp)
+	addi s0, sp, 0
+	sd s1, 88(sp)
+	addi s1, sp, 24
+	sd s3, 16(sp)
+	addi s3, sp, 48
+	sd s2, 80(sp)
+	mv s2, zero
+	sd ra, 72(sp)
 	fsw f10, 48(sp)
-	fsw f10, 120(sp)
-	fsw f10, 108(sp)
-	fsw f10, 96(sp)
-	fmv.w.x f10, t0
-	lui t0, 262144
-	fsw f10, 172(sp)
-	fsw f10, 148(sp)
+	fsw f10, 24(sp)
+	fsw f10, 0(sp)
+	fmv.w.x f10, a0
+	lui a0, 264192
 	fsw f10, 52(sp)
-	fsw f10, 124(sp)
-	fsw f10, 112(sp)
-	fsw f10, 100(sp)
-	fmv.w.x f10, t0
-	fsw f10, 176(sp)
-	fsw f10, 152(sp)
+	fsw f10, 28(sp)
+	fsw f10, 4(sp)
+	fmv.w.x f10, a0
 	fsw f10, 56(sp)
-	fsw f10, 128(sp)
-	fsw f10, 116(sp)
-	fsw f10, 104(sp)
-	li t0, 4
-	li t1, 3
-	bge t0, t1, label4
-label15:
-	sh2add t1, s3, a5
-	sh2add t2, s3, a2
-	flw f10, 0(t1)
-	sh2add t3, s3, s2
-	flw f11, 0(t2)
-	sh2add t4, s3, a4
-	sh2add t5, s3, a1
-	sh2add t6, s3, s1
-	sh2add a6, s3, a3
-	sh2add a7, s3, a0
-	fadd.s f10, f10, f11
-	sh2add s3, s3, s0
-	fsw f10, 0(t3)
-	flw f10, 0(t4)
-	flw f11, 0(t5)
-	fadd.s f10, f10, f11
-	fsw f10, 0(t6)
-	flw f10, 0(a6)
-	flw f11, 0(a7)
-	fadd.s f10, f10, f11
-	fsw f10, 0(s3)
-	flw f10, 4(t1)
-	flw f12, 4(t2)
-	fadd.s f11, f10, f12
-	fsw f11, 4(t3)
-	flw f10, 4(t4)
-	flw f11, 4(t5)
-	fadd.s f12, f10, f11
-	fsw f12, 4(t6)
-	flw f10, 4(a6)
-	flw f11, 4(a7)
-	fadd.s f12, f10, f11
-	fsw f12, 4(s3)
-	flw f10, 8(t1)
-	flw f12, 8(t2)
-	fadd.s f11, f10, f12
-	fsw f11, 8(t3)
-	flw f10, 8(t4)
-	flw f12, 8(t5)
-	fadd.s f11, f10, f12
-	fsw f11, 8(t6)
-	flw f10, 8(a6)
-	flw f12, 8(a7)
-	fadd.s f11, f10, f12
-	fsw f11, 8(s3)
-	flw f10, 12(t1)
-	flw f12, 12(t2)
-	fadd.s f11, f10, f12
-	fsw f11, 12(t3)
-	flw f10, 12(t4)
-	flw f12, 12(t5)
-	fadd.s f11, f10, f12
-	fsw f11, 12(t6)
-	flw f10, 12(a6)
-	flw f12, 12(a7)
-	fadd.s f11, f10, f12
-	fsw f11, 12(s3)
-	mv s3, t0
-	addiw t0, t0, 4
-	li t1, 3
-	bge t0, t1, label4
-	j label15
-label4:
-	sh2add t0, s3, a5
-	sh2add t1, s3, a2
-	flw f10, 0(t0)
-	sh2add t0, s3, s2
-	flw f11, 0(t1)
-	sh2add t1, s3, a4
-	fadd.s f10, f10, f11
-	fsw f10, 0(t0)
-	sh2add t0, s3, a1
-	flw f10, 0(t1)
-	sh2add t1, s3, a3
-	flw f11, 0(t0)
-	sh2add t0, s3, s1
-	fadd.s f10, f10, f11
-	fsw f10, 0(t0)
-	sh2add t0, s3, a0
-	flw f10, 0(t1)
-	flw f11, 0(t0)
-	sh2add t0, s3, s0
-	fadd.s f10, f10, f11
-	addiw s3, s3, 1
-	fsw f10, 0(t0)
-	li t0, 3
-	bge s3, t0, label86
-	j label4
-label86:
-	mv s4, zero
-label6:
-	sh2add a1, s4, s2
+	fsw f10, 32(sp)
+	fsw f10, 8(sp)
+label2:
+	sh2add a1, s2, s3
 	flw f10, 0(a1)
 	fcvt.w.s a0, f10, rtz
 	jal putint
 	li a0, 3
-	addiw s4, s4, 1
-	bge s4, a0, label8
-	j label6
-label8:
+	addiw s2, s2, 1
+	bge s2, a0, label4
+	j label2
+label4:
 	li a0, 10
 	jal putch
 	mv s2, zero
-label9:
+label5:
 	sh2add a1, s2, s1
 	flw f10, 0(a1)
 	fcvt.w.s a0, f10, rtz
 	jal putint
 	li a0, 3
 	addiw s2, s2, 1
-	bge s2, a0, label11
-	j label9
-label11:
+	bge s2, a0, label7
+	j label5
+label7:
 	li a0, 10
 	jal putch
 	mv s1, zero
-label12:
+label8:
 	sh2add a1, s1, s0
 	flw f10, 0(a1)
 	fcvt.w.s a0, f10, rtz
 	jal putint
 	li a0, 3
 	addiw s1, s1, 1
-	bge s1, a0, label14
-	j label12
-label14:
+	bge s1, a0, label10
+	j label8
+label10:
 	li a0, 10
 	jal putch
-	ld ra, 160(sp)
+	ld ra, 72(sp)
 	mv a0, zero
-	ld s4, 8(sp)
-	ld s3, 136(sp)
-	ld s2, 0(sp)
-	ld s1, 40(sp)
-	ld s0, 16(sp)
-	addi sp, sp, 184
+	ld s2, 80(sp)
+	ld s3, 16(sp)
+	ld s1, 88(sp)
+	ld s0, 40(sp)
+	addi sp, sp, 96
 	ret

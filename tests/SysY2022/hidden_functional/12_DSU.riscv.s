@@ -363,8 +363,8 @@ label480:
 	j label112
 label93:
 	jal getch
-	li a2, 57
 	li a3, 45
+	li a2, 57
 	slti a1, a0, 48
 	slt a4, a2, a0
 	li a2, 1

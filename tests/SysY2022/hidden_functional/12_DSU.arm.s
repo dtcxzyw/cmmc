@@ -353,8 +353,8 @@ label123:
 	b label123
 label110:
 	bl getch
-	mov r7, r0
 	cmp r0, #48
+	mov r7, r0
 	mov r1, #0
 	mov r0, #0
 	movwlt r0, #1
@@ -445,8 +445,8 @@ label68:
 	b label68
 label80:
 	bl getch
-	mov r1, #0
 	cmp r0, #48
+	mov r1, #0
 	mov r6, r0
 	mov r0, #0
 	movwlt r0, #1

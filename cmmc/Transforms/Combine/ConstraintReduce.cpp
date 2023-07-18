@@ -15,6 +15,7 @@
 #include <algorithm>
 #include <bitset>
 #include <cmmc/Analysis/CFGAnalysis.hpp>
+#include <cmmc/Analysis/DominateAnalysis.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/IRBuilder.hpp>
@@ -247,13 +248,41 @@ class ConstraintReduce final : public TransformPass<Function> {
         return false;
     }
 
-    static CondSet mergeSets(const std::unordered_map<Block*, CondSet>& sets) {
+    static CondSet mergeSets(Block* curBlock, const std::unordered_map<Block*, CondSet>& sets,
+                             const DominateAnalysisResult& dom) {
         if(sets.empty())
             return {};
-        const CondSet* minimal = nullptr;
-        for(auto& [block, set] : sets)
-            if(!minimal || set.size() < minimal->size())
-                minimal = &set;
+
+        // FIXME
+        auto getCommonAncestor = [&]() -> Block* {
+            Block* ancestor = nullptr;
+            for(auto& [block, set] : sets) {
+                if(!dom.reachable(block))
+                    return nullptr;
+                if(ancestor == nullptr) {
+                    ancestor = block;
+                } else {
+                    ancestor = dom.lca(ancestor, block);
+                }
+            }
+            if(curBlock != ancestor && dom.dominate(ancestor, curBlock)) {
+                for(auto& [block, set] : sets) {
+                    if(ancestor != block && !dom.dominate(curBlock, block))
+                        return nullptr;
+                }
+                return ancestor;
+            }
+            return nullptr;
+        };
+
+        const auto commonAncestor = getCommonAncestor();
+        const auto commonAncestorSet = sets.count(commonAncestor) ? &sets.at(commonAncestor) : nullptr;
+        const CondSet* minimal = commonAncestorSet;
+        if(!commonAncestorSet) {
+            for(auto& [block, set] : sets)
+                if(!minimal || set.size() < minimal->size())
+                    minimal = &set;
+        }
         CondSet res = *minimal;
 
         std::vector<VarPair> toRemove;
@@ -264,13 +293,15 @@ class ConstraintReduce final : public TransformPass<Function> {
                 if(res.count(pair))
                     res[pair].merge(relations);
             }
-            toRemove.clear();
-            for(auto& [pair, relations] : res)
-                if(!set.count(pair)) {
-                    toRemove.push_back(pair);
-                }
-            for(auto& pair : toRemove)
-                res.erase(pair);
+            if(!commonAncestorSet) {
+                toRemove.clear();
+                for(auto& [pair, relations] : res)
+                    if(!set.count(pair)) {
+                        toRemove.push_back(pair);
+                    }
+                for(auto& pair : toRemove)
+                    res.erase(pair);
+            }
         }
         for(auto& [pair, relations] : res)
             relations.localInfer();
@@ -333,6 +364,7 @@ class ConstraintReduce final : public TransformPass<Function> {
 public:
     bool run(Function& func, AnalysisPassManager& analysis) const override {
         auto& cfg = analysis.get<CFGAnalysis>(func);
+        auto& dom = analysis.get<DominateAnalysis>(func);
 
         std::unordered_map<Block*, std::unordered_map<Block*, std::unordered_map<Value*, bool>>> edges;
 
@@ -459,7 +491,7 @@ public:
                 auto& edge = edgeSets[u];
                 for(auto pred : preds)
                     edge[pred];  // touch
-                auto newDst = mergeSets(edge);
+                auto newDst = mergeSets(u, edge, dom);
                 if(newDst != dst) {
                     dst.swap(newDst);
                     updateBlock(u);

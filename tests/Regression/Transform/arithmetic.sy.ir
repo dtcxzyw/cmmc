@@ -796,3 +796,37 @@ func @and_or4() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRec
   ^entry:
     ret i32 -1;
 }
+func @square_eq_with_zero(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = icmp eq i32 %x, i32 0;
+    i32 %1 = zext i1 %0 to i32;
+    ret i32 %1;
+}
+func @square_neq_with_zero(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = icmp neq i32 %x, i32 0;
+    i32 %1 = zext i1 %0 to i32;
+    ret i32 %1;
+}
+func @square_slt_with_zero(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = mul i32 %x, i32 %x;
+    i32 %1 = lshr i32 %0, i32 31;
+    ret i32 %1;
+}
+func @square_sle_with_zero(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = icmp eq i32 %x, i32 0;
+    i32 %1 = zext i1 %0 to i32;
+    ret i32 %1;
+}
+func @square_sgt_with_zero(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = icmp neq i32 %x, i32 0;
+    i32 %1 = zext i1 %0 to i32;
+    ret i32 %1;
+}
+func @square_sge_with_zero() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret i32 1;
+}
