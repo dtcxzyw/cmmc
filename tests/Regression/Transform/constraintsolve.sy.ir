@@ -18,3 +18,14 @@ func @test5() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecur
   ^entry:
     ret i32 1;
 }
+func @test6(i32 %x, i32 %y) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = smax i32 %x, i32 1;
+    i1 %1 = icmp sgt i32 %y, i32 %0;
+    i32 %2 = zext i1 %1 to i32;
+    ret i32 %2;
+}
+func @test7() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret i32 1;
+}

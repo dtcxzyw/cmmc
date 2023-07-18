@@ -11,37 +11,36 @@ main:
 	mv s0, a0
 	li a0, 10
 	ble s0, a0, label19
-	j label15
+	j label2
 label19:
 	mv s0, zero
+	j label3
 label2:
+	mv a0, s0
+	jal putint
+label3:
 	jal getint
 	li a1, 11
-	ble a0, a1, label5
+	ble a0, a1, label6
 	addw s0, s0, a0
 	mv a0, s0
 	jal putint
-	j label5
-label15:
-	mv a0, s0
-	jal putint
-	j label2
-label5:
+label6:
 	jal getint
 	li a1, 100
-	bge a0, a1, label14
-label7:
+	bge a0, a1, label15
+label8:
 	jal getint
 	li a1, 101
-	bge a0, a1, label13
-label9:
+	bge a0, a1, label14
+label10:
 	addiw s1, s0, 99
 	mv a0, s1
 	jal putint
-	bne s1, zero, label12
+	bne s1, zero, label13
 	addiw a0, s0, 199
 	jal putint
-label12:
+label13:
 	mv a0, zero
 	ld ra, 0(sp)
 	ld s1, 8(sp)
@@ -52,9 +51,9 @@ label14:
 	addw s0, s0, a0
 	mv a0, s0
 	jal putint
-	j label7
-label13:
+	j label10
+label15:
 	addw s0, s0, a0
 	mv a0, s0
 	jal putint
-	j label9
+	j label8

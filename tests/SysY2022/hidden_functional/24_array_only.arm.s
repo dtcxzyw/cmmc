@@ -73,20 +73,20 @@ label15:
 	bne label15
 	add r8, r6, r8
 	cmp r4, #0
-	bne label20
+	bne label21
 	ldr r0, [sp, #0]
 	sub r9, r0, r6
 	cmp r8, #5
 	str r9, [sp, #0]
 	bge label27
 	b label5
-label20:
+label21:
 	ldr r0, [sp, #0]
 	mov r1, r4
-label21:
+label22:
 	subs r1, r1, #1
 	lsl r0, r0, #1
-	bne label21
+	bne label22
 	sub r9, r0, r6
 	cmp r8, #5
 	str r9, [sp, #0]
@@ -102,18 +102,6 @@ label27:
 	cmp r5, r0
 	bne label2
 	b label38
-label98:
-	mov r1, r4
-label30:
-	subs r1, r1, #1
-	lsl r0, r0, #1
-	bne label30
-	ldr r1, [sp, #0]
-	add r5, r0, r1
-	ldr r0, [r7, #4]
-	cmp r5, r0
-	bne label2
-	b label38
 label94:
 	mov r0, r4
 	subs r0, r4, #1
@@ -122,6 +110,18 @@ label94:
 	add r0, r5, #1
 	cmp r4, #0
 	bne label98
+	ldr r1, [sp, #0]
+	add r5, r0, r1
+	ldr r0, [r7, #4]
+	cmp r5, r0
+	bne label2
+	b label38
+label98:
+	mov r1, r4
+label30:
+	subs r1, r1, #1
+	lsl r0, r0, #1
+	bne label30
 	ldr r1, [sp, #0]
 	add r5, r0, r1
 	ldr r0, [r7, #4]

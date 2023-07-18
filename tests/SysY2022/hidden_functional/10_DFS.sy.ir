@@ -211,9 +211,9 @@ func @main() -> i32 { NoRecurse Entry } {
     store i32* %92 with i32 -1;
     ubr ^while.header2;
   ^while.header2:
-    i32 %93 = phi [^while.body5, i32 0] [^b6, i32 %210] [^if.then, i32 %93];
-    i32 %94 = phi [^while.body5, i32 %52] [^b6, i32 %211] [^if.then, i32 %225];
-    i1 %95 = icmp neq i32 %94, i32 0;
+    i32 %93 = phi [^while.body5, i32 %52] [^b6, i32 %211] [^if.then, i32 %225];
+    i32 %94 = phi [^while.body5, i32 0] [^b6, i32 %210] [^if.then, i32 %94];
+    i1 %95 = icmp neq i32 %93, i32 0;
     cbr i1 %95(prob = 0.97), ^while.body6, ^b2;
   ^while.body6:
     i32 %96 = call () -> i32 @getch();
@@ -357,23 +357,23 @@ func @main() -> i32 { NoRecurse Entry } {
     i1 %198 = icmp neq i32 %186, i32 0;
     i32 %199 = neg i32 %197;
     i32 %200 = select i1 %198 ? i32 %199 : i32 %197;
-    i32* %201 = getelementptr &([5005 * i32]* %5)[i64 0][i32 %93];
+    i32* %201 = getelementptr &([5005 * i32]* %5)[i64 0][i32 %94];
     store i32* %201 with i32 %200;
     i32* %202 = getelementptr &([1005 * i32]* %7)[i64 0][i32 %164];
     i32 %203 = load i32* %202;
-    i32* %204 = getelementptr &([5005 * i32]* %6)[i64 0][i32 %93];
+    i32* %204 = getelementptr &([5005 * i32]* %6)[i64 0][i32 %94];
     store i32* %204 with i32 %203;
     i32* %205 = getelementptr &([1005 * i32]* %7)[i64 0][i32 %200];
-    store i32* %202 with i32 %93;
+    store i32* %202 with i32 %94;
     i32* %206 = getelementptr &(i32* %201)[i64 1];
     store i32* %206 with i32 %164;
     i32 %207 = load i32* %205;
     i32* %208 = getelementptr &(i32* %204)[i64 1];
     store i32* %208 with i32 %207;
-    i32 %209 = add i32 %93, i32 1;
+    i32 %209 = add i32 %94, i32 1;
     store i32* %205 with i32 %209;
-    i32 %210 = add i32 %93, i32 2;
-    i32 %211 = add i32 %94, i32 -1;
+    i32 %210 = add i32 %94, i32 2;
+    i32 %211 = add i32 %93, i32 -1;
     ubr ^while.header2;
   ^b7:
     i32 %212 = phi [^while.header5, i32 0] [^while.body13, i32 %196];
@@ -395,7 +395,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i32 %224 = call (i32, i32) -> i32 @same(i32 %148, i32 %215);
     call (i32) -> void @putint(i32 %224);
     call (i32) -> void @putch(i32 10);
-    i32 %225 = add i32 %94, i32 -1;
+    i32 %225 = add i32 %93, i32 -1;
     ubr ^while.header2;
   ^while.body15:
     i32 %226 = phi [^b7, i32 1] [^while.body15, i32 %228];

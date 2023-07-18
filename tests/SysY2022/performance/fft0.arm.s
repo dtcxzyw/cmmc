@@ -137,8 +137,8 @@ fft:
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
 	cmp r2, #1
 	sub sp, sp, #36
-	mov r7, r1
 	mov r6, r0
+	mov r7, r1
 	str r2, [sp, #16]
 	mov r1, r3
 	str r3, [sp, #8]
@@ -158,7 +158,7 @@ label119:
 	cmp r2, r0
 	ble label99
 	ands r1, r0, #1
-	bne label98
+	bne label97
 	b label238
 label99:
 	ldr r2, [sp, #16]
@@ -183,9 +183,9 @@ label238:
 	cmp r2, r0
 	ble label99
 	ands r1, r0, #1
-	bne label98
+	bne label97
 	b label238
-label98:
+label97:
 	add r1, r0, r0, lsr #31
 	ldr r5, [sp, #12]
 	ldr r7, [sp, #0]
@@ -201,7 +201,7 @@ label98:
 	cmp r2, r0
 	ble label99
 	ands r1, r0, #1
-	bne label98
+	bne label97
 	b label238
 label102:
 	ldr r7, [sp, #0]

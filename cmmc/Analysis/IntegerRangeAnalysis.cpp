@@ -252,7 +252,19 @@ IntegerRangeAnalysisResult IntegerRangeAnalysis::run(Function& func, AnalysisPas
             }
             case InstructionID::SDiv: {
                 update(inst, getOperandRange(0).sdiv(getOperandRange(1)));
-                // TODO: contextual
+                // if(getOperandRange(1).isPositive()) {
+                //     if(getRange(inst, inst).isNonNegative()) {
+                //         IntegerRange range;
+                //         range.setSignedRange(1 - getOperandRange(1).maxSignedValue(), std::numeric_limits<int32_t>::max());
+                //         range.sync();
+                //         updateContextual(inst->getOperand(0), inst->getBlock(), range);
+                //     } else if(getRange(inst, inst).isPositive()) {
+                //         IntegerRange range;
+                //         range.setSignedRange(getOperandRange(1).minSignedValue(), std::numeric_limits<int32_t>::max());
+                //         range.sync();
+                //         updateContextual(inst->getOperand(0), inst->getBlock(), range);
+                //     }
+                // }
                 break;
             }
             case InstructionID::UDiv: {

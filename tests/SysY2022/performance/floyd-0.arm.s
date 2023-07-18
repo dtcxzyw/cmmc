@@ -26,8 +26,8 @@ main:
 	bl getarray
 	mov r0, #62
 	bl _sysy_starttime
-	mov r0, #0
 	movw r9, #:lower16:temp
+	mov r0, #0
 	movw r2, #:lower16:dst
 	movt r9, #:upper16:temp
 	movt r2, #:upper16:dst

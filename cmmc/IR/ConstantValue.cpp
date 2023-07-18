@@ -66,12 +66,12 @@ uintmax_t ConstantInteger::getZeroExtended() const noexcept {
 }
 
 ConstantInteger* ConstantInteger::getTrue() noexcept {
-    static ConstantInteger trueValue{ IntegerType::getBoolean(), 1 };
-    return &trueValue;
+    static auto* trueValue = make<ConstantInteger>(IntegerType::getBoolean(), 1, ExplicitConstruct{});
+    return trueValue;
 }
 ConstantInteger* ConstantInteger::getFalse() noexcept {
-    static ConstantInteger falseValue{ IntegerType::getBoolean(), 0 };
-    return &falseValue;
+    static auto* falseValue = make<ConstantInteger>(IntegerType::getBoolean(), 0, ExplicitConstruct{});
+    return falseValue;
 }
 ConstantInteger::ConstantInteger(const Type* type, intmax_t value) : ConstantValue{ type }, mValue{ value } {
     assert(type->isInteger());
@@ -80,15 +80,15 @@ ConstantInteger* ConstantInteger::get(const Type* type, intmax_t value) {
     if(type->isBoolean())
         return (value & 1) ? getTrue() : getFalse();
     if(value == 0) {
-        static ConstantInteger i8Zero{ IntegerType::get(8), 0 };
-        static ConstantInteger i32Zero{ IntegerType::get(32), 0 };
-        static ConstantInteger i64Zero{ IntegerType::get(64), 0 };
-        if(type == i32Zero.getType())
-            return &i32Zero;
-        if(type == i64Zero.getType())
-            return &i64Zero;
-        if(type == i8Zero.getType())
-            return &i8Zero;
+        static auto* i8Zero = make<ConstantInteger>(IntegerType::get(8), 0, ExplicitConstruct{});
+        static auto* i32Zero = make<ConstantInteger>(IntegerType::get(32), 0, ExplicitConstruct{});
+        static auto* i64Zero = make<ConstantInteger>(IntegerType::get(64), 0, ExplicitConstruct{});
+        if(type == i32Zero->getType())
+            return i32Zero;
+        if(type == i64Zero->getType())
+            return i64Zero;
+        if(type == i8Zero->getType())
+            return i8Zero;
     }
     return make<ConstantInteger>(type, value, ExplicitConstruct{});
 }

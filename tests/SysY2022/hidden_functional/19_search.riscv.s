@@ -10,7 +10,7 @@ search:
 	sd s0, 96(sp)
 	mv s0, a0
 	sd s5, 88(sp)
-pcrel215:
+pcrel214:
 	auipc a0, %pcrel_hi(a)
 	mv s5, a4
 	sd s1, 80(sp)
@@ -27,7 +27,7 @@ pcrel215:
 	sd s8, 40(sp)
 	mv s8, a7
 	sd s9, 32(sp)
-	addi s9, a0, %pcrel_lo(pcrel215)
+	addi s9, a0, %pcrel_lo(pcrel214)
 	sd s10, 24(sp)
 	sd s2, 16(sp)
 	sd s11, 8(sp)
@@ -44,44 +44,33 @@ label34:
 	mv a1, zero
 	mv a0, s1
 	mv a2, s0
-	li a5, 120
-	mul t1, s0, a5
-	add a4, s9, t1
-	li t1, 1
-	sh2add t0, s1, a4
-	lw a5, 0(t0)
-	beq a5, t1, label15
+	li t0, 120
+	mul a5, s0, t0
+	li t0, 1
+	add a4, s9, a5
+	sh2add t1, s1, a4
+	lw a5, 0(t1)
+	beq a5, t0, label12
 	lw a5, 0(s6)
-	bne s0, a5, label13
+	bne s0, a5, label20
 	lw a5, 0(s8)
-	bne s1, a5, label13
+	bne s1, a5, label20
 	lw a5, 0(s6)
-	bne s0, a5, label17
+	bne s0, a5, label14
 	lw a5, 0(s8)
-	bne s1, a5, label17
-label203:
-	li a0, 1
-label2:
-	ld ra, 0(sp)
-	ld s11, 8(sp)
-	ld s2, 16(sp)
-	ld s10, 24(sp)
-	ld s9, 32(sp)
-	ld s8, 40(sp)
-	ld s7, 48(sp)
-	ld s4, 56(sp)
-	ld s3, 64(sp)
-	ld s6, 72(sp)
-	ld s1, 80(sp)
-	ld s5, 88(sp)
-	ld s0, 96(sp)
-	addi sp, sp, 104
-	ret
-label17:
+	bne s1, a5, label14
+	j label201
+label7:
+	li a1, 10
+	lui a0, 262144
+	bgt s10, a1, label2
+	mv a0, s10
+	j label2
+label14:
 	slti a1, a1, 2
-	sltiu a5, a2, 1
-	or t0, a1, a5
-	beq t0, zero, label19
+	sltiu t0, a2, 1
+	or a5, a1, t0
+	beq a5, zero, label16
 	addiw s2, s2, 1
 	sh3add a3, s2, s4
 	li a0, 4
@@ -89,30 +78,30 @@ label17:
 	mv a1, zero
 	mv a0, s1
 	mv a2, s0
-	li a5, 120
-	mul t1, s0, a5
-	add a4, s9, t1
-	li t1, 1
-	sh2add t0, s1, a4
-	lw a5, 0(t0)
-	beq a5, t1, label15
+	li t0, 120
+	mul a5, s0, t0
+	li t0, 1
+	add a4, s9, a5
+	sh2add t1, s1, a4
+	lw a5, 0(t1)
+	beq a5, t0, label12
 	lw a5, 0(s6)
-	bne s0, a5, label13
+	bne s0, a5, label20
 	lw a5, 0(s8)
-	bne s1, a5, label13
+	bne s1, a5, label20
 	lw a5, 0(s6)
-	bne s0, a5, label17
+	bne s0, a5, label14
 	lw a5, 0(s8)
-	bne s1, a5, label17
-	j label203
-label19:
+	bne s1, a5, label14
+	j label201
+label16:
 	lw a1, 0(s7)
+	sltiu t0, a0, 1
 	addiw a5, a1, 1
-	xor t0, a2, a5
-	sltiu a5, a0, 1
-	sltiu a1, t0, 1
-	or t0, a1, a5
-	beq t0, zero, label20
+	xor t1, a2, a5
+	sltiu a1, t1, 1
+	or a5, a1, t0
+	beq a5, zero, label17
 	addiw s2, s2, 1
 	sh3add a3, s2, s4
 	li a0, 4
@@ -120,32 +109,26 @@ label19:
 	mv a1, zero
 	mv a0, s1
 	mv a2, s0
-	li a5, 120
-	mul t1, s0, a5
-	add a4, s9, t1
-	li t1, 1
-	sh2add t0, s1, a4
-	lw a5, 0(t0)
-	beq a5, t1, label15
+	li t0, 120
+	mul a5, s0, t0
+	li t0, 1
+	add a4, s9, a5
+	sh2add t1, s1, a4
+	lw a5, 0(t1)
+	beq a5, t0, label12
 	lw a5, 0(s6)
-	bne s0, a5, label13
+	bne s0, a5, label20
 	lw a5, 0(s8)
-	bne s1, a5, label13
+	bne s1, a5, label20
 	lw a5, 0(s6)
-	bne s0, a5, label17
+	bne s0, a5, label14
 	lw a5, 0(s8)
-	bne s1, a5, label17
-	j label203
-label15:
-	lw a5, 0(s6)
-	bne a2, a5, label17
-	lw a5, 0(s8)
-	bne a0, a5, label17
-	j label203
-label20:
+	bne s1, a5, label14
+	j label201
+label17:
 	lw a5, 0(s5)
 	addiw a1, a5, 1
-	bne a0, a1, label21
+	bne a0, a1, label18
 	addiw s2, s2, 1
 	sh3add a3, s2, s4
 	li a0, 4
@@ -153,23 +136,23 @@ label20:
 	mv a1, zero
 	mv a0, s1
 	mv a2, s0
-	li a5, 120
-	mul t1, s0, a5
-	add a4, s9, t1
-	li t1, 1
-	sh2add t0, s1, a4
-	lw a5, 0(t0)
-	beq a5, t1, label15
+	li t0, 120
+	mul a5, s0, t0
+	li t0, 1
+	add a4, s9, a5
+	sh2add t1, s1, a4
+	lw a5, 0(t1)
+	beq a5, t0, label12
 	lw a5, 0(s6)
-	bne s0, a5, label13
+	bne s0, a5, label20
 	lw a5, 0(s8)
-	bne s1, a5, label13
+	bne s1, a5, label20
 	lw a5, 0(s6)
-	bne s0, a5, label17
+	bne s0, a5, label14
 	lw a5, 0(s8)
-	bne s1, a5, label17
-	j label203
-label21:
+	bne s1, a5, label14
+	j label201
+label18:
 	sh2add s11, a0, a4
 	sw zero, 0(s11)
 	lw a5, 0(a3)
@@ -197,50 +180,67 @@ label21:
 	mv a1, zero
 	mv a0, s1
 	mv a2, s0
-	li a5, 120
-	mul t1, s0, a5
-	add a4, s9, t1
-	li t1, 1
-	sh2add t0, s1, a4
-	lw a5, 0(t0)
-	beq a5, t1, label15
+	li t0, 120
+	mul a5, s0, t0
+	li t0, 1
+	add a4, s9, a5
+	sh2add t1, s1, a4
+	lw a5, 0(t1)
+	beq a5, t0, label12
 	lw a5, 0(s6)
-	bne s0, a5, label13
+	bne s0, a5, label20
 	lw a5, 0(s8)
-	bne s1, a5, label13
+	bne s1, a5, label20
 	lw a5, 0(s6)
-	bne s0, a5, label17
+	bne s0, a5, label14
 	lw a5, 0(s8)
-	bne s1, a5, label17
-	j label203
-label13:
+	bne s1, a5, label14
+	j label201
+label20:
 	lw a5, 0(a3)
 	addiw a1, a1, 1
 	lw a4, 4(a3)
 	addw a2, a2, a5
 	addw a0, a0, a4
-	li a5, 120
-	mul t1, a2, a5
-	add a4, s9, t1
-	li t1, 1
-	sh2add t0, a0, a4
-	lw a5, 0(t0)
-	beq a5, t1, label15
+	li t0, 120
+	mul a5, a2, t0
+	li t0, 1
+	add a4, s9, a5
+	sh2add t1, a0, a4
+	lw a5, 0(t1)
+	beq a5, t0, label12
 	lw a5, 0(s6)
-	bne a2, a5, label13
+	bne a2, a5, label20
 	lw a5, 0(s8)
-	bne a0, a5, label13
+	bne a0, a5, label20
 	lw a5, 0(s6)
-	bne a2, a5, label17
+	bne a2, a5, label14
 	lw a5, 0(s8)
-	bne a0, a5, label17
-	j label203
-label7:
-	li a1, 10
-	lui a0, 262144
-	bgt s10, a1, label2
-	mv a0, s10
-	j label2
+	bne a0, a5, label14
+	j label201
+label12:
+	lw a5, 0(s6)
+	bne a2, a5, label14
+	lw a5, 0(s8)
+	bne a0, a5, label14
+label201:
+	li a0, 1
+label2:
+	ld ra, 0(sp)
+	ld s11, 8(sp)
+	ld s2, 16(sp)
+	ld s10, 24(sp)
+	ld s9, 32(sp)
+	ld s8, 40(sp)
+	ld s7, 48(sp)
+	ld s4, 56(sp)
+	ld s3, 64(sp)
+	ld s6, 72(sp)
+	ld s1, 80(sp)
+	ld s5, 88(sp)
+	ld s0, 96(sp)
+	addi sp, sp, 104
+	ret
 .globl main
 main:
 	addi sp, sp, -152
@@ -270,25 +270,25 @@ main:
 	sw zero, 108(sp)
 	sw zero, 112(sp)
 	sw a0, 116(sp)
-pcrel402:
+pcrel401:
 	auipc a0, %pcrel_hi(a)
 	sw zero, 120(sp)
-	addi s0, a0, %pcrel_lo(pcrel402)
+	addi s0, a0, %pcrel_lo(pcrel401)
 	sw a1, 124(sp)
 	sw zero, 72(sp)
 	sw zero, 56(sp)
 	mv s10, zero
-label217:
+label216:
 	jal getint
 	sw a0, 80(sp)
 	mv s6, a0
 	jal getint
 	sw a0, 76(sp)
-	beq s6, zero, label239
+	beq s6, zero, label238
 	mv a0, zero
 	li a1, 30
-	bge zero, a1, label267
-label222:
+	bge zero, a1, label266
+label221:
 	li a2, 120
 	mul a3, a0, a2
 	addiw a0, a0, 1
@@ -325,9 +325,9 @@ label222:
 	sw a2, 112(a1)
 	sw a2, 116(a1)
 	li a1, 30
-	bge a0, a1, label267
-	j label222
-label238:
+	bge a0, a1, label266
+	j label221
+label237:
 	mv a0, s10
 	li a2, 1
 	mv a1, s9
@@ -339,62 +339,62 @@ label238:
 	jal search
 	mv a1, a0
 	li a2, 11
-	blt a0, a2, label374
+	blt a0, a2, label373
 	li a1, -1
-label374:
+label373:
 	mv a0, a1
 	jal putint
 	li a0, 10
 	jal putch
-	j label217
-label267:
+	j label216
+label266:
 	li s6, 1
 	lw a1, 76(sp)
 	li a2, 120
 	mul a0, s6, a2
 	add s7, s0, a0
-	bgt s6, a1, label238
+	bgt s6, a1, label237
 	li s8, 1
 	lw a0, 80(sp)
-	bgt s8, a0, label237
-label231:
+	bgt s8, a0, label236
+label230:
 	jal getint
 	li a2, 2
 	sh2add a1, s8, s7
 	sw a0, 0(a1)
-	bne a0, a2, label235
+	bne a0, a2, label234
 	mv s9, s8
 	mv s10, s6
 	addiw s8, s8, 1
 	lw a0, 80(sp)
-	bgt s8, a0, label237
-	j label231
-label232:
+	bgt s8, a0, label236
+	j label230
+label231:
 	addiw s8, s8, 1
 	lw a0, 80(sp)
-	bgt s8, a0, label237
-	j label231
-label235:
+	bgt s8, a0, label236
+	j label230
+label234:
 	li a1, 3
-	bne a0, a1, label232
+	bne a0, a1, label231
 	sw s6, 72(sp)
 	sw s8, 56(sp)
 	addiw s8, s8, 1
 	lw a0, 80(sp)
-	bgt s8, a0, label237
-	j label231
-label237:
+	bgt s8, a0, label236
+	j label230
+label236:
 	addiw s6, s6, 1
 	lw a1, 76(sp)
 	li a2, 120
 	mul a0, s6, a2
 	add s7, s0, a0
-	bgt s6, a1, label238
+	bgt s6, a1, label237
 	li s8, 1
 	lw a0, 80(sp)
-	bgt s8, a0, label237
-	j label231
-label239:
+	bgt s8, a0, label236
+	j label230
+label238:
 	mv a0, zero
 	ld ra, 136(sp)
 	ld s8, 88(sp)

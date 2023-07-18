@@ -187,14 +187,14 @@ label18:
 	beq a1, zero, label9
 	j label18
 label6:
-	slliw a1, s1, 4
-	addw a2, a1, s1
-	addiw a0, a2, 23
-	slli a1, a0, 1
-	srli a2, a1, 59
-	add a3, a0, a2
-	andi a1, a3, -32
-	subw s1, a0, a1
+	slliw a2, s1, 4
+	addw a1, a2, s1
+	addiw a0, a1, 23
+	slli a2, a0, 1
+	srli a1, a2, 59
+	add a3, a0, a1
+	andi a2, a3, -32
+	subw s1, a0, a2
 	bne s1, zero, label4
 	mv a0, zero
 	ld ra, 24(sp)
@@ -223,31 +223,34 @@ label10:
 	j label10
 label159:
 	mv s3, zero
-	j label16
+	j label13
 label12:
 	li a0, 200
 	mul a1, s3, a0
 	add s2, s2, a1
 	lw a0, 0(s2)
-	beq a0, zero, label13
+	beq a0, zero, label15
 	j label159
-label16:
-	sh2add s4, s3, s2
-	lw a0, 0(s4)
-	jal putch
-	addiw s3, s3, 1
-	lw a1, 4(s4)
-	beq a1, zero, label13
+label160:
+	mv s2, zero
 	j label16
-label13:
+label15:
 	lw a0, 0(sp)
 	beq a0, zero, label6
-	mv s2, zero
-label14:
+	j label160
+label16:
 	sh2add s3, s2, s0
 	lw a0, 0(s3)
 	jal putch
 	addiw s2, s2, 1
 	lw a1, 4(s3)
 	beq a1, zero, label6
-	j label14
+	j label16
+label13:
+	sh2add s4, s3, s2
+	lw a0, 0(s4)
+	jal putch
+	addiw s3, s3, 1
+	lw a1, 4(s4)
+	beq a1, zero, label15
+	j label13

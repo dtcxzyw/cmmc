@@ -165,17 +165,7 @@ label31:
 	ldr r0, [r0, r3]
 	cmp r0, #0
 	beq label9
-label164:
-	mov r9, #0
-label18:
-	add r10, r8, r9, lsl #2
-	ldr r0, [r8, r9, lsl #2]
-	bl putch
-	add r9, r9, #1
-	ldr r0, [r10, #4]
-	cmp r0, #0
-	beq label9
-	b label18
+	b label164
 label2:
 	add r7, r5, r6, lsl #2
 	ldr r0, [r5, r6, lsl #2]
@@ -207,7 +197,17 @@ label4:
 	ldr r0, [r0, r3]
 	cmp r0, #0
 	beq label9
-	b label164
+label164:
+	mov r9, #0
+label18:
+	add r10, r8, r9, lsl #2
+	ldr r0, [r8, r9, lsl #2]
+	bl putch
+	add r9, r9, #1
+	ldr r0, [r10, #4]
+	cmp r0, #0
+	beq label9
+	b label18
 label6:
 	add r0, r5, r5, lsl #4
 	add r0, r0, #23
@@ -231,23 +231,40 @@ label9:
 	b label10
 label159:
 	mov r6, #0
-	b label16
+	b label13
 label12:
 	mov r0, #200
 	mul r1, r7, r0
 	mla r7, r7, r0, r6
 	ldr r0, [r6, r1]
 	cmp r0, #0
-	beq label13
+	beq label15
 	b label159
-label16:
+label13:
 	add r8, r7, r6, lsl #2
 	ldr r0, [r7, r6, lsl #2]
 	bl putch
 	add r6, r6, #1
 	ldr r0, [r8, #4]
 	cmp r0, #0
-	beq label13
+	beq label15
+	b label13
+label160:
+	mov r6, #0
+	b label16
+label15:
+	ldr r0, [sp, #0]
+	cmp r0, #0
+	beq label6
+	b label160
+label16:
+	add r7, r4, r6, lsl #2
+	ldr r0, [r4, r6, lsl #2]
+	bl putch
+	add r6, r6, #1
+	ldr r0, [r7, #4]
+	cmp r0, #0
+	beq label6
 	b label16
 label10:
 	add r10, r8, r9, lsl #2
@@ -258,17 +275,3 @@ label10:
 	cmp r0, #0
 	beq label12
 	b label10
-label13:
-	ldr r0, [sp, #0]
-	cmp r0, #0
-	beq label6
-	mov r6, #0
-label14:
-	add r7, r4, r6, lsl #2
-	ldr r0, [r4, r6, lsl #2]
-	bl putch
-	add r6, r6, #1
-	ldr r0, [r7, #4]
-	cmp r0, #0
-	beq label6
-	b label14

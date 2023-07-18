@@ -7,16 +7,16 @@
 .globl main
 main:
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
-	mov r11, #9
-	mov r6, #4
-	mov r4, #1
 	mov r9, #8
-	mov r2, #0
-	sub sp, sp, #372
-	mov r5, #3
-	mov r8, #7
-	mov r3, #2
 	mov r10, #5
+	mov r3, #2
+	mov r11, #9
+	sub sp, sp, #372
+	mov r4, #1
+	mov r2, #0
+	mov r6, #4
+	mov r8, #7
+	mov r5, #3
 	add r0, sp, #264
 	add r1, sp, #164
 	mov r7, sp
@@ -141,17 +141,40 @@ label4:
 	str r4, [r3, #28]
 	mov r3, #19
 	cmn r3, #1
-	ble label8
+	ble label16
 	ldr r2, [r1, r3, lsl #2]
 	mov r4, #19
 	cmn r4, #1
-	ble label17
+	ble label15
 	ldr r6, [r7, r5, lsl #2]
 	ldr r7, [r0, r4, lsl #2]
 	mla r6, r2, r7, r6
 	cmp r6, #9
-	ble label20
-label19:
+	ble label14
+	b label13
+label16:
+	ldr r0, [sp, #0]
+	cmp r0, #0
+	beq label176
+	bl putint
+	mov r4, #1
+	b label18
+label15:
+	add r5, r5, #19
+	sub r3, r3, #1
+	cmn r3, #1
+	ble label16
+	ldr r2, [r1, r3, lsl #2]
+	mov r4, #19
+	cmn r4, #1
+	ble label15
+	ldr r7, [sp, #160]
+	ldr r6, [r7, r5, lsl #2]
+	ldr r7, [r0, r4, lsl #2]
+	mla r6, r2, r7, r6
+	cmp r6, #9
+	ble label14
+label13:
 	sub r8, r5, #1
 	ldr r7, [sp, #160]
 	movw r9, #26215
@@ -166,62 +189,37 @@ label19:
 	str r5, [r7, r8, lsl #2]
 	mov r5, r8
 	cmn r4, #1
-	ble label17
+	ble label15
 	ldr r6, [r7, r8, lsl #2]
 	ldr r7, [r0, r4, lsl #2]
 	mla r6, r2, r7, r6
 	cmp r6, #9
-	ble label20
-	b label19
-label20:
+	ble label14
+	b label13
+label14:
 	ldr r7, [sp, #160]
 	sub r4, r4, #1
 	str r6, [r7, r5, lsl #2]
 	sub r5, r5, #1
 	cmn r4, #1
-	ble label17
+	ble label15
 	ldr r6, [r7, r5, lsl #2]
 	ldr r7, [r0, r4, lsl #2]
 	mla r6, r2, r7, r6
 	cmp r6, #9
-	ble label20
-	b label19
-label17:
-	add r5, r5, #19
-	sub r3, r3, #1
-	cmn r3, #1
-	ble label8
-	ldr r2, [r1, r3, lsl #2]
-	mov r4, #19
-	cmn r4, #1
-	ble label17
-	ldr r7, [sp, #160]
-	ldr r6, [r7, r5, lsl #2]
-	ldr r7, [r0, r4, lsl #2]
-	mla r6, r2, r7, r6
-	cmp r6, #9
-	ble label20
-	b label19
-label8:
-	ldr r0, [sp, #0]
-	cmp r0, #0
-	beq label142
-	b label9
-label142:
+	ble label14
+	b label13
+label176:
 	mov r4, #1
-	b label10
-label9:
-	bl putint
-	mov r4, #1
-label10:
+label18:
 	ldr r7, [sp, #160]
 	ldr r0, [r7, r4, lsl #2]
 	bl putint
 	add r4, r4, #1
 	cmp r4, #40
-	bge label12
-	b label10
-label12:
+	bge label20
+	b label18
+label20:
 	mov r0, #0
 	add sp, sp, #372
 	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }

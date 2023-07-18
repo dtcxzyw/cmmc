@@ -124,11 +124,11 @@ label17:
 .globl main
 main:
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
-	mov r0, #0
 	sub sp, sp, #132
-	str r0, [sp, #4]
+	mov r0, #0
 	add r4, sp, #4
 	mov r5, sp
+	str r0, [sp, #4]
 	str r0, [r4, #4]
 	str r0, [r4, #8]
 	str r0, [r4, #12]

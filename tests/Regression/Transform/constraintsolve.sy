@@ -25,3 +25,17 @@ int test5(int x, int y) {
         return x < y;
     return 1;
 }
+int test6(int x, int y) {
+    int val = x > 1 ? x : 1;
+    if(y > val) {
+        return y > x;
+    }
+    else {
+        return 0;
+    }
+}
+int test7(int x, int y, int z, int w) {
+    if((x == y) && (z == w) && (x != z))
+        return y != w;
+    return 1;
+}

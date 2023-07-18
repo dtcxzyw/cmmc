@@ -13,6 +13,7 @@
 */
 
 #include <cmmc/Support/StringFlyWeight.hpp>
+#include <cstddef>
 #include <cstdint>
 #include <cstdlib>
 #include <cstring>
@@ -22,6 +23,7 @@
 
 CMMC_NAMESPACE_BEGIN
 
+void* cmmcAllocate(std::size_t count, std::size_t alignment);
 class StringManager final {
     static constexpr size_t blockSize = 16384;
     std::vector<void*> mStorage;
@@ -37,7 +39,11 @@ class StringManager final {
             mCurrentOffset += size;
         } else {
             const auto allocatedSize = std::max(size, blockSize);
+#ifdef CMMC_ENABLE_DETERMINISTIC
+            mCurrentPtr = static_cast<char*>(cmmcAllocate(allocatedSize, alignof(std::max_align_t)));  // NOLINT
+#else
             mCurrentPtr = static_cast<char*>(malloc(allocatedSize));  // NOLINT
+#endif
             mStorage.push_back(mCurrentPtr);
             base = mCurrentPtr;
             mCurrentOffset = size;

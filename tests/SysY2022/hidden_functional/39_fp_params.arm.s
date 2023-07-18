@@ -168,9 +168,9 @@ label1113:
 params_f40_i24:
 	push { r4, r5, r6, r7, r8, r9, r10, lr }
 	vpush { s16, s17, s18, s19, s20, s21, s22, s23, s24, s25, s26, s27 }
-	vmov.f32 s19, s10
 	mov r8, r0
 	sub sp, sp, #424
+	vmov.f32 s19, s10
 	add r5, sp, #352
 	str r2, [sp, #216]
 	str r0, [sp, #416]
@@ -1810,8 +1810,8 @@ label1273:
 	str r3, [sp, #892]
 	add r3, r4, #96
 	str r3, [sp, #896]
-	str r0, [sp, #276]
 	add r3, r4, #144
+	str r0, [sp, #276]
 	add r0, r4, #120
 	str r0, [sp, #256]
 	add r0, r4, #132
@@ -1951,12 +1951,12 @@ label1273:
 	add r10, r5, #72
 	add r11, r5, #36
 	vmov.f32 s23, s0
+	add r3, r5, #156
+	add r0, r5, #144
 	add r1, r5, #132
 	add r2, r5, #120
-	add r0, r5, #144
-	add r4, r5, #84
-	add r3, r5, #156
 	str r3, [sp, #872]
+	add r4, r5, #84
 	add r3, r5, #180
 	str r3, [sp, #196]
 	add r3, r5, #192

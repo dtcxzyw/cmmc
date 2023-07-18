@@ -23,12 +23,9 @@ dfs:
 	mov r7, r3
 	sub sp, sp, #20
 	ldr r9, [sp, #56]
-	bne label4
+	bne label2
+	b label10
 label2:
-	mov r0, r4
-	add sp, sp, #20
-	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
-label4:
 	mov r0, #1
 	mov r8, #0
 	str r0, [r9, r5, lsl #2]
@@ -47,7 +44,7 @@ label4:
 	ldr r0, [r10, r8, lsl #2]
 	ldr r1, [r9, r0, lsl #2]
 	cmp r1, #0
-	beq label9
+	beq label7
 	add r8, r8, #1
 	ldr r0, [r7, r5, lsl #2]
 	cmp r8, r0
@@ -55,7 +52,7 @@ label4:
 	ldr r0, [r10, r8, lsl #2]
 	ldr r1, [r9, r0, lsl #2]
 	cmp r1, #0
-	beq label9
+	beq label7
 	add r8, r8, #1
 	ldr r0, [r7, r5, lsl #2]
 	cmp r8, r0
@@ -63,7 +60,7 @@ label4:
 	ldr r0, [r10, r8, lsl #2]
 	ldr r1, [r9, r0, lsl #2]
 	cmp r1, #0
-	beq label9
+	beq label7
 	add r8, r8, #1
 	ldr r0, [r7, r5, lsl #2]
 	cmp r8, r0
@@ -71,11 +68,14 @@ label4:
 	ldr r0, [r10, r8, lsl #2]
 	ldr r1, [r9, r0, lsl #2]
 	cmp r1, #0
-	beq label9
+	beq label7
 	b label135
 label37:
 	mov r4, #0
-	b label2
+label10:
+	mov r0, r4
+	add sp, sp, #20
+	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
 label135:
 	add r8, r8, #1
 	ldr r0, [r7, r5, lsl #2]
@@ -84,12 +84,12 @@ label135:
 	ldr r0, [r10, r8, lsl #2]
 	ldr r1, [r9, r0, lsl #2]
 	cmp r1, #0
-	beq label9
+	beq label7
 	b label135
-label9:
+label7:
 	ldr r1, [r11, r8, lsl #2]
 	cmp r1, #1
-	bge label10
+	bge label8
 	add r8, r8, #1
 	ldr r0, [r7, r5, lsl #2]
 	cmp r8, r0
@@ -97,7 +97,7 @@ label9:
 	ldr r0, [r10, r8, lsl #2]
 	ldr r1, [r9, r0, lsl #2]
 	cmp r1, #0
-	beq label9
+	beq label7
 	add r8, r8, #1
 	ldr r0, [r7, r5, lsl #2]
 	cmp r8, r0
@@ -105,7 +105,7 @@ label9:
 	ldr r0, [r10, r8, lsl #2]
 	ldr r1, [r9, r0, lsl #2]
 	cmp r1, #0
-	beq label9
+	beq label7
 	add r8, r8, #1
 	ldr r0, [r7, r5, lsl #2]
 	cmp r8, r0
@@ -113,7 +113,7 @@ label9:
 	ldr r0, [r10, r8, lsl #2]
 	ldr r1, [r9, r0, lsl #2]
 	cmp r1, #0
-	beq label9
+	beq label7
 	add r8, r8, #1
 	ldr r0, [r7, r5, lsl #2]
 	cmp r8, r0
@@ -121,7 +121,7 @@ label9:
 	ldr r0, [r10, r8, lsl #2]
 	ldr r1, [r9, r0, lsl #2]
 	cmp r1, #0
-	beq label9
+	beq label7
 	add r8, r8, #1
 	ldr r0, [r7, r5, lsl #2]
 	cmp r8, r0
@@ -129,51 +129,51 @@ label9:
 	ldr r0, [r10, r8, lsl #2]
 	ldr r1, [r9, r0, lsl #2]
 	cmp r1, #0
-	beq label9
+	beq label7
+	b label135
+label6:
+	add r8, r8, #1
+	ldr r0, [r7, r5, lsl #2]
+	cmp r8, r0
+	bge label37
+	ldr r0, [r10, r8, lsl #2]
+	ldr r1, [r9, r0, lsl #2]
+	cmp r1, #0
+	beq label7
+	add r8, r8, #1
+	ldr r0, [r7, r5, lsl #2]
+	cmp r8, r0
+	bge label37
+	ldr r0, [r10, r8, lsl #2]
+	ldr r1, [r9, r0, lsl #2]
+	cmp r1, #0
+	beq label7
+	add r8, r8, #1
+	ldr r0, [r7, r5, lsl #2]
+	cmp r8, r0
+	bge label37
+	ldr r0, [r10, r8, lsl #2]
+	ldr r1, [r9, r0, lsl #2]
+	cmp r1, #0
+	beq label7
+	add r8, r8, #1
+	ldr r0, [r7, r5, lsl #2]
+	cmp r8, r0
+	bge label37
+	ldr r0, [r10, r8, lsl #2]
+	ldr r1, [r9, r0, lsl #2]
+	cmp r1, #0
+	beq label7
+	add r8, r8, #1
+	ldr r0, [r7, r5, lsl #2]
+	cmp r8, r0
+	bge label37
+	ldr r0, [r10, r8, lsl #2]
+	ldr r1, [r9, r0, lsl #2]
+	cmp r1, #0
+	beq label7
 	b label135
 label8:
-	add r8, r8, #1
-	ldr r0, [r7, r5, lsl #2]
-	cmp r8, r0
-	bge label37
-	ldr r0, [r10, r8, lsl #2]
-	ldr r1, [r9, r0, lsl #2]
-	cmp r1, #0
-	beq label9
-	add r8, r8, #1
-	ldr r0, [r7, r5, lsl #2]
-	cmp r8, r0
-	bge label37
-	ldr r0, [r10, r8, lsl #2]
-	ldr r1, [r9, r0, lsl #2]
-	cmp r1, #0
-	beq label9
-	add r8, r8, #1
-	ldr r0, [r7, r5, lsl #2]
-	cmp r8, r0
-	bge label37
-	ldr r0, [r10, r8, lsl #2]
-	ldr r1, [r9, r0, lsl #2]
-	cmp r1, #0
-	beq label9
-	add r8, r8, #1
-	ldr r0, [r7, r5, lsl #2]
-	cmp r8, r0
-	bge label37
-	ldr r0, [r10, r8, lsl #2]
-	ldr r1, [r9, r0, lsl #2]
-	cmp r1, #0
-	beq label9
-	add r8, r8, #1
-	ldr r0, [r7, r5, lsl #2]
-	cmp r8, r0
-	bge label37
-	ldr r0, [r10, r8, lsl #2]
-	ldr r1, [r9, r0, lsl #2]
-	cmp r1, #0
-	beq label9
-	b label135
-label10:
 	cmp r4, r1
 	mov r2, r4
 	str r9, [sp, #0]
@@ -182,7 +182,7 @@ label10:
 	mov r3, r7
 	bl dfs
 	cmp r0, #0
-	ble label8
+	ble label6
 	ldr r1, [r11, r8, lsl #2]
 	mov r3, #40
 	sub r1, r1, r0
@@ -198,7 +198,7 @@ label10:
 	ldr r3, [r1, r2, lsl #2]
 	add r3, r0, r3
 	str r3, [r1, r2, lsl #2]
-	b label2
+	b label10
 .globl main
 main:
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
