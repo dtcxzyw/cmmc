@@ -31,8 +31,6 @@
 #include <new>
 #include <unordered_map>
 
-constexpr intmax_t maxStep = 65536;
-
 CMMC_NAMESPACE_BEGIN
 
 class LoopUnroll final : public TransformPass<Function> {

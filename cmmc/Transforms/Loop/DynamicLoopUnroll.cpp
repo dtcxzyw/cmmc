@@ -29,8 +29,6 @@
 #include <iostream>
 #include <new>
 
-constexpr intmax_t maxStep = 65536;
-
 CMMC_NAMESPACE_BEGIN
 
 class DynamicLoopUnroll final : public TransformPass<Function> {

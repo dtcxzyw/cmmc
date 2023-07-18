@@ -27,5 +27,6 @@ constexpr double defaultLoopProb =
 constexpr double coldBlockThreshold = 0.05;
 constexpr double primaryPathThreshold = 8.0;
 constexpr double significantBlockTripCountDifference = 0.05;
+constexpr intmax_t maxStep = 65536;
 
 CMMC_NAMESPACE_END

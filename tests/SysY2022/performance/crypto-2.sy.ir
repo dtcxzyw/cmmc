@@ -76,7 +76,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i32* %43 = getelementptr &(i32* %8)[i32 %42];
     store i32* %43 with i32 0;
     i32 %44 = add i32 %42, i32 1;
-    i32 %45 = srem i32 %44, i32 64;
+    i32 %45 = and i32 %44, i32 63;
     i1 %46 = icmp neq i32 %45, i32 60;
     cbr i1 %46(prob = 0.97), ^while.body1, ^b1;
   ^b1:

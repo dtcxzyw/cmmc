@@ -23,6 +23,7 @@
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/IR/Type.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
+#include <cmmc/Transforms/Hyperparameters.hpp>
 #include <cstdint>
 #include <iostream>
 #include <limits>
@@ -208,6 +209,25 @@ IntegerRangeAnalysisResult IntegerRangeAnalysis::run(Function& func, AnalysisPas
                                     update(inst, addRecRange);
                                 }
                             }
+                        }
+                    }
+                    if(scevInfo->operands.size() == 2) {
+                        const auto initial = scevInfo->operands[0];
+                        const auto step = scevInfo->operands[1];
+                        if(initial->instID == SCEVInstID::Constant && step->instID == SCEVInstID::Constant &&
+                           (std::abs(step->constant) < maxStep)) {
+                            IntegerRange addRecRange;
+                            if(step->constant > 0)
+                                addRecRange.setSignedRange(initial->constant, std::numeric_limits<int32_t>::max());
+                            else
+                                addRecRange.setSignedRange(std::numeric_limits<int32_t>::min(), initial->constant);
+                            addRecRange.sync();
+
+                            // inst->dumpInst(std::cerr);
+                            // std::cerr << " ->\n";
+                            // addRecRange.print(std::cerr);
+                            // std::cerr << '\n';
+                            update(inst, addRecRange);
                         }
                     }
                     break;
