@@ -410,6 +410,11 @@
       "parent": "a91e65b0fca3872769dbf87485e5f29b11066c21",
       "time": "2023-07-11 04:05:04 +0800"
     },
+    "7c8732a9ebf8b074b17f37b704c835f331beb655": {
+      "message": "fix(support): fix FengShui",
+      "parent": "43be4d9f3b3a4ab02e68f04af9d41f3b417f4758",
+      "time": "2023-07-19 06:51:09 +0800"
+    },
     "80d6e89e289ec70a1f33edcd9a24c093f2a50a25": {
       "message": "feat(transform): merge blocks with phi insts",
       "parent": "075cfde698d64f95d0c80923a0ad7cf5e03dd6d4",
@@ -746,5 +751,5 @@
       "time": "2023-07-06 01:05:50 +0800"
     }
   },
-  "head": "43be4d9f3b3a4ab02e68f04af9d41f3b417f4758"
+  "head": "7c8732a9ebf8b074b17f37b704c835f331beb655"
 }
