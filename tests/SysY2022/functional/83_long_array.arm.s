@@ -17,14 +17,14 @@ a3:
 .globl main
 main:
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
-	mov r0, #0
-	movw r5, #:lower16:a2
-	movw r4, #:lower16:a1
 	movw r6, #:lower16:a3
+	movw r5, #:lower16:a2
+	mov r0, #0
+	movw r4, #:lower16:a1
 	sub sp, sp, #4
+	movt r6, #:upper16:a3
 	movt r5, #:upper16:a2
 	movt r4, #:upper16:a1
-	movt r6, #:upper16:a3
 label2:
 	add r1, r4, r0, lsl #2
 	mov r2, #10

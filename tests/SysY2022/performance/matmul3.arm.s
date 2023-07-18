@@ -17,8 +17,8 @@ c:
 .globl main
 main:
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
-	movw r7, #:lower16:b
 	mov r5, #0
+	movw r7, #:lower16:b
 	movw r4, #:lower16:a
 	sub sp, sp, #20
 	movt r7, #:upper16:b

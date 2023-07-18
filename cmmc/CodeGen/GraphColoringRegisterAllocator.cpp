@@ -226,7 +226,7 @@ static void graphColoringAllocateImpl(MIRFunction& mfunc, CodeGenContext& ctx, I
             std::unordered_set<uint32_t> underRenamedISAReg;
             std::unordered_set<uint32_t> lockedISAReg;
 
-            const auto collectUnderRenamedISARegs = [&](std::list<MIRInst>::iterator it) {
+            const auto collectUnderRenamedISARegs = [&](MIRInstList::iterator it) {
                 while(it != instructions.end()) {
                     const auto& inst = *it;
                     auto& instInfo = ctx.instInfo.getInstInfo(inst);

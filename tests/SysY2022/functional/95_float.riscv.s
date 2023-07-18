@@ -10,8 +10,8 @@ main:
 	addi sp, sp, -88
 	li a0, 111
 	sd s0, 80(sp)
-	sd s1, 72(sp)
 	addi s0, sp, 0
+	sd s1, 72(sp)
 	sd s3, 64(sp)
 	sd s2, 56(sp)
 	sd s4, 48(sp)

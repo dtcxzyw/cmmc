@@ -126,7 +126,7 @@ static void fastAllocate(MIRFunction& mfunc, CodeGenContext& ctx, IPRAUsageCache
         auto& liveIntervalInfo = liveInterval.blockInfo[block.get()];
 
         const auto isAllocatableType = [](OperandType type) { return type <= OperandType::Float32; };
-        const auto collectUnderRenamedISARegs = [&](std::list<MIRInst>::iterator it) {
+        const auto collectUnderRenamedISARegs = [&](MIRInstList::iterator it) {
             while(it != instructions.end()) {
                 const auto& inst = *it;
                 auto& instInfo = ctx.instInfo.getInstInfo(inst);

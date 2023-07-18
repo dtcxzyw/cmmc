@@ -37,8 +37,9 @@ public:
         auto addValue = [&](ConstantValue* value) {
             if(!visited.insert(value).second)
                 return;
-            if(auto [iter, res] = pool.insert(value); !res)
+            if(auto [iter, res] = pool.insert(value); !res) {
                 replace.emplace(value, *iter);
+            }
         };
 
         bool modified = false;

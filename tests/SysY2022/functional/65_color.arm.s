@@ -11,16 +11,16 @@ dp:
 dfs:
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
 	sub sp, sp, #12
+	mov r5, r0
 	mov r6, r1
 	mov r7, r2
-	mov r8, r3
 	ldr r10, [sp, #48]
-	movw r1, #55744
-	mov r5, r0
-	ldr r9, [sp, #52]
-	movt r1, #44
 	movw r0, #:lower16:dp
+	mov r8, r3
+	ldr r9, [sp, #52]
+	movw r1, #55744
 	movt r0, #:upper16:dp
+	movt r1, #44
 	mla r0, r5, r1, r0
 	movw r1, #32224
 	movt r1, #2
@@ -65,10 +65,10 @@ label10:
 	mov r0, r5
 	mov r3, r8
 	bl dfs
-	movw r2, #12185
 	sub r1, r9, #4
-	movt r2, #17592
+	movw r2, #12185
 	clz r1, r1
+	movt r2, #17592
 	lsr r1, r1, #5
 	sub r1, r7, r1
 	mla r0, r0, r1, r4

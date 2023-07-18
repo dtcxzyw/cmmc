@@ -38,7 +38,7 @@ SCEV* SCEVAnalysisResult::query(Value* value) const {
         return iter->second;
     if(value->is<ConstantInteger>()) {
         auto constant = value->as<ConstantInteger>();
-        auto scev = std::make_unique<SCEV>();
+        auto scev = makeUnique<SCEV>();
         scev->instID = SCEVInstID::Constant;
         scev->constant = constant->getStorage();
         return addSCEV(constant, std::move(scev));
@@ -115,7 +115,7 @@ static std::unique_ptr<SCEV> foldAdd(SCEVAnalysisResult& res, SCEV* lhs, SCEV* r
         return nullptr;
 
     if(lhs->instID == SCEVInstID::Constant && rhs->instID == SCEVInstID::Constant) {
-        auto scev = std::make_unique<SCEV>();
+        auto scev = makeUnique<SCEV>();
         scev->instID = SCEVInstID::Constant;
         scev->constant = lhs->constant + rhs->constant;
         return scev;
@@ -124,7 +124,7 @@ static std::unique_ptr<SCEV> foldAdd(SCEVAnalysisResult& res, SCEV* lhs, SCEV* r
         auto base = lhs->operands.front();
         auto newBase = foldAdd(res, base, rhs);
         if(newBase) {
-            auto ret = std::make_unique<SCEV>(*lhs);
+            auto ret = makeUnique<SCEV>(*lhs);
             ret->operands.front() = newBase.get();
             res.addSCEV(nullptr, std::move(newBase));
             return ret;
@@ -149,7 +149,7 @@ static std::unique_ptr<SCEV> foldAdd(SCEVAnalysisResult& res, SCEV* lhs, SCEV* r
             else
                 operands.push_back(rhsOperand);
         }
-        auto ret = std::make_unique<SCEV>();
+        auto ret = makeUnique<SCEV>();
         ret->instID = SCEVInstID::AddRec;
         ret->operands = std::move(operands);
         return ret;
@@ -161,7 +161,7 @@ static std::unique_ptr<SCEV> foldMul(const SCEVAnalysisResult& res, SCEV* lhs, S
         return nullptr;
 
     if(lhs->instID == SCEVInstID::Constant && rhs->instID == SCEVInstID::Constant) {
-        auto scev = std::make_unique<SCEV>();
+        auto scev = makeUnique<SCEV>();
         scev->instID = SCEVInstID::Constant;
         scev->constant = lhs->constant * rhs->constant;
         return scev;
@@ -177,7 +177,7 @@ static std::unique_ptr<SCEV> foldMul(const SCEVAnalysisResult& res, SCEV* lhs, S
             } else
                 return nullptr;
         }
-        auto scev = std::make_unique<SCEV>();
+        auto scev = makeUnique<SCEV>();
         scev->instID = SCEVInstID::AddRec;
         scev->operands = std::move(operands);
         return scev;
@@ -202,12 +202,12 @@ static std::unique_ptr<SCEV> foldMul(const SCEVAnalysisResult& res, SCEV* lhs, S
                         return nullptr;
                 }
             }
-            auto scev = std::make_unique<SCEV>();
+            auto scev = makeUnique<SCEV>();
             scev->instID = SCEVInstID::Constant;
             scev->constant = sum;
             operands.push_back(res.addSCEV(nullptr, std::move(scev)));
         }
-        auto scev = std::make_unique<SCEV>();
+        auto scev = makeUnique<SCEV>();
         scev->instID = SCEVInstID::AddRec;
         scev->operands = std::move(operands);
         return scev;
@@ -243,7 +243,7 @@ SCEVAnalysisResult SCEVAnalysis::run(Function& func, AnalysisPassManager& analys
                             auto initialSCEV = res.query(initial->value);
                             auto incSCEV = res.query(c1);
                             if(initialSCEV && incSCEV) {
-                                auto scev = std::make_unique<SCEV>();
+                                auto scev = makeUnique<SCEV>();
                                 scev->instID = SCEVInstID::AddRec;
                                 scev->operands = { initialSCEV, incSCEV };
                                 scev->loop = loop;

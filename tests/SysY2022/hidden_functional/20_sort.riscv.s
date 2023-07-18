@@ -426,13 +426,28 @@ label255:
 	beq a0, zero, label278
 	mv a3, s3
 	lw a2, 0(s3)
-	beq a2, zero, label58
+	beq a2, zero, label56
 label422:
 	li a0, 1
-	j label55
+	j label58
 label278:
 	li a0, -123
-label55:
+	j label58
+label56:
+	sh2add a0, a1, s1
+	lw a2, 0(a0)
+	beq a2, zero, label57
+	li a0, 2
+	j label58
+label57:
+	addiw a1, a1, 1
+	subw a0, a1, s2
+	beq a0, zero, label278
+	sh2add a3, a1, s3
+	lw a2, 0(a3)
+	beq a2, zero, label56
+	j label422
+label58:
 	ld ra, 0(sp)
 	ld s7, 8(sp)
 	ld s4, 16(sp)
@@ -444,20 +459,6 @@ label55:
 	ld s0, 64(sp)
 	addi sp, sp, 72
 	ret
-label58:
-	sh2add a0, a1, s1
-	lw a2, 0(a0)
-	beq a2, zero, label59
-	li a0, 2
-	j label55
-label59:
-	addiw a1, a1, 1
-	subw a0, a1, s2
-	beq a0, zero, label278
-	sh2add a3, a1, s3
-	lw a2, 0(a3)
-	beq a2, zero, label58
-	j label422
 label61:
 	addiw a2, a2, 1
 	blt a1, a2, label37
@@ -705,5 +706,5 @@ label273:
 	beq a0, zero, label278
 	mv a3, s3
 	lw a2, 0(s3)
-	beq a2, zero, label58
+	beq a2, zero, label56
 	j label422

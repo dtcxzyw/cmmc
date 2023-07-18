@@ -56,8 +56,8 @@ Test_use_divrem_reg_imm:
 	li a3, 1041204193
 	li t0, 33
 	mul a1, a0, a3
-	srli a5, a1, 63
 	mul a3, a0, a3
+	srli a5, a1, 63
 	srai a2, a1, 35
 	li a1, 4294967295
 	add a4, a5, a2

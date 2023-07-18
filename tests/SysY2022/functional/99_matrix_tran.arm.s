@@ -8,13 +8,13 @@
 main:
 	push { r4, r5, r6, r7, lr }
 	sub sp, sp, #52
-	mov r6, #0
 	mov r0, #1065353216
+	mov r6, #0
 	add r7, sp, #24
-	vmov s2, r6
+	vmov s0, r0
 	add r5, sp, #12
 	mov r4, sp
-	vmov s0, r0
+	vmov s2, r6
 	mov r0, #1073741824
 	vmov s1, r0
 	vstr s0, [r5, #8]

@@ -13,9 +13,9 @@ main:
 	li t1, 7
 	li t2, 8
 	li t4, 9
-	sd s0, 376(sp)
 	addi a0, sp, 260
 	addi a1, sp, 160
+	sd s0, 376(sp)
 	addi s0, sp, 0
 	sd s1, 368(sp)
 	sd ra, 360(sp)

@@ -22,12 +22,12 @@ main:
 	jal getarray
 	mv s2, zero
 label2:
-	beq s1, zero, label4
+	beq s1, zero, label38
 	lw s4, 0(sp)
 	li a0, 5
-	bge s4, a0, label28
+	bge s4, a0, label27
 	mv s3, s4
-label6:
+label5:
 	mv a0, s2
 	jal putint
 	mv a0, s3
@@ -36,7 +36,7 @@ label6:
 	jal putint
 	mv a0, s4
 	jal putint
-	bne s0, zero, label10
+	bne s0, zero, label9
 	lw a1, 0(sp)
 	addw a0, s1, a1
 	sw a0, 0(sp)
@@ -45,52 +45,52 @@ label6:
 	subw s4, a1, s1
 	li a0, 5
 	sw s4, 0(sp)
-	bge s3, a0, label28
-	j label6
-label10:
+	bge s3, a0, label27
+	j label5
+label9:
 	lw a0, 0(sp)
 	mv a1, s0
-	j label11
+	j label10
 label68:
 	mv a0, s0
-label16:
+label15:
 	addiw a0, a0, -1
 	slliw s3, s3, 1
-	bne a0, zero, label16
+	bne a0, zero, label15
 	addw s3, s1, s3
-	bne s0, zero, label21
+	bne s0, zero, label20
 	lw a1, 0(sp)
 	subw s4, a1, s1
 	li a0, 5
 	sw s4, 0(sp)
-	bge s3, a0, label28
-	j label6
-label22:
+	bge s3, a0, label27
+	j label5
+label21:
 	addiw a1, a1, -1
 	slliw a0, a0, 1
-	bne a1, zero, label22
+	bne a1, zero, label21
 	mv a1, a0
 	subw s4, a0, s1
 	li a0, 5
 	sw s4, 0(sp)
-	bge s3, a0, label28
-	j label6
-label28:
+	bge s3, a0, label27
+	j label5
+label27:
 	bne s0, zero, label94
 	addiw a1, s2, 1
 	lw a2, 0(sp)
 	lw a0, 4(sp)
 	addw s2, a1, a2
 	bne s2, a0, label2
-	j label4
+	j label38
 label98:
 	mv a0, a1
 	mv a1, s0
-	j label31
-label11:
+	j label30
+label10:
 	addiw a1, a1, -1
 	slliw a0, a0, 1
-	bne a1, zero, label11
+	bne a1, zero, label10
 	mv a1, a0
 	addw a0, s1, a0
 	sw a0, 0(sp)
@@ -100,13 +100,13 @@ label11:
 	subw s4, a1, s1
 	li a0, 5
 	sw s4, 0(sp)
-	bge s3, a0, label28
-	j label6
-label21:
+	bge s3, a0, label27
+	j label5
+label20:
 	lw a0, 0(sp)
 	mv a1, s0
-	j label22
-label31:
+	j label21
+label30:
 	addiw a2, a1, -1
 	slliw a1, a0, 1
 	bne a2, zero, label104
@@ -114,12 +114,12 @@ label31:
 	lw a0, 4(sp)
 	addw s2, a1, a2
 	bne s2, a0, label2
-	j label4
+	j label38
 label104:
 	mv a0, a1
 	mv a1, a2
-	j label31
-label4:
+	j label30
+label38:
 	li a0, 10
 	jal putch
 	ld ra, 16(sp)
@@ -132,25 +132,25 @@ label4:
 	addi sp, sp, 56
 	ret
 label94:
-	mv a0, s0
-	addiw a0, s0, -1
+	mv a1, s0
+	addiw a1, s0, -1
 	slliw s2, s2, 1
-	bne a0, zero, label36
+	bne a1, zero, label35
 	addiw a1, s2, 1
 	bne s0, zero, label98
 	lw a2, 0(sp)
 	lw a0, 4(sp)
 	addw s2, a1, a2
 	bne s2, a0, label2
-	j label4
-label36:
-	addiw a0, a0, -1
+	j label38
+label35:
+	addiw a1, a1, -1
 	slliw s2, s2, 1
-	bne a0, zero, label36
+	bne a1, zero, label35
 	addiw a1, s2, 1
 	bne s0, zero, label98
 	lw a2, 0(sp)
 	lw a0, 4(sp)
 	addw s2, a1, a2
 	bne s2, a0, label2
-	j label4
+	j label38

@@ -168,11 +168,11 @@ label1113:
 params_f40_i24:
 	push { r4, r5, r6, r7, r8, r9, r10, lr }
 	vpush { s16, s17, s18, s19, s20, s21, s22, s23, s24, s25, s26, s27 }
-	mov r8, r0
 	vmov.f32 s19, s10
+	mov r8, r0
 	sub sp, sp, #424
-	str r2, [sp, #216]
 	add r5, sp, #352
+	str r2, [sp, #216]
 	str r0, [sp, #416]
 	ldr r0, [sp, #504]
 	ldr r2, [sp, #508]
@@ -512,11 +512,11 @@ label788:
 	b label786
 params_fa40:
 	push { r4, r5, r6, r7, r8, r9, r10, lr }
-	mov r9, r1
 	mov r6, r3
-	sub sp, sp, #344
 	mov r7, r2
+	mov r9, r1
 	mov r5, r0
+	sub sp, sp, #344
 	str r1, [sp, #308]
 	str r2, [sp, #304]
 	str r3, [sp, #300]
@@ -859,11 +859,11 @@ label450:
 params_mix:
 	push { r4, r5, r6, r7, r8, r9, r10, lr }
 	vpush { s16, s17, s18, s19, s20, s21, s22 }
-	mov r9, r1
-	mov r10, r2
-	sub sp, sp, #428
-	mov r5, r0
 	mov r7, r3
+	mov r9, r1
+	mov r5, r0
+	sub sp, sp, #428
+	mov r10, r2
 	str r1, [sp, #244]
 	str r3, [sp, #248]
 	ldr r0, [sp, #488]
@@ -1795,8 +1795,8 @@ label1273:
 	vmov.f32 s22, s0
 	add r0, r4, #48
 	add r3, r4, #36
-	add r2, r4, #12
 	add r10, r4, #24
+	add r2, r4, #12
 	str r2, [sp, #1328]
 	str r3, [sp, #324]
 	add r2, r4, #192
@@ -1810,14 +1810,14 @@ label1273:
 	str r3, [sp, #892]
 	add r3, r4, #96
 	str r3, [sp, #896]
-	add r3, r4, #144
 	str r0, [sp, #276]
+	add r3, r4, #144
 	add r0, r4, #120
 	str r0, [sp, #256]
 	add r0, r4, #132
 	str r0, [sp, #280]
-	str r3, [sp, #356]
 	add r0, r4, #156
+	str r3, [sp, #356]
 	str r0, [sp, #284]
 	add r0, r4, #168
 	str r0, [sp, #260]
@@ -1948,13 +1948,13 @@ label1273:
 	mov r1, r2
 	mov r2, r10
 	bl params_fa40
-	add r0, r5, #144
-	add r1, r5, #132
-	vmov.f32 s23, s0
 	add r10, r5, #72
-	add r2, r5, #120
-	add r4, r5, #84
 	add r11, r5, #36
+	vmov.f32 s23, s0
+	add r1, r5, #132
+	add r2, r5, #120
+	add r0, r5, #144
+	add r4, r5, #84
 	add r3, r5, #156
 	str r3, [sp, #872]
 	add r3, r5, #180

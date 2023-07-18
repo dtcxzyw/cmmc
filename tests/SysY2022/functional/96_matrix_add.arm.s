@@ -7,19 +7,19 @@
 .globl main
 main:
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
-	sub sp, sp, #156
 	mov r7, #0
 	mov r1, #1065353216
-	add r2, sp, #8
+	sub sp, sp, #156
 	vmov s0, r7
+	add r2, sp, #8
 	add r11, sp, #32
+	add r6, sp, #92
 	add r8, sp, #44
+	str r11, [sp, #104]
 	add r5, sp, #56
 	add r0, sp, #80
-	str r11, [sp, #104]
-	add r6, sp, #92
-	add r3, sp, #108
 	str r8, [sp, #4]
+	add r3, sp, #108
 	add r9, sp, #124
 	str r5, [sp, #120]
 	add r5, sp, #140

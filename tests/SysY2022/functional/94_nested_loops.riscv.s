@@ -28,8 +28,8 @@ main:
 	addiw s0, a0, 1
 	sd a0, 272(sp)
 	jal getint
-	mv a1, a0
 	sd a0, 264(sp)
+	mv a1, a0
 	addw a0, s0, a0
 	sd a0, 280(sp)
 	ld a0, 272(sp)

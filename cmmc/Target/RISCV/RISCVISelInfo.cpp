@@ -685,8 +685,7 @@ void RISCVISelInfo::postLegalizeInst(const InstLegalizeContext& ctx) const {
     }
 }
 
-static void emitImm(std::list<MIRInst>& instructions, std::list<MIRInst>::iterator iter, const MIROperand& dst,
-                    const MIROperand& imm) {
+static void emitImm(MIRInstList& instructions, MIRInstList::iterator iter, const MIROperand& dst, const MIROperand& imm) {
     if(isZero(imm)) {
         instructions.insert(iter, MIRInst{ MoveGPR }.setOperand<0>(dst).setOperand<1>(getZero(imm)));
         return;
@@ -729,14 +728,14 @@ void RISCVISelInfo::preRALegalizeInst(const InstLegalizeContext& ctx) const {
             auto falseBlock =
                 ctx.func.blocks()
                     .insert(insertPoint,
-                            std::make_unique<MIRBasicBlock>(prevBlock->symbol().withID(static_cast<int32_t>(ctx.ctx.nextId())),
-                                                            &ctx.func, prevBlock->getTripCount() * (1.0 - prob)))
+                            makeUnique<MIRBasicBlock>(prevBlock->symbol().withID(static_cast<int32_t>(ctx.ctx.nextId())),
+                                                      &ctx.func, prevBlock->getTripCount() * (1.0 - prob)))
                     ->get();
             auto nextBlock =
                 ctx.func.blocks()
                     .insert(insertPoint,
-                            std::make_unique<MIRBasicBlock>(prevBlock->symbol().withID(static_cast<int32_t>(ctx.ctx.nextId())),
-                                                            &ctx.func, prevBlock->getTripCount()))
+                            makeUnique<MIRBasicBlock>(prevBlock->symbol().withID(static_cast<int32_t>(ctx.ctx.nextId())),
+                                                      &ctx.func, prevBlock->getTripCount()))
                     ->get();
 
             nextBlock->instructions().splice(nextBlock->instructions().end(), curInstructions, std::next(ctx.iter),
@@ -831,8 +830,7 @@ void RISCVISelInfo::legalizeInstWithStackOperand(const InstLegalizeContext& ctx,
 }
 
 // constexpr auto scratch = MIROperand::asISAReg(RISCV::X5, OperandType::Int64);  // use $t0, never allocated
-void legalizeAddrBaseOffsetPostRA(std::list<MIRInst>& instructions, std::list<MIRInst>::iterator iter, MIROperand& base,
-                                  int64_t& imm) {
+void legalizeAddrBaseOffsetPostRA(MIRInstList& instructions, MIRInstList::iterator iter, MIROperand& base, int64_t& imm) {
     assert(isSignedImm<32>(imm));
     if(isSignedImm<12>(imm)) {
         return;
@@ -871,8 +869,7 @@ void legalizeAddrBaseOffsetPostRA(std::list<MIRInst>& instructions, std::list<MI
     //     assert(isSignedImm<12>(imm));
     // }
 }
-void adjustReg(std::list<MIRInst>& instructions, std::list<MIRInst>::iterator iter, const MIROperand& dst, const MIROperand& src,
-               int64_t imm) {
+void adjustReg(MIRInstList& instructions, MIRInstList::iterator iter, const MIROperand& dst, const MIROperand& src, int64_t imm) {
     if(dst == src && imm == 0)
         return;
 
@@ -881,7 +878,7 @@ void adjustReg(std::list<MIRInst>& instructions, std::list<MIRInst>::iterator it
     instructions.insert(
         iter, MIRInst{ ADDI }.setOperand<0>(dst).setOperand<1>(base).setOperand<2>(MIROperand::asImm(imm, OperandType::Int64)));
 }
-void RISCVISelInfo::postLegalizeInstSeq(const CodeGenContext& ctx, std::list<MIRInst>& instructions) const {
+void RISCVISelInfo::postLegalizeInstSeq(const CodeGenContext& ctx, MIRInstList& instructions) const {
     CMMC_UNUSED(ctx);
     CMMC_UNUSED(instructions);
 }

@@ -19,9 +19,9 @@ main:
 	mov r0, #56
 	bl _sysy_starttime
 	cmp r4, #0
-	ble label2
+	ble label9
 	b label13
-label2:
+label9:
 	mov r0, #64
 	bl _sysy_stoptime
 	movw r0, #10000
@@ -36,7 +36,7 @@ label13:
 	mov r2, r5
 	mov r1, r4
 	movt r0, #:upper16:a
-label4:
+label3:
 	movw r3, #58069
 	movw r5, #48287
 	movw r6, #12185
@@ -93,7 +93,7 @@ label4:
 	asr r8, r8, #1
 	sub r8, r7, r8, lsl #1
 	cmp r3, r8
-	beq label9
+	beq label8
 	and r8, r7, #1
 	eor r9, r3, #1
 	and r7, r7, #-2147483647
@@ -108,10 +108,10 @@ label4:
 	add r3, r5, r3
 	str r3, [r0, r4, lsl #2]
 	cmp r1, #0
-	ble label2
-	b label4
-label9:
+	ble label9
+	b label3
+label8:
 	str r5, [r0, r4, lsl #2]
 	cmp r1, #0
-	ble label2
-	b label4
+	ble label9
+	b label3

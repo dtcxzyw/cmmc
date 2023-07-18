@@ -18,6 +18,7 @@
 #include <cstdint>
 #include <deque>
 #include <list>
+#include <memory>
 #include <string>
 #include <type_traits>
 #include <unordered_map>
@@ -125,5 +126,47 @@ using HashTable = std::unordered_map<Key, Value, Hash, Equal,
 
 template <typename Key, Arena::Source Src, typename Hash = std::hash<Key>, typename Equal = std::equal_to<Key>>
 using HashSet = std::unordered_set<Key, Hash, Equal, typename GeneralArenaAllocator<Src>::template ArenaAllocator<Key>>;
+
+void* cmmcAllocate(std::size_t count, std::size_t alignment);
+template <typename T, typename... Args>
+auto makeUnique(Args&&... args) -> std::unique_ptr<T> {
+#ifdef CMMC_ENABLE_DETERMINISTIC
+    auto ptr = cmmcAllocate(sizeof(T), alignof(T));
+    return std::unique_ptr<T>{ new(ptr) T{ std::forward<Args>(args)... } };
+#else
+    return std::make_unique<T>(std::forward<Args>(args)...);
+#endif
+}
+
+template <typename T>
+class DeterministicAllocator {
+public:
+    using value_type = T;
+    using pointer = T*;
+    using const_pointer = const T*;
+    using reference = T&;
+
+    template <typename U>
+    struct rebind {  // NOLINT
+        using other = DeterministicAllocator<U>;
+    };
+
+    DeterministicAllocator() = default;
+    template <typename U>
+    DeterministicAllocator(const DeterministicAllocator<U>&) {}
+
+    [[nodiscard]] T* allocate(std::size_t n) {
+        return static_cast<T*>(cmmcAllocate(n * sizeof(T), alignof(T)));
+    }
+    void deallocate(T* p, std::size_t) {
+        free(p);
+    }
+    bool operator==(const DeterministicAllocator<T>&) const noexcept {
+        return true;
+    }
+    bool operator!=(const DeterministicAllocator<T>&) const noexcept {
+        return false;
+    }
+};
 
 CMMC_NAMESPACE_END

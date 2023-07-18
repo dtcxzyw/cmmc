@@ -189,8 +189,8 @@ label4:
 	sraiw t3, t5, 15
 	sd a7, 16(sp)
 	andi a7, t3, 1
-	xori a6, a7, 1
 	andn t2, t2, a7
+	xori a6, a7, 1
 	sd a7, 216(sp)
 	or t3, t1, a6
 	sd a6, 208(sp)

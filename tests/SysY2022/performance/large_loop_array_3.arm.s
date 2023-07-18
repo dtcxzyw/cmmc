@@ -21,13 +21,13 @@ main:
 	mov r0, #22
 	bl _sysy_starttime
 	mov r3, #1065353216
-	mov r2, #0
 	movw r1, #:lower16:y
+	mov r2, #0
 	movw r0, #:lower16:x
 	vmov s0, r3
+	movt r1, #:upper16:y
 	mov r5, r2
 	vmov s1, r2
-	movt r1, #:upper16:y
 	movt r0, #:upper16:x
 	vmov.f32 s16, s1
 	movw r3, #34464

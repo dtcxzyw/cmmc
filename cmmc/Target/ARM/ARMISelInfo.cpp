@@ -968,8 +968,8 @@ void ARMISelInfo::legalizeInstWithStackOperand(const InstLegalizeContext& ctx, M
 }
 
 constexpr auto scratch = MIROperand::asISAReg(ARM::R12, OperandType::Int32);
-void legalizeAddrBaseOffsetPostRA(std::list<MIRInst>& instructions, std::list<MIRInst>::iterator iter, MIROperand& base,
-                                  int64_t& imm, AddressingImmRange range) {
+void legalizeAddrBaseOffsetPostRA(MIRInstList& instructions, MIRInstList::iterator iter, MIROperand& base, int64_t& imm,
+                                  AddressingImmRange range) {
     assert(isSignedImm<32>(imm));
     if(isLegalAddrImm(imm, range))
         return;
@@ -987,8 +987,7 @@ void legalizeAddrBaseOffsetPostRA(std::list<MIRInst>& instructions, std::list<MI
     base = scratch;
     imm = 0;
 }
-void adjustReg(std::list<MIRInst>& instructions, std::list<MIRInst>::iterator iter, const MIROperand& dst, const MIROperand& src,
-               int64_t imm) {
+void adjustReg(MIRInstList& instructions, MIRInstList::iterator iter, const MIROperand& dst, const MIROperand& src, int64_t imm) {
     if(dst == src && imm == 0)
         return;
     if(imm == 0) {
@@ -1017,7 +1016,7 @@ void adjustReg(std::list<MIRInst>& instructions, std::list<MIRInst>::iterator it
 
     instructions.insert(iter, MIRInst{ inst }.setOperand<0>(dst).setOperand<1>(src).setOperand<2>(immOp));
 }
-void ARMISelInfo::postLegalizeInstSeq(const CodeGenContext& ctx, std::list<MIRInst>& instructions) const {
+void ARMISelInfo::postLegalizeInstSeq(const CodeGenContext& ctx, MIRInstList& instructions) const {
     CMMC_UNUSED(ctx);
     CMMC_UNUSED(instructions);
 }
@@ -1074,7 +1073,7 @@ bool ARMISelInfo::lowerInst(Instruction* inst, LoweringContext& loweringCtx) con
     //         }
     //     if(!func) {
     //         globals.push_back(
-    //             std::make_unique<MIRGlobal>(Linkage::Internal, 0, std::make_unique<MIRFunction>(String::get(abiName))));
+    //             makeUnique<MIRGlobal>(Linkage::Internal, 0, makeUnique<MIRFunction>(String::get(abiName))));
     //         func = globals.back()->reloc.get();
     //     }
 
@@ -1101,7 +1100,7 @@ bool ARMISelInfo::lowerInst(Instruction* inst, LoweringContext& loweringCtx) con
     //         }
     //     if(!func) {
     //         globals.push_back(
-    //             std::make_unique<MIRGlobal>(Linkage::Internal, 0, std::make_unique<MIRFunction>(String::get(abiName))));
+    //             makeUnique<MIRGlobal>(Linkage::Internal, 0, makeUnique<MIRFunction>(String::get(abiName))));
     //         func = globals.back()->reloc.get();
     //     }
 

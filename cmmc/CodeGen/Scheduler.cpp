@@ -196,7 +196,7 @@ static void preRAScheduleBlock(MIRBasicBlock& block, const CodeGenContext& ctx) 
         }
     }
 
-    std::list<MIRInst> newInsts;
+    MIRInstList newInsts;
     while(!q.empty()) {
         auto top = q.top().second;
         // dumpDequeue(*top, q.top().first);
@@ -328,7 +328,7 @@ static void postRAScheduleBlock(MIRBasicBlock& block, const TargetScheduleModel&
     };
 
     ScheduleState state{ renameMap };
-    std::list<MIRInst> newList;
+    MIRInstList newList;
     std::queue<MIRInst*> schedulePlane;
     if constexpr(debugSched) {
         block.dump(std::cerr, ctx);

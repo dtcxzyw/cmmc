@@ -78,11 +78,11 @@ main:
 	mov r0, #0
 	bl newPow
 	mov r2, #0
-	movw r0, #:lower16:my_y1
 	movw r1, #:lower16:my_y2
+	movw r0, #:lower16:my_y1
 	movw r4, #:lower16:imgOut
-	movt r0, #:upper16:my_y1
 	movt r1, #:upper16:my_y2
+	movt r0, #:upper16:my_y1
 	movt r4, #:upper16:imgOut
 	cmp r2, #512
 	bge label145

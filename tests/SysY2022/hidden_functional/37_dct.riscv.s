@@ -536,8 +536,8 @@ label649:
 	j label743
 label651:
 	jal my_sin_impl
-	sh2add a0, a3, a2
 	li t1, 1
+	sh2add a0, a3, a2
 	fmv.s f0, f10
 	flw f1, 0(a0)
 label109:
@@ -854,8 +854,8 @@ label147:
 label124:
 	li a0, 10
 	jal putch
-	mv a0, zero
 	ld ra, 0(sp)
+	mv a0, zero
 	ld s2, 8(sp)
 	flw f8, 16(sp)
 	flw f19, 20(sp)

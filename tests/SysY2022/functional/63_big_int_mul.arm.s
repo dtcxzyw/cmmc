@@ -8,17 +8,17 @@
 main:
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
 	mov r11, #9
-	mov r9, #8
-	mov r5, #3
-	mov r2, #0
-	mov r4, #1
 	mov r6, #4
+	mov r4, #1
+	mov r9, #8
+	mov r2, #0
 	sub sp, sp, #372
+	mov r5, #3
 	mov r8, #7
 	mov r3, #2
 	mov r10, #5
-	add r1, sp, #164
 	add r0, sp, #264
+	add r1, sp, #164
 	mov r7, sp
 	str r7, [sp, #160]
 	str r2, [sp, #0]

@@ -60,37 +60,38 @@ static void deallocate(void*) {}
 #endif
 
 static mi_heap_t* heap = nullptr;
-static mi_heap_t* getHeap() {
-    if(!heap) {
-        mi_thread_init();
-        mi_option_enable(mi_option_limit_os_alloc);
-        auto address = mmap(reinterpret_cast<void*>(baseAddress), preAllocatedSize, PROT_READ | PROT_WRITE,
-                            MAP_PRIVATE | MAP_ANONYMOUS | MAP_FIXED, -1, 0);
-        if(!address)
-            std::abort();
+void initializeCMMC() {
+    mi_thread_init();
+    mi_option_enable(mi_option_limit_os_alloc);
+    auto address = mmap(reinterpret_cast<void*>(baseAddress), preAllocatedSize, PROT_READ | PROT_WRITE,
+                        MAP_PRIVATE | MAP_ANONYMOUS | MAP_FIXED, -1, 0);
+    if(!address)
+        std::abort();
 
-        mi_arena_id_t arenaId;
-        if(!mi_manage_os_memory_ex(address, preAllocatedSize, false, false, true, -1, false, &arenaId))
-            std::abort();
+    mi_arena_id_t arenaId;
+    if(!mi_manage_os_memory_ex(address, preAllocatedSize, false, false, true, -1, false, &arenaId))
+        std::abort();
 
-        heap = mi_heap_new_in_arena(arenaId);
-        if(!heap)
-            std::abort();
-    }
-    return heap;
+    heap = mi_heap_new_in_arena(arenaId);
+    if(!heap)
+        std::abort();
 }
 static void deallocate(void* p) {
     assert(mi_is_in_heap_region(p));
+    // if(reinterpret_cast<uintptr_t>(p) >= baseAddress && reinterpret_cast<uintptr_t>(p) < baseAddress + preAllocatedSize) {
+    //     [[maybe_unused]] int ret = fprintf(stderr, "free %p\n", p);
+    // }
     mi_free(p);
 }
-static void* allocate(std::size_t count, std::size_t alignment) {
-    return mi_heap_malloc_aligned(getHeap(), count, alignment);
-}
-static void* allocate(std::size_t count) {
-    return allocate(count, alignof(std::max_align_t));
-}
 
-// make_unique/shared
+CMMC_NAMESPACE_BEGIN
+void* cmmcAllocate(std::size_t count, std::size_t alignment) {
+    const auto ptr = mi_heap_malloc_aligned(heap, count, alignment);
+    // [[maybe_unused]] int ret = fprintf(stderr, "alloc %zu %zu -> %p\n", count, alignment, ptr);
+    return ptr;
+}
+CMMC_NAMESPACE_END
+
 void operator delete(void* p) noexcept {
     deallocate(p);
 };
@@ -105,16 +106,16 @@ void operator delete[](void* p, const std::nothrow_t&) noexcept {
 }
 
 void* operator new(std::size_t n) noexcept(false) {
-    return allocate(n);
+    return mi_malloc(n);
 }
 void* operator new[](std::size_t n) noexcept(false) {
-    return allocate(n);
+    return mi_malloc(n);
 }
 void* operator new(std::size_t n, const std::nothrow_t&) noexcept {
-    return allocate(n);
+    return mi_malloc(n);
 }
 void* operator new[](std::size_t n, const std::nothrow_t&) noexcept {
-    return allocate(n);
+    return mi_malloc(n);
 }
 
 #if(__cplusplus >= 201402L)
@@ -147,30 +148,29 @@ void operator delete[](void* p, std::align_val_t, const std::nothrow_t&) noexcep
 }
 
 void* operator new(std::size_t n, std::align_val_t al) noexcept(false) {
-    return allocate(n, static_cast<size_t>(al));
+    return mi_aligned_alloc(static_cast<size_t>(al), n);
 }
 void* operator new[](std::size_t n, std::align_val_t al) noexcept(false) {
-    return allocate(n, static_cast<size_t>(al));
+    return mi_aligned_alloc(static_cast<size_t>(al), n);
 }
 void* operator new(std::size_t n, std::align_val_t al, const std::nothrow_t&) noexcept {
-    return allocate(n, static_cast<size_t>(al));
+    return mi_aligned_alloc(static_cast<size_t>(al), n);
 }
 void* operator new[](std::size_t n, std::align_val_t al, const std::nothrow_t&) noexcept {
-    return allocate(n, static_cast<size_t>(al));
+    return mi_aligned_alloc(static_cast<size_t>(al), n);
 }
 #endif
-// arena
 void* aligned_alloc(size_t alignment, size_t size) {
-    return allocate(size, alignment);
+    return mi_aligned_alloc(alignment, size);
 }
 void* malloc(size_t size) {
-    return allocate(size);
+    return mi_malloc(size);
 }
 void* calloc(size_t size, size_t n) {
-    return mi_heap_calloc(getHeap(), n, size);
+    return mi_calloc(n, size);
 }
 void* realloc(void* p, size_t newsize) {
-    return mi_heap_realloc(getHeap(), p, newsize);
+    return mi_realloc(p, newsize);
 }
 void free(void* p) {
     deallocate(p);

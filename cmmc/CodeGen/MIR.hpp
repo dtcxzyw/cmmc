@@ -334,10 +334,17 @@ public:
     }
 };
 class MIRFunction;
+
+#ifdef CMMC_ENABLE_DETERMINISTIC
+using MIRInstList = std::list<MIRInst, DeterministicAllocator<MIRInst>>;
+#else
+using MIRInstList = std::list<MIRInst>;
+#endif
+
 class MIRBasicBlock final : public MIRRelocable {
     MIRFunction* mFunction;
     double mTripCount;
-    std::list<MIRInst> mInsts;
+    MIRInstList mInsts;
 
 public:
     MIRBasicBlock(String label, MIRFunction* func, double tripCount)
@@ -348,10 +355,10 @@ public:
     [[nodiscard]] double getTripCount() const {
         return mTripCount;
     }
-    [[nodiscard]] std::list<MIRInst>& instructions() {
+    [[nodiscard]] MIRInstList& instructions() {
         return mInsts;
     }
-    [[nodiscard]] const std::list<MIRInst>& instructions() const {
+    [[nodiscard]] const MIRInstList& instructions() const {
         return mInsts;
     }
 

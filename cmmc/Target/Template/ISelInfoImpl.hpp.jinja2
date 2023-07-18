@@ -56,7 +56,7 @@ public:
     [[nodiscard]] bool isLegalGenericInst(uint32_t opcode) const override;
     bool matchAndSelect(MIRInst& inst, ISelContext& ctx, bool allowComplexPattern) const override;
     void postLegalizeInst(const InstLegalizeContext& ctx) const override;
-    void postLegalizeInstSeq(const CodeGenContext& ctx, std::list<MIRInst>& instructions) const override;
+    void postLegalizeInstSeq(const CodeGenContext& ctx, MIRInstList& instructions) const override;
     void preRALegalizeInst(const InstLegalizeContext& ctx) const override;
     void legalizeInstWithStackOperand(const InstLegalizeContext& ctx, MIROperand& op, const StackObject& obj) const override;
     MIROperand materializeFPConstant(ConstantFloatingPoint* fp, LoweringContext& loweringCtx) const override;

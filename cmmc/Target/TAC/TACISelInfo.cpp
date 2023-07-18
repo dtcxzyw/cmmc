@@ -95,7 +95,7 @@ void TACISelInfo::postLegalizeInst(const InstLegalizeContext& ctx) const {
 void TACISelInfo::preRALegalizeInst(const InstLegalizeContext& ctx) const {
     CMMC_UNUSED(ctx);
 }
-void TACISelInfo::postLegalizeInstSeq(const CodeGenContext& ctx, std::list<MIRInst>& instructions) const {
+void TACISelInfo::postLegalizeInstSeq(const CodeGenContext& ctx, MIRInstList& instructions) const {
     CMMC_UNUSED(ctx);
     CMMC_UNUSED(instructions);
 }

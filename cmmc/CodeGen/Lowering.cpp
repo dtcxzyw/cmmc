@@ -125,10 +125,9 @@ MIROperand FloatingPointConstantPool::getFPConstant(class LoweringContext& ctx, 
         offset = it->second;
     } else {
         if(!mFloatingPointConstantPool) {
-            auto storage =
-                std::make_unique<MIRDataStorage>(String::get("__cmmc_fp_constant_pool"), MIRDataStorage::Storage{}, true);
+            auto storage = makeUnique<MIRDataStorage>(String::get("__cmmc_fp_constant_pool"), MIRDataStorage::Storage{}, true);
             mFloatingPointConstantPool = storage.get();
-            auto pool = std::make_unique<MIRGlobal>(Linkage::Internal, sizeof(float), std::move(storage));
+            auto pool = makeUnique<MIRGlobal>(Linkage::Internal, sizeof(float), std::move(storage));
             ctx.getModule().globals().push_back(std::move(pool));
         }
         offset = mFloatingPointConstant[rep] = mFloatingPointConstantPool->appendWord(rep) * sizeof(float);
@@ -192,9 +191,9 @@ MIRBasicBlock* LoweringContext::addBlockAfter(double blockTripCount) {
     auto& blocks = mCurrentBasicBlock->getFunction()->blocks();
     auto iter = std::find_if(blocks.cbegin(), blocks.cend(), [&](auto& block) { return block.get() == mCurrentBasicBlock; });
     assert(iter != blocks.cend());
-    const auto ret = blocks.insert(
-        std::next(iter),
-        std::make_unique<MIRBasicBlock>(getBlockLabel(mCodeGenCtx), mCurrentBasicBlock->getFunction(), blockTripCount));
+    const auto ret =
+        blocks.insert(std::next(iter),
+                      makeUnique<MIRBasicBlock>(getBlockLabel(mCodeGenCtx), mCurrentBasicBlock->getFunction(), blockTripCount));
     return ret->get();
 }
 void LoweringContext::addOperand(Value* value, MIROperand reg) {
@@ -223,7 +222,7 @@ static void lowerToMachineFunction(MIRFunction& mfunc, Function* func, CodeGenCo
 
     for(auto block : dom.blocks()) {
         const auto tripCount = blockTripCount.isAvailable() ? blockTripCount.query(block) : 1.0;
-        mfunc.blocks().push_back(std::make_unique<MIRBasicBlock>(getBlockLabel(codeGenCtx), &mfunc, tripCount));
+        mfunc.blocks().push_back(makeUnique<MIRBasicBlock>(getBlockLabel(codeGenCtx), &mfunc, tripCount));
         auto& mblock = mfunc.blocks().back();
         blockMap.emplace(block, mblock.get());
         for(auto& inst : block->instructions()) {
@@ -310,11 +309,11 @@ static void lowerToMachineModule(MIRModule& machineModule, Module& module, Analy
                 } else if(symbol.prefix() == "stoptime"sv) {
                     symbol = String::get("_sysy_stoptime");
                 }
-                globals.push_back(std::make_unique<MIRGlobal>(func->getLinkage(), dataLayout.getCodeAlignment(),
-                                                              std::make_unique<MIRFunction>(symbol)));  // external symbol
+                globals.push_back(makeUnique<MIRGlobal>(func->getLinkage(), dataLayout.getCodeAlignment(),
+                                                        makeUnique<MIRFunction>(symbol)));  // external symbol
             } else {
-                globals.push_back(std::make_unique<MIRGlobal>(func->getLinkage(), dataLayout.getCodeAlignment(),
-                                                              std::make_unique<MIRFunction>(func->getSymbol())));
+                globals.push_back(makeUnique<MIRGlobal>(func->getLinkage(), dataLayout.getCodeAlignment(),
+                                                        makeUnique<MIRFunction>(func->getSymbol())));
             }
         } else {
             const auto var = global->as<GlobalVariable>();
@@ -370,13 +369,12 @@ static void lowerToMachineModule(MIRModule& machineModule, Module& module, Analy
                 expand(expand, initialValue);
 
                 // data/rodata
-                globals.emplace_back(std::make_unique<MIRGlobal>(
-                    global->getLinkage(), alignment,
-                    std::make_unique<MIRDataStorage>(global->getSymbol(), std::move(data), readOnly)));
+                globals.emplace_back(makeUnique<MIRGlobal>(
+                    global->getLinkage(), alignment, makeUnique<MIRDataStorage>(global->getSymbol(), std::move(data), readOnly)));
             } else {
                 // bss
-                globals.emplace_back(std::make_unique<MIRGlobal>(global->getLinkage(), alignment,
-                                                                 std::make_unique<MIRZeroStorage>(global->getSymbol(), size)));
+                globals.emplace_back(makeUnique<MIRGlobal>(global->getLinkage(), alignment,
+                                                           makeUnique<MIRZeroStorage>(global->getSymbol(), size)));
             }
         }
         globalMap.emplace(global, globals.back().get());
@@ -561,7 +559,7 @@ std::unique_ptr<MIRModule> lowerToMachineModule(Module& module, AnalysisPassMana
     Stage stage{ "lower to MIR"sv };
 
     auto& target = module.getTarget();
-    auto machineModule = std::make_unique<MIRModule>(target);
+    auto machineModule = makeUnique<MIRModule>(target);
     lowerToMachineModule(*machineModule, module, analysis, optLevel);
     // machineModule->dump(std::cerr);
     return machineModule;

@@ -22,8 +22,8 @@ main:
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
 	sub sp, sp, #4
 	bl getch
-	cmp r0, #48
 	mov r1, #0
+	cmp r0, #48
 	mov r4, r0
 	mov r0, #0
 	movwlt r0, #1
@@ -105,8 +105,8 @@ label352:
 	b label23
 label15:
 	bl getch
-	mov r1, #0
 	mov r2, #0
+	mov r1, #0
 	cmp r0, #48
 	movwlt r1, #1
 	cmp r0, #57
@@ -432,11 +432,11 @@ label255:
 	beq label278
 	ldr r1, [r7, r0, lsl #2]
 	cmp r1, #0
-	beq label58
+	beq label56
 	b label382
 label278:
 	mvn r0, #122
-	b label55
+	b label58
 label46:
 	ldr r9, [r5, r2, lsl #2]
 	ldr r10, [r5, r8, lsl #2]
@@ -503,7 +503,7 @@ label8:
 	b label8
 label382:
 	mov r0, #1
-	b label55
+	b label58
 label51:
 	ldr r2, [r7, r0, lsl #2]
 	ldr r1, [r4, r0, lsl #2]
@@ -523,22 +523,22 @@ label273:
 	beq label278
 	ldr r1, [r7, r0, lsl #2]
 	cmp r1, #0
-	beq label58
+	beq label56
 	b label382
-label55:
+label58:
 	add sp, sp, #4
 	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
-label58:
+label56:
 	ldr r1, [r5, r0, lsl #2]
 	cmp r1, #0
-	beq label59
+	beq label57
 	mov r0, #2
-	b label55
-label59:
+	b label58
+label57:
 	add r0, r0, #1
 	subs r1, r0, r6
 	beq label278
 	ldr r1, [r7, r0, lsl #2]
 	cmp r1, #0
-	beq label58
+	beq label56
 	b label382

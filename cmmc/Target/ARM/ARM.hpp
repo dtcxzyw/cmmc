@@ -146,9 +146,8 @@ enum class AddressingImmRange {
 };
 AddressingImmRange getAddressingImmRange(OperandType type, uint32_t opcode);
 bool isLegalAddrImm(intmax_t imm, AddressingImmRange range);
-void legalizeAddrBaseOffsetPostRA(std::list<MIRInst>& instructions, std::list<MIRInst>::iterator iter, MIROperand& base,
-                                  int64_t& imm, AddressingImmRange range);
+void legalizeAddrBaseOffsetPostRA(MIRInstList& instructions, MIRInstList::iterator iter, MIROperand& base, int64_t& imm,
+                                  AddressingImmRange range);
 // dst = src + imm
-void adjustReg(std::list<MIRInst>& instructions, std::list<MIRInst>::iterator iter, const MIROperand& dst, const MIROperand& src,
-               int64_t imm);
+void adjustReg(MIRInstList& instructions, MIRInstList::iterator iter, const MIROperand& dst, const MIROperand& src, int64_t imm);
 CMMC_TARGET_NAMESPACE_END

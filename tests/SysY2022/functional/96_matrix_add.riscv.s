@@ -6,12 +6,12 @@ main:
 	addi sp, sp, -184
 	fmv.w.x f10, zero
 	lui t0, 260096
-	addi a2, sp, 120
-	addi a5, sp, 168
-	addi a3, sp, 48
 	addi a0, sp, 96
 	addi a1, sp, 108
+	addi a2, sp, 120
+	addi a3, sp, 48
 	addi a4, sp, 144
+	addi a5, sp, 168
 	sd s0, 16(sp)
 	addi s0, sp, 24
 	sd s1, 40(sp)

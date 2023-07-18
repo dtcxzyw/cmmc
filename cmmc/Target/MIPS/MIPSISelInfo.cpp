@@ -653,8 +653,7 @@ void MIPSISelInfo::legalizeInstWithStackOperand(const InstLegalizeContext& ctx, 
 }
 
 // constexpr auto scratch = MIROperand::asISAReg(MIPS::X3, OperandType::Int32);  // use $v1
-void legalizeAddrBaseOffsetPostRA(std::list<MIRInst>& instructions, std::list<MIRInst>::iterator iter, MIROperand& base,
-                                  int64_t& imm) {
+void legalizeAddrBaseOffsetPostRA(MIRInstList& instructions, MIRInstList::iterator iter, MIROperand& base, int64_t& imm) {
     assert(isSignedImm<32>(imm));
     if(isSignedImm<16>(imm)) {
         return;
@@ -690,8 +689,7 @@ void legalizeAddrBaseOffsetPostRA(std::list<MIRInst>& instructions, std::list<MI
     //     assert(isSignedImm<16>(imm));
     // }
 }
-void adjustReg(std::list<MIRInst>& instructions, std::list<MIRInst>::iterator iter, const MIROperand& dst, const MIROperand& src,
-               int64_t imm) {
+void adjustReg(MIRInstList& instructions, MIRInstList::iterator iter, const MIROperand& dst, const MIROperand& src, int64_t imm) {
     if(dst == src && imm == 0)
         return;
 
@@ -700,7 +698,7 @@ void adjustReg(std::list<MIRInst>& instructions, std::list<MIRInst>::iterator it
     instructions.insert(
         iter, MIRInst{ ADDIU }.setOperand<0>(dst).setOperand<1>(base).setOperand<2>(MIROperand::asImm(imm, OperandType::Int32)));
 }
-void MIPSISelInfo::postLegalizeInstSeq(const CodeGenContext& ctx, std::list<MIRInst>& instructions) const {
+void MIPSISelInfo::postLegalizeInstSeq(const CodeGenContext& ctx, MIRInstList& instructions) const {
     assert(!ctx.flags.endsWithTerminator);
     constexpr bool alwaysInsertNop = true;  // FIXME
     // insert nops/place insts without side-effects after branch/jump instructions

@@ -40,10 +40,18 @@ static uintptr_t alloc(uintptr_t ptr, uintptr_t alignment) {
 void* Arena::allocate(size_t size, size_t alignment) {
     void* ptr = nullptr;
     if(size >= blockSize) {
-        ptr = std::aligned_alloc(alignment, size);  // NOLINT
+#ifdef CMMC_ENABLE_DETERMINISTIC
+        ptr = cmmcAllocate(size, alignment);
+#else
+        ptr = std::aligned_alloc(alignment, size);       // NOLINT
+#endif
         mLargeBlocks.insert(ptr);
     } else if(auto allocated = alloc(mBlockPtr, alignment); allocated + size > mBlockEndPtr) {
+#ifdef CMMC_ENABLE_DETERMINISTIC
+        ptr = cmmcAllocate(blockSize, alignment);
+#else
         ptr = std::aligned_alloc(alignment, blockSize);  // NOLINT
+#endif
         mBlocks.push_back(ptr);
 
         // keep larger block

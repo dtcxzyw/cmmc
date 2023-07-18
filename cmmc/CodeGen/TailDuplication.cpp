@@ -114,8 +114,8 @@ void tailDuplication(MIRFunction& func, CodeGenContext& ctx) {
 
                     const auto ensureNext = [&](MIRBasicBlock* next) {
                         if(nextIter == func.blocks().cend() || nextIter->get() != next) {
-                            auto newBlock = std::make_unique<MIRBasicBlock>(
-                                block->symbol().withID(static_cast<int32_t>(ctx.nextId())), &func, next->getTripCount());
+                            auto newBlock = makeUnique<MIRBasicBlock>(block->symbol().withID(static_cast<int32_t>(ctx.nextId())),
+                                                                      &func, next->getTripCount());
                             newBlock->instructions().emplace_back(ctx.instInfo.emitGoto(next));
                             func.blocks().insert(nextIter, std::move(newBlock));
                         }

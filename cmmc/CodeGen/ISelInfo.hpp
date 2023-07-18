@@ -28,7 +28,7 @@ class ISelContext final {
     CodeGenContext& mCodeGenCtx;
     std::unordered_map<MIROperand, MIRInst*, MIROperandHasher> mInstMapping, mConstantMapping;
     MIRBasicBlock* mCurrentBlock;
-    std::list<MIRInst>::iterator mInsertPoint;
+    MIRInstList::iterator mInsertPoint;
     std::unordered_map<MIROperand, MIROperand, MIROperandHasher> mReplaceList;
     std::unordered_set<MIRInst*> mRemoveWorkList, mReplaceBlockList;
     std::unordered_map<MIROperand, uint32_t, MIROperandHasher> mUseCount;
@@ -38,14 +38,13 @@ public:
     void runISel(MIRFunction& func);
     bool hasOneUse(const MIROperand& operand) const;
     MIRInst* lookupDef(const MIROperand& operand) const;
-    bool isDefinedAfter(const MIROperand& operand, const MIRInst& inst,
-                        std::optional<std::list<MIRInst>::iterator>* iterPtr) const;
+    bool isDefinedAfter(const MIROperand& operand, const MIRInst& inst, std::optional<MIRInstList::iterator>* iterPtr) const;
     bool isSafeToUse(const MIROperand& val, const MIROperand& def) const;
     std::optional<MIROperand> getRegRef(const MIROperand& reg, const MIRInst& inst);
     MIRInst& newInst(uint32_t opcode);
     MIROperand& getInstDef(MIRInst& inst) const;
-    std::list<MIRInst>& getInstructions() const;
-    std::list<MIRInst>::iterator getCurrentInstIter() const;
+    MIRInstList& getInstructions() const;
+    MIRInstList::iterator getCurrentInstIter() const;
     void removeInst(MIRInst& inst);
     void replaceOperand(const MIROperand& src, const MIROperand& dst);
     void blockReplace(MIRInst& inst);
@@ -59,8 +58,8 @@ public:
 
 struct InstLegalizeContext final {
     MIRInst& inst;
-    std::list<MIRInst>& instructions;
-    std::list<MIRInst>::iterator iter;
+    MIRInstList& instructions;
+    MIRInstList::iterator iter;
     CodeGenContext& ctx;
     std::optional<std::list<std::unique_ptr<MIRBasicBlock>>::iterator> blockIter;
     MIRFunction& func;
@@ -74,7 +73,7 @@ public:
     static bool expandSelect(MIRInst& inst, ISelContext& ctx);
     virtual bool matchAndSelect(MIRInst& inst, ISelContext& ctx, bool allowComplexPattern) const = 0;
     virtual void postLegalizeInst(const InstLegalizeContext& ctx) const = 0;
-    virtual void postLegalizeInstSeq(const CodeGenContext& ctx, std::list<MIRInst>& instructions) const = 0;
+    virtual void postLegalizeInstSeq(const CodeGenContext& ctx, MIRInstList& instructions) const = 0;
     virtual void preRALegalizeInst(const InstLegalizeContext& ctx) const = 0;
     virtual void legalizeInstWithStackOperand(const InstLegalizeContext& ctx, MIROperand& op, const StackObject& obj) const = 0;
     virtual MIROperand materializeFPConstant(ConstantFloatingPoint* fp, LoweringContext& loweringCtx) const = 0;

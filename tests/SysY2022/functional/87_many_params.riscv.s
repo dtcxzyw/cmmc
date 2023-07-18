@@ -4,8 +4,8 @@
 .globl main
 main:
 	addi sp, sp, -608
-	addi a3, sp, 224
 	sd s0, 80(sp)
+	addi a3, sp, 224
 	sd s5, 136(sp)
 	addi s0, sp, 496
 	sd s1, 168(sp)
@@ -27,8 +27,8 @@ main:
 	mv t3, a0
 	sd a0, 592(sp)
 	jal getint
-	sd a0, 584(sp)
 	mv t4, a0
+	sd a0, 584(sp)
 	jal getint
 	mv t5, a0
 	sd a0, 576(sp)
@@ -66,8 +66,8 @@ main:
 	sd a0, 208(sp)
 	mv s9, a0
 	jal getint
-	mv s10, a0
 	sd a0, 600(sp)
+	mv s10, a0
 	ld t2, 64(sp)
 	sw t2, 496(sp)
 	ld t3, 592(sp)
@@ -567,8 +567,8 @@ label15:
 	jal putint
 	li a0, 10
 	jal putch
-	ld ra, 16(sp)
 	mv a0, zero
+	ld ra, 16(sp)
 	ld s11, 480(sp)
 	ld s2, 8(sp)
 	ld s4, 0(sp)

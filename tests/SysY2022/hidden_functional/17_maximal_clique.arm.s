@@ -15,10 +15,10 @@ maxCliques:
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
 	mov r9, #1
 	movw r8, #:lower16:graph
-	mov r10, #0
 	add r5, r0, #1
 	mov r7, r2
 	mov r4, r1
+	mov r10, #0
 	mov r6, r0
 	sub sp, sp, #4
 	movt r8, #:upper16:graph

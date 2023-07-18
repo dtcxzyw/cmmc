@@ -116,7 +116,7 @@ void ISelContext::runISel(MIRFunction& func) {
             while(true) {
                 mInsertPoint = it;
                 auto& inst = *it;
-                std::optional<std::list<MIRInst>::iterator> prev = std::nullopt;
+                std::optional<MIRInstList::iterator> prev = std::nullopt;
                 if(it != instructions.begin())
                     prev = std::prev(it);
 
@@ -213,10 +213,10 @@ MIROperand& ISelContext::getInstDef(MIRInst& inst) const {
     reportUnreachable(CMMC_LOCATION());
 }
 
-std::list<MIRInst>& ISelContext::getInstructions() const {
+MIRInstList& ISelContext::getInstructions() const {
     return mCurrentBlock->instructions();
 }
-std::list<MIRInst>::iterator ISelContext::getCurrentInstIter() const {
+MIRInstList::iterator ISelContext::getCurrentInstIter() const {
     return mInsertPoint;
 }
 void ISelContext::removeInst(MIRInst& inst) {
@@ -236,7 +236,7 @@ bool ISelContext::hasOneUse(const MIROperand& operand) const {
     return true;
 }
 bool ISelContext::isDefinedAfter(const MIROperand& operand, const MIRInst& inst,
-                                 std::optional<std::list<MIRInst>::iterator>* iterPtr) const {
+                                 std::optional<MIRInstList::iterator>* iterPtr) const {
     auto iter = mInsertPoint;
     auto getIter = [&] {
         if(iterPtr) {
@@ -272,7 +272,7 @@ std::optional<MIROperand> ISelContext::getRegRef(const MIROperand& reg, const MI
     assert(isOperandVRegOrISAReg(reg));
     if(isOperandVReg(reg))
         return reg;
-    std::optional<std::list<MIRInst>::iterator> iter;
+    std::optional<MIRInstList::iterator> iter;
     if(!isDefinedAfter(reg, inst, &iter)) {
         // auto& instInfo = mCodeGenCtx.instInfo.getInstInfo(inst.opcode());
         // instInfo.print(std::cerr, inst, true);
@@ -386,10 +386,10 @@ bool TargetISelInfo::expandSelect(MIRInst& inst, ISelContext& ctx) {
     constexpr auto prob = defaultSelectProb;
     auto block = ctx.getCurrentBlock();
     auto func = block->getFunction();
-    auto falseBlock = std::make_unique<MIRBasicBlock>(block->symbol().withID(static_cast<int32_t>(codeGenCtx.nextId())), func,
-                                                      block->getTripCount() * (1.0 - prob));
-    auto postBlock = std::make_unique<MIRBasicBlock>(block->symbol().withID(static_cast<int32_t>(codeGenCtx.nextId())), func,
-                                                     block->getTripCount());
+    auto falseBlock = makeUnique<MIRBasicBlock>(block->symbol().withID(static_cast<int32_t>(codeGenCtx.nextId())), func,
+                                                block->getTripCount() * (1.0 - prob));
+    auto postBlock =
+        makeUnique<MIRBasicBlock>(block->symbol().withID(static_cast<int32_t>(codeGenCtx.nextId())), func, block->getTripCount());
     branch->setOperand<0>(cond).setOperand<1>(MIROperand::asReloc(postBlock.get())).setOperand<2>(MIROperand::asProb(prob));
     auto& onFalseInstructions = falseBlock->instructions();
     onFalseInstructions.push_back(MIRInst{ selectCopyOpcode(dst, falseV) }.setOperand<0>(dst).setOperand<1>(falseV));
@@ -419,10 +419,10 @@ bool TargetISelInfo::expandCmp(MIRInst& inst, ISelContext& ctx) {
     constexpr auto prob = defaultSelectProb;
     auto block = ctx.getCurrentBlock();
     auto func = block->getFunction();
-    auto falseBlock = std::make_unique<MIRBasicBlock>(block->symbol().withID(static_cast<int32_t>(codeGenCtx.nextId())), func,
-                                                      block->getTripCount() * (1.0 - prob));
-    auto postBlock = std::make_unique<MIRBasicBlock>(block->symbol().withID(static_cast<int32_t>(codeGenCtx.nextId())), func,
-                                                     block->getTripCount());
+    auto falseBlock = makeUnique<MIRBasicBlock>(block->symbol().withID(static_cast<int32_t>(codeGenCtx.nextId())), func,
+                                                block->getTripCount() * (1.0 - prob));
+    auto postBlock =
+        makeUnique<MIRBasicBlock>(block->symbol().withID(static_cast<int32_t>(codeGenCtx.nextId())), func, block->getTripCount());
     branch->setOperand<0>(inst.getOperand(0))
         .setOperand<1>(MIROperand::asReloc(postBlock.get()))
         .setOperand<2>(MIROperand::asProb(prob));

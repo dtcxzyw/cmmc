@@ -299,7 +299,11 @@ int mainImpl(int argc, char** argv) {
     return EXIT_FAILURE;
 }
 
+void initializeCMMC();
 int main(int argc, char** argv) {
+#ifdef CMMC_ENABLE_DETERMINISTIC
+    initializeCMMC();
+#endif
     auto& profiler = Profiler::get();
     const auto ret = mainImpl(argc, argv);
     if(ret == EXIT_SUCCESS) {

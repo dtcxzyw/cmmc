@@ -71,16 +71,16 @@ main:
 	bl getch
 	bl getch
 	cmp r0, #80
-	beq label47
+	beq label49
 	b label74
-label47:
+label49:
 	bl getch
 	cmp r0, #50
-	beq label48
+	beq label50
 label74:
 	mvn r0, #0
-	b label68
-label48:
+	b label47
+label50:
 	bl getint
 	mov r5, #0
 	cmp r0, #1024
@@ -92,9 +92,9 @@ label48:
 	mov r0, #0
 	movwgt r0, #1
 	orrs r0, r5, r0
-	beq label49
+	beq label51
 	b label74
-label49:
+label51:
 	bl getint
 	movw r5, #:lower16:image
 	cmp r0, #255
@@ -112,11 +112,15 @@ label49:
 label100:
 	mov r9, #0
 	cmp r6, r9
-	ble label52
+	ble label54
 	cmp r4, #0
-	ble label64
+	ble label66
 	b label227
-label52:
+label47:
+	add sp, sp, #4
+	vpop { s16, s17, s18, s19, s20, s21 }
+	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
+label54:
 	movw r0, #4059
 	movw r1, #4059
 	movt r0, #16329
@@ -129,8 +133,8 @@ label52:
 	vmov s3, r0
 	mov r0, #0
 	vadd.f32 s0, s19, s0
-	vcmp.f32 s0, s3
 	vdiv.f32 s1, s0, s3
+	vcmp.f32 s0, s3
 	vmrs APSR_nzcv, FPSCR
 	movwgt r0, #1
 	vcmp.f32 s0, s4
@@ -152,14 +156,14 @@ label52:
 	vsub.f32 s1, s0, s3
 	vmrs APSR_nzcv, FPSCR
 	vmovgt.f32 s0, s1
-	vadd.f32 s1, s0, s3
 	vcmp.f32 s0, s6
+	vadd.f32 s1, s0, s3
 	vmrs APSR_nzcv, FPSCR
 	vmovmi.f32 s0, s1
 	bl my_sin_impl
 	vcmp.f32 s19, s3
-	mov r0, #0
 	mov r1, #0
+	mov r0, #0
 	vmov.f32 s1, s19
 	vmov.f32 s18, s0
 	vmrs APSR_nzcv, FPSCR
@@ -212,17 +216,14 @@ label52:
 	vcvt.f32.s32 s0, s0
 	vmul.f32 s21, s0, s19
 	vmul.f32 s20, s0, s18
-	ble label62
+	ble label64
 	b label228
 label151:
 	mov r0, #0
-label68:
-	add sp, sp, #4
-	vpop { s16, s17, s18, s19, s20, s21 }
-	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
+	b label47
 label228:
 	mov r10, #0
-label56:
+label58:
 	sub r0, r10, r7
 	mov r1, #0
 	mov r2, #0
@@ -247,26 +248,26 @@ label56:
 	cmp r2, #0
 	movwlt r3, #1
 	orrs r1, r1, r3
-	beq label58
+	beq label60
 label175:
 	mov r0, #0
-	b label60
-label58:
+	b label62
+label60:
 	cmp r6, r2
-	bgt label59
+	bgt label61
 	b label175
-label59:
+label61:
 	mla r0, r4, r2, r0
 	ldr r0, [r5, r0, lsl #2]
-label60:
+label62:
 	bl putint
 	mov r0, #32
 	bl putch
 	add r10, r10, #1
 	cmp r4, r10
-	ble label62
-	b label56
-label62:
+	ble label64
+	b label58
+label64:
 	mov r0, #10
 	bl putch
 	add r9, r9, #1
@@ -278,22 +279,22 @@ label62:
 	vcvt.f32.s32 s0, s0
 	vmul.f32 s21, s0, s19
 	vmul.f32 s20, s0, s18
-	ble label62
+	ble label64
 	b label228
-label64:
+label66:
 	add r9, r9, #1
 	cmp r6, r9
-	ble label52
+	ble label54
 	cmp r4, #0
-	ble label64
+	ble label66
 label227:
 	mul r10, r4, r9
 	mov r11, #0
-label66:
+label68:
 	bl getint
 	add r1, r10, r11
 	add r11, r11, #1
 	str r0, [r5, r1, lsl #2]
 	cmp r4, r11
-	ble label64
-	b label66
+	ble label66
+	b label68

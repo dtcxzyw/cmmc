@@ -236,11 +236,11 @@ label23:
 main:
 	push { r4, r5, lr }
 	sub sp, sp, #44
-	mov r1, #0
 	mov r0, #4
 	mov r2, #9
-	mov r4, sp
+	mov r1, #0
 	str r0, [sp, #0]
+	mov r4, sp
 	mov r0, #3
 	str r0, [r4, #4]
 	mov r0, #2

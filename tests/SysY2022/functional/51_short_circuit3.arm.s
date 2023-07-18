@@ -7,8 +7,8 @@
 .globl main
 main:
 	push { lr }
-	sub sp, sp, #4
 	mov r0, #0
+	sub sp, sp, #4
 	bl putint
 	mov r0, #32
 	bl putch
