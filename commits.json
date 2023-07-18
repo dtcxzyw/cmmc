@@ -170,6 +170,11 @@
       "parent": "816f822888acbcef7ed3f4fb74188f7b6c856ce0",
       "time": "2023-07-06 19:29:20 +0800"
     },
+    "3afb7cdcd5d524ef12d5c86589ed479a9c2a8bd0": {
+      "message": "feat(analysis): add range for scev without loop",
+      "parent": "e0a46c219c7890fd3aa137339d0dc84973354560",
+      "time": "2023-07-19 00:52:53 +0800"
+    },
     "3b456200e42e06bf7b9c01045913353124de379f": {
       "message": "feat(transform): aggressive range-aware arith reduce",
       "parent": "500e485f35d479493f784d9c6fdacead96fb1859",
@@ -675,6 +680,11 @@
       "parent": "06a1668979545faf5da61846bca1aa7c8bbe3728",
       "time": "2023-07-05 23:22:57 +0800"
     },
+    "e0a46c219c7890fd3aa137339d0dc84973354560": {
+      "message": "fix(support): remove FengShui",
+      "parent": "595c7daef141f61de457cf8e66a861437dddbb34",
+      "time": "2023-07-19 00:39:34 +0800"
+    },
     "e15d2533f26a57059fbb95edf8f811865c3d1a3f": {
       "message": "feat(transform): add lut2expr",
       "parent": "d59c49feebe67bdca8b7a92cca1d865c892253fb",
@@ -684,6 +694,11 @@
       "message": "misc: update `.gitattributes` for generated references",
       "parent": "00e6cd2b13e3b99ff19815f49db801e9cc1d7db7",
       "time": "2023-07-03 22:26:57 +0800"
+    },
+    "e87901f1931b3bbb5175bd3035309c5db03280ad": {
+      "message": "feat(transform): improve cond merge",
+      "parent": "3afb7cdcd5d524ef12d5c86589ed479a9c2a8bd0",
+      "time": "2023-07-19 02:00:47 +0800"
     },
     "ebcab252f2e50b0331c759413a9ccb383fc581c5": {
       "message": "feat(codegen): fold more insts with zero on riscv",
@@ -726,5 +741,5 @@
       "time": "2023-07-06 01:05:50 +0800"
     }
   },
-  "head": "595c7daef141f61de457cf8e66a861437dddbb34"
+  "head": "e87901f1931b3bbb5175bd3035309c5db03280ad"
 }
