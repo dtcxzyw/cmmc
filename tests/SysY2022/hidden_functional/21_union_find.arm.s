@@ -67,7 +67,7 @@ main:
 	mov r0, #0
 	add r1, r0, #4
 	cmp r5, r1
-	ble label60
+	ble label61
 	add r2, r4, r0, lsl #2
 	str r0, [r4, r0, lsl #2]
 	add r3, r0, #1
@@ -79,7 +79,7 @@ main:
 	mov r0, r1
 	add r1, r1, #4
 	cmp r5, r1
-	ble label60
+	ble label61
 	add r2, r4, r0, lsl #2
 	str r0, [r4, r0, lsl #2]
 	add r3, r0, #1
@@ -91,7 +91,7 @@ main:
 	mov r0, r1
 	add r1, r1, #4
 	cmp r5, r1
-	ble label60
+	ble label61
 	add r2, r4, r0, lsl #2
 	str r0, [r4, r0, lsl #2]
 	add r3, r0, #1
@@ -103,7 +103,7 @@ main:
 	mov r0, r1
 	add r1, r1, #4
 	cmp r5, r1
-	ble label60
+	ble label61
 	add r2, r4, r0, lsl #2
 	str r0, [r4, r0, lsl #2]
 	add r3, r0, #1
@@ -115,17 +115,11 @@ main:
 	mov r0, r1
 	add r1, r1, #4
 	cmp r5, r1
-	ble label60
-	b label155
+	ble label61
+	b label162
 label136:
 	mov r7, #0
 	b label64
-label60:
-	str r0, [r4, r0, lsl #2]
-	add r0, r0, #1
-	cmp r5, r0
-	ble label63
-	b label60
 label63:
 	cmp r6, #0
 	ble label103
@@ -167,19 +161,12 @@ label103:
 	add r0, r0, r2
 	cmp r5, r1
 	ble label72
-	b label157
-label118:
-	mov r0, #0
-	mov r1, r0
-label68:
-	cmp r5, r1
-	ble label72
-	b label157
+	b label165
 label72:
 	bl putint
 	mov r0, #0
 	pop { r4, r5, r6, r7, r8, pc }
-label157:
+label165:
 	ldr r2, [r4, r1, lsl #2]
 	sub r2, r1, r2
 	add r1, r1, #1
@@ -187,6 +174,13 @@ label157:
 	lsr r2, r2, #5
 	add r0, r0, r2
 	b label68
+label118:
+	mov r0, #0
+	mov r1, r0
+label68:
+	cmp r5, r1
+	ble label72
+	b label165
 label64:
 	bl getint
 	mov r8, r0
@@ -209,7 +203,7 @@ label67:
 	cmp r6, r7
 	ble label118
 	b label64
-label155:
+label162:
 	add r2, r4, r0, lsl #2
 	str r0, [r4, r0, lsl #2]
 	add r3, r0, #1
@@ -221,5 +215,11 @@ label155:
 	mov r0, r1
 	add r1, r1, #4
 	cmp r5, r1
-	ble label60
-	b label155
+	ble label61
+	b label162
+label61:
+	str r0, [r4, r0, lsl #2]
+	add r0, r0, #1
+	cmp r5, r0
+	ble label63
+	b label61

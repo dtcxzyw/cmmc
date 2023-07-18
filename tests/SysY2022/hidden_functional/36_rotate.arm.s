@@ -71,16 +71,16 @@ main:
 	bl getch
 	bl getch
 	cmp r0, #80
-	beq label49
+	beq label47
 	b label74
-label49:
+label47:
 	bl getch
 	cmp r0, #50
-	beq label50
+	beq label48
 label74:
 	mvn r0, #0
-	b label47
-label50:
+	b label68
+label48:
 	bl getint
 	mov r5, #0
 	cmp r0, #1024
@@ -92,9 +92,9 @@ label50:
 	mov r0, #0
 	movwgt r0, #1
 	orrs r0, r5, r0
-	beq label51
+	beq label49
 	b label74
-label51:
+label49:
 	bl getint
 	movw r5, #:lower16:image
 	cmp r0, #255
@@ -112,15 +112,11 @@ label51:
 label100:
 	mov r9, #0
 	cmp r6, r9
-	ble label54
+	ble label52
 	cmp r4, #0
-	ble label66
+	ble label64
 	b label227
-label47:
-	add sp, sp, #4
-	vpop { s16, s17, s18, s19, s20, s21 }
-	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
-label54:
+label52:
 	movw r0, #4059
 	movw r1, #4059
 	movt r0, #16329
@@ -152,8 +148,8 @@ label54:
 	vmul.f32 s1, s1, s3
 	vsub.f32 s1, s0, s1
 	vmovne.f32 s0, s1
-	vcmp.f32 s0, s5
 	vsub.f32 s1, s0, s3
+	vcmp.f32 s0, s5
 	vmrs APSR_nzcv, FPSCR
 	vmovgt.f32 s0, s1
 	vcmp.f32 s0, s6
@@ -216,14 +212,17 @@ label54:
 	vcvt.f32.s32 s0, s0
 	vmul.f32 s21, s0, s19
 	vmul.f32 s20, s0, s18
-	ble label64
+	ble label62
 	b label228
 label151:
 	mov r0, #0
-	b label47
+label68:
+	add sp, sp, #4
+	vpop { s16, s17, s18, s19, s20, s21 }
+	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
 label228:
 	mov r10, #0
-label58:
+label56:
 	sub r0, r10, r7
 	mov r1, #0
 	mov r2, #0
@@ -248,26 +247,26 @@ label58:
 	cmp r2, #0
 	movwlt r3, #1
 	orrs r1, r1, r3
-	beq label60
+	beq label58
 label175:
 	mov r0, #0
-	b label62
-label60:
+	b label60
+label58:
 	cmp r6, r2
-	bgt label61
+	bgt label59
 	b label175
-label61:
+label59:
 	mla r0, r4, r2, r0
 	ldr r0, [r5, r0, lsl #2]
-label62:
+label60:
 	bl putint
 	mov r0, #32
 	bl putch
 	add r10, r10, #1
 	cmp r4, r10
-	ble label64
-	b label58
-label64:
+	ble label62
+	b label56
+label62:
 	mov r0, #10
 	bl putch
 	add r9, r9, #1
@@ -279,22 +278,22 @@ label64:
 	vcvt.f32.s32 s0, s0
 	vmul.f32 s21, s0, s19
 	vmul.f32 s20, s0, s18
-	ble label64
+	ble label62
 	b label228
-label66:
+label64:
 	add r9, r9, #1
 	cmp r6, r9
-	ble label54
+	ble label52
 	cmp r4, #0
-	ble label66
+	ble label64
 label227:
 	mul r10, r4, r9
 	mov r11, #0
-label68:
+label66:
 	bl getint
 	add r1, r10, r11
 	add r11, r11, #1
 	str r0, [r5, r1, lsl #2]
 	cmp r4, r11
-	ble label66
-	b label68
+	ble label64
+	b label66

@@ -135,13 +135,13 @@ main:
 	sd s4, 32(sp)
 	sd ra, 24(sp)
 	sw a0, 0(sp)
-pcrel164:
+pcrel166:
 	auipc a0, %pcrel_hi(__HELLO)
 	sw zero, 4(sp)
-	addi s1, a0, %pcrel_lo(pcrel164)
+	addi s1, a0, %pcrel_lo(pcrel166)
 	sd zero, 8(sp)
 	sw zero, 16(sp)
-	lw a0, %pcrel_lo(pcrel164)(a0)
+	lw a0, %pcrel_lo(pcrel166)(a0)
 	beq a0, zero, label31
 	mv s2, zero
 label2:
@@ -156,7 +156,6 @@ label31:
 	mv s1, zero
 label4:
 	li a0, 715827883
-	li a4, 6
 	mul a1, s1, a0
 	mul a0, s1, a0
 	srli a3, a1, 63
@@ -165,36 +164,29 @@ label4:
 	srli a3, a0, 63
 	srli a2, a0, 32
 	add a0, a3, a2
-	mulw a2, a0, a4
-	subw s3, s1, a2
-	beq a1, s3, label6
-pcrel165:
+	li a2, 6
+	mulw a3, a0, a2
+	subw s3, s1, a3
+	beq a1, s3, label18
+pcrel167:
 	auipc a2, %pcrel_hi(N4__mE___)
-	addi a0, a2, %pcrel_lo(pcrel165)
+	addi a0, a2, %pcrel_lo(pcrel167)
 	li a2, 200
 	mv s2, a0
 	mul a1, a1, a2
 	add s4, a0, a1
 	lw a0, 0(s4)
-	beq a0, zero, label9
-	mv s5, zero
+	beq a0, zero, label7
+	j label158
 label18:
-	sh2add s6, s5, s4
-	lw a0, 0(s6)
-	jal putch
-	addiw s5, s5, 1
-	lw a1, 4(s6)
-	beq a1, zero, label9
-	j label18
-label6:
-	slliw a2, s1, 4
-	addw a1, a2, s1
-	addiw a0, a1, 23
-	slli a2, a0, 1
-	srli a1, a2, 59
-	add a3, a0, a1
-	andi a2, a3, -32
-	subw s1, a0, a2
+	slliw a1, s1, 4
+	addw a2, a1, s1
+	addiw a0, a2, 23
+	slli a1, a0, 1
+	srli a2, a1, 59
+	add a3, a0, a2
+	andi a1, a3, -32
+	subw s1, a0, a1
 	bne s1, zero, label4
 	mv a0, zero
 	ld ra, 24(sp)
@@ -207,50 +199,60 @@ label6:
 	ld s0, 80(sp)
 	addi sp, sp, 88
 	ret
-label9:
-	auipc a0, %pcrel_hi(saY_HeI10_To)
-	addi s4, a0, %pcrel_lo(label9)
-	lw a0, %pcrel_lo(label9)(a0)
-	beq a0, zero, label12
+label158:
 	mv s5, zero
-label10:
+label16:
 	sh2add s6, s5, s4
 	lw a0, 0(s6)
 	jal putch
 	addiw s5, s5, 1
 	lw a1, 4(s6)
-	beq a1, zero, label12
-	j label10
-label159:
+	beq a1, zero, label7
+	j label16
+label7:
+	auipc a0, %pcrel_hi(saY_HeI10_To)
+	addi s4, a0, %pcrel_lo(label7)
+	lw a0, %pcrel_lo(label7)(a0)
+	beq a0, zero, label10
+	mv s5, zero
+label8:
+	sh2add s6, s5, s4
+	lw a0, 0(s6)
+	jal putch
+	addiw s5, s5, 1
+	lw a1, 4(s6)
+	beq a1, zero, label10
+	j label8
+label160:
 	mv s3, zero
-	j label13
-label12:
+	j label11
+label10:
 	li a0, 200
 	mul a1, s3, a0
 	add s2, s2, a1
 	lw a0, 0(s2)
-	beq a0, zero, label15
-	j label159
-label160:
-	mv s2, zero
-	j label16
-label15:
-	lw a0, 0(sp)
-	beq a0, zero, label6
+	beq a0, zero, label13
 	j label160
-label16:
-	sh2add s3, s2, s0
-	lw a0, 0(s3)
-	jal putch
-	addiw s2, s2, 1
-	lw a1, 4(s3)
-	beq a1, zero, label6
-	j label16
-label13:
+label11:
 	sh2add s4, s3, s2
 	lw a0, 0(s4)
 	jal putch
 	addiw s3, s3, 1
 	lw a1, 4(s4)
-	beq a1, zero, label15
-	j label13
+	beq a1, zero, label13
+	j label11
+label161:
+	mv s2, zero
+	j label14
+label13:
+	lw a0, 0(sp)
+	beq a0, zero, label18
+	j label161
+label14:
+	sh2add s3, s2, s0
+	lw a0, 0(s3)
+	jal putch
+	addiw s2, s2, 1
+	lw a1, 4(s3)
+	beq a1, zero, label18
+	j label14

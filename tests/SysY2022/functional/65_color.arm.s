@@ -245,8 +245,8 @@ main:
 	mov r7, #504
 	cmp r6, #18
 	mla r7, r6, r7, r0
-	bge label203
-	b label432
+	bge label206
+	b label433
 label419:
 	mov r4, #0
 	b label209
@@ -255,22 +255,9 @@ label208:
 	cmp r0, #0
 	ble label211
 	b label419
-label432:
+label433:
 	mov r8, #0
-	b label204
 label203:
-	add r5, r5, #1
-	movw r0, #9072
-	cmp r5, #18
-	mla r0, r5, r0, r1
-	bge label200
-	mov r6, #0
-	mov r7, #504
-	cmp r6, #18
-	mla r7, r6, r7, r0
-	bge label203
-	b label432
-label204:
 	mov r9, #28
 	mvn r10, #0
 	mul r11, r8, r9
@@ -305,9 +292,9 @@ label204:
 	str r10, [r9, #100]
 	str r10, [r9, #104]
 	str r10, [r9, #108]
-	bge label206
-	b label204
-label206:
+	bge label205
+	b label203
+label205:
 	mov r9, #28
 	add r6, r6, #1
 	mul r10, r8, r9
@@ -330,8 +317,8 @@ label206:
 	mov r7, #504
 	cmp r6, #18
 	mla r7, r6, r7, r0
-	bge label203
-	b label432
+	bge label206
+	b label433
 label200:
 	add r4, r4, #1
 	movw r0, #32224
@@ -348,8 +335,20 @@ label200:
 	mov r7, #504
 	cmp r6, #18
 	mla r7, r6, r7, r0
-	bge label203
-	b label432
+	bge label206
+	b label433
+label206:
+	add r5, r5, #1
+	movw r0, #9072
+	cmp r5, #18
+	mla r0, r5, r0, r1
+	bge label200
+	mov r6, #0
+	mov r7, #504
+	cmp r6, #18
+	mla r7, r6, r7, r0
+	bge label206
+	b label433
 label207:
 	add r3, r3, #1
 	movw r0, #55744
@@ -373,8 +372,8 @@ label207:
 	mov r7, #504
 	cmp r6, #18
 	mla r7, r6, r7, r0
-	bge label203
-	b label432
+	bge label206
+	b label433
 label209:
 	bl getint
 	add r4, r4, #1

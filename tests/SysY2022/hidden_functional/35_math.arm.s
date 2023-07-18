@@ -152,14 +152,9 @@ eee:
 	vmov s1, r0
 	vcmp.f32 s0, s1
 	vmrs APSR_nzcv, FPSCR
-	ble label126
-	mov r0, #1056964608
-	vmov s1, r0
-	vmul.f32 s0, s0, s1
-	bl eee
-	vmul.f32 s0, s0, s0
-	b label142
-label126:
+	ble label125
+	b label143
+label125:
 	vmul.f32 s1, s0, s0
 	mov r0, #1056964608
 	vmov s2, r0
@@ -170,7 +165,18 @@ label126:
 	vadd.f32 s2, s0, s3
 	vadd.f32 s1, s2, s1
 	vmov.f32 s2, s0
-label127:
+	b label126
+label141:
+	add sp, sp, #4
+	pop { pc }
+label143:
+	mov r0, #1056964608
+	vmov s1, r0
+	vmul.f32 s0, s0, s1
+	bl eee
+	vmul.f32 s0, s0, s0
+	b label141
+label126:
 	vmul.f32 s4, s3, s2
 	ands r1, r0, #1
 	vmul.f32 s2, s2, s2
@@ -178,18 +184,9 @@ label127:
 	asr r0, r0, #1
 	vmovne.f32 s3, s4
 	cmp r0, #0
-	beq label131
-	b label127
-label141:
-	movw r0, #0
-	movt r0, #17136
-	vmov s0, r0
-	vdiv.f32 s0, s2, s0
-	vadd.f32 s0, s1, s0
-label142:
-	add sp, sp, #4
-	pop { pc }
-label131:
+	beq label130
+	b label126
+label130:
 	movw r0, #0
 	movt r0, #16576
 	vmov s2, r0
@@ -199,7 +196,7 @@ label131:
 	mov r0, #4
 	vadd.f32 s1, s1, s2
 	vmov.f32 s2, s0
-label132:
+label131:
 	vmul.f32 s4, s3, s2
 	ands r1, r0, #1
 	vmul.f32 s2, s2, s2
@@ -207,9 +204,9 @@ label132:
 	asr r0, r0, #1
 	vmovne.f32 s3, s4
 	cmp r0, #0
-	beq label136
-	b label132
-label136:
+	beq label135
+	b label131
+label135:
 	movw r0, #0
 	movt r0, #16832
 	vmov s2, r0
@@ -218,7 +215,7 @@ label136:
 	vadd.f32 s1, s1, s2
 	vmov s2, r0
 	mov r0, #5
-label137:
+label136:
 	vmul.f32 s3, s2, s0
 	ands r1, r0, #1
 	vmul.f32 s0, s0, s0
@@ -226,22 +223,34 @@ label137:
 	asr r0, r0, #1
 	vmovne.f32 s2, s3
 	cmp r0, #0
-	beq label141
-	b label137
+	beq label140
+	b label136
+label140:
+	movw r0, #0
+	movt r0, #17136
+	vmov s0, r0
+	vdiv.f32 s0, s2, s0
+	vadd.f32 s0, s1, s0
+	b label141
 my_exp:
 	push { lr }
 	vcmp.f32 s0, #0
 	sub sp, sp, #4
 	vmrs APSR_nzcv, FPSCR
-	bhs label216
-	b label230
-label216:
+	bhs label217
+	vneg.f32 s0, s0
+	bl my_exp
+	mov r0, #1065353216
+	vmov s1, r0
+	vdiv.f32 s0, s1, s0
+	b label215
+label217:
 	vcvt.s32.f32 s1, s0
 	vmov r0, s1
 	vcvt.f32.s32 s1, s1
 	vsub.f32 s0, s0, s1
 	cmp r0, #0
-	bge label225
+	bge label226
 	rsb r0, r0, #0
 	mov r1, #1065353216
 	vmov s2, r1
@@ -255,7 +264,7 @@ label216:
 	asr r0, r0, #1
 	vmovne.f32 s2, s3
 	cmp r0, #0
-	beq label222
+	beq label223
 	vmul.f32 s3, s2, s1
 	ands r1, r0, #1
 	vmul.f32 s1, s1, s1
@@ -263,7 +272,7 @@ label216:
 	asr r0, r0, #1
 	vmovne.f32 s2, s3
 	cmp r0, #0
-	beq label222
+	beq label223
 	vmul.f32 s3, s2, s1
 	ands r1, r0, #1
 	vmul.f32 s1, s1, s1
@@ -271,7 +280,7 @@ label216:
 	asr r0, r0, #1
 	vmovne.f32 s2, s3
 	cmp r0, #0
-	beq label222
+	beq label223
 	vmul.f32 s3, s2, s1
 	ands r1, r0, #1
 	vmul.f32 s1, s1, s1
@@ -279,7 +288,7 @@ label216:
 	asr r0, r0, #1
 	vmovne.f32 s2, s3
 	cmp r0, #0
-	beq label222
+	beq label223
 	vmul.f32 s3, s2, s1
 	ands r1, r0, #1
 	vmul.f32 s1, s1, s1
@@ -287,7 +296,7 @@ label216:
 	asr r0, r0, #1
 	vmovne.f32 s2, s3
 	cmp r0, #0
-	beq label222
+	beq label223
 	vmul.f32 s3, s2, s1
 	ands r1, r0, #1
 	vmul.f32 s1, s1, s1
@@ -295,7 +304,7 @@ label216:
 	asr r0, r0, #1
 	vmovne.f32 s2, s3
 	cmp r0, #0
-	beq label222
+	beq label223
 	vmul.f32 s3, s2, s1
 	ands r1, r0, #1
 	vmul.f32 s1, s1, s1
@@ -303,7 +312,7 @@ label216:
 	asr r0, r0, #1
 	vmovne.f32 s2, s3
 	cmp r0, #0
-	beq label222
+	beq label223
 	vmul.f32 s3, s2, s1
 	ands r1, r0, #1
 	vmul.f32 s1, s1, s1
@@ -311,7 +320,7 @@ label216:
 	asr r0, r0, #1
 	vmovne.f32 s2, s3
 	cmp r0, #0
-	beq label222
+	beq label223
 	vmul.f32 s3, s2, s1
 	ands r1, r0, #1
 	vmul.f32 s1, s1, s1
@@ -319,20 +328,8 @@ label216:
 	asr r0, r0, #1
 	vmovne.f32 s2, s3
 	cmp r0, #0
-	beq label222
-	b label218
-label225:
-	cmp r0, #0
-	beq label266
-	b label265
-label230:
-	vneg.f32 s0, s0
-	bl my_exp
-	mov r0, #1065353216
-	vmov s1, r0
-	vdiv.f32 s0, s1, s0
-	b label214
-label218:
+	beq label223
+label219:
 	vmul.f32 s3, s2, s1
 	ands r1, r0, #1
 	vmul.f32 s1, s1, s1
@@ -340,21 +337,28 @@ label218:
 	asr r0, r0, #1
 	vmovne.f32 s2, s3
 	cmp r0, #0
-	beq label222
-	b label218
-label222:
-	mov r0, #1065353216
-	vmov s1, r0
-	vdiv.f32 s5, s1, s2
-	b label223
-label214:
+	beq label223
+	b label219
+label215:
 	add sp, sp, #4
 	pop { pc }
 label223:
+	mov r0, #1065353216
+	vmov s1, r0
+	vdiv.f32 s5, s1, s2
+label224:
 	bl eee
 	vmul.f32 s0, s5, s0
-	b label214
-label265:
+	b label215
+label226:
+	cmp r0, #0
+	beq label271
+	b label270
+label271:
+	mov r0, #1065353216
+	vmov s5, r0
+	b label224
+label270:
 	mov r1, #1065353216
 	vmov s2, r1
 	movw r1, #63572
@@ -367,7 +371,7 @@ label265:
 	asr r0, r0, #1
 	vmovne.f32 s2, s3
 	cmp r0, #0
-	beq label281
+	beq label286
 	vmul.f32 s3, s2, s1
 	ands r1, r0, #1
 	vmul.f32 s1, s1, s1
@@ -375,7 +379,7 @@ label265:
 	asr r0, r0, #1
 	vmovne.f32 s2, s3
 	cmp r0, #0
-	beq label281
+	beq label286
 	vmul.f32 s3, s2, s1
 	ands r1, r0, #1
 	vmul.f32 s1, s1, s1
@@ -383,7 +387,7 @@ label265:
 	asr r0, r0, #1
 	vmovne.f32 s2, s3
 	cmp r0, #0
-	beq label281
+	beq label286
 	vmul.f32 s3, s2, s1
 	ands r1, r0, #1
 	vmul.f32 s1, s1, s1
@@ -391,7 +395,7 @@ label265:
 	asr r0, r0, #1
 	vmovne.f32 s2, s3
 	cmp r0, #0
-	beq label281
+	beq label286
 	vmul.f32 s3, s2, s1
 	ands r1, r0, #1
 	vmul.f32 s1, s1, s1
@@ -399,7 +403,7 @@ label265:
 	asr r0, r0, #1
 	vmovne.f32 s2, s3
 	cmp r0, #0
-	beq label281
+	beq label286
 	vmul.f32 s3, s2, s1
 	ands r1, r0, #1
 	vmul.f32 s1, s1, s1
@@ -407,7 +411,7 @@ label265:
 	asr r0, r0, #1
 	vmovne.f32 s2, s3
 	cmp r0, #0
-	beq label281
+	beq label286
 	vmul.f32 s3, s2, s1
 	ands r1, r0, #1
 	vmul.f32 s1, s1, s1
@@ -415,7 +419,7 @@ label265:
 	asr r0, r0, #1
 	vmovne.f32 s2, s3
 	cmp r0, #0
-	beq label281
+	beq label286
 	vmul.f32 s3, s2, s1
 	ands r1, r0, #1
 	vmul.f32 s1, s1, s1
@@ -423,7 +427,7 @@ label265:
 	asr r0, r0, #1
 	vmovne.f32 s2, s3
 	cmp r0, #0
-	beq label281
+	beq label286
 	vmul.f32 s3, s2, s1
 	ands r1, r0, #1
 	vmul.f32 s1, s1, s1
@@ -431,7 +435,7 @@ label265:
 	asr r0, r0, #1
 	vmovne.f32 s2, s3
 	cmp r0, #0
-	beq label281
+	beq label286
 	vmul.f32 s3, s2, s1
 	ands r1, r0, #1
 	vmul.f32 s1, s1, s1
@@ -439,25 +443,21 @@ label265:
 	asr r0, r0, #1
 	vmovne.f32 s2, s3
 	cmp r0, #0
-	beq label281
-	b label226
-label266:
-	mov r0, #1065353216
-	vmov s5, r0
-	b label223
-label226:
-	vmul.f32 s3, s2, s1
-	ands r1, r0, #1
-	vmul.f32 s1, s1, s1
-	add r0, r0, r0, lsr #31
-	asr r0, r0, #1
-	vmovne.f32 s2, s3
-	cmp r0, #0
-	beq label281
-	b label226
-label281:
+	beq label286
+	b label227
+label286:
 	vmov.f32 s5, s2
-	b label223
+	b label224
+label227:
+	vmul.f32 s3, s2, s1
+	ands r1, r0, #1
+	vmul.f32 s1, s1, s1
+	add r0, r0, r0, lsr #31
+	asr r0, r0, #1
+	vmovne.f32 s2, s3
+	cmp r0, #0
+	beq label286
+	b label227
 .globl main
 main:
 	push { r4, r5, lr }
@@ -512,7 +512,7 @@ label334:
 	vcmp.f32 s16, #0
 	vmrs APSR_nzcv, FPSCR
 	movwgt r5, #1
-	ble label342
+	ble label335
 	mov r0, #1065353216
 	vmov s0, r0
 	mov r0, #1056964608
@@ -540,7 +540,7 @@ label334:
 	mov r0, #1
 	bl asr5
 	bl putfloat
-label335:
+label337:
 	mov r0, #32
 	bl putch
 	mov r0, #0
@@ -548,25 +548,74 @@ label335:
 	vmrs APSR_nzcv, FPSCR
 	movwgt r0, #1
 	ands r0, r5, r0
-	beq label336
-	b label341
-label337:
-	mov r0, #32
-	bl putch
-	vcmp.f32 s16, #0
-	vmrs APSR_nzcv, FPSCR
-	ble label338
-	b label340
+	beq label338
+	mov r0, #1065353216
+	vmov s10, r0
+	mov r0, #1056964608
+	vmov s11, r0
+	movw r0, #0
+	movt r0, #16512
+	vdiv.f32 s2, s10, s17
+	vsub.f32 s0, s17, s10
+	vmov s12, r0
+	movw r0, #0
+	movt r0, #16576
+	vmov s14, r0
+	vmul.f32 s1, s0, s11
+	movw r0, #52343
+	movt r0, #12843
+	vmov s13, r0
+	mov r0, #1
+	vadd.f32 s1, s1, s10
+	vdiv.f32 s1, s10, s1
+	vmul.f32 s1, s1, s12
+	vadd.f32 s1, s1, s10
+	vadd.f32 s1, s1, s2
+	vmul.f32 s0, s1, s0
+	vdiv.f32 s3, s0, s14
+	vmov.f32 s0, s10
+	vmov.f32 s1, s17
+	vmov.f32 s2, s13
+	bl asr5
+	vmov.f32 s15, s0
+	mov r0, #1
+	vdiv.f32 s2, s10, s16
+	vsub.f32 s0, s16, s10
+	vmul.f32 s1, s0, s11
+	vadd.f32 s1, s1, s10
+	vdiv.f32 s1, s10, s1
+	vmul.f32 s1, s1, s12
+	vadd.f32 s1, s1, s10
+	vadd.f32 s1, s1, s2
+	vmul.f32 s0, s1, s0
+	vdiv.f32 s3, s0, s14
+	vmov.f32 s0, s10
+	vmov.f32 s1, s16
+	vmov.f32 s2, s13
+	bl asr5
+	vdiv.f32 s0, s15, s0
+	bl putfloat
+	b label339
 label338:
 	mov r0, #45
 	bl putch
 label339:
+	mov r0, #32
+	bl putch
+	vcmp.f32 s16, #0
+	vmrs APSR_nzcv, FPSCR
+	ble label340
+	b label342
+label340:
+	mov r0, #45
+	bl putch
+label341:
 	mov r0, #10
 	bl putch
 	subs r4, r4, #1
 	beq label328
 	b label329
-label340:
+label342:
 	mov r0, #1065353216
 	vmov s0, r0
 	mov r0, #1056964608
@@ -596,60 +645,8 @@ label340:
 	vmul.f32 s0, s17, s0
 	bl my_exp
 	bl putfloat
-	b label339
-label341:
-	mov r0, #1065353216
-	vmov s10, r0
-	mov r0, #1056964608
-	vmov s11, r0
-	movw r0, #0
-	movt r0, #16512
-	vsub.f32 s0, s17, s10
-	vmov s12, r0
-	vdiv.f32 s2, s10, s17
-	movw r0, #0
-	movt r0, #16576
-	vmov s14, r0
-	vmul.f32 s1, s0, s11
-	movw r0, #52343
-	movt r0, #12843
-	vmov s13, r0
-	mov r0, #1
-	vadd.f32 s1, s1, s10
-	vdiv.f32 s1, s10, s1
-	vmul.f32 s1, s1, s12
-	vadd.f32 s1, s1, s10
-	vadd.f32 s1, s1, s2
-	vmul.f32 s0, s1, s0
-	vdiv.f32 s3, s0, s14
-	vmov.f32 s0, s10
-	vmov.f32 s1, s17
-	vmov.f32 s2, s13
-	bl asr5
-	mov r0, #1
-	vmov.f32 s15, s0
-	vdiv.f32 s2, s10, s16
-	vsub.f32 s0, s16, s10
-	vmul.f32 s1, s0, s11
-	vadd.f32 s1, s1, s10
-	vdiv.f32 s1, s10, s1
-	vmul.f32 s1, s1, s12
-	vadd.f32 s1, s1, s10
-	vadd.f32 s1, s1, s2
-	vmul.f32 s0, s1, s0
-	vdiv.f32 s3, s0, s14
-	vmov.f32 s0, s10
-	vmov.f32 s1, s16
-	vmov.f32 s2, s13
-	bl asr5
-	vdiv.f32 s0, s15, s0
-	bl putfloat
-	b label337
-label342:
-	mov r0, #45
-	bl putch
-	b label335
-label336:
+	b label341
+label335:
 	mov r0, #45
 	bl putch
 	b label337

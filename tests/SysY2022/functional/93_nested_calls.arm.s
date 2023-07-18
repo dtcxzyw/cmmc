@@ -125,7 +125,7 @@ label9:
 	moveq r2, r1
 	cmp r7, #0
 	mla r0, r2, r0, r2
-	beq label11
+	beq label12
 	sdiv r1, r0, r7
 	mls r0, r1, r7, r0
 	ldr r7, [sp, #64]
@@ -135,19 +135,9 @@ label9:
 	moveq r1, r7
 	cmp r3, #0
 	add r1, r1, #1
-	beq label13
-	b label120
-label11:
-	ldr r7, [sp, #64]
-	ldr r8, [sp, #72]
-	cmp r8, #0
-	sub r1, r7, r8
-	moveq r1, r7
-	cmp r3, #0
-	add r1, r1, #1
-	beq label13
-	b label120
-label13:
+	beq label14
+	b label121
+label14:
 	clz r2, r6
 	ldr r8, [sp, #40]
 	cmp r6, #0
@@ -156,9 +146,9 @@ label13:
 	movne r2, r8
 	cmp r5, #0
 	mul r1, r1, r2
-	beq label15
-	b label184
-label15:
+	beq label17
+	b label185
+label17:
 	ldr r8, [sp, #44]
 	add r2, r8, r1
 	ldr r8, [sp, #48]
@@ -171,7 +161,35 @@ label15:
 	moveq r1, r3
 	mul r0, r0, r1
 	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
-label120:
+label101:
+	ldr r0, [sp, #56]
+	sdiv r7, r0, r4
+	mls r0, r7, r4, r0
+	b label9
+label185:
+	rsb r2, r5, #0
+	sdiv r3, r1, r2
+	mls r1, r3, r2, r1
+	b label17
+label77:
+	ldr r8, [sp, #40]
+	sdiv r0, r6, r8
+	mls r0, r0, r8, r6
+	b label7
+label42:
+	sdiv r1, r0, r4
+	mls r0, r1, r4, r0
+	b label5
+label12:
+	ldr r7, [sp, #64]
+	ldr r8, [sp, #72]
+	cmp r8, #0
+	sub r1, r7, r8
+	moveq r1, r7
+	cmp r3, #0
+	add r1, r1, #1
+	beq label14
+label121:
 	rsb r2, r3, #0
 	sdiv r3, r1, r2
 	mls r1, r3, r2, r1
@@ -183,23 +201,5 @@ label120:
 	movne r2, r8
 	cmp r5, #0
 	mul r1, r1, r2
-	beq label15
-label184:
-	rsb r2, r5, #0
-	sdiv r3, r1, r2
-	mls r1, r3, r2, r1
-	b label15
-label101:
-	ldr r0, [sp, #56]
-	sdiv r7, r0, r4
-	mls r0, r7, r4, r0
-	b label9
-label77:
-	ldr r8, [sp, #40]
-	sdiv r0, r6, r8
-	mls r0, r0, r8, r6
-	b label7
-label42:
-	sdiv r1, r0, r4
-	mls r0, r1, r4, r0
-	b label5
+	beq label17
+	b label185

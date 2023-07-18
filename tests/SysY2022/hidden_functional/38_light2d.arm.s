@@ -390,8 +390,8 @@ label58:
 	vmrs APSR_nzcv, FPSCR
 	vmovmi.f32 s0, s1
 	bl my_sin_impl
-	vcmp.f32 s6, s7
 	mov r0, #0
+	vcmp.f32 s6, s7
 	movw r2, #4059
 	movt r2, #49353
 	vmov.f32 s5, s0

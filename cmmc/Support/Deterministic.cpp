@@ -69,7 +69,7 @@ void initializeCMMC() {
         std::abort();
 
     mi_arena_id_t arenaId;
-    if(!mi_manage_os_memory_ex(address, preAllocatedSize, false, false, true, -1, false, &arenaId))
+    if(!mi_manage_os_memory_ex(address, preAllocatedSize, false, false, true, -1, true, &arenaId))
         std::abort();
 
     heap = mi_heap_new_in_arena(arenaId);

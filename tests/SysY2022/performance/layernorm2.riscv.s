@@ -19,20 +19,20 @@ mean:
 .globl main
 main:
 	addi sp, sp, -48
-pcrel634:
+pcrel638:
 	auipc a0, %pcrel_hi(a)
 	sd s0, 40(sp)
-	addi s0, a0, %pcrel_lo(pcrel634)
+	addi s0, a0, %pcrel_lo(pcrel638)
 	sd s1, 32(sp)
-pcrel635:
+pcrel639:
 	auipc a0, %pcrel_hi(mean)
 	sd s2, 24(sp)
-	addi s1, a0, %pcrel_lo(pcrel635)
+	addi s1, a0, %pcrel_lo(pcrel639)
 	sd s3, 16(sp)
-pcrel636:
+pcrel640:
 	auipc a0, %pcrel_hi(var)
 	mv s3, zero
-	addi s2, a0, %pcrel_lo(pcrel636)
+	addi s2, a0, %pcrel_lo(pcrel640)
 	fsw f8, 8(sp)
 	sd ra, 0(sp)
 	li a0, 1000
@@ -48,57 +48,13 @@ label6:
 	mv a1, zero
 	li a2, 1000
 	bge zero, a2, label69
-label611:
-	li a4, 4000
-	fmv.w.x f11, zero
-	mul a3, a1, a4
-	add a2, s0, a3
-	mv a3, zero
-	j label37
+	j label611
 label65:
 	fmv.s f8, f10
 	mv a0, zero
 	li a2, 1000
 	bge zero, a2, label44
 	j label612
-label37:
-	sh2add a4, a3, a2
-	flw f13, 0(a4)
-	addiw a3, a3, 16
-	flw f14, 4(a4)
-	fadd.s f12, f11, f13
-	fadd.s f11, f12, f14
-	flw f12, 8(a4)
-	fadd.s f13, f11, f12
-	flw f11, 12(a4)
-	fadd.s f12, f13, f11
-	flw f13, 16(a4)
-	flw f14, 20(a4)
-	fadd.s f11, f12, f13
-	flw f13, 24(a4)
-	fadd.s f12, f11, f14
-	flw f14, 28(a4)
-	fadd.s f11, f12, f13
-	flw f13, 32(a4)
-	fadd.s f12, f11, f14
-	fadd.s f11, f12, f13
-	flw f12, 36(a4)
-	fadd.s f13, f11, f12
-	flw f11, 40(a4)
-	fadd.s f12, f13, f11
-	flw f13, 44(a4)
-	flw f14, 48(a4)
-	fadd.s f11, f12, f13
-	flw f13, 52(a4)
-	fadd.s f12, f11, f14
-	flw f14, 56(a4)
-	fadd.s f11, f12, f13
-	flw f13, 60(a4)
-	li a4, 992
-	fadd.s f12, f11, f14
-	fadd.s f11, f12, f13
-	bge a3, a4, label40
-	j label37
 label69:
 	mv a1, zero
 	li a2, 1000
@@ -110,15 +66,6 @@ label73:
 	li a3, 1000
 	bge zero, a3, label30
 	j label613
-label30:
-	addiw a0, a0, 1
-	fmv.s f10, f12
-	li a2, 100
-	bge a0, a2, label65
-	mv a1, zero
-	li a2, 1000
-	bge zero, a2, label69
-	j label611
 label72:
 	sh2add a4, a1, s1
 	li a3, 4000
@@ -199,7 +146,7 @@ label15:
 	j label15
 label18:
 	sh2add a2, a3, a2
-pcrel637:
+pcrel641:
 	auipc a3, %pcrel_hi(__cmmc_fp_constant_pool)
 	flw f14, 0(a2)
 	flw f15, 4(a2)
@@ -236,7 +183,7 @@ pcrel637:
 	fmv.w.x f13, zero
 	fadd.s f11, f12, f14
 	fmv.w.x f12, a2
-	addi a2, a3, %pcrel_lo(pcrel637)
+	addi a2, a3, %pcrel_lo(pcrel641)
 	fdiv.s f11, f11, f12
 	flw f12, 0(a2)
 	lui a2, 258048
@@ -245,53 +192,16 @@ pcrel637:
 	fmul.s f12, f11, f14
 	fmv.s f14, f11
 	fmul.s f15, f12, f12
-pcrel638:
+pcrel642:
 	auipc a3, %pcrel_hi(__cmmc_fp_constant_pool)
-	addi a2, a3, %pcrel_lo(pcrel638)
+	addi a2, a3, %pcrel_lo(pcrel642)
 	fsub.s f1, f15, f11
 	fabs.s f0, f1
 	flw f1, 4(a2)
 	flt.s a3, f1, f0
 	beq a3, zero, label26
 	flt.s a2, f11, f15
-	beq a2, zero, label24
-label614:
-	fadd.s f14, f12, f13
-	lui a2, 258048
-	fmv.w.x f0, a2
-	fmul.s f15, f14, f0
-	fmv.s f14, f12
-	fmv.s f12, f15
-	fmul.s f15, f15, f15
-pcrel639:
-	auipc a3, %pcrel_hi(__cmmc_fp_constant_pool)
-	addi a2, a3, %pcrel_lo(pcrel639)
-	fsub.s f1, f15, f11
-	fabs.s f0, f1
-	flw f1, 4(a2)
-	flt.s a3, f1, f0
-	beq a3, zero, label26
-	flt.s a2, f11, f15
-	beq a2, zero, label24
-	j label614
-label24:
-	fadd.s f13, f12, f14
-	lui a2, 258048
-	fmv.w.x f0, a2
-	fmul.s f15, f13, f0
-	fmv.s f13, f12
-	fmv.s f12, f15
-	fmul.s f15, f15, f15
-pcrel640:
-	auipc a3, %pcrel_hi(__cmmc_fp_constant_pool)
-	addi a2, a3, %pcrel_lo(pcrel640)
-	fsub.s f1, f15, f11
-	fabs.s f0, f1
-	flw f1, 4(a2)
-	flt.s a3, f1, f0
-	beq a3, zero, label26
-	flt.s a2, f11, f15
-	beq a2, zero, label24
+	beq a2, zero, label25
 	j label614
 label26:
 	sh2add a2, a1, s2
@@ -300,6 +210,44 @@ label26:
 	li a2, 1000
 	bge a1, a2, label73
 	j label72
+label614:
+	fadd.s f14, f12, f13
+	lui a2, 258048
+	fmv.w.x f0, a2
+	fmul.s f15, f14, f0
+	fmv.s f14, f12
+	fmv.s f12, f15
+	fmul.s f15, f15, f15
+pcrel643:
+	auipc a3, %pcrel_hi(__cmmc_fp_constant_pool)
+	addi a2, a3, %pcrel_lo(pcrel643)
+	fsub.s f1, f15, f11
+	fabs.s f0, f1
+	flw f1, 4(a2)
+	flt.s a3, f1, f0
+	beq a3, zero, label26
+	flt.s a2, f11, f15
+	beq a2, zero, label25
+	j label614
+label25:
+	fadd.s f13, f12, f14
+	lui a2, 258048
+	fmv.w.x f0, a2
+	fmul.s f15, f13, f0
+	fmv.s f13, f12
+	fmv.s f12, f15
+	fmul.s f15, f15, f15
+pcrel644:
+	auipc a3, %pcrel_hi(__cmmc_fp_constant_pool)
+	addi a2, a3, %pcrel_lo(pcrel644)
+	fsub.s f1, f15, f11
+	fabs.s f0, f1
+	flw f1, 4(a2)
+	flt.s a3, f1, f0
+	beq a3, zero, label26
+	flt.s a2, f11, f15
+	beq a2, zero, label25
+	j label614
 label613:
 	sh2add a1, a2, s2
 	li a4, 4000
@@ -441,6 +389,59 @@ label35:
 	li a3, 1000
 	bge a2, a3, label30
 	j label613
+label611:
+	li a4, 4000
+	fmv.w.x f11, zero
+	mul a3, a1, a4
+	add a2, s0, a3
+	mv a3, zero
+label37:
+	sh2add a4, a3, a2
+	flw f13, 0(a4)
+	addiw a3, a3, 16
+	flw f14, 4(a4)
+	fadd.s f12, f11, f13
+	fadd.s f11, f12, f14
+	flw f12, 8(a4)
+	fadd.s f13, f11, f12
+	flw f11, 12(a4)
+	fadd.s f12, f13, f11
+	flw f13, 16(a4)
+	flw f14, 20(a4)
+	fadd.s f11, f12, f13
+	flw f13, 24(a4)
+	fadd.s f12, f11, f14
+	flw f14, 28(a4)
+	fadd.s f11, f12, f13
+	flw f13, 32(a4)
+	fadd.s f12, f11, f14
+	fadd.s f11, f12, f13
+	flw f12, 36(a4)
+	fadd.s f13, f11, f12
+	flw f11, 40(a4)
+	fadd.s f12, f13, f11
+	flw f13, 44(a4)
+	flw f14, 48(a4)
+	fadd.s f11, f12, f13
+	flw f13, 52(a4)
+	fadd.s f12, f11, f14
+	flw f14, 56(a4)
+	fadd.s f11, f12, f13
+	flw f13, 60(a4)
+	li a4, 992
+	fadd.s f12, f11, f14
+	fadd.s f11, f12, f13
+	bge a3, a4, label40
+	j label37
+label30:
+	addiw a0, a0, 1
+	fmv.s f10, f12
+	li a2, 100
+	bge a0, a2, label65
+	mv a1, zero
+	li a2, 1000
+	bge zero, a2, label69
+	j label611
 label40:
 	sh2add a2, a3, a2
 	flw f13, 0(a2)
@@ -474,6 +475,29 @@ label612:
 	mul a3, a0, a2
 	mv a2, zero
 	add a1, s0, a3
+	j label46
+label49:
+	sh2add a1, a2, a1
+	addiw a0, a0, 1
+	flw f13, 0(a1)
+	flw f12, 4(a1)
+	fadd.s f11, f10, f13
+	flw f13, 8(a1)
+	fadd.s f10, f11, f12
+	flw f12, 12(a1)
+	fadd.s f11, f10, f13
+	flw f13, 16(a1)
+	flw f14, 20(a1)
+	fadd.s f10, f11, f12
+	flw f12, 24(a1)
+	fadd.s f11, f10, f13
+	fadd.s f10, f11, f14
+	fadd.s f11, f10, f12
+	flw f10, 28(a1)
+	fadd.s f8, f11, f10
+	li a2, 1000
+	bge a0, a2, label44
+	j label612
 label46:
 	sh2add a3, a2, a1
 	flw f11, 0(a3)
@@ -512,28 +536,6 @@ label46:
 	fadd.s f10, f11, f12
 	bge a2, a3, label49
 	j label46
-label49:
-	sh2add a1, a2, a1
-	addiw a0, a0, 1
-	flw f13, 0(a1)
-	flw f12, 4(a1)
-	fadd.s f11, f10, f13
-	flw f13, 8(a1)
-	fadd.s f10, f11, f12
-	flw f12, 12(a1)
-	fadd.s f11, f10, f13
-	flw f13, 16(a1)
-	flw f14, 20(a1)
-	fadd.s f10, f11, f12
-	flw f12, 24(a1)
-	fadd.s f11, f10, f13
-	fadd.s f10, f11, f14
-	fadd.s f11, f10, f12
-	flw f10, 28(a1)
-	fadd.s f8, f11, f10
-	li a2, 1000
-	bge a0, a2, label44
-	j label612
 label4:
 	ld ra, 0(sp)
 	flw f8, 8(sp)

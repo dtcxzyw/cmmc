@@ -87,67 +87,61 @@ main:
 	mv s0, a0
 	jal getint
 	mv s2, a0
-pcrel182:
+pcrel191:
 	auipc a0, %pcrel_hi(parent)
-	addi s1, a0, %pcrel_lo(pcrel182)
+	addi s1, a0, %pcrel_lo(pcrel191)
 	ble s0, zero, label75
 	mv a0, zero
 	li a1, 4
-	ble s0, a1, label72
+	ble s0, a1, label73
 	mv a2, s1
-	li a4, 1
-	li a3, 2
+	li a3, 1
+	li a4, 2
 	sw zero, 0(s1)
-	sw a4, 4(s1)
-	li a4, 3
-	sw a3, 8(s1)
+	sw a3, 4(s1)
+	li a3, 3
+	sw a4, 8(s1)
 	mv a0, a1
-	sw a4, 12(s1)
+	sw a3, 12(s1)
 	addiw a1, a1, 4
-	ble s0, a1, label72
+	ble s0, a1, label73
 	sh2add a2, a0, s1
-	addiw a4, a0, 1
-	addiw a3, a0, 2
+	addiw a3, a0, 1
+	addiw a4, a0, 2
 	sw a0, 0(a2)
-	sw a4, 4(a2)
-	addiw a4, a0, 3
-	sw a3, 8(a2)
+	sw a3, 4(a2)
+	addiw a3, a0, 3
+	sw a4, 8(a2)
 	mv a0, a1
-	sw a4, 12(a2)
+	sw a3, 12(a2)
 	addiw a1, a1, 4
-	ble s0, a1, label72
+	ble s0, a1, label73
 	sh2add a2, a0, s1
-	addiw a4, a0, 1
-	addiw a3, a0, 2
+	addiw a3, a0, 1
+	addiw a4, a0, 2
 	sw a0, 0(a2)
-	sw a4, 4(a2)
-	addiw a4, a0, 3
-	sw a3, 8(a2)
+	sw a3, 4(a2)
+	addiw a3, a0, 3
+	sw a4, 8(a2)
 	mv a0, a1
-	sw a4, 12(a2)
+	sw a3, 12(a2)
 	addiw a1, a1, 4
-	ble s0, a1, label72
+	ble s0, a1, label73
 	sh2add a2, a0, s1
-	addiw a4, a0, 1
-	addiw a3, a0, 2
+	addiw a3, a0, 1
+	addiw a4, a0, 2
 	sw a0, 0(a2)
-	sw a4, 4(a2)
-	addiw a4, a0, 3
-	sw a3, 8(a2)
+	sw a3, 4(a2)
+	addiw a3, a0, 3
+	sw a4, 8(a2)
 	mv a0, a1
-	sw a4, 12(a2)
+	sw a3, 12(a2)
 	addiw a1, a1, 4
-	ble s0, a1, label72
-	j label176
+	ble s0, a1, label73
+	j label183
 label157:
 	mv s3, zero
 	j label76
-label72:
-	sh2add a1, a0, s1
-	sw a0, 0(a1)
-	addiw a0, a0, 1
-	ble s0, a0, label75
-	j label72
 label75:
 	ble s2, zero, label115
 	j label157
@@ -155,41 +149,35 @@ label115:
 	mv a0, zero
 	mv a1, zero
 	ble s0, zero, label84
-	mv a2, s1
-	lw a4, 0(s1)
-	xor a3, zero, a4
+	mv a3, s1
+	lw a2, 0(s1)
+	xor a4, zero, a2
 	li a1, 1
-	sltiu a2, a3, 1
-	sext.w a0, a2
+	sltiu a3, a4, 1
+	sext.w a0, a3
 	ble s0, a1, label84
-	sh2add a2, a1, s1
-	lw a4, 0(a2)
-	xor a3, a1, a4
+	sh2add a3, a1, s1
+	lw a2, 0(a3)
+	xor a4, a1, a2
 	addiw a1, a1, 1
-	sltiu a2, a3, 1
-	addw a0, a0, a2
+	sltiu a3, a4, 1
+	addw a0, a0, a3
 	ble s0, a1, label84
-	sh2add a2, a1, s1
-	lw a4, 0(a2)
-	xor a3, a1, a4
+	sh2add a3, a1, s1
+	lw a2, 0(a3)
+	xor a4, a1, a2
 	addiw a1, a1, 1
-	sltiu a2, a3, 1
-	addw a0, a0, a2
+	sltiu a3, a4, 1
+	addw a0, a0, a3
 	ble s0, a1, label84
-	sh2add a2, a1, s1
-	lw a4, 0(a2)
-	xor a3, a1, a4
+	sh2add a3, a1, s1
+	lw a2, 0(a3)
+	xor a4, a1, a2
 	addiw a1, a1, 1
-	sltiu a2, a3, 1
-	addw a0, a0, a2
+	sltiu a3, a4, 1
+	addw a0, a0, a3
 	ble s0, a1, label84
-	j label178
-label130:
-	mv a0, zero
-	mv a1, zero
-label80:
-	ble s0, a1, label84
-	j label178
+	j label186
 label84:
 	jal putint
 	ld ra, 0(sp)
@@ -201,14 +189,20 @@ label84:
 	ld s0, 40(sp)
 	addi sp, sp, 48
 	ret
-label178:
-	sh2add a2, a1, s1
-	lw a4, 0(a2)
-	xor a3, a1, a4
+label186:
+	sh2add a3, a1, s1
+	lw a2, 0(a3)
+	xor a4, a1, a2
 	addiw a1, a1, 1
-	sltiu a2, a3, 1
-	addw a0, a0, a2
+	sltiu a3, a4, 1
+	addw a0, a0, a3
 	j label80
+label130:
+	mv a0, zero
+	mv a1, zero
+label80:
+	ble s0, a1, label84
+	j label186
 label76:
 	jal getint
 	mv s4, a0
@@ -229,16 +223,22 @@ label79:
 	addiw s3, s3, 1
 	ble s2, s3, label130
 	j label76
-label176:
+label183:
 	sh2add a2, a0, s1
-	addiw a4, a0, 1
-	addiw a3, a0, 2
+	addiw a3, a0, 1
+	addiw a4, a0, 2
 	sw a0, 0(a2)
-	sw a4, 4(a2)
-	addiw a4, a0, 3
-	sw a3, 8(a2)
+	sw a3, 4(a2)
+	addiw a3, a0, 3
+	sw a4, 8(a2)
 	mv a0, a1
-	sw a4, 12(a2)
+	sw a3, 12(a2)
 	addiw a1, a1, 4
-	ble s0, a1, label72
-	j label176
+	ble s0, a1, label73
+	j label183
+label73:
+	sh2add a1, a0, s1
+	sw a0, 0(a1)
+	addiw a0, a0, 1
+	ble s0, a0, label75
+	j label73

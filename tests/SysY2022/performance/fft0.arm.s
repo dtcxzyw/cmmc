@@ -158,7 +158,7 @@ label119:
 	cmp r2, r0
 	ble label99
 	ands r1, r0, #1
-	bne label97
+	bne label98
 	b label238
 label99:
 	ldr r2, [sp, #16]
@@ -183,9 +183,9 @@ label238:
 	cmp r2, r0
 	ble label99
 	ands r1, r0, #1
-	bne label97
+	bne label98
 	b label238
-label97:
+label98:
 	add r1, r0, r0, lsr #31
 	ldr r5, [sp, #12]
 	ldr r7, [sp, #0]
@@ -201,7 +201,7 @@ label97:
 	cmp r2, r0
 	ble label99
 	ands r1, r0, #1
-	bne label97
+	bne label98
 	b label238
 label102:
 	ldr r7, [sp, #0]
@@ -277,17 +277,17 @@ label106:
 	ldr r1, [r6, r7, lsl #2]
 	mov r0, r5
 	bl multiply
-	mov r1, r0
 	add r3, r9, r0
 	movw r2, #51217
+	mov r1, r0
+	movt r2, #4405
 	sub r1, r9, r0
 	movw r0, #1
-	movt r2, #4405
-	movt r0, #15232
 	smmul r10, r3, r2
+	movt r0, #15232
 	add r1, r1, r0
-	smmul r2, r1, r2
 	asr r11, r10, #26
+	smmul r2, r1, r2
 	add r10, r11, r10, lsr #31
 	mls r3, r10, r0, r3
 	str r3, [r6, r8, lsl #2]

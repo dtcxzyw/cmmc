@@ -22,7 +22,7 @@ qemu_command = {
     'mips': f'{qemu_path}/qemu-mipsel -L /usr/mipsel-linux-gnu -s {stack_size} -d plugin -plugin {qemu_path}/tests/plugin/libinsn_clock.so -D /dev/stderr'.split(),
     'arm': f'{qemu_path}/qemu-arm -L /usr/arm-linux-gnueabihf -cpu cortex-a7 -s {stack_size} -d plugin -plugin {qemu_path}/tests/plugin/libinsn_clock.so -D /dev/stderr'.split(),
 }
-gcc_ref_command = "gcc -x c++ -O3 -DNDEBUG -march=native -s -funroll-loops -ffp-contract=on -w ".split()
+gcc_ref_command = "gcc -x c++ -O3 -DNDEBUG -march=native -fno-tree-vectorize -s -funroll-loops -ffp-contract=on -w ".split()
 clang_ref_command = "clang -Qn -O3 -DNDEBUG -emit-llvm -fno-slp-vectorize -fno-vectorize -mllvm -vectorize-loops=false -S -ffp-contract=on -w ".split()
 qemu_gcc_ref_command = {
     'riscv': "riscv64-linux-gnu-gcc-11 -O2 -DNDEBUG -march=rv64gc -mabi=lp64d -mcmodel=medlow -ffp-contract=on -w ".split(),

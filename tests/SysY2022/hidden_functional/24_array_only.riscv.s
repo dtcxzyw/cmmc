@@ -50,6 +50,34 @@ label5:
 label9:
 	lw a0, 0(sp)
 	mv a1, s0
+	j label10
+label68:
+	mv a0, s0
+label15:
+	addiw a0, a0, -1
+	slliw s3, s3, 1
+	bne a0, zero, label15
+	addw s3, s1, s3
+	bne s0, zero, label20
+	lw a1, 0(sp)
+	subw s4, a1, s1
+	li a0, 5
+	sw s4, 0(sp)
+	bge s3, a0, label27
+	j label5
+label20:
+	lw a0, 0(sp)
+	mv a1, s0
+label21:
+	addiw a1, a1, -1
+	slliw a0, a0, 1
+	bne a1, zero, label21
+	mv a1, a0
+	subw s4, a0, s1
+	li a0, 5
+	sw s4, 0(sp)
+	bge s3, a0, label27
+	j label5
 label10:
 	addiw a1, a1, -1
 	slliw a0, a0, 1
@@ -65,33 +93,6 @@ label10:
 	sw s4, 0(sp)
 	bge s3, a0, label27
 	j label5
-label68:
-	mv a0, s0
-label15:
-	addiw a0, a0, -1
-	slliw s3, s3, 1
-	bne a0, zero, label15
-	addw s3, s1, s3
-	bne s0, zero, label21
-	lw a1, 0(sp)
-	subw s4, a1, s1
-	li a0, 5
-	sw s4, 0(sp)
-	bge s3, a0, label27
-	j label5
-label21:
-	lw a0, 0(sp)
-	mv a1, s0
-label22:
-	addiw a1, a1, -1
-	slliw a0, a0, 1
-	bne a1, zero, label22
-	mv a1, a0
-	subw s4, a0, s1
-	li a0, 5
-	sw s4, 0(sp)
-	bge s3, a0, label27
-	j label5
 label27:
 	bne s0, zero, label94
 	addiw a1, s2, 1
@@ -100,6 +101,31 @@ label27:
 	addw s2, a1, a2
 	bne s2, a0, label2
 	j label38
+label30:
+	addiw a2, a1, -1
+	slliw a1, a0, 1
+	bne a2, zero, label104
+	lw a2, 0(sp)
+	lw a0, 4(sp)
+	addw s2, a1, a2
+	bne s2, a0, label2
+	j label38
+label104:
+	mv a0, a1
+	mv a1, a2
+	j label30
+label38:
+	li a0, 10
+	jal putch
+	ld ra, 16(sp)
+	mv a0, zero
+	ld s3, 24(sp)
+	ld s4, 32(sp)
+	ld s1, 40(sp)
+	ld s0, 8(sp)
+	ld s2, 48(sp)
+	addi sp, sp, 56
+	ret
 label94:
 	mv a1, s0
 	addiw a1, s0, -1
@@ -115,18 +141,6 @@ label94:
 label98:
 	mv a0, a1
 	mv a1, s0
-label30:
-	addiw a2, a1, -1
-	slliw a1, a0, 1
-	bne a2, zero, label104
-	lw a2, 0(sp)
-	lw a0, 4(sp)
-	addw s2, a1, a2
-	bne s2, a0, label2
-	j label38
-label104:
-	mv a0, a1
-	mv a1, a2
 	j label30
 label35:
 	addiw a1, a1, -1
@@ -138,15 +152,4 @@ label35:
 	lw a0, 4(sp)
 	addw s2, a1, a2
 	bne s2, a0, label2
-label38:
-	li a0, 10
-	jal putch
-	ld ra, 16(sp)
-	mv a0, zero
-	ld s3, 24(sp)
-	ld s4, 32(sp)
-	ld s1, 40(sp)
-	ld s0, 8(sp)
-	ld s2, 48(sp)
-	addi sp, sp, 56
-	ret
+	j label38

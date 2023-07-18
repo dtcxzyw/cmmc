@@ -424,12 +424,12 @@ label4:
 	sh1add a1, a0, s3
 	sh1add a0, a1, a2
 	jal fib
-	slli t6, s0, 1
 	slli a4, s0, 1
 	mv t1, a0
-	srli a6, t6, 52
 	sd a0, 200(sp)
+	slli t6, s0, 1
 	srliw a0, a0, 31
+	srli a6, t6, 52
 	add a1, t1, a0
 	sraiw a2, a1, 1
 	ld a1, 304(sp)

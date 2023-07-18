@@ -191,9 +191,9 @@ label10:
 	subw s3, zero, s1
 	subw s1, s2, s0
 	addw t6, t6, s3
-	ld s2, 56(sp)
 	slliw s0, a1, 3
 	addw t6, t6, s1
+	ld s2, 56(sp)
 	subw s1, zero, s0
 	sh1add s0, a3, a3
 	addw t6, t6, s1

@@ -18,8 +18,8 @@ label2:
 label4:
 	ldr r5, [sp, #144]
 	asr r4, r5, #31
-	add r0, r5, r5, lsr #31
 	and r1, r5, #1
+	add r0, r5, r5, lsr #31
 	add r4, r5, r4, lsr #17
 	str r1, [sp, #28]
 	asr r0, r0, #1
@@ -140,8 +140,8 @@ label4:
 	add r1, r5, r1, lsr #20
 	asr r1, r1, #12
 	and r3, r1, #1
-	bic r0, r0, r3
 	eor r2, r3, #1
+	bic r0, r0, r3
 	str r3, [sp, #40]
 	orr r1, r3, r0
 	str r2, [sp, #48]
@@ -439,8 +439,8 @@ label4:
 	add r0, r7, r0, lsl #1
 	add r0, r1, r0, lsl #1
 	bl fib
-	str r0, [sp, #88]
 	mov r3, r0
+	str r0, [sp, #88]
 	ldr r1, [sp, #356]
 	add r0, r0, r0, lsr #31
 	asr r0, r0, #1

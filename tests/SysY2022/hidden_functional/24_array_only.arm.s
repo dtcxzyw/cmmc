@@ -50,6 +50,34 @@ label5:
 label9:
 	ldr r0, [sp, #0]
 	mov r1, r4
+	b label10
+label68:
+	mov r0, r4
+label15:
+	subs r0, r0, #1
+	lsl r8, r8, #1
+	bne label15
+	add r8, r6, r8
+	cmp r4, #0
+	bne label20
+	ldr r0, [sp, #0]
+	sub r9, r0, r6
+	cmp r8, #5
+	str r9, [sp, #0]
+	bge label27
+	b label5
+label20:
+	ldr r0, [sp, #0]
+	mov r1, r4
+label21:
+	subs r1, r1, #1
+	lsl r0, r0, #1
+	bne label21
+	sub r9, r0, r6
+	cmp r8, #5
+	str r9, [sp, #0]
+	bge label27
+	b label5
 label10:
 	subs r1, r1, #1
 	lsl r0, r0, #1
@@ -60,33 +88,6 @@ label10:
 	bne label68
 	add r8, r6, r8
 	ldr r0, [sp, #0]
-	sub r9, r0, r6
-	cmp r8, #5
-	str r9, [sp, #0]
-	bge label27
-	b label5
-label68:
-	mov r0, r4
-label15:
-	subs r0, r0, #1
-	lsl r8, r8, #1
-	bne label15
-	add r8, r6, r8
-	cmp r4, #0
-	bne label21
-	ldr r0, [sp, #0]
-	sub r9, r0, r6
-	cmp r8, #5
-	str r9, [sp, #0]
-	bge label27
-	b label5
-label21:
-	ldr r0, [sp, #0]
-	mov r1, r4
-label22:
-	subs r1, r1, #1
-	lsl r0, r0, #1
-	bne label22
 	sub r9, r0, r6
 	cmp r8, #5
 	str r9, [sp, #0]
