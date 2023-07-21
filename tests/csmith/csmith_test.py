@@ -56,7 +56,7 @@ double fabs(double x) {
 }
 """
 optimization_level = '3'
-prog_timeout = 10.0
+prog_timeout = 0.2
 cmmc_timeout = 20.0
 
 cwd = os.path.dirname(binary)+"/csmith"
