@@ -628,5 +628,12 @@ const MicroarchitectureInfo& RISCVScheduleModel_sifive_u74::getInfo() const {
     };
     return info;
 }
+bool RISCVScheduleModel_sifive_u74::isExpensiveInst(const MIRInst& inst, const CodeGenContext& ctx) const {
+    CMMC_UNUSED(ctx);
+    switch(inst.opcode()) {
+        default:
+            return true;
+    }
+}
 
 CMMC_TARGET_NAMESPACE_END

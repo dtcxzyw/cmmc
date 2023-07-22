@@ -1317,17 +1317,17 @@ label1274:
 label1276:
 	lw s6, 504(sp)
 	ld s0, 1784(sp)
-	sh2add a1, s6, s0
 	addi a0, s0, 12
 	addi a2, s0, 60
+	sh2add a1, s6, s0
 	flw f10, 0(a1)
 	sh2add a1, s6, a0
 	fsw f10, 400(sp)
 	addi a0, s0, 24
 	flw f25, 0(a1)
 	sh2add a1, s6, a0
-	flw f12, 0(a1)
 	addi a0, s0, 36
+	flw f12, 0(a1)
 	sh2add a1, s6, a0
 	fsw f12, 396(sp)
 	addi a0, s0, 48
@@ -1341,18 +1341,18 @@ label1276:
 	fsw f14, 392(sp)
 	flw f24, 0(a0)
 	sh2add a0, s6, a1
-	flw f16, 0(a0)
 	addi a1, s0, 84
+	flw f16, 0(a0)
 	sh2add a0, s6, a1
 	fsw f16, 680(sp)
 	addi a1, s0, 96
 	flw f8, 0(a0)
 	sh2add a0, s6, a1
-	addi a1, s0, 108
 	flw f23, 0(a0)
+	addi a1, s0, 108
 	sh2add a0, s6, a1
-	addi a1, s0, 120
 	flw f14, 0(a0)
+	addi a1, s0, 120
 	sh2add a0, s6, a1
 	fsw f14, 404(sp)
 	addi a1, s0, 132
@@ -1385,8 +1385,8 @@ label1276:
 	addi a1, s0, 216
 	flw f27, 0(a0)
 	sh2add a0, s6, a1
-	addi a1, s0, 228
 	flw f11, 0(a0)
+	addi a1, s0, 228
 	sh2add a0, s6, a1
 	fsw f11, 432(sp)
 	addi a1, s0, 240
@@ -1404,8 +1404,8 @@ label1276:
 	addi a1, s0, 276
 	flw f21, 0(a0)
 	sh2add a0, s6, a1
-	addi a1, s0, 288
 	flw f22, 0(a0)
+	addi a1, s0, 288
 	sh2add a0, s6, a1
 	addi a1, s0, 300
 	flw f10, 0(a0)
@@ -1414,8 +1414,8 @@ label1276:
 	addi a1, s0, 312
 	flw f20, 0(a0)
 	sh2add a0, s6, a1
-	flw f12, 0(a0)
 	addi a1, s0, 324
+	flw f12, 0(a0)
 	sh2add a0, s6, a1
 	fsw f12, 648(sp)
 	addi a1, s0, 336
@@ -1450,8 +1450,8 @@ label1276:
 	addi a1, s0, 432
 	flw f19, 0(a0)
 	sh2add a0, s6, a1
-	addi a1, s0, 444
 	flw f10, 0(a0)
+	addi a1, s0, 444
 	sh2add a0, s6, a1
 	fsw f10, 792(sp)
 	addi a1, s0, 456
@@ -1612,8 +1612,8 @@ label1276:
 	addi a5, s1, 180
 	sh2add t0, s6, a5
 	sd a4, 720(sp)
-	lw a2, 0(t0)
 	addi a4, s1, 168
+	lw a2, 0(t0)
 	sh2add a5, s6, a4
 	lw t0, 0(a5)
 	sd t0, 656(sp)
@@ -1719,28 +1719,28 @@ label1276:
 	flw f16, 632(sp)
 	fmv.s f17, f26
 	jal params_f40_i24
-	addi t4, s0, 456
 	addi a1, s0, 132
-	addi a0, s0, 108
 	addi a7, s0, 84
 	addi s7, s0, 180
 	fmv.s f8, f10
-	addi t3, s0, 432
+	addi t1, s0, 264
 	addi a2, s0, 12
 	addi s11, s0, 96
+	addi t3, s0, 432
+	addi s6, s0, 336
+	addi a3, s0, 36
+	addi t6, s0, 372
 	addi t0, s0, 24
 	addi a4, s0, 48
-	addi a3, s0, 36
-	addi a5, s0, 60
-	addi a6, s0, 72
 	addi s8, s0, 228
-	addi t1, s0, 264
-	addi s10, s0, 276
+	addi a6, s0, 72
 	addi t5, s0, 300
+	addi a5, s0, 60
+	addi a0, s0, 108
+	addi s10, s0, 276
 	addi s9, s0, 324
-	addi s6, s0, 336
-	addi t6, s0, 372
 	addi t2, s0, 444
+	addi t4, s0, 456
 	sd a2, 640(sp)
 	sd t0, 480(sp)
 	addi a2, s0, 120
@@ -1750,10 +1750,10 @@ label1276:
 	addi a3, s0, 168
 	sd a5, 672(sp)
 	addi a4, s0, 384
-	addi a5, s0, 156
 	sd a6, 552(sp)
-	sd a7, 560(sp)
+	addi a5, s0, 156
 	addi a6, s0, 288
+	sd a7, 560(sp)
 	sd s11, 568(sp)
 	addi a7, s0, 216
 	addi s11, s0, 144
@@ -1836,14 +1836,14 @@ label1276:
 	jal params_fa40
 	addi a1, s1, 276
 	addi a0, s1, 12
+	addi a4, s1, 192
 	addi t0, s1, 36
+	addi t1, s1, 132
 	addi t5, s1, 72
 	addi t4, s1, 84
 	addi t3, s1, 120
-	addi t1, s1, 132
 	addi t2, s1, 144
 	addi a5, s1, 180
-	addi a4, s1, 192
 	fmv.s f23, f10
 	addi a3, s1, 228
 	addi a2, s1, 264
@@ -1966,8 +1966,8 @@ label1276:
 	jal putint
 	li a0, 10
 	jal putch
-	mv a0, zero
 	ld ra, 616(sp)
+	mv a0, zero
 	ld s4, 696(sp)
 	ld s5, 1696(sp)
 	ld s3, 1712(sp)

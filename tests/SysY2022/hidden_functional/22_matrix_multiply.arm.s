@@ -21,13 +21,13 @@ main:
 	bl getint
 	str r0, [sp, #0]
 	bl getint
-	movw r7, #:lower16:b
+	mov r4, #0
 	movw r1, #:lower16:a
 	str r0, [sp, #8]
 	mov r6, r0
-	mov r4, #0
-	movt r7, #:upper16:b
+	movw r7, #:lower16:b
 	movt r1, #:upper16:a
+	movt r7, #:upper16:b
 	str r1, [sp, #12]
 	movw r1, #:lower16:res
 	str r7, [sp, #16]
@@ -42,7 +42,7 @@ main:
 	mla r5, r4, r0, r1
 	cmp r6, #0
 	ble label7
-	b label200
+	b label199
 label8:
 	bl getint
 	mov r4, r0
@@ -58,7 +58,7 @@ label8:
 	ldr r7, [sp, #20]
 	cmp r7, #0
 	ble label14
-	b label202
+	b label201
 label70:
 	mov r3, #0
 	mov r0, #400
@@ -95,13 +95,13 @@ label25:
 	ldr r9, [r7, #8]
 	add r8, r6, #800
 	mla r5, r10, r11, r5
+	add r6, r6, #1200
 	ldr r8, [r8, r0, lsl #2]
+	ldr r7, [r7, #12]
+	ldr r6, [r6, r0, lsl #2]
 	mla r5, r9, r8, r5
-	add r8, r6, #1200
-	ldr r6, [r7, #12]
-	ldr r7, [r8, r0, lsl #2]
 	mov r8, r4
-	mla r5, r6, r7, r5
+	mla r5, r7, r6, r5
 	add r4, r4, #4
 	ldr r6, [sp, #8]
 	cmp r6, r4
@@ -157,7 +157,7 @@ label29:
 	cmp r6, r4
 	ble label26
 	b label25
-label200:
+label199:
 	mov r6, #0
 	b label5
 label7:
@@ -171,7 +171,7 @@ label7:
 	mla r5, r4, r0, r1
 	cmp r6, #0
 	ble label7
-	b label200
+	b label199
 label5:
 	bl getint
 	str r0, [r5, r6, lsl #2]
@@ -181,7 +181,7 @@ label5:
 	ble label7
 	mov r6, r0
 	b label5
-label202:
+label201:
 	mov r7, #0
 label12:
 	bl getint
@@ -203,7 +203,7 @@ label92:
 	mla r5, r4, r0, r1
 	cmp r7, #0
 	ble label37
-	b label221
+	b label220
 label20:
 	add r0, r0, #1
 	ldr r7, [sp, #20]
@@ -218,7 +218,7 @@ label20:
 	cmp r6, r4
 	ble label26
 	b label25
-label221:
+label220:
 	mov r6, #0
 label35:
 	ldr r0, [r5, r6, lsl #2]
@@ -240,7 +240,7 @@ label14:
 	ldr r7, [sp, #20]
 	cmp r7, #0
 	ble label14
-	b label202
+	b label201
 label37:
 	mov r0, #10
 	bl putch
@@ -254,7 +254,7 @@ label37:
 	mla r5, r4, r0, r1
 	cmp r7, #0
 	ble label37
-	b label221
+	b label220
 label33:
 	mov r0, #0
 	add sp, sp, #28

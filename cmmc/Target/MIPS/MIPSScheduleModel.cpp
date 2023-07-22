@@ -98,5 +98,8 @@ bool MIPSScheduleModel_emulator::peepholeOpt(MIRFunction& func, const CodeGenCon
     }
     return modified;
 }
+bool MIPSScheduleModel_emulator::isExpensiveInst(const MIRInst&, const CodeGenContext&) const {
+    return true;
+}
 
 CMMC_TARGET_NAMESPACE_END

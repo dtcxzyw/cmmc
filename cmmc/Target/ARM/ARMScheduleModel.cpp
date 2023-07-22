@@ -473,5 +473,12 @@ const MicroarchitectureInfo& ARMScheduleModel_cortex_a72::getInfo() const {
     };
     return info;
 }
+bool ARMScheduleModel_cortex_a72::isExpensiveInst(const MIRInst& inst, const CodeGenContext& ctx) const {
+    CMMC_UNUSED(ctx);
+    switch(inst.opcode()) {
+        default:
+            return true;
+    }
+}
 
 CMMC_TARGET_NAMESPACE_END

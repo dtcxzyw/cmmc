@@ -26,10 +26,10 @@ main:
 	mv s0, a0
 	li a0, 22
 	jal _sysy_starttime
-	mv a4, zero
 	fmv.w.x f11, zero
 pcrel223:
 	auipc a2, %pcrel_hi(y)
+	mv a4, zero
 pcrel224:
 	auipc a1, %pcrel_hi(x)
 	fmv.s f8, f11

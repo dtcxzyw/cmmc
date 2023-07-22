@@ -38,6 +38,7 @@ public:
     }
     const MicroarchitectureInfo& getInfo() const override;
     {% if model.peephole %} bool peepholeOpt(MIRFunction& func, const CodeGenContext& ctx) const override; {% endif %}
+    bool isExpensiveInst(const MIRInst& inst, const CodeGenContext& ctx) const override;
 };
 {% endfor %}
 

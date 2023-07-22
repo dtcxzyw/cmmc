@@ -37,13 +37,11 @@ label22:
 	li $t3, 1
 label4:
 	sll $t4, $t3, 2
-	addu $t4, $t0, $t4
-	lwc1 $f4, 0($t4)
+	addu $t5, $t0, $t4
+	lwc1 $f4, 0($t5)
 	add.s $f4, $f4, $f4
-	sll $t4, $t3, 2
-	addu $t4, $t1, $t4
-	swc1 $f4, 0($t4)
-	sll $t4, $t3, 2
+	addu $t5, $t1, $t4
+	swc1 $f4, 0($t5)
 	addu $t4, $t2, $t4
 	sll $t5, $t3, 1
 	addiu $t5, $t5, 64

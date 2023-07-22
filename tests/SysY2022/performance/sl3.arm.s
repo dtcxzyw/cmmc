@@ -74,7 +74,7 @@ main:
 	ldr r6, [sp, #0]
 	cmp r6, r4
 	ble label12
-	b label295
+	b label293
 label38:
 	mov r4, #1
 	mov r0, r4
@@ -124,7 +124,7 @@ label18:
 	add sp, sp, #52
 	mov r0, #0
 	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
-label295:
+label293:
 	add r6, r3, r5, lsl #2
 	mov r7, #1
 	str r7, [r3, r5, lsl #2]
@@ -136,7 +136,7 @@ label295:
 	ldr r6, [sp, #0]
 	cmp r6, r4
 	ble label12
-	b label295
+	b label293
 label14:
 	add r2, r2, #1
 	ldr r6, [sp, #0]
@@ -181,7 +181,7 @@ label14:
 	ldr r6, [sp, #0]
 	cmp r6, r4
 	ble label12
-	b label295
+	b label293
 label87:
 	mov r4, r0
 	ldr r1, [sp, #24]
@@ -367,7 +367,7 @@ label6:
 	ldr r6, [sp, #0]
 	cmp r6, r4
 	ble label12
-	b label295
+	b label293
 label12:
 	mov r4, #1
 	str r4, [r3, r5, lsl #2]

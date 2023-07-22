@@ -18,9 +18,9 @@ mean:
 main:
 	push { r4, r5, r6, r7, lr }
 	vpush { s16 }
+	mov r7, #0
 	movw r6, #:lower16:var
 	movw r5, #:lower16:mean
-	mov r7, #0
 	movw r4, #:lower16:a
 	movt r6, #:upper16:var
 	movt r5, #:upper16:mean

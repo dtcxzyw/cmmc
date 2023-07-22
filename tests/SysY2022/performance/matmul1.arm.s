@@ -57,11 +57,11 @@ label68:
 	mov r0, #0
 	cmp r0, #1000
 	bge label21
-	b label623
+	b label622
 label46:
 	add sp, sp, #20
 	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
-label623:
+label622:
 	mov r4, #0
 	mov r5, r4
 	b label17
@@ -100,7 +100,7 @@ label208:
 	movge r0, r4
 	cmp r3, #1000
 	bge label511
-	b label641
+	b label640
 label17:
 	mov r6, #4000
 	ldr r7, [sp, #8]
@@ -109,17 +109,17 @@ label17:
 	add r7, r1, r4, lsl #2
 	add r4, r4, #4
 	cmp r4, #1000
-	add r10, r6, #4000
+	add r11, r6, #4000
 	ldr r9, [r6, r0, lsl #2]
-	ldr r11, [r7, #4]
-	ldr r10, [r10, r0, lsl #2]
-	mul r10, r11, r10
+	ldr r10, [r7, #4]
+	ldr r11, [r11, r0, lsl #2]
+	mul r10, r10, r11
 	mla r8, r8, r9, r10
-	ldr r9, [r7, #8]
-	add r10, r6, #8000
-	ldr r10, [r10, r0, lsl #2]
+	ldr r10, [r7, #8]
+	add r9, r6, #8000
+	ldr r9, [r9, r0, lsl #2]
 	ldr r7, [r7, #12]
-	mla r8, r9, r10, r8
+	mla r8, r10, r9, r8
 	movw r9, #12000
 	add r6, r6, r9
 	ldr r6, [r6, r0, lsl #2]
@@ -132,7 +132,7 @@ label20:
 	add r0, r0, #1
 	cmp r0, #1000
 	bge label21
-	b label623
+	b label622
 label261:
 	mov r0, #0
 	cmp r0, #1000
@@ -148,7 +148,7 @@ label265:
 	mov r0, r5
 	cmp r5, #1000
 	bge label33
-label618:
+label617:
 	mov r1, #4000
 	ldr r4, [sp, #0]
 	mov r2, #0
@@ -223,7 +223,7 @@ label44:
 	movge r0, r4
 	cmp r3, #1000
 	bge label511
-	b label641
+	b label640
 label35:
 	add r3, r1, r2, lsl #2
 	ldr r5, [r1, r2, lsl #2]
@@ -284,7 +284,7 @@ label38:
 	add r5, r1, r2
 	cmp r0, #1000
 	bge label33
-	b label618
+	b label617
 label27:
 	mov r3, #4000
 	ldr r4, [sp, #0]
@@ -424,15 +424,15 @@ label21:
 	mov r0, #0
 	cmp r0, #1000
 	bge label21
-	b label623
-label641:
+	b label622
+label640:
 	ldr r4, [r1, r3, lsl #2]
 	add r3, r3, #1
 	cmp r0, r4
 	movge r0, r4
 	cmp r3, #1000
 	bge label511
-	b label641
+	b label640
 label33:
 	mov r0, #92
 	bl _sysy_stoptime

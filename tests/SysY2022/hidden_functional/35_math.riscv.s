@@ -678,6 +678,8 @@ label423:
 	j label412
 label424:
 	lui a0, 260096
+pcrel571:
+	auipc a1, %pcrel_hi(__cmmc_fp_constant_pool)
 	fmv.w.x f10, a0
 	lui a0, 258048
 	fsub.s f11, f8, f10
@@ -693,13 +695,11 @@ label424:
 	fadd.s f12, f14, f10
 	fadd.s f14, f12, f13
 	fmv.w.x f12, a0
-pcrel571:
-	auipc a0, %pcrel_hi(__cmmc_fp_constant_pool)
-	addi a1, a0, %pcrel_lo(pcrel571)
-	li a0, 1
+	addi a0, a1, %pcrel_lo(pcrel571)
 	fmul.s f11, f14, f11
 	fdiv.s f13, f11, f12
-	flw f12, 8(a1)
+	flw f12, 8(a0)
+	li a0, 1
 	fmv.s f11, f8
 	jal asr5
 	fmul.s f10, f9, f10
@@ -779,9 +779,8 @@ label417:
 	li a0, 32
 	jal putch
 	fmv.w.x f10, zero
-	flt.s a0, f10, f8
 	flt.s s1, f10, f8
-	beq a0, zero, label418
+	beq s1, zero, label418
 	j label426
 label419:
 	li a0, 32

@@ -11,18 +11,18 @@ p:
 .globl main
 main:
 	push { r4, r5, r6, r7, r8, r9, r10, lr }
-	mov r1, #1
 	mov r3, #7
-	mov r0, #8
-	mov r2, #4
-	sub sp, sp, #112
 	mov r7, #2
-	mov r9, #9
 	mov r8, #3
+	sub sp, sp, #112
+	mov r1, #1
+	mov r6, #0
+	mov r2, #4
+	mov r0, #8
+	mov r9, #9
+	add r5, sp, #52
 	str r0, [sp, #52]
 	mov r4, sp
-	mov r6, #0
-	add r5, sp, #52
 	str r3, [r5, #4]
 	str r2, [r5, #8]
 	str r1, [r5, #12]

@@ -24,8 +24,8 @@ tree:
 	push { r4, r5, r6, r7, r8, lr }
 	movw r6, #:lower16:next
 	mov r3, r1
-	mov r2, #80
 	movw r5, #:lower16:to
+	mov r2, #80
 	movt r6, #:upper16:next
 	movw r1, #:lower16:dep
 	mul r4, r0, r2
@@ -142,10 +142,10 @@ main:
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
 	sub sp, sp, #28
 	bl getch
-	mov r4, r0
 	cmp r0, #48
-	movw r6, #:lower16:dep
+	mov r4, r0
 	mov r1, #0
+	movw r6, #:lower16:dep
 	movw r3, #:lower16:next
 	mov r0, #0
 	movt r6, #:upper16:dep
@@ -540,8 +540,8 @@ label131:
 	mov r4, r5
 label133:
 	bl getch
-	cmp r0, #48
 	mov r1, #0
+	cmp r0, #48
 	mov r5, r0
 	mov r0, #0
 	movwlt r0, #1

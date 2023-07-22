@@ -6,8 +6,8 @@
 .fpu vfpv4
 .globl main
 main:
-	push { r4, r5, r6, r7, lr }
-	sub sp, sp, #68
+	push { r4, r5, r6, lr }
+	sub sp, sp, #64
 	mov r4, sp
 label2:
 	bl getch
@@ -45,21 +45,19 @@ label13:
 	ble label63
 	b label101
 label14:
-	mov r3, #10
-	movw r2, #26215
-	movt r2, #26214
-	smmul r6, r1, r2
-	asr r7, r6, #2
-	add r6, r7, r6, lsr #31
-	mls r3, r6, r3, r1
-	smmul r1, r1, r2
-	add r3, r3, #48
-	asr r2, r1, #2
-	str r3, [r4, r0, lsl #2]
-	add r1, r2, r1, lsr #31
+	mov r2, #10
+	movw r3, #26215
+	movt r3, #26214
+	smmul r3, r1, r3
+	asr r6, r3, #2
+	add r3, r6, r3, lsr #31
+	cmp r3, #0
+	mls r1, r3, r2, r1
+	add r1, r1, #48
+	str r1, [r4, r0, lsl #2]
 	add r0, r0, #1
-	cmp r1, #0
 	ble label73
+	mov r1, r3
 	b label14
 label73:
 	movs r6, r0
@@ -88,8 +86,8 @@ label63:
 	b label20
 label22:
 	mov r0, #0
-	add sp, sp, #68
-	pop { r4, r5, r6, r7, pc }
+	add sp, sp, #64
+	pop { r4, r5, r6, pc }
 label34:
 	add r1, r5, r5, lsl #2
 	add r5, r0, r1, lsl #1

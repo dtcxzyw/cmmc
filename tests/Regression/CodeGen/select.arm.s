@@ -267,3 +267,12 @@ select_one:
 	mov r0, r2
 	moveq r0, r1
 	bx lr
+.globl select_constant
+select_constant:
+	cmp r0, #0
+	movw r1, #48348
+	movw r0, #49414
+	movt r1, #36635
+	movt r0, #51810
+	movne r0, r1
+	bx lr

@@ -23,8 +23,8 @@ main:
 	mov r0, #161
 	bl _sysy_starttime
 	mov r0, #0
-	mov r3, r4
 	movw r6, #:lower16:buffer
+	mov r3, r4
 	str r0, [sp, #320]
 	movt r6, #:upper16:buffer
 	ldr r1, [sp, #340]
@@ -44,23 +44,20 @@ label5:
 	add r2, r1, r2, lsr #15
 	asr r2, r2, #17
 	add r1, r1, r2
-	add r2, r1, r1, lsl #5
 	add r1, r1, r1, lsl #5
-	add r2, r2, r2, lsl #13
+	add r2, r1, r1, lsl #13
 	asr r3, r2, #31
 	add r3, r2, r3, lsr #15
 	asr r3, r3, #17
 	add r2, r2, r3
-	add r3, r2, r2, lsl #5
 	add r2, r2, r2, lsl #5
-	add r3, r3, r3, lsl #13
+	add r3, r2, r2, lsl #13
 	asr r4, r3, #31
 	add r4, r3, r4, lsr #15
 	asr r4, r4, #17
-	add r4, r3, r4
-	add r3, r4, r4, lsl #5
-	add r4, r4, r4, lsl #5
-	add r3, r3, r3, lsl #13
+	add r3, r3, r4
+	add r4, r3, r3, lsl #5
+	add r3, r4, r4, lsl #13
 	asr r5, r3, #31
 	add r5, r3, r5, lsr #15
 	asr r5, r5, #17

@@ -77,17 +77,17 @@ label12:
 	mov r2, #3
 	str r2, [r0, #1428]
 	str r1, [r0, #1452]
-	ldr r2, [r0, #1416]
 	movw r1, #1416
-	add r4, r0, r1
 	add r5, r0, r1
-	str r2, [sp, #0]
-	movw r2, #8040
-	add r2, r0, r2
-	ldr r7, [r2, #0]
-	movw r2, #12108
-	add r2, r0, r2
-	ldr r8, [r2, #0]
+	mov r4, r5
+	ldr r1, [r0, #1416]
+	str r1, [sp, #0]
+	movw r1, #8040
+	add r1, r0, r1
+	ldr r7, [r1, #0]
+	movw r1, #12108
+	add r0, r0, r1
+	ldr r8, [r0, #0]
 label13:
 	ldr r0, [r4, r9, lsl #2]
 	bl putint
@@ -113,8 +113,8 @@ label15:
 	bge label23
 	b label26
 label16:
-	ldr r2, [sp, #0]
-	add r0, r2, #3
+	ldr r1, [sp, #0]
+	add r0, r1, #3
 	add r5, r0, r0, lsl #1
 	cmn r5, #1
 	ble label17

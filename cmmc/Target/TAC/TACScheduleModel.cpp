@@ -30,5 +30,8 @@ const MicroarchitectureInfo& TACScheduleModel_emulator::getInfo() const {
     };
     return info;
 }
+bool TACScheduleModel_emulator::isExpensiveInst(const MIRInst&, const CodeGenContext&) const {
+    return false;
+}
 
 CMMC_TARGET_NAMESPACE_END

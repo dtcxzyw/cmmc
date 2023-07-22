@@ -67,9 +67,9 @@ label12:
 	li a3, 4584
 	li a1, 9
 	addi s1, a0, 1416
-	addi s0, a0, 1416
 	mv s6, zero
 	add a2, s3, a3
+	mv s0, s1
 	li a3, 2
 	sw a1, 0(a2)
 	li a2, 1
@@ -82,9 +82,9 @@ label12:
 	lw s2, 1416(a0)
 	add a2, a0, a1
 	li a1, 12108
+	add a0, a0, a1
 	lw s4, 0(a2)
-	add a2, a0, a1
-	lw s5, 0(a2)
+	lw s5, 0(a0)
 label13:
 	sh2add a1, s6, s0
 	lw a0, 0(a1)
@@ -128,16 +128,16 @@ label26:
 	li a3, 128875
 	li a4, -1932965947
 	mulw t0, a0, a3
-	mul t2, t0, a4
-	srli t1, t2, 32
-	add a5, t1, t0
+	mul t1, t0, a4
+	srli t2, t1, 32
+	add a5, t2, t0
 	srliw t3, a5, 31
-	sraiw t2, a5, 11
+	sraiw t1, a5, 11
 	li a5, 3724
-	add t1, t3, t2
-	mulw t2, t1, a5
+	add t2, t3, t1
+	mulw t1, t2, a5
+	subw t0, t0, t1
 	addiw t1, a0, 7
-	subw t0, t0, t2
 	sw t0, 0(a2)
 	mulw t0, t1, a3
 	mul t2, t0, a4

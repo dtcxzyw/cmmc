@@ -54,20 +54,16 @@ Test_use_div_reg_imm:
 .globl Test_use_divrem_reg_imm
 Test_use_divrem_reg_imm:
 	li a3, 1041204193
-	li t0, 33
 	mul a1, a0, a3
-	mul a3, a0, a3
-	srli a5, a1, 63
+	srli a4, a1, 63
 	srai a2, a1, 35
 	li a1, 4294967295
-	add a4, a5, a2
-	srli a5, a3, 63
-	and a2, a4, a1
-	srai a4, a3, 35
-	add a3, a5, a4
-	mulw a4, a3, t0
-	subw a3, a0, a4
-	and a1, a3, a1
+	add a3, a4, a2
+	li a4, 33
+	and a2, a3, a1
+	mulw a3, a3, a4
+	subw a5, a0, a3
+	and a1, a5, a1
 	addw a0, a2, a1
 	ret
 .globl Test_use_rem_imm_reg

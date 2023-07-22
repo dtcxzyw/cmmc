@@ -25,18 +25,18 @@ main:
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
 	sub sp, sp, #20
 	bl getch
-	movw r5, #:lower16:next
+	movw r4, #:lower16:to
 	movw r9, #:lower16:head
+	movw r5, #:lower16:next
 	cmp r0, #48
-	mov r2, #0
 	mov r1, #0
 	movw r10, #:lower16:que
-	movw r4, #:lower16:to
-	movt r5, #:upper16:next
+	mov r2, #0
+	movt r4, #:upper16:to
 	movt r9, #:upper16:head
+	movt r5, #:upper16:next
 	movwlt r1, #1
 	movt r10, #:upper16:que
-	movt r4, #:upper16:to
 	cmp r0, #57
 	str r10, [sp, #0]
 	movwgt r2, #1
@@ -484,8 +484,8 @@ label75:
 	b label75
 label22:
 	bl getch
-	mov r1, #0
 	cmp r0, #48
+	mov r1, #0
 	mov r8, r0
 	mov r0, #0
 	movwlt r0, #1

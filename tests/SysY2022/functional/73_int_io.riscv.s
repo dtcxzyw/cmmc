@@ -51,23 +51,20 @@ label19:
 	ble s1, zero, label22
 	j label9
 label14:
-	sh2add a3, a0, s0
-	li a2, 1717986919
-	li t1, 10
+	sh2add a2, a0, s0
+	li a5, 1717986919
 	addiw a0, a0, 1
-	mul a4, a1, a2
-	srli t0, a4, 63
-	srai a5, a4, 34
-	add a4, t0, a5
-	mulw a5, a4, t1
-	subw t0, a1, a5
-	mul a1, a1, a2
-	addiw a4, t0, 48
-	srai a2, a1, 34
-	sw a4, 0(a3)
-	srli a3, a1, 63
-	add a1, a3, a2
-	ble a1, zero, label73
+	mul a3, a1, a5
+	srli a5, a3, 63
+	srai a4, a3, 34
+	add a3, a5, a4
+	li a4, 10
+	mulw a5, a3, a4
+	subw a1, a1, a5
+	addiw a4, a1, 48
+	mv a1, a3
+	sw a4, 0(a2)
+	ble a3, zero, label73
 	j label14
 label73:
 	mv s2, a0

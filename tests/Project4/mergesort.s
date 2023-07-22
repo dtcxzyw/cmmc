@@ -115,11 +115,10 @@ merge:
 	nop
 label167:
 	sll $t0, $s3, 2
-	addu $t0, $s2, $t0
-	lw $t0, 0($t0)
-	sll $t1, $s3, 2
-	addu $t1, $s0, $t1
-	sw $t0, 0($t1)
+	addu $t1, $s2, $t0
+	lw $t1, 0($t1)
+	addu $t0, $s0, $t0
+	sw $t1, 0($t0)
 	addiu $s3, $s3, 1
 label12:
 	beq $s1, $s3, label15

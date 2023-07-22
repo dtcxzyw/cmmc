@@ -121,3 +121,6 @@ int select_imm(int x) {
 int select_one(int x, int y, int z) {
     return x == 1 ? y : z;
 }
+int select_constant(int x) {
+    return x ? -1894007588 : -899497722;
+}

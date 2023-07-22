@@ -145,14 +145,12 @@ main:
 	b label2
 label31:
 	mov r5, #0
-	movw r1, #43691
-	mov r2, #6
-	movt r1, #10922
-	smmul r0, r5, r1
-	smmul r1, r5, r1
+	movw r0, #43691
+	mov r1, #6
+	movt r0, #10922
+	smmul r0, r5, r0
 	add r0, r0, r0, lsr #31
-	add r1, r1, r1, lsr #31
-	mls r7, r1, r2, r5
+	mls r7, r0, r1, r5
 	cmp r0, r7
 	beq label18
 	movw r6, #:lower16:N4__mE___
@@ -176,14 +174,12 @@ label2:
 label41:
 	mov r5, #0
 label4:
-	movw r1, #43691
-	mov r2, #6
-	movt r1, #10922
-	smmul r0, r5, r1
-	smmul r1, r5, r1
+	movw r0, #43691
+	mov r1, #6
+	movt r0, #10922
+	smmul r0, r5, r0
 	add r0, r0, r0, lsr #31
-	add r1, r1, r1, lsr #31
-	mls r7, r1, r2, r5
+	mls r7, r0, r1, r5
 	cmp r0, r7
 	beq label18
 	movw r6, #:lower16:N4__mE___

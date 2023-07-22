@@ -13,8 +13,8 @@ main:
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
 	mov r0, #0
 	sub sp, sp, #132
-	str r0, [sp, #64]
 	add r7, sp, #64
+	str r0, [sp, #64]
 	mov r5, sp
 	str r0, [r7, #4]
 	str r0, [r7, #8]

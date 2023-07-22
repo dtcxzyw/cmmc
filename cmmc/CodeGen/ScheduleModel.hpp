@@ -50,6 +50,7 @@ public:
         CMMC_UNUSED(ctx);
         return false;
     }
+    [[nodiscard]] virtual bool isExpensiveInst(const MIRInst& inst, const CodeGenContext& ctx) const = 0;
 };
 
 class ScheduleState final {

@@ -235,7 +235,7 @@ bool applySSAPropagation(MIRFunction& func, const CodeGenContext& ctx) {
 }
 */
 
-bool machineInstCSE(MIRFunction& func, const CodeGenContext& ctx) {
+static bool machineConstantCSE(MIRFunction& func, const CodeGenContext& ctx) {
     if(!ctx.flags.inSSAForm)
         return false;
 
@@ -257,6 +257,102 @@ bool machineInstCSE(MIRFunction& func, const CodeGenContext& ctx) {
                     modified = true;
                 } else if(!isISAReg(dst.reg()))
                     map.emplace(src, dst);
+            }
+        }
+    }
+    // if(modified) {
+    //     std::cerr << "after\n";
+    //     func.dump(std::cerr, ctx);
+    // }
+    return modified;
+}
+
+static bool machineInstCSE(MIRFunction& func, const CodeGenContext& ctx) {
+    if(!ctx.flags.inSSAForm)
+        return false;
+    bool modified = false;
+    // func.dump(std::cerr, ctx);
+    for(auto& block : func.blocks()) {
+        auto& instructions = block->instructions();
+        std::unordered_map<MIROperand, uint32_t, MIROperandHasher> version;
+        uint32_t versionIdx = 0;
+        auto getVersion = [&](const MIROperand& op) -> uint32_t {
+            if(!isOperandVRegOrISAReg(op))
+                return 0;
+            if(auto iter = version.find(op); iter != version.cend())
+                return iter->second;
+            return version[op] = ++versionIdx;
+        };
+        using VersionArray = std::array<uint32_t, MIRInst::maxOperandCount>;
+        std::unordered_map<MIRInst*, VersionArray> verArray;
+        std::unordered_map<uint32_t, std::vector<MIRInst*>> lastDefine;  // opcode -> insts
+
+        for(auto& inst : instructions) {
+            auto& instInfo = ctx.instInfo.getInstInfo(inst);
+            auto equal = [&](const MIRInst& rhs, const VersionArray& rhsVer, uint32_t defIdx, const VersionArray& ver) {
+                if(inst.opcode() != rhs.opcode())
+                    return false;
+                for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
+                    if(idx == defIdx) {
+                        if(rhsVer[idx] != version.at(rhs.getOperand(idx)))
+                            return false;
+                        continue;
+                    }
+                    if(inst.getOperand(idx) != rhs.getOperand(idx) || ver[idx] != rhsVer[idx])
+                        return false;
+                }
+                return true;
+            };
+
+            if(requireFlag(instInfo.getInstFlag(), InstFlagCall)) {
+                // TODO: use IPRA info
+                lastDefine.clear();
+                continue;
+            }
+
+            if(requireOneFlag(instInfo.getInstFlag(),
+                              InstFlagSideEffect | InstFlagPCRel | InstFlagMultiDef | InstFlagRegCopy | InstFlagLoadConstant)) {
+                for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
+                    if(instInfo.getOperandFlag(idx) & OperandFlagDef) {
+                        version[inst.getOperand(idx)] = ++versionIdx;
+                    }
+                }
+            } else {
+                auto& ver = verArray[&inst];
+                for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
+                    ver[idx] = getVersion(inst.getOperand(idx));
+                }
+
+                auto& cache = lastDefine[inst.opcode()];
+                for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
+                    if(instInfo.getOperandFlag(idx) & OperandFlagDef) {
+                        auto& op = inst.getOperand(idx);
+                        if(isOperandVRegOrISAReg(op)) {
+                            bool changed = false;
+                            for(auto rhs : cache) {
+                                if(equal(*rhs, verArray.at(rhs), idx, ver)) {
+                                    const auto& rhsDef = rhs->getOperand(idx);
+                                    if(isOperandVReg(op) && isOperandVReg(rhsDef) && op.type() == rhsDef.type()) {
+                                        // instInfo.print(std::cerr, inst, true);
+                                        // std::cerr << '\n';
+                                        inst = MIRInst{ InstCopy }.setOperand<0>(op).setOperand<1>(rhsDef);
+                                        changed = true;
+                                        break;
+                                    }
+                                }
+                            }
+
+                            if(changed) {
+                                modified = true;
+                            } else {
+                                cache.push_back(&inst);
+                            }
+                            ver[idx] = version[op] = ++versionIdx;
+                        }
+
+                        break;
+                    }
+                }
             }
         }
     }
@@ -501,6 +597,7 @@ bool genericPeepholeOpt(MIRFunction& func, const CodeGenContext& ctx) {
     // FIXME: incompatible with expanded Phi value setup
     // modified |= applySSAPropagation(func, ctx);
     // func.dump(std::cerr, ctx);
+    modified |= machineConstantCSE(func, ctx);
     modified |= machineInstCSE(func, ctx);
     modified |= deadInstElimination(func, ctx);
     modified |= ctx.scheduleModel.peepholeOpt(func, ctx);

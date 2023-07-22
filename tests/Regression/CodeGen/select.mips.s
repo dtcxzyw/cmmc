@@ -350,3 +350,11 @@ select_one:
 	move $v0, $a2
 	jr $ra
 	nop
+.globl select_constant
+select_constant:
+	sltu $t0, $zero, $a0
+	li $t1, -1894007588
+	li $v0, -899497722
+	movn $v0, $t1, $t0
+	jr $ra
+	nop

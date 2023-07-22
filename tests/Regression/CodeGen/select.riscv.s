@@ -278,3 +278,11 @@ select_one:
 label348:
 	mv a0, a1
 	ret
+.globl select_constant
+select_constant:
+	mv a1, a0
+	li a0, -1894007588
+	bne a1, zero, label354
+	li a0, -899497722
+label354:
+	ret

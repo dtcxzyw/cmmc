@@ -145,19 +145,15 @@ fused_div_rem:
 	ret
 .globl fused_div_rem_constant
 fused_div_rem_constant:
-	li a2, 1431655766
-	li a5, 3
-	mul a1, a0, a2
-	mul a2, a0, a2
-	srli a4, a1, 63
-	srli a3, a1, 32
-	add a1, a4, a3
-	srli a4, a2, 63
-	srli a3, a2, 32
-	add a2, a4, a3
-	mulw a3, a2, a5
-	subw a2, a0, a3
-	addw a0, a1, a2
+	li a3, 1431655766
+	mul a1, a0, a3
+	srli a3, a1, 63
+	srli a2, a1, 32
+	add a1, a3, a2
+	li a2, 3
+	mulw a3, a1, a2
+	subw a4, a0, a3
+	addw a0, a1, a4
 	ret
 .globl fused_mvn_and
 fused_mvn_and:

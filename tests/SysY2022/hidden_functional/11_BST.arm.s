@@ -16,8 +16,8 @@ right_child:
 .fpu vfpv4
 insert:
 	push { r4, r5, r6, r7, lr }
-	cmn r0, #1
 	mov r4, r0
+	cmn r0, #1
 	sub sp, sp, #4
 	bne label5
 	ldr r0, [r2, #0]

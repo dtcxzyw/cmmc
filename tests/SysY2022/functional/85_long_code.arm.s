@@ -230,18 +230,18 @@ label21:
 main:
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
 	mov r5, #26
-	mov r9, #1
-	mov r2, #23
-	mov r4, #89
 	mov r1, #7
-	movw r6, #282
+	mov r4, #89
+	mov r2, #23
+	mov r9, #1
 	sub sp, sp, #364
+	movw r6, #282
 	mov r11, #254
 	mov r7, #39
 	mov r8, #28
 	movw r10, #290
-	add r0, sp, #96
 	add r3, sp, #232
+	add r0, sp, #96
 	str r3, [sp, #92]
 	str r0, [sp, #68]
 	str r1, [sp, #96]

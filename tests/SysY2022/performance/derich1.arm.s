@@ -448,8 +448,8 @@ label134:
 	vmov s5, r8
 	add r8, r3, r9, lsl #2
 	add r9, r6, r9, lsl #2
-	vmul.f32 s3, s3, s5
 	vmul.f32 s6, s6, s5
+	vmul.f32 s3, s3, s5
 	vadd.f32 s6, s7, s6
 	vmul.f32 s8, s0, s6
 	vstr s6, [r8, #0]

@@ -50,7 +50,6 @@ label3:
 	smmul r7, r4, r6
 	asr r8, r7, #28
 	add r7, r8, r7, lsr #31
-	mov r8, #30
 	mls r4, r7, r2, r4
 	add r7, r4, r2
 	cmp r4, #0
@@ -69,24 +68,22 @@ label3:
 	mov r2, r3
 	add r6, r7, r6, lsr #31
 	movlt r2, r5
-	movw r7, #34953
+	mov r7, #30
 	movw r5, #37856
 	and r3, r2, #1
-	movt r7, #34952
 	movt r5, #4
 	mls r6, r6, r5, r4
-	smmla r4, r6, r7, r6
-	smmla r7, r6, r7, r6
+	movw r4, #34953
+	movt r4, #34952
+	smmla r4, r6, r4, r6
 	asr r5, r4, #4
-	asr r9, r7, #4
 	add r4, r5, r4, lsr #31
-	add r7, r9, r7, lsr #31
+	mls r7, r4, r7, r6
 	ldr r5, [r0, r4, lsl #2]
-	mls r7, r7, r8, r6
 	mov r6, #1
 	asr r8, r5, #31
-	lsl r6, r6, r7
 	rsb r9, r7, #32
+	lsl r6, r6, r7
 	add r8, r5, r8, lsr r9
 	asr r7, r8, r7
 	add r8, r7, r7, lsr #31
