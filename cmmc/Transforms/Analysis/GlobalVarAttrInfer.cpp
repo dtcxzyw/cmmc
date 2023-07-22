@@ -12,7 +12,6 @@
     limitations under the License.
 */
 
-#include "cmmc/IR/Type.hpp"
 #include <cmmc/Analysis/AliasAnalysis.hpp>
 #include <cmmc/Analysis/AnalysisPass.hpp>
 #include <cmmc/Analysis/PointerBaseAnalysis.hpp>
@@ -20,6 +19,7 @@
 #include <cmmc/IR/Function.hpp>
 #include <cmmc/IR/GlobalVariable.hpp>
 #include <cmmc/IR/Instruction.hpp>
+#include <cmmc/IR/Type.hpp>
 #include <cmmc/IR/Value.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <queue>
