@@ -23,28 +23,27 @@ b:
 .globl main
 main:
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
-	movw r1, #:lower16:x
+	movw r0, #:lower16:x
 	sub sp, sp, #36
-	movt r1, #:upper16:x
-	str r1, [sp, #0]
-	mov r0, r1
+	movt r0, #:upper16:x
+	str r0, [sp, #0]
 	bl getarray
+	movw r2, #:lower16:y
 	sub r0, r0, #1
+	movt r2, #:upper16:y
 	str r0, [sp, #4]
-	movw r0, #:lower16:y
-	movt r0, #:upper16:y
-	str r0, [sp, #8]
-	mov r2, r0
+	str r2, [sp, #8]
+	mov r0, r2
 	bl getarray
-	movw r0, #:lower16:v
-	movt r0, #:upper16:v
-	str r0, [sp, #12]
-	mov r5, r0
+	movw r5, #:lower16:v
+	movt r5, #:upper16:v
+	str r5, [sp, #12]
+	mov r0, r5
 	bl getarray
-	movw r0, #:lower16:a
-	movt r0, #:upper16:a
-	str r0, [sp, #16]
-	mov r2, r0
+	movw r2, #:lower16:a
+	movt r2, #:upper16:a
+	str r2, [sp, #16]
+	mov r0, r2
 	bl getarray
 	mov r0, #39
 	bl _sysy_starttime

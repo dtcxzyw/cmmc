@@ -307,15 +307,15 @@ label106:
 .globl main
 main:
 	push { r4, r5, r6, r7, r8, r9, lr }
-	movw r0, #:lower16:a
+	movw r4, #:lower16:a
 	sub sp, sp, #4
-	movt r0, #:upper16:a
-	mov r4, r0
+	movt r4, #:upper16:a
+	mov r0, r4
 	bl getarray
+	movw r7, #:lower16:b
 	sub r5, r0, #1
-	movw r0, #:lower16:b
-	movt r0, #:upper16:b
-	mov r7, r0
+	movt r7, #:upper16:b
+	mov r0, r7
 	bl getarray
 	add r5, r5, r0
 	mov r0, #60

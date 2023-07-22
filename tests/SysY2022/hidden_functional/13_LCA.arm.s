@@ -24,20 +24,19 @@ tree:
 	push { r4, r5, r6, r7, r8, lr }
 	movw r6, #:lower16:next
 	mov r3, r1
-	movw r4, #:lower16:f
 	mov r2, #80
+	movw r5, #:lower16:to
 	movt r6, #:upper16:next
 	movw r1, #:lower16:dep
-	mul r5, r0, r2
-	movt r4, #:upper16:f
-	movt r1, #:upper16:dep
-	mla r2, r0, r2, r4
-	str r3, [r1, r0, lsl #2]
-	ldr r7, [r4, r5]
-	mov r1, r4
-	movw r5, #:lower16:to
-	add r4, r3, #1
+	mul r4, r0, r2
 	movt r5, #:upper16:to
+	movt r1, #:upper16:dep
+	str r3, [r1, r0, lsl #2]
+	movw r1, #:lower16:f
+	movt r1, #:upper16:f
+	ldr r7, [r1, r4]
+	mla r2, r0, r2, r1
+	add r4, r3, #1
 	cmp r7, #0
 	beq label4
 	mov r3, #0
@@ -143,8 +142,8 @@ main:
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
 	sub sp, sp, #28
 	bl getch
-	cmp r0, #48
 	mov r4, r0
+	cmp r0, #48
 	movw r6, #:lower16:dep
 	mov r1, #0
 	movw r3, #:lower16:next
@@ -181,15 +180,13 @@ label601:
 	b label172
 label84:
 	bl getch
-	mov r2, #0
+	mov r2, #1
 	mov r1, #0
 	cmp r0, #48
 	movwlt r1, #1
 	cmp r0, #57
-	movwgt r2, #1
+	orrgt r1, r1, #1
 	cmp r4, #45
-	orr r1, r1, r2
-	mov r2, #1
 	moveq r5, r2
 	cmp r1, #0
 	beq label199
@@ -205,17 +202,15 @@ label204:
 	mov r6, #0
 label90:
 	bl getch
-	mov r5, r0
+	rsb r1, r6, #0
 	cmp r0, #48
-	mov r1, #0
+	mov r5, r0
 	mov r0, #0
 	movwlt r0, #1
 	cmp r5, #57
-	movwgt r1, #1
+	orrgt r0, r0, #1
 	cmp r4, #0
-	orr r0, r0, r1
 	mov r4, r6
-	rsb r1, r6, #0
 	movne r4, r1
 	cmp r0, #0
 	beq label214
@@ -329,17 +324,15 @@ label269:
 	mov r10, #0
 label115:
 	bl getch
-	mov r9, r0
+	rsb r1, r10, #0
 	cmp r0, #48
-	mov r1, #0
+	mov r9, r0
 	mov r0, #0
 	movwlt r0, #1
 	cmp r9, #57
-	movwgt r1, #1
+	orrgt r0, r0, #1
 	cmp r8, #0
-	orr r0, r0, r1
 	mov r8, r10
-	rsb r1, r10, #0
 	movne r8, r1
 	cmp r0, #0
 	beq label290
@@ -371,15 +364,13 @@ label122:
 	b label122
 label125:
 	bl getch
-	mov r2, #0
+	mov r2, #1
 	mov r1, #0
 	cmp r0, #48
 	movwlt r1, #1
 	cmp r0, #57
-	movwgt r2, #1
+	orrgt r1, r1, #1
 	cmp r9, #45
-	orr r1, r1, r2
-	mov r2, #1
 	moveq r10, r2
 	cmp r1, #0
 	beq label333
@@ -393,15 +384,13 @@ label333:
 	b label294
 label128:
 	bl getch
+	mov r2, #1
 	mov r1, #0
-	mov r2, #0
 	cmp r0, #48
 	movwlt r1, #1
 	cmp r0, #57
-	movwgt r2, #1
+	orrgt r1, r1, #1
 	cmp r8, #45
-	orr r1, r1, r2
-	mov r2, #1
 	moveq r9, r2
 	cmp r1, #0
 	beq label342
@@ -441,15 +430,13 @@ label602:
 	b label98
 label92:
 	bl getch
-	mov r2, #0
+	mov r2, #1
 	mov r1, #0
 	cmp r0, #48
 	movwlt r1, #1
 	cmp r0, #57
-	movwgt r2, #1
+	orrgt r1, r1, #1
 	cmp r5, #45
-	orr r1, r1, r2
-	mov r2, #1
 	moveq r6, r2
 	cmp r1, #0
 	beq label223
@@ -553,8 +540,8 @@ label131:
 	mov r4, r5
 label133:
 	bl getch
-	mov r1, #0
 	cmp r0, #48
+	mov r1, #0
 	mov r5, r0
 	mov r0, #0
 	movwlt r0, #1
@@ -598,15 +585,13 @@ label162:
 	b label133
 label169:
 	bl getch
-	mov r2, #0
+	mov r2, #1
 	mov r1, #0
 	cmp r0, #48
 	movwlt r1, #1
 	cmp r0, #57
-	movwgt r2, #1
+	orrgt r1, r1, #1
 	cmp r5, #45
-	orr r1, r1, r2
-	mov r2, #1
 	moveq r6, r2
 	cmp r1, #0
 	beq label522
@@ -734,17 +719,15 @@ label164:
 	b label164
 label141:
 	bl getch
-	mov r6, r0
-	mov r1, #0
+	rsb r1, r7, #0
 	cmp r0, #48
+	mov r6, r0
 	mov r0, #0
 	movwlt r0, #1
 	cmp r6, #57
-	movwgt r1, #1
+	orrgt r0, r0, #1
 	cmp r5, #0
-	orr r0, r0, r1
 	mov r5, r7
-	rsb r1, r7, #0
 	movne r5, r1
 	cmp r0, #0
 	beq label379
@@ -766,15 +749,13 @@ label608:
 	b label149
 label143:
 	bl getch
-	mov r2, #0
+	mov r2, #1
 	mov r1, #0
 	cmp r0, #48
 	movwlt r1, #1
 	cmp r0, #57
-	movwgt r2, #1
+	orrgt r1, r1, #1
 	cmp r6, #45
-	orr r1, r1, r2
-	mov r2, #1
 	moveq r7, r2
 	cmp r1, #0
 	beq label388

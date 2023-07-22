@@ -16,10 +16,9 @@ g1:
 .globl test1
 test1:
 	movs r1, r0
-	movw r2, #:lower16:g0
-	movt r2, #:upper16:g0
-	mov r0, r2
-	ldr r2, [r2, #0]
+	movw r0, #:lower16:g0
+	movt r0, #:upper16:g0
+	ldr r2, [r0, #0]
 	bne label12
 	add r1, r2, #11
 	str r1, [r0, #0]

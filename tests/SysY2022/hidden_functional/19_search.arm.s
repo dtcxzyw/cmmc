@@ -287,12 +287,12 @@ main:
 	movw r4, #:lower16:a
 	mvn r1, #0
 	sub sp, sp, #84
-	mov r11, #0
+	mov r10, #0
 	movt r4, #:upper16:a
 	add r5, sp, #32
 	add r0, sp, #20
 	add r6, sp, #16
-	mov r10, r11
+	mov r11, r10
 	str r0, [sp, #72]
 	add r0, sp, #24
 	str r0, [sp, #68]
@@ -300,15 +300,15 @@ main:
 	str r0, [sp, #64]
 	mov r0, #1
 	str r0, [sp, #32]
-	str r11, [r5, #4]
+	str r10, [r5, #4]
 	str r1, [r5, #8]
-	str r11, [r5, #12]
-	str r11, [r5, #16]
+	str r10, [r5, #12]
+	str r10, [r5, #16]
 	str r0, [r5, #20]
-	str r11, [r5, #24]
+	str r10, [r5, #24]
 	str r1, [r5, #28]
-	str r11, [sp, #20]
-	str r11, [sp, #16]
+	str r10, [sp, #20]
+	str r10, [sp, #16]
 label217:
 	bl getint
 	str r0, [sp, #28]

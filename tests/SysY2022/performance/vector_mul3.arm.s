@@ -58,39 +58,39 @@ label4:
 	movt r8, #:upper16:vectorB
 	movt r0, #:upper16:Vectortm
 	str r8, [sp, #0]
-	mov r3, #0
-	mov r7, r3
-	vmov s0, r3
+	mov r7, #0
+	mov r3, r7
+	vmov s0, r7
 	movw r2, #34464
 	movt r2, #1
-	cmp r3, r2
+	cmp r7, r2
 	bge label133
-	add r4, r3, #3
-	add r5, r3, #2
-	add r2, r3, #1
+	add r4, r7, #3
+	add r5, r7, #2
+	add r2, r7, #1
 	movw r6, #34464
 	movt r6, #1
-	cmp r3, r6
+	cmp r7, r6
 	bge label12
-	add r6, r3, #4
+	add r6, r7, #4
 	movw r8, #34464
 	movt r8, #1
 	cmp r6, r8
 	bge label19
 	b label18
 label133:
-	mov r2, #0
-	mov r8, r2
-	vmov s0, r2
+	mov r8, #0
+	mov r2, r8
+	vmov s0, r8
 	movw r3, #34464
 	movt r3, #1
-	cmp r2, r3
+	cmp r8, r3
 	bge label212
 	movw r3, #34464
 	movt r3, #1
-	cmp r2, r3
+	cmp r8, r3
 	bge label218
-	add r5, r2, #4
+	add r5, r8, #4
 	movw r3, #34464
 	movt r3, #1
 	cmp r5, r3
@@ -216,39 +216,39 @@ label208:
 	bge label19
 	b label18
 label212:
-	mov r3, #0
-	mov r7, r3
-	vmov s0, r3
+	mov r7, #0
+	mov r3, r7
+	vmov s0, r7
 	movw r2, #34464
 	movt r2, #1
-	cmp r3, r2
+	cmp r7, r2
 	bge label297
-	add r4, r3, #3
-	add r5, r3, #2
-	add r2, r3, #1
+	add r4, r7, #3
+	add r5, r7, #2
+	add r2, r7, #1
 	movw r6, #34464
 	movt r6, #1
-	cmp r3, r6
+	cmp r7, r6
 	bge label89
-	add r6, r3, #4
+	add r6, r7, #4
 	movw r8, #34464
 	movt r8, #1
 	cmp r6, r8
 	bge label95
 	b label98
 label297:
-	mov r2, #0
-	mov r8, r2
-	vmov s0, r2
+	mov r8, #0
+	mov r2, r8
+	vmov s0, r8
 	movw r3, #34464
 	movt r3, #1
-	cmp r2, r3
+	cmp r8, r3
 	bge label66
 	movw r3, #34464
 	movt r3, #1
-	cmp r2, r3
+	cmp r8, r3
 	bge label307
-	add r5, r2, #4
+	add r5, r8, #4
 	movw r3, #34464
 	movt r3, #1
 	cmp r5, r3
@@ -258,21 +258,21 @@ label66:
 	add r1, r1, #1
 	cmp r1, #1000
 	bge label67
-	mov r3, #0
-	mov r7, r3
-	vmov s0, r3
+	mov r7, #0
+	mov r3, r7
+	vmov s0, r7
 	movw r2, #34464
 	movt r2, #1
-	cmp r3, r2
+	cmp r7, r2
 	bge label133
-	add r4, r3, #3
-	add r5, r3, #2
-	add r2, r3, #1
+	add r4, r7, #3
+	add r5, r7, #2
+	add r2, r7, #1
 	movw r6, #34464
 	movt r6, #1
-	cmp r3, r6
+	cmp r7, r6
 	bge label12
-	add r6, r3, #4
+	add r6, r7, #4
 	movw r8, #34464
 	movt r8, #1
 	cmp r6, r8

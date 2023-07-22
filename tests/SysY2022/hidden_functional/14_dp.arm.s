@@ -16,12 +16,11 @@ main:
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
 	sub sp, sp, #12
 	bl getint
-	mov r1, #140
+	movw r4, #:lower16:dp
 	mov r5, r0
-	movw r0, #:lower16:dp
-	movt r0, #:upper16:dp
-	mla r2, r5, r1, r0
-	mov r4, r0
+	movt r4, #:upper16:dp
+	mov r0, #140
+	mla r2, r5, r0, r4
 	str r2, [sp, #0]
 	bl getint
 	cmp r5, #0

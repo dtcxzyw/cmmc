@@ -223,8 +223,8 @@ func @main() -> i32 { NoRecurse Entry } {
     i32* %121 = getelementptr &([65536 * i32]* %16)[i64 0][i32 %120];
     i32 %122 = load i32* %121;
     i1 %123 = icmp eq i32 %122, i32 93;
-    i32 %124 = add i32 %116, i32 -1;
-    i32 %125 = select i1 %123 ? i32 %124 : i32 %116;
+    i32 %124 = zext i1 %123 to i32;
+    i32 %125 = sub i32 %116, i32 %124;
     i1 %126 = icmp eq i32 %122, i32 91;
     i32 %127 = zext i1 %126 to i32;
     i32 %128 = add i32 %125, i32 %127;

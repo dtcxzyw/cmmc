@@ -22,17 +22,14 @@ basic_3:
 basic_5:
 	mov r1, #1
 	cmp r0, #0
-	mov r2, #0
 	lsl r1, r1, r0
-	movwlt r2, #1
 	and r1, r1, #31
-	cmp r0, #4
 	clz r1, r1
-	mov r0, #0
 	lsr r1, r1, #5
-	movwgt r0, #1
-	orr r1, r1, r2
-	orr r0, r1, r0
+	orrlt r1, r1, #1
+	cmp r0, #4
+	mov r0, r1
+	orrgt r0, r1, #1
 	bx lr
 .globl cross_64_with_9
 cross_64_with_9:
@@ -42,11 +39,9 @@ cross_64_with_9:
 	lsl r2, r1, r2
 	movt r3, #2560
 	and r2, r3, r2
-	mov r3, #0
 	clz r2, r2
-	movwlt r3, #1
 	lsr r2, r2, #5
-	orr r2, r2, r3
+	orrlt r2, r2, #1
 	subs r3, r0, #67
 	lsl r1, r1, r3
 	and r1, r1, #83886080
@@ -55,9 +50,8 @@ cross_64_with_9:
 	mov r1, r2
 	movge r1, r3
 	cmp r0, #93
-	mov r0, #0
-	movwgt r0, #1
-	orr r0, r1, r0
+	mov r0, r1
+	orrgt r0, r1, #1
 	bx lr
 .globl cross_32_with_5
 cross_32_with_5:
@@ -66,15 +60,12 @@ cross_32_with_5:
 	lsl r1, r2, r1
 	movw r2, #3841
 	and r1, r2, r1
-	mov r2, #0
 	clz r1, r1
-	movwlt r2, #1
 	lsr r1, r1, #5
+	orrlt r1, r1, #1
 	cmp r0, #46
-	orr r1, r1, r2
-	mov r0, #0
-	movwgt r0, #1
-	orr r0, r1, r0
+	mov r0, r1
+	orrgt r0, r1, #1
 	bx lr
 .globl negative_5
 negative_5:
@@ -83,13 +74,10 @@ negative_5:
 	lsl r1, r2, r1
 	movw r2, #5201
 	and r1, r2, r1
-	mov r2, #0
 	clz r1, r1
-	movwlt r2, #1
 	lsr r1, r1, #5
+	orrlt r1, r1, #1
 	cmp r0, #5
-	orr r1, r1, r2
-	mov r0, #0
-	movwgt r0, #1
-	orr r0, r1, r0
+	mov r0, r1
+	orrgt r0, r1, #1
 	bx lr

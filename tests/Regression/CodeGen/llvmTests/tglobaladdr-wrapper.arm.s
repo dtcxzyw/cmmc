@@ -19,10 +19,9 @@ b:
 .fpu vfpv4
 .globl foo
 foo:
-	movw r0, #:lower16:x
-	movt r0, #:upper16:x
-	mov r1, r0
-	ldr r0, [r0, #0]
+	movw r1, #:lower16:x
+	movt r1, #:upper16:x
+	ldr r0, [r1, #0]
 	cmp r0, #0
 	bne label11
 	movw r0, #:lower16:a

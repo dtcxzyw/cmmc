@@ -20,16 +20,14 @@ foo:
 	push { r4 }
 	cmp r0, #0
 	ble label5
-	movw r2, #:lower16:X
-	mov r4, #0
-	movw r3, #:lower16:Y
+	movw r1, #:lower16:X
+	mov r3, #0
+	movw r2, #:lower16:Y
 	cmp r0, #1
-	movt r2, #:upper16:X
-	movt r3, #:upper16:Y
-	strh r4, [r2, #0]
-	mov r1, r2
-	strh r4, [r3, #0]
-	mov r2, r3
+	movt r1, #:upper16:X
+	movt r2, #:upper16:Y
+	strh r3, [r1, #0]
+	strh r3, [r2, #0]
 	bne label18
 	b label5
 label18:

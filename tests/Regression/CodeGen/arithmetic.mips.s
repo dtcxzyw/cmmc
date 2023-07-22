@@ -617,3 +617,20 @@ andn:
 	and $v0, $t0, $t1
 	jr $ra
 	nop
+.globl sign
+sign:
+	sra $v0, $a0, 31
+	jr $ra
+	nop
+.globl select_add_one
+select_add_one:
+	sltu $t0, $zero, $a1
+	addu $v0, $a0, $t0
+	jr $ra
+	nop
+.globl select_sub_one
+select_sub_one:
+	sltu $t0, $zero, $a1
+	subu $v0, $a0, $t0
+	jr $ra
+	nop

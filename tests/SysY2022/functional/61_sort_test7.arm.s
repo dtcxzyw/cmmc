@@ -30,10 +30,9 @@ label3:
 	mov r3, r5
 	mov r7, r5
 	mov r2, r6
-	movw r1, #:lower16:buf
-	movt r1, #:upper16:buf
-	mov r0, r1
-	add r1, r1, #400
+	movw r0, #:lower16:buf
+	movt r0, #:upper16:buf
+	add r1, r0, #400
 	cmp r6, r5
 	mov r8, #0
 	mov r9, #0

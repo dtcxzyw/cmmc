@@ -320,3 +320,12 @@ int mul_neg2(int x) {
 int andn(int x, int y) {
     return x && !(y==10.0);
 }
+int sign(int x) {
+    return x >= 0 ? 0 : -1;
+}
+int select_add_one(int y, int x) {
+    return x ? y + 1 : y;
+}
+int select_sub_one(int y, int x) {
+    return x ? y - 1 : y;
+}

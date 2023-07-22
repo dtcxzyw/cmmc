@@ -503,3 +503,17 @@ andn:
 	movwne r0, #1
 	and r0, r1, r0
 	bx lr
+.globl sign
+sign:
+	asr r0, r0, #31
+	bx lr
+.globl select_add_one
+select_add_one:
+	cmp r1, #0
+	addne r0, r0, #1
+	bx lr
+.globl select_sub_one
+select_sub_one:
+	cmp r1, #0
+	subne r0, r0, #1
+	bx lr

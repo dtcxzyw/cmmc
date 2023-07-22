@@ -19,10 +19,10 @@ main:
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
 	sub sp, sp, #12
 	bl getint
+	movw r5, #:lower16:w
 	mov r4, r0
-	movw r0, #:lower16:w
-	movt r0, #:upper16:w
-	mov r5, r0
+	movt r5, #:upper16:w
+	mov r0, r5
 	bl getarray
 	mov r0, #62
 	bl _sysy_starttime

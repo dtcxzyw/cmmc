@@ -15,22 +15,20 @@ c:
 main:
 	push { r4, r5, lr }
 	sub sp, sp, #4
-	movw r0, #:lower16:c
-	mov r1, #1
-	mov r2, #0
-	movt r0, #:upper16:c
-	str r1, [r0, #0]
-	mov r4, r0
-	mov r1, #2
-	str r1, [r0, #4]
+	movw r4, #:lower16:c
+	mov r0, #1
 	mov r1, #3
-	str r2, [r0, #8]
-	str r2, [r0, #12]
-	str r1, [r0, #16]
+	movt r4, #:upper16:c
+	str r0, [r4, #0]
+	mov r0, #2
+	str r0, [r4, #4]
+	mov r0, #0
+	str r0, [r4, #8]
+	str r0, [r4, #12]
+	str r1, [r4, #16]
 	mov r1, #4
-	str r1, [r0, #20]
-	add r1, r0, #24
-	mov r0, r2
+	str r1, [r4, #20]
+	add r1, r4, #24
 label2:
 	add r2, r0, #4
 	movw r3, #4090

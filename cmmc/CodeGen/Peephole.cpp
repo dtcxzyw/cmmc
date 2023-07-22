@@ -13,6 +13,7 @@
 */
 
 #include <array>
+#include <chrono>
 #include <cmmc/CodeGen/CodeGenUtils.hpp>
 #include <cmmc/CodeGen/ISelInfo.hpp>
 #include <cmmc/CodeGen/InstInfo.hpp>
@@ -25,6 +26,7 @@
 #include <iterator>
 #include <optional>
 #include <queue>
+#include <stack>
 #include <variant>
 #include <vector>
 
@@ -416,6 +418,75 @@ bool removeIndirectCopy(MIRFunction& func, const CodeGenContext& ctx) {
             iter = next;
         }
     }
+    // func.dump(std::cerr, ctx);
+    return modified;
+}
+
+bool createIndirectCopy(MIRFunction& func, const CodeGenContext& ctx) {
+    if(!ctx.flags.dontForward)
+        return false;
+
+    bool modified = false;
+
+    // func.dump(std::cerr, ctx);
+    for(auto& block : func.blocks()) {
+        std::unordered_map<MIROperand, uint32_t, MIROperandHasher> valueNumber;
+        std::unordered_map<uint32_t, std::stack<MIROperand>> latestVersion;
+        uint32_t id = 0;
+
+        const auto defReg = [&](const MIROperand& reg) {
+            if(!isOperandVReg(reg))
+                return;
+            valueNumber[reg] = ++id;
+            latestVersion[id].push(reg);
+        };
+
+        for(auto& inst : block->instructions()) {
+            auto& instInfo = ctx.instInfo.getInstInfo(inst);
+            for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx)
+                if(instInfo.getOperandFlag(idx) & OperandFlagUse) {
+                    auto& op = inst.getOperand(idx);
+                    if(!isOperandVReg(op))
+                        continue;
+                    if(auto it = valueNumber.find(op); it != valueNumber.cend())
+                        if(auto iter = latestVersion.find(it->second); iter != latestVersion.cend()) {
+                            auto& stack = iter->second;
+                            while(!stack.empty()) {
+                                if(auto num = valueNumber.find(stack.top()); num != valueNumber.cend()) {
+                                    if(num->second == it->second)
+                                        break;
+                                }
+
+                                stack.pop();
+                            }
+
+                            if(!stack.empty() && op != stack.top()) {
+                                op = stack.top();
+                                modified = true;
+                            }
+                        }
+                }
+
+            MIROperand dst, src;
+            if(ctx.instInfo.matchCopy(inst, dst, src)) {
+                if(isOperandVReg(dst) && isOperandVReg(src)) {
+                    if(auto it = valueNumber.find(src); it != valueNumber.cend()) {
+                        valueNumber[dst] = it->second;
+                        latestVersion[it->second].push(dst);
+                        continue;
+                    }
+                }
+            }
+
+            for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx)
+                if(instInfo.getOperandFlag(idx) & OperandFlagDef)
+                    defReg(inst.getOperand(idx));
+            if(requireFlag(instInfo.getInstFlag(), InstFlagCall)) {
+                latestVersion.clear();
+            }
+        }
+    }
+
     // func.dump(std::cerr, ctx);
     return modified;
 }

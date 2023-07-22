@@ -518,3 +518,17 @@ andn:
 	xori a1, a3, 1
 	and a0, a1, a2
 	ret
+.globl sign
+sign:
+	sraiw a0, a0, 31
+	ret
+.globl select_add_one
+select_add_one:
+	sltu a2, zero, a1
+	addw a0, a0, a2
+	ret
+.globl select_sub_one
+select_sub_one:
+	sltu a2, zero, a1
+	subw a0, a0, a2
+	ret

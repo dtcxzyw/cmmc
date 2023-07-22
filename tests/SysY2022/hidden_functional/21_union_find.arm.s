@@ -10,14 +10,12 @@ parent:
 .fpu vfpv4
 find:
 	push { r4, r5, r6, r7, r8, lr }
+	movw r5, #:lower16:parent
 	mov r4, r0
-	movw r0, #:lower16:parent
-	movt r0, #:upper16:parent
-	ldr r6, [r0, r4, lsl #2]
-	mov r5, r0
-	cmp r4, r6
+	movt r5, #:upper16:parent
+	ldr r6, [r5, r0, lsl #2]
+	cmp r0, r6
 	bne label4
-	mov r0, r4
 	b label2
 label54:
 	mov r0, r6
@@ -59,8 +57,8 @@ main:
 	bl getint
 	mov r5, r0
 	bl getint
-	movw r4, #:lower16:parent
 	cmp r5, #0
+	movw r4, #:lower16:parent
 	mov r6, r0
 	movt r4, #:upper16:parent
 	ble label63

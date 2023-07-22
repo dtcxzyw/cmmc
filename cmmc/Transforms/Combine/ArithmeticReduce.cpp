@@ -780,8 +780,6 @@ class ArithmeticReduce final : public TransformPass<Function> {
                 }
             }
 
-            // TODO: 8–4 Multiplication by Constants
-
             // TODO: handle select?
             // c = select x a b
             // d = add c 1
@@ -899,6 +897,15 @@ class ArithmeticReduce final : public TransformPass<Function> {
                 }
             }
 
+            // select x s>= 0, 0, -1 -> x >>> (BitWidth-1)
+            if(select(icmp(cmp, any(v1), cint_(0)), cint_(0), cint_(-1))(matchCtx) && cmp == CompareOp::ICmpSignedGreaterEqual) {
+                return builder.makeOp<BinaryInst>(InstructionID::AShr, v1,
+                                                  makeIntLike(v1->getType()->as<IntegerType>()->getBitwidth() - 1, v1));
+            }
+            if(select(icmp(cmp, any(v1), cint_(-1)), cint_(0), cint_(-1))(matchCtx) && cmp == CompareOp::ICmpSignedGreaterThan) {
+                return builder.makeOp<BinaryInst>(InstructionID::AShr, v1,
+                                                  makeIntLike(v1->getType()->as<IntegerType>()->getBitwidth() - 1, v1));
+            }
             // select x, c1, c1+/-1 -> add c1/c2, (zext x)
             if(select(any(v1), capture(int_(i1), v2), capture(int_(i2), v3))(matchCtx) && !inst->getType()->isBoolean()) {
                 if(i2 == i1 + 1) {
@@ -909,6 +916,14 @@ class ArithmeticReduce final : public TransformPass<Function> {
                     auto zext = builder.makeOp<CastInst>(InstructionID::ZExt, inst->getType(), v1);
                     return builder.makeOp<BinaryInst>(InstructionID::Add, zext, v3);
                 }
+            }
+            if(select(any(v1), add(any(v2), cint_(-1)), exactly(v2))(matchCtx)) {
+                auto zext = builder.makeOp<CastInst>(InstructionID::ZExt, inst->getType(), v1);
+                return builder.makeOp<BinaryInst>(InstructionID::Sub, v2, zext);
+            }
+            if(select(any(v1), add(any(v2), cint_(1)), exactly(v2))(matchCtx)) {
+                auto zext = builder.makeOp<CastInst>(InstructionID::ZExt, inst->getType(), v1);
+                return builder.makeOp<BinaryInst>(InstructionID::Add, v2, zext);
             }
 
             // neg(x) * c -> x * -c

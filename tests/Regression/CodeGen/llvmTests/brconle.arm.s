@@ -28,13 +28,12 @@ result2:
 .globl test
 test:
 	movw r0, #:lower16:i
+	movw r1, #:lower16:j
 	movt r0, #:upper16:i
-	ldr r1, [r0, #0]
-	movw r0, #:lower16:j
-	movt r0, #:upper16:j
-	ldr r2, [r0, #0]
-	mov r0, r1
-	cmp r2, r1
+	movt r1, #:upper16:j
+	ldr r0, [r0, #0]
+	ldr r1, [r1, #0]
+	cmp r1, r0
 	ble label3
 	movw r1, #:lower16:result1
 	mov r2, #1

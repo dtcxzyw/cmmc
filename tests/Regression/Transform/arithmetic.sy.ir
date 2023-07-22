@@ -686,8 +686,8 @@ func @sdivmul2(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateles
 func @multi_select(i32 %x, i32 %y) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i1 %0 = icmp eq i32 %x, i32 93;
-    i32 %1 = add i32 %y, i32 -1;
-    i32 %2 = select i1 %0 ? i32 %1 : i32 %y;
+    i32 %1 = zext i1 %0 to i32;
+    i32 %2 = sub i32 %y, i32 %1;
     i1 %3 = icmp eq i32 %x, i32 91;
     i32 %4 = zext i1 %3 to i32;
     i32 %5 = add i32 %2, i32 %4;
@@ -829,4 +829,23 @@ func @square_sgt_with_zero(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEff
 func @square_sge_with_zero() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     ret i32 1;
+}
+func @sign(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = ashr i32 %x, i32 31;
+    ret i32 %0;
+}
+func @select_add_one(i32 %y, i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = icmp neq i32 %x, i32 0;
+    i32 %1 = zext i1 %0 to i32;
+    i32 %2 = add i32 %y, i32 %1;
+    ret i32 %2;
+}
+func @select_sub_one(i32 %y, i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = icmp neq i32 %x, i32 0;
+    i32 %1 = zext i1 %0 to i32;
+    i32 %2 = sub i32 %y, i32 %1;
+    ret i32 %2;
 }

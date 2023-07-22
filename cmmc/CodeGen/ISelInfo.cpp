@@ -59,7 +59,6 @@ void ISelContext::runISel(MIRFunction& func) {
         mReplaceBlockList.clear();
         mReplaceList.clear();
 
-        // TODO: cross block isel?
         mConstantMapping.clear();
         mUseCount.clear();
         {

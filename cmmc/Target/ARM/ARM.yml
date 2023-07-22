@@ -350,6 +350,12 @@ InstInfo:
     Format: select_gpr $Rd:GPR[Def], $Rn:GPR[Use], $Rm:Op2[Use], $CC:CC[Use], $CF:CondField[Metadata]
     Flag: [LegalizePreRA]
 
+  # if hold: $Rd = $Rn op $Rm
+  # otherwise: $Rd = $Rn
+  CondArith_GPR:
+    Format: cond_arith_gpr $Rd:GPR[Def], $Rn:GPR[Use], $Rm:Op2[Use], $CC:CC[Use], $CF:CondField[Metadata], $Op:Imm[Metadata]
+    Flag: [LegalizePreRA]
+
   Select_FPR:
     Format: select_fpr $Rd:FPR[Def], $Rn:FPR[Use], $Rm:FPR[Use], $CC:CC[Use], $CF:CondField[Metadata]
     Flag: [LegalizePreRA]
@@ -1524,6 +1530,71 @@ InstSelection:
       VABS_F32:
         Fd: $Dst
         Fm: $Src
+
+  # add x1, select(cf, x3, 0) -> add_cond cf, x1,
+  - Pattern:
+      $Template:
+        Rd: $Dst
+        Rn: $Lhs
+        Op2:
+          Select_GPR:
+            Rd: $Rhs
+            Rn: $TrueV
+            Rm: $FalseV
+            CC: $CC
+            CF: $CF
+            $Predicate: isZero($FalseV) && ctx.hasOneUse($Rhs) && ctx.isSafeToUse($CC, $Rhs)
+      $Instances: [ADD, SUB, ORR, EOR]
+    Replace:
+      CondArith_GPR:
+        Rd: $Dst
+        Rn: $Lhs
+        Rm: $TrueV
+        CC: $CC
+        CF: $CF
+        Op: MIROperand::asImm(rootOpcode, OperandType::Special)
+
+  - Pattern:
+      $Template:
+        Rd: $Dst
+        Rn: $Lhs
+        Op2:
+          Select_GPR:
+            Rd: $Rhs
+            Rn: $TrueV
+            Rm: $FalseV
+            CC: $CC
+            CF: $CF
+            $Predicate: isZero($TrueV) && ctx.hasOneUse($Rhs) && ctx.isSafeToUse($CC, $Rhs)
+      $Instances: [ADD, SUB, ORR, EOR]
+    Replace:
+      CondArith_GPR:
+        Rd: $Dst
+        Rn: $Lhs
+        Rm: $FalseV
+        CC: $CC
+        CF: getInvertedCondField($CF)
+        Op: MIROperand::asImm(rootOpcode, OperandType::Special)
+
+  - Pattern:
+      $Template:
+        Rd: $Dst
+        Rn: $Lhs
+        Op2:
+          NZCVFlag2GPR:
+            Rd: $Rhs
+            CC: $CC
+            CF: $CF
+            $Predicate: ctx.isSafeToUse($CC, $Rhs)
+      $Instances: [ADD, SUB, ORR, EOR]
+    Replace:
+      CondArith_GPR:
+        Rd: $Dst
+        Rn: $Lhs
+        Rm: MIROperand::asImm(1, OperandType::Int32)
+        CC: $CC
+        CF: $CF
+        Op: MIROperand::asImm(rootOpcode, OperandType::Special)
 
   # For csmith
   - Pattern:

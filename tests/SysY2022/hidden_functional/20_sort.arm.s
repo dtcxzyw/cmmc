@@ -45,15 +45,13 @@ label351:
 	b label8
 label2:
 	bl getch
-	mov r2, #0
+	mov r2, #1
 	mov r1, #0
 	cmp r0, #48
 	movwlt r1, #1
 	cmp r0, #57
-	movwgt r2, #1
+	orrgt r1, r1, #1
 	cmp r4, #45
-	orr r1, r1, r2
-	mov r2, #1
 	moveq r5, r2
 	cmp r1, #0
 	beq label86
@@ -105,15 +103,13 @@ label352:
 	b label23
 label15:
 	bl getch
-	mov r2, #0
+	mov r2, #1
 	mov r1, #0
 	cmp r0, #48
 	movwlt r1, #1
 	cmp r0, #57
-	movwgt r2, #1
+	orrgt r1, r1, #1
 	cmp r9, #45
-	orr r1, r1, r2
-	mov r2, #1
 	moveq r10, r2
 	cmp r1, #0
 	beq label131

@@ -8,9 +8,7 @@
 test1:
 	add r0, r0, r1
 	cmp r1, r0
-	mov r1, #0
-	movwhi r1, #1
-	add r0, r0, r1
+	addhi r0, r0, #1
 	bx lr
 .globl test2
 test2:

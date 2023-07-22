@@ -20,19 +20,19 @@ main:
 	mov r4, r0
 	mov r0, #22
 	bl _sysy_starttime
-	mov r3, #1065353216
-	mov r2, #0
+	mov r2, #1065353216
+	mov r5, #0
 	movw r1, #:lower16:y
 	movw r0, #:lower16:x
-	vmov s0, r3
-	mov r5, r2
-	vmov s1, r2
+	vmov s0, r2
+	vmov s16, r5
 	movt r1, #:upper16:y
 	movt r0, #:upper16:x
-	vmov.f32 s16, s1
+	mov r2, r5
+	vmov.f32 s1, s16
 	movw r3, #34464
 	movt r3, #1
-	cmp r2, r3
+	cmp r5, r3
 	bge label8
 	b label13
 label8:

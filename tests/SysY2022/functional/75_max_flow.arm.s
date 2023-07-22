@@ -16,11 +16,11 @@ rev:
 .fpu vfpv4
 dfs:
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
-	cmp r0, r1
+	mov r7, r3
 	mov r4, r2
 	mov r6, r1
 	mov r5, r0
-	mov r7, r3
+	cmp r0, r1
 	sub sp, sp, #20
 	ldr r9, [sp, #56]
 	bne label4
@@ -30,17 +30,16 @@ label2:
 	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
 label4:
 	mov r0, #1
+	movw r1, #:lower16:cap
 	mov r8, #0
 	str r0, [r9, r5, lsl #2]
-	movw r0, #:lower16:cap
-	movt r0, #:upper16:cap
-	str r0, [sp, #8]
-	mov r1, r0
-	mov r1, #40
-	mla r11, r5, r1, r0
-	movw r0, #:lower16:to
-	movt r0, #:upper16:to
-	mla r10, r5, r1, r0
+	movt r1, #:upper16:cap
+	mov r0, #40
+	str r1, [sp, #8]
+	mla r11, r5, r0, r1
+	movw r1, #:lower16:to
+	movt r1, #:upper16:to
+	mla r10, r5, r0, r1
 	ldr r0, [r7, r5, lsl #2]
 	cmp r8, r0
 	bge label37

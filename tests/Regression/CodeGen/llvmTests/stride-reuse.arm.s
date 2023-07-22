@@ -22,21 +22,18 @@ foo:
 	push { r4, r5 }
 	cmp r0, #0
 	ble label2
-	movw r2, #:lower16:B
-	movw r3, #:lower16:A
-	movw r4, #:lower16:P
-	mov r5, #64
+	movw r1, #:lower16:B
+	movw r2, #:lower16:A
+	movw r3, #:lower16:P
+	mov r4, #64
 	cmp r0, #1
-	movt r2, #:upper16:B
-	movt r3, #:upper16:A
-	movt r4, #:upper16:P
-	vldr s0, [r2, #0]
-	mov r1, r2
-	mov r2, r3
+	movt r1, #:upper16:B
+	movt r2, #:upper16:A
+	movt r3, #:upper16:P
+	vldr s0, [r1, #0]
 	vadd.f32 s0, s0, s0
-	vstr s0, [r3, #0]
-	str r5, [r4, #0]
-	mov r3, r4
+	vstr s0, [r2, #0]
+	str r4, [r3, #0]
 	bne label22
 	b label2
 label22:

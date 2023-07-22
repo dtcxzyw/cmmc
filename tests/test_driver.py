@@ -437,7 +437,7 @@ def sysy_cmmc_native(src, target):
 
     run_cmmc(src, target=target, output=output_asm, hide_symbol=True)
     link_executable(output_asm, target, output)
-    run_executable([output], fake_src, f"cmmc_native_{target}")
+    run_executable([output], src, f"cmmc_native_{target}")
 
 
 def sysy_cmmc_compile_only(src, target):

@@ -47,10 +47,10 @@ label9:
 	add r1, r3, r1, lsl #1
 	add r3, r0, #9
 	add r1, r1, r5, lsl #1
+	add r0, r0, #13
 	add r3, r3, r3, lsl #1
 	add r4, r1, r3
-	add r1, r0, #13
-	mov r0, r1
+	mov r1, r0
 	cmp r2, #3
 	bge label10
 	b label7

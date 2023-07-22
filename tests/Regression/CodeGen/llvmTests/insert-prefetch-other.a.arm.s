@@ -14,12 +14,11 @@ X:
 foo:
 	movs r1, r0
 	ble label11
-	movw r0, #:lower16:X
-	mov r3, #0
+	movw r2, #:lower16:X
+	mov r0, #0
 	cmp r1, #1
-	movt r0, #:upper16:X
-	strh r3, [r0, #0]
-	mov r2, r0
+	movt r2, #:upper16:X
+	strh r0, [r2, #0]
 	bne label17
 	b label26
 label11:

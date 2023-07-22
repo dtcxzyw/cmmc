@@ -95,10 +95,9 @@ label102:
 	add sp, sp, #4
 	pop { r4, r5, pc }
 label85:
-	movw r0, #:lower16:value
-	movt r0, #:upper16:value
-	mov r2, r0
-	ldr r0, [r0, r4, lsl #2]
+	movw r2, #:lower16:value
+	movt r2, #:upper16:value
+	ldr r0, [r2, r4, lsl #2]
 	cmp r1, r0
 	ble label87
 	movw r5, #:lower16:right_child
@@ -155,10 +154,9 @@ label93:
 	bne label91
 	b label220
 label94:
-	movw r0, #:lower16:right_child
-	movt r0, #:upper16:right_child
-	ldr r1, [r0, r4, lsl #2]
-	mov r5, r0
+	movw r5, #:lower16:right_child
+	movt r5, #:upper16:right_child
+	ldr r1, [r5, r4, lsl #2]
 	mov r0, r1
 	cmn r1, #1
 	bne label97

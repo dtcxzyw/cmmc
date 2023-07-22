@@ -22,23 +22,20 @@ foo:
 	push { r4, r5, r6 }
 	cmp r0, #0
 	ble label5
-	movw r2, #:lower16:B
-	mov r5, #17
+	movw r1, #:lower16:B
+	mov r4, #17
 	cmp r0, #1
-	movt r2, #:upper16:B
-	ldrsb r3, [r2, #0]
-	mov r1, r2
-	movw r3, #:lower16:A
-	ldrb r2, [r2, #0]
-	movt r3, #:upper16:A
+	movt r1, #:upper16:B
+	ldrsb r2, [r1, #0]
+	ldrb r2, [r1, #0]
 	lsl r2, r2, #1
-	uxtb r4, r2
+	uxtb r3, r2
+	movw r2, #:lower16:A
+	movt r2, #:upper16:A
+	strb r3, [r2, #0]
+	movw r3, #:lower16:P
+	movt r3, #:upper16:P
 	strb r4, [r3, #0]
-	mov r2, r3
-	movw r4, #:lower16:P
-	movt r4, #:upper16:P
-	strb r5, [r4, #0]
-	mov r3, r4
 	bne label24
 	b label5
 label24:

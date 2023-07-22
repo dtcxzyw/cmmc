@@ -498,30 +498,30 @@ main:
 	sub sp, sp, #4
 	movt r6, #:upper16:a
 	mov r0, r6
-	mov r5, r6
+	mov r4, r6
 	bl getarray
-	mov r4, r0
+	mov r5, r0
 	mov r0, #90
 	bl _sysy_starttime
 	mov r2, #0
 	mov r1, r6
 	mov r0, #8
-	mov r3, r4
+	mov r3, r5
 	bl radixSort
-	cmp r4, #0
+	cmp r5, #0
 	ble label464
 	mov r2, #0
 	mov r0, r2
 	add r1, r2, #4
-	cmp r4, r1
+	cmp r5, r1
 	ble label454
 	b label453
 label464:
 	mov r4, #0
 	b label457
 label453:
-	add r6, r5, r0, lsl #2
-	ldr r8, [r5, r0, lsl #2]
+	add r6, r4, r0, lsl #2
+	ldr r8, [r4, r0, lsl #2]
 	add r3, r0, #3
 	add r10, r0, #1
 	ldr r7, [r6, #4]
@@ -543,17 +543,17 @@ label453:
 	mla r2, r3, r0, r2
 	mov r0, r1
 	add r1, r1, #4
-	cmp r4, r1
+	cmp r5, r1
 	ble label454
 	b label453
 label454:
-	ldr r1, [r5, r0, lsl #2]
+	ldr r1, [r4, r0, lsl #2]
 	add r3, r0, #2
 	sdiv r6, r1, r3
 	mls r1, r6, r3, r1
 	mla r2, r0, r1, r2
 	add r0, r0, #1
-	cmp r4, r0
+	cmp r5, r0
 	ble label506
 	b label454
 label506:

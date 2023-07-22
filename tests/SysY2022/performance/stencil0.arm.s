@@ -14,10 +14,10 @@ image_out:
 .globl main
 main:
 	push { r4, r5, r6, r7, r8, r9, lr }
-	movw r0, #:lower16:image_in
+	movw r4, #:lower16:image_in
 	sub sp, sp, #4
-	movt r0, #:upper16:image_in
-	mov r4, r0
+	movt r4, #:upper16:image_in
+	mov r0, r4
 	bl getarray
 	mov r6, r0
 	mov r0, #23

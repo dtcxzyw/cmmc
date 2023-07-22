@@ -25,12 +25,11 @@ label2:
 	bne label8
 	b label23
 label8:
-	movw r2, #:lower16:array
+	movw r5, #:lower16:array
 	mov r6, r0
-	movt r2, #:upper16:array
-	ldr r3, [r2, r1, lsl #2]
-	mov r5, r2
 	mov r2, r0
+	movt r5, #:upper16:array
+	ldr r3, [r5, r1, lsl #2]
 	cmp r1, r0
 	ble label16
 	ldr r7, [r5, r0, lsl #2]

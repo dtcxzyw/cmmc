@@ -25,43 +25,42 @@ main:
 	b label32
 label37:
 	mov r0, #0
-	movw r1, #:lower16:program
-	mov r6, #0
+	movw r4, #:lower16:program
+	mov r7, #0
 	movw r5, #:lower16:tape
-	movt r1, #:upper16:program
-	mov r7, r6
+	movt r4, #:upper16:program
+	mov r6, r7
 	movt r5, #:upper16:tape
-	str r6, [r1, r0, lsl #2]
-	mov r4, r1
-	ldr r0, [r1, r6, lsl #2]
-	cmp r0, #0
-	beq label30
-	cmp r0, #62
-	bne label12
-	add r7, r6, #1
-	add r6, r6, #1
-	ldr r0, [r1, r6, lsl #2]
+	str r7, [r4, r0, lsl #2]
+	ldr r0, [r4, r7, lsl #2]
 	cmp r0, #0
 	beq label30
 	cmp r0, #62
 	bne label12
 	add r7, r7, #1
 	add r6, r6, #1
-	ldr r0, [r1, r6, lsl #2]
+	ldr r0, [r4, r6, lsl #2]
 	cmp r0, #0
 	beq label30
 	cmp r0, #62
 	bne label12
 	add r7, r7, #1
 	add r6, r6, #1
-	ldr r0, [r1, r6, lsl #2]
+	ldr r0, [r4, r6, lsl #2]
 	cmp r0, #0
 	beq label30
 	cmp r0, #62
 	bne label12
 	add r7, r7, #1
 	add r6, r6, #1
-	ldr r0, [r1, r6, lsl #2]
+	ldr r0, [r4, r6, lsl #2]
+	cmp r0, #0
+	beq label30
+	cmp r0, #62
+	bne label12
+	add r7, r7, #1
+	add r6, r6, #1
+	ldr r0, [r4, r6, lsl #2]
 	cmp r0, #0
 	beq label30
 label321:
@@ -77,43 +76,42 @@ label32:
 	b label32
 label128:
 	mov r0, r4
-	movw r1, #:lower16:program
-	mov r6, #0
+	movw r4, #:lower16:program
+	mov r7, #0
 	movw r5, #:lower16:tape
-	movt r1, #:upper16:program
-	mov r7, r6
+	movt r4, #:upper16:program
+	mov r6, r7
 	movt r5, #:upper16:tape
-	str r6, [r1, r4, lsl #2]
-	mov r4, r1
-	ldr r0, [r1, r6, lsl #2]
-	cmp r0, #0
-	beq label30
-	cmp r0, #62
-	bne label12
-	add r7, r6, #1
-	add r6, r6, #1
-	ldr r0, [r1, r6, lsl #2]
+	str r7, [r4, r0, lsl #2]
+	ldr r0, [r4, r7, lsl #2]
 	cmp r0, #0
 	beq label30
 	cmp r0, #62
 	bne label12
 	add r7, r7, #1
 	add r6, r6, #1
-	ldr r0, [r1, r6, lsl #2]
+	ldr r0, [r4, r6, lsl #2]
 	cmp r0, #0
 	beq label30
 	cmp r0, #62
 	bne label12
 	add r7, r7, #1
 	add r6, r6, #1
-	ldr r0, [r1, r6, lsl #2]
+	ldr r0, [r4, r6, lsl #2]
 	cmp r0, #0
 	beq label30
 	cmp r0, #62
 	bne label12
 	add r7, r7, #1
 	add r6, r6, #1
-	ldr r0, [r1, r6, lsl #2]
+	ldr r0, [r4, r6, lsl #2]
+	cmp r0, #0
+	beq label30
+	cmp r0, #62
+	bne label12
+	add r7, r7, #1
+	add r6, r6, #1
+	ldr r0, [r4, r6, lsl #2]
 	cmp r0, #0
 	beq label30
 	b label321

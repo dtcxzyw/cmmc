@@ -32,6 +32,7 @@ void allocateStackObjects(MIRFunction& func, CodeGenContext& ctx, bool isNonLeaf
 void identicalCodeFolding(MIRFunction& func, const CodeGenContext& ctx);
 void tailDuplication(MIRFunction& func, CodeGenContext& ctx);
 void simplifyCFGWithUniqueTerminator(MIRFunction& func, const CodeGenContext& ctx);
+bool createIndirectCopy(MIRFunction& func, const CodeGenContext& ctx);
 bool genericPeepholeOpt(MIRFunction& func, const CodeGenContext& ctx);
 void postLegalizeFunc(MIRFunction& func, CodeGenContext& ctx);
 void preRALegalizeFunc(MIRFunction& func, CodeGenContext& ctx);

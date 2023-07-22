@@ -13,6 +13,7 @@
 */
 
 #include <ARM/InstInfoDecl.hpp>
+#include <cmmc/CodeGen/CodeGenUtils.hpp>
 #include <cmmc/CodeGen/InstInfo.hpp>
 #include <cmmc/CodeGen/MIR.hpp>
 #include <cmmc/CodeGen/Target.hpp>
@@ -454,6 +455,8 @@ bool ARMScheduleModel_cortex_a72::peepholeOpt(MIRFunction& func, const CodeGenCo
         if(!ctx.flags.endsWithTerminator)
             modified |= removeDeadBranch(*block, ctx);
     }
+    if(ctx.flags.dontForward)
+        modified |= createIndirectCopy(func, ctx);
     return modified;
 }
 

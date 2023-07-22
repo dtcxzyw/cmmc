@@ -167,6 +167,52 @@ static MIROperand getCondFieldFCmp(const MIROperand& op) {
     return MIROperand::asImm(field, OperandType::CondField);
 }
 
+[[maybe_unused]] static MIROperand getInvertedCondField(const MIROperand& operand) {
+    const auto cf = static_cast<CondField>(operand.imm());
+    CondField field;
+    switch(cf) {
+        case CondField::EQ:
+            field = CondField::NE;
+            break;
+        case CondField::NE:
+            field = CondField::EQ;
+            break;
+        case CondField::HS:
+            field = CondField::LO;
+            break;
+        case CondField::LO:
+            field = CondField::HS;
+            break;
+        case CondField::MI:
+            field = CondField::PL;
+            break;
+        case CondField::PL:
+            field = CondField::MI;
+            break;
+        case CondField::HI:
+            field = CondField::LS;
+            break;
+        case CondField::LS:
+            field = CondField::HI;
+            break;
+        case CondField::GE:
+            field = CondField::LT;
+            break;
+        case CondField::LT:
+            field = CondField::GE;
+            break;
+        case CondField::GT:
+            field = CondField::LE;
+            break;
+        case CondField::LE:
+            field = CondField::GT;
+            break;
+        default:
+            reportUnreachable(CMMC_LOCATION());
+    }
+    return MIROperand::asImm(field, OperandType::CondField);
+}
+
 static bool selectAddrOffset(const MIROperand& addr, ISelContext& ctx, MIROperand& base, MIROperand& offset, uint32_t opcode) {
     const auto addrInst = ctx.lookupDef(addr);
     if(addrInst) {
@@ -871,6 +917,23 @@ void ARMISelInfo::preRALegalizeInst(const InstLegalizeContext& ctx) const {
             ctx.instructions.insert(ctx.iter, MIRInst{ VMOV }.setOperand<0>(dst).setOperand<1>(rhs));
             *ctx.iter =
                 MIRInst{ VMOV_Cond }.setOperand<0>(cf).setOperand<1>(dst).setOperand<2>(lhs).setOperand<3>(cc).setOperand<4>(dst);
+            break;
+        }
+        case CondArith_GPR: {
+            auto dst = inst.getOperand(0);
+            auto lhs = inst.getOperand(1);
+            auto rhs = inst.getOperand(2);
+            auto cc = inst.getOperand(3);
+            auto cf = inst.getOperand(4);
+            auto op = static_cast<uint32_t>(inst.getOperand(5).imm());
+            ctx.instructions.insert(ctx.iter, MIRInst{ MoveGPR }.setOperand<0>(dst).setOperand<1>(lhs));
+            *ctx.iter = MIRInst{ op - ADD + ADD_Cond }
+                            .setOperand<0>(cf)
+                            .setOperand<1>(dst)
+                            .setOperand<2>(dst)
+                            .setOperand<3>(rhs)
+                            .setOperand<4>(cc)
+                            .setOperand<5>(dst);
             break;
         }
         case LoadGlobalAddr: {

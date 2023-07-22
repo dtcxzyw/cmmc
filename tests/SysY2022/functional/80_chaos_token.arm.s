@@ -129,40 +129,38 @@ main:
 	push { r4, r5, r6, r7, r8, r9, r10, lr }
 	sub sp, sp, #24
 	mov r0, #10
+	movw r5, #:lower16:__HELLO
 	mov r4, sp
 	str r0, [sp, #0]
+	movt r5, #:upper16:__HELLO
 	mov r0, #0
 	str r0, [r4, #4]
 	str r0, [r4, #8]
 	str r0, [r4, #12]
 	str r0, [r4, #16]
-	movw r0, #:lower16:__HELLO
-	movt r0, #:upper16:__HELLO
-	mov r5, r0
-	ldr r0, [r0, #0]
+	ldr r0, [r5, #0]
 	cmp r0, #0
 	beq label31
 	mov r6, #0
 	b label2
 label31:
 	mov r5, #0
-	movw r0, #43691
+	movw r1, #43691
 	mov r2, #6
-	movt r0, #10922
-	smmul r1, r5, r0
-	smmul r0, r5, r0
-	add r1, r1, r1, lsr #31
+	movt r1, #10922
+	smmul r0, r5, r1
+	smmul r1, r5, r1
 	add r0, r0, r0, lsr #31
-	mls r7, r0, r2, r5
-	cmp r1, r7
+	add r1, r1, r1, lsr #31
+	mls r7, r1, r2, r5
+	cmp r0, r7
 	beq label18
-	movw r0, #:lower16:N4__mE___
-	mov r2, #200
-	movt r0, #:upper16:N4__mE___
-	mul r3, r1, r2
-	mla r8, r1, r2, r0
-	mov r6, r0
-	ldr r0, [r0, r3]
+	movw r6, #:lower16:N4__mE___
+	mov r1, #200
+	movt r6, #:upper16:N4__mE___
+	mul r2, r0, r1
+	mla r8, r0, r1, r6
+	ldr r0, [r6, r2]
 	cmp r0, #0
 	beq label7
 	b label165
@@ -178,23 +176,22 @@ label2:
 label41:
 	mov r5, #0
 label4:
-	movw r0, #43691
+	movw r1, #43691
 	mov r2, #6
-	movt r0, #10922
-	smmul r1, r5, r0
-	smmul r0, r5, r0
-	add r1, r1, r1, lsr #31
+	movt r1, #10922
+	smmul r0, r5, r1
+	smmul r1, r5, r1
 	add r0, r0, r0, lsr #31
-	mls r7, r0, r2, r5
-	cmp r1, r7
+	add r1, r1, r1, lsr #31
+	mls r7, r1, r2, r5
+	cmp r0, r7
 	beq label18
-	movw r0, #:lower16:N4__mE___
-	mov r2, #200
-	movt r0, #:upper16:N4__mE___
-	mul r3, r1, r2
-	mla r8, r1, r2, r0
-	mov r6, r0
-	ldr r0, [r0, r3]
+	movw r6, #:lower16:N4__mE___
+	mov r1, #200
+	movt r6, #:upper16:N4__mE___
+	mul r2, r0, r1
+	mla r8, r0, r1, r6
+	ldr r0, [r6, r2]
 	cmp r0, #0
 	beq label7
 	b label165
@@ -224,10 +221,9 @@ label19:
 	add sp, sp, #24
 	pop { r4, r5, r6, r7, r8, r9, r10, pc }
 label7:
-	movw r0, #:lower16:saY_HeI10_To
-	movt r0, #:upper16:saY_HeI10_To
-	mov r8, r0
-	ldr r0, [r0, #0]
+	movw r8, #:lower16:saY_HeI10_To
+	movt r8, #:upper16:saY_HeI10_To
+	ldr r0, [r8, #0]
 	cmp r0, #0
 	beq label10
 	b label62

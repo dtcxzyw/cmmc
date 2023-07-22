@@ -67,10 +67,8 @@ select_eq_zero_negone:
 .globl select_ne_10001_10002
 select_ne_10001_10002:
 	cmp r0, r1
-	movw r1, #10002
-	mov r0, #0
-	movwne r0, #1
-	sub r0, r1, r0
+	movw r0, #10002
+	subne r0, r0, #1
 	bx lr
 .globl select_ne_1_2
 select_ne_1_2:

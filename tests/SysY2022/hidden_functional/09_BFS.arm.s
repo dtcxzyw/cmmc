@@ -26,17 +26,17 @@ main:
 	sub sp, sp, #20
 	bl getch
 	movw r5, #:lower16:next
-	movw r4, #:lower16:to
 	movw r9, #:lower16:head
 	cmp r0, #48
-	mov r1, #0
 	mov r2, #0
+	mov r1, #0
 	movw r10, #:lower16:que
+	movw r4, #:lower16:to
 	movt r5, #:upper16:next
-	movt r4, #:upper16:to
 	movt r9, #:upper16:head
 	movwlt r1, #1
 	movt r10, #:upper16:que
+	movt r4, #:upper16:to
 	cmp r0, #57
 	str r10, [sp, #0]
 	movwgt r2, #1
@@ -111,15 +111,13 @@ label9:
 	b label9
 label85:
 	bl getch
-	mov r2, #0
+	mov r2, #1
 	mov r1, #0
 	cmp r0, #48
 	movwlt r1, #1
 	cmp r0, #57
-	movwgt r2, #1
+	orrgt r1, r1, #1
 	cmp r6, #45
-	orr r1, r1, r2
-	mov r2, #1
 	moveq r7, r2
 	cmp r1, #0
 	beq label409
@@ -242,15 +240,13 @@ label490:
 	b label81
 label46:
 	bl getch
-	mov r2, #0
+	mov r2, #1
 	mov r1, #0
 	cmp r0, #48
 	movwlt r1, #1
 	cmp r0, #57
-	movwgt r2, #1
+	orrgt r1, r1, #1
 	cmp r8, #45
-	orr r1, r1, r2
-	mov r2, #1
 	moveq r9, r2
 	cmp r1, #0
 	beq label293
@@ -266,17 +262,15 @@ label298:
 	mov r10, #0
 label52:
 	bl getch
-	mov r9, r0
+	rsb r1, r10, #0
 	cmp r0, #48
-	mov r1, #0
+	mov r9, r0
 	mov r0, #0
 	movwlt r0, #1
 	cmp r9, #57
-	movwgt r1, #1
+	orrgt r0, r0, #1
 	cmp r8, #0
-	orr r0, r0, r1
 	mov r8, r10
-	rsb r1, r10, #0
 	movne r8, r1
 	cmp r0, #0
 	beq label308
@@ -322,15 +316,13 @@ label57:
 	b label59
 label78:
 	bl getch
-	mov r2, #0
+	mov r2, #1
 	mov r1, #0
 	cmp r0, #48
 	movwlt r1, #1
 	cmp r0, #57
-	movwgt r2, #1
+	orrgt r1, r1, #1
 	cmp r9, #45
-	orr r1, r1, r2
-	mov r2, #1
 	moveq r10, r2
 	cmp r1, #0
 	beq label389
@@ -515,15 +507,13 @@ label487:
 	b label29
 label23:
 	bl getch
-	mov r2, #0
+	mov r2, #1
 	mov r1, #0
 	cmp r0, #48
 	movwlt r1, #1
 	cmp r0, #57
-	movwgt r2, #1
+	orrgt r1, r1, #1
 	cmp r8, #45
-	orr r1, r1, r2
-	mov r2, #1
 	moveq r9, r2
 	cmp r1, #0
 	beq label208
@@ -636,17 +626,15 @@ label64:
 	b label64
 label32:
 	bl getch
-	mov r9, r0
+	rsb r1, r10, #0
 	cmp r0, #48
-	mov r1, #0
+	mov r9, r0
 	mov r0, #0
 	movwlt r0, #1
 	cmp r9, #57
-	movwgt r1, #1
+	orrgt r0, r0, #1
 	cmp r8, #0
-	orr r0, r0, r1
 	mov r8, r10
-	rsb r1, r10, #0
 	movne r8, r1
 	cmp r0, #0
 	beq label234
@@ -668,15 +656,13 @@ label488:
 	b label42
 label34:
 	bl getch
-	mov r2, #0
+	mov r2, #1
 	mov r1, #0
 	cmp r0, #48
 	movwlt r1, #1
 	cmp r0, #57
-	movwgt r2, #1
+	orrgt r1, r1, #1
 	cmp r9, #45
-	orr r1, r1, r2
-	mov r2, #1
 	moveq r10, r2
 	cmp r1, #0
 	beq label243
