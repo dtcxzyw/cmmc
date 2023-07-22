@@ -687,4 +687,4 @@ func @main() -> i32 { NoRecurse Entry } {
   ^b6:
     ret i32 0;
 }
-internal [1000 * i32]* @count;
+internal [1000 * i32]* @count { Flexible };

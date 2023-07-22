@@ -1,9 +1,9 @@
 internal func @getint() -> i32 { NoMemoryRead NoMemoryWrite };
 internal func @putint() -> void { NoMemoryRead NoMemoryWrite };
 internal func @putch() -> void { NoMemoryRead NoMemoryWrite };
-internal [10000 * i32]* @value;
-internal [10000 * i32]* @left_child;
-internal [10000 * i32]* @right_child;
+internal [10000 * i32]* @value { Flexible };
+internal [10000 * i32]* @left_child { Flexible };
+internal [10000 * i32]* @right_child { Flexible };
 internal func @insert(i32 %root, i32 %x, i32* %0) -> i32 {
   ^entry:
     i1 %1 = icmp eq i32 %root, i32 -1;

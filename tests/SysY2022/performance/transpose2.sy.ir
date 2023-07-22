@@ -4,7 +4,7 @@ internal func @putint() -> void { NoMemoryRead NoMemoryWrite };
 internal func @putch() -> void { NoMemoryRead NoMemoryWrite };
 internal func @starttime() -> void { NoMemoryRead NoMemoryWrite };
 internal func @stoptime() -> void { NoMemoryRead NoMemoryWrite };
-internal [20000000 * i32]* @matrix;
+internal [20000000 * i32]* @matrix { Flexible };
 internal [100000 * i32]* @a;
 func @main() -> i32 { NoRecurse Entry } {
   ^entry:

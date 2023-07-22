@@ -3,7 +3,7 @@ internal func @getch() -> i32 { NoMemoryRead NoMemoryWrite };
 internal func @getfloat() -> f32 { NoMemoryRead NoMemoryWrite };
 internal func @putint() -> void { NoMemoryRead NoMemoryWrite };
 internal func @putch() -> void { NoMemoryRead NoMemoryWrite };
-internal [1048576 * i32]* @image;
+internal [1048576 * i32]* @image { Flexible };
 internal func @my_sin_impl(f32 %x) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless } {
   ^entry:
     f32 %0 = fabs f32 %x;

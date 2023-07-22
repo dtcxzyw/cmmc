@@ -1,7 +1,7 @@
 internal func @getint() -> i32 { NoMemoryRead NoMemoryWrite };
 internal func @putint() -> void { NoMemoryRead NoMemoryWrite };
 internal func @putch() -> void { NoMemoryRead NoMemoryWrite };
-internal [110 * i32]* @array;
+internal [110 * i32]* @array { Flexible };
 internal func @findfa(i32 %a) -> i32 {
   ^entry:
     [110 * i32]* %0 = ptrcast [110 * i32]* @array to [110 * i32]*;

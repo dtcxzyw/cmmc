@@ -551,5 +551,5 @@ func @main() -> i32 { NoRecurse Entry } {
     f32 %456 = fmul f32 %455, f32 0.5;
     ubr ^while.header6;
 }
-internal [1000 * f32]* @var;
-internal [1000 * f32]* @mean;
+internal [1000 * f32]* @var { Flexible };
+internal [1000 * f32]* @mean { Flexible };

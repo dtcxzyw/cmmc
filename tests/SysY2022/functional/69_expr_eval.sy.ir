@@ -372,5 +372,5 @@ func @main() -> i32 { NoRecurse Entry } {
     i32 %200 = srem i32 %183, i32 %180;
     ubr ^b17;
 }
-internal [256 * i32]* @oprs;
-internal [256 * i32]* @ops;
+internal [256 * i32]* @oprs { Flexible };
+internal [256 * i32]* @ops { Flexible };

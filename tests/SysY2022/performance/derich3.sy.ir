@@ -4,8 +4,8 @@ internal func @starttime() -> void { NoMemoryRead NoMemoryWrite };
 internal func @stoptime() -> void { NoMemoryRead NoMemoryWrite };
 internal [512 * [270 * f32]]* @imgIn;
 internal [512 * [270 * f32]]* @imgOut;
-internal [512 * [270 * f32]]* @my_y1;
-internal [512 * [270 * f32]]* @my_y2;
+internal [512 * [270 * f32]]* @my_y1 { Flexible };
+internal [512 * [270 * f32]]* @my_y2 { Flexible };
 func @main() -> i32 { NoRecurse Entry } {
   ^entry:
     [512 * [270 * f32]]* %0 = ptrcast [512 * [270 * f32]]* @imgIn to [512 * [270 * f32]]*;

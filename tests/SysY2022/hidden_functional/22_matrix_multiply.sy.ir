@@ -1,9 +1,9 @@
 internal func @getint() -> i32 { NoMemoryRead NoMemoryWrite };
 internal func @putint() -> void { NoMemoryRead NoMemoryWrite };
 internal func @putch() -> void { NoMemoryRead NoMemoryWrite };
-internal [100 * [100 * i32]]* @a;
-internal [100 * [100 * i32]]* @b;
-internal [100 * [100 * i32]]* @res;
+internal [100 * [100 * i32]]* @a { Flexible };
+internal [100 * [100 * i32]]* @b { Flexible };
+internal [100 * [100 * i32]]* @res { Flexible };
 func @main() -> i32 { NoRecurse Entry } {
   ^entry:
     i32 %0 = call () -> i32 @getint();

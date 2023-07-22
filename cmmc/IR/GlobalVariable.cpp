@@ -32,6 +32,7 @@ void GlobalVariable::dump(std::ostream& out, const HighlightSelector& selector) 
     out << #NAME " "sv
 
         HANDLE_ATTR(ReadOnly);
+        HANDLE_ATTR(Flexible);
 
 #undef HANDLE_ATTR
         out << '}';

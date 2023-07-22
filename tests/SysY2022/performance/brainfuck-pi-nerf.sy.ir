@@ -3,10 +3,10 @@ internal func @getch() -> i32 { NoMemoryRead NoMemoryWrite };
 internal func @putch() -> void { NoMemoryRead NoMemoryWrite };
 internal func @starttime() -> void { NoMemoryRead NoMemoryWrite };
 internal func @stoptime() -> void { NoMemoryRead NoMemoryWrite };
-internal [65536 * i32]* @program;
-internal [65536 * i32]* @tape;
-internal [65536 * i32]* @input;
-internal [65536 * i32]* @output;
+internal [65536 * i32]* @program { Flexible };
+internal [65536 * i32]* @tape { Flexible };
+internal [65536 * i32]* @input { Flexible };
+internal [65536 * i32]* @output { Flexible };
 func @main() -> i32 { NoRecurse Entry } {
   ^entry:
     ubr ^while.body;
@@ -260,4 +260,4 @@ func @main() -> i32 { NoRecurse Entry } {
     i32 %143 = add i32 %74, i32 1;
     ubr ^b3;
 }
-internal [512 * i32]* @return_a;
+internal [512 * i32]* @return_a { Flexible };

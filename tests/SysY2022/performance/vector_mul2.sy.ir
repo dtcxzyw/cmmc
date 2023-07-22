@@ -522,6 +522,6 @@ func @main() -> i32 { NoRecurse Entry } {
     call (i32) -> void @putch(i32 10);
     ret i32 0;
 }
-internal [100000 * f32]* @Vectortm;
-internal [100000 * f32]* @vectorB;
-internal [100000 * f32]* @vectorA;
+internal [100000 * f32]* @Vectortm { Flexible };
+internal [100000 * f32]* @vectorB { Flexible };
+internal [100000 * f32]* @vectorA { Flexible };

@@ -151,5 +151,5 @@ func @main() -> i32 { NoMemoryWrite NoRecurse Entry } {
     i1 %102 = icmp sgt i32 %0, i32 %101;
     cbr i1 %102(prob = 0.75), ^while.body4, ^b2;
 }
-internal [8192 * f32]* @y;
-internal [8192 * f32]* @x;
+internal [8192 * f32]* @y { Flexible };
+internal [8192 * f32]* @x { Flexible };

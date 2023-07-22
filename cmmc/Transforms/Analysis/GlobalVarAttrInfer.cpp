@@ -12,7 +12,10 @@
     limitations under the License.
 */
 
+#include "cmmc/IR/Type.hpp"
 #include <cmmc/Analysis/AliasAnalysis.hpp>
+#include <cmmc/Analysis/AnalysisPass.hpp>
+#include <cmmc/Analysis/PointerBaseAnalysis.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/Function.hpp>
 #include <cmmc/IR/GlobalVariable.hpp>
@@ -26,8 +29,7 @@
 CMMC_NAMESPACE_BEGIN
 
 class GlobalVarAttrInfer final : public TransformPass<Module> {
-public:
-    bool run(Module& module, AnalysisPassManager& analysis) const override {
+    static bool setReadOnly(Module& module, AnalysisPassManager& analysis) {
         std::list<GlobalVariable*> todo;
         for(auto global : module.globals()) {
             if(global->is<GlobalVariable>()) {
@@ -76,8 +78,70 @@ public:
 
         for(auto gv : todo)
             gv->attr().addAttr(GlobalVariableAttribute::ReadOnly);
-
         return !todo.empty();
+    }
+
+    static bool setFlexible(Module& module, AnalysisPassManager& analysis) {
+        std::list<GlobalVariable*> todo;
+        for(auto global : module.globals()) {
+            if(global->is<GlobalVariable>()) {
+                const auto gv = global->as<GlobalVariable>();
+                if(!gv->attr().hasAttr(GlobalVariableAttribute::Flexible) && gv->getLinkage() == Linkage::Internal &&
+                   gv->getType()->as<PointerType>()->getPointee()->isArray()) {
+                    todo.push_back(gv);
+                }
+            }
+        }
+
+        if(todo.empty())
+            return false;
+
+        for(auto global : module.globals()) {
+            if(!global->isFunction())
+                continue;
+            const auto func = global->as<Function>();
+            if(!func->blocks().empty()) {
+                auto& alias = analysis.get<AliasAnalysis>(*func);
+                auto& base = analysis.get<PointerBaseAnalysis>(*func);
+                for(auto block : func->blocks()) {
+                    for(auto& inst : block->instructions()) {
+                        if(inst.getInstID() == InstructionID::Call) {
+                            const auto callee = inst.lastOperand()->as<Function>();
+                            // external funcs
+                            if(callee->blocks().empty()) {
+                                todo.remove_if([&](GlobalVariable* gv) {
+                                    for(auto operand : inst.operands()) {
+                                        if(operand->getType()->isPointer() && !alias.isDistinct(gv, operand)) {
+                                            const auto basePtr = base.lookup(operand);
+                                            if(basePtr)
+                                                return basePtr == gv;
+                                            return true;
+                                        }
+                                    }
+                                    return false;
+                                });
+                            }
+                        }
+                    }
+                    if(todo.empty())
+                        return false;
+                }
+            }
+            if(todo.empty())
+                return false;
+        }
+
+        for(auto gv : todo)
+            gv->attr().addAttr(GlobalVariableAttribute::Flexible);
+        return !todo.empty();
+    }
+
+public:
+    bool run(Module& module, AnalysisPassManager& analysis) const override {
+        bool modified = false;
+        modified |= setReadOnly(module, analysis);
+        modified |= setFlexible(module, analysis);
+        return modified;
     }
 
     [[nodiscard]] std::string_view name() const noexcept override {

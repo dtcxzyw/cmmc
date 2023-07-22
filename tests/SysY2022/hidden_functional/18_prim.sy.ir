@@ -1,8 +1,8 @@
 internal func @getch() -> i32 { NoMemoryRead NoMemoryWrite };
-internal [1005 * i32]* @u;
-internal [1005 * i32]* @v;
-internal [1005 * i32]* @c;
-internal [1005 * i32]* @fa;
+internal [1005 * i32]* @u { Flexible };
+internal [1005 * i32]* @v { Flexible };
+internal [1005 * i32]* @c { Flexible };
+internal [1005 * i32]* @fa { Flexible };
 internal func @find(i32 %x) -> i32 {
   ^entry:
     [1005 * i32]* %0 = ptrcast [1005 * i32]* @fa to [1005 * i32]*;

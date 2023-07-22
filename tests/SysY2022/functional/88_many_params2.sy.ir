@@ -144,5 +144,5 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     call (i32) -> void @putch(i32 10);
     ret i32 0;
 }
-internal [53 * [59 * i32]]* @b;
-internal [61 * [67 * i32]]* @a;
+internal [53 * [59 * i32]]* @b { Flexible };
+internal [61 * [67 * i32]]* @a { Flexible };

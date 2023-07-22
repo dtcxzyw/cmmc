@@ -2,8 +2,8 @@ internal func @getint() -> i32 { NoMemoryRead NoMemoryWrite };
 internal func @putarray() -> void { NoMemoryWrite };
 internal func @starttime() -> void { NoMemoryRead NoMemoryWrite };
 internal func @stoptime() -> void { NoMemoryRead NoMemoryWrite };
-internal [2010 * [2010 * i32]]* @A;
-internal [2010 * i32]* @B;
+internal [2010 * [2010 * i32]]* @A { Flexible };
+internal [2010 * i32]* @B { Flexible };
 internal [2010 * i32]* @C;
 func @main() -> i32 { NoRecurse Entry } {
   ^entry:

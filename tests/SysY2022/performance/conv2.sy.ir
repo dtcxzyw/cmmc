@@ -4,7 +4,7 @@ internal func @putarray() -> void { NoMemoryWrite };
 internal func @starttime() -> void { NoMemoryRead NoMemoryWrite };
 internal func @stoptime() -> void { NoMemoryRead NoMemoryWrite };
 internal [10000000 * i32]* @a;
-internal [10000000 * i32]* @b;
+internal [10000000 * i32]* @b { Flexible };
 internal [10000 * i32]* @kernelid;
 func @main() -> i32 { NoRecurse Entry } {
   ^entry:

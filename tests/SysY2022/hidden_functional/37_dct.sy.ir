@@ -2,9 +2,9 @@ internal func @getint() -> i32 { NoMemoryRead NoMemoryWrite };
 internal func @getfloat() -> f32 { NoMemoryRead NoMemoryWrite };
 internal func @putch() -> void { NoMemoryRead NoMemoryWrite };
 internal func @putfloat() -> void { NoMemoryRead NoMemoryWrite };
-internal [8 * [8 * f32]]* @test_block;
-internal [8 * [8 * f32]]* @test_dct;
-internal [8 * [8 * f32]]* @test_idct;
+internal [8 * [8 * f32]]* @test_block { Flexible };
+internal [8 * [8 * f32]]* @test_dct { Flexible };
+internal [8 * [8 * f32]]* @test_idct { Flexible };
 internal func @my_sin_impl(f32 %x) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless } {
   ^entry:
     f32 %0 = fabs f32 %x;

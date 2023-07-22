@@ -1,8 +1,8 @@
 internal func @getch() -> i32 { NoMemoryRead NoMemoryWrite };
-internal [400020 * i32]* @cnt;
-internal [100005 * i32]* @a;
-internal [100005 * i32]* @b;
-internal [100005 * i32]* @c;
+internal [400020 * i32]* @cnt { Flexible };
+internal [100005 * i32]* @a { Flexible };
+internal [100005 * i32]* @b { Flexible };
+internal [100005 * i32]* @c { Flexible };
 func @main() -> i32 { NoRecurse Entry } {
   ^entry:
     i32 %0 = call () -> i32 @getch();

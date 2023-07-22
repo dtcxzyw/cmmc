@@ -1,6 +1,6 @@
 internal func @getint() -> i32 { NoMemoryRead NoMemoryWrite };
 internal func @putint() -> void { NoMemoryRead NoMemoryWrite };
-internal [30 * [30 * i32]]* @graph;
+internal [30 * [30 * i32]]* @graph { Flexible };
 internal func @maxCliques(i32 %k, [30 * i32]* %0, i32* %1) -> i32 {
   ^entry:
     i32* %2 = getelementptr &([30 * i32]* %0)[i64 0][i32 %k];
@@ -210,4 +210,4 @@ func @main() -> i32 { NoRecurse Entry } {
     i1 %93 = icmp sgt i32 %31, i32 %92;
     cbr i1 %93(prob = 0.75), ^while.body2, ^b;
 }
-internal [600 * [2 * i32]]* @edges;
+internal [600 * [2 * i32]]* @edges { Flexible };

@@ -2,7 +2,7 @@ internal func @getint() -> i32 { NoMemoryRead NoMemoryWrite };
 internal func @putarray() -> void { NoMemoryWrite };
 internal func @starttime() -> void { NoMemoryRead NoMemoryWrite };
 internal func @stoptime() -> void { NoMemoryRead NoMemoryWrite };
-internal [32768 * i32]* @buffer;
+internal [32768 * i32]* @buffer { Flexible };
 func @main() -> i32 { NoRecurse Entry } {
   ^entry:
     [80 * i32]* %words = alloc [80 * i32];
