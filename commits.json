@@ -85,6 +85,11 @@
       "parent": "c9c373ab7eefd99835ddc5441c452517ef6c17ad",
       "time": "2023-07-07 00:43:43 +0800"
     },
+    "1c9c17bbd7b24fabfa48b8c00cc043dee604737e": {
+      "message": "feat(codegen): optimize select",
+      "parent": "58025f21e1f21fc2e594897cd87e1cc6f2adff63",
+      "time": "2023-07-22 16:53:59 +0800"
+    },
     "1f59ecf03b60013c8fede43a47937e42df1bfca6": {
       "message": "feat(codegen): fix cgscc analysis",
       "parent": "cb2bacbaa905b3a86d42ec948cba23be3058ae1f",
@@ -305,6 +310,11 @@
       "parent": "3e4564a6705cbe0a844e11403b448d3a25fd763c",
       "time": "2023-07-01 22:12:31 +0800"
     },
+    "58025f21e1f21fc2e594897cd87e1cc6f2adff63": {
+      "message": "feat(codegen): generic inst CSE",
+      "parent": "69691ffe05325859c09ffdf2c52e25cb30c3594f",
+      "time": "2023-07-22 16:28:08 +0800"
+    },
     "595c7daef141f61de457cf8e66a861437dddbb34": {
       "message": "feat(support): add mimalloc support",
       "parent": "cae14d83d374b5e515f1d88de99ae22c47600b6c",
@@ -519,6 +529,11 @@
       "message": "feat(codegen): simplify insts with zero for riscv",
       "parent": "086e03c6856345fe64903c5818ac5f1b1b3471bb",
       "time": "2023-07-11 21:14:46 +0800"
+    },
+    "a59a7ec6d259e38e59de0606d16e029f42ac33a1": {
+      "message": "feat(transform): mark flexible arrays",
+      "parent": "1c9c17bbd7b24fabfa48b8c00cc043dee604737e",
+      "time": "2023-07-22 17:17:51 +0800"
     },
     "a91e65b0fca3872769dbf87485e5f29b11066c21": {
       "message": "ci: fix RISC-V perf events",
@@ -761,5 +776,5 @@
       "time": "2023-07-06 01:05:50 +0800"
     }
   },
-  "head": "69691ffe05325859c09ffdf2c52e25cb30c3594f"
+  "head": "a59a7ec6d259e38e59de0606d16e029f42ac33a1"
 }
