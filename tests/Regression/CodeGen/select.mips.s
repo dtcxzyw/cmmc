@@ -336,6 +336,19 @@ select_zero:
 	and $v0, $a1, $t0
 	jr $ra
 	nop
+.globl select_sgt_zero
+select_sgt_zero:
+	slt $t0, $zero, $a0
+	subu $t0, $zero, $t0
+	and $v0, $a1, $t0
+	jr $ra
+	nop
+.globl select_slt_zero
+select_slt_zero:
+	sra $t0, $a0, 31
+	and $v0, $a1, $t0
+	jr $ra
+	nop
 .globl select_imm
 select_imm:
 	sltu $t0, $zero, $a0

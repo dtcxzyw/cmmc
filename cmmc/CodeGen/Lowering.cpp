@@ -912,9 +912,22 @@ static void lower(UnreachableInst*, LoweringContext& ctx) {
 static void lower(SelectInst* inst, LoweringContext& ctx) {
     const auto ret = ctx.newVReg(inst->getType());
     auto& target = ctx.getCodeGenContext().target;
+    CompareOp cmp;
+    Value *v1, *v2;
+    // select x < 0, y, 0 -> (x >>> (bitwidth - 1)) & y
+    if(target.isNativeSupported(InstructionID::And) && target.isNativeSupported(InstructionID::AShr) &&
+       select(icmp(cmp, any(v1), cint_(0)), any(v2), cint_(0))(MatchContext<Value>(inst)) &&
+       cmp == CompareOp::ICmpSignedLessThan) {
+        const auto mask = ctx.newVReg(inst->getType());
+        const auto val = ctx.mapOperand(v1);
+        const auto trueV = ctx.mapOperand(v2);
+        ctx.emitInst(MIRInst{ InstAShr }.setOperand<0>(mask).setOperand<1>(val).setOperand<2>(
+            MIROperand::asImm(inst->getType()->as<IntegerType>()->getBitwidth() - 1, val.type())));
+        ctx.emitInst(MIRInst{ InstAnd }.setOperand<0>(ret).setOperand<1>(trueV).setOperand<2>(mask));
+    }
     // select x, y, 0 -> -x & y
-    if(target.isNativeSupported(InstructionID::And) && !target.getOptHeuristic().disableSelectionOpt &&
-       cuint_(0)(MatchContext<Value>(inst->getOperand(2)))) {
+    else if(target.isNativeSupported(InstructionID::And) && !target.getOptHeuristic().disableSelectionOpt &&
+            cuint_(0)(MatchContext<Value>(inst->getOperand(2)))) {
         const auto mask = ctx.newVReg(inst->getType());
         const auto cond = ctx.mapOperand(inst->getOperand(0));
         const auto trueV = ctx.mapOperand(inst->getOperand(1));

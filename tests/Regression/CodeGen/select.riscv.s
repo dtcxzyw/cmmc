@@ -265,6 +265,17 @@ select_zero:
 	subw a3, zero, a2
 	and a0, a1, a3
 	ret
+.globl select_sgt_zero
+select_sgt_zero:
+	slt a2, zero, a0
+	subw a3, zero, a2
+	and a0, a1, a3
+	ret
+.globl select_slt_zero
+select_slt_zero:
+	sraiw a2, a0, 31
+	and a0, a1, a2
+	ret
 .globl select_imm
 select_imm:
 	sltu a1, zero, a0
@@ -273,16 +284,16 @@ select_imm:
 .globl select_one
 select_one:
 	li a3, 1
-	beq a0, a3, label348
+	beq a0, a3, label360
 	mv a1, a2
-label348:
+label360:
 	mv a0, a1
 	ret
 .globl select_constant
 select_constant:
 	mv a1, a0
 	li a0, -1894007588
-	bne a1, zero, label354
+	bne a1, zero, label366
 	li a0, -899497722
-label354:
+label366:
 	ret

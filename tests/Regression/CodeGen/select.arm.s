@@ -254,6 +254,16 @@ select_zero:
 	mov r0, #0
 	moveq r0, r1
 	bx lr
+.globl select_sgt_zero
+select_sgt_zero:
+	cmp r0, #0
+	mov r0, #0
+	movgt r0, r1
+	bx lr
+.globl select_slt_zero
+select_slt_zero:
+	and r0, r1, r0, asr #31
+	bx lr
 .globl select_imm
 select_imm:
 	cmp r0, #0
