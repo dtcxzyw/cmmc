@@ -61,14 +61,7 @@ main:
 	nop
 	jal read
 	nop
-	li $t0, 10
-	move $t1, $zero
-label2:
-	addiu $t0, $t0, -1
-	addiu $t1, $t1, 1
-	bne $t0, $zero, label2
-	nop
-	addu $a0, $t0, $t1
+	li $a0, 10
 	jal write
 	nop
 	move $v0, $zero

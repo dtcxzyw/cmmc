@@ -249,8 +249,8 @@ func @fib(i32 %x, i32 %y) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect State
     i32 %17 = add i32 %12, i32 %14;
     i32 %18 = add i32 %y, i32 %17;
     i32 %19 = add i32 %11, i32 -2;
-    i1 %20 = icmp slt i32 %19, i32 2;
-    cbr i1 %20(prob = 0.5), ^b2, ^b3;
+    i1 %20 = icmp sgt i32 %19, i32 1;
+    cbr i1 %20(prob = 0.5), ^b3, ^b2;
   ^b5:
     i32 %21 = add i32 %15, i32 -1;
     i1 %22 = icmp slt i32 %21, i32 2;
@@ -268,8 +268,8 @@ func @fib(i32 %x, i32 %y) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect State
     i32 %30 = call (i32, i32) -> i32 @fib(i32 %29, i32 %y);
     i32 %31 = add i32 %28, i32 %30;
     i32 %32 = add i32 %27, i32 -2;
-    i1 %33 = icmp slt i32 %32, i32 2;
-    cbr i1 %33(prob = 0.5), ^b6, ^b7;
+    i1 %33 = icmp sgt i32 %32, i32 1;
+    cbr i1 %33(prob = 0.5), ^b7, ^b6;
 }
 func @fibcaller(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:

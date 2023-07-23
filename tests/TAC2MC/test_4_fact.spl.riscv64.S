@@ -36,14 +36,14 @@ label2:
 	mulw a1, a0, a1
 	li a2, 1
 	addiw a0, a0, -1
-	beq a0, a2, label5
-	j label2
+	bne a0, a2, label2
+	j label16
 label6:
 	jal write
 	ld ra, 0(sp)
 	mv a0, zero
 	addi sp, sp, 8
 	ret
-label5:
+label16:
 	mulw a0, a1, a0
 	j label6

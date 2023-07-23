@@ -252,8 +252,8 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i32 %152 = add i32 %121, i32 %122;
     i32 %153 = srem i32 %152, i32 998244353;
     i32 %154 = add i32 %120, i32 -1;
-    i1 %155 = icmp eq i32 %154, i32 0;
-    cbr i1 %155(prob = 0.5), ^b, ^if.else;
+    i1 %155 = icmp neq i32 %154, i32 0;
+    cbr i1 %155(prob = 0.5), ^if.else, ^b;
   ^while.body1:
     i32* %156 = getelementptr &(i32* %16)[i32 %118];
     i32 %157 = load i32* %34;

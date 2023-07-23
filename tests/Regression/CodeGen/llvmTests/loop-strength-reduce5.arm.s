@@ -19,7 +19,11 @@ Y:
 foo:
 	push { r4 }
 	cmp r0, #0
-	ble label5
+	bgt label2
+label5:
+	pop { r4 }
+	bx lr
+label2:
 	movw r1, #:lower16:X
 	mov r3, #0
 	movw r2, #:lower16:Y
@@ -40,99 +44,6 @@ foo:
 	uxth r4, r4
 	strh r4, [r2, #0]
 	beq label5
-	uxth r4, r3
-	strh r4, [r1, #0]
-	movw r4, #65535
-	and r4, r3, r4
-	add r3, r3, #1
-	lsl r4, r4, #2
-	cmp r0, r3
-	uxth r4, r4
-	strh r4, [r2, #0]
-	beq label5
-	uxth r4, r3
-	strh r4, [r1, #0]
-	movw r4, #65535
-	and r4, r3, r4
-	add r3, r3, #1
-	lsl r4, r4, #2
-	cmp r0, r3
-	uxth r4, r4
-	strh r4, [r2, #0]
-	beq label5
-	uxth r4, r3
-	strh r4, [r1, #0]
-	movw r4, #65535
-	and r4, r3, r4
-	add r3, r3, #1
-	lsl r4, r4, #2
-	cmp r0, r3
-	uxth r4, r4
-	strh r4, [r2, #0]
-	beq label5
-	uxth r4, r3
-	strh r4, [r1, #0]
-	movw r4, #65535
-	and r4, r3, r4
-	add r3, r3, #1
-	lsl r4, r4, #2
-	cmp r0, r3
-	uxth r4, r4
-	strh r4, [r2, #0]
-	beq label5
-	uxth r4, r3
-	strh r4, [r1, #0]
-	movw r4, #65535
-	and r4, r3, r4
-	add r3, r3, #1
-	lsl r4, r4, #2
-	cmp r0, r3
-	uxth r4, r4
-	strh r4, [r2, #0]
-	beq label5
-	uxth r4, r3
-	strh r4, [r1, #0]
-	movw r4, #65535
-	and r4, r3, r4
-	add r3, r3, #1
-	lsl r4, r4, #2
-	cmp r0, r3
-	uxth r4, r4
-	strh r4, [r2, #0]
-	beq label5
-	uxth r4, r3
-	strh r4, [r1, #0]
-	movw r4, #65535
-	and r4, r3, r4
-	add r3, r3, #1
-	lsl r4, r4, #2
-	cmp r0, r3
-	uxth r4, r4
-	strh r4, [r2, #0]
-	beq label5
-	uxth r4, r3
-	strh r4, [r1, #0]
-	movw r4, #65535
-	and r4, r3, r4
-	add r3, r3, #1
-	lsl r4, r4, #2
-	cmp r0, r3
-	uxth r4, r4
-	strh r4, [r2, #0]
-	beq label5
-	uxth r4, r3
-	strh r4, [r1, #0]
-	movw r4, #65535
-	and r4, r3, r4
-	add r3, r3, #1
-	lsl r4, r4, #2
-	cmp r0, r3
-	uxth r4, r4
-	strh r4, [r2, #0]
-	bne label3
-label5:
-	pop { r4 }
-	bx lr
 label3:
 	uxth r4, r3
 	strh r4, [r1, #0]
@@ -143,5 +54,5 @@ label3:
 	cmp r0, r3
 	uxth r4, r4
 	strh r4, [r2, #0]
-	beq label5
-	b label3
+	bne label3
+	b label5

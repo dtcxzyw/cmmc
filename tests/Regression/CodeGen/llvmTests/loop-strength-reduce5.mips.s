@@ -13,8 +13,12 @@ Y:
 .text
 .globl foo
 foo:
-	blez $a0, label5
+	bgtz $a0, label2
 	nop
+label5:
+	jr $ra
+	nop
+label2:
 	lui $t1, %hi(X)
 	addiu $t0, $t1, %lo(X)
 	sh $zero, %lo(X)($t1)
@@ -32,70 +36,7 @@ foo:
 	addiu $t2, $t2, 1
 	beq $a0, $t2, label5
 	nop
-	andi $t3, $t2, 65535
-	sh $t3, 0($t0)
-	sll $t3, $t3, 2
-	andi $t3, $t3, 65535
-	sh $t3, 0($t1)
-	addiu $t2, $t2, 1
-	beq $a0, $t2, label5
-	nop
-	andi $t3, $t2, 65535
-	sh $t3, 0($t0)
-	sll $t3, $t3, 2
-	andi $t3, $t3, 65535
-	sh $t3, 0($t1)
-	addiu $t2, $t2, 1
-	beq $a0, $t2, label5
-	nop
-	andi $t3, $t2, 65535
-	sh $t3, 0($t0)
-	sll $t3, $t3, 2
-	andi $t3, $t3, 65535
-	sh $t3, 0($t1)
-	addiu $t2, $t2, 1
-	beq $a0, $t2, label5
-	nop
-	andi $t3, $t2, 65535
-	sh $t3, 0($t0)
-	sll $t3, $t3, 2
-	andi $t3, $t3, 65535
-	sh $t3, 0($t1)
-	addiu $t2, $t2, 1
-	beq $a0, $t2, label5
-	nop
-	andi $t3, $t2, 65535
-	sh $t3, 0($t0)
-	sll $t3, $t3, 2
-	andi $t3, $t3, 65535
-	sh $t3, 0($t1)
-	addiu $t2, $t2, 1
-	beq $a0, $t2, label5
-	nop
-	andi $t3, $t2, 65535
-	sh $t3, 0($t0)
-	sll $t3, $t3, 2
-	andi $t3, $t3, 65535
-	sh $t3, 0($t1)
-	addiu $t2, $t2, 1
-	beq $a0, $t2, label5
-	nop
-	andi $t3, $t2, 65535
-	sh $t3, 0($t0)
-	sll $t3, $t3, 2
-	andi $t3, $t3, 65535
-	sh $t3, 0($t1)
-	addiu $t2, $t2, 1
-	beq $a0, $t2, label5
-	nop
-	andi $t3, $t2, 65535
-	sh $t3, 0($t0)
-	sll $t3, $t3, 2
-	andi $t3, $t3, 65535
-	sh $t3, 0($t1)
-	addiu $t2, $t2, 1
-	beq $a0, $t2, label5
-	nop
+label3:
 	andi $t3, $t2, 65535
 	sh $t3, 0($t0)
 	sll $t3, $t3, 2
@@ -104,17 +45,5 @@ foo:
 	addiu $t2, $t2, 1
 	bne $a0, $t2, label3
 	nop
-label5:
-	jr $ra
-	nop
-label3:
-	andi $t3, $t2, 65535
-	sh $t3, 0($t0)
-	sll $t3, $t3, 2
-	andi $t3, $t3, 65535
-	sh $t3, 0($t1)
-	addiu $t2, $t2, 1
-	beq $a0, $t2, label5
-	nop
-	b label3
+	b label5
 	nop

@@ -51,7 +51,7 @@ label3:
 	li $t5, 17
 	sb $t5, 0($t4)
 	addiu $t3, $t3, 1
-	beq $a0, $t3, label5
+	bne $a0, $t3, label3
 	nop
-	b label3
+	b label5
 	nop

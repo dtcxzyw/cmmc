@@ -49,5 +49,5 @@ label3:
 	addiw a4, a4, 1
 	addi t1, t0, 64
 	sw t1, 0(a5)
-	beq a0, a4, label5
-	j label3
+	bne a0, a4, label3
+	j label5

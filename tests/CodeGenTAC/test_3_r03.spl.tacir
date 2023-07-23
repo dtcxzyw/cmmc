@@ -1,178 +1,43 @@
 FUNCTION main :
 v3 := #1
-IF v3 >= #31 GOTO label17
-v5 := #1
-v6 := #0
-IF v3 < v5 GOTO label7
-v28 := v3 / v5
-v29 := v5 * v28
-IF v3 != v29 GOTO label32
-v34 := v6 + #1
-v35 := v5 + #1
-v5 := v35
-v6 := v34
-IF v3 < v35 GOTO label7
-v28 := v3 / v35
-v29 := v35 * v28
-IF v3 != v29 GOTO label32
-v34 := v34 + #1
-v35 := v35 + #1
-v5 := v35
-v6 := v34
-IF v3 < v35 GOTO label7
-v28 := v3 / v35
-v29 := v35 * v28
-IF v3 != v29 GOTO label32
-v34 := v34 + #1
-v35 := v35 + #1
-v5 := v35
-v6 := v34
-IF v3 < v35 GOTO label7
-v28 := v3 / v35
-v29 := v35 * v28
-IF v3 != v29 GOTO label32
-GOTO label94
-LABEL label7 :
-IF v6 != #2 GOTO label9
+IF v3 < #31 GOTO label17
+LABEL label16 :
+RETURN #0
+LABEL label17 :
+v5 := #0
+v6 := #1
+IF v3 >= v6 GOTO label10
+IF v5 == #2 GOTO label8
+v27 := v3 + #1
+v3 := v27
+IF v27 < #31 GOTO label17
+GOTO label16
+LABEL label10 :
+v28 := v3 / v6
+v29 := v6 * v28
+IF v3 == v29 GOTO label11
+v35 := v6 + #1
+v6 := v35
+IF v3 >= v35 GOTO label10
+IF v5 == #2 GOTO label8
+v27 := v3 + #1
+v3 := v27
+IF v27 < #31 GOTO label17
+GOTO label16
+LABEL label11 :
+v34 := v5 + #1
+v35 := v6 + #1
+v5 := v34
+v6 := v35
+IF v3 >= v35 GOTO label10
+IF v34 == #2 GOTO label8
+v27 := v3 + #1
+v3 := v27
+IF v27 < #31 GOTO label17
+GOTO label16
+LABEL label8 :
 WRITE v3
 v27 := v3 + #1
 v3 := v27
-IF v27 >= #31 GOTO label17
-v5 := #1
-v6 := #0
-IF v27 < v5 GOTO label7
-v28 := v27 / v5
-v29 := v5 * v28
-IF v27 != v29 GOTO label32
-v34 := v6 + #1
-v35 := v5 + #1
-v5 := v35
-v6 := v34
-IF v27 < v35 GOTO label7
-v28 := v27 / v35
-v29 := v35 * v28
-IF v27 != v29 GOTO label32
-v34 := v34 + #1
-v35 := v35 + #1
-v5 := v35
-v6 := v34
-IF v27 < v35 GOTO label7
-v28 := v27 / v35
-v29 := v35 * v28
-IF v27 != v29 GOTO label32
-v34 := v34 + #1
-v35 := v35 + #1
-v5 := v35
-v6 := v34
-IF v27 < v35 GOTO label7
-v28 := v27 / v35
-v29 := v35 * v28
-IF v27 != v29 GOTO label32
-GOTO label98
-LABEL label9 :
-v27 := v3 + #1
-v3 := v27
-IF v27 >= #31 GOTO label17
-v5 := #1
-v6 := #0
-IF v27 < v5 GOTO label7
-v28 := v27 / v5
-v29 := v5 * v28
-IF v27 != v29 GOTO label32
-v34 := v6 + #1
-v35 := v5 + #1
-v5 := v35
-v6 := v34
-IF v27 < v35 GOTO label7
-v28 := v27 / v35
-v29 := v35 * v28
-IF v27 != v29 GOTO label32
-v34 := v34 + #1
-v35 := v35 + #1
-v5 := v35
-v6 := v34
-IF v27 < v35 GOTO label7
-v28 := v27 / v35
-v29 := v35 * v28
-IF v27 != v29 GOTO label32
-v34 := v34 + #1
-v35 := v35 + #1
-v5 := v35
-v6 := v34
-IF v27 < v35 GOTO label7
-v28 := v27 / v35
-v29 := v35 * v28
-IF v27 != v29 GOTO label32
-LABEL label98 :
-v34 := v6 + #1
-v35 := v5 + #1
-v5 := v35
-v6 := v34
-IF v3 < v35 GOTO label7
-GOTO label85
-LABEL label94 :
-v34 := v6 + #1
-v35 := v5 + #1
-v5 := v35
-v6 := v34
-IF v3 < v35 GOTO label7
-LABEL label85 :
-v28 := v3 / v5
-v29 := v5 * v28
-IF v3 != v29 GOTO label32
-LABEL label93 :
-v34 := v6 + #1
-v35 := v5 + #1
-v5 := v35
-v6 := v34
-IF v3 < v35 GOTO label7
-GOTO label101
-LABEL label95 :
-v28 := v3 / v5
-v29 := v5 * v28
-IF v3 != v29 GOTO label32
-GOTO label93
-LABEL label32 :
-v35 := v5 + #1
-v5 := v35
-IF v3 < v35 GOTO label7
-v28 := v3 / v35
-v29 := v35 * v28
-IF v3 != v29 GOTO label32
-v34 := v6 + #1
-v35 := v35 + #1
-v5 := v35
-v6 := v34
-IF v3 < v35 GOTO label7
-v28 := v3 / v35
-v29 := v35 * v28
-IF v3 != v29 GOTO label32
-v34 := v34 + #1
-v35 := v35 + #1
-v5 := v35
-v6 := v34
-IF v3 < v35 GOTO label7
-v28 := v3 / v35
-v29 := v35 * v28
-IF v3 != v29 GOTO label32
-v34 := v34 + #1
-v35 := v35 + #1
-v5 := v35
-v6 := v34
-IF v3 < v35 GOTO label7
-v28 := v3 / v35
-v29 := v35 * v28
-IF v3 != v29 GOTO label32
-v34 := v34 + #1
-v35 := v35 + #1
-v5 := v35
-v6 := v34
-IF v3 < v35 GOTO label7
-GOTO label95
-LABEL label101 :
-v28 := v3 / v5
-v29 := v5 * v28
-IF v3 != v29 GOTO label32
-GOTO label93
-LABEL label17 :
-RETURN #0
+IF v27 < #31 GOTO label17
+GOTO label16

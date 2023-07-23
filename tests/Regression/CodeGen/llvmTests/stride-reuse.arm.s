@@ -51,5 +51,5 @@ label4:
 	str r5, [r3, r4, lsl #2]
 	add r4, r4, #1
 	cmp r0, r4
-	beq label2
-	b label4
+	bne label4
+	b label2

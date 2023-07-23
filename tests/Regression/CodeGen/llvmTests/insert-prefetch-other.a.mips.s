@@ -11,7 +11,8 @@ foo:
 	bgtz $a0, label2
 	nop
 	move $v0, $zero
-	b label5
+label5:
+	jr $ra
 	nop
 label2:
 	lui $t1, %hi(X)
@@ -24,65 +25,19 @@ label2:
 	andi $t1, $v0, 65535
 	sh $t1, 0($t0)
 	addiu $v0, $v0, 1
-	beq $a0, $v0, label5
+	bne $a0, $v0, label3
 	nop
-	andi $t1, $v0, 65535
-	sh $t1, 0($t0)
-	addiu $v0, $v0, 1
-	beq $a0, $v0, label5
-	nop
-	andi $t1, $v0, 65535
-	sh $t1, 0($t0)
-	addiu $v0, $v0, 1
-	beq $a0, $v0, label5
-	nop
-	andi $t1, $v0, 65535
-	sh $t1, 0($t0)
-	addiu $v0, $v0, 1
-	beq $a0, $v0, label5
-	nop
-	andi $t1, $v0, 65535
-	sh $t1, 0($t0)
-	addiu $v0, $v0, 1
-	beq $a0, $v0, label5
-	nop
-	andi $t1, $v0, 65535
-	sh $t1, 0($t0)
-	addiu $v0, $v0, 1
-	beq $a0, $v0, label5
-	nop
-	andi $t1, $v0, 65535
-	sh $t1, 0($t0)
-	addiu $v0, $v0, 1
-	beq $a0, $v0, label5
-	nop
-	andi $t1, $v0, 65535
-	sh $t1, 0($t0)
-	addiu $v0, $v0, 1
-	beq $a0, $v0, label5
-	nop
-	andi $t1, $v0, 65535
-	sh $t1, 0($t0)
-	addiu $v0, $v0, 1
-	beq $a0, $v0, label5
-	nop
-	andi $t1, $v0, 65535
-	sh $t1, 0($t0)
-	addiu $v0, $v0, 1
-	beq $a0, $v0, label5
-	nop
-	b label3
+	b label5
 	nop
 label17:
 	li $v0, 1
-label5:
-	jr $ra
+	b label5
 	nop
 label3:
 	andi $t1, $v0, 65535
 	sh $t1, 0($t0)
 	addiu $v0, $v0, 1
-	beq $a0, $v0, label5
+	bne $a0, $v0, label3
 	nop
-	b label3
+	b label5
 	nop

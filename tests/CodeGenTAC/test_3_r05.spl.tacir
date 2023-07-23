@@ -1,94 +1,29 @@
 FUNCTION main :
-READ v15
-IF v15 >= #1 GOTO label4
+READ v13
+IF v13 < #1 GOTO label2
+IF v13 == #1 GOTO label12
+IF v13 == #2 GOTO label12
+IF v13 > #2 GOTO label28
+GOTO label42
+LABEL label2 :
 WRITE #0
+LABEL label42 :
 RETURN #0
-LABEL label4 :
-IF v15 != #1 GOTO label5
-LABEL label43 :
+LABEL label12 :
 WRITE #1
 RETURN #0
-LABEL label5 :
-IF v15 != #2 GOTO label6
-GOTO label43
-LABEL label6 :
-IF v15 <= #2 GOTO label3
-IF v15 <= #2 GOTO label34
+LABEL label28 :
+v8 := #3
 v9 := #1
 v10 := v9
-v11 := #3
-v36 := v11 + #1
-v38 := v9 + v9
-IF v15 < v36 GOTO label40
-v11 := v36
-v10 := v38
-v36 := v36 + #1
-v38 := v9 + v38
-IF v15 < v36 GOTO label40
+LABEL label7 :
+v30 := v8 + #1
+v32 := v9 + v10
+IF v13 < v30 GOTO label11
+v8 := v30
 v9 := v10
-v11 := v36
-v10 := v38
-v36 := v36 + #1
-v38 := v9 + v38
-IF v15 < v36 GOTO label40
-v9 := v10
-v11 := v36
-v10 := v38
-v36 := v36 + #1
-v38 := v9 + v38
-IF v15 < v36 GOTO label40
-v9 := v10
-v11 := v36
-v10 := v38
-v36 := v36 + #1
-v38 := v9 + v38
-IF v15 < v36 GOTO label40
-v9 := v10
-v11 := v36
-v10 := v38
-v36 := v36 + #1
-v38 := v9 + v38
-IF v15 < v36 GOTO label40
-v9 := v10
-v11 := v36
-v10 := v38
-v36 := v36 + #1
-v38 := v9 + v38
-IF v15 < v36 GOTO label40
-v9 := v10
-v11 := v36
-v10 := v38
-v36 := v36 + #1
-v38 := v9 + v38
-IF v15 < v36 GOTO label40
-v9 := v10
-v11 := v36
-v10 := v38
-v36 := v36 + #1
-v38 := v9 + v38
-IF v15 < v36 GOTO label40
-v9 := v10
-v11 := v36
-v10 := v38
-v36 := v36 + #1
-v38 := v9 + v38
-IF v15 < v36 GOTO label40
-GOTO label70
-LABEL label34 :
-v13 := #0
-WRITE v13
-RETURN #0
-LABEL label70 :
-v9 := v10
-v11 := v36
-v10 := v38
-v36 := v36 + #1
-v38 := v9 + v38
-IF v15 < v36 GOTO label40
-GOTO label70
-LABEL label40 :
-v13 := v38
-WRITE v38
-RETURN #0
-LABEL label3 :
+v10 := v32
+GOTO label7
+LABEL label11 :
+WRITE v32
 RETURN #0

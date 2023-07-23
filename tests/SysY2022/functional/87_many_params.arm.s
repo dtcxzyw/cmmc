@@ -8,30 +8,30 @@
 main:
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
 	sub sp, sp, #548
-	add r0, sp, #132
+	add r0, sp, #136
 	add r4, sp, #64
 	str r4, [sp, #440]
-	str r0, [sp, #392]
+	str r0, [sp, #396]
 	bl getint
 	str r0, [sp, #524]
 	bl getint
 	str r0, [sp, #532]
 	bl getint
-	str r0, [sp, #4]
+	str r0, [sp, #8]
 	bl getint
-	str r0, [sp, #16]
+	str r0, [sp, #20]
 	bl getint
-	str r0, [sp, #24]
+	str r0, [sp, #28]
 	bl getint
-	str r0, [sp, #32]
+	str r0, [sp, #36]
 	bl getint
-	str r0, [sp, #40]
+	str r0, [sp, #44]
 	bl getint
-	str r0, [sp, #48]
+	str r0, [sp, #52]
 	bl getint
-	str r0, [sp, #56]
+	str r0, [sp, #60]
 	bl getint
-	str r0, [sp, #496]
+	str r0, [sp, #536]
 	bl getint
 	str r0, [sp, #420]
 	bl getint
@@ -41,7 +41,7 @@ main:
 	bl getint
 	str r0, [sp, #400]
 	bl getint
-	str r0, [sp, #396]
+	str r0, [sp, #132]
 	bl getint
 	str r0, [sp, #412]
 	ldr r0, [sp, #524]
@@ -49,21 +49,21 @@ main:
 	ldr r0, [sp, #532]
 	ldr r4, [sp, #440]
 	str r0, [r4, #4]
-	ldr r0, [sp, #4]
+	ldr r0, [sp, #8]
 	str r0, [r4, #8]
-	ldr r0, [sp, #16]
+	ldr r0, [sp, #20]
 	str r0, [r4, #12]
-	ldr r0, [sp, #24]
+	ldr r0, [sp, #28]
 	str r0, [r4, #16]
-	ldr r0, [sp, #32]
+	ldr r0, [sp, #36]
 	str r0, [r4, #20]
-	ldr r0, [sp, #40]
+	ldr r0, [sp, #44]
 	str r0, [r4, #24]
-	ldr r0, [sp, #48]
+	ldr r0, [sp, #52]
 	str r0, [r4, #28]
-	ldr r0, [sp, #56]
+	ldr r0, [sp, #60]
 	str r0, [r4, #32]
-	ldr r0, [sp, #496]
+	ldr r0, [sp, #536]
 	str r0, [r4, #36]
 	ldr r0, [sp, #420]
 	str r0, [r4, #40]
@@ -73,7 +73,7 @@ main:
 	str r0, [r4, #48]
 	ldr r0, [sp, #400]
 	str r0, [r4, #52]
-	ldr r0, [sp, #396]
+	ldr r0, [sp, #132]
 	str r0, [r4, #56]
 	ldr r0, [sp, #412]
 	str r0, [r4, #60]
@@ -142,26 +142,26 @@ label10:
 	str r4, [sp, #456]
 	beq label11
 	str r1, [sp, #408]
-	str r0, [sp, #12]
+	str r0, [sp, #16]
 	mov r0, r10
-	str r11, [sp, #0]
+	str r11, [sp, #4]
 	mov r0, r9
-	str r10, [sp, #536]
+	str r10, [sp, #496]
 	mov r0, r8
 	str r9, [sp, #488]
 	mov r0, r7
-	str r8, [sp, #52]
+	str r8, [sp, #56]
 	mov r0, r6
-	str r7, [sp, #44]
+	str r7, [sp, #48]
 	mov r0, r5
-	str r6, [sp, #36]
+	str r6, [sp, #40]
 	mov r0, r3
-	str r5, [sp, #28]
+	str r5, [sp, #32]
 	mov r0, r2
-	str r3, [sp, #20]
-	str r2, [sp, #8]
+	str r3, [sp, #24]
+	str r2, [sp, #12]
 	ldr r4, [sp, #472]
-	str r4, [sp, #60]
+	str r4, [sp, #0]
 	mov r0, r4
 	ldr r4, [sp, #468]
 	str r4, [sp, #528]
@@ -179,21 +179,21 @@ label10:
 	str r0, [sp, #508]
 	ldr r0, [sp, #532]
 	str r0, [sp, #504]
-	ldr r0, [sp, #4]
-	str r0, [sp, #128]
-	ldr r0, [sp, #16]
+	ldr r0, [sp, #8]
 	str r0, [sp, #500]
-	ldr r0, [sp, #24]
-	str r0, [sp, #388]
-	ldr r0, [sp, #32]
+	ldr r0, [sp, #20]
+	str r0, [sp, #128]
+	ldr r0, [sp, #28]
 	str r0, [sp, #492]
-	ldr r0, [sp, #40]
+	ldr r0, [sp, #36]
+	str r0, [sp, #392]
+	ldr r0, [sp, #44]
 	str r0, [sp, #484]
-	ldr r0, [sp, #48]
+	ldr r0, [sp, #52]
 	str r0, [sp, #480]
-	ldr r0, [sp, #56]
+	ldr r0, [sp, #60]
 	str r0, [sp, #476]
-	ldr r0, [sp, #496]
+	ldr r0, [sp, #536]
 	str r0, [sp, #424]
 	ldr r0, [sp, #420]
 	str r0, [sp, #428]
@@ -203,15 +203,15 @@ label10:
 	str r0, [sp, #436]
 	ldr r0, [sp, #400]
 	str r0, [sp, #444]
-	ldr r0, [sp, #396]
+	ldr r0, [sp, #132]
 	str r0, [sp, #448]
 	ldr r0, [sp, #412]
 	str r0, [sp, #452]
 	b label16
 label11:
-	str r0, [sp, #132]
+	str r0, [sp, #136]
 	movw r1, #8848
-	ldr r0, [sp, #392]
+	ldr r0, [sp, #396]
 	str r1, [r0, #4]
 	mov r1, #0
 	str r1, [r0, #8]
@@ -278,7 +278,7 @@ label11:
 	str r1, [r0, #252]
 	mov r1, #1
 label13:
-	ldr r0, [sp, #392]
+	ldr r0, [sp, #396]
 	add r2, r0, r1, lsl #3
 	ldr r3, [r2, #-4]
 	sub r4, r3, #1
@@ -301,7 +301,7 @@ label13:
 	sub r0, r3, #6
 	str r0, [r2, #28]
 	blt label13
-	ldr r0, [sp, #392]
+	ldr r0, [sp, #396]
 	add r2, r0, r1, lsl #3
 	ldr r3, [r2, #-4]
 	sub r4, r3, #1
@@ -317,7 +317,7 @@ label13:
 	str r4, [r2, #12]
 	str r3, [r2, #16]
 	str r1, [r2, #20]
-	ldr r1, [sp, #132]
+	ldr r1, [sp, #136]
 	ldr r2, [r0, #4]
 	add r1, r1, r2
 	ldr r2, [r0, #8]
@@ -451,10 +451,10 @@ label13:
 	mov r0, #0
 	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
 label16:
-	ldr r0, [sp, #12]
+	ldr r0, [sp, #16]
 	movw r1, #1
 	movw r2, #51217
-	ldr r11, [sp, #0]
+	ldr r11, [sp, #4]
 	movt r1, #15232
 	movt r2, #4405
 	add r0, r0, r11
@@ -466,28 +466,28 @@ label16:
 	subs r1, r1, #1
 	beq label11
 	str r1, [sp, #408]
-	str r0, [sp, #12]
-	ldr r0, [sp, #536]
-	str r0, [sp, #0]
+	str r0, [sp, #16]
+	ldr r0, [sp, #496]
+	str r0, [sp, #4]
 	mov r11, r0
 	ldr r0, [sp, #488]
-	str r0, [sp, #536]
-	ldr r0, [sp, #52]
+	str r0, [sp, #496]
+	ldr r0, [sp, #56]
 	str r0, [sp, #488]
-	ldr r0, [sp, #44]
-	str r0, [sp, #52]
-	ldr r0, [sp, #36]
-	str r0, [sp, #44]
-	ldr r0, [sp, #28]
-	str r0, [sp, #36]
-	ldr r0, [sp, #20]
-	str r0, [sp, #28]
-	ldr r0, [sp, #8]
-	str r0, [sp, #20]
-	ldr r0, [sp, #60]
-	str r0, [sp, #8]
+	ldr r0, [sp, #48]
+	str r0, [sp, #56]
+	ldr r0, [sp, #40]
+	str r0, [sp, #48]
+	ldr r0, [sp, #32]
+	str r0, [sp, #40]
+	ldr r0, [sp, #24]
+	str r0, [sp, #32]
+	ldr r0, [sp, #12]
+	str r0, [sp, #24]
+	ldr r0, [sp, #0]
+	str r0, [sp, #12]
 	ldr r0, [sp, #528]
-	str r0, [sp, #60]
+	str r0, [sp, #0]
 	ldr r0, [sp, #520]
 	str r0, [sp, #528]
 	ldr r0, [sp, #516]
@@ -498,16 +498,16 @@ label16:
 	str r0, [sp, #512]
 	ldr r0, [sp, #504]
 	str r0, [sp, #508]
-	ldr r0, [sp, #128]
-	str r0, [sp, #504]
 	ldr r0, [sp, #500]
-	str r0, [sp, #128]
-	ldr r0, [sp, #388]
+	str r0, [sp, #504]
+	ldr r0, [sp, #128]
 	str r0, [sp, #500]
 	ldr r0, [sp, #492]
-	str r0, [sp, #388]
-	ldr r0, [sp, #484]
+	str r0, [sp, #128]
+	ldr r0, [sp, #392]
 	str r0, [sp, #492]
+	ldr r0, [sp, #484]
+	str r0, [sp, #392]
 	ldr r0, [sp, #480]
 	str r0, [sp, #484]
 	ldr r0, [sp, #476]

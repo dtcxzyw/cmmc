@@ -12,7 +12,8 @@ foo:
 	mv a1, a0
 	bgt a0, zero, label2
 	mv a0, zero
-	j label5
+label5:
+	ret
 label2:
 	auipc a0, %pcrel_hi(X)
 	li a3, 1
@@ -24,52 +25,15 @@ label2:
 	and a3, a0, a4
 	addiw a0, a0, 1
 	sh a3, 0(a2)
-	beq a1, a0, label5
-	and a3, a0, a4
-	addiw a0, a0, 1
-	sh a3, 0(a2)
-	beq a1, a0, label5
-	and a3, a0, a4
-	addiw a0, a0, 1
-	sh a3, 0(a2)
-	beq a1, a0, label5
-	and a3, a0, a4
-	addiw a0, a0, 1
-	sh a3, 0(a2)
-	beq a1, a0, label5
-	and a3, a0, a4
-	addiw a0, a0, 1
-	sh a3, 0(a2)
-	beq a1, a0, label5
-	and a3, a0, a4
-	addiw a0, a0, 1
-	sh a3, 0(a2)
-	beq a1, a0, label5
-	and a3, a0, a4
-	addiw a0, a0, 1
-	sh a3, 0(a2)
-	beq a1, a0, label5
-	and a3, a0, a4
-	addiw a0, a0, 1
-	sh a3, 0(a2)
-	beq a1, a0, label5
-	and a3, a0, a4
-	addiw a0, a0, 1
-	sh a3, 0(a2)
-	beq a1, a0, label5
-	and a3, a0, a4
-	addiw a0, a0, 1
-	sh a3, 0(a2)
-	beq a1, a0, label5
-	j label3
+	bne a1, a0, label3
+	j label5
 label17:
 	li a0, 1
-label5:
-	ret
+	j label5
 label3:
 	li a4, 65535
 	and a3, a0, a4
 	addiw a0, a0, 1
 	sh a3, 0(a2)
-	beq a1, a0, label5
-	j label3
+	bne a1, a0, label3
+	j label5

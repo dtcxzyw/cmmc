@@ -7,31 +7,13 @@ foo:
 	beq a0, zero, label9
 	mv a0, zero
 	li a0, 1
-	beq a1, a0, label2
-	addiw a0, a0, 1
-	beq a1, a0, label2
-	addiw a0, a0, 1
-	beq a1, a0, label2
-	addiw a0, a0, 1
-	beq a1, a0, label2
-	addiw a0, a0, 1
-	beq a1, a0, label2
-	addiw a0, a0, 1
-	beq a1, a0, label2
-	addiw a0, a0, 1
-	beq a1, a0, label2
-	addiw a0, a0, 1
-	beq a1, a0, label2
-	addiw a0, a0, 1
-	beq a1, a0, label2
-	addiw a0, a0, 1
-	beq a1, a0, label2
-	j label4
+	bne a1, a0, label4
+	j label2
 label9:
 	mv a0, zero
 label2:
 	ret
 label4:
 	addiw a0, a0, 1
-	beq a1, a0, label2
-	j label4
+	bne a1, a0, label4
+	j label2

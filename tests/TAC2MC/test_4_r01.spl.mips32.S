@@ -54,15 +54,17 @@ label4:
 	jal write
 	nop
 	li $t0, 1
-	beq $s3, $t0, label25
+	bne $s3, $t0, label25
 	nop
+	move $a1, $s0
+	b label2
+	nop
+label25:
 	move $t0, $s1
 	move $s1, $s0
 	move $s0, $t0
 	b label4
 	nop
-label25:
-	move $a1, $s0
 label2:
 	li $t0, 10000
 	mult $a1, $t0

@@ -139,9 +139,6 @@ label35:
 label198:
 	mv s3, a0
 	j label58
-label489:
-	mv s4, a0
-	j label26
 label42:
 	sh2add a4, a3, s1
 	lw a2, 0(a4)
@@ -166,23 +163,10 @@ label42:
 	sh2add a2, a3, s1
 	sw a3, 0(s1)
 	sw s4, 0(a2)
-	bne a1, zero, label269
-	j label489
-label52:
-	mulw a2, a3, a4
-	lw a4, 0(s0)
-	addiw a3, a4, 1
-	sh2add a4, a3, s0
-	sw a3, 0(s0)
-	sw a2, 0(a4)
-	lw a3, 0(s1)
-	bne a3, zero, label42
-	addiw a3, a3, 1
-	sh2add a2, a3, s1
-	sw a3, 0(s1)
-	sw s4, 0(a2)
-	bne a1, zero, label269
-	j label489
+	bne a1, zero, label489
+label269:
+	mv s4, a0
+	j label26
 label58:
 	jal getch
 	li a2, 10
@@ -195,7 +179,7 @@ label58:
 	sh2add a2, a3, s1
 	sw a3, 0(s1)
 	sw s4, 0(a2)
-	j label489
+	j label269
 label60:
 	sh2add a0, s3, s3
 	sh1add s3, a0, a1
@@ -209,7 +193,7 @@ label61:
 	sh2add a2, a3, s1
 	sw a3, 0(s1)
 	sw s4, 0(a2)
-	bne a1, zero, label269
+	beq a1, zero, label269
 	j label489
 label62:
 	xori a3, s4, 42
@@ -507,10 +491,25 @@ label22:
 	jal putch
 	li a0, -1
 	j label94
-label269:
+label489:
 	mv s4, a0
 	mv s5, a1
 	j label22
+label52:
+	mulw a2, a3, a4
+	lw a4, 0(s0)
+	addiw a3, a4, 1
+	sh2add a4, a3, s0
+	sw a3, 0(s0)
+	sw a2, 0(a4)
+	lw a3, 0(s1)
+	bne a3, zero, label42
+	addiw a3, a3, 1
+	sh2add a2, a3, s1
+	sw a3, 0(s1)
+	sw s4, 0(a2)
+	beq a1, zero, label269
+	j label489
 label45:
 	addiw a3, a3, -1
 	sw a3, 0(s1)
@@ -544,7 +543,7 @@ label45:
 	sh2add a2, a3, s1
 	sw a3, 0(s1)
 	sw s4, 0(a2)
-	bne a1, zero, label269
+	beq a1, zero, label269
 	j label489
 label46:
 	addw a2, a3, a4
@@ -559,7 +558,7 @@ label46:
 	sh2add a2, a3, s1
 	sw a3, 0(s1)
 	sw s4, 0(a2)
-	bne a1, zero, label269
+	beq a1, zero, label269
 	j label489
 label56:
 	divw a2, a4, a3
@@ -574,7 +573,7 @@ label56:
 	sh2add a2, a3, s1
 	sw a3, 0(s1)
 	sw s4, 0(a2)
-	bne a1, zero, label269
+	beq a1, zero, label269
 	j label489
 label55:
 	remw a2, a4, a3
@@ -589,7 +588,7 @@ label55:
 	sh2add a2, a3, s1
 	sw a3, 0(s1)
 	sw s4, 0(a2)
-	bne a1, zero, label269
+	beq a1, zero, label269
 	j label489
 label43:
 	li a4, 11
@@ -598,7 +597,7 @@ label43:
 	sh2add a2, a3, s1
 	sw a3, 0(s1)
 	sw s4, 0(a2)
-	bne a1, zero, label269
+	beq a1, zero, label269
 	j label489
 label50:
 	subw a2, a4, a3
@@ -613,5 +612,5 @@ label50:
 	sh2add a2, a3, s1
 	sw a3, 0(s1)
 	sw s4, 0(a2)
-	bne a1, zero, label269
+	beq a1, zero, label269
 	j label489

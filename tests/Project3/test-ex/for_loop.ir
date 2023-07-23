@@ -1,120 +1,61 @@
 FUNCTION main :
 v3 := #0
+LABEL label2 :
 WRITE v3
 v8 := v3 + #1
-IF v8 >= #10 GOTO label11
-v3 := v8
-WRITE v8
-v8 := v8 + #1
-IF v8 >= #10 GOTO label11
-v3 := v8
-WRITE v8
-v8 := v8 + #1
-IF v8 >= #10 GOTO label11
-v3 := v8
-WRITE v8
-v8 := v8 + #1
-IF v8 >= #10 GOTO label11
-v3 := v8
-WRITE v8
-v8 := v8 + #1
-IF v8 >= #10 GOTO label11
-v3 := v8
-WRITE v8
-v8 := v8 + #1
-IF v8 >= #10 GOTO label11
-v3 := v8
-WRITE v8
-v8 := v8 + #1
-IF v8 >= #10 GOTO label11
-v3 := v8
-WRITE v8
-v8 := v8 + #1
-IF v8 >= #10 GOTO label11
-v3 := v8
-WRITE v8
-v8 := v8 + #1
-IF v8 >= #10 GOTO label11
-v3 := v8
-WRITE v8
-v8 := v8 + #1
-IF v8 >= #10 GOTO label11
-LABEL label46 :
-v3 := v8
-WRITE v8
-v8 := v8 + #1
-IF v8 >= #10 GOTO label11
-GOTO label46
-LABEL label11 :
+IF v8 < #10 GOTO label11
 v5 := #0
 v13 := v5 + #1
-IF v13 != #5 GOTO label6
+IF v13 == #5 GOTO label16
+IF v13 > #9 GOTO label7
 v5 := v13
 v13 := v13 + #1
-IF v13 != #5 GOTO label6
+IF v13 == #5 GOTO label16
+IF v13 > #9 GOTO label7
 v5 := v13
 v13 := v13 + #1
-IF v13 != #5 GOTO label6
+IF v13 == #5 GOTO label16
+IF v13 > #9 GOTO label7
 v5 := v13
 v13 := v13 + #1
-IF v13 != #5 GOTO label6
+IF v13 == #5 GOTO label16
+IF v13 > #9 GOTO label7
 v5 := v13
 v13 := v13 + #1
-IF v13 != #5 GOTO label6
-v5 := v13
-v13 := v13 + #1
-IF v13 != #5 GOTO label6
-v5 := v13
-v13 := v13 + #1
-IF v13 != #5 GOTO label6
-v5 := v13
-v13 := v13 + #1
-IF v13 != #5 GOTO label6
-v5 := v13
-v13 := v13 + #1
-IF v13 != #5 GOTO label6
-v5 := v13
-v13 := v13 + #1
-IF v13 != #5 GOTO label6
+IF v13 == #5 GOTO label16
+IF v13 > #9 GOTO label7
 GOTO label47
-LABEL label6 :
-IF v13 <= #9 GOTO label20
-GOTO label19
-LABEL label20 :
+LABEL label11 :
+v3 := v8
+GOTO label2
+LABEL label4 :
+v13 := v5 + #1
+IF v13 == #5 GOTO label16
+IF v13 > #9 GOTO label7
 v5 := v13
 v13 := v13 + #1
-IF v13 != #5 GOTO label6
+IF v13 == #5 GOTO label16
+IF v13 > #9 GOTO label7
 v5 := v13
 v13 := v13 + #1
-IF v13 != #5 GOTO label6
+IF v13 == #5 GOTO label16
+IF v13 > #9 GOTO label7
 v5 := v13
 v13 := v13 + #1
-IF v13 != #5 GOTO label6
+IF v13 == #5 GOTO label16
+IF v13 > #9 GOTO label7
 v5 := v13
 v13 := v13 + #1
-IF v13 != #5 GOTO label6
-v5 := v13
-v13 := v13 + #1
-IF v13 != #5 GOTO label6
-v5 := v13
-v13 := v13 + #1
-IF v13 != #5 GOTO label6
-v5 := v13
-v13 := v13 + #1
-IF v13 != #5 GOTO label6
-v5 := v13
-v13 := v13 + #1
-IF v13 != #5 GOTO label6
-v5 := v13
-v13 := v13 + #1
-IF v13 != #5 GOTO label6
-v5 := v13
-v13 := v13 + #1
-IF v13 != #5 GOTO label6
+IF v13 == #5 GOTO label16
+IF v13 > #9 GOTO label7
 LABEL label47 :
 v5 := v13
 v13 := v13 + #1
-IF v13 != #5 GOTO label6
-GOTO label47
-LABEL label19 :
+IF v13 != #5 GOTO label48
+LABEL label16 :
+v5 := v13
+GOTO label4
+LABEL label48 :
+IF v13 <= #9 GOTO label47
+LABEL label7 :
 RETURN v13

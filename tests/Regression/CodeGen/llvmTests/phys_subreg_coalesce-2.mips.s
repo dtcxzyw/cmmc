@@ -21,6 +21,10 @@ label17:
 	li $v0, 1
 	b label2
 	nop
+label21:
+	move $v0, $a0
+	b label2
+	nop
 label20:
 	move $t0, $a0
 	li $t1, 1
@@ -32,59 +36,15 @@ label20:
 	mflo $t0
 	addiu $t1, $t1, 2
 	sltu $t1, $a1, $t1
+	xori $t1, $t1, 1
 	bne $t1, $zero, label30
 	nop
-	move $t1, $t2
-	subu $t2, $a0, $t2
-	mult $t0, $t2
-	mflo $t0
-	addiu $t2, $t1, 1
-	divu $zero, $t0, $t2
-	mflo $t0
-	addiu $t1, $t1, 2
-	sltu $t1, $a1, $t1
-	bne $t1, $zero, label30
-	nop
-	move $t1, $t2
-	subu $t2, $a0, $t2
-	mult $t0, $t2
-	mflo $t0
-	addiu $t2, $t1, 1
-	divu $zero, $t0, $t2
-	mflo $t0
-	addiu $t1, $t1, 2
-	sltu $t1, $a1, $t1
-	bne $t1, $zero, label30
-	nop
-	move $t1, $t2
-	subu $t2, $a0, $t2
-	mult $t0, $t2
-	mflo $t0
-	addiu $t2, $t1, 1
-	divu $zero, $t0, $t2
-	mflo $t0
-	addiu $t1, $t1, 2
-	sltu $t1, $a1, $t1
-	bne $t1, $zero, label30
-	nop
-	move $t1, $t2
-	subu $t2, $a0, $t2
-	mult $t0, $t2
-	mflo $t0
-	addiu $t2, $t1, 1
-	divu $zero, $t0, $t2
-	mflo $t0
-	addiu $t1, $t1, 2
-	sltu $t1, $a1, $t1
-	beq $t1, $zero, label39
-	nop
-label30:
+label35:
 	move $v0, $t0
 	b label2
 	nop
-label39:
-	move $t1, $t2
-	subu $t2, $a0, $t2
+label6:
+	subu $t2, $a0, $t1
 	mult $t0, $t2
 	mflo $t0
 	addiu $t2, $t1, 1
@@ -92,11 +52,10 @@ label39:
 	mflo $t0
 	addiu $t1, $t1, 2
 	sltu $t1, $a1, $t1
-	bne $t1, $zero, label30
+	xori $t1, $t1, 1
+	beq $t1, $zero, label35
 	nop
-	b label39
-	nop
-label21:
-	move $v0, $a0
-	b label2
+label30:
+	move $t1, $t2
+	b label6
 	nop

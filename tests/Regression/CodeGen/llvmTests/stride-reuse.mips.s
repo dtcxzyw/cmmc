@@ -47,7 +47,7 @@ label4:
 	addiu $t5, $t5, 64
 	sw $t5, 0($t4)
 	addiu $t3, $t3, 1
-	beq $a0, $t3, label2
+	bne $a0, $t3, label4
 	nop
-	b label4
+	b label2
 	nop

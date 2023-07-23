@@ -16,7 +16,7 @@ internal func @detect_item(i32 %type, i32* %buf, i32 %len, i32* %0) -> i32 {
     i32 %8 = load i32* %0;
     ubr ^while.body;
   ^b:
-    i32 %9 = phi [^entry, i32 0] [^b3, i32 0] [^if.else5, i32 0] [^b5, i32 0] [^if.then7, i32 %80] [^if.then8, i32 0] [^if.else11, i32 0] [^if.then11, i32 %113] [^if.else12, i32 0] [^if.then12, i32 0] [^if.else13, i32 0] [^if.else14, i32 0] [^if.then13, i32 1] [^b10, i32 0] [^if.then18, i32 %149] [^if.else15, i32 0] [^if.else16, i32 0] [^if.then19, i32 0] [^b11, i32 0] [^b12, i32 1] [^if.else17, i32 0] [^if.else18, i32 0] [^if.else19, i32 0] [^if.then22, i32 1] [^if.else20, i32 0] [^if.else21, i32 0] [^if.else22, i32 0] [^b14, i32 1] [^if.else23, i32 0] [^if.else24, i32 0] [^if.else25, i32 0] [^if.else26, i32 0] [^b18, i32 0] [^b19, i32 1] [^b20, i32 0] [^while.header2, i32 1] [^while.body11, i32 1] [^b24, i32 0] [^b25, i32 0] [^b26, i32 0] [^b32, i32 0] [^if.else27, i32 0];
+    i32 %9 = phi [^entry, i32 0] [^b3, i32 0] [^if.else5, i32 0] [^b5, i32 0] [^if.then7, i32 %80] [^if.then8, i32 0] [^if.else11, i32 0] [^if.then11, i32 %113] [^if.else12, i32 0] [^if.then12, i32 0] [^if.else13, i32 0] [^if.else14, i32 0] [^if.then13, i32 1] [^b10, i32 0] [^if.then18, i32 %149] [^if.else15, i32 0] [^if.else16, i32 0] [^if.then19, i32 0] [^b11, i32 0] [^b12, i32 1] [^if.else17, i32 0] [^if.else18, i32 0] [^if.else19, i32 0] [^if.then22, i32 1] [^if.else20, i32 0] [^if.else21, i32 0] [^if.else22, i32 0] [^b14, i32 1] [^if.else23, i32 0] [^if.else24, i32 0] [^if.else25, i32 0] [^if.else26, i32 0] [^b18, i32 0] [^b19, i32 1] [^b20, i32 0] [^while.header2, i32 1] [^while.body11, i32 0] [^while.body12, i32 1] [^b24, i32 0] [^b25, i32 0] [^b26, i32 0] [^while.body18, i32 0] [^b32, i32 0] [^if.else27, i32 0] [^b34, i32 0] [^b35, i32 0] [^b37, i32 0];
     ret i32 %9;
   ^while.body:
     i32 %10 = phi [^entry1, i32 %8] [^if.then, i32 %23];
@@ -249,7 +249,7 @@ internal func @detect_item(i32 %type, i32* %buf, i32 %len, i32* %0) -> i32 {
     i1 %133 = icmp eq i32 %6, i32 7;
     cbr i1 %133(prob = 0.5), ^if.then19, ^b;
   ^if.then13:
-    i32 %134 = phi [^if.else11, i32 %108] [^if.then14, i32 %106] [^if.then20, i32 %141] [^b25, i32 %310] [^if.else27, i32 %378];
+    i32 %134 = phi [^if.else11, i32 %108] [^if.then14, i32 %106] [^if.then20, i32 %141] [^b25, i32 %312] [^if.else27, i32 %383];
     i32 %135 = add i32 %134, i32 1;
     store i32* %0 with i32 %135;
     ubr ^b;
@@ -344,8 +344,8 @@ internal func @detect_item(i32 %type, i32* %buf, i32 %len, i32* %0) -> i32 {
     i32* %183 = getelementptr &(i32* %buf)[i32 %165];
     i32 %184 = load i32* %183;
     i32 %185 = add i32 %184, i32 -48;
-    i1 %186 = icmp uge i32 %185, i32 10;
-    cbr i1 %186(prob = 0.5), ^b12, ^if.then21;
+    i1 %186 = icmp ult i32 %185, i32 10;
+    cbr i1 %186(prob = 0.5), ^if.then21, ^b12;
   ^while.body6:
     i32 %187 = phi [^entry3, i32 %160] [^if.then24, i32 %229];
     i1 %188 = icmp sle i32 %len, i32 %187;
@@ -495,16 +495,16 @@ internal func @detect_item(i32 %type, i32* %buf, i32 %len, i32* %0) -> i32 {
     store i32* %0 with i32 %269;
     ubr ^b;
   ^if.then29:
-    i32 %270 = phi [^if.then28, i32 %265] [^while.body11, i32 %303];
+    i32 %270 = phi [^if.then28, i32 %265] [^while.body12, i32 %305];
     i32 %271 = add i32 %270, i32 1;
     store i32* %0 with i32 %271;
     ubr ^while.header2;
   ^while.body9:
-    i32 %272 = phi [^while.body8, i32 %256] [^if.then30, i32 %308];
+    i32 %272 = phi [^while.body8, i32 %256] [^if.then30, i32 %310];
     i1 %273 = icmp sle i32 %len, i32 %272;
-    cbr i1 %273(prob = 0.5), ^b10, ^b22;
+    cbr i1 %273(prob = 0.5), ^while.body11, ^b22;
   ^while.body10:
-    i32 %274 = phi [^entry5, i32 %259] [^if.then31, i32 %309];
+    i32 %274 = phi [^entry5, i32 %259] [^if.then31, i32 %311];
     i1 %275 = icmp sle i32 %len, i32 %274;
     cbr i1 %275(prob = 0.5), ^indirect9, ^b23;
   ^b20:
@@ -515,177 +515,248 @@ internal func @detect_item(i32 %type, i32* %buf, i32 %len, i32* %0) -> i32 {
   ^while.header2:
     i32 %279 = phi [^indirect8, i32 %262] [^if.then28, i32 %265] [^if.then29, i32 %271];
     i1 %280 = icmp sgt i32 %len, i32 %279;
-    cbr i1 %280(prob = 0.97), ^while.body11, ^b;
+    cbr i1 %280(prob = 0.97), ^while.body12, ^b;
   ^indirect9:
     i32 %281 = load i32* %0;
     ubr ^b24;
-  ^b21:
-    i32 %282 = add i32 %263, i32 1;
-    store i32* %0 with i32 %282;
-    ubr ^while.body12;
-  ^b22:
-    i32 %283 = load i32* %0;
-    i32* %284 = getelementptr &(i32* %buf)[i32 %283];
-    i32 %285 = load i32* %284;
-    i1 %286 = icmp eq i32 %285, i32 32;
-    i1 %287 = icmp eq i32 %285, i32 9;
-    i1 %288 = or i1 %286, i1 %287;
-    i1 %289 = icmp eq i32 %285, i32 10;
-    i1 %290 = or i1 %288, i1 %289;
-    i1 %291 = icmp eq i32 %285, i32 13;
-    i1 %292 = or i1 %290, i1 %291;
-    cbr i1 %292(prob = 0.94), ^if.then30, ^b10;
-  ^b23:
-    i32 %293 = load i32* %0;
-    i32* %294 = getelementptr &(i32* %buf)[i32 %293];
-    i32 %295 = load i32* %294;
-    i1 %296 = icmp eq i32 %295, i32 32;
-    i1 %297 = icmp eq i32 %295, i32 9;
-    i1 %298 = or i1 %296, i1 %297;
-    i1 %299 = icmp eq i32 %295, i32 10;
-    i1 %300 = or i1 %298, i1 %299;
-    i1 %301 = icmp eq i32 %295, i32 13;
-    i1 %302 = or i1 %300, i1 %301;
-    cbr i1 %302(prob = 0.94), ^if.then31, ^b24;
   ^while.body11:
-    i32 %303 = load i32* %0;
-    i32* %304 = getelementptr &(i32* %buf)[i32 %303];
-    i32 %305 = load i32* %304;
-    i32 %306 = add i32 %305, i32 -48;
-    i1 %307 = icmp uge i32 %306, i32 10;
-    cbr i1 %307(prob = 0.5), ^b, ^if.then29;
+    i32 %282 = call (i32, i32*, i32, i32*) -> i32 @detect_item(i32 0, i32* %buf, i32 %len, i32* %0);
+    i1 %283 = icmp neq i32 %282, i32 0;
+    cbr i1 %283(prob = 0.5), ^entry3, ^b;
+  ^b21:
+    i32 %284 = add i32 %263, i32 1;
+    store i32* %0 with i32 %284;
+    ubr ^while.body13;
+  ^b22:
+    i32 %285 = load i32* %0;
+    i32* %286 = getelementptr &(i32* %buf)[i32 %285];
+    i32 %287 = load i32* %286;
+    i1 %288 = icmp eq i32 %287, i32 32;
+    i1 %289 = icmp eq i32 %287, i32 9;
+    i1 %290 = or i1 %288, i1 %289;
+    i1 %291 = icmp eq i32 %287, i32 10;
+    i1 %292 = or i1 %290, i1 %291;
+    i1 %293 = icmp eq i32 %287, i32 13;
+    i1 %294 = or i1 %292, i1 %293;
+    cbr i1 %294(prob = 0.94), ^if.then30, ^while.body11;
+  ^b23:
+    i32 %295 = load i32* %0;
+    i32* %296 = getelementptr &(i32* %buf)[i32 %295];
+    i32 %297 = load i32* %296;
+    i1 %298 = icmp eq i32 %297, i32 32;
+    i1 %299 = icmp eq i32 %297, i32 9;
+    i1 %300 = or i1 %298, i1 %299;
+    i1 %301 = icmp eq i32 %297, i32 10;
+    i1 %302 = or i1 %300, i1 %301;
+    i1 %303 = icmp eq i32 %297, i32 13;
+    i1 %304 = or i1 %302, i1 %303;
+    cbr i1 %304(prob = 0.94), ^if.then31, ^b24;
+  ^while.body12:
+    i32 %305 = load i32* %0;
+    i32* %306 = getelementptr &(i32* %buf)[i32 %305];
+    i32 %307 = load i32* %306;
+    i32 %308 = add i32 %307, i32 -48;
+    i1 %309 = icmp uge i32 %308, i32 10;
+    cbr i1 %309(prob = 0.5), ^b, ^if.then29;
   ^if.then30:
-    i32 %308 = add i32 %283, i32 1;
-    store i32* %0 with i32 %308;
+    i32 %310 = add i32 %285, i32 1;
+    store i32* %0 with i32 %310;
     ubr ^while.body9;
   ^if.then31:
-    i32 %309 = add i32 %293, i32 1;
-    store i32* %0 with i32 %309;
+    i32 %311 = add i32 %295, i32 1;
+    store i32* %0 with i32 %311;
     ubr ^while.body10;
   ^b24:
-    i32 %310 = phi [^indirect9, i32 %281] [^b23, i32 %293];
-    i1 %311 = icmp sle i32 %len, i32 %310;
-    cbr i1 %311(prob = 0.5), ^b, ^b25;
-  ^while.body12:
-    i32 %312 = phi [^b21, i32 %282] [^if.then32, i32 %329];
+    i32 %312 = phi [^indirect9, i32 %281] [^b23, i32 %295];
     i1 %313 = icmp sle i32 %len, i32 %312;
-    cbr i1 %313(prob = 0.5), ^b26, ^b27;
-  ^b25:
-    i32* %314 = getelementptr &(i32* %buf)[i32 %310];
-    i32 %315 = load i32* %314;
-    i1 %316 = icmp neq i32 %315, i32 93;
-    cbr i1 %316(prob = 0.5), ^b, ^if.then13;
-  ^b26:
-    i32 %317 = call (i32, i32*, i32, i32*) -> i32 @detect_item(i32 0, i32* %buf, i32 %len, i32* %0);
-    i1 %318 = icmp eq i32 %317, i32 0;
-    cbr i1 %318(prob = 0.5), ^b, ^entry6;
-  ^b27:
-    i32 %319 = load i32* %0;
-    i32* %320 = getelementptr &(i32* %buf)[i32 %319];
-    i32 %321 = load i32* %320;
-    i1 %322 = icmp eq i32 %321, i32 32;
-    i1 %323 = icmp eq i32 %321, i32 9;
-    i1 %324 = or i1 %322, i1 %323;
-    i1 %325 = icmp eq i32 %321, i32 10;
-    i1 %326 = or i1 %324, i1 %325;
-    i1 %327 = icmp eq i32 %321, i32 13;
-    i1 %328 = or i1 %326, i1 %327;
-    cbr i1 %328(prob = 0.94), ^if.then32, ^b26;
-  ^if.then32:
-    i32 %329 = add i32 %319, i32 1;
-    store i32* %0 with i32 %329;
-    ubr ^while.body12;
-  ^entry6:
-    i32 %330 = load i32* %0;
-    ubr ^while.body13;
+    cbr i1 %313(prob = 0.5), ^b, ^b25;
   ^while.body13:
-    i32 %331 = phi [^entry6, i32 %330] [^if.then33, i32 %344];
-    i1 %332 = icmp sle i32 %len, i32 %331;
-    cbr i1 %332(prob = 0.5), ^indirect10, ^b28;
+    i32 %314 = phi [^b21, i32 %284] [^if.then32, i32 %331];
+    i1 %315 = icmp sle i32 %len, i32 %314;
+    cbr i1 %315(prob = 0.5), ^b26, ^b27;
+  ^b25:
+    i32* %316 = getelementptr &(i32* %buf)[i32 %312];
+    i32 %317 = load i32* %316;
+    i1 %318 = icmp neq i32 %317, i32 93;
+    cbr i1 %318(prob = 0.5), ^b, ^if.then13;
+  ^b26:
+    i32 %319 = call (i32, i32*, i32, i32*) -> i32 @detect_item(i32 0, i32* %buf, i32 %len, i32* %0);
+    i1 %320 = icmp eq i32 %319, i32 0;
+    cbr i1 %320(prob = 0.5), ^b, ^entry6;
+  ^b27:
+    i32 %321 = load i32* %0;
+    i32* %322 = getelementptr &(i32* %buf)[i32 %321];
+    i32 %323 = load i32* %322;
+    i1 %324 = icmp eq i32 %323, i32 32;
+    i1 %325 = icmp eq i32 %323, i32 9;
+    i1 %326 = or i1 %324, i1 %325;
+    i1 %327 = icmp eq i32 %323, i32 10;
+    i1 %328 = or i1 %326, i1 %327;
+    i1 %329 = icmp eq i32 %323, i32 13;
+    i1 %330 = or i1 %328, i1 %329;
+    cbr i1 %330(prob = 0.94), ^if.then32, ^b26;
+  ^if.then32:
+    i32 %331 = add i32 %321, i32 1;
+    store i32* %0 with i32 %331;
+    ubr ^while.body13;
+  ^entry6:
+    i32 %332 = load i32* %0;
+    ubr ^while.body14;
+  ^while.body14:
+    i32 %333 = phi [^entry6, i32 %332] [^if.then33, i32 %346];
+    i1 %334 = icmp sle i32 %len, i32 %333;
+    cbr i1 %334(prob = 0.5), ^indirect10, ^b28;
   ^indirect10:
-    i32 %333 = load i32* %0;
+    i32 %335 = load i32* %0;
     ubr ^b29;
   ^b28:
-    i32 %334 = load i32* %0;
-    i32* %335 = getelementptr &(i32* %buf)[i32 %334];
-    i32 %336 = load i32* %335;
-    i1 %337 = icmp eq i32 %336, i32 32;
-    i1 %338 = icmp eq i32 %336, i32 9;
-    i1 %339 = or i1 %337, i1 %338;
-    i1 %340 = icmp eq i32 %336, i32 10;
+    i32 %336 = load i32* %0;
+    i32* %337 = getelementptr &(i32* %buf)[i32 %336];
+    i32 %338 = load i32* %337;
+    i1 %339 = icmp eq i32 %338, i32 32;
+    i1 %340 = icmp eq i32 %338, i32 9;
     i1 %341 = or i1 %339, i1 %340;
-    i1 %342 = icmp eq i32 %336, i32 13;
+    i1 %342 = icmp eq i32 %338, i32 10;
     i1 %343 = or i1 %341, i1 %342;
-    cbr i1 %343(prob = 0.94), ^if.then33, ^b29;
+    i1 %344 = icmp eq i32 %338, i32 13;
+    i1 %345 = or i1 %343, i1 %344;
+    cbr i1 %345(prob = 0.94), ^if.then33, ^b29;
   ^if.then33:
-    i32 %344 = add i32 %334, i32 1;
-    store i32* %0 with i32 %344;
-    ubr ^while.body13;
+    i32 %346 = add i32 %336, i32 1;
+    store i32* %0 with i32 %346;
+    ubr ^while.body14;
   ^b29:
-    i32 %345 = phi [^indirect10, i32 %333] [^b28, i32 %334];
-    i32* %346 = getelementptr &(i32* %buf)[i32 %345];
-    i32 %347 = load i32* %346;
-    i1 %348 = icmp eq i32 %347, i32 44;
-    cbr i1 %348(prob = 0.97), ^while.body14, ^entry7;
-  ^while.body14:
-    i32 %349 = add i32 %345, i32 1;
-    store i32* %0 with i32 %349;
-    ubr ^while.body15;
-  ^entry7:
-    i32 %350 = load i32* %0;
-    ubr ^while.body16;
+    i32 %347 = phi [^indirect10, i32 %335] [^b28, i32 %336];
+    i32* %348 = getelementptr &(i32* %buf)[i32 %347];
+    i32 %349 = load i32* %348;
+    i1 %350 = icmp eq i32 %349, i32 44;
+    cbr i1 %350(prob = 0.97), ^while.body15, ^entry7;
   ^while.body15:
-    i32 %351 = phi [^while.body14, i32 %349] [^if.then34, i32 %376];
-    i1 %352 = icmp sle i32 %len, i32 %351;
-    cbr i1 %352(prob = 0.5), ^b11, ^b30;
-  ^while.body16:
-    i32 %353 = phi [^entry7, i32 %350] [^if.then35, i32 %377];
-    i1 %354 = icmp sle i32 %len, i32 %353;
-    cbr i1 %354(prob = 0.5), ^indirect11, ^b31;
-  ^indirect11:
-    i32 %355 = load i32* %0;
-    ubr ^b32;
-  ^b30:
-    i32 %356 = load i32* %0;
-    i32* %357 = getelementptr &(i32* %buf)[i32 %356];
-    i32 %358 = load i32* %357;
-    i1 %359 = icmp eq i32 %358, i32 32;
-    i1 %360 = icmp eq i32 %358, i32 9;
-    i1 %361 = or i1 %359, i1 %360;
-    i1 %362 = icmp eq i32 %358, i32 10;
-    i1 %363 = or i1 %361, i1 %362;
-    i1 %364 = icmp eq i32 %358, i32 13;
-    i1 %365 = or i1 %363, i1 %364;
-    cbr i1 %365(prob = 0.94), ^if.then34, ^b11;
-  ^b31:
-    i32 %366 = load i32* %0;
-    i32* %367 = getelementptr &(i32* %buf)[i32 %366];
-    i32 %368 = load i32* %367;
-    i1 %369 = icmp eq i32 %368, i32 32;
-    i1 %370 = icmp eq i32 %368, i32 9;
-    i1 %371 = or i1 %369, i1 %370;
-    i1 %372 = icmp eq i32 %368, i32 10;
-    i1 %373 = or i1 %371, i1 %372;
-    i1 %374 = icmp eq i32 %368, i32 13;
-    i1 %375 = or i1 %373, i1 %374;
-    cbr i1 %375(prob = 0.94), ^if.then35, ^b32;
-  ^if.then34:
-    i32 %376 = add i32 %356, i32 1;
-    store i32* %0 with i32 %376;
-    ubr ^while.body15;
-  ^if.then35:
-    i32 %377 = add i32 %366, i32 1;
-    store i32* %0 with i32 %377;
+    i32 %351 = add i32 %347, i32 1;
+    store i32* %0 with i32 %351;
     ubr ^while.body16;
+  ^entry7:
+    i32 %352 = load i32* %0;
+    ubr ^while.body17;
+  ^while.body16:
+    i32 %353 = phi [^while.body15, i32 %351] [^if.then34, i32 %380];
+    i1 %354 = icmp sle i32 %len, i32 %353;
+    cbr i1 %354(prob = 0.5), ^while.body18, ^b30;
+  ^while.body17:
+    i32 %355 = phi [^entry7, i32 %352] [^if.then35, i32 %382];
+    i1 %356 = icmp sle i32 %len, i32 %355;
+    cbr i1 %356(prob = 0.5), ^indirect11, ^b31;
+  ^indirect11:
+    i32 %357 = load i32* %0;
+    ubr ^b32;
+  ^while.body18:
+    i32 %358 = call (i32, i32*, i32, i32*) -> i32 @detect_item(i32 2, i32* %buf, i32 %len, i32* %0);
+    i1 %359 = icmp eq i32 %358, i32 0;
+    cbr i1 %359(prob = 0.5), ^b, ^entry8;
+  ^b30:
+    i32 %360 = load i32* %0;
+    i32* %361 = getelementptr &(i32* %buf)[i32 %360];
+    i32 %362 = load i32* %361;
+    i1 %363 = icmp eq i32 %362, i32 32;
+    i1 %364 = icmp eq i32 %362, i32 9;
+    i1 %365 = or i1 %363, i1 %364;
+    i1 %366 = icmp eq i32 %362, i32 10;
+    i1 %367 = or i1 %365, i1 %366;
+    i1 %368 = icmp eq i32 %362, i32 13;
+    i1 %369 = or i1 %367, i1 %368;
+    cbr i1 %369(prob = 0.94), ^if.then34, ^while.body18;
+  ^b31:
+    i32 %370 = load i32* %0;
+    i32* %371 = getelementptr &(i32* %buf)[i32 %370];
+    i32 %372 = load i32* %371;
+    i1 %373 = icmp eq i32 %372, i32 32;
+    i1 %374 = icmp eq i32 %372, i32 9;
+    i1 %375 = or i1 %373, i1 %374;
+    i1 %376 = icmp eq i32 %372, i32 10;
+    i1 %377 = or i1 %375, i1 %376;
+    i1 %378 = icmp eq i32 %372, i32 13;
+    i1 %379 = or i1 %377, i1 %378;
+    cbr i1 %379(prob = 0.94), ^if.then35, ^b32;
+  ^if.then34:
+    i32 %380 = add i32 %360, i32 1;
+    store i32* %0 with i32 %380;
+    ubr ^while.body16;
+  ^entry8:
+    i32 %381 = load i32* %0;
+    ubr ^while.body19;
+  ^if.then35:
+    i32 %382 = add i32 %370, i32 1;
+    store i32* %0 with i32 %382;
+    ubr ^while.body17;
   ^b32:
-    i32 %378 = phi [^indirect11, i32 %355] [^b31, i32 %366];
-    i1 %379 = icmp sle i32 %len, i32 %378;
-    cbr i1 %379(prob = 0.5), ^b, ^if.else27;
+    i32 %383 = phi [^indirect11, i32 %357] [^b31, i32 %370];
+    i1 %384 = icmp sle i32 %len, i32 %383;
+    cbr i1 %384(prob = 0.5), ^b, ^if.else27;
+  ^while.body19:
+    i32 %385 = phi [^entry8, i32 %381] [^if.then36, i32 %401];
+    i1 %386 = icmp sle i32 %len, i32 %385;
+    cbr i1 %386(prob = 0.5), ^indirect12, ^b33;
   ^if.else27:
-    i32* %380 = getelementptr &(i32* %buf)[i32 %378];
-    i32 %381 = load i32* %380;
-    i1 %382 = icmp neq i32 %381, i32 125;
-    cbr i1 %382(prob = 0.5), ^b, ^if.then13;
+    i32* %387 = getelementptr &(i32* %buf)[i32 %383];
+    i32 %388 = load i32* %387;
+    i1 %389 = icmp neq i32 %388, i32 125;
+    cbr i1 %389(prob = 0.5), ^b, ^if.then13;
+  ^indirect12:
+    i32 %390 = load i32* %0;
+    ubr ^b34;
+  ^b33:
+    i32 %391 = load i32* %0;
+    i32* %392 = getelementptr &(i32* %buf)[i32 %391];
+    i32 %393 = load i32* %392;
+    i1 %394 = icmp eq i32 %393, i32 32;
+    i1 %395 = icmp eq i32 %393, i32 9;
+    i1 %396 = or i1 %394, i1 %395;
+    i1 %397 = icmp eq i32 %393, i32 10;
+    i1 %398 = or i1 %396, i1 %397;
+    i1 %399 = icmp eq i32 %393, i32 13;
+    i1 %400 = or i1 %398, i1 %399;
+    cbr i1 %400(prob = 0.94), ^if.then36, ^b34;
+  ^if.then36:
+    i32 %401 = add i32 %391, i32 1;
+    store i32* %0 with i32 %401;
+    ubr ^while.body19;
+  ^b34:
+    i32 %402 = phi [^indirect12, i32 %390] [^b33, i32 %391];
+    i1 %403 = icmp sle i32 %len, i32 %402;
+    cbr i1 %403(prob = 0.5), ^b, ^b35;
+  ^b35:
+    i32* %404 = getelementptr &(i32* %buf)[i32 %402];
+    i32 %405 = load i32* %404;
+    i1 %406 = icmp neq i32 %405, i32 58;
+    cbr i1 %406(prob = 0.5), ^b, ^b36;
+  ^b36:
+    i32 %407 = add i32 %402, i32 1;
+    store i32* %0 with i32 %407;
+    ubr ^while.body20;
+  ^while.body20:
+    i32 %408 = phi [^b36, i32 %407] [^if.then37, i32 %422];
+    i1 %409 = icmp sle i32 %len, i32 %408;
+    cbr i1 %409(prob = 0.5), ^b37, ^b38;
+  ^b37:
+    i32 %410 = call (i32, i32*, i32, i32*) -> i32 @detect_item(i32 0, i32* %buf, i32 %len, i32* %0);
+    i1 %411 = icmp neq i32 %410, i32 0;
+    cbr i1 %411(prob = 0.5), ^entry6, ^b;
+  ^b38:
+    i32 %412 = load i32* %0;
+    i32* %413 = getelementptr &(i32* %buf)[i32 %412];
+    i32 %414 = load i32* %413;
+    i1 %415 = icmp eq i32 %414, i32 32;
+    i1 %416 = icmp eq i32 %414, i32 9;
+    i1 %417 = or i1 %415, i1 %416;
+    i1 %418 = icmp eq i32 %414, i32 10;
+    i1 %419 = or i1 %417, i1 %418;
+    i1 %420 = icmp eq i32 %414, i32 13;
+    i1 %421 = or i1 %419, i1 %420;
+    cbr i1 %421(prob = 0.94), ^if.then37, ^b37;
+  ^if.then37:
+    i32 %422 = add i32 %412, i32 1;
+    store i32* %0 with i32 %422;
+    ubr ^while.body20;
 }
 internal [50000000 * i32]* @buffer { Flexible };
 func @main() -> i32 { NoRecurse Entry } {

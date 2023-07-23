@@ -3,48 +3,41 @@ PARAM v11
 PARAM v10
 PARAM v9
 PARAM v8
-IF v8 != #1 GOTO label14
-v16 := v9 * #1000000
+IF v8 == #1 GOTO label14
+v5 := v8
+v6 := v9
+v7 := v10
+GOTO label4
+LABEL label14 :
+v3 := v9
+LABEL label2 :
+v16 := v3 * #1000000
 v17 := v11 + v16
 WRITE v17
 RETURN #0
-LABEL label14 :
-v6 := v9
-v7 := v10
-v18 := v8 + #-1
-ARG v18
-ARG v9
-ARG v11
-ARG v10
-v19 := CALL hanoi
-v20 := v9 * #1000000
-v21 := v11 + v20
-WRITE v21
-IF v18 != #1 GOTO label24
-GOTO label28
-LABEL label24 :
-v26 := v6
-v6 := v7
-v7 := v26
-v18 := v18 + #-1
+LABEL label4 :
+v18 := v5 + #-1
 ARG v18
 ARG v6
 ARG v11
-ARG v26
+ARG v7
 v19 := CALL hanoi
 v20 := v6 * #1000000
 v21 := v11 + v20
 WRITE v21
 IF v18 != #1 GOTO label24
-LABEL label28 :
-v16 := v7 * #1000000
-v17 := v11 + v16
-WRITE v17
-RETURN #0
+v3 := v7
+GOTO label2
+LABEL label24 :
+v5 := v18
+v26 := v6
+v6 := v7
+v7 := v26
+GOTO label4
 FUNCTION main :
 ARG #3
 ARG #1
 ARG #2
 ARG #3
-v32 := CALL hanoi
+v29 := CALL hanoi
 RETURN #0

@@ -11,35 +11,8 @@ foo:
 	mov r0, #0
 	add r0, r0, #1
 	cmp r1, r0
-	beq label2
-	add r0, r0, #1
-	cmp r1, r0
-	beq label2
-	add r0, r0, #1
-	cmp r1, r0
-	beq label2
-	add r0, r0, #1
-	cmp r1, r0
-	beq label2
-	add r0, r0, #1
-	cmp r1, r0
-	beq label2
-	add r0, r0, #1
-	cmp r1, r0
-	beq label2
-	add r0, r0, #1
-	cmp r1, r0
-	beq label2
-	add r0, r0, #1
-	cmp r1, r0
-	beq label2
-	add r0, r0, #1
-	cmp r1, r0
-	beq label2
-	add r0, r0, #1
-	cmp r1, r0
-	beq label2
-	b label4
+	bne label4
+	b label2
 label9:
 	mov r0, #0
 label2:
@@ -47,5 +20,5 @@ label2:
 label4:
 	add r0, r0, #1
 	cmp r1, r0
-	beq label2
-	b label4
+	bne label4
+	b label2

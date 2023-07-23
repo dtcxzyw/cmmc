@@ -54,5 +54,5 @@ label3:
 	add r4, r4, #1
 	strb r6, [r3, r5]
 	cmp r0, r4
-	beq label5
-	b label3
+	bne label3
+	b label5

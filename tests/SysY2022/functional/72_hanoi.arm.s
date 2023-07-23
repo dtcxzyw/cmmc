@@ -31,13 +31,14 @@ label4:
 	mov r0, #32
 	bl putch
 	cmp r7, #1
-	beq label19
+	bne label19
+	mov r1, r5
+	b label2
+label19:
 	mov r0, r4
 	mov r4, r5
 	mov r5, r0
 	b label4
-label19:
-	mov r1, r5
 label2:
 	mov r0, r1
 	bl putint
@@ -56,9 +57,9 @@ main:
 	push { r4, lr }
 	bl getint
 	cmp r0, #0
-	ble label30
+	ble label28
 	mov r4, r0
-label28:
+label26:
 	bl getint
 	mov r3, #3
 	mov r2, #2
@@ -67,7 +68,7 @@ label28:
 	mov r0, #10
 	bl putch
 	subs r4, r4, #1
-	bgt label28
-label30:
+	bgt label26
+label28:
 	mov r0, #0
 	pop { r4, pc }

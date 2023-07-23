@@ -54,5 +54,5 @@ label3:
 	li t0, 17
 	add a5, a3, t1
 	sb t0, 0(a5)
-	beq a0, a4, label5
-	j label3
+	bne a0, a4, label3
+	j label5

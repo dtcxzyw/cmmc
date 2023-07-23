@@ -45,9 +45,9 @@ label2:
 	mflo $t1
 	addiu $t0, $t0, -1
 	li $t2, 1
-	beq $t0, $t2, label5
+	bne $t0, $t2, label2
 	nop
-	b label2
+	b label17
 	nop
 label6:
 	jal write
@@ -57,7 +57,7 @@ label6:
 	addiu $sp, $sp, 24
 	jr $ra
 	nop
-label5:
+label17:
 	mult $t1, $t0
 	mflo $a0
 	b label6

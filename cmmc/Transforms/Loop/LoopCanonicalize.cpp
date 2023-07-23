@@ -12,6 +12,7 @@
     limitations under the License.
 */
 
+#include <cmmc/Analysis/DominateAnalysis.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/IRBuilder.hpp>
@@ -24,7 +25,7 @@ CMMC_NAMESPACE_BEGIN
 class LoopCanonicalize final : public TransformPass<Function> {
 public:
     bool run(Function& func, AnalysisPassManager& analysis) const override {
-        CMMC_UNUSED(analysis);
+        auto& dom = analysis.get<DominateAnalysis>(func);
         bool modified = false;
 
         for(auto block : func.blocks()) {
@@ -66,6 +67,15 @@ public:
                         }
                     }
                 }
+            }
+            const auto terminatorBranch = terminator->as<BranchInst>();
+            if(terminatorBranch->getTrueTarget() != terminatorBranch->getFalseTarget() && cmp->hasExactlyOneUse() &&
+               dom.dominate(terminatorBranch->getFalseTarget(), block) &&
+               !dom.dominate(terminatorBranch->getFalseTarget(), terminatorBranch->getTrueTarget())) {
+                terminatorBranch->updateBranchProb(1.0 - terminatorBranch->getBranchProb());
+                std::swap(terminatorBranch->getTrueTarget(), terminatorBranch->getFalseTarget());
+                cmp->setOp(getInvertedOp(cmp->getOp()));
+                modified = true;
             }
         }
 
