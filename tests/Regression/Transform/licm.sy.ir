@@ -9,37 +9,40 @@ func @licm1(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless N
     i32 %4 = mul i32 %x, i32 %1;
     ubr ^super.header;
   ^b:
-    i32 %5 = phi [^entry, i32 0] [^for.body1, i32 %26];
+    i32 %5 = phi [^entry, i32 0] [^for.body1, i32 %27];
     ret i32 %5;
   ^super.header:
-    i32 %6 = phi [^prebody, i32 0] [^for.body, i32 %8];
-    i32 %7 = phi [^prebody, i32 0] [^for.body, i32 %21];
-    i32 %8 = add i32 %6, i32 4;
-    i1 %9 = icmp sgt i32 %x, i32 %8;
-    cbr i1 %9(prob = 0.89), ^for.body, ^for.body1;
+    i32 %6 = phi [^prebody, i32 0] [^for.body, i32 %20];
+    i32 %7 = phi [^prebody, i32 1] [^for.body, i32 %21];
+    i32 %8 = phi [^prebody, i32 0] [^for.body, i32 %10];
+    i32 %9 = phi [^prebody, i32 0] [^for.body, i32 %17];
+    i32 %10 = add i32 %8, i32 4;
+    i1 %11 = icmp sgt i32 %x, i32 %10;
+    cbr i1 %11(prob = 0.89), ^for.body, ^for.body1;
   ^for.body:
-    i32 %10 = add i32 %3, i32 %7;
-    i32 %11 = mul i32 %6, i32 %6;
-    i32 %12 = add i32 %10, i32 %11;
-    i32 %13 = add i32 %6, i32 1;
-    i32 %14 = mul i32 %13, i32 %13;
-    i32 %15 = add i32 %12, i32 %14;
-    i32 %16 = add i32 %6, i32 2;
-    i32 %17 = mul i32 %16, i32 %16;
-    i32 %18 = add i32 %15, i32 %17;
-    i32 %19 = add i32 %6, i32 3;
-    i32 %20 = mul i32 %19, i32 %19;
-    i32 %21 = add i32 %18, i32 %20;
+    i32 %12 = add i32 %9, i32 8;
+    i32 %13 = add i32 %3, i32 %12;
+    i32 %14 = mul i32 %6, i32 4;
+    i32 %15 = add i32 %13, i32 %14;
+    i32 %16 = mul i32 %7, i32 6;
+    i32 %17 = add i32 %15, i32 %16;
+    i32 %18 = mul i32 %7, i32 4;
+    i32 %19 = add i32 %6, i32 12;
+    i32 %20 = add i32 %18, i32 %19;
+    i32 %21 = add i32 %7, i32 8;
     ubr ^super.header;
   ^for.body1:
-    i32 %22 = phi [^super.header, i32 %6] [^for.body1, i32 %27];
-    i32 %23 = phi [^super.header, i32 %7] [^for.body1, i32 %26];
-    i32 %24 = mul i32 %22, i32 %22;
-    i32 %25 = add i32 %4, i32 %24;
-    i32 %26 = add i32 %23, i32 %25;
-    i32 %27 = add i32 %22, i32 1;
-    i1 %28 = icmp sgt i32 %x, i32 %27;
-    cbr i1 %28(prob = 0.75), ^for.body1, ^b;
+    i32 %22 = phi [^super.header, i32 %6] [^for.body1, i32 %30];
+    i32 %23 = phi [^super.header, i32 %7] [^for.body1, i32 %31];
+    i32 %24 = phi [^super.header, i32 %8] [^for.body1, i32 %28];
+    i32 %25 = phi [^super.header, i32 %9] [^for.body1, i32 %27];
+    i32 %26 = add i32 %4, i32 %22;
+    i32 %27 = add i32 %25, i32 %26;
+    i32 %28 = add i32 %24, i32 1;
+    i1 %29 = icmp sgt i32 %x, i32 %28;
+    i32 %30 = add i32 %22, i32 %23;
+    i32 %31 = add i32 %23, i32 2;
+    cbr i1 %29(prob = 0.75), ^for.body1, ^b;
 }
 func @licm2(i32* %head, i32* %tail, i32 %i) -> i32 { NoRecurse } {
   ^entry:

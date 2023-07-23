@@ -110,6 +110,10 @@ static intmax_t getBinomialCoefficient(uint32_t n, uint32_t k) {
     return coeff[n][k];
 }
 
+static bool inSameLoop(SCEV* lhs, SCEV* rhs) {
+    return lhs->loop && rhs->loop && lhs->loop == rhs->loop;
+}
+
 static std::unique_ptr<SCEV> foldAdd(SCEVAnalysisResult& res, SCEV* lhs, SCEV* rhs) {
     if(!(lhs && rhs))
         return nullptr;
@@ -130,7 +134,7 @@ static std::unique_ptr<SCEV> foldAdd(SCEVAnalysisResult& res, SCEV* lhs, SCEV* r
             return ret;
         }
     }
-    if(lhs->instID == SCEVInstID::AddRec && rhs->instID == SCEVInstID::AddRec) {
+    if(lhs->instID == SCEVInstID::AddRec && rhs->instID == SCEVInstID::AddRec && inSameLoop(lhs, rhs)) {
         std::vector<SCEV*> operands;
         const auto endSize = std::max(lhs->operands.size(), rhs->operands.size());
         operands.reserve(endSize);
@@ -151,6 +155,7 @@ static std::unique_ptr<SCEV> foldAdd(SCEVAnalysisResult& res, SCEV* lhs, SCEV* r
         }
         auto ret = makeUnique<SCEV>();
         ret->instID = SCEVInstID::AddRec;
+        ret->loop = lhs->loop;
         ret->operands = std::move(operands);
         return ret;
     }
@@ -179,10 +184,11 @@ static std::unique_ptr<SCEV> foldMul(const SCEVAnalysisResult& res, SCEV* lhs, S
         }
         auto scev = makeUnique<SCEV>();
         scev->instID = SCEVInstID::AddRec;
+        scev->loop = lhs->loop;
         scev->operands = std::move(operands);
         return scev;
     }
-    if(lhs->instID == SCEVInstID::AddRec && rhs->instID == SCEVInstID::AddRec) {
+    if(lhs->instID == SCEVInstID::AddRec && rhs->instID == SCEVInstID::AddRec && inSameLoop(lhs, rhs)) {
         std::vector<SCEV*> operands;
         const auto n = lhs->operands.size() + rhs->operands.size() - 1;
         operands.reserve(n);
@@ -209,6 +215,7 @@ static std::unique_ptr<SCEV> foldMul(const SCEVAnalysisResult& res, SCEV* lhs, S
         }
         auto scev = makeUnique<SCEV>();
         scev->instID = SCEVInstID::AddRec;
+        scev->loop = lhs->loop;
         scev->operands = std::move(operands);
         return scev;
     }

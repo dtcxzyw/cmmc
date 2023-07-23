@@ -13,3 +13,7 @@ int foo3(int x) {
     }
     return x;
 }
+void foo4(int a[], int n) {
+    for(int i = 0; i < n; ++i)
+        a[i] = i * 17;
+}

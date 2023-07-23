@@ -1,7 +1,0 @@
-func @_Z3fooi(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
-  ^entry:
-    i32 %0 = strunc i32 %var0 to i32;
-    i1 %1 = icmp sgt i32 %0, i32 0;
-    i32 %2 = select i1 %1 ? i32 10 : i32 20;
-    ret i32 %2;
-}

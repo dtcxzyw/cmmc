@@ -1,5 +1,0 @@
-func @foo() -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
-  ^entry:
-    ret;
-}
-i32* @x = 0;
