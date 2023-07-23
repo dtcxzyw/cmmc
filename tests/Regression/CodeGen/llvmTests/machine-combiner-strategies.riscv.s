@@ -7,15 +7,15 @@ test_local_strategy:
 	li t0, 4294967295
 	and a1, a0, t0
 	subw a0, a1, a2
-	bne a0, zero, label20
+	beq a0, zero, label2
+	li a1, 4294967295
+	and a0, a0, a1
+	j label3
+label2:
 	addw a3, a3, a4
 	li a2, 4294967295
 	addw a1, a5, a3
 	and a3, a0, a2
 	addw a0, a1, a3
-	j label3
-label20:
-	li a1, 4294967295
-	and a0, a0, a1
 label3:
 	ret

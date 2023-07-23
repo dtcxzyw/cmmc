@@ -14,15 +14,24 @@ main:
 	str r0, [sp, #140]
 	cmp r0, #0
 	ble label11
+label17:
 	mov r4, #0
 	cmp r4, #5
 	bge label10
-label1576:
+label6:
 	mov r0, #20
 	ldr r5, [sp, #144]
 	mov r6, #0
 	mla r5, r4, r0, r5
-	b label7
+label7:
+	bl getint
+	str r0, [r5, r6, lsl #2]
+	add r6, r6, #1
+	cmp r6, #5
+	blt label7
+	add r4, r4, #1
+	cmp r4, #5
+	blt label6
 label10:
 	ldr r8, [sp, #404]
 	add r0, r8, r8, lsl #2
@@ -1127,23 +1136,7 @@ label10:
 	ldr r0, [sp, #140]
 	subs r0, r0, #1
 	str r0, [sp, #140]
-	ble label11
-	mov r4, #0
-	cmp r4, #5
-	bge label10
-	b label1576
-label7:
-	bl getint
-	str r0, [r5, r6, lsl #2]
-	add r6, r6, #1
-	cmp r6, #5
-	bge label9
-	b label7
-label9:
-	add r4, r4, #1
-	cmp r4, #5
-	bge label10
-	b label1576
+	bgt label17
 label11:
 	mov r0, #0
 	add sp, sp, #512

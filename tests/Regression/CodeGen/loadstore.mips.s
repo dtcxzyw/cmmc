@@ -140,10 +140,7 @@ label98:
 	sw $zero, 60($t1)
 	addiu $t0, $t0, 16
 	addiu $t1, $t0, -128
-	bgez $t1, label100
+	bltz $t1, label98
 	nop
-	b label98
-	nop
-label100:
 	jr $ra
 	nop

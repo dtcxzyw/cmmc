@@ -122,9 +122,7 @@ pcrel64:
 	li a0, 1000000000
 	fmul.s f10, f10, f11
 	fcvt.w.s s3, f10, rtz
-	bge s3, a0, label5
-	j label2
-label5:
+	blt s3, a0, label2
 	mv a0, s1
 	mv a1, s0
 	jal putfarray

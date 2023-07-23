@@ -5,53 +5,19 @@
 mulw:
 	mv a2, a0
 	mv a3, a1
-	bge a0, a1, label16
-	addiw a1, a0, 1
-	ble a3, a1, label21
-	mulw a0, a1, a0
-	addiw a1, a1, 1
-	ble a3, a1, label21
-	mulw a0, a1, a0
-	addiw a1, a1, 1
-	ble a3, a1, label21
-	mulw a0, a1, a0
-	addiw a1, a1, 1
-	ble a3, a1, label21
-	mulw a0, a1, a0
-	addiw a1, a1, 1
-	ble a3, a1, label21
-	mulw a0, a1, a0
-	addiw a1, a1, 1
-	ble a3, a1, label21
-	mulw a0, a1, a0
-	addiw a1, a1, 1
-	ble a3, a1, label21
-	mulw a0, a1, a0
-	addiw a1, a1, 1
-	ble a3, a1, label21
-	mulw a0, a1, a0
-	addiw a1, a1, 1
-	ble a3, a1, label21
-	mulw a0, a1, a0
-	addiw a1, a1, 1
-	ble a3, a1, label21
-	j label53
-label16:
+	blt a0, a1, label2
 	li a0, 1
-	j label8
-label53:
-	mulw a0, a1, a0
-	addiw a1, a1, 1
-	ble a3, a1, label21
-	j label3
 label8:
 	ret
-label21:
+label2:
+	addiw a1, a0, 1
+	bgt a3, a1, label3
+label20:
 	li a1, 4294967295
 	and a0, a0, a1
 	j label8
 label3:
 	mulw a0, a1, a0
 	addiw a1, a1, 1
-	ble a3, a1, label21
-	j label3
+	bgt a3, a1, label3
+	j label20

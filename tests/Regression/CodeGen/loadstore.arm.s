@@ -110,7 +110,5 @@ label92:
 	str r3, [r2, #52]
 	str r3, [r2, #56]
 	str r3, [r2, #60]
-	bge label94
-	b label92
-label94:
+	blt label92
 	bx lr

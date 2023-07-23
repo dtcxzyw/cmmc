@@ -64,6 +64,30 @@ static MIRInst emitGotoImpl(MIRBasicBlock* target) {
     return gotoInst;
 }
 
+static void inverseBranchImpl(MIRInst& inst, MIRBasicBlock* newTarget) {
+    switch(inst.opcode()) {
+        case BranchEq:
+            inst.setOpcode(BranchNe);
+            break;
+        case BranchNe:
+            inst.setOpcode(BranchEq);
+            break;
+        case BranchLt:
+            inst.setOpcode(BranchGe);
+            break;
+        case BranchGe:
+            inst.setOpcode(BranchLt);
+            break;
+        case BranchGt:
+            inst.setOpcode(BranchLe);
+            break;
+        default:
+            reportUnreachable(CMMC_LOCATION());
+    }
+    inst.setOperand<2>(MIROperand::asReloc(newTarget));
+    inst.setOperand<3>(MIROperand::asProb(1.0 - inst.getOperand(3).prob()));
+}
+
 CMMC_TARGET_NAMESPACE_END
 
 #include <TAC/InstInfoImpl.hpp>

@@ -113,7 +113,5 @@ label97:
 	sw zero, 56(a2)
 	sw zero, 60(a2)
 	li a2, 128
-	bge a1, a2, label99
-	j label97
-label99:
+	blt a1, a2, label97
 	ret

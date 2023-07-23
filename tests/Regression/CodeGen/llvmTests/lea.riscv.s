@@ -9,12 +9,14 @@ test1:
 .globl test2
 test2:
 	li a1, 4
-	ble a0, a1, label7
+	bgt a0, a1, label6
+label7:
+	ret
+label6:
 	addiw a1, a0, -5
 	srliw a2, a1, 2
 	slli a3, a2, 2
 	addiw a2, a0, -4
 	subw a1, zero, a3
 	addw a0, a1, a2
-label7:
-	ret
+	j label7

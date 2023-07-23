@@ -19,82 +19,72 @@ line2:
 .fpu vfpv4
 f:
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
+	mov r6, #1
 	sub sp, sp, #20
+	mov r11, r2
+	movw r4, #:lower16:row
+	str r0, [sp, #8]
 	mov r10, r0
 	movw r5, #:lower16:ans
-	mov r11, r2
-	str r0, [sp, #8]
-	movw r7, #:lower16:line1
-	mov r6, #1
 	str r2, [sp, #4]
 	movw r8, #:lower16:line2
-	movw r4, #:lower16:row
+	movw r7, #:lower16:line1
 	str r1, [sp, #0]
-	movt r5, #:upper16:ans
+	movt r4, #:upper16:row
 	add r0, r0, #1
-	movt r7, #:upper16:line1
+	movt r5, #:upper16:ans
 	movt r8, #:upper16:line2
 	str r0, [sp, #12]
-	movt r4, #:upper16:row
+	movt r7, #:upper16:line1
 	ldr r0, [r2, #0]
 	cmp r6, r0
-	bgt label4
+	ble label5
+label4:
+	add sp, sp, #20
+	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
+label5:
 	ldr r1, [r4, r6, lsl #2]
 	cmp r1, #1
-	beq label6
-	ldr r10, [sp, #8]
-	add r9, r10, r6
-	ldr r1, [r7, r9, lsl #2]
-	cmp r1, #0
-	bne label6
-	add r1, r10, r0
-	sub r1, r1, r6
-	ldr r1, [r8, r1, lsl #2]
-	cmp r1, #0
-	bne label6
-	cmp r10, r0
-	str r6, [r5, r10, lsl #2]
-	bne label65
-	ldr r1, [sp, #0]
-	mov r10, #1
-	ldr r0, [r1, #0]
-	add r0, r0, #1
-	str r0, [r1, #0]
-	ldr r11, [r2, #0]
-	cmp r10, r11
-	bgt label85
-	b label15
-label6:
+	bne label7
 	add r6, r6, #1
 	ldr r11, [sp, #4]
 	ldr r0, [r11, #0]
 	cmp r6, r0
-	bgt label4
-	ldr r1, [r4, r6, lsl #2]
-	cmp r1, #1
-	beq label6
+	ble label5
+	b label4
+label7:
 	ldr r10, [sp, #8]
 	add r9, r10, r6
 	ldr r1, [r7, r9, lsl #2]
 	cmp r1, #0
-	bne label6
+	beq label8
+	add r6, r6, #1
+	ldr r11, [sp, #4]
+	ldr r0, [r11, #0]
+	cmp r6, r0
+	ble label5
+	b label4
+label8:
+	ldr r10, [sp, #8]
 	add r1, r10, r0
 	sub r1, r1, r6
 	ldr r1, [r8, r1, lsl #2]
 	cmp r1, #0
-	bne label6
+	beq label9
+	add r6, r6, #1
+	ldr r11, [sp, #4]
+	ldr r0, [r11, #0]
+	cmp r6, r0
+	ble label5
+	b label4
+label9:
+	ldr r10, [sp, #8]
 	cmp r10, r0
 	str r6, [r5, r10, lsl #2]
-	bne label65
-	ldr r1, [sp, #0]
-	mov r10, #1
-	ldr r0, [r1, #0]
-	add r0, r0, #1
-	str r0, [r1, #0]
-	ldr r11, [r11, #0]
-	cmp r10, r11
-	bgt label85
-	b label15
+	beq label12
+	b label64
+label121:
+	mov r0, r11
 label10:
 	ldr r10, [sp, #8]
 	mov r1, #1
@@ -119,61 +109,41 @@ label10:
 	ldr r11, [sp, #4]
 	ldr r0, [r11, #0]
 	cmp r6, r0
-	bgt label4
-	ldr r1, [r4, r6, lsl #2]
-	cmp r1, #1
-	beq label6
-	ldr r10, [sp, #8]
-	add r9, r10, r6
-	ldr r1, [r7, r9, lsl #2]
-	cmp r1, #0
-	bne label6
-	add r1, r10, r0
-	sub r1, r1, r6
-	ldr r1, [r8, r1, lsl #2]
-	cmp r1, #0
-	bne label6
-	cmp r10, r0
-	str r6, [r5, r10, lsl #2]
-	bne label65
+	ble label5
+	b label4
+label12:
 	ldr r1, [sp, #0]
 	mov r10, #1
 	ldr r0, [r1, #0]
 	add r0, r0, #1
 	str r0, [r1, #0]
+	ldr r11, [sp, #4]
 	ldr r11, [r11, #0]
 	cmp r10, r11
-	bgt label85
-	b label15
-label85:
-	mov r0, r11
-	b label10
+	bgt label121
 label15:
 	ldr r0, [r5, r10, lsl #2]
 	bl putint
 	cmp r10, r11
-	bne label17
-	mov r0, #10
-	bl putch
-	ldr r11, [sp, #4]
-	ldr r0, [r11, #0]
-	b label10
-label65:
-	ldr r11, [sp, #4]
-	ldr r0, [r11, #0]
-	b label10
-label17:
+	beq label16
 	mov r0, #32
 	bl putch
 	add r10, r10, #1
 	ldr r11, [sp, #4]
 	ldr r11, [r11, #0]
 	cmp r10, r11
-	bgt label85
-	b label15
-label4:
-	add sp, sp, #20
-	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
+	ble label15
+	b label121
+label64:
+	ldr r11, [sp, #4]
+	ldr r0, [r11, #0]
+	b label10
+label16:
+	mov r0, #10
+	bl putch
+	ldr r11, [sp, #4]
+	ldr r0, [r11, #0]
+	b label10
 .globl main
 main:
 	push { r4, r5, r6, lr }
@@ -184,13 +154,12 @@ main:
 	mov r4, sp
 	bl getint
 	cmp r0, #0
-	mov r6, r0
-	ble label161
-	b label149
-label161:
+	bgt label137
 	mov r0, #0
-	b label152
-label149:
+	b label128
+label137:
+	mov r6, r0
+label125:
 	bl getint
 	str r0, [sp, #0]
 	mov r1, r5
@@ -198,10 +167,8 @@ label149:
 	mov r2, r4
 	bl f
 	subs r6, r6, #1
-	ble label151
-	b label149
-label151:
+	bgt label125
 	ldr r0, [sp, #4]
-label152:
+label128:
 	add sp, sp, #8
 	pop { r4, r5, r6, pc }

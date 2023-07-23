@@ -35,8 +35,8 @@ label7:
 	addw a4, a2, a5
 	li a2, 2
 	li a3, 3
-	bge a2, a3, label10
-	j label7
+	blt a2, a3, label7
+	j label10
 label9:
 	addiw a1, a0, 7
 	addw a3, a3, a4
@@ -49,8 +49,7 @@ label9:
 	addiw a1, a0, 13
 	mv a0, a1
 	li a3, 3
-	bge a2, a3, label10
-	j label7
+	blt a2, a3, label7
 label10:
 	mv a0, a4
 	jal putint

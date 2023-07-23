@@ -15,12 +15,12 @@ func:
 	fsw f9, 16(sp)
 	sd s1, 8(sp)
 	sd ra, 0(sp)
-	bge a0, zero, label4
+	blt a0, zero, label15
+	addiw s2, a0, -1
+	blt s2, zero, label21
+	j label10
+label15:
 	fmv.w.x f10, zero
-	j label2
-label52:
-	fmv.w.x f10, zero
-	fsub.s f10, f8, f10
 label2:
 	ld ra, 0(sp)
 	ld s1, 8(sp)
@@ -30,12 +30,14 @@ label2:
 	flw f8, 40(sp)
 	addi sp, sp, 48
 	ret
-label4:
-	addiw s2, s0, -1
-	bge s2, zero, label10
+label21:
 	fmv.w.x f10, zero
 	fadd.s f8, f8, f10
-	j label52
+	bge s2, zero, label9
+label26:
+	fmv.w.x f10, zero
+	fsub.s f10, f8, f10
+	j label2
 label9:
 	addiw s0, s0, -2
 	fmv.s f10, f8
@@ -59,8 +61,8 @@ label10:
 	jal func
 	fsub.s f10, f9, f10
 	fadd.s f8, f8, f10
-	bge s2, zero, label9
-	j label52
+	blt s2, zero, label26
+	j label9
 .globl main
 main:
 	addi sp, sp, -8
@@ -68,22 +70,24 @@ main:
 	sd ra, 0(sp)
 	jal _sysy_starttime
 	jal getint
-pcrel71:
+pcrel64:
 	auipc a2, %pcrel_hi(__cmmc_fp_constant_pool)
-	addi a1, a2, %pcrel_lo(pcrel71)
+	addi a1, a2, %pcrel_lo(pcrel64)
 	flw f11, 0(a1)
 	fmv.s f10, f11
 	jal func
 	fmv.w.x f12, zero
 	fsub.s f11, f10, f11
 	feq.s a0, f11, f12
-	beq a0, zero, label55
-	li a0, 112
-	jal putch
-label55:
+	bne a0, zero, label49
+label50:
 	li a0, 32
 	jal _sysy_stoptime
 	ld ra, 0(sp)
 	mv a0, zero
 	addi sp, sp, 8
 	ret
+label49:
+	li a0, 112
+	jal putch
+	j label50

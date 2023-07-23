@@ -16,9 +16,7 @@ pcrel20:
 	auipc a1, %pcrel_hi(i)
 	li a2, 10
 	lw a0, %pcrel_lo(pcrel20)(a1)
-	bne a0, a2, label9
-	j label2
-label9:
+	beq a0, a2, label2
 	li a0, 1
 pcrel21:
 	auipc a1, %pcrel_hi(result)

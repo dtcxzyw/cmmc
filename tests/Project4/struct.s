@@ -33,21 +33,24 @@ gcd:
 	lw $v0, 0($t0)
 	lw $t0, 4($t0)
 	move $t1, $t0
-	beq $t0, $zero, label3
+	bne $t0, $zero, label2
 	nop
-	div $zero, $v0, $t0
+label3:
+	lw $ra, 24($sp)
+	addiu $sp, $sp, 32
+	jr $ra
+	nop
+label2:
+	div $zero, $v0, $t1
 	mflo $t2
-	mult $t0, $t2
+	mult $t1, $t2
 	mflo $t1
 	subu $t1, $v0, $t1
 	sw $t0, 16($sp)
 	sw $t1, 4($a0)
 	jal gcd
 	nop
-label3:
-	lw $ra, 24($sp)
-	addiu $sp, $sp, 32
-	jr $ra
+	b label3
 	nop
 .globl main
 main:

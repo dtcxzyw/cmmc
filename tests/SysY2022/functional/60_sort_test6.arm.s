@@ -41,33 +41,10 @@ main:
 	str r3, [r0, #28]
 	str r3, [r0, #32]
 	str r3, [r0, #36]
+label2:
 	add r2, r3, #4
 	cmp r2, #10
-	bge label4
-label15:
-	add r5, r1, r3, lsl #2
-	ldr r3, [r1, r3, lsl #2]
-	ldr r6, [r0, r3, lsl #2]
-	add r6, r6, #1
-	str r6, [r0, r3, lsl #2]
-	ldr r3, [r5, #4]
-	ldr r6, [r0, r3, lsl #2]
-	add r6, r6, #1
-	str r6, [r0, r3, lsl #2]
-	ldr r3, [r5, #8]
-	ldr r6, [r0, r3, lsl #2]
-	add r6, r6, #1
-	str r6, [r0, r3, lsl #2]
-	ldr r3, [r5, #12]
-	ldr r5, [r0, r3, lsl #2]
-	add r5, r5, #1
-	str r5, [r0, r3, lsl #2]
-	mov r3, r2
-	add r2, r2, #4
-	cmp r2, #10
-	bge label4
-	b label15
-label4:
+	blt label15
 	ldr r2, [r1, r3, lsl #2]
 	add r3, r3, #1
 	cmp r3, #10
@@ -75,7 +52,14 @@ label4:
 	add r5, r5, #1
 	str r5, [r0, r2, lsl #2]
 	bge label6
-	b label4
+label4:
+	ldr r2, [r1, r3, lsl #2]
+	add r3, r3, #1
+	cmp r3, #10
+	ldr r5, [r0, r2, lsl #2]
+	add r5, r5, #1
+	str r5, [r0, r2, lsl #2]
+	blt label4
 label6:
 	ldr r2, [r0, #4]
 	ldr r3, [sp, #0]
@@ -106,8 +90,38 @@ label6:
 	add r2, r2, r3
 	mov r3, #10
 	str r2, [r0, #36]
+	b label7
+label15:
+	add r5, r1, r3, lsl #2
+	ldr r3, [r1, r3, lsl #2]
+	ldr r6, [r0, r3, lsl #2]
+	add r6, r6, #1
+	str r6, [r0, r3, lsl #2]
+	ldr r3, [r5, #4]
+	ldr r6, [r0, r3, lsl #2]
+	add r6, r6, #1
+	str r6, [r0, r3, lsl #2]
+	ldr r3, [r5, #8]
+	ldr r6, [r0, r3, lsl #2]
+	add r6, r6, #1
+	str r6, [r0, r3, lsl #2]
+	ldr r3, [r5, #12]
+	ldr r5, [r0, r3, lsl #2]
+	add r5, r5, #1
+	str r5, [r0, r3, lsl #2]
+	mov r3, r2
+	b label2
+label7:
 	subs r2, r3, #4
-	ble label9
+	bgt label14
+	subs r3, r3, #1
+	ldr r2, [r1, r3, lsl #2]
+	ldr r5, [r0, r2, lsl #2]
+	sub r5, r5, #1
+	str r5, [r0, r2, lsl #2]
+	str r2, [r4, r5, lsl #2]
+	bgt label9
+	b label193
 label14:
 	sub r5, r3, #1
 	add r3, r1, r5, lsl #2
@@ -132,9 +146,10 @@ label14:
 	str r5, [r0, r3, lsl #2]
 	str r3, [r4, r5, lsl #2]
 	mov r3, r2
-	subs r2, r2, #4
-	ble label9
-	b label14
+	b label7
+label193:
+	mov r5, #0
+	b label11
 label9:
 	subs r3, r3, #1
 	ldr r2, [r1, r3, lsl #2]
@@ -142,10 +157,8 @@ label9:
 	sub r5, r5, #1
 	str r5, [r0, r2, lsl #2]
 	str r2, [r4, r5, lsl #2]
-	ble label102
-	b label9
-label102:
-	mov r5, #0
+	bgt label9
+	b label193
 label11:
 	ldr r0, [r4, r5, lsl #2]
 	bl putint
@@ -153,9 +166,7 @@ label11:
 	bl putch
 	add r5, r5, #1
 	cmp r5, #10
-	bge label13
-	b label11
-label13:
+	blt label11
 	mov r0, #0
 	add sp, sp, #120
 	pop { r4, r5, r6, pc }

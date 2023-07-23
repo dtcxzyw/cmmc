@@ -48,9 +48,7 @@ label2:
 	cmp r5, #20
 	add r0, r7, r0
 	add r6, r9, r0
-	bge label5
-	b label2
-label5:
+	blt label2
 	mov r0, r6
 	add sp, sp, #84
 	pop { r4, r5, r6, r7, r8, r9, pc }

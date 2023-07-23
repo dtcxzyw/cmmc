@@ -21,72 +21,80 @@ setne0:
 .globl slti_beq0
 slti_beq0:
 	lui a1, 1048568
-	bge a0, a1, label15
-pcrel28:
-	auipc a1, %pcrel_hi(g1)
-	sw a0, %pcrel_lo(pcrel28)(a1)
+	blt a0, a1, label14
 label15:
 	ret
+label14:
+	auipc a1, %pcrel_hi(g1)
+	sw a0, %pcrel_lo(label14)(a1)
+	j label15
 .globl slti_beq1
 slti_beq1:
 	li a1, -32769
-	bge a0, a1, label31
-pcrel44:
-	auipc a1, %pcrel_hi(g1)
-	sw a0, %pcrel_lo(pcrel44)(a1)
-label31:
+	blt a0, a1, label29
+label30:
 	ret
+label29:
+	auipc a1, %pcrel_hi(g1)
+	sw a0, %pcrel_lo(label29)(a1)
+	j label30
 .globl slti_beq2
 slti_beq2:
 	li a1, 32767
-	bge a0, a1, label47
-pcrel60:
-	auipc a1, %pcrel_hi(g1)
-	sw a0, %pcrel_lo(pcrel60)(a1)
-label47:
+	blt a0, a1, label44
+label45:
 	ret
+label44:
+	auipc a1, %pcrel_hi(g1)
+	sw a0, %pcrel_lo(label44)(a1)
+	j label45
 .globl slti_beq3
 slti_beq3:
 	lui a1, 8
-	bge a0, a1, label63
-pcrel76:
-	auipc a1, %pcrel_hi(g1)
-	sw a0, %pcrel_lo(pcrel76)(a1)
-label63:
+	blt a0, a1, label59
+label60:
 	ret
+label59:
+	auipc a1, %pcrel_hi(g1)
+	sw a0, %pcrel_lo(label59)(a1)
+	j label60
 .globl sltiu_beq0
 sltiu_beq0:
 	li a1, 32767
-	bgeu a0, a1, label79
-pcrel91:
-	auipc a1, %pcrel_hi(g1)
-	sw a0, %pcrel_lo(pcrel91)(a1)
-label79:
+	bltu a0, a1, label74
+label75:
 	ret
+label74:
+	auipc a1, %pcrel_hi(g1)
+	sw a0, %pcrel_lo(label74)(a1)
+	j label75
 .globl sltiu_beq1
 sltiu_beq1:
 	lui a1, 8
-	bgeu a0, a1, label94
-pcrel106:
-	auipc a1, %pcrel_hi(g1)
-	sw a0, %pcrel_lo(pcrel106)(a1)
-label94:
+	bltu a0, a1, label88
+label89:
 	ret
+label88:
+	auipc a1, %pcrel_hi(g1)
+	sw a0, %pcrel_lo(label88)(a1)
+	j label89
 .globl sltiu_beq2
 sltiu_beq2:
 	lui a1, 1048568
-	bgeu a0, a1, label109
-pcrel121:
-	auipc a1, %pcrel_hi(g1)
-	sw a0, %pcrel_lo(pcrel121)(a1)
-label109:
+	bltu a0, a1, label102
+label103:
 	ret
+label102:
+	auipc a1, %pcrel_hi(g1)
+	sw a0, %pcrel_lo(label102)(a1)
+	j label103
 .globl sltiu_beq3
 sltiu_beq3:
 	li a1, -32769
-	bgeu a0, a1, label124
-pcrel136:
-	auipc a1, %pcrel_hi(g1)
-	sw a0, %pcrel_lo(pcrel136)(a1)
-label124:
+	bltu a0, a1, label116
+label117:
 	ret
+label116:
+	auipc a1, %pcrel_hi(g1)
+	sw a0, %pcrel_lo(label116)(a1)
+	j label117

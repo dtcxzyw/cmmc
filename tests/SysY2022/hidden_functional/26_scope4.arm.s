@@ -38,8 +38,8 @@ label7:
 	add r4, r2, r3
 	mov r2, #2
 	cmp r2, #3
-	bge label10
-	b label7
+	blt label7
+	b label10
 label9:
 	add r1, r0, #7
 	add r3, r3, r4
@@ -52,8 +52,7 @@ label9:
 	add r4, r1, r3
 	mov r1, r0
 	cmp r2, #3
-	bge label10
-	b label7
+	blt label7
 label10:
 	mov r0, r4
 	bl putint

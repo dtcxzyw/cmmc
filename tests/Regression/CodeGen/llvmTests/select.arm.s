@@ -189,45 +189,45 @@ select_sub_3:
 .globl select_udiv_1
 select_udiv_1:
 	cmp r0, #0
-	beq label203
-	udiv r0, r1, r2
-	b label196
-label203:
+	bne label195
 	mov r0, r2
 label196:
 	bx lr
+label195:
+	udiv r0, r1, r2
+	b label196
 .globl select_udiv_2
 select_udiv_2:
 	cmp r0, #0
-	beq label216
-	mov r0, r1
-	b label208
-label216:
+	bne label215
 	udiv r0, r1, r2
-label208:
+	b label207
+label215:
+	mov r0, r1
+label207:
 	bx lr
 .globl select_udiv_3
 select_udiv_3:
 	cmp r0, #0
-	beq label228
-	mov r0, r1
-	b label221
-label228:
+	bne label226
 	mov r0, #42
 	udiv r0, r1, r0
-label221:
+	b label219
+label226:
+	mov r0, r1
+label219:
 	bx lr
 .globl select_xor_1
 select_xor_1:
 	uxtb r1, r1
 	ands r1, r1, #1
-	bne label244
-	uxth r0, r0
-	b label235
-label244:
+	beq label231
 	uxth r0, r0
 	eor r0, r0, #43
-label235:
+	b label232
+label231:
+	uxth r0, r0
+label232:
 	uxth r0, r0
 	bx lr
 .globl select_xor_1b
@@ -235,13 +235,13 @@ select_xor_1b:
 	uxtb r1, r1
 	and r1, r1, #1
 	cmp r1, #1
-	beq label261
-	uxth r0, r0
-	b label252
-label261:
+	bne label249
 	uxth r0, r0
 	eor r0, r0, #43
-label252:
+	b label250
+label249:
+	uxth r0, r0
+label250:
 	uxth r0, r0
 	bx lr
 .globl select_xor_2
@@ -265,13 +265,13 @@ select_xor_2b:
 select_xor_3:
 	uxtb r1, r1
 	ands r1, r1, #1
-	bne label299
+	beq label285
+	uxth r0, r0
+	b label286
+label285:
 	uxth r0, r0
 	eor r0, r0, #43
-	b label290
-label299:
-	uxth r0, r0
-label290:
+label286:
 	uxth r0, r0
 	bx lr
 .globl select_xor_3b
@@ -279,13 +279,13 @@ select_xor_3b:
 	uxtb r1, r1
 	and r1, r1, #1
 	cmp r1, #1
-	beq label316
+	bne label303
+	uxth r0, r0
+	b label304
+label303:
 	uxth r0, r0
 	eor r0, r0, #43
-	b label307
-label316:
-	uxth r0, r0
-label307:
+label304:
 	uxth r0, r0
 	bx lr
 .globl select_xor_4

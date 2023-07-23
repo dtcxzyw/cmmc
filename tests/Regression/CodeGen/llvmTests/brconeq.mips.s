@@ -19,11 +19,8 @@ test:
 	lw $t0, %lo(i)($t0)
 	lui $t1, %hi(j)
 	lw $t1, %lo(j)($t1)
-	bne $t0, $t1, label12
+	beq $t0, $t1, label2
 	nop
-	b label2
-	nop
-label12:
 	li $t0, 1
 	lui $t1, %hi(result)
 	sw $t0, %lo(result)($t1)

@@ -20,14 +20,14 @@ pcrel25:
 	auipc a0, %pcrel_hi(x)
 	addi a1, a0, %pcrel_lo(pcrel25)
 	lw a0, %pcrel_lo(pcrel25)(a0)
-	bne a0, zero, label11
+	beq a0, zero, label2
 pcrel26:
-	auipc a2, %pcrel_hi(a)
+	auipc a2, %pcrel_hi(b)
 	lw a0, %pcrel_lo(pcrel26)(a2)
 	j label3
-label11:
-	auipc a2, %pcrel_hi(b)
-	lw a0, %pcrel_lo(label11)(a2)
+label2:
+	auipc a2, %pcrel_hi(a)
+	lw a0, %pcrel_lo(label2)(a2)
 label3:
 	sw a0, 0(a1)
 	ret

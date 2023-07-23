@@ -276,19 +276,19 @@ select_cross_fpr:
 	slt $t0, $a0, $a1
 	move $t1, $t0
 	subu $t2, $a1, $a2
-	bgez $t2, label223
+	bltz $t2, label212
 	nop
+	mtc1 $t0, $f4
+	cvt.s.w $f0, $f4
+	b label213
+	nop
+label212:
 	lui $t1, %hi(__cmmc_fp_constant_pool)
 	addiu $t1, $t1, %lo(__cmmc_fp_constant_pool)
 	lwc1 $f6, 0($t1)
 	lwc1 $f4, 4($t1)
 	mov.s $f0, $f6
 	movz.s $f0, $f4, $t0
-	b label213
-	nop
-label223:
-	mtc1 $t1, $f4
-	cvt.s.w $f0, $f4
 label213:
 	jr $ra
 	nop

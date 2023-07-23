@@ -3,10 +3,10 @@
 .text
 .globl test_ifcvt
 test_ifcvt:
-	bne a0, zero, label10
-	addiw a0, a1, -1
-	j label3
-label10:
+	beq a0, zero, label2
 	addiw a0, a1, 1
+	j label3
+label2:
+	addiw a0, a1, -1
 label3:
 	ret

@@ -30,9 +30,7 @@ label2:
 	bl putint
 	add r6, r6, #1
 	cmp r6, #3
-	bge label4
-	b label2
-label4:
+	blt label2
 	mov r0, #10
 	bl putch
 	mov r6, #0
@@ -44,9 +42,7 @@ label5:
 	bl putint
 	add r6, r6, #1
 	cmp r6, #3
-	bge label7
-	b label5
-label7:
+	blt label5
 	mov r0, #10
 	bl putch
 	mov r5, #0
@@ -58,9 +54,7 @@ label8:
 	bl putint
 	add r5, r5, #1
 	cmp r5, #3
-	bge label10
-	b label8
-label10:
+	blt label8
 	mov r0, #10
 	bl putch
 	add sp, sp, #52

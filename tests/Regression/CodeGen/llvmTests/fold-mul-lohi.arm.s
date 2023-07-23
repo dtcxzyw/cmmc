@@ -21,7 +21,11 @@ P:
 foo:
 	push { r4, r5, r6 }
 	cmp r0, #0
-	ble label5
+	bgt label2
+label5:
+	pop { r4, r5, r6 }
+	bx lr
+label2:
 	movw r1, #:lower16:B
 	mov r4, #17
 	cmp r0, #1
@@ -36,9 +40,7 @@ foo:
 	movw r3, #:lower16:P
 	movt r3, #:upper16:P
 	strb r4, [r3, #0]
-	bne label24
-	b label5
-label24:
+	beq label5
 	mov r4, #1
 label3:
 	add r5, r1, r4
@@ -52,7 +54,5 @@ label3:
 	add r4, r4, #1
 	strb r6, [r3, r5]
 	cmp r0, r4
-	bne label3
-label5:
-	pop { r4, r5, r6 }
-	bx lr
+	beq label5
+	b label3

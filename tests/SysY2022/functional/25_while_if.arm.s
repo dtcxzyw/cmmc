@@ -15,9 +15,7 @@ label2:
 	cmp r0, #99
 	movgt r0, r1
 	cmp r0, #75
-	bge label4
-	b label2
-label4:
+	blt label2
 	bl putint
 	add sp, sp, #4
 	mov r0, #0

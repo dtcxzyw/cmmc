@@ -32,33 +32,22 @@ main:
 	jal read
 	nop
 	addiu $t0, $v0, -1
-	blez $t0, label12
+	bgtz $t0, label12
 	nop
-	move $t0, $v0
-	li $t1, 1
-	mult $v0, $t1
-	mflo $t1
-	addiu $t0, $v0, -1
-	li $t2, 1
-	bne $t0, $t2, label2
-	nop
-label26:
-	mult $t1, $t0
-	mflo $a0
-	b label6
-	nop
-label12:
 	li $a0, 1
 	b label6
 	nop
+label12:
+	move $t0, $v0
+	li $t1, 1
 label2:
 	mult $t0, $t1
 	mflo $t1
 	addiu $t0, $t0, -1
 	li $t2, 1
-	bne $t0, $t2, label2
+	beq $t0, $t2, label5
 	nop
-	b label26
+	b label2
 	nop
 label6:
 	jal write
@@ -67,4 +56,9 @@ label6:
 	lw $ra, 16($sp)
 	addiu $sp, $sp, 24
 	jr $ra
+	nop
+label5:
+	mult $t1, $t0
+	mflo $a0
+	b label6
 	nop

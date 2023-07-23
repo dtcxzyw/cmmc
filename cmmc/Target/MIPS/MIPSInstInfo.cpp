@@ -93,6 +93,47 @@ static MIRInst emitGotoImpl(MIRBasicBlock* targetBlock) {
     return MIRInst{ B }.setOperand<0>(MIROperand::asReloc(targetBlock));
 }
 
+static void inverseBranchImpl(MIRInst& inst, MIRBasicBlock* newTarget) {
+    switch(inst.opcode()) {
+        case BEQ:
+            inst.setOpcode(BNE);
+            break;
+        case BNE:
+            inst.setOpcode(BEQ);
+            break;
+        case BLTZ:
+            inst.setOpcode(BGEZ);
+            break;
+        case BLEZ:
+            inst.setOpcode(BGTZ);
+            break;
+        case BGTZ:
+            inst.setOpcode(BLEZ);
+            break;
+        case BGEZ:
+            inst.setOpcode(BLTZ);
+            break;
+        case BC1F:
+            inst.setOpcode(BC1T);
+            break;
+        case BC1T:
+            inst.setOpcode(BC1F);
+            break;
+        default:
+            reportUnreachable(CMMC_LOCATION());
+    }
+    if(inst.opcode() == BEQ || inst.opcode() == BNE) {
+        inst.setOperand<2>(MIROperand::asReloc(newTarget));
+        inst.setOperand<3>(MIROperand::asProb(1.0 - inst.getOperand(3).prob()));
+    } else if(inst.opcode() == BC1F || inst.opcode() == BC1T) {
+        inst.setOperand<0>(MIROperand::asReloc(newTarget));
+        inst.setOperand<2>(MIROperand::asProb(1.0 - inst.getOperand(2).prob()));
+    } else {
+        inst.setOperand<1>(MIROperand::asReloc(newTarget));
+        inst.setOperand<2>(MIROperand::asProb(1.0 - inst.getOperand(2).prob()));
+    }
+}
+
 CMMC_TARGET_NAMESPACE_END
 
 #include <MIPS/InstInfoImpl.hpp>

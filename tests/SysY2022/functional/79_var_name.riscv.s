@@ -43,9 +43,7 @@ label2:
 	addw a0, s4, a1
 	addw s2, s5, a0
 	li a0, 20
-	bge s1, a0, label5
-	j label2
-label5:
+	blt s1, a0, label2
 	mv a0, s2
 	ld ra, 80(sp)
 	ld s4, 88(sp)

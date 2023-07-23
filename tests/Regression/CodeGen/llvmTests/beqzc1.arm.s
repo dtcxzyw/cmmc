@@ -19,11 +19,13 @@ main:
 	movt r0, #:upper16:i
 	ldr r0, [r0, #0]
 	cmp r0, #0
-	bne label3
+	beq label2
+label3:
+	mov r0, #0
+	bx lr
+label2:
 	movw r0, #:lower16:j
 	mov r1, #10
 	movt r0, #:upper16:j
 	str r1, [r0, #0]
-label3:
-	mov r0, #0
-	bx lr
+	b label3

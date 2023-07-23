@@ -11,9 +11,7 @@ main:
 	bl getint
 	cmp r0, #10
 	mov r4, r0
-	ble label19
-	b label2
-label19:
+	bgt label2
 	mov r4, #0
 	b label3
 label2:
@@ -39,13 +37,8 @@ label10:
 	mov r0, r5
 	bl putint
 	cmp r5, #0
-	bne label13
-	add r0, r4, #199
-	bl putint
-label13:
-	mov r0, #0
-	add sp, sp, #4
-	pop { r4, r5, pc }
+	beq label12
+	b label13
 label14:
 	add r4, r4, r0
 	mov r0, r4
@@ -56,3 +49,10 @@ label15:
 	mov r0, r4
 	bl putint
 	b label8
+label12:
+	add r0, r4, #199
+	bl putint
+label13:
+	mov r0, #0
+	add sp, sp, #4
+	pop { r4, r5, pc }

@@ -30,9 +30,7 @@ label2:
 	jal putint
 	li a0, 3
 	addiw s2, s2, 1
-	bge s2, a0, label4
-	j label2
-label4:
+	blt s2, a0, label2
 	li a0, 10
 	jal putch
 	mv s2, zero
@@ -43,9 +41,7 @@ label5:
 	jal putint
 	li a0, 3
 	addiw s2, s2, 1
-	bge s2, a0, label7
-	j label5
-label7:
+	blt s2, a0, label5
 	li a0, 10
 	jal putch
 	mv s1, zero
@@ -56,9 +52,7 @@ label8:
 	jal putint
 	li a0, 3
 	addiw s1, s1, 1
-	bge s1, a0, label10
-	j label8
-label10:
+	blt s1, a0, label8
 	li a0, 10
 	jal putch
 	ld ra, 48(sp)

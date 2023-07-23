@@ -46,16 +46,16 @@ main:
 	ldrsb r1, [r0, #0]
 	ldrb r1, [r0, #0]
 	rsb r2, r1, #0
-	bne label27
-	mov r1, #0
-	b label2
-label27:
+	beq label27
 	movw r1, #:lower16:b
 	movt r1, #:upper16:b
 	ldr r1, [r1, #0]
 	cmp r1, #0
 	mov r1, #0
 	movwne r1, #1
+	b label2
+label27:
+	mov r1, #0
 label2:
 	and r1, r1, #255
 	and r2, r2, #255

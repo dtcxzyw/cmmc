@@ -15,20 +15,98 @@ Y:
 .globl foo
 foo:
 	ble a0, zero, label5
-pcrel41:
+pcrel49:
 	auipc a2, %pcrel_hi(X)
-pcrel42:
+pcrel50:
 	auipc a3, %pcrel_hi(Y)
-	sh zero, %pcrel_lo(pcrel41)(a2)
-	addi a1, a2, %pcrel_lo(pcrel41)
-	sh zero, %pcrel_lo(pcrel42)(a3)
-	addi a2, a3, %pcrel_lo(pcrel42)
+	li a4, 1
+	addi a1, a2, %pcrel_lo(pcrel49)
+	sh zero, %pcrel_lo(pcrel49)(a2)
+	sh zero, %pcrel_lo(pcrel50)(a3)
+	addi a2, a3, %pcrel_lo(pcrel50)
+	beq a0, a4, label5
 	li a3, 1
-	bne a0, a3, label18
-	j label5
-label18:
-	li a3, 1
-label3:
+	li a4, 65535
+	and t0, a3, a4
+	and a5, a3, a4
+	addiw a3, a3, 1
+	sh a5, 0(a1)
+	slliw a5, t0, 2
+	and a4, a5, a4
+	sh a4, 0(a2)
+	beq a0, a3, label5
+	li a4, 65535
+	and t0, a3, a4
+	and a5, a3, a4
+	addiw a3, a3, 1
+	sh a5, 0(a1)
+	slliw a5, t0, 2
+	and a4, a5, a4
+	sh a4, 0(a2)
+	beq a0, a3, label5
+	li a4, 65535
+	and t0, a3, a4
+	and a5, a3, a4
+	addiw a3, a3, 1
+	sh a5, 0(a1)
+	slliw a5, t0, 2
+	and a4, a5, a4
+	sh a4, 0(a2)
+	beq a0, a3, label5
+	li a4, 65535
+	and t0, a3, a4
+	and a5, a3, a4
+	addiw a3, a3, 1
+	sh a5, 0(a1)
+	slliw a5, t0, 2
+	and a4, a5, a4
+	sh a4, 0(a2)
+	beq a0, a3, label5
+	li a4, 65535
+	and t0, a3, a4
+	and a5, a3, a4
+	addiw a3, a3, 1
+	sh a5, 0(a1)
+	slliw a5, t0, 2
+	and a4, a5, a4
+	sh a4, 0(a2)
+	beq a0, a3, label5
+	li a4, 65535
+	and t0, a3, a4
+	and a5, a3, a4
+	addiw a3, a3, 1
+	sh a5, 0(a1)
+	slliw a5, t0, 2
+	and a4, a5, a4
+	sh a4, 0(a2)
+	beq a0, a3, label5
+	li a4, 65535
+	and t0, a3, a4
+	and a5, a3, a4
+	addiw a3, a3, 1
+	sh a5, 0(a1)
+	slliw a5, t0, 2
+	and a4, a5, a4
+	sh a4, 0(a2)
+	beq a0, a3, label5
+	li a4, 65535
+	and t0, a3, a4
+	and a5, a3, a4
+	addiw a3, a3, 1
+	sh a5, 0(a1)
+	slliw a5, t0, 2
+	and a4, a5, a4
+	sh a4, 0(a2)
+	beq a0, a3, label5
+	li a4, 65535
+	and t0, a3, a4
+	and a5, a3, a4
+	addiw a3, a3, 1
+	sh a5, 0(a1)
+	slliw a5, t0, 2
+	and a4, a5, a4
+	sh a4, 0(a2)
+	beq a0, a3, label5
 	li a4, 65535
 	and t0, a3, a4
 	and a5, a3, a4
@@ -40,3 +118,14 @@ label3:
 	bne a0, a3, label3
 label5:
 	ret
+label3:
+	li a4, 65535
+	and t0, a3, a4
+	and a5, a3, a4
+	addiw a3, a3, 1
+	sh a5, 0(a1)
+	slliw a5, t0, 2
+	and a4, a5, a4
+	sh a4, 0(a2)
+	beq a0, a3, label5
+	j label3

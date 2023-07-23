@@ -21,7 +21,11 @@ P:
 foo:
 	push { r4, r5 }
 	cmp r0, #0
-	ble label2
+	bgt label3
+label2:
+	pop { r4, r5 }
+	bx lr
+label3:
 	movw r1, #:lower16:B
 	movw r2, #:lower16:A
 	movw r3, #:lower16:P
@@ -34,9 +38,7 @@ foo:
 	vadd.f32 s0, s0, s0
 	vstr s0, [r2, #0]
 	str r4, [r3, #0]
-	bne label22
-	b label2
-label22:
+	beq label2
 	mov r4, #1
 label4:
 	add r5, r1, r4, lsl #2
@@ -49,7 +51,5 @@ label4:
 	str r5, [r3, r4, lsl #2]
 	add r4, r4, #1
 	cmp r0, r4
-	bne label4
-label2:
-	pop { r4, r5 }
-	bx lr
+	beq label2
+	b label4

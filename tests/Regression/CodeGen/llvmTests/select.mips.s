@@ -212,41 +212,41 @@ select_sub_3:
 	nop
 .globl select_udiv_1
 select_udiv_1:
-	beq $a0, $zero, label204
+	bne $a0, $zero, label196
 	nop
-	divu $zero, $a1, $a2
-	mflo $v0
-	b label197
-	nop
-label204:
 	move $v0, $a2
 label197:
 	jr $ra
 	nop
+label196:
+	divu $zero, $a1, $a2
+	mflo $v0
+	b label197
+	nop
 .globl select_udiv_2
 select_udiv_2:
-	beq $a0, $zero, label216
+	bne $a0, $zero, label216
 	nop
-	move $v0, $a1
+	divu $zero, $a1, $a2
+	mflo $v0
 	b label208
 	nop
 label216:
-	divu $zero, $a1, $a2
-	mflo $v0
+	move $v0, $a1
 label208:
 	jr $ra
 	nop
 .globl select_udiv_3
 select_udiv_3:
-	beq $a0, $zero, label227
+	bne $a0, $zero, label227
 	nop
-	move $v0, $a1
-	b label220
-	nop
-label227:
 	li $t0, 42
 	divu $zero, $a1, $t0
 	mflo $v0
+	b label220
+	nop
+label227:
+	move $v0, $a1
 label220:
 	jr $ra
 	nop
@@ -254,14 +254,14 @@ label220:
 select_xor_1:
 	andi $t0, $a1, 255
 	andi $t0, $t0, 1
-	bne $t0, $zero, label242
+	beq $t0, $zero, label232
 	nop
-	andi $t0, $a0, 65535
-	b label233
-	nop
-label242:
 	andi $t0, $a0, 65535
 	xori $t0, $t0, 43
+	b label233
+	nop
+label232:
+	andi $t0, $a0, 65535
 label233:
 	andi $v0, $t0, 65535
 	jr $ra
@@ -271,14 +271,14 @@ select_xor_1b:
 	andi $t0, $a1, 255
 	andi $t0, $t0, 1
 	li $t1, 1
-	beq $t0, $t1, label259
+	bne $t0, $t1, label249
 	nop
-	andi $t0, $a0, 65535
-	b label250
-	nop
-label259:
 	andi $t0, $a0, 65535
 	xori $t0, $t0, 43
+	b label250
+	nop
+label249:
+	andi $t0, $a0, 65535
 label250:
 	andi $v0, $t0, 65535
 	jr $ra
@@ -306,14 +306,14 @@ select_xor_2b:
 select_xor_3:
 	andi $t0, $a1, 255
 	andi $t0, $t0, 1
-	bne $t0, $zero, label297
+	beq $t0, $zero, label287
 	nop
 	andi $t0, $a0, 65535
-	xori $t0, $t0, 43
 	b label288
 	nop
-label297:
+label287:
 	andi $t0, $a0, 65535
+	xori $t0, $t0, 43
 label288:
 	andi $v0, $t0, 65535
 	jr $ra
@@ -323,14 +323,14 @@ select_xor_3b:
 	andi $t0, $a1, 255
 	andi $t0, $t0, 1
 	li $t1, 1
-	beq $t0, $t1, label314
+	bne $t0, $t1, label304
 	nop
 	andi $t0, $a0, 65535
-	xori $t0, $t0, 43
 	b label305
 	nop
-label314:
+label304:
 	andi $t0, $a0, 65535
+	xori $t0, $t0, 43
 label305:
 	andi $v0, $t0, 65535
 	jr $ra

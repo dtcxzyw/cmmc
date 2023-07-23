@@ -24,11 +24,8 @@ test:
 	lui $t1, %hi(i)
 	lw $t1, %lo(i)($t1)
 	subu $t0, $t0, $t1
-	bgez $t0, label14
+	bltz $t0, label2
 	nop
-	b label2
-	nop
-label14:
 	li $t0, 1
 	lui $t1, %hi(result)
 	sw $t0, %lo(result)($t1)

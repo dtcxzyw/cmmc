@@ -871,7 +871,7 @@ static void lower(BranchInst* inst, LoweringContext& ctx) {
         ctx.emitInst(MIRInst{ InstBranch }
                          .setOperand<0>(cond)
                          .setOperand<1>(MIROperand::asReloc(elsePrepareBlock))
-                         .setOperand<2>(MIROperand::asProb(1.0 - inst->getBranchProb())));
+                         .setOperand<2>(MIROperand::asProb(invertBlock ? inst->getBranchProb() : 1.0 - inst->getBranchProb())));
 
         ctx.setCurrentBasicBlock(thenPrepareBlock);
         auto thenTarget = inst->getTrueTarget();
@@ -884,6 +884,9 @@ static void lower(BranchInst* inst, LoweringContext& ctx) {
         ctx.setCurrentBasicBlock(elsePrepareBlock);
         emitBranch(elseTarget, srcBlock, ctx);
     };
+
+    auto preferFallthroughWithFalseLabel = [&] { return inst->getBranchProb() >= 0.5; };
+
     if(inst->getInstID() == InstructionID::Branch) {
         emitBranch(inst->getTrueTarget(), srcBlock, ctx);
     } else if(auto condInst = dynamic_cast<CompareInst*>(inst->getOperand(0))) {
@@ -898,12 +901,22 @@ static void lower(BranchInst* inst, LoweringContext& ctx) {
             }
         }();
 
-        emitCondBranch(ctx.mapOperand(condInst->getOperand(0)), ctx.mapOperand(condInst->getOperand(1)), id,
-                       getInvertedOp(condInst->getOp()), false);
+        if(!preferFallthroughWithFalseLabel()) {
+            emitCondBranch(ctx.mapOperand(condInst->getOperand(0)), ctx.mapOperand(condInst->getOperand(1)), id,
+                           getInvertedOp(condInst->getOp()), false);
+        } else {
+            emitCondBranch(ctx.mapOperand(condInst->getOperand(0)), ctx.mapOperand(condInst->getOperand(1)), id,
+                           condInst->getOp(), true);
+        }
     } else {
-        // beqz %cond, false_label
         const auto cond = ctx.mapOperand(inst->getOperand(0));
-        emitCondBranch(cond, MIROperand::asImm(0, cond.type()), InstICmp, CompareOp::ICmpEqual, false);
+        if(!preferFallthroughWithFalseLabel()) {
+            // beqz %cond, false_label
+            emitCondBranch(cond, MIROperand::asImm(0, cond.type()), InstICmp, CompareOp::ICmpEqual, false);
+        } else {
+            // bnez %cond, true_label
+            emitCondBranch(cond, MIROperand::asImm(0, cond.type()), InstICmp, CompareOp::ICmpNotEqual, true);
+        }
     }
 }
 static void lower(UnreachableInst*, LoweringContext& ctx) {

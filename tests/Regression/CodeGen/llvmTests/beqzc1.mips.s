@@ -13,12 +13,15 @@ j:
 main:
 	lui $t0, %hi(i)
 	lw $t0, %lo(i)($t0)
-	bne $t0, $zero, label3
+	beq $t0, $zero, label2
 	nop
-	li $t0, 10
-	lui $t1, %hi(j)
-	sw $t0, %lo(j)($t1)
 label3:
 	move $v0, $zero
 	jr $ra
+	nop
+label2:
+	li $t0, 10
+	lui $t1, %hi(j)
+	sw $t0, %lo(j)($t1)
+	b label3
 	nop

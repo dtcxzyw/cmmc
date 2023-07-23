@@ -20,18 +20,16 @@ result:
 .text
 .globl test
 test:
-pcrel26:
+pcrel25:
 	auipc a1, %pcrel_hi(i)
-pcrel27:
+pcrel26:
 	auipc a2, %pcrel_hi(j)
-	lw a0, %pcrel_lo(pcrel26)(a1)
-	lw a1, %pcrel_lo(pcrel27)(a2)
-	ble a0, a1, label14
-	j label2
-label14:
+	lw a0, %pcrel_lo(pcrel25)(a1)
+	lw a1, %pcrel_lo(pcrel26)(a2)
+	bgt a0, a1, label2
 	li a0, 1
-pcrel28:
+pcrel27:
 	auipc a1, %pcrel_hi(result)
-	sw a0, %pcrel_lo(pcrel28)(a1)
+	sw a0, %pcrel_lo(pcrel27)(a1)
 label2:
 	ret

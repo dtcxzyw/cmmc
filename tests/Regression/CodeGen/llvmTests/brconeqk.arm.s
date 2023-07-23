@@ -19,9 +19,7 @@ test:
 	movt r0, #:upper16:i
 	ldr r0, [r0, #0]
 	cmp r0, #10
-	bne label9
-	b label2
-label9:
+	beq label2
 	movw r0, #:lower16:result
 	mov r1, #1
 	movt r0, #:upper16:result

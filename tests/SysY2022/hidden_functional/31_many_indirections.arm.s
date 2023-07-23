@@ -16,12 +16,7 @@ main:
 	sub sp, sp, #4
 	movt r1, #:upper16:array
 	cmp r2, #20
-	bge label8
-label12:
-	mov r0, #400
-	mla r3, r2, r0, r1
-	mov r0, #0
-	b label5
+	blt label4
 label8:
 	movw r0, #7692
 	movw r2, #7200
@@ -116,6 +111,10 @@ label8:
 	add sp, sp, #4
 	mov r0, #0
 	pop { r4, r5, pc }
+label4:
+	mov r0, #400
+	mla r3, r2, r0, r1
+	mov r0, #0
 label5:
 	add r4, r3, r0, lsl #2
 	str r0, [r3, r0, lsl #2]
@@ -151,10 +150,7 @@ label5:
 	str r5, [r4, #60]
 	add r4, r0, #16
 	cmp r4, #96
-	bge label7
-	mov r0, r4
-	b label5
-label7:
+	blt label52
 	add r5, r3, r4, lsl #2
 	str r4, [r3, r4, lsl #2]
 	add r2, r2, #1
@@ -165,5 +161,8 @@ label7:
 	str r3, [r5, #8]
 	str r0, [r5, #12]
 	cmp r2, #20
-	bge label8
-	b label12
+	blt label4
+	b label8
+label52:
+	mov r0, r4
+	b label5

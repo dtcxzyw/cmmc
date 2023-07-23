@@ -13,11 +13,15 @@ exgcd:
 	mv s2, a3
 	sd s4, 8(sp)
 	sd ra, 0(sp)
-	bne a1, zero, label5
+	beq a1, zero, label2
+	remw s4, a0, a1
+	beq s4, zero, label6
+	j label9
+label2:
 	li a0, 1
-	sw a0, 0(a2)
+	sw a0, 0(s3)
 	mv a0, s0
-	sw zero, 0(a3)
+	sw zero, 0(s2)
 label3:
 	ld ra, 0(sp)
 	ld s4, 8(sp)
@@ -27,9 +31,7 @@ label3:
 	ld s0, 40(sp)
 	addi sp, sp, 48
 	ret
-label5:
-	remw s4, s0, s1
-	bne s4, zero, label9
+label6:
 	li a0, 1
 	sw a0, 0(s3)
 	mv a0, s1

@@ -90,6 +90,7 @@ public:
     bool matchCopy(const MIRInst& inst, MIROperand& dst, MIROperand& src) const;
     virtual void redirectBranch(MIRInst& inst, MIRBasicBlock* target) const;
     virtual MIRInst emitGoto(MIRBasicBlock* target) const = 0;
+    virtual void inverseBranch(MIRInst& inst, MIRBasicBlock* newTarget) const = 0;
 };
 
 bool checkISASpecificOperands(const MIRInst& inst, const CodeGenContext& ctx, uint32_t count);

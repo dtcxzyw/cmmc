@@ -12,24 +12,19 @@ fibFP:
 	vmov s0, r0
 	vcmp.f32 s17, s0
 	vmrs APSR_nzcv, FPSCR
-	bhs label4
-	mov r0, #1065353216
-	vmov s0, r0
-	b label2
-label62:
-	mov r0, #1065353216
-	vmov s0, r0
-	vadd.f32 s0, s16, s0
-label2:
-	vpop { s16, s17, s18 }
-	pop { pc }
-label4:
-	mov r0, #1073741824
-	vmov s0, r0
+	bmi label16
 	vsub.f32 s18, s17, s0
 	vcmp.f32 s18, s0
 	vmrs APSR_nzcv, FPSCR
-	bhs label10
+	bmi label25
+	b label10
+label16:
+	mov r0, #1065353216
+	vmov s0, r0
+label2:
+	vpop { s16, s17, s18 }
+	pop { pc }
+label25:
 	mov r0, #1065353216
 	vmov s16, r0
 	vmov s0, r0
@@ -38,8 +33,12 @@ label4:
 	vmov s0, r0
 	vcmp.f32 s18, s0
 	vmrs APSR_nzcv, FPSCR
-	bhs label9
-	b label62
+	bpl label9
+label36:
+	mov r0, #1065353216
+	vmov s0, r0
+	vadd.f32 s0, s16, s0
+	b label2
 label9:
 	mov r0, #1073741824
 	vmov s0, r0
@@ -71,53 +70,79 @@ label10:
 	vmov s0, r0
 	vcmp.f32 s18, s0
 	vmrs APSR_nzcv, FPSCR
-	bhs label9
-	b label62
+	bmi label36
+	b label9
 takFP:
 	push { lr }
 	vpush { s16, s17, s18, s19, s20, s21, s22, s23, s24, s25 }
-	vmov.f32 s17, s1
 	vmov.f32 s18, s0
+	vmov.f32 s17, s1
 	sub sp, sp, #4
 	vmov.f32 s16, s2
 	vcmp.f32 s1, s0
 	vmrs APSR_nzcv, FPSCR
-	bhs label85
+	bpl label83
+label66:
 	mov r0, #1065353216
 	vmov s0, r0
 	vsub.f32 s19, s18, s0
-	vcmp.f32 s1, s19
+	vcmp.f32 s17, s19
 	vmrs APSR_nzcv, FPSCR
-	bhs label98
-	b label151
-label98:
+	bmi label96
 	vmov.f32 s19, s16
-	mov r0, #1065353216
-	vmov s0, r0
 	vsub.f32 s20, s17, s0
 	vcmp.f32 s16, s20
 	vmrs APSR_nzcv, FPSCR
-	bhs label105
-	b label104
-label85:
-	vmov.f32 s0, s16
-	add sp, sp, #4
-	vpop { s16, s17, s18, s19, s20, s21, s22, s23, s24, s25 }
-	pop { pc }
-label104:
-	vmov.f32 s21, s16
-	vmov.f32 s22, s18
-	b label71
-label105:
+	bmi label103
 	vmov.f32 s20, s18
-	mov r0, #1065353216
-	vmov s0, r0
 	vsub.f32 s16, s16, s0
 	vcmp.f32 s18, s16
 	vmrs APSR_nzcv, FPSCR
-	bhs label124
-	b label77
-label81:
+	bmi label75
+	vmov.f32 s16, s17
+	vmov.f32 s18, s19
+	vmov.f32 s17, s20
+	vcmp.f32 s20, s19
+	vmrs APSR_nzcv, FPSCR
+	bmi label66
+	b label83
+label96:
+	vmov.f32 s20, s17
+	vmov.f32 s21, s16
+	b label79
+label75:
+	mov r0, #1065353216
+	vmov.f32 s1, s18
+	vmov s23, r0
+	vmov.f32 s2, s17
+	vsub.f32 s0, s16, s23
+	bl takFP
+	vmov.f32 s1, s17
+	vmov.f32 s2, s16
+	vmov.f32 s21, s0
+	vsub.f32 s0, s18, s23
+	bl takFP
+	vmov.f32 s1, s16
+	vmov.f32 s2, s18
+	vmov.f32 s22, s0
+	vsub.f32 s0, s17, s23
+	bl takFP
+	vcmp.f32 s22, s21
+	vmov.f32 s17, s0
+	vmrs APSR_nzcv, FPSCR
+	bmi label135
+	vmov.f32 s16, s0
+	vmov.f32 s18, s19
+	vmov.f32 s17, s20
+	vcmp.f32 s20, s19
+	vmrs APSR_nzcv, FPSCR
+	bmi label66
+	b label83
+label135:
+	vmov.f32 s16, s21
+	vmov.f32 s18, s22
+	b label75
+label79:
 	mov r0, #1065353216
 	vmov.f32 s1, s20
 	vmov s24, r0
@@ -136,63 +161,40 @@ label81:
 	bl takFP
 	vcmp.f32 s23, s22
 	vmrs APSR_nzcv, FPSCR
-	bhs label149
-	vmov.f32 s19, s22
-	vmov.f32 s20, s23
-	vmov.f32 s21, s0
-	b label81
-label149:
+	bmi label147
 	vmov.f32 s19, s0
 	mov r0, #1065353216
 	vmov s0, r0
 	vsub.f32 s20, s17, s0
 	vcmp.f32 s16, s20
 	vmrs APSR_nzcv, FPSCR
-	bhs label105
-	b label104
-label151:
-	vmov.f32 s20, s17
-	vmov.f32 s21, s16
-	b label81
-label77:
-	mov r0, #1065353216
-	vmov.f32 s1, s18
-	vmov s23, r0
-	vmov.f32 s2, s17
-	vsub.f32 s0, s16, s23
-	bl takFP
-	vmov.f32 s1, s17
-	vmov.f32 s2, s16
-	vmov.f32 s21, s0
-	vsub.f32 s0, s18, s23
-	bl takFP
-	vmov.f32 s1, s16
-	vmov.f32 s2, s18
-	vmov.f32 s22, s0
-	vsub.f32 s0, s17, s23
-	bl takFP
-	vcmp.f32 s22, s21
+	bmi label103
+	vmov.f32 s20, s18
+	vsub.f32 s16, s16, s0
+	vcmp.f32 s18, s16
 	vmrs APSR_nzcv, FPSCR
-	bhs label137
-	vmov.f32 s16, s21
-	vmov.f32 s18, s22
-	vmov.f32 s17, s0
-	b label77
-label137:
-	vmov.f32 s16, s0
-	vmov.f32 s17, s20
+	bmi label75
+	vmov.f32 s16, s17
 	vmov.f32 s18, s19
+	vmov.f32 s17, s20
 	vcmp.f32 s20, s19
 	vmrs APSR_nzcv, FPSCR
-	bhs label85
-	mov r0, #1065353216
-	vmov s0, r0
-	vsub.f32 s19, s19, s0
-	vcmp.f32 s20, s19
-	vmrs APSR_nzcv, FPSCR
-	bhs label98
-	b label151
-label71:
+	bmi label66
+	b label83
+label147:
+	vmov.f32 s19, s22
+	vmov.f32 s20, s23
+	vmov.f32 s21, s0
+	b label79
+label83:
+	vmov.f32 s0, s16
+	add sp, sp, #4
+	vpop { s16, s17, s18, s19, s20, s21, s22, s23, s24, s25 }
+	pop { pc }
+label103:
+	vmov.f32 s21, s16
+	vmov.f32 s22, s18
+label69:
 	mov r0, #1065353216
 	vmov.f32 s1, s21
 	vmov s25, r0
@@ -211,34 +213,26 @@ label71:
 	bl takFP
 	vcmp.f32 s24, s23
 	vmrs APSR_nzcv, FPSCR
-	bhs label117
-	vmov.f32 s20, s23
-	vmov.f32 s21, s24
-	vmov.f32 s22, s0
-	b label71
-label117:
+	bmi label115
 	vmov.f32 s20, s0
 	mov r0, #1065353216
 	vmov s0, r0
 	vsub.f32 s16, s16, s0
 	vcmp.f32 s18, s16
 	vmrs APSR_nzcv, FPSCR
-	bhs label124
-	b label77
-label124:
+	bmi label75
 	vmov.f32 s16, s17
 	vmov.f32 s18, s19
 	vmov.f32 s17, s20
 	vcmp.f32 s20, s19
 	vmrs APSR_nzcv, FPSCR
-	bhs label85
-	mov r0, #1065353216
-	vmov s0, r0
-	vsub.f32 s19, s19, s0
-	vcmp.f32 s20, s19
-	vmrs APSR_nzcv, FPSCR
-	bhs label98
-	b label151
+	bmi label66
+	b label83
+label115:
+	vmov.f32 s20, s23
+	vmov.f32 s21, s24
+	vmov.f32 s22, s0
+	b label69
 .globl main
 main:
 	push { r4, lr }
@@ -269,33 +263,33 @@ main:
 	vmov s1, r0
 	vcmp.f32 s0, s1
 	vmrs APSR_nzcv, FPSCR
-	bne label166
+	bne label167
 	mov r0, #112
 	bl putch
 	mov r0, #1065353216
 	vmov s0, r0
 	vcmp.f32 s16, s0
 	vmrs APSR_nzcv, FPSCR
-	bne label165
-label163:
+	bne label166
+label164:
 	mov r0, #112
 	bl putch
-label164:
+label165:
 	mov r0, #41
 	bl _sysy_stoptime
 	mov r0, #0
 	vpop { s16, s17 }
 	pop { r4, pc }
-label165:
+label166:
 	mov r0, #1
 	bl putint
-	b label164
-label166:
+	b label165
+label167:
 	mov r0, #1
 	bl putint
 	mov r0, #1065353216
 	vmov s0, r0
 	vcmp.f32 s16, s0
 	vmrs APSR_nzcv, FPSCR
-	bne label165
-	b label163
+	beq label164
+	b label166

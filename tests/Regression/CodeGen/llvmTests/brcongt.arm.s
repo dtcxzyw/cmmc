@@ -30,9 +30,7 @@ test:
 	ldr r0, [r0, #0]
 	ldr r1, [r1, #0]
 	cmp r0, r1
-	ble label14
-	b label2
-label14:
+	bgt label2
 	movw r0, #:lower16:result
 	mov r1, #1
 	movt r0, #:upper16:result

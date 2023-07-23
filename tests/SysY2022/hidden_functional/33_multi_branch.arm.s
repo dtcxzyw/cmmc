@@ -17,551 +17,500 @@ label4:
 	bl getint
 	sub r1, r0, #1
 	cmp r1, #99
-	bhs label114
-	cmp r0, #99
-	bge label118
-	cmp r0, #98
-	bge label122
-	cmp r0, #97
-	bge label126
-	cmp r0, #96
-	bge label130
-	cmp r0, #95
-	bge label134
-	b label793
-label114:
+	blo label5
 	mov r0, #100
-	b label102
-label104:
-	mov r0, #0
-	add sp, sp, #4
-	pop { r4, r5, pc }
-label834:
-	cmp r0, #53
-	bge label302
-	b label835
-label286:
-	mov r0, #57
-	b label102
-label290:
-	mov r0, #56
-	b label102
-label298:
-	mov r0, #54
 label102:
 	bl putint
 	mov r0, #10
 	bl putch
 	add r5, r5, #1
 	cmp r4, r5
-	ble label104
-	b label4
-label793:
-	cmp r0, #94
-	bge label138
-	b label794
-label118:
+	bgt label4
+label104:
+	mov r0, #0
+	add sp, sp, #4
+	pop { r4, r5, pc }
+label5:
+	cmp r0, #99
+	blt label6
 	mov r0, #99
 	b label102
-label794:
-	cmp r0, #93
-	bge label142
-	cmp r0, #92
-	bge label146
-	cmp r0, #91
-	bge label150
-	cmp r0, #90
-	bge label154
-	cmp r0, #89
-	bge label158
-	b label799
-label122:
+label6:
+	cmp r0, #98
+	blt label7
 	mov r0, #98
 	b label102
-label126:
+label7:
+	cmp r0, #97
+	blt label8
 	mov r0, #97
 	b label102
-label130:
+label8:
+	cmp r0, #96
+	blt label9
 	mov r0, #96
 	b label102
-label138:
-	mov r0, #94
-	b label102
-label146:
-	mov r0, #92
-	b label102
-label134:
+label9:
+	cmp r0, #95
+	blt label10
 	mov r0, #95
 	b label102
-label142:
+label10:
+	cmp r0, #94
+	blt label11
+	mov r0, #94
+	b label102
+label11:
+	cmp r0, #93
+	blt label12
 	mov r0, #93
 	b label102
-label799:
-	cmp r0, #88
-	bge label162
-	cmp r0, #87
-	bge label166
-	cmp r0, #86
-	bge label170
-	b label802
-label150:
+label12:
+	cmp r0, #92
+	blt label13
+	mov r0, #92
+	b label102
+label13:
+	cmp r0, #91
+	blt label14
 	mov r0, #91
 	b label102
-label802:
-	cmp r0, #85
-	bge label174
-	b label803
-label154:
+label14:
+	cmp r0, #90
+	blt label15
 	mov r0, #90
 	b label102
-label158:
+label15:
+	cmp r0, #89
+	blt label16
 	mov r0, #89
 	b label102
-label162:
+label16:
+	cmp r0, #88
+	blt label17
 	mov r0, #88
 	b label102
-label803:
-	cmp r0, #84
-	bge label178
-	cmp r0, #83
-	bge label182
-	b label805
-label170:
-	mov r0, #86
-	b label102
-label174:
-	mov r0, #85
-	b label102
-label805:
-	cmp r0, #82
-	bge label186
-	b label806
-label166:
+label17:
+	cmp r0, #87
+	blt label18
 	mov r0, #87
 	b label102
-label806:
-	cmp r0, #81
-	bge label190
-	cmp r0, #80
-	bge label194
-	cmp r0, #79
-	bge label198
-	cmp r0, #78
-	bge label202
-	b label810
-label190:
-	mov r0, #81
+label18:
+	cmp r0, #86
+	blt label19
+	mov r0, #86
 	b label102
-label178:
+label19:
+	cmp r0, #85
+	blt label20
+	mov r0, #85
+	b label102
+label20:
+	cmp r0, #84
+	blt label21
 	mov r0, #84
 	b label102
-label182:
+label21:
+	cmp r0, #83
+	blt label22
 	mov r0, #83
 	b label102
-label186:
+label22:
+	cmp r0, #82
+	blt label23
 	mov r0, #82
 	b label102
-label194:
+label23:
+	cmp r0, #81
+	blt label24
+	mov r0, #81
+	b label102
+label24:
+	cmp r0, #80
+	blt label25
 	mov r0, #80
 	b label102
-label810:
-	cmp r0, #77
-	bge label206
-	cmp r0, #76
-	bge label210
-	b label812
-label202:
-	mov r0, #78
-	b label102
-label812:
-	cmp r0, #75
-	bge label214
-	cmp r0, #74
-	bge label218
-	cmp r0, #73
-	bge label222
-	cmp r0, #72
-	bge label226
-	b label816
-label206:
-	mov r0, #77
-	b label102
-label816:
-	cmp r0, #71
-	bge label230
-	cmp r0, #70
-	bge label234
-	b label818
-label214:
-	mov r0, #75
-	b label102
-label222:
-	mov r0, #73
-	b label102
-label198:
+label25:
+	cmp r0, #79
+	blt label26
 	mov r0, #79
 	b label102
-label210:
+label26:
+	cmp r0, #78
+	blt label27
+	mov r0, #78
+	b label102
+label27:
+	cmp r0, #77
+	blt label28
+	mov r0, #77
+	b label102
+label28:
+	cmp r0, #76
+	blt label29
 	mov r0, #76
 	b label102
-label218:
+label29:
+	cmp r0, #75
+	blt label30
+	mov r0, #75
+	b label102
+label30:
+	cmp r0, #74
+	blt label31
 	mov r0, #74
 	b label102
-label818:
-	cmp r0, #69
-	bge label238
-	cmp r0, #68
-	bge label242
-	cmp r0, #67
-	bge label246
-	b label821
-label226:
+label31:
+	cmp r0, #73
+	blt label32
+	mov r0, #73
+	b label102
+label32:
+	cmp r0, #72
+	blt label33
 	mov r0, #72
 	b label102
-label821:
-	cmp r0, #66
-	bge label250
-	cmp r0, #65
-	bge label254
-	b label823
-label234:
-	mov r0, #70
-	b label102
-label823:
-	cmp r0, #64
-	bge label258
-	cmp r0, #63
-	bge label262
-	b label825
-label254:
-	mov r0, #65
-	b label102
-label230:
+label33:
+	cmp r0, #71
+	blt label34
 	mov r0, #71
 	b label102
-label238:
+label34:
+	cmp r0, #70
+	blt label35
+	mov r0, #70
+	b label102
+label35:
+	cmp r0, #69
+	blt label36
 	mov r0, #69
 	b label102
-label246:
-	mov r0, #67
-	b label102
-label250:
-	mov r0, #66
-	b label102
-label242:
+label36:
+	cmp r0, #68
+	blt label37
 	mov r0, #68
 	b label102
-label825:
-	cmp r0, #62
-	bge label266
-	cmp r0, #61
-	bge label270
-	cmp r0, #60
-	bge label274
-	cmp r0, #59
-	bge label278
-	b label829
-label262:
-	mov r0, #63
+label37:
+	cmp r0, #67
+	blt label38
+	mov r0, #67
 	b label102
-label258:
+label38:
+	cmp r0, #66
+	blt label39
+	mov r0, #66
+	b label102
+label39:
+	cmp r0, #65
+	blt label40
+	mov r0, #65
+	b label102
+label40:
+	cmp r0, #64
+	blt label41
 	mov r0, #64
 	b label102
-label274:
-	mov r0, #60
+label41:
+	cmp r0, #63
+	blt label42
+	mov r0, #63
 	b label102
-label829:
-	cmp r0, #58
-	bge label282
-	b label830
-label266:
+label42:
+	cmp r0, #62
+	blt label43
 	mov r0, #62
 	b label102
-label830:
-	cmp r0, #57
-	bge label286
-	cmp r0, #56
-	bge label290
-	cmp r0, #55
-	bge label294
-	cmp r0, #54
-	bge label298
-	b label834
-label278:
-	mov r0, #59
-	b label102
-label270:
+label43:
+	cmp r0, #61
+	blt label44
 	mov r0, #61
 	b label102
-label282:
+label44:
+	cmp r0, #60
+	blt label45
+	mov r0, #60
+	b label102
+label45:
+	cmp r0, #59
+	blt label46
+	mov r0, #59
+	b label102
+label46:
+	cmp r0, #58
+	blt label47
 	mov r0, #58
 	b label102
-label294:
+label47:
+	cmp r0, #57
+	blt label48
+	mov r0, #57
+	b label102
+label48:
+	cmp r0, #56
+	blt label49
+	mov r0, #56
+	b label102
+label49:
+	cmp r0, #55
+	blt label50
 	mov r0, #55
 	b label102
-label835:
-	cmp r0, #52
-	bge label306
-	cmp r0, #51
-	bge label310
-	b label837
-label302:
+label50:
+	cmp r0, #54
+	blt label51
+	mov r0, #54
+	b label102
+label51:
+	cmp r0, #53
+	blt label52
 	mov r0, #53
 	b label102
-label837:
-	cmp r0, #50
-	bge label314
-	b label838
-label310:
-	mov r0, #51
-	b label102
-label838:
-	cmp r0, #49
-	bge label318
-	cmp r0, #48
-	bge label322
-	b label840
-label314:
-	mov r0, #50
-	b label102
-label322:
-	mov r0, #48
-	b label102
-label306:
+label52:
+	cmp r0, #52
+	blt label53
 	mov r0, #52
 	b label102
-label840:
-	cmp r0, #47
-	bge label326
-	b label841
-label318:
+label53:
+	cmp r0, #51
+	blt label54
+	mov r0, #51
+	b label102
+label54:
+	cmp r0, #50
+	blt label55
+	mov r0, #50
+	b label102
+label55:
+	cmp r0, #49
+	blt label56
 	mov r0, #49
 	b label102
-label841:
-	cmp r0, #46
-	bge label330
-	cmp r0, #45
-	bge label334
-	cmp r0, #44
-	bge label338
-	cmp r0, #43
-	bge label342
-	cmp r0, #42
-	bge label346
-	cmp r0, #41
-	bge label350
-	b label847
-label334:
-	mov r0, #45
+label56:
+	cmp r0, #48
+	blt label57
+	mov r0, #48
 	b label102
-label330:
-	mov r0, #46
-	b label102
-label338:
-	mov r0, #44
-	b label102
-label326:
+label57:
+	cmp r0, #47
+	blt label58
 	mov r0, #47
 	b label102
-label342:
+label58:
+	cmp r0, #46
+	blt label59
+	mov r0, #46
+	b label102
+label59:
+	cmp r0, #45
+	blt label60
+	mov r0, #45
+	b label102
+label60:
+	cmp r0, #44
+	blt label61
+	mov r0, #44
+	b label102
+label61:
+	cmp r0, #43
+	blt label62
 	mov r0, #43
 	b label102
-label847:
-	cmp r0, #40
-	bge label354
-	cmp r0, #39
-	bge label358
-	b label849
-label350:
-	mov r0, #41
-	b label102
-label849:
-	cmp r0, #38
-	bge label362
-	cmp r0, #37
-	bge label366
-	b label851
-label362:
-	mov r0, #38
-	b label102
-label346:
+label62:
+	cmp r0, #42
+	blt label63
 	mov r0, #42
 	b label102
-label354:
+label63:
+	cmp r0, #41
+	blt label64
+	mov r0, #41
+	b label102
+label64:
+	cmp r0, #40
+	blt label65
 	mov r0, #40
 	b label102
-label358:
+label65:
+	cmp r0, #39
+	blt label66
 	mov r0, #39
 	b label102
-label851:
-	cmp r0, #36
-	bge label370
-	b label852
-label370:
-	mov r0, #36
+label66:
+	cmp r0, #38
+	blt label67
+	mov r0, #38
 	b label102
-label852:
-	cmp r0, #35
-	bge label374
-	cmp r0, #34
-	bge label378
-	cmp r0, #33
-	bge label382
-	b label855
-label378:
-	mov r0, #34
-	b label102
-label366:
+label67:
+	cmp r0, #37
+	blt label68
 	mov r0, #37
 	b label102
-label855:
-	cmp r0, #32
-	bge label386
-	cmp r0, #31
-	bge label390
-	cmp r0, #30
-	bge label394
-	cmp r0, #29
-	bge label398
-	b label859
-label386:
-	mov r0, #32
+label68:
+	cmp r0, #36
+	blt label69
+	mov r0, #36
 	b label102
-label390:
-	mov r0, #31
-	b label102
-label374:
+label69:
+	cmp r0, #35
+	blt label70
 	mov r0, #35
 	b label102
-label382:
+label70:
+	cmp r0, #34
+	blt label71
+	mov r0, #34
+	b label102
+label71:
+	cmp r0, #33
+	blt label72
 	mov r0, #33
 	b label102
-label859:
-	cmp r0, #28
-	bge label402
-	b label860
-label398:
-	mov r0, #29
+label72:
+	cmp r0, #32
+	blt label73
+	mov r0, #32
 	b label102
-label860:
-	cmp r0, #27
-	bge label406
-	cmp r0, #26
-	bge label410
-	cmp r0, #25
-	bge label414
-	b label863
-label414:
-	mov r0, #25
+label73:
+	cmp r0, #31
+	blt label74
+	mov r0, #31
 	b label102
-label394:
+label74:
+	cmp r0, #30
+	blt label75
 	mov r0, #30
 	b label102
-label406:
-	mov r0, #27
+label75:
+	cmp r0, #29
+	blt label76
+	mov r0, #29
 	b label102
-label863:
-	cmp r0, #24
-	bge label418
-	cmp r0, #23
-	bge label422
-	b label865
-label402:
+label76:
+	cmp r0, #28
+	blt label77
 	mov r0, #28
 	b label102
-label410:
+label77:
+	cmp r0, #27
+	blt label78
+	mov r0, #27
+	b label102
+label78:
+	cmp r0, #26
+	blt label79
 	mov r0, #26
 	b label102
-label865:
-	cmp r0, #22
-	bge label426
-	b label866
-label422:
-	mov r0, #23
+label79:
+	cmp r0, #25
+	blt label80
+	mov r0, #25
 	b label102
-label866:
-	cmp r0, #21
-	bge label430
-	b label867
-label418:
+label80:
+	cmp r0, #24
+	blt label81
 	mov r0, #24
 	b label102
-label426:
+label81:
+	cmp r0, #23
+	blt label82
+	mov r0, #23
+	b label102
+label82:
+	cmp r0, #22
+	blt label83
 	mov r0, #22
 	b label102
-label867:
-	cmp r0, #20
-	bge label434
-	cmp r0, #19
-	bge label438
-	cmp r0, #18
-	bge label442
-	cmp r0, #17
-	bge label446
-	cmp r0, #16
-	bge label450
-	b label872
-label430:
+label83:
+	cmp r0, #21
+	blt label84
 	mov r0, #21
 	b label102
-label434:
+label84:
+	cmp r0, #20
+	blt label85
 	mov r0, #20
 	b label102
-label872:
-	cmp r0, #15
-	bge label454
-	cmp r0, #14
-	bge label458
-	b label874
-label438:
+label85:
+	cmp r0, #19
+	blt label86
 	mov r0, #19
 	b label102
-label874:
-	cmp r0, #13
-	bge label462
-	cmp r0, #12
-	bge label466
-	b label876
-label458:
-	mov r0, #14
-	b label102
-label442:
+label86:
+	cmp r0, #18
+	blt label87
 	mov r0, #18
 	b label102
-label450:
-	mov r0, #16
-	b label102
-label446:
+label87:
+	cmp r0, #17
+	blt label88
 	mov r0, #17
 	b label102
-label876:
-	cmp r0, #11
-	bge label470
-	cmp r0, #10
-	bge label474
-	cmp r0, #9
-	bge label478
-	cmp r0, #8
-	bge label482
-	b label880
-label462:
-	mov r0, #13
+label88:
+	cmp r0, #16
+	blt label89
+	mov r0, #16
 	b label102
-label466:
-	mov r0, #12
-	b label102
-label454:
+label89:
+	cmp r0, #15
+	blt label90
 	mov r0, #15
 	b label102
-label880:
+label90:
+	cmp r0, #14
+	blt label91
+	mov r0, #14
+	b label102
+label91:
+	cmp r0, #13
+	blt label92
+	mov r0, #13
+	b label102
+label92:
+	cmp r0, #12
+	blt label93
+	mov r0, #12
+	b label102
+label93:
+	cmp r0, #11
+	blt label94
+	mov r0, #11
+	b label102
+label94:
+	cmp r0, #10
+	blt label95
+	mov r0, #10
+	b label102
+label95:
+	cmp r0, #9
+	blt label96
+	mov r0, #9
+	b label102
+label96:
+	cmp r0, #8
+	blt label97
+	mov r0, #8
+	b label102
+label97:
 	cmp r0, #7
-	bge label486
+	blt label98
+	mov r0, #7
+	b label102
+label98:
 	cmp r0, #6
-	bge label490
+	blt label99
+	mov r0, #6
+	b label102
+label99:
 	cmp r0, #5
-	bge label494
+	blt label100
+	mov r0, #5
+	b label102
+label100:
 	cmp r0, #4
-	bge label498
+	blt label101
+	mov r0, #4
+	b label102
+label101:
 	cmp r0, #2
 	mov r1, #0
 	movwlt r1, #1
@@ -569,28 +518,4 @@ label880:
 	rsb r1, r1, #2
 	mov r0, #3
 	movlt r0, r1
-	b label102
-label482:
-	mov r0, #8
-	b label102
-label486:
-	mov r0, #7
-	b label102
-label490:
-	mov r0, #6
-	b label102
-label494:
-	mov r0, #5
-	b label102
-label498:
-	mov r0, #4
-	b label102
-label470:
-	mov r0, #11
-	b label102
-label474:
-	mov r0, #10
-	b label102
-label478:
-	mov r0, #9
 	b label102

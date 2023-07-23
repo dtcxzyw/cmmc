@@ -28,11 +28,98 @@ foo:
 	movt r2, #:upper16:Y
 	strh r3, [r1, #0]
 	strh r3, [r2, #0]
-	bne label18
-	b label5
-label18:
+	beq label5
 	mov r3, #1
-label3:
+	uxth r4, r3
+	strh r4, [r1, #0]
+	movw r4, #65535
+	and r4, r3, r4
+	add r3, r3, #1
+	lsl r4, r4, #2
+	cmp r0, r3
+	uxth r4, r4
+	strh r4, [r2, #0]
+	beq label5
+	uxth r4, r3
+	strh r4, [r1, #0]
+	movw r4, #65535
+	and r4, r3, r4
+	add r3, r3, #1
+	lsl r4, r4, #2
+	cmp r0, r3
+	uxth r4, r4
+	strh r4, [r2, #0]
+	beq label5
+	uxth r4, r3
+	strh r4, [r1, #0]
+	movw r4, #65535
+	and r4, r3, r4
+	add r3, r3, #1
+	lsl r4, r4, #2
+	cmp r0, r3
+	uxth r4, r4
+	strh r4, [r2, #0]
+	beq label5
+	uxth r4, r3
+	strh r4, [r1, #0]
+	movw r4, #65535
+	and r4, r3, r4
+	add r3, r3, #1
+	lsl r4, r4, #2
+	cmp r0, r3
+	uxth r4, r4
+	strh r4, [r2, #0]
+	beq label5
+	uxth r4, r3
+	strh r4, [r1, #0]
+	movw r4, #65535
+	and r4, r3, r4
+	add r3, r3, #1
+	lsl r4, r4, #2
+	cmp r0, r3
+	uxth r4, r4
+	strh r4, [r2, #0]
+	beq label5
+	uxth r4, r3
+	strh r4, [r1, #0]
+	movw r4, #65535
+	and r4, r3, r4
+	add r3, r3, #1
+	lsl r4, r4, #2
+	cmp r0, r3
+	uxth r4, r4
+	strh r4, [r2, #0]
+	beq label5
+	uxth r4, r3
+	strh r4, [r1, #0]
+	movw r4, #65535
+	and r4, r3, r4
+	add r3, r3, #1
+	lsl r4, r4, #2
+	cmp r0, r3
+	uxth r4, r4
+	strh r4, [r2, #0]
+	beq label5
+	uxth r4, r3
+	strh r4, [r1, #0]
+	movw r4, #65535
+	and r4, r3, r4
+	add r3, r3, #1
+	lsl r4, r4, #2
+	cmp r0, r3
+	uxth r4, r4
+	strh r4, [r2, #0]
+	beq label5
+	uxth r4, r3
+	strh r4, [r1, #0]
+	movw r4, #65535
+	and r4, r3, r4
+	add r3, r3, #1
+	lsl r4, r4, #2
+	cmp r0, r3
+	uxth r4, r4
+	strh r4, [r2, #0]
+	beq label5
 	uxth r4, r3
 	strh r4, [r1, #0]
 	movw r4, #65535
@@ -46,3 +133,15 @@ label3:
 label5:
 	pop { r4 }
 	bx lr
+label3:
+	uxth r4, r3
+	strh r4, [r1, #0]
+	movw r4, #65535
+	and r4, r3, r4
+	add r3, r3, #1
+	lsl r4, r4, #2
+	cmp r0, r3
+	uxth r4, r4
+	strh r4, [r2, #0]
+	beq label5
+	b label3

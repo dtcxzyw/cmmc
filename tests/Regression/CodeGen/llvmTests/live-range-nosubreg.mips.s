@@ -39,15 +39,15 @@ main:
 	lb $t2, %lo(d)($t2)
 	andi $t2, $t2, 255
 	subu $t2, $zero, $t2
-	bne $t1, $zero, label27
+	beq $t1, $zero, label27
 	nop
-	move $t1, $zero
-	b label2
-	nop
-label27:
 	lui $t1, %hi(b)
 	lw $t1, %lo(b)($t1)
 	sltu $t1, $zero, $t1
+	b label2
+	nop
+label27:
+	move $t1, $zero
 label2:
 	andi $t1, $t1, 255
 	andi $t2, $t2, 255

@@ -19,85 +19,107 @@ setne0:
 slti_beq0:
 	li $t0, 32768
 	addu $t0, $a0, $t0
-	bgez $t0, label13
+	bltz $t0, label12
 	nop
-	lui $t0, %hi(g1)
-	sw $a0, %lo(g1)($t0)
 label13:
 	jr $ra
+	nop
+label12:
+	lui $t0, %hi(g1)
+	sw $a0, %lo(g1)($t0)
+	b label13
 	nop
 .globl slti_beq1
 slti_beq1:
 	li $t0, 32769
 	addu $t0, $a0, $t0
-	bgez $t0, label29
+	bltz $t0, label27
 	nop
+label28:
+	jr $ra
+	nop
+label27:
 	lui $t0, %hi(g1)
 	sw $a0, %lo(g1)($t0)
-label29:
-	jr $ra
+	b label28
 	nop
 .globl slti_beq2
 slti_beq2:
 	addiu $t0, $a0, -32767
-	bgez $t0, label45
+	bltz $t0, label43
 	nop
+label44:
+	jr $ra
+	nop
+label43:
 	lui $t0, %hi(g1)
 	sw $a0, %lo(g1)($t0)
-label45:
-	jr $ra
+	b label44
 	nop
 .globl slti_beq3
 slti_beq3:
 	addiu $t0, $a0, -32768
-	bgez $t0, label60
+	bltz $t0, label57
 	nop
+label58:
+	jr $ra
+	nop
+label57:
 	lui $t0, %hi(g1)
 	sw $a0, %lo(g1)($t0)
-label60:
-	jr $ra
+	b label58
 	nop
 .globl sltiu_beq0
 sltiu_beq0:
-	li $t0, 32766
-	sltu $t0, $t0, $a0
-	bne $t0, $zero, label75
+	sltiu $t0, $a0, 32767
+	bne $t0, $zero, label72
 	nop
+label73:
+	jr $ra
+	nop
+label72:
 	lui $t0, %hi(g1)
 	sw $a0, %lo(g1)($t0)
-label75:
-	jr $ra
+	b label73
 	nop
 .globl sltiu_beq1
 sltiu_beq1:
-	li $t0, 32767
-	sltu $t0, $t0, $a0
-	bne $t0, $zero, label88
+	li $t0, 32768
+	sltu $t0, $a0, $t0
+	bne $t0, $zero, label84
 	nop
+label85:
+	jr $ra
+	nop
+label84:
 	lui $t0, %hi(g1)
 	sw $a0, %lo(g1)($t0)
-label88:
-	jr $ra
+	b label85
 	nop
 .globl sltiu_beq2
 sltiu_beq2:
-	li $t0, -32769
-	sltu $t0, $t0, $a0
-	bne $t0, $zero, label101
+	sltiu $t0, $a0, -32768
+	bne $t0, $zero, label97
 	nop
+label98:
+	jr $ra
+	nop
+label97:
 	lui $t0, %hi(g1)
 	sw $a0, %lo(g1)($t0)
-label101:
-	jr $ra
+	b label98
 	nop
 .globl sltiu_beq3
 sltiu_beq3:
-	li $t0, -32770
-	sltu $t0, $t0, $a0
-	bne $t0, $zero, label114
+	li $t0, -32769
+	sltu $t0, $a0, $t0
+	bne $t0, $zero, label109
 	nop
+label110:
+	jr $ra
+	nop
+label109:
 	lui $t0, %hi(g1)
 	sw $a0, %lo(g1)($t0)
-label114:
-	jr $ra
+	b label110
 	nop

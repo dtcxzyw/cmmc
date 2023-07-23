@@ -250,6 +250,38 @@ static bool conditional2Unconditional(MIRFunction& func, const CodeGenContext& c
     }
     return modified;
 }
+static bool reorderBranch(MIRFunction& func, const CodeGenContext& ctx) {
+    bool modified = false;
+    for(auto iter = func.blocks().begin(); iter != func.blocks().end();) {
+        const auto next = std::next(iter);
+        if(next == func.blocks().end())
+            break;
+
+        const auto currentBlock = iter->get();
+        const auto nextBlock = next->get();
+        auto& instructions = currentBlock->instructions();
+        if(instructions.size() < 2) {
+            iter = next;
+            continue;
+        }
+        auto& branch = *std::prev(instructions.end(), 2);
+        auto& jump = instructions.back();
+        MIRBasicBlock* targetBlock;
+        double prob;
+        MIRBasicBlock* jumpBlock;
+        if(ctx.instInfo.matchConditionalBranch(branch, targetBlock, prob) &&
+           ctx.instInfo.matchUnconditionalBranch(jump, jumpBlock)) {
+            if(targetBlock == nextBlock) {
+                ctx.instInfo.inverseBranch(branch, jumpBlock);
+                instructions.pop_back();
+                modified = true;
+            }
+        }
+
+        iter = next;
+    }
+    return modified;
+}
 
 void simplifyCFG(MIRFunction& func, const CodeGenContext& ctx) {
     while(true) {
@@ -259,6 +291,7 @@ void simplifyCFG(MIRFunction& func, const CodeGenContext& ctx) {
         modified |= redirectGoto(func, ctx);
         modified |= removeEmptyBlocks(func, ctx);
         modified |= removeUnusedLabels(func, ctx);
+        modified |= reorderBranch(func, ctx);
         modified |= genericPeepholeOpt(func, ctx);
 
         if(!modified)

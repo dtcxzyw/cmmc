@@ -10,13 +10,35 @@ hanoi:
 	sd s0, 16(sp)
 	sd s1, 8(sp)
 	sd ra, 0(sp)
-	bne a0, a3, label14
-	j label2
-label14:
+	beq a0, a3, label2
 	mv s3, a0
 	mv s0, a1
 	mv s1, a2
+label4:
+	addiw s3, s3, -1
+	mv a0, s3
+	mv a1, s0
+	mv a2, s2
+	mv a3, s1
+	jal hanoi
+	mv a0, s0
+	jal putint
+	li a0, 32
+	jal putch
+	mv a0, s2
+	jal putint
+	li a0, 44
+	jal putch
+	li a0, 32
+	jal putch
+	li a1, 1
+	beq s3, a1, label19
+	mv a0, s0
+	mv s0, s1
+	mv s1, a0
 	j label4
+label19:
+	mv a1, s1
 label2:
 	mv a0, a1
 	jal putint
@@ -35,40 +57,14 @@ label2:
 	ld s2, 32(sp)
 	addi sp, sp, 40
 	ret
-label4:
-	addiw s3, s3, -1
-	mv a0, s3
-	mv a1, s0
-	mv a2, s2
-	mv a3, s1
-	jal hanoi
-	mv a0, s0
-	jal putint
-	li a0, 32
-	jal putch
-	mv a0, s2
-	jal putint
-	li a0, 44
-	jal putch
-	li a0, 32
-	jal putch
-	li a2, 1
-	bne s3, a2, label19
-	mv a1, s1
-	j label2
-label19:
-	mv a0, s0
-	mv s0, s1
-	mv s1, a0
-	j label4
 .globl main
 main:
 	addi sp, sp, -16
 	sd s0, 8(sp)
 	sd ra, 0(sp)
 	jal getint
-	mv s0, a0
 	ble a0, zero, label35
+	mv s0, a0
 label33:
 	jal getint
 	li a3, 3
@@ -78,8 +74,7 @@ label33:
 	li a0, 10
 	jal putch
 	addiw s0, s0, -1
-	ble s0, zero, label35
-	j label33
+	bgt s0, zero, label33
 label35:
 	mv a0, zero
 	ld ra, 0(sp)

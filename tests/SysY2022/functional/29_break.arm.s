@@ -10,15 +10,12 @@ main:
 	mov r1, r0
 	cmp r0, #100
 	bge label7
-	cmp r0, #50
-	bne label6
-	b label7
-label6:
+label5:
+	cmp r1, #50
+	beq label7
 	add r0, r0, r1
 	add r1, r1, #1
 	cmp r1, #100
-	bge label7
-	cmp r1, #50
-	bne label6
+	blt label5
 label7:
 	bx lr

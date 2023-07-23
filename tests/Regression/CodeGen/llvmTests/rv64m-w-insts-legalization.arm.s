@@ -8,61 +8,17 @@
 mulw:
 	mov r2, r1
 	cmp r0, r1
-	bge label16
+	blt label2
+	mov r0, #1
+label8:
+	bx lr
+label2:
 	add r1, r0, #1
 	cmp r2, r1
 	ble label8
-	mul r0, r1, r0
-	add r1, r1, #1
-	cmp r2, r1
-	ble label8
-	mul r0, r1, r0
-	add r1, r1, #1
-	cmp r2, r1
-	ble label8
-	mul r0, r1, r0
-	add r1, r1, #1
-	cmp r2, r1
-	ble label8
-	mul r0, r1, r0
-	add r1, r1, #1
-	cmp r2, r1
-	ble label8
-	mul r0, r1, r0
-	add r1, r1, #1
-	cmp r2, r1
-	ble label8
-	mul r0, r1, r0
-	add r1, r1, #1
-	cmp r2, r1
-	ble label8
-	mul r0, r1, r0
-	add r1, r1, #1
-	cmp r2, r1
-	ble label8
-	mul r0, r1, r0
-	add r1, r1, #1
-	cmp r2, r1
-	ble label8
-	mul r0, r1, r0
-	add r1, r1, #1
-	cmp r2, r1
-	ble label8
-	b label49
-label16:
-	mov r0, #1
-	b label8
-label49:
-	mul r0, r1, r0
-	add r1, r1, #1
-	cmp r2, r1
-	ble label8
-	b label3
-label8:
-	bx lr
 label3:
 	mul r0, r1, r0
 	add r1, r1, #1
 	cmp r2, r1
-	ble label8
-	b label3
+	bgt label3
+	b label8

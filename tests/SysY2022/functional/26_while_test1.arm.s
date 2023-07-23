@@ -10,78 +10,72 @@ main:
 	mov r0, #5
 	cmp r0, #100
 	bge label16
+label5:
 	add r0, r0, #30
 	cmp r1, #100
-	bge label14
-	add r2, r1, #384
-	cmp r2, #100
-	bge label8
-	mov r1, r2
-	add r2, r2, #384
-	cmp r2, #100
-	bge label8
-	mov r1, r2
-	add r2, r2, #384
-	cmp r2, #100
-	bge label8
-	mov r1, r2
-	add r2, r2, #384
-	cmp r2, #100
-	bge label8
-	mov r1, r2
-	add r2, r2, #384
-	cmp r2, #100
-	bge label8
-label67:
-	mov r1, r2
-	add r2, r2, #384
-	cmp r2, #100
-	bge label8
-	b label67
-label14:
+	blt label6
 	sub r1, r1, #100
 	cmp r0, #100
-	bge label16
-	add r0, r0, #30
-	cmp r1, #100
-	bge label14
+	blt label5
+	b label16
+label6:
 	add r2, r1, #384
 	cmp r2, #100
-	bge label8
-	mov r1, r2
-	add r2, r2, #384
+	blt label29
+	add r2, r1, #96
 	cmp r2, #100
-	bge label8
-	mov r1, r2
-	add r2, r2, #384
+	blt label34
+	add r2, r1, #24
 	cmp r2, #100
-	bge label8
+	blt label39
+	add r1, r1, #6
+	cmp r1, #100
+	blt label12
+	sub r1, r1, #100
+	cmp r0, #100
+	blt label5
+	b label16
+label29:
 	mov r1, r2
-	add r2, r2, #384
-	cmp r2, #100
-	bge label8
-	mov r1, r2
-	add r2, r2, #384
-	cmp r2, #100
-	bge label8
-	b label67
+	b label6
 label8:
 	add r2, r1, #96
 	cmp r2, #100
-	bge label10
+	blt label34
+	add r2, r1, #24
+	cmp r2, #100
+	blt label39
+	add r1, r1, #6
+	cmp r1, #100
+	blt label12
+	sub r1, r1, #100
+	cmp r0, #100
+	blt label5
+	b label16
+label34:
 	mov r1, r2
 	b label8
 label10:
 	add r2, r1, #24
 	cmp r2, #100
-	bge label12
+	blt label39
+	add r1, r1, #6
+	cmp r1, #100
+	blt label12
+	sub r1, r1, #100
+	cmp r0, #100
+	blt label5
+	b label16
+label39:
 	mov r1, r2
 	b label10
 label12:
 	add r1, r1, #6
 	cmp r1, #100
-	bge label14
-	b label12
+	blt label12
+	sub r1, r1, #100
+	cmp r0, #100
+	blt label5
 label16:
 	mov r0, r1
 	bx lr

@@ -30,13 +30,29 @@ hanoi:
 	sd s1, 16(sp)
 	sd s0, 8(sp)
 	sd ra, 0(sp)
-	bne a0, a3, label14
-	j label2
-label14:
+	beq a0, a3, label2
 	mv s3, a0
 	mv s1, a1
 	mv s0, a2
+label4:
+	addiw s3, s3, -1
+	mv a0, s3
+	mv a1, s1
+	mv a2, s2
+	mv a3, s0
+	jal hanoi
+	li a2, 10000
+	mulw a1, s1, a2
+	addw a0, s2, a1
+	jal write
+	li a1, 1
+	beq s3, a1, label23
+	mv a0, s1
+	mv s1, s0
+	mv s0, a0
 	j label4
+label23:
+	mv a1, s0
 label2:
 	li a2, 10000
 	mulw a1, a1, a2
@@ -49,26 +65,6 @@ label2:
 	ld s2, 32(sp)
 	addi sp, sp, 40
 	ret
-label4:
-	addiw s3, s3, -1
-	mv a0, s3
-	mv a1, s1
-	mv a2, s2
-	mv a3, s0
-	jal hanoi
-	li a1, 10000
-	mulw a2, s1, a1
-	addw a0, s2, a2
-	jal write
-	li a2, 1
-	bne s3, a2, label23
-	mv a1, s0
-	j label2
-label23:
-	mv a0, s1
-	mv s1, s0
-	mv s0, a0
-	j label4
 .globl main
 main:
 	addi sp, sp, -8

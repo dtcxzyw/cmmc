@@ -19,23 +19,8 @@ main:
 	mov r0, #56
 	bl _sysy_starttime
 	cmp r4, #0
-	ble label9
-	b label13
-label9:
-	mov r0, #64
-	bl _sysy_stoptime
-	movw r0, #10000
-	movw r1, #:lower16:a
-	movt r1, #:upper16:a
-	bl putarray
-	add sp, sp, #4
-	mov r0, #0
-	pop { r4, r5, r6, r7, r8, r9, pc }
-label13:
-	movw r0, #:lower16:a
-	mov r2, r5
-	mov r1, r4
-	movt r0, #:upper16:a
+	bgt label2
+	b label9
 label3:
 	movw r3, #58069
 	movw r5, #48287
@@ -90,7 +75,12 @@ label3:
 	asr r8, r8, #1
 	sub r8, r7, r8, lsl #1
 	cmp r3, r8
-	beq label8
+	bne label6
+	str r5, [r0, r4, lsl #2]
+	cmp r1, #0
+	bgt label3
+	b label9
+label6:
 	and r8, r7, #1
 	eor r9, r3, #1
 	and r7, r7, #-2147483647
@@ -105,10 +95,20 @@ label3:
 	add r3, r5, r3
 	str r3, [r0, r4, lsl #2]
 	cmp r1, #0
-	ble label9
-	b label3
-label8:
-	str r5, [r0, r4, lsl #2]
-	cmp r1, #0
-	ble label9
+	bgt label3
+label9:
+	mov r0, #64
+	bl _sysy_stoptime
+	movw r0, #10000
+	movw r1, #:lower16:a
+	movt r1, #:upper16:a
+	bl putarray
+	add sp, sp, #4
+	mov r0, #0
+	pop { r4, r5, r6, r7, r8, r9, pc }
+label2:
+	movw r0, #:lower16:a
+	mov r2, r5
+	mov r1, r4
+	movt r0, #:upper16:a
 	b label3

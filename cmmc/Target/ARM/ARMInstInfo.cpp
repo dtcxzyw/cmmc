@@ -220,6 +220,12 @@ static bool verifyInstSTRH(const MIRInst& inst) {
     return verifyInstAddrImm9(inst);
 }
 
+static void inverseBranchImpl(MIRInst& inst, MIRBasicBlock* newTarget) {
+    inst.setOperand<0>(getInvertedCondField(inst.getOperand(0)));
+    inst.setOperand<1>(MIROperand::asReloc(newTarget));
+    inst.setOperand<3>(MIROperand::asProb(1.0 - inst.getOperand(3).prob()));
+}
+
 CMMC_TARGET_NAMESPACE_END
 
 #include <ARM/InstInfoImpl.hpp>

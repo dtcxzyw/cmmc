@@ -11,14 +11,14 @@ c:
 .globl main
 main:
 	addi sp, sp, -16
-pcrel73:
+pcrel60:
 	auipc a1, %pcrel_hi(c)
 	li a2, 1
-	addi a0, a1, %pcrel_lo(pcrel73)
+	addi a0, a1, %pcrel_lo(pcrel60)
 	sd s0, 8(sp)
 	mv s0, a0
 	sd ra, 0(sp)
-	sw a2, %pcrel_lo(pcrel73)(a1)
+	sw a2, %pcrel_lo(pcrel60)(a1)
 	li a2, 4
 	li a1, 2
 	sw a1, 4(a0)
@@ -32,21 +32,27 @@ pcrel73:
 label2:
 	addi a2, a1, 4
 	li a3, 4090
-	bge a2, a3, label5
-	sh2add a3, a1, a0
+	blt a2, a3, label4
+	sh2add a2, a1, a0
+	addi a1, a1, 1
+	sw zero, 0(a2)
+	li a2, 4090
+	blt a1, a2, label5
+	j label7
+label4:
+	sh2add a1, a1, a0
+	sw zero, 0(a1)
+	sw zero, 4(a1)
+	sw zero, 8(a1)
+	sw zero, 12(a1)
 	mv a1, a2
-	sw zero, 0(a3)
-	sw zero, 4(a3)
-	sw zero, 8(a3)
-	sw zero, 12(a3)
 	j label2
 label5:
 	sh2add a2, a1, a0
 	addi a1, a1, 1
 	sw zero, 0(a2)
 	li a2, 4090
-	bge a1, a2, label7
-	j label5
+	blt a1, a2, label5
 label7:
 	auipc a2, %pcrel_hi(a)
 	li a0, 4000

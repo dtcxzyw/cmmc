@@ -29,21 +29,23 @@ gcd:
 	lw a2, 4(a0)
 	mv a0, a4
 	mv a3, a2
-	beq a2, zero, label3
-	divw a5, a4, a2
-	mulw t0, a2, a5
+	bne a2, zero, label2
+label3:
+	ld ra, 8(sp)
+	addi sp, sp, 16
+	ret
+label2:
+	divw a5, a0, a3
+	mulw t0, a3, a5
 	li a3, 4294967295
-	subw a4, a4, t0
+	subw a4, a0, t0
 	and a2, a2, a3
 	and a0, a4, a3
 	sw a2, 0(sp)
 	sw a0, 4(sp)
 	mv a0, a1
 	jal gcd
-label3:
-	ld ra, 8(sp)
-	addi sp, sp, 16
-	ret
+	j label3
 .globl main
 main:
 	addi sp, sp, -16

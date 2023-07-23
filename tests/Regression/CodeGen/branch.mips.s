@@ -2,259 +2,343 @@
 .text
 .globl beqz
 beqz:
-	bne $a0, $zero, label3
+	beq $a0, $zero, label2
 	nop
-	sw $zero, 0($a1)
 label3:
 	jr $ra
+	nop
+label2:
+	sw $zero, 0($a1)
+	b label3
 	nop
 .globl beqi
 beqi:
 	li $t0, 1
-	bne $a0, $t0, label12
+	beq $a0, $t0, label11
 	nop
-	sw $zero, 0($a1)
 label12:
 	jr $ra
 	nop
+label11:
+	sw $zero, 0($a1)
+	b label12
+	nop
 .globl beq
 beq:
-	bne $a0, $a1, label23
+	beq $a0, $a1, label22
 	nop
-	sw $zero, 0($a2)
 label23:
 	jr $ra
 	nop
+label22:
+	sw $zero, 0($a2)
+	b label23
+	nop
 .globl bnez
 bnez:
-	beq $a0, $zero, label34
+	bne $a0, $zero, label33
 	nop
-	sw $zero, 0($a1)
 label34:
 	jr $ra
+	nop
+label33:
+	sw $zero, 0($a1)
+	b label34
 	nop
 .globl bnei
 bnei:
 	li $t0, 1
-	beq $a0, $t0, label43
+	bne $a0, $t0, label42
 	nop
-	sw $zero, 0($a1)
 label43:
 	jr $ra
 	nop
+label42:
+	sw $zero, 0($a1)
+	b label43
+	nop
 .globl bne
 bne:
-	beq $a0, $a1, label54
+	bne $a0, $a1, label53
 	nop
-	sw $zero, 0($a2)
 label54:
 	jr $ra
 	nop
+label53:
+	sw $zero, 0($a2)
+	b label54
+	nop
 .globl bltz
 bltz:
-	bgez $a0, label65
+	bltz $a0, label64
 	nop
-	sw $zero, 0($a1)
 label65:
 	jr $ra
+	nop
+label64:
+	sw $zero, 0($a1)
+	b label65
 	nop
 .globl blti1
 blti1:
 	addiu $t0, $a0, -1
-	bgez $t0, label75
+	bltz $t0, label73
 	nop
-	sw $zero, 0($a1)
-label75:
+label74:
 	jr $ra
+	nop
+label73:
+	sw $zero, 0($a1)
+	b label74
 	nop
 .globl blti2
 blti2:
 	addiu $t0, $a0, -10
-	bgez $t0, label85
+	bltz $t0, label83
 	nop
-	sw $zero, 0($a1)
-label85:
+label84:
 	jr $ra
+	nop
+label83:
+	sw $zero, 0($a1)
+	b label84
 	nop
 .globl blt
 blt:
 	subu $t0, $a0, $a1
-	bgez $t0, label96
+	bltz $t0, label93
 	nop
-	sw $zero, 0($a2)
-label96:
+label94:
 	jr $ra
+	nop
+label93:
+	sw $zero, 0($a2)
+	b label94
 	nop
 .globl bgez
 bgez:
 	addiu $t0, $a0, 1
-	blez $t0, label108
+	bgtz $t0, label104
 	nop
-	sw $zero, 0($a1)
-label108:
+label105:
 	jr $ra
+	nop
+label104:
+	sw $zero, 0($a1)
+	b label105
 	nop
 .globl bgei1
 bgei1:
-	blez $a0, label118
+	bgtz $a0, label115
 	nop
-	sw $zero, 0($a1)
-label118:
+label116:
 	jr $ra
+	nop
+label115:
+	sw $zero, 0($a1)
+	b label116
 	nop
 .globl bgei2
 bgei2:
 	addiu $t0, $a0, -9
-	blez $t0, label127
+	bgtz $t0, label124
 	nop
-	sw $zero, 0($a1)
-label127:
+label125:
 	jr $ra
+	nop
+label124:
+	sw $zero, 0($a1)
+	b label125
 	nop
 .globl bge
 bge:
 	subu $t0, $a0, $a1
-	bltz $t0, label137
+	bgez $t0, label135
 	nop
-	sw $zero, 0($a2)
-label137:
+label136:
 	jr $ra
+	nop
+label135:
+	sw $zero, 0($a2)
+	b label136
 	nop
 .globl bgtz
 bgtz:
-	blez $a0, label148
+	bgtz $a0, label147
 	nop
-	sw $zero, 0($a1)
 label148:
 	jr $ra
+	nop
+label147:
+	sw $zero, 0($a1)
+	b label148
 	nop
 .globl bgti1
 bgti1:
 	addiu $t0, $a0, 1
-	blez $t0, label157
+	bgtz $t0, label156
 	nop
-	sw $zero, 0($a1)
 label157:
 	jr $ra
+	nop
+label156:
+	sw $zero, 0($a1)
+	b label157
 	nop
 .globl bgti2
 bgti2:
 	addiu $t0, $a0, -10
-	blez $t0, label167
+	bgtz $t0, label167
 	nop
-	sw $zero, 0($a1)
-label167:
+label168:
 	jr $ra
+	nop
+label167:
+	sw $zero, 0($a1)
+	b label168
 	nop
 .globl bgt
 bgt:
 	subu $t0, $a0, $a1
-	blez $t0, label177
+	bgtz $t0, label178
 	nop
-	sw $zero, 0($a2)
-label177:
+label179:
 	jr $ra
+	nop
+label178:
+	sw $zero, 0($a2)
+	b label179
 	nop
 .globl blez
 blez:
 	addiu $t0, $a0, -1
-	bgez $t0, label189
+	bltz $t0, label189
 	nop
-	sw $zero, 0($a1)
-label189:
+label190:
 	jr $ra
+	nop
+label189:
+	sw $zero, 0($a1)
+	b label190
 	nop
 .globl blei1
 blei1:
-	bgez $a0, label199
+	bltz $a0, label199
 	nop
-	sw $zero, 0($a1)
-label199:
+label200:
 	jr $ra
+	nop
+label199:
+	sw $zero, 0($a1)
+	b label200
 	nop
 .globl blei2
 blei2:
 	addiu $t0, $a0, -11
-	bgez $t0, label209
+	bltz $t0, label208
 	nop
-	sw $zero, 0($a1)
 label209:
 	jr $ra
+	nop
+label208:
+	sw $zero, 0($a1)
+	b label209
 	nop
 .globl ble
 ble:
 	subu $t0, $a0, $a1
-	bgtz $t0, label220
+	blez $t0, label218
 	nop
-	sw $zero, 0($a2)
-label220:
+label219:
 	jr $ra
+	nop
+label218:
+	sw $zero, 0($a2)
+	b label219
 	nop
 .globl bfeq
 bfeq:
 	c.eq.s $f12, $f14
 	li $t0, 1
-	movt $t0, $zero, $fcc0
-	bne $t0, $zero, label231
+	movf $t0, $zero, $fcc0
+	bne $t0, $zero, label230
 	nop
-	sw $zero, 0($a2)
 label231:
 	jr $ra
+	nop
+label230:
+	sw $zero, 0($a2)
+	b label231
 	nop
 .globl bfne
 bfne:
 	c.eq.s $f12, $f14
 	li $t0, 1
-	movf $t0, $zero, $fcc0
-	bne $t0, $zero, label241
+	movt $t0, $zero, $fcc0
+	bne $t0, $zero, label240
 	nop
-	sw $zero, 0($a2)
 label241:
 	jr $ra
 	nop
+label240:
+	sw $zero, 0($a2)
+	b label241
+	nop
 .globl bflt
 bflt:
-	c.ole.s $f12, $f14
-	li $t0, 1
-	movf $t0, $zero, $fcc0
-	bne $t0, $zero, label251
-	nop
-	sw $zero, 0($a2)
-label251:
-	jr $ra
-	nop
-.globl bfle
-bfle:
 	c.olt.s $f12, $f14
 	li $t0, 1
 	movf $t0, $zero, $fcc0
-	bne $t0, $zero, label261
+	bne $t0, $zero, label250
 	nop
+label251:
+	jr $ra
+	nop
+label250:
 	sw $zero, 0($a2)
+	b label251
+	nop
+.globl bfle
+bfle:
+	c.ole.s $f12, $f14
+	li $t0, 1
+	movf $t0, $zero, $fcc0
+	bne $t0, $zero, label260
+	nop
 label261:
 	jr $ra
+	nop
+label260:
+	sw $zero, 0($a2)
+	b label261
 	nop
 .globl bfge
 bfge:
 	c.ult.s $f12, $f14
 	li $t0, 1
 	movt $t0, $zero, $fcc0
-	bne $t0, $zero, label271
+	bne $t0, $zero, label270
 	nop
-	sw $zero, 0($a2)
 label271:
 	jr $ra
+	nop
+label270:
+	sw $zero, 0($a2)
+	b label271
 	nop
 .globl bfgt
 bfgt:
 	c.ule.s $f12, $f14
 	li $t0, 1
 	movt $t0, $zero, $fcc0
-	bne $t0, $zero, label281
+	bne $t0, $zero, label280
 	nop
-	sw $zero, 0($a2)
 label281:
 	jr $ra
+	nop
+label280:
+	sw $zero, 0($a2)
+	b label281
 	nop
 .globl normal_srem
 normal_srem:

@@ -47,20 +47,21 @@ pcrel59:
 	addi a0, a2, %pcrel_lo(pcrel59)
 	andi a3, a4, 255
 	subw a2, zero, a3
-	bne a1, zero, label27
-	mv a1, zero
-	j label2
-label27:
+	beq a1, zero, label27
+pcrel60:
 	auipc a1, %pcrel_hi(b)
 	li a4, 4294967295
-	lw a5, %pcrel_lo(label27)(a1)
+	lw a5, %pcrel_lo(pcrel60)(a1)
 	sltu a3, zero, a5
 	and a1, a3, a4
+	j label2
+label27:
+	mv a1, zero
 label2:
-	andi a1, a1, 255
-	andi a3, a2, 255
-	or a2, a1, a3
-	andi a1, a2, 255
-	sb a1, 0(a0)
+	andi a3, a1, 255
+	andi a4, a2, 255
+	or a1, a3, a4
+	andi a2, a1, 255
+	sb a2, 0(a0)
 	mv a0, zero
 	ret

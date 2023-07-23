@@ -123,9 +123,7 @@ label2:
 	vcvt.s32.f32 s0, s0
 	vmov r7, s0
 	cmp r7, r0
-	bge label5
-	b label2
-label5:
+	blt label2
 	mov r0, r5
 	mov r1, r4
 	bl putfarray

@@ -16,25 +16,25 @@ P:
 .text
 .globl foo
 foo:
-	ble a0, zero, label5
-pcrel51:
+	bgt a0, zero, label2
+label5:
+	ret
+label2:
 	auipc a2, %pcrel_hi(B)
-pcrel52:
+pcrel51:
 	auipc a3, %pcrel_hi(A)
-pcrel53:
+pcrel52:
 	auipc a4, %pcrel_hi(P)
 	li a5, 64
-	flw f11, %pcrel_lo(pcrel51)(a2)
-	addi a1, a2, %pcrel_lo(pcrel51)
-	addi a2, a3, %pcrel_lo(pcrel52)
+	li t0, 1
+	addi a1, a2, %pcrel_lo(label2)
+	flw f11, %pcrel_lo(label2)(a2)
+	addi a2, a3, %pcrel_lo(pcrel51)
 	fadd.s f10, f11, f11
-	fsw f10, %pcrel_lo(pcrel52)(a3)
-	sw a5, %pcrel_lo(pcrel53)(a4)
-	addi a3, a4, %pcrel_lo(pcrel53)
-	li a4, 1
-	bne a0, a4, label22
-	j label5
-label22:
+	fsw f10, %pcrel_lo(pcrel51)(a3)
+	sw a5, %pcrel_lo(pcrel52)(a4)
+	addi a3, a4, %pcrel_lo(pcrel52)
+	beq a0, t0, label5
 	li a4, 1
 label3:
 	li t1, 4294967295
@@ -49,6 +49,5 @@ label3:
 	addiw a4, a4, 1
 	addi t1, t0, 64
 	sw t1, 0(a5)
-	bne a0, a4, label3
-label5:
-	ret
+	beq a0, a4, label5
+	j label3

@@ -6,52 +6,16 @@ main:
 	addi sp, sp, -8
 	li a0, 112
 	sd ra, 0(sp)
+label2:
 	addiw a1, a0, -88
 	addiw a2, a0, -76
 	li a3, 1000
 	mv a0, a2
-	blt a1, a3, label16
+	blt a1, a3, label17
 	mv a0, a1
-label16:
+label17:
 	li a1, 10
-	ble a0, a1, label4
-	addiw a1, a0, -88
-	addiw a2, a0, -76
-	li a3, 1000
-	mv a0, a2
-	blt a1, a3, label16
-	mv a0, a1
-	li a1, 10
-	ble a0, a1, label4
-	addiw a1, a0, -88
-	addiw a2, a0, -76
-	mv a0, a2
-	blt a1, a3, label16
-	mv a0, a1
-	li a1, 10
-	ble a0, a1, label4
-	addiw a1, a0, -88
-	addiw a2, a0, -76
-	mv a0, a2
-	blt a1, a3, label16
-	mv a0, a1
-	li a1, 10
-	ble a0, a1, label4
-	addiw a1, a0, -88
-	addiw a2, a0, -76
-	mv a0, a2
-	blt a1, a3, label16
-label24:
-	mv a0, a1
-	li a1, 10
-	ble a0, a1, label4
-	addiw a1, a0, -88
-	addiw a2, a0, -76
-	li a3, 1000
-	mv a0, a2
-	blt a1, a3, label16
-	j label24
-label4:
+	bgt a0, a1, label2
 	jal putint
 	ld ra, 0(sp)
 	li a0, 3390

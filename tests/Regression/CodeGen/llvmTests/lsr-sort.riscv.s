@@ -10,27 +10,66 @@ X:
 .globl foo
 foo:
 	mv a1, a0
-	ble a0, zero, label11
-pcrel34:
-	auipc a3, %pcrel_hi(X)
-	sh zero, %pcrel_lo(pcrel34)(a3)
-	addi a2, a3, %pcrel_lo(pcrel34)
-	li a3, 1
-	bne a0, a3, label17
-	j label31
-label11:
+	bgt a0, zero, label2
 	mv a0, zero
 	j label5
+label2:
+	auipc a0, %pcrel_hi(X)
+	li a3, 1
+	sh zero, %pcrel_lo(label2)(a0)
+	addi a2, a0, %pcrel_lo(label2)
+	beq a1, a3, label17
+	li a0, 1
+	li a4, 65535
+	and a3, a0, a4
+	addiw a0, a0, 1
+	sh a3, 0(a2)
+	beq a1, a0, label5
+	and a3, a0, a4
+	addiw a0, a0, 1
+	sh a3, 0(a2)
+	beq a1, a0, label5
+	and a3, a0, a4
+	addiw a0, a0, 1
+	sh a3, 0(a2)
+	beq a1, a0, label5
+	and a3, a0, a4
+	addiw a0, a0, 1
+	sh a3, 0(a2)
+	beq a1, a0, label5
+	and a3, a0, a4
+	addiw a0, a0, 1
+	sh a3, 0(a2)
+	beq a1, a0, label5
+	and a3, a0, a4
+	addiw a0, a0, 1
+	sh a3, 0(a2)
+	beq a1, a0, label5
+	and a3, a0, a4
+	addiw a0, a0, 1
+	sh a3, 0(a2)
+	beq a1, a0, label5
+	and a3, a0, a4
+	addiw a0, a0, 1
+	sh a3, 0(a2)
+	beq a1, a0, label5
+	and a3, a0, a4
+	addiw a0, a0, 1
+	sh a3, 0(a2)
+	beq a1, a0, label5
+	and a3, a0, a4
+	addiw a0, a0, 1
+	sh a3, 0(a2)
+	beq a1, a0, label5
+	j label3
 label17:
 	li a0, 1
+label5:
+	ret
 label3:
 	li a4, 65535
 	and a3, a0, a4
 	addiw a0, a0, 1
 	sh a3, 0(a2)
-	bne a1, a0, label3
-	j label5
-label31:
-	li a0, 1
-label5:
-	ret
+	beq a1, a0, label5
+	j label3

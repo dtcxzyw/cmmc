@@ -10,24 +10,27 @@ func:
 	cmp r0, #0
 	mov r4, r0
 	vmov.f32 s16, s0
-	bge label4
+	blt label15
+	subs r6, r0, #1
+	blt label22
+	b label10
+label15:
 	mov r0, #0
 	vmov s0, r0
-	b label2
-label46:
-	mov r0, #0
-	vmov s0, r0
-	vsub.f32 s0, s16, s0
 label2:
 	vpop { s16, s17 }
 	pop { r4, r5, r6, pc }
-label4:
-	subs r6, r4, #1
-	bge label10
+label22:
 	mov r0, #0
 	vmov s0, r0
 	vadd.f32 s16, s16, s0
-	b label46
+	cmp r6, #0
+	bge label9
+label28:
+	mov r0, #0
+	vmov s0, r0
+	vsub.f32 s0, s16, s0
+	b label2
 label9:
 	sub r4, r4, #2
 	vmov.f32 s0, s16
@@ -52,8 +55,8 @@ label10:
 	vsub.f32 s0, s17, s0
 	vadd.f32 s16, s16, s0
 	cmp r6, #0
-	bge label9
-	b label46
+	blt label28
+	b label9
 .globl main
 main:
 	push { lr }
@@ -67,12 +70,14 @@ main:
 	bl func
 	vcmp.f32 s0, #0
 	vmrs APSR_nzcv, FPSCR
-	bne label49
-	mov r0, #112
-	bl putch
-label49:
+	beq label46
+label47:
 	mov r0, #32
 	bl _sysy_stoptime
 	add sp, sp, #4
 	mov r0, #0
 	pop { pc }
+label46:
+	mov r0, #112
+	bl putch
+	b label47

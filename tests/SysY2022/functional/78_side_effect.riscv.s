@@ -12,19 +12,31 @@ main:
 	li s1, 5
 	sd ra, 0(sp)
 	blt s1, zero, label18
-	addiw a1, s2, 1
-	beq a1, zero, label7
-	addiw a1, s2, 2
-	beq a1, zero, label7
-	addiw s2, s2, 3
-	beq s2, zero, label58
-	j label17
-label58:
-	mv a1, s2
-	addiw s2, s2, 1
-	li a0, 14
-	bge s2, a0, label11
-	j label9
+label6:
+	addiw a0, s2, 1
+	bne a0, zero, label15
+	addiw s2, a0, 1
+	li a1, 14
+	blt s2, a1, label9
+	addiw a1, a0, 2
+	bne a1, zero, label12
+	mv a0, a1
+	addiw s2, a1, 1
+	addiw s1, s1, -1
+	bge s1, zero, label6
+	j label18
+label15:
+	addiw a0, s2, 2
+	bne a0, zero, label16
+	addiw s2, a0, 1
+	li a1, 14
+	blt s2, a1, label9
+	addiw a1, a0, 2
+	bne a1, zero, label12
+	mv a0, a1
+	addiw s2, a1, 1
+	addiw s1, s1, -1
+	bge s1, zero, label6
 label18:
 	mv a0, s2
 	jal putint
@@ -41,34 +53,20 @@ label18:
 	ld s0, 24(sp)
 	addi sp, sp, 32
 	ret
-label7:
-	addiw s2, a1, 1
-	li a0, 14
-	bge s2, a0, label11
-label9:
-	mv a0, s2
-	jal putint
-	li a0, 10
-	jal putch
-	addiw s1, s1, -1
-	slliw s0, s0, 1
-	blt s1, zero, label18
-	addiw a1, s2, 1
-	beq a1, zero, label7
-	addiw a1, s2, 2
-	beq a1, zero, label7
+label16:
 	addiw s2, s2, 3
-	beq s2, zero, label58
-	j label17
-label11:
-	addiw s2, a1, 2
-	beq s2, zero, label13
-	addiw a0, a1, 3
-	addiw s2, a1, 4
-	subw a1, a0, s2
-	addiw a0, a1, 1
-	beq a0, zero, label13
-	j label9
+	bne s2, zero, label17
+	mv a0, s2
+	addiw s2, s2, 1
+	li a1, 14
+	blt s2, a1, label9
+	addiw a1, a0, 2
+	bne a1, zero, label12
+	mv a0, a1
+	addiw s2, a1, 1
+	addiw s1, s1, -1
+	bge s1, zero, label6
+	j label18
 label17:
 	mv a0, s2
 	jal putint
@@ -78,19 +76,36 @@ label17:
 	jal putint
 	li a0, 10
 	jal putch
-	mv a1, s2
+	mv a0, s2
 	addiw s2, s2, 1
-	li a0, 14
-	bge s2, a0, label11
-	j label9
-label13:
-	addiw s2, s2, 1
+	li a1, 14
+	blt s2, a1, label9
+	addiw a1, a0, 2
+	bne a1, zero, label12
+	mv a0, a1
+	addiw s2, a1, 1
 	addiw s1, s1, -1
-	blt s1, zero, label18
-	addiw a1, s2, 1
-	beq a1, zero, label7
-	addiw a1, s2, 2
-	beq a1, zero, label7
-	addiw s2, s2, 3
-	beq s2, zero, label58
-	j label17
+	bge s1, zero, label6
+	j label18
+label9:
+	mv a0, s2
+	jal putint
+	li a0, 10
+	jal putch
+	addiw s1, s1, -1
+	slliw s0, s0, 1
+	bge s1, zero, label6
+	j label18
+label12:
+	addiw a1, a0, 3
+	addiw a0, a0, 4
+	subw a2, a1, a0
+	addiw a1, a2, 1
+	bne a1, zero, label46
+	addiw s2, a0, 1
+	addiw s1, s1, -1
+	bge s1, zero, label6
+	j label18
+label46:
+	mv s2, a0
+	j label9

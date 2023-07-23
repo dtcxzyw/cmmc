@@ -9,26 +9,10 @@ hanoi:
 	cmp r0, #1
 	mov r6, r3
 	sub sp, sp, #4
-	bne label14
-	b label2
-label14:
+	beq label2
 	mov r7, r0
 	mov r4, r1
 	mov r5, r2
-	b label4
-label2:
-	mov r0, r1
-	bl putint
-	mov r0, #32
-	bl putch
-	mov r0, r6
-	bl putint
-	mov r0, #44
-	bl putch
-	mov r0, #32
-	bl putch
-	add sp, sp, #4
-	pop { r4, r5, r6, r7, pc }
 label4:
 	sub r7, r7, #1
 	mov r0, r7
@@ -47,22 +31,34 @@ label4:
 	mov r0, #32
 	bl putch
 	cmp r7, #1
-	bne label19
-	mov r1, r5
-	b label2
-label19:
+	beq label19
 	mov r0, r4
 	mov r4, r5
 	mov r5, r0
 	b label4
+label19:
+	mov r1, r5
+label2:
+	mov r0, r1
+	bl putint
+	mov r0, #32
+	bl putch
+	mov r0, r6
+	bl putint
+	mov r0, #44
+	bl putch
+	mov r0, #32
+	bl putch
+	add sp, sp, #4
+	pop { r4, r5, r6, r7, pc }
 .globl main
 main:
 	push { r4, lr }
 	bl getint
 	cmp r0, #0
+	ble label30
 	mov r4, r0
-	ble label26
-label24:
+label28:
 	bl getint
 	mov r3, #3
 	mov r2, #2
@@ -71,8 +67,7 @@ label24:
 	mov r0, #10
 	bl putch
 	subs r4, r4, #1
-	ble label26
-	b label24
-label26:
+	bgt label28
+label30:
 	mov r0, #0
 	pop { r4, pc }

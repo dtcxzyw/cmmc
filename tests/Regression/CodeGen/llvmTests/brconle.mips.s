@@ -29,8 +29,17 @@ test:
 	lw $t2, %lo(j)($t0)
 	move $t0, $t1
 	subu $t1, $t2, $t1
-	blez $t1, label3
+	bgtz $t1, label2
 	nop
+	lui $t1, %hi(k)
+	lw $t1, %lo(k)($t1)
+	subu $t0, $t0, $t1
+	bgtz $t0, label4
+	nop
+label5:
+	jr $ra
+	nop
+label2:
 	li $t1, 1
 	lui $t2, %hi(result1)
 	sw $t1, %lo(result1)($t2)
@@ -39,20 +48,7 @@ test:
 	subu $t0, $t0, $t1
 	blez $t0, label5
 	nop
-	b label46
-	nop
-label3:
-	lui $t1, %hi(k)
-	lw $t1, %lo(k)($t1)
-	subu $t0, $t0, $t1
-	blez $t0, label5
-	nop
-	b label46
-	nop
-label5:
-	jr $ra
-	nop
-label46:
+label4:
 	lui $t0, %hi(result1)
 	sw $zero, %lo(result1)($t0)
 	b label5

@@ -22,9 +22,7 @@ pcrel25:
 	auipc a2, %pcrel_hi(j)
 	lw a0, %pcrel_lo(pcrel24)(a1)
 	lw a1, %pcrel_lo(pcrel25)(a2)
-	bne a0, a1, label12
-	j label2
-label12:
+	beq a0, a1, label2
 	li a0, 1
 pcrel26:
 	auipc a1, %pcrel_hi(result)

@@ -33,7 +33,15 @@ label2:
 	add r2, r0, #4
 	movw r3, #4090
 	cmp r2, r3
-	bge label5
+	blt label4
+	mov r2, #0
+	str r2, [r1, r0, lsl #2]
+	movw r2, #4090
+	add r0, r0, #1
+	cmp r0, r2
+	blt label5
+	b label7
+label4:
 	add r3, r1, r0, lsl #2
 	mov r5, #0
 	str r5, [r1, r0, lsl #2]
@@ -48,8 +56,7 @@ label5:
 	movw r2, #4090
 	add r0, r0, #1
 	cmp r0, r2
-	bge label7
-	b label5
+	blt label5
 label7:
 	movw r1, #:lower16:a
 	mov r0, #4000

@@ -29,8 +29,17 @@ test:
 	lui $t2, %hi(j)
 	lw $t2, %lo(j)($t2)
 	subu $t1, $t1, $t2
-	bgez $t1, label3
+	bltz $t1, label2
 	nop
+	lui $t1, %hi(k)
+	lw $t1, %lo(k)($t1)
+	subu $t0, $t0, $t1
+	bltz $t0, label4
+	nop
+label5:
+	jr $ra
+	nop
+label2:
 	li $t1, 1
 	lui $t2, %hi(result1)
 	sw $t1, %lo(result1)($t2)
@@ -39,20 +48,7 @@ test:
 	subu $t0, $t0, $t1
 	bgez $t0, label5
 	nop
-	b label47
-	nop
-label3:
-	lui $t1, %hi(k)
-	lw $t1, %lo(k)($t1)
-	subu $t0, $t0, $t1
-	bgez $t0, label5
-	nop
-	b label47
-	nop
-label5:
-	jr $ra
-	nop
-label47:
+label4:
 	li $t0, 1
 	lui $t1, %hi(result1)
 	sw $t0, %lo(result1)($t1)

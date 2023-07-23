@@ -7,13 +7,13 @@
 .globl foo
 foo:
 	cmp r0, #0
-	bne label10
+	beq label2
+	add r0, r0, #2
+	b label3
+label2:
 	mov r2, #0
 	cmp r1, #0
 	mov r0, #5
 	moveq r0, r2
-	b label3
-label10:
-	add r0, r0, #2
 label3:
 	bx lr

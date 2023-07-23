@@ -216,31 +216,31 @@ label271:
 select_cross_fpr:
 	slt a0, a0, a1
 	mv a3, a0
-	bge a1, a2, label284
+	blt a1, a2, label273
+	fcvt.s.w f10, a0
+	j label274
+label273:
 	lui a1, 260096
 	lui a2, 266752
 	fmv.w.x f10, a1
 	fmv.w.x f11, a2
 	bne a0, zero, label274
 	fmv.s f10, f11
-	j label274
-label284:
-	fcvt.s.w f10, a3
 label274:
 	ret
 .globl select_round
 select_round:
-pcrel310:
+pcrel308:
 	auipc a0, %pcrel_hi(__cmmc_fp_constant_pool)
-	addi a1, a0, %pcrel_lo(pcrel310)
+	addi a1, a0, %pcrel_lo(pcrel308)
 	flw f11, 0(a1)
 	flw f12, 4(a1)
 	flt.s a0, f10, f11
 	fadd.s f13, f10, f12
 	fmv.s f11, f13
-	bne a0, zero, label309
+	bne a0, zero, label307
 	fmv.s f11, f10
-label309:
+label307:
 	fmv.s f10, f11
 	ret
 .globl select_bitset
@@ -284,16 +284,16 @@ select_imm:
 .globl select_one
 select_one:
 	li a3, 1
-	beq a0, a3, label360
+	beq a0, a3, label358
 	mv a1, a2
-label360:
+label358:
 	mv a0, a1
 	ret
 .globl select_constant
 select_constant:
 	mv a1, a0
 	li a0, -1894007588
-	bne a1, zero, label366
+	bne a1, zero, label364
 	li a0, -899497722
-label366:
+label364:
 	ret

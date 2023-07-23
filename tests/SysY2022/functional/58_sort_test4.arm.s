@@ -8,8 +8,8 @@
 main:
 	push { r4, r5, r6, r7, r8, lr }
 	sub sp, sp, #40
-	mov r0, #4
 	mov r1, #1
+	mov r0, #4
 	mov r4, sp
 	str r0, [sp, #0]
 	mov r0, #3
@@ -30,13 +30,32 @@ main:
 	mov r1, #8
 	str r1, [r4, #36]
 	cmp r0, #9
-	bge label30
+	bge label29
+label4:
 	add r1, r0, #1
 	mov r5, r0
 	mov r3, r1
-	add r2, r1, #4
+	b label5
+label29:
+	mov r5, #0
+	b label14
+label5:
+	add r2, r3, #4
 	cmp r2, #10
-	bge label9
+	blt label8
+	ldr r2, [r4, r5, lsl #2]
+	ldr r6, [r4, r3, lsl #2]
+	cmp r2, r6
+	movgt r5, r3
+	add r3, r3, #1
+	cmp r3, #10
+	blt label9
+	cmp r0, r5
+	bne label13
+	mov r0, r1
+	cmp r1, #9
+	blt label4
+	b label29
 label8:
 	ldr r6, [r4, r5, lsl #2]
 	ldr r7, [r4, r3, lsl #2]
@@ -58,53 +77,30 @@ label8:
 	cmp r6, r7
 	movgt r5, r3
 	mov r3, r2
-	add r2, r2, #4
-	cmp r2, #10
-	bge label9
-	b label8
-label128:
-	mov r5, r2
+	b label5
 label9:
 	ldr r2, [r4, r5, lsl #2]
 	ldr r6, [r4, r3, lsl #2]
 	cmp r2, r6
-	mov r2, r5
-	movgt r2, r3
+	movgt r5, r3
 	add r3, r3, #1
 	cmp r3, #10
-	bge label12
-	b label128
-label30:
-	mov r5, #0
-	b label14
-label12:
-	cmp r0, r2
-	beq label88
-	ldr r3, [r4, r2, lsl #2]
-	ldr r5, [r4, r0, lsl #2]
-	str r5, [r4, r2, lsl #2]
-	str r3, [r4, r0, lsl #2]
+	blt label9
+	cmp r0, r5
+	bne label13
 	mov r0, r1
 	cmp r1, #9
-	bge label30
-	add r1, r1, #1
-	mov r5, r0
-	mov r3, r1
-	add r2, r1, #4
-	cmp r2, #10
-	bge label9
-	b label8
-label88:
+	blt label4
+	b label29
+label13:
+	ldr r2, [r4, r5, lsl #2]
+	ldr r3, [r4, r0, lsl #2]
+	str r3, [r4, r5, lsl #2]
+	str r2, [r4, r0, lsl #2]
 	mov r0, r1
 	cmp r1, #9
-	bge label30
-	add r1, r1, #1
-	mov r5, r0
-	mov r3, r1
-	add r2, r1, #4
-	cmp r2, #10
-	bge label9
-	b label8
+	blt label4
+	b label29
 label14:
 	ldr r0, [r4, r5, lsl #2]
 	bl putint
@@ -112,9 +108,7 @@ label14:
 	bl putch
 	add r5, r5, #1
 	cmp r5, #10
-	bge label16
-	b label14
-label16:
+	blt label14
 	mov r0, #0
 	add sp, sp, #40
 	pop { r4, r5, r6, r7, r8, pc }

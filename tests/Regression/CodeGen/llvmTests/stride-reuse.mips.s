@@ -15,8 +15,12 @@ P:
 .text
 .globl foo
 foo:
-	blez $a0, label2
+	bgtz $a0, label3
 	nop
+label2:
+	jr $ra
+	nop
+label3:
 	lui $t1, %hi(B)
 	addiu $t0, $t1, %lo(B)
 	lwc1 $f4, %lo(B)($t1)
@@ -29,12 +33,8 @@ foo:
 	li $t4, 64
 	sw $t4, %lo(P)($t3)
 	li $t3, 1
-	bne $a0, $t3, label22
+	beq $a0, $t3, label2
 	nop
-	b label2
-	nop
-label22:
-	li $t3, 1
 label4:
 	sll $t4, $t3, 2
 	addu $t5, $t0, $t4
@@ -47,8 +47,7 @@ label4:
 	addiu $t5, $t5, 64
 	sw $t5, 0($t4)
 	addiu $t3, $t3, 1
-	bne $a0, $t3, label4
+	beq $a0, $t3, label2
 	nop
-label2:
-	jr $ra
+	b label4
 	nop

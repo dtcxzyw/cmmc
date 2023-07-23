@@ -167,7 +167,7 @@ static MIROperand getCondFieldFCmp(const MIROperand& op) {
     return MIROperand::asImm(field, OperandType::CondField);
 }
 
-[[maybe_unused]] static MIROperand getInvertedCondField(const MIROperand& operand) {
+MIROperand getInvertedCondField(const MIROperand& operand) {
     const auto cf = static_cast<CondField>(operand.imm());
     CondField field;
     switch(cf) {

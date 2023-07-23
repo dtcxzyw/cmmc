@@ -7,11 +7,11 @@ main:
 	li a2, 4
 	li a3, 3
 	li a4, 5
-	sd s0, 136(sp)
+	sd s0, 40(sp)
 	addi a0, sp, 0
 	addi a1, sp, 88
-	addi s0, sp, 40
-	sd s1, 80(sp)
+	addi s0, sp, 48
+	sd s1, 136(sp)
 	sd ra, 128(sp)
 	sw a2, 88(sp)
 	li a2, 9
@@ -35,51 +35,33 @@ main:
 	sd zero, 16(sp)
 	sd zero, 24(sp)
 	sd zero, 32(sp)
-	li a2, 4
+label2:
+	addiw a2, a3, 4
 	li a4, 10
-	bge a2, a4, label4
-label15:
-	sh2add a3, a3, a1
-	lw a5, 0(a3)
-	sh2add a4, a5, a0
-	lw t0, 0(a4)
-	addi a5, t0, 1
-	sw a5, 0(a4)
-	lw t0, 4(a3)
-	sh2add a4, t0, a0
-	lw a5, 0(a4)
-	addi t0, a5, 1
-	sw t0, 0(a4)
-	lw a5, 8(a3)
-	sh2add a4, a5, a0
-	lw t1, 0(a4)
-	addi t0, t1, 1
-	sw t0, 0(a4)
-	lw a5, 12(a3)
-	sh2add a3, a5, a0
-	lw a4, 0(a3)
-	addi a5, a4, 1
-	sw a5, 0(a3)
-	mv a3, a2
-	addiw a2, a2, 4
-	li a4, 10
-	bge a2, a4, label4
-	j label15
-label4:
-	sh2add a4, a3, a1
+	blt a2, a4, label15
+	sh2add a5, a3, a1
 	addiw a3, a3, 1
-	lw a5, 0(a4)
-	sh2add a2, a5, a0
-	lw a4, 0(a2)
-	addi a5, a4, 1
-	sw a5, 0(a2)
+	lw a4, 0(a5)
+	sh2add a2, a4, a0
+	lw a5, 0(a2)
+	addi a4, a5, 1
+	sw a4, 0(a2)
 	li a2, 10
 	bge a3, a2, label6
-	j label4
+label4:
+	sh2add a5, a3, a1
+	addiw a3, a3, 1
+	lw a4, 0(a5)
+	sh2add a2, a4, a0
+	lw a5, 0(a2)
+	addi a4, a5, 1
+	sw a4, 0(a2)
+	li a2, 10
+	blt a3, a2, label4
 label6:
-	lw a3, 4(sp)
-	lw a4, 0(sp)
-	addw a2, a3, a4
+	lw a4, 4(sp)
+	lw a3, 0(sp)
+	addw a2, a4, a3
 	li a4, 10
 	sw a2, 4(sp)
 	lw a3, 8(sp)
@@ -106,8 +88,45 @@ label6:
 	lw a3, 36(sp)
 	addw a2, a2, a3
 	sw a2, 36(sp)
+	j label7
+label15:
+	sh2add a3, a3, a1
+	lw a5, 0(a3)
+	sh2add a4, a5, a0
+	lw t0, 0(a4)
+	addi a5, t0, 1
+	sw a5, 0(a4)
+	lw t0, 4(a3)
+	sh2add a4, t0, a0
+	lw a5, 0(a4)
+	addi t0, a5, 1
+	sw t0, 0(a4)
+	lw a5, 8(a3)
+	sh2add a4, a5, a0
+	lw t1, 0(a4)
+	addi t0, t1, 1
+	sw t0, 0(a4)
+	lw a5, 12(a3)
+	sh2add a3, a5, a0
+	lw a4, 0(a3)
+	addi a5, a4, 1
+	sw a5, 0(a3)
+	mv a3, a2
+	j label2
+label7:
 	addiw a2, a4, -4
-	ble a2, zero, label9
+	bgt a2, zero, label14
+	addiw a4, a4, -1
+	sh2add a5, a4, a1
+	lw a2, 0(a5)
+	sh2add a3, a2, a0
+	lw t0, 0(a3)
+	addiw a5, t0, -1
+	sw a5, 0(a3)
+	sh2add a3, a5, s0
+	sw a2, 0(a3)
+	bgt a4, zero, label9
+	j label188
 label14:
 	addiw a5, a4, -1
 	sh2add a3, a5, a1
@@ -140,24 +159,22 @@ label14:
 	sw a5, 0(a4)
 	mv a4, a2
 	sw a3, 0(t0)
-	addiw a2, a2, -4
-	ble a2, zero, label9
-	j label14
-label9:
-	addiw a2, a4, -1
-	sh2add a5, a2, a1
-	lw a3, 0(a5)
-	sh2add a4, a3, a0
-	lw t0, 0(a4)
-	addiw a5, t0, -1
-	sw a5, 0(a4)
-	sh2add a4, a5, s0
-	sw a3, 0(a4)
-	ble a2, zero, label102
-	mv a4, a2
-	j label9
-label102:
+	j label7
+label188:
 	mv s1, zero
+	j label11
+label9:
+	addiw a4, a4, -1
+	sh2add a5, a4, a1
+	lw a2, 0(a5)
+	sh2add a3, a2, a0
+	lw t0, 0(a3)
+	addiw a5, t0, -1
+	sw a5, 0(a3)
+	sh2add a3, a5, s0
+	sw a2, 0(a3)
+	bgt a4, zero, label9
+	j label188
 label11:
 	sh2add a1, s1, s0
 	lw a0, 0(a1)
@@ -166,12 +183,10 @@ label11:
 	jal putch
 	li a0, 10
 	addiw s1, s1, 1
-	bge s1, a0, label13
-	j label11
-label13:
+	blt s1, a0, label11
 	mv a0, zero
 	ld ra, 128(sp)
-	ld s1, 80(sp)
-	ld s0, 136(sp)
+	ld s1, 136(sp)
+	ld s0, 40(sp)
 	addi sp, sp, 144
 	ret

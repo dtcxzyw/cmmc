@@ -151,6 +151,10 @@ static MIRInst emitGotoImpl(MIRBasicBlock*) {
     reportUnreachable(CMMC_LOCATION());
 }
 
+static void inverseBranchImpl(MIRInst&, MIRBasicBlock*) {
+    reportUnreachable(CMMC_LOCATION());
+}
+
 CMMC_TARGET_NAMESPACE_END
 
 #include <Generic/InstInfoImpl.hpp>

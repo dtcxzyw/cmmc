@@ -859,9 +859,7 @@ label782:
 	bl putch
 	add r4, r4, #1
 	cmp r4, #21
-	bge label784
-	b label782
-label784:
+	blt label782
 	mov r0, #0
 	add sp, sp, #4
 	pop { r4, r5, pc }

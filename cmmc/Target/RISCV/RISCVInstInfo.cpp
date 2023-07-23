@@ -90,6 +90,45 @@ static bool isOperandCC(const MIROperand& op) {
         op.imm() <= static_cast<intmax_t>(CompareOp::ICmpUnsignedGreaterEqual);
 }
 
+static void inverseBranchImpl(MIRInst& inst, MIRBasicBlock* newTarget) {
+    switch(inst.opcode()) {
+        case BEQ:
+            inst.setOpcode(BNE);
+            break;
+        case BNE:
+            inst.setOpcode(BEQ);
+            break;
+        case BLT:
+            inst.setOpcode(BGE);
+            break;
+        case BLTU:
+            inst.setOpcode(BGEU);
+            break;
+        case BLE:
+            inst.setOpcode(BGT);
+            break;
+        case BLEU:
+            inst.setOpcode(BGTU);
+            break;
+        case BGT:
+            inst.setOpcode(BLE);
+            break;
+        case BGTU:
+            inst.setOpcode(BLEU);
+            break;
+        case BGE:
+            inst.setOpcode(BLT);
+            break;
+        case BGEU:
+            inst.setOpcode(BLTU);
+            break;
+        default:
+            reportUnreachable(CMMC_LOCATION());
+    }
+    inst.setOperand<2>(MIROperand::asReloc(newTarget));
+    inst.setOperand<3>(MIROperand::asProb(1.0 - inst.getOperand(3).prob()));
+}
+
 CMMC_TARGET_NAMESPACE_END
 
 #include <RISCV/InstInfoImpl.hpp>

@@ -13,11 +13,8 @@ result:
 test:
 	lui $t0, %hi(i)
 	lw $t0, %lo(i)($t0)
-	bne $t0, $zero, label9
+	beq $t0, $zero, label2
 	nop
-	b label2
-	nop
-label9:
 	li $t0, 1
 	lui $t1, %hi(result)
 	sw $t0, %lo(result)($t1)

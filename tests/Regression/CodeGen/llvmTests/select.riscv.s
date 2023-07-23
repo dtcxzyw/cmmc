@@ -233,44 +233,44 @@ label248:
 	ret
 .globl select_udiv_1
 select_udiv_1:
-	beq a0, zero, label258
-	divuw a0, a1, a2
-	j label251
-label258:
+	bne a0, zero, label250
 	mv a0, a2
 label251:
 	ret
+label250:
+	divuw a0, a1, a2
+	j label251
 .globl select_udiv_2
 select_udiv_2:
-	beq a0, zero, label270
-	mv a0, a1
+	bne a0, zero, label270
+	divuw a0, a1, a2
 	j label262
 label270:
-	divuw a0, a1, a2
+	mv a0, a1
 label262:
 	ret
 .globl select_udiv_3
 select_udiv_3:
-	beq a0, zero, label281
-	mv a0, a1
-	j label274
-label281:
+	bne a0, zero, label281
 	li a2, 42
 	divuw a0, a1, a2
+	j label274
+label281:
+	mv a0, a1
 label274:
 	ret
 .globl select_xor_1
 select_xor_1:
 	andi a2, a1, 255
 	andi a3, a2, 1
-	bne a3, zero, label296
-	li a1, 65535
-	and a0, a0, a1
-	j label287
-label296:
+	beq a3, zero, label286
 	li a1, 65535
 	and a2, a0, a1
 	xori a0, a2, 43
+	j label287
+label286:
+	li a1, 65535
+	and a0, a0, a1
 label287:
 	li a1, 65535
 	and a0, a0, a1
@@ -280,14 +280,14 @@ select_xor_1b:
 	andi a3, a1, 255
 	li a1, 1
 	andi a2, a3, 1
-	beq a2, a1, label316
-	li a1, 65535
-	and a0, a0, a1
-	j label307
-label316:
+	bne a2, a1, label306
 	li a1, 65535
 	and a2, a0, a1
 	xori a0, a2, 43
+	j label307
+label306:
+	li a1, 65535
+	and a0, a0, a1
 label307:
 	li a1, 65535
 	and a0, a0, a1
@@ -315,14 +315,14 @@ label350:
 select_xor_3:
 	andi a2, a1, 255
 	andi a3, a2, 1
-	bne a3, zero, label362
+	beq a3, zero, label352
+	li a1, 65535
+	and a0, a0, a1
+	j label353
+label352:
 	li a1, 65535
 	and a2, a0, a1
 	xori a0, a2, 43
-	j label353
-label362:
-	li a1, 65535
-	and a0, a0, a1
 label353:
 	li a1, 65535
 	and a0, a0, a1
@@ -332,14 +332,14 @@ select_xor_3b:
 	andi a3, a1, 255
 	li a1, 1
 	andi a2, a3, 1
-	beq a2, a1, label382
+	bne a2, a1, label372
+	li a1, 65535
+	and a0, a0, a1
+	j label373
+label372:
 	li a1, 65535
 	and a2, a0, a1
 	xori a0, a2, 43
-	j label373
-label382:
-	li a1, 65535
-	and a0, a0, a1
 label373:
 	li a1, 65535
 	and a0, a0, a1

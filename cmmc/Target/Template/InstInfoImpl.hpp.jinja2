@@ -86,6 +86,9 @@ public:
     MIRInst emitGoto(MIRBasicBlock* target) const override {
         return emitGotoImpl(target);
     }
+    void inverseBranch(MIRInst& inst, MIRBasicBlock* newTarget) const override {
+        inverseBranchImpl(inst, newTarget);
+    }
 };
 
 const TargetInstInfo& get{{target}}InstInfo() {
