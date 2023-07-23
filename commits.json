@@ -555,6 +555,11 @@
       "parent": "cfc5994fab038a4bff09d9bdd6bf38b4dab836ba",
       "time": "2023-07-17 00:59:02 +0800"
     },
+    "aa4929e70bd9e93a7b8952c78a68675eb0a06c7a": {
+      "message": "misc: fix header",
+      "parent": "faeaffd4ee4e57ece4ece4f3a2656c9c8d6e2e94",
+      "time": "2023-07-23 22:00:56 +0800"
+    },
     "aab1a0a63041678fdafb3988b7e797ea536758ec": {
       "message": "ci: record historical summary data",
       "parent": "53380379f6f03d5950eb3de091380278c20ee681",
@@ -796,5 +801,5 @@
       "time": "2023-07-06 01:05:50 +0800"
     }
   },
-  "head": "faeaffd4ee4e57ece4ece4f3a2656c9c8d6e2e94"
+  "head": "aa4929e70bd9e93a7b8952c78a68675eb0a06c7a"
 }
