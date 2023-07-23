@@ -100,7 +100,7 @@ label65:
 	sh2add t1, t0, a5
 	lw t2, 0(t1)
 	sh2add t1, a1, a3
-	addiw t0, t2, 1
+	addi t0, t2, 1
 	addiw a1, a1, 1
 	sw t0, 0(t1)
 	li t0, 14
@@ -113,7 +113,7 @@ label65:
 	sh2add t1, t0, a5
 	lw t2, 0(t1)
 	sh2add t1, a1, a3
-	addiw t0, t2, 1
+	addi t0, t2, 1
 	addiw a1, a1, 1
 	sw t0, 0(t1)
 	li t0, 14
@@ -126,7 +126,7 @@ label65:
 	sh2add t1, t0, a5
 	lw t2, 0(t1)
 	sh2add t1, a1, a3
-	addiw t0, t2, 1
+	addi t0, t2, 1
 	addiw a1, a1, 1
 	sw t0, 0(t1)
 	li t0, 14
@@ -176,7 +176,7 @@ label11:
 	sh2add t1, t0, a5
 	lw t2, 0(t1)
 	sh2add t1, a1, a3
-	addiw t0, t2, 1
+	addi t0, t2, 1
 	addiw a1, a1, 1
 	sw t0, 0(t1)
 	li t0, 14
@@ -189,7 +189,7 @@ label11:
 	sh2add t1, t0, a5
 	lw t2, 0(t1)
 	sh2add t1, a1, a3
-	addiw t0, t2, 1
+	addi t0, t2, 1
 	addiw a1, a1, 1
 	sw t0, 0(t1)
 	li t0, 14
@@ -202,7 +202,7 @@ label11:
 	sh2add t1, t0, a5
 	lw t2, 0(t1)
 	sh2add t1, a1, a3
-	addiw t0, t2, 1
+	addi t0, t2, 1
 	addiw a1, a1, 1
 	sw t0, 0(t1)
 	li t0, 14
@@ -215,7 +215,7 @@ label11:
 	sh2add t1, t0, a5
 	lw t2, 0(t1)
 	sh2add t1, a1, a3
-	addiw t0, t2, 1
+	addi t0, t2, 1
 	addiw a1, a1, 1
 	sw t0, 0(t1)
 	li t0, 14
@@ -225,7 +225,7 @@ label197:
 	sh2add t1, t0, a5
 	lw t2, 0(t1)
 	sh2add t1, a1, a3
-	addiw t0, t2, 1
+	addi t0, t2, 1
 	addiw a1, a1, 1
 	sw t0, 0(t1)
 	li t0, 14
@@ -256,7 +256,7 @@ label10:
 	sh2add t1, t0, a5
 	lw t2, 0(t1)
 	sh2add t1, a1, a3
-	addiw t0, t2, 1
+	addi t0, t2, 1
 	addiw a1, a1, 1
 	sw t0, 0(t1)
 	li t0, 14
@@ -269,7 +269,7 @@ label10:
 	sh2add t1, t0, a5
 	lw t2, 0(t1)
 	sh2add t1, a1, a3
-	addiw t0, t2, 1
+	addi t0, t2, 1
 	addiw a1, a1, 1
 	sw t0, 0(t1)
 	li t0, 14
@@ -282,7 +282,7 @@ label10:
 	sh2add t1, t0, a5
 	lw t2, 0(t1)
 	sh2add t1, a1, a3
-	addiw t0, t2, 1
+	addi t0, t2, 1
 	addiw a1, a1, 1
 	sw t0, 0(t1)
 	li t0, 14
@@ -295,7 +295,7 @@ label10:
 	sh2add t1, t0, a5
 	lw t2, 0(t1)
 	sh2add t1, a1, a3
-	addiw t0, t2, 1
+	addi t0, t2, 1
 	addiw a1, a1, 1
 	sw t0, 0(t1)
 	li t0, 14
@@ -310,7 +310,7 @@ label204:
 	sh2add t1, t0, a5
 	lw t2, 0(t1)
 	sh2add t1, a1, a3
-	addiw t0, t2, 1
+	addi t0, t2, 1
 	addiw a1, a1, 1
 	sw t0, 0(t1)
 	li t0, 14

@@ -38,7 +38,7 @@ test_mul_by_13:
 	slliw a3, a1, 3
 	subw a0, a3, a1
 	li a3, 65535
-	slliw a2, a0, 1
+	slli a2, a0, 1
 	subw a1, a2, a1
 	and a0, a1, a3
 	ret
@@ -155,7 +155,7 @@ test_mul_by_26:
 	sext.h a1, a0
 	slliw a2, a1, 3
 	subw a3, a2, a1
-	slliw a0, a3, 1
+	slli a0, a3, 1
 	li a3, 65535
 	subw a2, a0, a1
 	slliw a1, a2, 1
@@ -184,7 +184,7 @@ test_mul_by_29:
 	slliw a3, a1, 4
 	subw a0, a3, a1
 	li a3, 65535
-	slliw a2, a0, 1
+	slli a2, a0, 1
 	subw a1, a2, a1
 	and a0, a1, a3
 	ret

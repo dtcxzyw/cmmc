@@ -23,7 +23,7 @@ label5:
 	addiw s1, s1, -1
 	sh2add a1, s1, s0
 	lw a2, 0(a1)
-	sext.w a0, a2
+	mv a0, a2
 	beq s1, zero, label9
 	addiw s1, s1, -1
 	sh2add a1, s1, s0

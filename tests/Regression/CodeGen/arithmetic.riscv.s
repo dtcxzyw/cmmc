@@ -368,7 +368,7 @@ mul_with_constant_100:
 mul_with_constant_1000:
 	slliw a1, a0, 6
 	subw a2, a1, a0
-	slliw a3, a2, 1
+	slli a3, a2, 1
 	subw a1, a3, a0
 	slliw a0, a1, 3
 	ret
@@ -428,16 +428,16 @@ mul_with_constant_neg_82:
 mul_with_constant_neg_103:
 	slliw a3, a0, 3
 	subw a1, a3, a0
-	slliw a2, a1, 1
+	slli a2, a1, 1
 	subw a3, a2, a0
-	slliw a1, a3, 3
+	slli a1, a3, 3
 	subw a0, a0, a1
 	ret
 .globl mul_with_constant_neg_59
 mul_with_constant_neg_59:
 	slliw a1, a0, 4
 	subw a2, a1, a0
-	slliw a3, a2, 2
+	slli a3, a2, 2
 	subw a0, a0, a3
 	ret
 .globl mul_with_constant_17
@@ -469,7 +469,7 @@ mul_with_constant_8193:
 mul_with_constant_270369:
 	slliw a2, a0, 5
 	addw a1, a2, a0
-	slliw a3, a1, 13
+	slli a3, a1, 13
 	addw a0, a3, a1
 	ret
 .globl mul_with_constant_33

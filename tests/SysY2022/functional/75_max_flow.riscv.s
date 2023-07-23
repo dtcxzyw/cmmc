@@ -371,11 +371,11 @@ label171:
 	sh2add a5, a3, a4
 	sh2add a3, a3, a2
 	sw zero, 0(a5)
-	addiw a2, a0, 1
+	addi a2, a0, 1
 	sw a0, 0(a3)
 	sw a2, 0(s7)
 	lw a0, 0(a1)
-	addiw a2, a0, 1
+	addi a2, a0, 1
 	sw a2, 0(a1)
 	ble s6, zero, label273
 	j label171

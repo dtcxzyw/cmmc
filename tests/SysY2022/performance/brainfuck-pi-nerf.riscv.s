@@ -195,7 +195,7 @@ label29:
 	bne t0, t1, label30
 	sh2add t0, a3, a1
 	lw t1, 0(t0)
-	addiw t2, t1, 1
+	addi t2, t1, 1
 	sw t2, 0(t0)
 	addiw a5, a5, 1
 	ble s2, a5, label22
@@ -352,7 +352,7 @@ label30:
 	bne t0, t1, label31
 	sh2add t0, a3, a1
 	lw t2, 0(t0)
-	addiw t1, t2, -1
+	addi t1, t2, -1
 	sw t1, 0(t0)
 	addiw a5, a5, 1
 	ble s2, a5, label22

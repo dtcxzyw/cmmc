@@ -47,7 +47,7 @@ label3:
 	fsw f10, 0(t0)
 	slliw t0, a4, 1
 	addiw a4, a4, 1
-	addiw t1, t0, 64
+	addi t1, t0, 64
 	sw t1, 0(a5)
 	bne a0, a4, label3
 label5:

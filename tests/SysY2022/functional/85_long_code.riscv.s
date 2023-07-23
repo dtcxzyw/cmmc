@@ -18,7 +18,7 @@ QuickSort:
 	mv s2, a1
 	lw a0, 0(a3)
 	mv a3, a2
-	addiw a2, a0, -1
+	addi a2, a0, -1
 	ble s1, a1, label8
 	bge a1, a3, label13
 	sh2add a5, a3, s0
@@ -126,7 +126,7 @@ label8:
 	mv s2, a1
 	lw a0, 0(a3)
 	mv a3, s1
-	addiw a2, a0, -1
+	addi a2, a0, -1
 	bge a1, s1, label13
 	sh2add a5, s1, s0
 	lw a4, 0(a5)
@@ -349,7 +349,7 @@ label436:
 	li a2, 32
 	li a3, 31
 	subw a4, a2, zero
-	addiw a0, a4, -1
+	addi a0, a4, -1
 	bge zero, a3, label442
 	mv a2, zero
 	ble a0, zero, label277
@@ -398,7 +398,7 @@ label277:
 	li a2, 32
 	li a3, 31
 	subw a4, a2, a1
-	addiw a0, a4, -1
+	addi a0, a4, -1
 	bge a1, a3, label442
 	mv a2, zero
 	ble a0, zero, label277
@@ -675,7 +675,7 @@ label592:
 	li a2, 32
 	li a4, 31
 	subw a3, a2, zero
-	addiw a0, a3, -1
+	addi a0, a3, -1
 	bge zero, a4, label598
 	mv a2, zero
 	ble a0, zero, label303
@@ -717,7 +717,7 @@ label303:
 	li a2, 32
 	li a4, 31
 	subw a3, a2, a1
-	addiw a0, a3, -1
+	addi a0, a3, -1
 	bge a1, a4, label598
 	mv a2, zero
 	ble a0, zero, label303
@@ -989,7 +989,7 @@ label740:
 	li a3, 3
 	lw a4, 0(a2)
 	mv a2, zero
-	sext.w a1, a4
+	mv a1, a4
 	beq zero, a3, label339
 	ld a3, 296(sp)
 	mv a2, a3
@@ -1061,7 +1061,7 @@ label796:
 	mv a4, a3
 	li a2, 1
 	lw a5, 0(a3)
-	sext.w a1, a5
+	mv a1, a5
 	li a3, 32
 	bge a2, a3, label800
 	li a3, 2
@@ -1182,7 +1182,7 @@ label339:
 	li a3, 3
 	lw a4, 0(a2)
 	andi a2, a0, 3
-	sext.w a1, a4
+	mv a1, a4
 	beq a2, a3, label339
 	ld a3, 296(sp)
 	sh2add a2, a0, a3

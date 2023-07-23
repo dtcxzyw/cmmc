@@ -66,7 +66,7 @@ pcrel163:
 	bne s0, a0, label65
 	lw a0, 0(s2)
 	li s10, 1
-	addiw a1, a0, 1
+	addi a1, a0, 1
 	sw a1, 0(s2)
 	lw s11, 0(s1)
 	bgt s10, s11, label85
@@ -93,7 +93,7 @@ label6:
 	bne s0, a0, label65
 	lw a0, 0(s2)
 	li s10, 1
-	addiw a1, a0, 1
+	addi a1, a0, 1
 	sw a1, 0(s2)
 	lw s11, 0(s1)
 	bgt s10, s11, label85
@@ -140,7 +140,7 @@ label10:
 	bne s0, a0, label65
 	lw a0, 0(s2)
 	li s10, 1
-	addiw a1, a0, 1
+	addi a1, a0, 1
 	sw a1, 0(s2)
 	lw s11, 0(s1)
 	bgt s10, s11, label85

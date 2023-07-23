@@ -1106,7 +1106,7 @@ InstSelection:
         Rs2: $Rhs
 
   - Pattern:
-      SLLIW:
+      $Template:
         Rd: $Dst
         Rs1:
           SRAIW:
@@ -1115,6 +1115,7 @@ InstSelection:
             Imm: $Shift1
         Imm: $Shift2
         $Predicate: ($Shift1) == ($Shift2) && selectShiftImm12Mask($Shift1, [$Mask])
+      $Instances: [SLLI, SLLIW]
     Replace:
       ANDI:
         Rd: $Dst

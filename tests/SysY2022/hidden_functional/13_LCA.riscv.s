@@ -164,7 +164,7 @@ label172:
 	sh2add a3, s6, s6
 	addiw a1, a0, -48
 	slliw a2, a3, 1
-	addiw a4, a2, -48
+	addi a4, a2, -48
 	li a2, 10
 	addw s6, s4, a4
 	bgeu a1, a2, label90
@@ -262,7 +262,7 @@ label98:
 	addiw a1, a0, -48
 	slliw a4, a2, 1
 	li a2, 10
-	addiw a3, a4, -48
+	addi a3, a4, -48
 	addw s7, s5, a3
 	bgeu a1, a2, label101
 	mv s5, a0
@@ -370,7 +370,7 @@ label112:
 	addiw a1, a0, -48
 	slliw a4, a2, 1
 	li a2, 10
-	addiw a3, a4, -48
+	addi a3, a4, -48
 	addw s10, s8, a3
 	bgeu a1, a2, label115
 	mv s8, a0
@@ -456,7 +456,7 @@ label122:
 	addiw a1, a0, -48
 	slliw a3, a2, 1
 	li a2, 10
-	addiw a4, a3, -48
+	addi a4, a3, -48
 	addw s11, s10, a4
 	bgeu a1, a2, label120
 	mv s10, a0
@@ -646,7 +646,7 @@ label149:
 	sh2add a4, s5, s5
 	addiw a1, a0, -48
 	slliw a2, a4, 1
-	addiw a3, a2, -48
+	addi a3, a2, -48
 	li a2, 10
 	addw s5, s4, a3
 	bgeu a1, a2, label152
@@ -699,7 +699,7 @@ label138:
 	sh2add a3, s4, s4
 	addiw a1, a0, -48
 	slliw a2, a3, 1
-	addiw a4, a2, -48
+	addi a4, a2, -48
 	li a2, 10
 	addw s4, s2, a4
 	bgeu a1, a2, label141

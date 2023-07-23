@@ -374,11 +374,11 @@ label77:
 	lw a3, 0(a5)
 	sw a4, 0(s1)
 	lw t0, 0(s0)
-	addiw t1, t0, -1
+	addi t1, t0, -1
 	sh2add a5, t0, s0
 	lw a4, 0(a5)
 	sw t1, 0(s0)
-	addiw t1, t0, -2
+	addi t1, t0, -2
 	lw a5, -4(a5)
 	li t0, 43
 	sw t1, 0(s0)
@@ -491,11 +491,11 @@ label45:
 	addiw a4, a4, -1
 	sw a4, 0(s1)
 	lw t0, 0(s0)
-	addiw t1, t0, -1
+	addi t1, t0, -1
 	sh2add a5, t0, s0
 	lw a4, 0(a5)
 	sw t1, 0(s0)
-	addiw t1, t0, -2
+	addi t1, t0, -2
 	lw a5, -4(a5)
 	li t0, 43
 	sw t1, 0(s0)

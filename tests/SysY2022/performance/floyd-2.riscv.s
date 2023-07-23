@@ -45,7 +45,7 @@ pcrel375:
 	sw a4, 0(a0)
 	ble s0, a1, label10
 	mulw a4, s0, a1
-	sext.w a3, a4
+	mv a3, a4
 	bgt s0, a1, label9
 	li a4, -1
 	addiw a1, a1, 1
@@ -53,7 +53,7 @@ pcrel375:
 	sw a4, 0(a3)
 	ble s0, a1, label10
 	mulw a4, s0, a1
-	sext.w a3, a4
+	mv a3, a4
 	bgt s0, a1, label9
 	li a4, -1
 	addiw a1, a1, 1
@@ -137,14 +137,14 @@ label24:
 	ble s0, a3, label25
 	mv a4, zero
 	mv a5, zero
-	sext.w a2, a3
+	mv a2, a3
 	ble s0, zero, label24
 	mv t0, zero
-	sh2add t2, a2, a0
+	sh2add t2, a3, a0
 	lw t1, 0(t2)
 	blt t1, zero, label23
-	sext.w t3, a1
-	sh2add t4, t3, a0
+	mv t3, a1
+	sh2add t4, a1, a0
 	lw t2, 0(t4)
 	blt t2, zero, label23
 	mv t3, zero
@@ -156,7 +156,7 @@ label24:
 	sw t1, 0(a0)
 	li t0, 1
 	ble s0, t0, label17
-	sh2add t2, a2, a0
+	sh2add t2, a3, a0
 	lw t1, 0(t2)
 	blt t1, zero, label23
 	addw t3, a1, t0
@@ -178,11 +178,11 @@ label17:
 	sh2add t4, t3, a0
 	lw t2, 0(t4)
 	blt t2, zero, label23
-	sext.w t3, a5
-	sh2add t4, t3, a0
+	mv t3, a5
+	sh2add t4, a5, a0
 	lw t5, 0(t4)
 	bge t5, zero, label21
-	sh2add t3, t3, a0
+	sh2add t3, a5, a0
 	addw t1, t1, t2
 	sw t1, 0(t3)
 	li t0, 1
@@ -267,11 +267,11 @@ label10:
 	ble s0, zero, label10
 	mv a1, zero
 	mv a4, zero
-	sext.w a3, a2
+	mv a3, a2
 	bgt s0, zero, label9
 	li a4, -1
 	li a1, 1
-	sh2add a3, a3, a0
+	sh2add a3, a2, a0
 	sw a4, 0(a3)
 	ble s0, a1, label10
 	mulw a4, s0, a1

@@ -12,6 +12,7 @@
     limitations under the License.
 */
 
+#include "cmmc/Support/Diagnostics.hpp"
 #include <RISCV/InstInfoDecl.hpp>
 #include <cmmc/CodeGen/InstInfo.hpp>
 #include <cmmc/CodeGen/MIR.hpp>
@@ -20,6 +21,8 @@
 #include <deque>
 #include <iostream>
 #include <iterator>
+#include <queue>
+#include <unordered_map>
 #include <vector>
 
 CMMC_TARGET_NAMESPACE_BEGIN
@@ -598,6 +601,224 @@ static bool simplifyOpWithZero(MIRFunction& func, const CodeGenContext&) {
         }
     return modified;
 }
+static bool isWProvider(uint32_t opcode) {
+    switch(opcode) {
+        case ADDIW:
+        case ADDW:
+        case SUBW:
+        case MULW:
+        case DIVW:
+        case DIVUW:
+        case REMW:
+        case REMUW:
+        case SEXT_W:
+        case SLLIW:
+        case SRAIW:
+        case SRLIW:
+        case SLLW:
+        case SRAW:
+        case SRLW:
+        case LW:
+        case LH:
+        case LB:
+            return true;
+        default:
+            return false;
+    }
+}
+static bool relaxWInst(MIRFunction& func, const CodeGenContext& ctx) {
+    if(!ctx.flags.inSSAForm)
+        return false;
+    std::unordered_map<MIRInst*, std::vector<MIRInst*>> users;
+    auto isWUser = [](uint32_t opcode) {
+        switch(opcode) {
+            case ADDIW:
+            case ADD_UW:
+            case ADDW:
+            case SUBW:
+            case MULW:
+            case DIVW:
+            case DIVUW:
+            case REMW:
+            case REMUW:
+            case SEXT_W:
+            case SLLIW:
+            case SRAIW:
+            case SRLIW:
+            case SLLW:
+            case SRAW:
+            case SRLW:
+            case SW:
+            case SH:
+            case SB:
+            case FCVT_S_W:
+                return true;
+            default:
+                return false;
+        }
+    };
+
+    auto isInterestWInst = [](uint32_t opcode) {
+        switch(opcode) {
+            case ADDIW:
+            case SEXT_W:
+            case SLLIW:
+            case SRAIW:
+            case SRLIW:
+                return true;
+            default:
+                return false;
+        }
+    };
+    auto needWProvider = [](uint32_t opcode) {
+        switch(opcode) {
+            case ADDIW:
+            case ADDW:
+            case SUBW:
+            case SLLIW:
+            case SRAIW:
+            case SRLIW:
+            case SLLW:
+            case SRAW:
+            case SRLW:
+                return true;
+            default:
+                return false;
+        }
+    };
+
+    for(auto& block : func.blocks()) {
+        std::unordered_map<MIROperand, MIRInst*, MIROperandHasher> defs;
+        for(auto& inst : block->instructions()) {
+            auto& instInfo = ctx.instInfo.getInstInfo(inst);
+            for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx)
+                if(instInfo.getOperandFlag(idx) & OperandFlagUse) {
+                    const auto def = defs.find(inst.getOperand(idx));
+                    if(def != defs.cend()) {
+                        const auto userIter = users.find(def->second);
+                        if(userIter != users.end())
+                            userIter->second.push_back(&inst);
+                    }
+                }
+            for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx)
+                if(instInfo.getOperandFlag(idx) & OperandFlagDef) {
+                    defs[inst.getOperand(idx)] = &inst;
+                    break;
+                }
+            if(isInterestWInst(inst.opcode())) {
+                bool allWOperand = true;
+                if(needWProvider(inst.opcode())) {
+                    for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx)
+                        if(instInfo.getOperandFlag(idx) & OperandFlagUse) {
+                            const auto def = defs.find(inst.getOperand(idx));
+                            if(def != defs.cend()) {
+                                if(isWProvider(def->second->opcode()))
+                                    continue;
+                            }
+                            allWOperand = false;
+                            break;
+                        }
+                }
+                if(allWOperand)
+                    users[&inst];  // touch
+            }
+        }
+    }
+
+    bool modified = false;
+    std::unordered_set<MIRInst*> noRelax;
+    for(auto& [u, userList] : users) {
+        if(noRelax.count(u))
+            continue;
+
+        bool allWUser = true;
+        for(auto user : userList) {
+            if(!isWUser(user->opcode())) {
+                allWUser = false;
+                break;
+            }
+        }
+
+        // TODO: relax sext.w if its input is a signed 32-bit integer.
+        if(allWUser) {
+            RISCVInst relaxed;
+            switch(u->opcode()) {
+                case ADDIW:
+                    relaxed = ADDI;
+                    break;
+                case ADDW:
+                    relaxed = ADD;
+                    break;
+                case SUBW:
+                    relaxed = SUB;
+                    break;
+                case MULW:
+                    relaxed = MUL;
+                    break;
+                case SEXT_W:
+                    relaxed = MoveGPR;
+                    break;
+                case SLLIW:
+                    relaxed = SLLI;
+                    break;
+                case SRAIW:
+                    relaxed = SRAI;
+                    break;
+                case SRLIW:
+                    relaxed = SRLI;
+                    break;
+                case SLLW:
+                    relaxed = SLL;
+                    break;
+                case SRAW:
+                    relaxed = SRA;
+                    break;
+                case SRLW:
+                    relaxed = SRL;
+                    break;
+                default:
+                    reportUnreachable(CMMC_LOCATION());
+            }
+            u->setOpcode(relaxed);
+            modified = true;
+            if(u->opcode() != SRA && u->opcode() != SRAI)
+                for(auto user : userList)
+                    noRelax.insert(user);
+        }
+    }
+    return modified;
+}
+
+static bool removeSExtW(MIRFunction& func, const CodeGenContext& ctx) {
+    bool modified = false;
+    for(auto& block : func.blocks()) {
+        std::unordered_map<MIROperand, MIRInst*, MIROperandHasher> defs;
+        for(auto& inst : block->instructions()) {
+            if(inst.opcode() == SEXT_W) {
+                const auto& src = inst.getOperand(1);
+                if(auto iter = defs.find(src); iter != defs.cend()) {
+                    if(isWProvider(iter->second->opcode())) {
+                        inst.setOpcode(MoveGPR);
+                        modified = true;
+                    }
+                }
+                defs[inst.getOperand(0)] = &inst;
+            } else {
+                auto& instInfo = ctx.instInfo.getInstInfo(inst);
+                for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx)
+                    if(instInfo.getOperandFlag(idx) & OperandFlagDef) {
+                        defs[inst.getOperand(idx)] = &inst;
+                        break;
+                    }
+                // TODO: use IPRAInfo
+                if(requireFlag(instInfo.getInstFlag(), InstFlagCall))
+                    defs.clear();
+            }
+        }
+    }
+
+    return modified;
+}
 
 bool RISCVScheduleModel_sifive_u74::peepholeOpt(MIRFunction& func, const CodeGenContext& ctx) const {
     bool modified = false;
@@ -612,6 +833,8 @@ bool RISCVScheduleModel_sifive_u74::peepholeOpt(MIRFunction& func, const CodeGen
     modified |= branch2jump(func, ctx);
     modified |= removeDeadBranch(func, ctx);
     modified |= simplifyOpWithZero(func, ctx);
+    modified |= relaxWInst(func, ctx);
+    modified |= removeSExtW(func, ctx);
     return modified;
 }
 

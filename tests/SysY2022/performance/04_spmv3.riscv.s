@@ -262,7 +262,7 @@ label35:
 	sh2add a5, a3, s1
 	mv t0, a4
 	lw t1, 0(a5)
-	addiw a3, t1, -1
+	addi a3, t1, -1
 	addiw a4, a4, 4
 	ble a1, a4, label39
 	j label41
@@ -395,7 +395,7 @@ label15:
 	sh2add a5, a3, s0
 	mv t0, a4
 	lw t1, 0(a5)
-	addiw a3, t1, -1
+	addi a3, t1, -1
 	addiw a4, a4, 4
 	ble a1, a4, label20
 	j label19

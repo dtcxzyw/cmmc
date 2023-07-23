@@ -153,7 +153,7 @@ pcrel290:
 	sh2add t3, t1, a0
 	lw t4, 0(t3)
 	sh2add t3, t1, a1
-	sext.w t2, t4
+	mv t2, t4
 	lw t1, 0(t3)
 	beq t1, zero, label26
 	sh2add t3, t1, a0
@@ -214,7 +214,7 @@ label26:
 	sh2add t3, t1, a0
 	lw t4, 0(t3)
 	sh2add t3, t1, a1
-	sext.w t2, t4
+	mv t2, t4
 	lw t1, 0(t3)
 	beq t1, zero, label26
 	sh2add t3, t1, a0
@@ -282,7 +282,7 @@ label132:
 	sh2add t3, t1, a0
 	lw t4, 0(t3)
 	sh2add t3, t1, a1
-	sext.w t2, t4
+	mv t2, t4
 	lw t1, 0(t3)
 	beq t1, zero, label26
 	sh2add t3, t1, a0
@@ -341,7 +341,7 @@ label22:
 	sh2add t3, t1, a0
 	lw t4, 0(t3)
 	sh2add t3, t1, a1
-	sext.w t2, t4
+	mv t2, t4
 	lw t1, 0(t3)
 	beq t1, zero, label26
 	sh2add t3, t1, a0

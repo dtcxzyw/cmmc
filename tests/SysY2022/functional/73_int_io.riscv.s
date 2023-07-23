@@ -61,7 +61,7 @@ label14:
 	li a4, 10
 	mulw a5, a3, a4
 	subw a1, a1, a5
-	addiw a4, a1, 48
+	addi a4, a1, 48
 	mv a1, a3
 	sw a4, 0(a2)
 	ble a3, zero, label73

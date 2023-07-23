@@ -381,7 +381,7 @@ label207:
 	addiw s2, s2, 1
 	sh2add a0, a0, s1
 	lw a1, 0(a0)
-	addiw a2, a1, 1
+	addi a2, a1, 1
 	sw a2, 0(a0)
 	ble s0, s2, label209
 	j label207

@@ -787,7 +787,7 @@ label90:
 	sh2add t1, t0, s0
 	slliw t0, a4, 1
 	lw a5, 0(t1)
-	addiw t1, t0, -48
+	addi t1, t0, -48
 	addw t0, a2, a3
 	addw a4, a5, t1
 	addiw a3, a3, 1

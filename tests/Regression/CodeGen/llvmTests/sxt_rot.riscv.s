@@ -70,7 +70,7 @@ test6:
 .globl test7
 test7:
 	slliw a2, a0, 24
-	srliw a3, a2, 24
+	srli a3, a2, 24
 	addw a0, a1, a3
 	ret
 .globl test8
@@ -83,6 +83,6 @@ test8:
 .globl test9
 test9:
 	slliw a2, a0, 16
-	srliw a3, a2, 16
+	srli a3, a2, 16
 	addw a0, a1, a3
 	ret

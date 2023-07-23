@@ -125,9 +125,9 @@ fused_mul_sub:
 fused_mul_sub_imm:
 	slliw a4, a1, 3
 	subw a3, a4, a1
-	slliw a2, a3, 4
+	slli a2, a3, 4
 	subw a1, a2, a1
-	slliw a3, a1, 3
+	slli a3, a1, 3
 	subw a2, a3, a1
 	subw a0, a0, a2
 	ret

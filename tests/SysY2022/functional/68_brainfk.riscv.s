@@ -158,7 +158,7 @@ label14:
 	bne a0, a1, label16
 	sh2add a0, s3, s1
 	lw a2, 0(a0)
-	addiw a1, a2, 1
+	addi a1, a2, 1
 	sw a1, 0(a0)
 	addiw s2, s2, 1
 	sh2add a1, s2, s0
@@ -193,7 +193,7 @@ label16:
 	bne a0, a1, label17
 	sh2add a0, s3, s1
 	lw a2, 0(a0)
-	addiw a1, a2, -1
+	addi a1, a2, -1
 	sw a1, 0(a0)
 	addiw s2, s2, 1
 	sh2add a1, s2, s0

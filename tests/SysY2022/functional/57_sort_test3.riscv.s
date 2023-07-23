@@ -18,7 +18,7 @@ QuickSort:
 	mv s4, a1
 	lw a0, 0(a3)
 	mv a3, a2
-	addiw a2, a0, -1
+	addi a2, a0, -1
 	ble s1, a1, label10
 	bge a1, a3, label15
 	sh2add a4, a3, s0
@@ -129,7 +129,7 @@ label10:
 	mv s4, a1
 	lw a0, 0(a3)
 	mv a3, s1
-	addiw a2, a0, -1
+	addi a2, a0, -1
 	bge a1, s1, label15
 	sh2add a4, s1, s0
 	lw a5, 0(a4)

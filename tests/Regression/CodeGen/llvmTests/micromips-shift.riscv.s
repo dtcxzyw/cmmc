@@ -41,14 +41,14 @@ pcrel22:
 	lw a2, %pcrel_lo(pcrel22)(a1)
 pcrel23:
 	auipc a1, %pcrel_hi(b)
-	slliw a0, a2, 4
+	slli a0, a2, 4
 pcrel24:
 	auipc a2, %pcrel_hi(c)
 	sw a0, %pcrel_lo(pcrel23)(a1)
 	lw a1, %pcrel_lo(pcrel24)(a2)
 pcrel25:
 	auipc a2, %pcrel_hi(d)
-	slliw a0, a1, 10
+	slli a0, a1, 10
 	sw a0, %pcrel_lo(pcrel25)(a2)
 	mv a0, zero
 	ret
@@ -59,14 +59,14 @@ pcrel47:
 	lw a2, %pcrel_lo(pcrel47)(a1)
 pcrel48:
 	auipc a1, %pcrel_hi(j)
-	srliw a0, a2, 4
+	srli a0, a2, 4
 pcrel49:
 	auipc a2, %pcrel_hi(m)
 	sw a0, %pcrel_lo(pcrel48)(a1)
 	lw a1, %pcrel_lo(pcrel49)(a2)
 pcrel50:
 	auipc a2, %pcrel_hi(n)
-	srliw a0, a1, 10
+	srli a0, a1, 10
 	sw a0, %pcrel_lo(pcrel50)(a2)
 	mv a0, zero
 	ret

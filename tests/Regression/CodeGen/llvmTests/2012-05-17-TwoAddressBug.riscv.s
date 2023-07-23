@@ -6,6 +6,6 @@ t:
 	li a2, -65535
 	addw a3, a0, a2
 	andi a2, a0, 1
-	srliw a1, a3, 23
+	srli a1, a3, 23
 	addw a0, a1, a2
 	ret

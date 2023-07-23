@@ -159,7 +159,7 @@ label23:
 	sh2add a3, s7, s7
 	addiw a1, a0, -48
 	slliw a2, a3, 1
-	addiw a4, a2, -48
+	addi a4, a2, -48
 	li a2, 10
 	addw s7, s6, a4
 	bgeu a1, a2, label21
@@ -213,7 +213,7 @@ label30:
 	max a1, a1, a3
 	sh2add a4, a3, a0
 	lw t0, 0(a4)
-	addiw a5, t0, 1
+	addi a5, t0, 1
 	sw a5, 0(a4)
 	j label30
 label171:
@@ -637,7 +637,7 @@ label8:
 	sh2add a4, s2, s2
 	addiw a1, a0, -48
 	slliw a3, a4, 1
-	addiw a2, a3, -48
+	addi a2, a3, -48
 	li a3, 10
 	addw s2, s1, a2
 	bgeu a1, a3, label102

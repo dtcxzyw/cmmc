@@ -38,7 +38,7 @@ pcrel114:
 	addi a5, a4, %pcrel_lo(pcrel114)
 	sh2add a3, a0, a5
 	sw a1, 0(a3)
-	addiw a1, a0, 1
+	addi a1, a0, 1
 	sw a1, 0(a2)
 label3:
 	ld ra, 0(sp)
@@ -84,7 +84,7 @@ pcrel119:
 	addi a3, a5, %pcrel_lo(pcrel118)
 	sh2add a4, a0, a3
 	sw a1, 0(a4)
-	addiw a1, a0, 1
+	addi a1, a0, 1
 	sw a1, 0(a2)
 	sh2add a2, s0, s1
 	sw a0, 0(a2)

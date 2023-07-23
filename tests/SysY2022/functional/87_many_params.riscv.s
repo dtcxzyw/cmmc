@@ -400,20 +400,20 @@ label13:
 	sh3add a1, a0, a3
 	addiw a0, a0, 4
 	lw a2, -4(a1)
-	addiw a4, a2, -1
+	addi a4, a2, -1
 	sw a4, 0(a1)
 	lw a3, -8(a1)
-	addiw a5, a3, -3
-	addiw a4, a3, -2
+	addi a5, a3, -3
+	addi a4, a3, -2
 	sw a4, 4(a1)
-	addiw a4, a2, -3
+	addi a4, a2, -3
 	sw a5, 8(a1)
-	addiw a5, a2, -4
+	addi a5, a2, -4
 	sw a4, 12(a1)
-	addiw a2, a2, -6
-	addiw a4, a3, -5
+	addi a2, a2, -6
+	addi a4, a3, -5
 	sw a5, 16(a1)
-	addiw a3, a3, -6
+	addi a3, a3, -6
 	sw a4, 20(a1)
 	sw a3, 24(a1)
 	sw a2, 28(a1)
@@ -424,16 +424,16 @@ label15:
 	ld a3, 120(sp)
 	sh3add a0, a0, a3
 	lw a1, -4(a0)
-	addiw a3, a1, -1
+	addi a3, a1, -1
 	sw a3, 0(a0)
 	lw a2, -8(a0)
-	addiw a4, a2, -3
-	addiw a3, a2, -2
-	addiw a2, a2, -5
+	addi a4, a2, -3
+	addi a3, a2, -2
+	addi a2, a2, -5
 	sw a3, 4(a0)
-	addiw a3, a1, -3
+	addi a3, a1, -3
 	sw a4, 8(a0)
-	addiw a1, a1, -4
+	addi a1, a1, -4
 	sw a3, 12(a0)
 	sw a1, 16(a0)
 	sw a2, 20(a0)

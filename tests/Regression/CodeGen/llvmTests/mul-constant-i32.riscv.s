@@ -38,7 +38,7 @@ test_mul_by_12:
 test_mul_by_13:
 	slliw a1, a0, 3
 	subw a2, a1, a0
-	slliw a3, a2, 1
+	slli a3, a2, 1
 	li a2, 4294967295
 	subw a1, a3, a0
 	and a0, a1, a2
@@ -142,7 +142,7 @@ test_mul_by_25:
 test_mul_by_26:
 	slliw a1, a0, 3
 	subw a3, a1, a0
-	slliw a2, a3, 1
+	slli a2, a3, 1
 	subw a0, a2, a0
 	li a2, 4294967295
 	slliw a1, a0, 1
@@ -167,7 +167,7 @@ test_mul_by_28:
 test_mul_by_29:
 	slliw a1, a0, 4
 	subw a2, a1, a0
-	slliw a3, a2, 1
+	slli a3, a2, 1
 	li a2, 4294967295
 	subw a1, a3, a0
 	and a0, a1, a2

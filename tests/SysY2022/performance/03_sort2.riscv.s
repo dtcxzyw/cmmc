@@ -103,7 +103,7 @@ label12:
 	addiw a1, a1, 1
 	sh2add a4, a5, s3
 	lw t0, 0(a4)
-	addiw a5, t0, 1
+	addi a5, t0, 1
 	sw a5, 0(a4)
 	ble a3, a1, label111
 	sh2add a5, a1, s0
@@ -266,7 +266,7 @@ label32:
 	sh2add a4, a4, s1
 	lw a5, 0(a4)
 	sh2add t1, a5, s0
-	addiw a5, a5, 1
+	addi a5, a5, 1
 	lw t0, 0(t1)
 	sw a3, 0(t1)
 	mv a3, t0

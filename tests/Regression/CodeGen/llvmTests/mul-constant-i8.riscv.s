@@ -33,7 +33,7 @@ test_mul_by_13:
 	andi a1, a0, 255
 	slliw a2, a1, 3
 	subw a0, a2, a1
-	slliw a3, a0, 1
+	slli a3, a0, 1
 	subw a1, a3, a1
 	andi a0, a1, 255
 	ret
@@ -137,7 +137,7 @@ test_mul_by_26:
 	andi a1, a0, 255
 	slliw a3, a1, 3
 	subw a0, a3, a1
-	slliw a2, a0, 1
+	slli a2, a0, 1
 	subw a1, a2, a1
 	slliw a3, a1, 1
 	andi a0, a3, 255
@@ -162,7 +162,7 @@ test_mul_by_29:
 	andi a1, a0, 255
 	slliw a2, a1, 4
 	subw a0, a2, a1
-	slliw a3, a0, 1
+	slli a3, a0, 1
 	subw a1, a3, a1
 	andi a0, a1, 255
 	ret

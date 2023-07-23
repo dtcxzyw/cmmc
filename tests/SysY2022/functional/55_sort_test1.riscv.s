@@ -31,7 +31,7 @@ main:
 	li a3, 10
 	subw a2, a3, zero
 	li a3, 9
-	addiw a0, a2, -1
+	addi a0, a2, -1
 	bge zero, a3, label27
 	mv a2, zero
 	ble a0, zero, label8
@@ -146,7 +146,7 @@ label8:
 	li a3, 10
 	subw a2, a3, a1
 	li a3, 9
-	addiw a0, a2, -1
+	addi a0, a2, -1
 	bge a1, a3, label27
 	mv a2, zero
 	ble a0, zero, label8
