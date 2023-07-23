@@ -195,6 +195,11 @@
       "parent": "93ba47b34e53b711ffe38ebbc54f2f5a3109ec14",
       "time": "2023-07-08 06:38:15 +0800"
     },
+    "3c395100b1a8eeedc5c4b917358fe89562891bc4": {
+      "message": "feat(codegen): optimize W insts for riscv",
+      "parent": "b1b6e5d0009af31483c1279aa58f078a67dc85d7",
+      "time": "2023-07-23 19:12:38 +0800"
+    },
     "3c9bfc69a8452250b22638e3e6231f85e7f64a85": {
       "message": "fix(transform): fix phi merge",
       "parent": "80d6e89e289ec70a1f33edcd9a24c093f2a50a25",
@@ -580,6 +585,11 @@
       "parent": "ad894f668c6480d476152947b318ab84f45bb804",
       "time": "2023-07-06 19:29:22 +0800"
     },
+    "b1b6e5d0009af31483c1279aa58f078a67dc85d7": {
+      "message": "feat(transform): basic LSR",
+      "parent": "091e2e9d39eefcb23258052624b61f043d6ffbae",
+      "time": "2023-07-23 16:21:59 +0800"
+    },
     "b642f635bd39964b79138897e82d1cd1ca8de9f6": {
       "message": "feat(codegen): add and-not folding on riscv and arm",
       "parent": "c486fc2beb3aa47793bb2b73d8de6496dac4e292",
@@ -770,6 +780,11 @@
       "parent": "7bae69aa5a88f0f49632223013714fa862acab9d",
       "time": "2023-07-03 01:31:00 +0800"
     },
+    "faeaffd4ee4e57ece4ece4f3a2656c9c8d6e2e94": {
+      "message": "feat(codegen): optimize branch lowering",
+      "parent": "3c395100b1a8eeedc5c4b917358fe89562891bc4",
+      "time": "2023-07-23 21:28:26 +0800"
+    },
     "fd09d81a7f01e2eea69cfec9e186c92b254fc584": {
       "message": "misc: update ref",
       "parent": "dab395f5471c2e2abcc130aed1055c5f889f99a1",
@@ -781,5 +796,5 @@
       "time": "2023-07-06 01:05:50 +0800"
     }
   },
-  "head": "091e2e9d39eefcb23258052624b61f043d6ffbae"
+  "head": "faeaffd4ee4e57ece4ece4f3a2656c9c8d6e2e94"
 }
