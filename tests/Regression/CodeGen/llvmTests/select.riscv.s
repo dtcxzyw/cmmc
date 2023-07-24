@@ -3,6 +3,7 @@
 .text
 .globl select_add_1
 select_add_1:
+.p2align 2
 	addw a3, a1, a2
 	mv a1, a3
 	bne a0, zero, label9
@@ -12,6 +13,7 @@ label9:
 	ret
 .globl select_add_2
 select_add_2:
+.p2align 2
 	addw a3, a1, a2
 	bne a0, zero, label18
 	mv a1, a3
@@ -20,6 +22,7 @@ label18:
 	ret
 .globl select_add_3
 select_add_3:
+.p2align 2
 	addiw a2, a1, 42
 	bne a0, zero, label26
 	mv a1, a2
@@ -28,6 +31,7 @@ label26:
 	ret
 .globl select_and_1
 select_and_1:
+.p2align 2
 	and a3, a1, a2
 	mv a1, a3
 	bne a0, zero, label35
@@ -37,6 +41,7 @@ label35:
 	ret
 .globl select_and_2
 select_and_2:
+.p2align 2
 	and a3, a1, a2
 	bne a0, zero, label44
 	mv a1, a3
@@ -45,6 +50,7 @@ label44:
 	ret
 .globl select_and_3
 select_and_3:
+.p2align 2
 	andi a2, a1, 42
 	bne a0, zero, label52
 	mv a1, a2
@@ -53,6 +59,7 @@ label52:
 	ret
 .globl select_ashr_1
 select_ashr_1:
+.p2align 2
 	srlw a3, a1, a2
 	mv a1, a3
 	bne a0, zero, label61
@@ -62,6 +69,7 @@ label61:
 	ret
 .globl select_ashr_2
 select_ashr_2:
+.p2align 2
 	srlw a3, a1, a2
 	bne a0, zero, label70
 	mv a1, a3
@@ -70,6 +78,7 @@ label70:
 	ret
 .globl select_ashr_3
 select_ashr_3:
+.p2align 2
 	li a3, 42
 	srlw a2, a1, a3
 	bne a0, zero, label79
@@ -79,6 +88,7 @@ label79:
 	ret
 .globl select_lshr_1
 select_lshr_1:
+.p2align 2
 	srlw a3, a1, a2
 	mv a1, a3
 	bne a0, zero, label88
@@ -88,6 +98,7 @@ label88:
 	ret
 .globl select_lshr_2
 select_lshr_2:
+.p2align 2
 	srlw a3, a1, a2
 	bne a0, zero, label97
 	mv a1, a3
@@ -96,6 +107,7 @@ label97:
 	ret
 .globl select_lshr_3
 select_lshr_3:
+.p2align 2
 	li a3, 42
 	srlw a2, a1, a3
 	bne a0, zero, label106
@@ -105,6 +117,7 @@ label106:
 	ret
 .globl select_or
 select_or:
+.p2align 2
 	andi a4, a2, 255
 	or a1, a0, a1
 	andi a3, a4, 1
@@ -114,6 +127,7 @@ label117:
 	ret
 .globl select_or_1
 select_or_1:
+.p2align 2
 	andi a3, a2, 1
 	or a1, a0, a1
 	beq a3, zero, label127
@@ -122,6 +136,7 @@ label127:
 	ret
 .globl select_or_1b
 select_or_1b:
+.p2align 2
 	andi a3, a2, 1
 	or a1, a0, a1
 	li a2, 1
@@ -131,6 +146,7 @@ label139:
 	ret
 .globl select_or_2
 select_or_2:
+.p2align 2
 	andi a4, a2, 255
 	or a2, a0, a1
 	andi a3, a4, 1
@@ -142,6 +158,7 @@ label150:
 	ret
 .globl select_or_2b
 select_or_2b:
+.p2align 2
 	andi a5, a2, 255
 	or a4, a0, a1
 	li a2, 1
@@ -154,6 +171,7 @@ label163:
 	ret
 .globl select_or_3
 select_or_3:
+.p2align 2
 	andi a3, a2, 1
 	or a4, a0, a1
 	mv a1, a4
@@ -164,6 +182,7 @@ label173:
 	ret
 .globl select_or_3b
 select_or_3b:
+.p2align 2
 	andi a3, a2, 1
 	or a4, a0, a1
 	li a2, 1
@@ -175,6 +194,7 @@ label185:
 	ret
 .globl select_or_b
 select_or_b:
+.p2align 2
 	andi a4, a2, 255
 	or a1, a0, a1
 	li a2, 1
@@ -185,6 +205,7 @@ label198:
 	ret
 .globl select_shl_1
 select_shl_1:
+.p2align 2
 	sllw a3, a1, a2
 	mv a1, a3
 	bne a0, zero, label207
@@ -194,6 +215,7 @@ label207:
 	ret
 .globl select_shl_2
 select_shl_2:
+.p2align 2
 	sllw a3, a1, a2
 	bne a0, zero, label216
 	mv a1, a3
@@ -202,12 +224,14 @@ label216:
 	ret
 .globl select_shl_3
 select_shl_3:
+.p2align 2
 	sltu a2, zero, a0
 	subw a3, zero, a2
 	and a0, a1, a3
 	ret
 .globl select_sub_1
 select_sub_1:
+.p2align 2
 	subw a3, a1, a2
 	mv a1, a3
 	bne a0, zero, label231
@@ -217,6 +241,7 @@ label231:
 	ret
 .globl select_sub_2
 select_sub_2:
+.p2align 2
 	subw a3, a1, a2
 	bne a0, zero, label240
 	mv a1, a3
@@ -225,6 +250,7 @@ label240:
 	ret
 .globl select_sub_3
 select_sub_3:
+.p2align 2
 	addiw a2, a1, -42
 	bne a0, zero, label248
 	mv a1, a2
@@ -233,6 +259,7 @@ label248:
 	ret
 .globl select_udiv_1
 select_udiv_1:
+.p2align 2
 	bne a0, zero, label250
 	mv a0, a2
 label251:
@@ -242,6 +269,7 @@ label250:
 	j label251
 .globl select_udiv_2
 select_udiv_2:
+.p2align 2
 	bne a0, zero, label270
 	divuw a0, a1, a2
 	j label262
@@ -251,6 +279,7 @@ label262:
 	ret
 .globl select_udiv_3
 select_udiv_3:
+.p2align 2
 	bne a0, zero, label281
 	li a2, 42
 	divuw a0, a1, a2
@@ -261,6 +290,7 @@ label274:
 	ret
 .globl select_xor_1
 select_xor_1:
+.p2align 2
 	andi a2, a1, 255
 	andi a3, a2, 1
 	beq a3, zero, label286
@@ -277,6 +307,7 @@ label287:
 	ret
 .globl select_xor_1b
 select_xor_1b:
+.p2align 2
 	andi a3, a1, 255
 	li a1, 1
 	andi a2, a3, 1
@@ -294,6 +325,7 @@ label307:
 	ret
 .globl select_xor_2
 select_xor_2:
+.p2align 2
 	andi a4, a2, 255
 	xor a1, a0, a1
 	andi a3, a4, 1
@@ -303,6 +335,7 @@ label337:
 	ret
 .globl select_xor_2b
 select_xor_2b:
+.p2align 2
 	andi a4, a2, 255
 	xor a1, a0, a1
 	li a2, 1
@@ -313,6 +346,7 @@ label350:
 	ret
 .globl select_xor_3
 select_xor_3:
+.p2align 2
 	andi a2, a1, 255
 	andi a3, a2, 1
 	beq a3, zero, label352
@@ -329,6 +363,7 @@ label353:
 	ret
 .globl select_xor_3b
 select_xor_3b:
+.p2align 2
 	andi a3, a1, 255
 	li a1, 1
 	andi a2, a3, 1
@@ -346,6 +381,7 @@ label373:
 	ret
 .globl select_xor_4
 select_xor_4:
+.p2align 2
 	andi a4, a2, 255
 	xor a2, a0, a1
 	andi a3, a4, 1
@@ -357,6 +393,7 @@ label403:
 	ret
 .globl select_xor_4b
 select_xor_4b:
+.p2align 2
 	andi a5, a2, 255
 	xor a4, a0, a1
 	li a2, 1

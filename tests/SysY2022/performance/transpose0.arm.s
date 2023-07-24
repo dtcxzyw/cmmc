@@ -13,6 +13,7 @@ a:
 .fpu vfpv4
 .globl main
 main:
+.p2align 4
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
 	sub sp, sp, #4
 	bl getint
@@ -28,6 +29,7 @@ main:
 	bgt label2
 	b label8
 label3:
+.p2align 4
 	add r2, r1, #4
 	cmp r6, r2
 	ble label6
@@ -51,6 +53,7 @@ label8:
 	bgt label9
 	b label162
 label10:
+.p2align 4
 	ldr r3, [r5, r1, lsl #2]
 	mov r2, #0
 	sdiv r7, r6, r3
@@ -66,6 +69,7 @@ label162:
 	mov r4, #0
 	b label22
 label79:
+.p2align 4
 	mov r8, #0
 	cmp r3, r8
 	bgt label16
@@ -80,6 +84,7 @@ label79:
 	bgt label106
 	b label162
 label16:
+.p2align 4
 	cmp r2, r8
 	blt label17
 	mla r10, r7, r8, r2
@@ -100,6 +105,7 @@ label16:
 	bgt label106
 	b label162
 label17:
+.p2align 4
 	add r8, r8, #1
 	cmp r3, r8
 	bgt label16
@@ -132,6 +138,7 @@ label22:
 	mov r0, #0
 	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
 label25:
+.p2align 4
 	add r3, r5, #4
 	cmp r4, r3
 	ble label31

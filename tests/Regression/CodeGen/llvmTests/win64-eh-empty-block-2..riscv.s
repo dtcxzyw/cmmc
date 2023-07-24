@@ -16,6 +16,7 @@ z:
 .text
 .globl PR35761
 PR35761:
+.p2align 2
 pcrel23:
 	auipc a2, %pcrel_hi(x)
 pcrel24:

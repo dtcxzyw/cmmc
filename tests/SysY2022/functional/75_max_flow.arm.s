@@ -15,6 +15,7 @@ rev:
 .arm
 .fpu vfpv4
 dfs:
+.p2align 4
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
 	cmp r0, r1
 	mov r7, r3
@@ -86,6 +87,7 @@ label9:
 	b label2
 .globl main
 main:
+.p2align 4
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
 	sub sp, sp, #100
 	mov r9, #0
@@ -125,6 +127,7 @@ main:
 	movt r5, #:upper16:to
 	mov r0, r9
 label96:
+.p2align 4
 	add r1, r0, #4
 	cmp r1, #10
 	bge label99
@@ -157,6 +160,7 @@ label99:
 	blt label109
 	b label111
 label102:
+.p2align 4
 	bl getint
 	mov r10, r0
 	bl getint
@@ -199,6 +203,7 @@ label102:
 	blt label109
 	b label111
 label106:
+.p2align 4
 	add r1, r0, #4
 	cmp r1, #10
 	blt label108
@@ -210,6 +215,7 @@ label106:
 	blt label109
 	b label111
 label108:
+.p2align 4
 	ldr r3, [sp, #48]
 	mov r6, #0
 	add r2, r3, r0, lsl #2
@@ -220,6 +226,7 @@ label108:
 	str r6, [r2, #12]
 	b label106
 label109:
+.p2align 4
 	mov r1, #0
 	ldr r3, [sp, #48]
 	str r1, [r3, r0, lsl #2]

@@ -6,6 +6,7 @@
 .fpu vfpv4
 .globl beqz
 beqz:
+.p2align 4
 	cmp r0, #0
 	beq label2
 label3:
@@ -16,6 +17,7 @@ label2:
 	b label3
 .globl beqi
 beqi:
+.p2align 4
 	cmp r0, #1
 	beq label13
 label14:
@@ -26,6 +28,7 @@ label13:
 	b label14
 .globl beq
 beq:
+.p2align 4
 	cmp r0, r1
 	beq label25
 label26:
@@ -36,6 +39,7 @@ label25:
 	b label26
 .globl bnez
 bnez:
+.p2align 4
 	cmp r0, #0
 	bne label38
 label39:
@@ -46,6 +50,7 @@ label38:
 	b label39
 .globl bnei
 bnei:
+.p2align 4
 	cmp r0, #1
 	bne label48
 label49:
@@ -56,6 +61,7 @@ label48:
 	b label49
 .globl bne
 bne:
+.p2align 4
 	cmp r0, r1
 	bne label58
 label59:
@@ -66,6 +72,7 @@ label58:
 	b label59
 .globl bltz
 bltz:
+.p2align 4
 	cmp r0, #0
 	blt label69
 label70:
@@ -76,6 +83,7 @@ label69:
 	b label70
 .globl blti1
 blti1:
+.p2align 4
 	cmp r0, #1
 	blt label79
 label80:
@@ -86,6 +94,7 @@ label79:
 	b label80
 .globl blti2
 blti2:
+.p2align 4
 	cmp r0, #10
 	blt label89
 label90:
@@ -96,6 +105,7 @@ label89:
 	b label90
 .globl blt
 blt:
+.p2align 4
 	cmp r0, r1
 	blt label99
 label100:
@@ -106,6 +116,7 @@ label99:
 	b label100
 .globl bgez
 bgez:
+.p2align 4
 	cmn r0, #1
 	bgt label110
 label111:
@@ -116,6 +127,7 @@ label110:
 	b label111
 .globl bgei1
 bgei1:
+.p2align 4
 	cmp r0, #0
 	bgt label120
 label121:
@@ -126,6 +138,7 @@ label120:
 	b label121
 .globl bgei2
 bgei2:
+.p2align 4
 	cmp r0, #9
 	bgt label130
 label131:
@@ -136,6 +149,7 @@ label130:
 	b label131
 .globl bge
 bge:
+.p2align 4
 	cmp r0, r1
 	bge label140
 label141:
@@ -146,6 +160,7 @@ label140:
 	b label141
 .globl bgtz
 bgtz:
+.p2align 4
 	cmp r0, #0
 	bgt label151
 label152:
@@ -156,6 +171,7 @@ label151:
 	b label152
 .globl bgti1
 bgti1:
+.p2align 4
 	cmn r0, #1
 	bgt label161
 label162:
@@ -166,6 +182,7 @@ label161:
 	b label162
 .globl bgti2
 bgti2:
+.p2align 4
 	cmp r0, #10
 	bgt label171
 label172:
@@ -176,6 +193,7 @@ label171:
 	b label172
 .globl bgt
 bgt:
+.p2align 4
 	cmp r0, r1
 	bgt label181
 label182:
@@ -186,6 +204,7 @@ label181:
 	b label182
 .globl blez
 blez:
+.p2align 4
 	cmp r0, #1
 	blt label192
 label193:
@@ -196,6 +215,7 @@ label192:
 	b label193
 .globl blei1
 blei1:
+.p2align 4
 	cmp r0, #0
 	blt label202
 label203:
@@ -206,6 +226,7 @@ label202:
 	b label203
 .globl blei2
 blei2:
+.p2align 4
 	cmp r0, #11
 	blt label212
 label213:
@@ -216,6 +237,7 @@ label212:
 	b label213
 .globl ble
 ble:
+.p2align 4
 	cmp r0, r1
 	ble label222
 label223:
@@ -226,6 +248,7 @@ label222:
 	b label223
 .globl bfeq
 bfeq:
+.p2align 4
 	vcmp.f32 s0, s1
 	vmrs APSR_nzcv, FPSCR
 	beq label233
@@ -237,6 +260,7 @@ label233:
 	b label234
 .globl bfne
 bfne:
+.p2align 4
 	vcmp.f32 s0, s1
 	vmrs APSR_nzcv, FPSCR
 	bne label244
@@ -248,6 +272,7 @@ label244:
 	b label245
 .globl bflt
 bflt:
+.p2align 4
 	vcmp.f32 s0, s1
 	vmrs APSR_nzcv, FPSCR
 	bmi label255
@@ -259,6 +284,7 @@ label255:
 	b label256
 .globl bfle
 bfle:
+.p2align 4
 	vcmp.f32 s0, s1
 	vmrs APSR_nzcv, FPSCR
 	bls label266
@@ -270,6 +296,7 @@ label266:
 	b label267
 .globl bfge
 bfge:
+.p2align 4
 	vcmp.f32 s0, s1
 	vmrs APSR_nzcv, FPSCR
 	bge label277
@@ -281,6 +308,7 @@ label277:
 	b label278
 .globl bfgt
 bfgt:
+.p2align 4
 	vcmp.f32 s0, s1
 	vmrs APSR_nzcv, FPSCR
 	bgt label288
@@ -292,6 +320,7 @@ label288:
 	b label289
 .globl normal_srem
 normal_srem:
+.p2align 4
 	movw r1, #51719
 	movw r2, #12185
 	movt r1, #15258

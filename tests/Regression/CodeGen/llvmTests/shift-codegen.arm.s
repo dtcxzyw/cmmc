@@ -15,6 +15,7 @@ X:
 .fpu vfpv4
 .globl fn1
 fn1:
+.p2align 4
 	movw r0, #:lower16:Y
 	movt r0, #:upper16:Y
 	ldr r1, [r0, #0]
@@ -26,5 +27,6 @@ fn1:
 	bx lr
 .globl fn2
 fn2:
+.p2align 4
 	orr r0, r0, r1, lsl #3
 	bx lr

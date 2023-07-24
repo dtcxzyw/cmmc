@@ -3,6 +3,7 @@
 .text
 .globl test1
 test1:
+.p2align 2
 	li a3, 65535
 	slliw a1, a1, 16
 	and a2, a0, a3
@@ -10,6 +11,7 @@ test1:
 	ret
 .globl test10
 test10:
+.p2align 2
 	lui a3, 1048560
 	srliw a1, a1, 17
 	and a2, a0, a3
@@ -17,6 +19,7 @@ test10:
 	ret
 .globl test2
 test2:
+.p2align 2
 	slliw a2, a1, 12
 	lui a3, 1048560
 	and a1, a2, a3
@@ -26,6 +29,7 @@ test2:
 	ret
 .globl test3
 test3:
+.p2align 2
 	li a3, 65535
 	slliw a1, a1, 18
 	and a2, a0, a3
@@ -33,6 +37,7 @@ test3:
 	ret
 .globl test4
 test4:
+.p2align 2
 	li a2, 65535
 	lui a3, 1048560
 	and a0, a0, a2
@@ -41,6 +46,7 @@ test4:
 	ret
 .globl test5
 test5:
+.p2align 2
 	lui a3, 1048560
 	srliw a1, a1, 16
 	and a2, a0, a3
@@ -48,6 +54,7 @@ test5:
 	ret
 .globl test5a
 test5a:
+.p2align 2
 	lui a3, 1048560
 	srliw a1, a1, 16
 	and a2, a0, a3
@@ -55,6 +62,7 @@ test5a:
 	ret
 .globl test6
 test6:
+.p2align 2
 	srliw a2, a1, 12
 	li a3, 65535
 	and a1, a2, a3
@@ -64,6 +72,7 @@ test6:
 	ret
 .globl test7
 test7:
+.p2align 2
 	srliw a2, a1, 18
 	li a3, 65535
 	and a1, a2, a3
@@ -73,6 +82,7 @@ test7:
 	ret
 .globl test8
 test8:
+.p2align 2
 	lui a3, 1048560
 	srliw a1, a1, 22
 	and a2, a0, a3
@@ -80,6 +90,7 @@ test8:
 	ret
 .globl test9
 test9:
+.p2align 2
 	lui a3, 1048560
 	srliw a1, a1, 16
 	and a2, a0, a3

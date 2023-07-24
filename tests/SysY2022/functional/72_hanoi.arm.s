@@ -5,6 +5,7 @@
 .arm
 .fpu vfpv4
 hanoi:
+.p2align 4
 	push { r4, r5, r6, r7, lr }
 	cmp r0, #1
 	mov r6, r3
@@ -54,12 +55,14 @@ label2:
 	pop { r4, r5, r6, r7, pc }
 .globl main
 main:
+.p2align 4
 	push { r4, lr }
 	bl getint
 	cmp r0, #0
 	ble label28
 	mov r4, r0
 label26:
+.p2align 4
 	bl getint
 	mov r3, #3
 	mov r2, #2

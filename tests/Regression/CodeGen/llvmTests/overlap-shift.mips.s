@@ -7,6 +7,7 @@ G:
 .text
 .globl test1
 test1:
+.p2align 2
 	sll $t0, $a0, 2
 	lui $t1, %hi(G)
 	sw $t0, %lo(G)($t1)

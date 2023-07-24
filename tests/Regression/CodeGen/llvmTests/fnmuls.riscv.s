@@ -3,11 +3,13 @@
 .text
 .globl test1
 test1:
+.p2align 2
 	fmul.s f12, f10, f11
 	fneg.s f10, f12
 	ret
 .globl test2
 test2:
+.p2align 2
 	fmul.s f12, f10, f11
 	fneg.s f10, f12
 	ret

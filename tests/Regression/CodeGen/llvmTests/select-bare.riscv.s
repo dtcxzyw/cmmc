@@ -3,6 +3,7 @@
 .text
 .globl bare_select
 bare_select:
+.p2align 2
 	bne a0, zero, label8
 	mv a1, a2
 label8:
@@ -10,6 +11,7 @@ label8:
 	ret
 .globl bare_select_float
 bare_select_float:
+.p2align 2
 	bne a0, zero, label16
 	fmv.s f10, f11
 label16:

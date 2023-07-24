@@ -3,5 +3,6 @@
 .text
 .globl addi
 addi:
+.p2align 2
 	addiw a0, a0, 1
 	ret

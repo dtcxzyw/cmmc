@@ -6,6 +6,7 @@ __cmmc_fp_constant_pool:
 .text
 .globl select_icmp_eq
 select_icmp_eq:
+.p2align 2
 	mtc1 $a2, $f4
 	mtc1 $a3, $f6
 	xor $t0, $a0, $a1
@@ -16,6 +17,7 @@ select_icmp_eq:
 	nop
 .globl select_icmp_ne
 select_icmp_ne:
+.p2align 2
 	mtc1 $a2, $f4
 	mtc1 $a3, $f6
 	xor $t0, $a0, $a1
@@ -26,6 +28,7 @@ select_icmp_ne:
 	nop
 .globl select_icmp_sge
 select_icmp_sge:
+.p2align 2
 	mtc1 $a2, $f4
 	mtc1 $a3, $f6
 	slt $t0, $a0, $a1
@@ -36,6 +39,7 @@ select_icmp_sge:
 	nop
 .globl select_icmp_sgt
 select_icmp_sgt:
+.p2align 2
 	mtc1 $a2, $f4
 	mtc1 $a3, $f6
 	slt $t0, $a1, $a0
@@ -45,6 +49,7 @@ select_icmp_sgt:
 	nop
 .globl select_icmp_sgt_zero
 select_icmp_sgt_zero:
+.p2align 2
 	slt $t0, $zero, $a0
 	mtc1 $zero, $f4
 	lui $t1, %hi(__cmmc_fp_constant_pool)
@@ -56,6 +61,7 @@ select_icmp_sgt_zero:
 	nop
 .globl select_icmp_sle
 select_icmp_sle:
+.p2align 2
 	mtc1 $a2, $f4
 	mtc1 $a3, $f6
 	slt $t0, $a1, $a0
@@ -66,6 +72,7 @@ select_icmp_sle:
 	nop
 .globl select_icmp_slt
 select_icmp_slt:
+.p2align 2
 	mtc1 $a2, $f4
 	mtc1 $a3, $f6
 	slt $t0, $a0, $a1
@@ -75,6 +82,7 @@ select_icmp_slt:
 	nop
 .globl select_icmp_slt_one
 select_icmp_slt_one:
+.p2align 2
 	slti $t0, $a0, 1
 	lui $t1, %hi(__cmmc_fp_constant_pool)
 	addiu $t1, $t1, %lo(__cmmc_fp_constant_pool)
@@ -86,6 +94,7 @@ select_icmp_slt_one:
 	nop
 .globl select_icmp_uge
 select_icmp_uge:
+.p2align 2
 	mtc1 $a2, $f4
 	mtc1 $a3, $f6
 	sltu $t0, $a0, $a1
@@ -96,6 +105,7 @@ select_icmp_uge:
 	nop
 .globl select_icmp_ugt
 select_icmp_ugt:
+.p2align 2
 	mtc1 $a2, $f4
 	mtc1 $a3, $f6
 	sltu $t0, $a1, $a0
@@ -105,6 +115,7 @@ select_icmp_ugt:
 	nop
 .globl select_icmp_ule
 select_icmp_ule:
+.p2align 2
 	mtc1 $a2, $f4
 	mtc1 $a3, $f6
 	sltu $t0, $a1, $a0
@@ -115,6 +126,7 @@ select_icmp_ule:
 	nop
 .globl select_icmp_ult
 select_icmp_ult:
+.p2align 2
 	mtc1 $a2, $f4
 	mtc1 $a3, $f6
 	sltu $t0, $a0, $a1

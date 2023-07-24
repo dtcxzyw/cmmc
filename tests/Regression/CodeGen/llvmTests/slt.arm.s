@@ -6,6 +6,7 @@
 .fpu vfpv4
 .globl sgt
 sgt:
+.p2align 4
 	movw r1, #32767
 	cmp r0, r1
 	mov r0, #5
@@ -14,6 +15,7 @@ sgt:
 	bx lr
 .globl slt
 slt:
+.p2align 4
 	cmp r0, #7
 	mov r0, #0
 	movwlt r0, #1

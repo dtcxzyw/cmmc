@@ -6,6 +6,7 @@
 .fpu vfpv4
 .globl foo
 foo:
+.p2align 4
 	movs r1, r0
 	beq label9
 	mov r0, #0

@@ -3,6 +3,7 @@
 .text
 .globl test1
 test1:
+.p2align 2
 	addw a2, a0, a1
 	sltu a0, a2, a1
 	li a1, 4294967295
@@ -11,6 +12,7 @@ test1:
 	ret
 .globl test2
 test2:
+.p2align 2
 	sltu a0, a1, a0
 	addw a1, a0, a2
 	li a2, 4294967295

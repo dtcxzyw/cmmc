@@ -6,6 +6,7 @@ dp:
 	.zero	52907904
 .text
 dfs:
+.p2align 2
 	addi sp, sp, -72
 	sd s1, 64(sp)
 	mv s1, a0
@@ -190,6 +191,7 @@ label16:
 	j label19
 .globl main
 main:
+.p2align 2
 	addi sp, sp, -112
 	sd s1, 104(sp)
 	addi s1, sp, 0
@@ -235,6 +237,7 @@ label234:
 	bgt s0, zero, label309
 	j label205
 label197:
+.p2align 2
 	li t4, 28
 	mul t6, t5, t4
 	addiw t5, t5, 4
@@ -315,6 +318,7 @@ label197:
 	bgt s0, zero, label309
 	j label205
 label240:
+.p2align 2
 	mv a5, zero
 	li t1, 9072
 	mv t2, zero
@@ -336,6 +340,7 @@ label240:
 	bgt s0, zero, label309
 	j label205
 label246:
+.p2align 2
 	mv t1, zero
 	li t3, 504
 	mv t4, zero
@@ -363,11 +368,13 @@ label246:
 	bgt s0, zero, label309
 	j label205
 label253:
+.p2align 2
 	mv t5, zero
 	j label197
 label309:
 	mv s2, zero
 label203:
+.p2align 2
 	jal getint
 	addiw s2, s2, 1
 	sh2add a0, a0, s1

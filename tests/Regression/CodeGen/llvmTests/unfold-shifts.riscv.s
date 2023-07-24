@@ -3,6 +3,7 @@
 .text
 .globl unfold1
 unfold1:
+.p2align 2
 	slliw a2, a0, 1
 	ori a0, a2, 510
 	li a2, 4294967295
@@ -11,6 +12,7 @@ unfold1:
 	ret
 .globl unfold10
 unfold10:
+.p2align 2
 	slliw a2, a0, 10
 	lui a0, 1020
 	or a3, a2, a0
@@ -20,6 +22,7 @@ unfold10:
 	ret
 .globl unfold11
 unfold11:
+.p2align 2
 	slliw a2, a0, 11
 	lui a0, 3968
 	addw a3, a2, a0
@@ -29,6 +32,7 @@ unfold11:
 	ret
 .globl unfold2
 unfold2:
+.p2align 2
 	slliw a2, a0, 2
 	li a0, 16320
 	or a3, a2, a0
@@ -38,6 +42,7 @@ unfold2:
 	ret
 .globl unfold3
 unfold3:
+.p2align 2
 	slliw a2, a0, 4
 	lui a3, 255
 	or a4, a2, a3
@@ -45,6 +50,7 @@ unfold3:
 	ret
 .globl unfold4
 unfold4:
+.p2align 2
 	slliw a2, a0, 5
 	lui a3, 8160
 	or a4, a2, a3
@@ -52,6 +58,7 @@ unfold4:
 	ret
 .globl unfold5
 unfold5:
+.p2align 2
 	slliw a2, a0, 6
 	li a3, 31744
 	addw a4, a2, a3
@@ -59,6 +66,7 @@ unfold5:
 	ret
 .globl unfold6
 unfold6:
+.p2align 2
 	slliw a2, a0, 8
 	lui a3, 496
 	addw a4, a2, a3
@@ -66,6 +74,7 @@ unfold6:
 	ret
 .globl unfold7
 unfold7:
+.p2align 2
 	slliw a2, a0, 1
 	andi a0, a2, 512
 	li a2, 4294967295
@@ -74,6 +83,7 @@ unfold7:
 	ret
 .globl unfold8
 unfold8:
+.p2align 2
 	slliw a2, a0, 9
 	lui a3, 15872
 	addw a4, a2, a3
@@ -81,6 +91,7 @@ unfold8:
 	ret
 .globl unfold9
 unfold9:
+.p2align 2
 	slliw a2, a0, 1
 	xori a0, a2, 510
 	li a2, 4294967295

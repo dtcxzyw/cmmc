@@ -3,6 +3,7 @@
 .text
 .globl f1
 f1:
+.p2align 2
 	divuw a0, a1, a0
 	addiw a3, a2, 1
 	li a2, 4294967295
@@ -11,6 +12,7 @@ f1:
 	ret
 .globl f2
 f2:
+.p2align 2
 	remuw a0, a1, a0
 	subw a2, a2, a3
 	li a3, 4294967295
@@ -19,12 +21,14 @@ f2:
 	ret
 .globl f3
 f3:
+.p2align 2
 	addw a2, a0, a1
 	subw a3, a0, a1
 	mulw a0, a2, a3
 	ret
 .globl f4
 f4:
+.p2align 2
 	subw a0, a0, a1
 	subw a4, a1, a2
 	subw a2, a2, a3

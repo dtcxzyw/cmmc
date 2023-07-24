@@ -5,6 +5,7 @@
 .arm
 .fpu vfpv4
 graphColoring:
+.p2align 4
 	push { r4, r5, r6, r7, lr }
 	cmp r2, #4
 	mov r4, r3
@@ -80,6 +81,7 @@ label10:
 	b label42
 .globl main
 main:
+.p2align 4
 	push { lr }
 	mov r2, #0
 	sub sp, sp, #84

@@ -3,6 +3,7 @@
 .text
 .globl main
 main:
+.p2align 2
 	addi sp, sp, -56
 	sd s0, 48(sp)
 	sd s5, 40(sp)

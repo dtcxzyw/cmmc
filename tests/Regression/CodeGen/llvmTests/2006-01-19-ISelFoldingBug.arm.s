@@ -11,6 +11,7 @@ A:
 .fpu vfpv4
 .globl test5
 test5:
+.p2align 4
 	uxtb r1, r1
 	rsb r2, r1, #32
 	lsr r0, r0, r2

@@ -6,6 +6,7 @@
 .fpu vfpv4
 .globl main
 main:
+.p2align 4
 	push { lr }
 	sub sp, sp, #4
 	mov r0, #3

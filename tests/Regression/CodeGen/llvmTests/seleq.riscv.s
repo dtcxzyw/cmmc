@@ -40,6 +40,7 @@ z4:
 .text
 .globl calc_seleq
 calc_seleq:
+.p2align 2
 pcrel111:
 	auipc a2, %pcrel_hi(a)
 pcrel112:

@@ -3,9 +3,11 @@
 .text
 .globl bar
 bar:
+.p2align 2
 	li a0, 21
 	ret
 .globl foo
 foo:
+.p2align 2
 	li a0, 42
 	ret

@@ -3,9 +3,11 @@
 .text
 .globl callee
 callee:
+.p2align 2
 	mv a0, zero
 	ret
 .globl caller
 caller:
+.p2align 2
 	mv a0, zero
 	ret

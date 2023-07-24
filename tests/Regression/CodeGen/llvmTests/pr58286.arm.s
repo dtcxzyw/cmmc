@@ -11,7 +11,9 @@ var:
 .fpu vfpv4
 .globl func
 func:
+.p2align 4
 	bx lr
 .globl shrink_wrap
 shrink_wrap:
+.p2align 4
 	bx lr

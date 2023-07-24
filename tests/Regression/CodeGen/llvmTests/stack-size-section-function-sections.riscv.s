@@ -3,13 +3,16 @@
 .text
 .globl _Z3barv
 _Z3barv:
+.p2align 2
 	mv a0, zero
 	ret
 .globl _Z3foov
 _Z3foov:
+.p2align 2
 	mv a0, zero
 	ret
 .globl _Z4fooTIiET_v
 _Z4fooTIiET_v:
+.p2align 2
 	mv a0, zero
 	ret

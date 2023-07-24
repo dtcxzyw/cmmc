@@ -2,6 +2,7 @@
 .text
 .globl foo
 foo:
+.p2align 2
 	sltu $t0, $zero, $a1
 	subu $t0, $zero, $t0
 	andi $v0, $t0, 2

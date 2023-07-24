@@ -3,6 +3,7 @@
 .text
 .globl test
 test:
+.p2align 2
 	subw a3, zero, a0
 	li a2, 4294967295
 	and a4, a3, a2

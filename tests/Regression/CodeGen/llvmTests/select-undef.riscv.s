@@ -3,6 +3,7 @@
 .text
 .globl func
 func:
+.p2align 2
 	li a3, 10
 	mv a2, zero
 	blt a0, a3, label9

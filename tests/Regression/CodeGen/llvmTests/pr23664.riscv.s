@@ -3,6 +3,7 @@
 .text
 .globl f
 f:
+.p2align 2
 	sext.b a1, a0
 	ori a2, a1, 1
 	andi a0, a2, 255

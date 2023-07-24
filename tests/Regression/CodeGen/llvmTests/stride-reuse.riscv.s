@@ -16,6 +16,7 @@ P:
 .text
 .globl foo
 foo:
+.p2align 2
 	bgt a0, zero, label2
 label5:
 	ret

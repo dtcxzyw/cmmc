@@ -43,6 +43,7 @@ z4:
 .fpu vfpv4
 .globl calc_seleq
 calc_seleq:
+.p2align 4
 	movw r0, #:lower16:a
 	movt r0, #:upper16:a
 	ldr r1, [r0, #0]

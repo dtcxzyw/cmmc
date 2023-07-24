@@ -6,6 +6,7 @@
 .fpu vfpv4
 .globl mulw
 mulw:
+.p2align 4
 	mov r2, r1
 	cmp r0, r1
 	blt label2

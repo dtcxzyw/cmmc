@@ -123,6 +123,7 @@ saY_HeI10_To:
 .text
 .globl main
 main:
+.p2align 2
 	addi sp, sp, -88
 	li a0, 10
 	sd s0, 80(sp)
@@ -168,6 +169,7 @@ label18:
 	beq s1, zero, label19
 	j label4
 label2:
+.p2align 2
 	sh2add s3, s2, s1
 	lw a0, 0(s3)
 	jal putch
@@ -221,6 +223,7 @@ label80:
 	mv s3, zero
 	j label11
 label8:
+.p2align 2
 	sh2add s6, s5, s4
 	lw a0, 0(s6)
 	jal putch
@@ -263,6 +266,7 @@ label63:
 	mv s5, zero
 	j label8
 label16:
+.p2align 2
 	sh2add s6, s5, s4
 	lw a0, 0(s6)
 	jal putch
@@ -270,6 +274,7 @@ label16:
 	lw a1, 4(s6)
 	bne a1, zero, label16
 pcrel182:
+.p2align 2
 	auipc a0, %pcrel_hi(saY_HeI10_To)
 	addi s4, a0, %pcrel_lo(pcrel182)
 	lw a0, %pcrel_lo(pcrel182)(a0)
@@ -302,6 +307,7 @@ label4:
 	bne a1, s3, label6
 	j label18
 label14:
+.p2align 2
 	sh2add s3, s2, s0
 	lw a0, 0(s3)
 	jal putch
@@ -319,6 +325,7 @@ label14:
 	beq s1, zero, label19
 	j label4
 label11:
+.p2align 2
 	sh2add s4, s3, s2
 	lw a0, 0(s4)
 	jal putch

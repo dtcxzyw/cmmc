@@ -16,6 +16,7 @@ mean:
 .fpu vfpv4
 .globl main
 main:
+.p2align 4
 	push { r4, r5, r6, r7, lr }
 	vpush { s16 }
 	mov r7, #0
@@ -50,6 +51,7 @@ label7:
 	blt label479
 	b label44
 label14:
+.p2align 4
 	add r2, r5, r1, lsl #2
 	mov r3, #0
 	vmov s2, r3
@@ -57,6 +59,7 @@ label14:
 	mov r2, #4000
 	mla r2, r1, r2, r4
 label15:
+.p2align 4
 	add r7, r2, r3, lsl #2
 	add r3, r3, #16
 	vldr s3, [r7, #0]
@@ -199,6 +202,7 @@ label15:
 	blt label479
 	b label44
 label23:
+.p2align 4
 	vcmp.f32 s5, s2
 	vmrs APSR_nzcv, FPSCR
 	bgt label24
@@ -235,6 +239,7 @@ label23:
 	blt label479
 	b label44
 label24:
+.p2align 4
 	vadd.f32 s4, s1, s3
 	mov r2, #1056964608
 	vmov s5, r2
@@ -289,12 +294,14 @@ label66:
 	blt label479
 	b label44
 label70:
+.p2align 4
 	mov r2, #4000
 	mov r7, #0
 	mla r2, r1, r2, r4
 	vmov s1, r7
 	b label37
 label32:
+.p2align 4
 	add r1, r3, r7, lsl #2
 	add r7, r7, #16
 	vldr s3, [r1, #0]
@@ -433,6 +440,7 @@ label32:
 	blt label479
 	b label44
 label37:
+.p2align 4
 	add r3, r2, r7, lsl #2
 	add r7, r7, #16
 	vldr s2, [r3, #0]
@@ -515,6 +523,7 @@ label41:
 	blt label479
 	b label44
 label46:
+.p2align 4
 	add r2, r1, r3, lsl #2
 	add r3, r3, #16
 	vldr s1, [r2, #0]

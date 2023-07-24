@@ -3,6 +3,7 @@
 .text
 .globl main
 main:
+.p2align 2
 	addi sp, sp, -608
 	sd s0, 464(sp)
 	addi a3, sp, 104
@@ -103,6 +104,7 @@ main:
 	li a1, 15
 	bge zero, a1, label10
 label4:
+.p2align 2
 	addiw a1, a0, 1
 	mv a2, a1
 	li a3, 16
@@ -112,6 +114,7 @@ label4:
 	blt a0, a1, label4
 	j label10
 label7:
+.p2align 2
 	sh2add a4, a2, s0
 	sh2add a5, a0, s0
 	lw a3, 0(a5)
@@ -125,6 +128,7 @@ label7:
 	blt a0, a1, label4
 	j label10
 label8:
+.p2align 2
 	sh2add a5, a0, s0
 	sw a4, 0(a5)
 	sh2add a4, a2, s0

@@ -2,6 +2,7 @@
 .text
 .globl test_local_strategy
 test_local_strategy:
+.p2align 2
 	lw $t0, 16($sp)
 	lw $t1, 20($sp)
 	div $zero, $a0, $a1

@@ -15,6 +15,7 @@ z:
 .text
 .globl main
 main:
+.p2align 2
 	li $t0, 1
 	lui $t1, %hi(x)
 	sw $t0, %lo(x)($t1)

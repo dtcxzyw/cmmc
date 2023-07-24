@@ -11,6 +11,7 @@ y:
 .text
 .globl f1
 f1:
+.p2align 2
 	lui $t0, %hi(x)
 	sw $a0, %lo(x)($t0)
 	lui $t0, %hi(y)

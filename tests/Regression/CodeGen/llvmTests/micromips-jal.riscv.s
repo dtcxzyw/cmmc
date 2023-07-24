@@ -3,10 +3,12 @@
 .text
 .globl main
 main:
+.p2align 2
 	mv a0, zero
 	ret
 .globl sum
 sum:
+.p2align 2
 	addw a2, a0, a1
 	li a3, 4294967295
 	and a0, a2, a3

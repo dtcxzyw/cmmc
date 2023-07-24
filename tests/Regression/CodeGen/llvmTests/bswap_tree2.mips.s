@@ -2,6 +2,7 @@
 .text
 .globl test1
 test1:
+.p2align 2
 	andi $t0, $a0, 255
 	sll $t0, $t0, 8
 	andi $t1, $a0, 65280
@@ -19,6 +20,7 @@ test1:
 	nop
 .globl test2
 test2:
+.p2align 2
 	srl $t0, $a0, 8
 	andi $t1, $t0, 65280
 	li $t2, 16711680
@@ -32,6 +34,7 @@ test2:
 	nop
 .globl test3
 test3:
+.p2align 2
 	trunc.w.s $f4, $f12
 	mfc1 $t0, $f4
 	srl $t1, $t0, 8

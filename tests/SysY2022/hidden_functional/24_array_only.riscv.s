@@ -3,6 +3,7 @@
 .text
 .globl main
 main:
+.p2align 2
 	addi sp, sp, -56
 	li a0, -1
 	sd s2, 48(sp)
@@ -34,6 +35,7 @@ label53:
 	mv s3, s4
 	j label5
 label15:
+.p2align 2
 	addiw a0, a0, -1
 	slliw s3, s3, 1
 	bne a0, zero, label15
@@ -51,6 +53,7 @@ label15:
 	blt s3, a0, label5
 	j label130
 label18:
+.p2align 2
 	addw s3, s1, s3
 	beq s0, zero, label24
 	lw a0, 0(sp)
@@ -65,6 +68,7 @@ label18:
 	blt s3, a0, label5
 	j label130
 label24:
+.p2align 2
 	lw a1, 0(sp)
 	subw s4, a1, s1
 	li a0, 5
@@ -92,6 +96,7 @@ label33:
 	beq s2, a0, label38
 	j label2
 label5:
+.p2align 2
 	mv a0, s2
 	jal putint
 	mv a0, s3
@@ -126,6 +131,7 @@ label5:
 	blt s3, a0, label5
 	j label130
 label8:
+.p2align 2
 	lw a1, 0(sp)
 	addw a0, s1, a1
 	sw a0, 0(sp)
@@ -147,6 +153,7 @@ label8:
 	blt s3, a0, label5
 	j label130
 label21:
+.p2align 2
 	addiw a1, a1, -1
 	slliw a0, a0, 1
 	bne a1, zero, label21
@@ -158,6 +165,7 @@ label21:
 	beq s0, zero, label28
 	j label130
 label10:
+.p2align 2
 	addiw a1, a1, -1
 	slliw a0, a0, 1
 	bne a1, zero, label10

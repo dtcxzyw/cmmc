@@ -3,22 +3,29 @@
 .text
 .globl bar
 bar:
+.p2align 2
 	ret
 .globl bar_comdat
 bar_comdat:
+.p2align 2
 	ret
 .globl baz
 baz:
+.p2align 2
 	ret
 .globl baz_comdat
 baz_comdat:
+.p2align 2
 	ret
 .globl foo
 foo:
+.p2align 2
 	ret
 .globl quux
 quux:
+.p2align 2
 	ret
 .globl quux_comdat
 quux_comdat:
+.p2align 2
 	ret

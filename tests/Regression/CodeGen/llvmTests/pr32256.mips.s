@@ -7,5 +7,6 @@ c:
 .text
 .globl _Z1av
 _Z1av:
+.p2align 2
 	jr $ra
 	nop

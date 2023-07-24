@@ -8,4 +8,5 @@ var:
 .text
 .globl func
 func:
+.p2align 2
 	ret

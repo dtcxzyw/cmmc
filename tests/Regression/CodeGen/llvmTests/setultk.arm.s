@@ -35,6 +35,7 @@ r3:
 .fpu vfpv4
 .globl test
 test:
+.p2align 4
 	movw r0, #:lower16:j
 	movw r1, #:lower16:r1
 	movt r0, #:upper16:j

@@ -3,6 +3,7 @@
 .text
 .globl dummy
 dummy:
+.p2align 2
 	mulw a3, a0, a1
 	addw a0, a2, a3
 	ret

@@ -7,6 +7,7 @@ __cmmc_fp_constant_pool:
 .text
 .globl main
 main:
+.p2align 2
 	addi sp, sp, -88
 	li a0, 111
 	sd s0, 80(sp)
@@ -84,9 +85,11 @@ main:
 	li s3, 1
 	mv s1, a0
 label2:
+.p2align 2
 	jal getfloat
 	fcvt.w.s a0, f10, rtz
 pcrel64:
+.p2align 2
 	auipc a1, %pcrel_hi(__cmmc_fp_constant_pool)
 	addi a2, a1, %pcrel_lo(pcrel64)
 	flw f11, 0(a2)

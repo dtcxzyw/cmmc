@@ -16,6 +16,7 @@ kkkk:
 .text
 .globl test
 test:
+.p2align 2
 pcrel21:
 	auipc a1, %pcrel_hi(iiii)
 pcrel22:

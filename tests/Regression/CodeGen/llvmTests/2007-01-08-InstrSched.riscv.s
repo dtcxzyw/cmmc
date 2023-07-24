@@ -3,6 +3,7 @@
 .text
 .globl foo
 foo:
+.p2align 2
 	lui a0, 263168
 	fmv.w.x f12, a0
 	lui a0, 264704

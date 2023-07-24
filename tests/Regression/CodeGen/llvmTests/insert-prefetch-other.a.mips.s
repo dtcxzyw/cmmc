@@ -8,6 +8,7 @@ X:
 .text
 .globl foo
 foo:
+.p2align 2
 	bgtz $a0, label2
 	nop
 	move $v0, $zero

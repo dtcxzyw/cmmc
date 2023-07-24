@@ -15,6 +15,7 @@ right_child:
 .arm
 .fpu vfpv4
 insert:
+.p2align 4
 	push { r4, r5, r6, r7, lr }
 	cmn r0, #1
 	mov r4, r0
@@ -84,6 +85,7 @@ label7:
 	str r6, [r5, r4, lsl #2]
 	b label3
 delete:
+.p2align 4
 	push { r4, r5, lr }
 	cmn r0, #1
 	mov r4, r0
@@ -187,6 +189,7 @@ label157:
 	ldr r0, [r0, r4, lsl #2]
 	b label106
 inorder:
+.p2align 4
 	push { r4, lr }
 	cmn r0, #1
 	beq label239
@@ -211,6 +214,7 @@ label239:
 	pop { r4, pc }
 .globl main
 main:
+.p2align 4
 	push { r4, r5, r6, lr }
 	sub sp, sp, #8
 	mov r4, sp
@@ -255,6 +259,7 @@ label303:
 	mov r5, #0
 	mov r6, r5
 label270:
+.p2align 4
 	bl getint
 	mov r1, r0
 	mov r0, r6
@@ -270,6 +275,7 @@ label273:
 	bl putch
 	b label265
 label267:
+.p2align 4
 	bl getint
 	mov r2, r4
 	mov r1, r0

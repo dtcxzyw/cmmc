@@ -2,6 +2,7 @@
 .data
 .text
 hanoi:
+.p2align 2
 	addi sp, sp, -40
 	sd s2, 32(sp)
 	mv s2, a3
@@ -60,6 +61,7 @@ label2:
 	ret
 .globl main
 main:
+.p2align 2
 	addi sp, sp, -16
 	sd s0, 8(sp)
 	sd ra, 0(sp)
@@ -67,6 +69,7 @@ main:
 	ble a0, zero, label35
 	mv s0, a0
 label33:
+.p2align 2
 	jal getint
 	li a3, 3
 	li a2, 2

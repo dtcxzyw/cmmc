@@ -51,7 +51,7 @@ public:
         return 4;
     }
     [[nodiscard]] size_t getCodeAlignment() const noexcept override {
-        return 4;
+        return 16;
     }
 };
 

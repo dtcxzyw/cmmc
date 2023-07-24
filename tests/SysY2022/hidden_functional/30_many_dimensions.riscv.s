@@ -7,6 +7,7 @@ array:
 .text
 .globl main
 main:
+.p2align 2
 	addi sp, sp, -64
 pcrel324:
 	auipc a1, %pcrel_hi(array)

@@ -3,6 +3,7 @@
 .text
 .globl f
 f:
+.p2align 2
 	ori a2, a0, 1
 	srliw a3, a0, 27
 	slliw a1, a2, 5

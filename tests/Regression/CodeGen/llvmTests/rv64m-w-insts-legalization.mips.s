@@ -2,6 +2,7 @@
 .text
 .globl mulw
 mulw:
+.p2align 2
 	move $t0, $a0
 	move $t2, $a1
 	subu $t1, $a0, $a1

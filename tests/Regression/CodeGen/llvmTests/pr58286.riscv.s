@@ -8,7 +8,9 @@ var:
 .text
 .globl func
 func:
+.p2align 2
 	ret
 .globl shrink_wrap
 shrink_wrap:
+.p2align 2
 	ret

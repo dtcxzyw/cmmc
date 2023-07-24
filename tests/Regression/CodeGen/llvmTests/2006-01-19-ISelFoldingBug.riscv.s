@@ -8,6 +8,7 @@ A:
 .text
 .globl test5
 test5:
+.p2align 2
 	andi a2, a1, 255
 	li a4, 32
 	li a3, 4294967295

@@ -3,6 +3,7 @@
 .text
 .globl fastisel_select
 fastisel_select:
+.p2align 2
 	subw a2, a0, a1
 	sltu a3, zero, a2
 	li a2, 1204476887

@@ -32,6 +32,7 @@ r3:
 .text
 .globl test
 test:
+.p2align 2
 pcrel16:
 	auipc a2, %pcrel_hi(j)
 	lw a0, %pcrel_lo(pcrel16)(a2)

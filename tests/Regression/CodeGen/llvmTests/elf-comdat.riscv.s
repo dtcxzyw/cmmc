@@ -8,4 +8,5 @@ v:
 .text
 .globl f
 f:
+.p2align 2
 	ret

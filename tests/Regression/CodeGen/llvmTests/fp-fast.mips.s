@@ -6,18 +6,21 @@ __cmmc_fp_constant_pool:
 .text
 .globl test1
 test1:
+.p2align 2
 	add.s $f4, $f12, $f12
 	add.s $f0, $f4, $f4
 	jr $ra
 	nop
 .globl test10
 test10:
+.p2align 2
 	neg.s $f4, $f12
 	add.s $f0, $f12, $f4
 	jr $ra
 	nop
 .globl test2
 test2:
+.p2align 2
 	lui $t0, %hi(__cmmc_fp_constant_pool)
 	addiu $t0, $t0, %lo(__cmmc_fp_constant_pool)
 	lwc1 $f4, 0($t0)
@@ -28,6 +31,7 @@ test2:
 	nop
 .globl test3
 test3:
+.p2align 2
 	lui $t0, %hi(__cmmc_fp_constant_pool)
 	addiu $t0, $t0, %lo(__cmmc_fp_constant_pool)
 	lwc1 $f4, 0($t0)
@@ -38,6 +42,7 @@ test3:
 	nop
 .globl test4
 test4:
+.p2align 2
 	add.s $f4, $f12, $f12
 	lui $t0, %hi(__cmmc_fp_constant_pool)
 	addiu $t0, $t0, %lo(__cmmc_fp_constant_pool)
@@ -48,6 +53,7 @@ test4:
 	nop
 .globl test5
 test5:
+.p2align 2
 	add.s $f4, $f12, $f12
 	lui $t0, %hi(__cmmc_fp_constant_pool)
 	addiu $t0, $t0, %lo(__cmmc_fp_constant_pool)
@@ -58,21 +64,25 @@ test5:
 	nop
 .globl test6
 test6:
+.p2align 2
 	mtc1 $zero, $f0
 	jr $ra
 	nop
 .globl test7
 test7:
+.p2align 2
 	mtc1 $zero, $f0
 	jr $ra
 	nop
 .globl test8
 test8:
+.p2align 2
 	mov.s $f0, $f12
 	jr $ra
 	nop
 .globl test9
 test9:
+.p2align 2
 	mov.s $f0, $f12
 	jr $ra
 	nop

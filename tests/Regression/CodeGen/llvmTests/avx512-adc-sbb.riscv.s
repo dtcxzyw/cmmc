@@ -3,6 +3,7 @@
 .text
 .globl PR32316
 PR32316:
+.p2align 2
 	andi a4, a0, 255
 	li a3, 4294967295
 	andi a2, a2, 255

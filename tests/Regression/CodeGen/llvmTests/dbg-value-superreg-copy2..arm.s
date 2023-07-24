@@ -23,6 +23,7 @@ a:
 .fpu vfpv4
 .globl PR37060
 PR37060:
+.p2align 4
 	movw r0, #:lower16:b
 	movw r1, #:lower16:c
 	mvn r2, #0
@@ -40,6 +41,7 @@ PR37060:
 	bx lr
 .globl PR37667
 PR37667:
+.p2align 4
 	movw r0, #:lower16:b
 	movw r1, #:lower16:d
 	movt r0, #:upper16:b

@@ -9,6 +9,7 @@ edges:
 	.zero	4800
 .text
 maxCliques:
+.p2align 2
 	addi sp, sp, -64
 	sd s2, 56(sp)
 	mv s2, a0
@@ -30,6 +31,7 @@ pcrel98:
 	lw a0, 0(a2)
 	bgt s5, a0, label18
 label5:
+.p2align 2
 	sh2add a1, s2, s0
 	li a0, 1
 	sw s5, 0(a1)
@@ -40,6 +42,7 @@ label5:
 	ble s5, a0, label5
 	j label18
 label13:
+.p2align 2
 	addiw a1, a0, 1
 	mv a2, a1
 	bgt s1, a1, label16
@@ -51,6 +54,7 @@ label13:
 	ble s5, a0, label5
 	j label18
 label16:
+.p2align 2
 	sh2add a4, a0, s0
 	li a5, 120
 	lw a3, 0(a4)
@@ -72,6 +76,7 @@ label16:
 	ble s5, a0, label5
 	j label18
 label62:
+.p2align 2
 	mv a0, zero
 	addiw s5, s5, 1
 	lw a0, 0(s3)
@@ -89,6 +94,7 @@ label18:
 	addi sp, sp, 64
 	ret
 label10:
+.p2align 2
 	mv a0, s1
 	mv a1, s0
 	mv a2, s3
@@ -101,6 +107,7 @@ label10:
 	j label18
 .globl main
 main:
+.p2align 2
 	addi sp, sp, -192
 	sd s0, 184(sp)
 	addi s0, sp, 0
@@ -140,6 +147,7 @@ pcrel275:
 	ble s3, zero, label108
 	mv s5, zero
 label100:
+.p2align 2
 	jal getint
 	sh3add s6, s5, s4
 	sw a0, 0(s6)

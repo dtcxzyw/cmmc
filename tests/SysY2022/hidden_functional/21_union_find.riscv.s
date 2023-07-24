@@ -6,6 +6,7 @@ parent:
 	.zero	4020
 .text
 find:
+.p2align 2
 	addi sp, sp, -48
 pcrel65:
 	auipc a1, %pcrel_hi(parent)
@@ -74,6 +75,7 @@ label13:
 	j label2
 .globl main
 main:
+.p2align 2
 	addi sp, sp, -48
 	sd s0, 40(sp)
 	sd s2, 32(sp)
@@ -96,6 +98,7 @@ pcrel155:
 label88:
 	mv a0, zero
 label67:
+.p2align 2
 	addiw a1, a0, 4
 	ble s0, a1, label70
 	sh2add a2, a0, s1
@@ -119,11 +122,14 @@ label70:
 	bgt s0, zero, label80
 	j label81
 label112:
+.p2align 2
 	mv s3, zero
 	j label73
 label77:
+.p2align 2
 	ble s0, a1, label81
 label80:
+.p2align 2
 	sh2add a3, a1, s1
 	lw a2, 0(a3)
 	xor a4, a1, a2
@@ -143,6 +149,7 @@ label81:
 	addi sp, sp, 48
 	ret
 label73:
+.p2align 2
 	jal getint
 	mv s4, a0
 	jal getint
@@ -160,6 +167,7 @@ label73:
 	bgt s0, zero, label80
 	j label81
 label75:
+.p2align 2
 	sh2add a0, a0, s1
 	sw a2, 0(a0)
 	addiw s3, s3, 1

@@ -11,6 +11,7 @@ j:
 .text
 .globl main
 main:
+.p2align 2
 	lui $t0, %hi(i)
 	lw $t0, %lo(i)($t0)
 	beq $t0, $zero, label2

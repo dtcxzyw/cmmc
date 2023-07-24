@@ -11,6 +11,7 @@ X:
 .text
 .globl fn1
 fn1:
+.p2align 2
 	lui $t0, %hi(Y)
 	lw $t0, %lo(Y)($t0)
 	sll $t1, $t0, 3
@@ -22,6 +23,7 @@ fn1:
 	nop
 .globl fn2
 fn2:
+.p2align 2
 	sll $t0, $a1, 3
 	or $v0, $a0, $t0
 	jr $ra

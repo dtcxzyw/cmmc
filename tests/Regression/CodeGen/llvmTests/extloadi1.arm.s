@@ -11,4 +11,5 @@ handler_installed_6144_b:
 .fpu vfpv4
 .globl __mf_sigusr1_respond
 __mf_sigusr1_respond:
+.p2align 4
 	bx lr

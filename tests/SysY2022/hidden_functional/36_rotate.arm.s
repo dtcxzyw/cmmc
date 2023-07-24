@@ -9,6 +9,7 @@ image:
 .arm
 .fpu vfpv4
 my_sin_impl:
+.p2align 4
 	push { lr }
 	vpush { s16 }
 	movw r0, #14269
@@ -63,6 +64,7 @@ label7:
 	b label5
 .globl main
 main:
+.p2align 4
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
 	vpush { s16, s17, s18, s19, s20, s21 }
 	sub sp, sp, #4
@@ -130,6 +132,7 @@ label68:
 	vpop { s16, s17, s18, s19, s20, s21 }
 	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
 label56:
+.p2align 4
 	sub r0, r10, r7
 	mov r1, #0
 	mov r3, #0
@@ -159,8 +162,10 @@ label56:
 	ldr r0, [r5, r0, lsl #2]
 	b label60
 label176:
+.p2align 4
 	mov r0, #0
 label60:
+.p2align 4
 	bl putint
 	mov r0, #32
 	bl putch
@@ -269,6 +274,7 @@ label63:
 	bgt label194
 	b label193
 label66:
+.p2align 4
 	bl getint
 	add r1, r10, r11
 	add r11, r11, #1

@@ -3,5 +3,6 @@
 .text
 .globl test_abi
 test_abi:
+.p2align 2
 	fadd.s f10, f10, f11
 	ret

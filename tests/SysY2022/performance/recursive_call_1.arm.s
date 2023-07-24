@@ -5,6 +5,7 @@
 .arm
 .fpu vfpv4
 func:
+.p2align 4
 	push { r4, r5, r6, lr }
 	vpush { s16, s17 }
 	cmp r0, #0
@@ -54,6 +55,7 @@ label10:
 	b label5
 .globl main
 main:
+.p2align 4
 	push { lr }
 	mov r0, #21
 	sub sp, sp, #4

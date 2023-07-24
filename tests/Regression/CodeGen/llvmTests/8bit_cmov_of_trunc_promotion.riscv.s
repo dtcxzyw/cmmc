@@ -3,6 +3,7 @@
 .text
 .globl neg_only_one_truncation
 neg_only_one_truncation:
+.p2align 2
 	andi a3, a1, 255
 	andi a5, a2, 255
 	addw a0, a0, a2
@@ -21,6 +22,7 @@ label3:
 	ret
 .globl neg_type_mismatch
 neg_type_mismatch:
+.p2align 2
 	li a3, 65535
 	addw a0, a0, a2
 	and a5, a2, a3
@@ -40,6 +42,7 @@ label28:
 	ret
 .globl negative_CopyFromReg
 negative_CopyFromReg:
+.p2align 2
 	addw a3, a1, a2
 	andi a2, a0, 255
 	andi a4, a3, 255
@@ -55,6 +58,7 @@ label55:
 	ret
 .globl negative_CopyFromRegs
 negative_CopyFromRegs:
+.p2align 2
 	andi a4, a0, 255
 	andi a3, a1, 255
 	sext.b a2, a4
@@ -69,6 +73,7 @@ label77:
 	ret
 .globl t0
 t0:
+.p2align 2
 	addw a0, a0, a2
 	addw a1, a1, a2
 	andi a4, a0, 255

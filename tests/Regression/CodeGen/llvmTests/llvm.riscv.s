@@ -12,6 +12,7 @@ j:
 .text
 .globl main
 main:
+.p2align 2
 pcrel17:
 	auipc a2, %pcrel_hi(i)
 	li a0, 10

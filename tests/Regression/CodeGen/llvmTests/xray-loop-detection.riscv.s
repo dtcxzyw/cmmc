@@ -3,6 +3,7 @@
 .text
 .globl foo
 foo:
+.p2align 2
 	mv a1, a0
 	beq a0, zero, label9
 	mv a0, zero

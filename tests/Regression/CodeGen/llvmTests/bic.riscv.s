@@ -3,13 +3,16 @@
 .text
 .globl f1
 f1:
+.p2align 2
 	andn a0, a0, a1
 	ret
 .globl f2
 f2:
+.p2align 2
 	andn a0, a0, a1
 	ret
 .globl f3
 f3:
+.p2align 2
 	andi a0, a0, -256
 	ret

@@ -3,6 +3,7 @@
 .text
 .globl compare_i_gt
 compare_i_gt:
+.p2align 2
 	li a2, -78
 	li a1, 42
 	bgt a0, a2, label11
@@ -13,6 +14,7 @@ label11:
 	ret
 .globl compare_r_eq
 compare_r_eq:
+.p2align 2
 	subw a3, zero, a1
 	li a2, 4294967295
 	li a1, 42

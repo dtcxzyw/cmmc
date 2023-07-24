@@ -2,6 +2,7 @@
 .text
 .globl test5
 test5:
+.p2align 2
 	andi $t0, $a0, 65535
 	sll $t0, $t0, 2
 	sra $t0, $t0, 8

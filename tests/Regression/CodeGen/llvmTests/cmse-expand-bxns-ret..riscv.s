@@ -8,6 +8,7 @@ counter:
 .text
 .globl foo
 foo:
+.p2align 2
 	li a0, 5
 pcrel7:
 	auipc a1, %pcrel_hi(counter)

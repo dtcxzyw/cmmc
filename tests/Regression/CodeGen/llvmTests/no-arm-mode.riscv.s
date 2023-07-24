@@ -3,7 +3,9 @@
 .text
 .globl foo
 foo:
+.p2align 2
 	ret
 .globl no_thumb_mode_feature
 no_thumb_mode_feature:
+.p2align 2
 	ret

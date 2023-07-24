@@ -20,17 +20,21 @@ gd:
 .text
 .globl test_la
 test_la:
+.p2align 2
 	jr $ra
 	nop
 .globl test_la_tls_gd
 test_la_tls_gd:
+.p2align 2
 	jr $ra
 	nop
 .globl test_la_tls_ie
 test_la_tls_ie:
+.p2align 2
 	jr $ra
 	nop
 .globl test_lla
 test_lla:
+.p2align 2
 	jr $ra
 	nop

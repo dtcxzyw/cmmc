@@ -31,6 +31,7 @@ r3:
 .text
 .globl test
 test:
+.p2align 2
 	lui $t0, %hi(k)
 	lw $t0, %lo(k)($t0)
 	lui $t1, %hi(j)

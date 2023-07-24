@@ -3,6 +3,7 @@
 .text
 .globl main
 main:
+.p2align 2
 	addi sp, sp, -88
 	mv a1, zero
 	sd ra, 80(sp)
@@ -19,6 +20,7 @@ main:
 	sd zero, 72(sp)
 	mv a2, zero
 label2:
+.p2align 2
 	li a3, 20
 	blt a2, a3, label116
 	mv a2, zero
@@ -32,6 +34,7 @@ label18:
 	mv a1, a0
 	j label49
 label116:
+.p2align 2
 	addiw a3, a1, 1
 	ble a2, zero, label600
 	li a4, 1
@@ -51,9 +54,11 @@ label958:
 	addiw a2, a2, 1
 	j label2
 label124:
+.p2align 2
 	bne a4, zero, label126
 	j label958
 label52:
+.p2align 2
 	addiw a3, a1, 2
 	ble a2, zero, label376
 	sw zero, 0(sp)
@@ -84,6 +89,7 @@ label52:
 	bne a4, zero, label380
 	j label1093
 label376:
+.p2align 2
 	li a4, 1
 	bne a4, zero, label380
 	addiw a3, a1, 4
@@ -112,20 +118,24 @@ label376:
 	bne a4, zero, label380
 	j label1063
 label1093:
+.p2align 2
 	addiw a3, a1, 12
 	li a4, 6
 	blt a2, a4, label380
 	j label1080
 label1063:
+.p2align 2
 	addiw a3, a1, 12
 	li a4, 6
 	blt a2, a4, label380
 label1080:
+.p2align 2
 	sw zero, 20(sp)
 	lw a4, 16(sp)
 	bne a4, zero, label380
 	j label1096
 label392:
+.p2align 2
 	mv a1, a3
 	addiw a2, a2, 1
 	li a3, 20
@@ -134,10 +144,12 @@ label392:
 	blt a2, a3, label11
 	j label18
 label1096:
+.p2align 2
 	addiw a3, a1, 14
 	li a4, 7
 	blt a2, a4, label380
 label1065:
+.p2align 2
 	sw zero, 24(sp)
 	lw a4, 20(sp)
 	bne a4, zero, label380
@@ -164,6 +176,7 @@ label1065:
 	blt a2, a4, label490
 	j label1104
 label386:
+.p2align 2
 	li a4, 1
 	bne a4, zero, label392
 	addiw a3, a1, 6
@@ -195,11 +208,13 @@ label397:
 	li a4, 1
 	j label63
 label1047:
+.p2align 2
 	addiw a3, a1, 14
 	li a4, 7
 	blt a2, a4, label380
 	j label1065
 label119:
+.p2align 2
 	addiw a3, a1, 2
 	li a4, 2
 	blt a2, a4, label609
@@ -217,6 +232,7 @@ label119:
 	blt a2, a3, label11
 	j label18
 label609:
+.p2align 2
 	mv a4, zero
 	mv a1, a3
 	addiw a2, a2, 1
@@ -228,6 +244,7 @@ label609:
 	blt a2, a3, label11
 	j label18
 label122:
+.p2align 2
 	addiw a3, a1, 3
 	li a4, 3
 	blt a2, a4, label618
@@ -347,6 +364,7 @@ label11:
 	beq a3, zero, label223
 	j label222
 label600:
+.p2align 2
 	mv a4, zero
 	mv a1, a3
 	addiw a2, a2, 1
@@ -358,8 +376,10 @@ label600:
 	blt a2, a3, label11
 	j label18
 label380:
+.p2align 2
 	mv a1, a3
 label56:
+.p2align 2
 	addiw a2, a2, 1
 	li a3, 20
 	blt a2, a3, label52
@@ -367,6 +387,7 @@ label56:
 	blt a2, a3, label11
 	j label18
 label63:
+.p2align 2
 	bne a4, zero, label380
 	addiw a3, a1, 8
 	li a4, 4
@@ -670,6 +691,7 @@ label169:
 	addiw a2, a2, 1
 	j label2
 label177:
+.p2align 2
 	addiw a2, a2, 1
 	li a3, 20
 	blt a2, a3, label116

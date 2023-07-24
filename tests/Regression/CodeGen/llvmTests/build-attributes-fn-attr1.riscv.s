@@ -3,5 +3,6 @@
 .text
 .globl foo_no_fn_attr
 foo_no_fn_attr:
+.p2align 2
 	li a0, 42
 	ret

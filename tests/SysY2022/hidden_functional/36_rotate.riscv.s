@@ -15,6 +15,7 @@ image:
 	.zero	4194304
 .text
 my_sin_impl:
+.p2align 2
 	addi sp, sp, -16
 	fabs.s f11, f10
 pcrel52:
@@ -74,6 +75,7 @@ label7:
 	j label2
 .globl main
 main:
+.p2align 2
 	addi sp, sp, -104
 	fsw f20, 12(sp)
 	fsw f18, 24(sp)
@@ -139,6 +141,7 @@ label63:
 	ble s0, zero, label70
 	mv s6, zero
 label64:
+.p2align 2
 	subw a0, s6, s3
 	fcvt.s.w f10, a0
 	fmul.s f12, f10, f18
@@ -163,8 +166,10 @@ label64:
 	lw a0, 0(a1)
 	j label68
 label189:
+.p2align 2
 	mv a0, zero
 label68:
+.p2align 2
 	jal putint
 	li a0, 32
 	jal putch
@@ -282,6 +287,7 @@ label71:
 	bgt s0, zero, label207
 	j label206
 label74:
+.p2align 2
 	jal getint
 	addw a2, s6, s7
 	addiw s7, s7, 1

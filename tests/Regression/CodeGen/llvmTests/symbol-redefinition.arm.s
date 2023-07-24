@@ -11,4 +11,5 @@ var:
 .fpu vfpv4
 .globl fn
 fn:
+.p2align 4
 	bx lr

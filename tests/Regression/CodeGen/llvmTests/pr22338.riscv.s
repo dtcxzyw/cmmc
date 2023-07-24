@@ -3,6 +3,7 @@
 .text
 .globl fn
 fn:
+.p2align 2
 	xori a3, a1, 1
 	xori a0, a0, 1
 	li a1, 4294967295

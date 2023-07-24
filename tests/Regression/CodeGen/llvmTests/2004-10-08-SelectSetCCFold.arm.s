@@ -6,6 +6,7 @@
 .fpu vfpv4
 .globl test
 test:
+.p2align 4
 	cmp r0, #0
 	bne label11
 	cmp r2, r3

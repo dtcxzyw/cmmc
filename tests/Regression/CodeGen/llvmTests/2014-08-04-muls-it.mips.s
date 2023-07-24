@@ -2,6 +2,7 @@
 .text
 .globl function
 function:
+.p2align 2
 	mult $a0, $a0
 	mflo $t0
 	xor $t1, $a0, $a1

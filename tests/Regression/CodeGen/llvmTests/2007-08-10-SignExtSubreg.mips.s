@@ -7,6 +7,7 @@ X:
 .text
 .globl _Z3fooi
 _Z3fooi:
+.p2align 2
 	andi $t0, $a0, 255
 	sll $t0, $t0, 24
 	sra $v0, $t0, 24

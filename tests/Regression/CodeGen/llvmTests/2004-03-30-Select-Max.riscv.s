@@ -3,6 +3,7 @@
 .text
 .globl max
 max:
+.p2align 2
 	mv a2, a0
 	bgt a0, a1, label9
 	mv a2, a1

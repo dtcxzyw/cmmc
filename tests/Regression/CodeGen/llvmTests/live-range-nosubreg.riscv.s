@@ -21,6 +21,7 @@ b:
 .text
 .globl main
 main:
+.p2align 2
 pcrel56:
 	auipc a0, %pcrel_hi(a)
 	li a1, 65535

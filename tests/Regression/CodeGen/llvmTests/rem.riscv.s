@@ -3,6 +3,7 @@
 .text
 .globl test1
 test1:
+.p2align 2
 	li a1, -2139062143
 	mul a2, a0, a1
 	srli a3, a2, 32
@@ -18,6 +19,7 @@ test1:
 	ret
 .globl test2
 test2:
+.p2align 2
 	slli a1, a0, 1
 	srli a4, a1, 56
 	add a2, a0, a4
@@ -28,15 +30,18 @@ test2:
 	ret
 .globl test3
 test3:
+.p2align 2
 	li a1, 255
 	remuw a0, a0, a1
 	ret
 .globl test4
 test4:
+.p2align 2
 	andi a0, a0, 255
 	ret
 .globl test5
 test5:
+.p2align 2
 	li a2, 41
 	li a3, 4294967295
 	remw a1, a2, a0

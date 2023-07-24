@@ -2,6 +2,7 @@
 .text
 .globl t
 t:
+.p2align 2
 	beq $a0, $a1, label15
 	nop
 	move $t0, $a1

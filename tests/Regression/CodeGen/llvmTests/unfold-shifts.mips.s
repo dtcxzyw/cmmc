@@ -2,6 +2,7 @@
 .text
 .globl unfold1
 unfold1:
+.p2align 2
 	sll $t0, $a0, 1
 	ori $t0, $t0, 510
 	addu $v0, $t0, $a1
@@ -9,6 +10,7 @@ unfold1:
 	nop
 .globl unfold10
 unfold10:
+.p2align 2
 	sll $t0, $a0, 10
 	li $t1, 4177920
 	or $t0, $t0, $t1
@@ -17,6 +19,7 @@ unfold10:
 	nop
 .globl unfold11
 unfold11:
+.p2align 2
 	sll $t0, $a0, 11
 	li $t1, 16252928
 	addu $t0, $t0, $t1
@@ -25,6 +28,7 @@ unfold11:
 	nop
 .globl unfold2
 unfold2:
+.p2align 2
 	sll $t0, $a0, 2
 	ori $t0, $t0, 16320
 	subu $v0, $a1, $t0
@@ -32,6 +36,7 @@ unfold2:
 	nop
 .globl unfold3
 unfold3:
+.p2align 2
 	sll $t0, $a0, 4
 	li $t1, 1044480
 	or $t0, $t0, $t1
@@ -40,6 +45,7 @@ unfold3:
 	nop
 .globl unfold4
 unfold4:
+.p2align 2
 	sll $t0, $a0, 5
 	li $t1, 33423360
 	or $t0, $t0, $t1
@@ -48,6 +54,7 @@ unfold4:
 	nop
 .globl unfold5
 unfold5:
+.p2align 2
 	sll $t0, $a0, 6
 	addiu $t0, $t0, 31744
 	or $v0, $a1, $t0
@@ -55,6 +62,7 @@ unfold5:
 	nop
 .globl unfold6
 unfold6:
+.p2align 2
 	sll $t0, $a0, 8
 	li $t1, 2031616
 	addu $t0, $t0, $t1
@@ -63,6 +71,7 @@ unfold6:
 	nop
 .globl unfold7
 unfold7:
+.p2align 2
 	sll $t0, $a0, 1
 	andi $t0, $t0, 512
 	addu $v0, $t0, $a1
@@ -70,6 +79,7 @@ unfold7:
 	nop
 .globl unfold8
 unfold8:
+.p2align 2
 	sll $t0, $a0, 9
 	li $t1, 65011712
 	addu $t0, $t0, $t1
@@ -78,6 +88,7 @@ unfold8:
 	nop
 .globl unfold9
 unfold9:
+.p2align 2
 	sll $t0, $a0, 1
 	xori $t0, $t0, 510
 	addu $v0, $t0, $a1

@@ -3,8 +3,10 @@
 .text
 .globl f1
 f1:
+.p2align 2
 	ret
 .globl f2
 f2:
+.p2align 2
 	li a0, 1
 	ret

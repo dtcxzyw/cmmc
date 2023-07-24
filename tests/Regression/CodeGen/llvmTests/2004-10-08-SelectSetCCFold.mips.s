@@ -2,6 +2,7 @@
 .text
 .globl test
 test:
+.p2align 2
 	bne $a0, $zero, label11
 	nop
 	slt $v0, $a2, $a3

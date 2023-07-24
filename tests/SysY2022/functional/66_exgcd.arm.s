@@ -5,6 +5,7 @@
 .arm
 .fpu vfpv4
 exgcd:
+.p2align 4
 	push { r4, r5, r6, r7, r8, lr }
 	mov r6, r3
 	mov r7, r2
@@ -60,6 +61,7 @@ label9:
 	b label3
 .globl main
 main:
+.p2align 4
 	push { r4, lr }
 	mov r0, #1
 	mov r1, #15

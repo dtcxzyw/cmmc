@@ -6,6 +6,7 @@
 .fpu vfpv4
 .globl i32_select_0_or_neg1
 i32_select_0_or_neg1:
+.p2align 4
 	cmp r0, #0
 	mov r0, #0
 	movwne r0, #1

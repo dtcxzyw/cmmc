@@ -2,6 +2,7 @@
 .text
 .globl test_ifcvt
 test_ifcvt:
+.p2align 2
 	beq $a0, $zero, label2
 	nop
 	addiu $v0, $a1, 1

@@ -12,6 +12,7 @@ edges:
 .arm
 .fpu vfpv4
 maxCliques:
+.p2align 4
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
 	mov r9, #1
 	movw r8, #:lower16:graph
@@ -26,6 +27,7 @@ maxCliques:
 	cmp r9, r0
 	bgt label18
 label5:
+.p2align 4
 	str r9, [r4, r6, lsl #2]
 	mov r0, #1
 	cmp r5, r0
@@ -38,6 +40,7 @@ label5:
 	ble label5
 	b label18
 label13:
+.p2align 4
 	add r1, r0, #1
 	mov r2, r1
 	cmp r5, r1
@@ -52,6 +55,7 @@ label13:
 	ble label5
 	b label18
 label16:
+.p2align 4
 	ldr r3, [r4, r0, lsl #2]
 	mov r11, #120
 	mla r3, r3, r11, r8
@@ -74,6 +78,7 @@ label16:
 	ble label5
 	b label18
 label62:
+.p2align 4
 	mov r0, #0
 	cmp r0, #0
 	bne label10
@@ -86,6 +91,7 @@ label18:
 	add sp, sp, #4
 	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
 label10:
+.p2align 4
 	mov r0, r5
 	mov r1, r4
 	mov r2, r7
@@ -103,6 +109,7 @@ label10:
 	b label18
 .globl main
 main:
+.p2align 4
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
 	mov r0, #0
 	sub sp, sp, #132
@@ -150,6 +157,7 @@ main:
 	ble label98
 	mov r9, #0
 label90:
+.p2align 4
 	bl getint
 	str r0, [r6, r9, lsl #3]
 	add r10, r6, r9, lsl #3

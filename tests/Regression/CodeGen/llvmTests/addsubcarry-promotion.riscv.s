@@ -3,4 +3,5 @@
 .text
 .globl fn1
 fn1:
+.p2align 2
 	ret

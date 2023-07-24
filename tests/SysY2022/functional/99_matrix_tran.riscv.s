@@ -3,6 +3,7 @@
 .text
 .globl main
 main:
+.p2align 2
 	addi sp, sp, -88
 	lui a0, 260096
 	fmv.w.x f12, zero

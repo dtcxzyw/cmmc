@@ -6,6 +6,7 @@
 .fpu vfpv4
 .globl PR15705
 PR15705:
+.p2align 4
 	push { r4 }
 	mov r4, r1
 	cmp r0, r2

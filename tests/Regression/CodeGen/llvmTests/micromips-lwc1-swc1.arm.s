@@ -11,12 +11,14 @@ gf0:
 .fpu vfpv4
 .globl test_lwc1
 test_lwc1:
+.p2align 4
 	movw r0, #:lower16:gf0
 	movt r0, #:upper16:gf0
 	vldr s0, [r0, #0]
 	bx lr
 .globl test_swc1
 test_swc1:
+.p2align 4
 	movw r0, #:lower16:gf0
 	movt r0, #:upper16:gf0
 	vstr s0, [r0, #0]

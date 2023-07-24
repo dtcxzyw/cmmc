@@ -35,6 +35,7 @@ n:
 .text
 .globl shift_left
 shift_left:
+.p2align 2
 	lui $t0, %hi(a)
 	lw $t0, %lo(a)($t0)
 	sll $t0, $t0, 4
@@ -50,6 +51,7 @@ shift_left:
 	nop
 .globl shift_right
 shift_right:
+.p2align 2
 	lui $t0, %hi(i)
 	lw $t0, %lo(i)($t0)
 	srl $t0, $t0, 4

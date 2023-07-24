@@ -8,5 +8,6 @@ foo:
 .text
 .globl main
 main:
+.p2align 2
 	mv a0, zero
 	ret

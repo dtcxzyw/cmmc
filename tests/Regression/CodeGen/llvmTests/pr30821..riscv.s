@@ -3,6 +3,7 @@
 .text
 .globl test
 test:
+.p2align 2
 	addiw a2, a0, -1
 	addiw a3, a1, 1
 	mulw a0, a2, a3

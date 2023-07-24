@@ -6,6 +6,7 @@
 .fpu vfpv4
 .globl f0
 f0:
+.p2align 4
 	lsl r1, r0, #7
 	orr r1, r1, r0, lsr #25
 	orr r1, r1, r0, lsl #9
@@ -13,12 +14,14 @@ f0:
 	bx lr
 .globl f1
 f1:
+.p2align 4
 	orr r1, r1, r0, lsl #7
 	orr r1, r1, r0, lsl #9
 	orr r0, r1, r0, lsr #23
 	bx lr
 .globl f2
 f2:
+.p2align 4
 	lsl r2, r0, #11
 	orr r2, r2, r1, lsl #19
 	orr r0, r2, r0, lsr #21
@@ -26,6 +29,7 @@ f2:
 	bx lr
 .globl f3
 f3:
+.p2align 4
 	lsl r1, r0, #3
 	orr r1, r1, r0, lsl #5
 	orr r1, r1, r0, lsl #7

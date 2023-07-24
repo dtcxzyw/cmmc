@@ -13,6 +13,7 @@ c:
 .fpu vfpv4
 .globl main
 main:
+.p2align 4
 	push { r4, r5, lr }
 	sub sp, sp, #4
 	movw r4, #:lower16:c
@@ -30,6 +31,7 @@ main:
 	str r1, [r4, #20]
 	add r1, r4, #24
 label2:
+.p2align 4
 	add r2, r0, #4
 	movw r3, #4090
 	cmp r2, r3

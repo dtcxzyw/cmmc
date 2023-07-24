@@ -11,6 +11,7 @@ x:
 .fpu vfpv4
 .globl v_sf
 v_sf:
+.p2align 4
 	movw r0, #:lower16:x
 	movt r0, #:upper16:x
 	vstr s0, [r0, #0]

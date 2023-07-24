@@ -6,6 +6,7 @@
 .fpu vfpv4
 .globl hoge
 hoge:
+.p2align 4
 	mvn r1, #0
 	lsl r0, r1, r0
 	eor r0, r1, r0

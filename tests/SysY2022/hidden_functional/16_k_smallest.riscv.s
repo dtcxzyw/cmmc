@@ -7,6 +7,7 @@ array:
 .text
 .globl main
 main:
+.p2align 2
 	addi sp, sp, -40
 	sd s1, 32(sp)
 	sd s0, 24(sp)
@@ -44,6 +45,7 @@ label108:
 	addiw a0, s2, 1
 	j label6
 label12:
+.p2align 2
 	sh2add a5, a2, s1
 	lw a4, 0(a5)
 	bge a3, a4, label13
@@ -74,6 +76,7 @@ label23:
 	addi sp, sp, 40
 	ret
 label25:
+.p2align 2
 	jal getint
 	sh2add a1, s3, s2
 	addiw s3, s3, 1
@@ -84,6 +87,7 @@ label25:
 	beq zero, a1, label23
 	j label35
 label13:
+.p2align 2
 	sh2add a5, s2, s1
 	sh2add t1, a2, s1
 	addiw s2, s2, 1
@@ -102,6 +106,7 @@ label13:
 	blt s0, s2, label81
 	j label108
 label17:
+.p2align 2
 	ble s2, s0, label23
 	sh2add a1, s0, s1
 	lw a0, 0(a1)

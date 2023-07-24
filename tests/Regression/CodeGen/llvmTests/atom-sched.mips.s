@@ -27,6 +27,7 @@ f:
 .text
 .globl func
 func:
+.p2align 2
 	lui $t0, %hi(b)
 	lw $t0, %lo(b)($t0)
 	lui $t1, %hi(c)

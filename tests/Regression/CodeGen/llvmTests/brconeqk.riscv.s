@@ -12,6 +12,7 @@ result:
 .text
 .globl test
 test:
+.p2align 2
 pcrel20:
 	auipc a1, %pcrel_hi(i)
 	li a2, 10

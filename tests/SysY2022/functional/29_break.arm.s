@@ -6,6 +6,7 @@
 .fpu vfpv4
 .globl main
 main:
+.p2align 4
 	mov r0, #0
 	mov r1, r0
 label2:

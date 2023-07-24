@@ -3,6 +3,7 @@
 .text
 .globl pass_fast_bool
 pass_fast_bool:
+.p2align 2
 	sltu a2, zero, a0
 	subw a3, zero, a2
 	li a2, 4294967295
@@ -11,6 +12,7 @@ pass_fast_bool:
 	ret
 .globl pass_vector_bool
 pass_vector_bool:
+.p2align 2
 	sltu a2, zero, a0
 	subw a3, zero, a2
 	li a2, 4294967295
@@ -19,5 +21,6 @@ pass_vector_bool:
 	ret
 .globl ret_true
 ret_true:
+.p2align 2
 	li a0, 1
 	ret

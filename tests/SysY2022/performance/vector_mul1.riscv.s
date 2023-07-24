@@ -18,6 +18,7 @@ vectorA:
 .text
 .globl main
 main:
+.p2align 2
 	addi sp, sp, -24
 	li a0, 62
 	sd s0, 16(sp)
@@ -29,6 +30,7 @@ pcrel750:
 	addi s0, a1, %pcrel_lo(pcrel750)
 	mv a1, zero
 label2:
+.p2align 2
 	sh2add a0, a1, s0
 	lui a2, 260096
 	addiw a1, a1, 16
@@ -52,8 +54,10 @@ label2:
 	li a0, 100000
 	blt a1, a0, label2
 pcrel751:
+.p2align 2
 	auipc a0, %pcrel_hi(vectorB)
 pcrel752:
+.p2align 2
 	auipc a1, %pcrel_hi(Vectortm)
 	addi s1, a0, %pcrel_lo(pcrel751)
 	addi a0, a1, %pcrel_lo(pcrel752)
@@ -77,6 +81,7 @@ pcrel752:
 	blt a1, a2, label5
 	j label67
 label11:
+.p2align 2
 	addiw a4, a3, 3
 	addiw a5, a3, 2
 	addiw a2, a3, 1
@@ -104,6 +109,7 @@ label11:
 	blt a1, a2, label5
 	j label67
 label15:
+.p2align 2
 	addiw t0, t1, 4
 	li t2, 100000
 	bge t0, t2, label19
@@ -157,6 +163,7 @@ label15:
 	fadd.s f10, f10, f12
 	j label15
 label88:
+.p2align 2
 	addiw a4, a3, 3
 	addiw a5, a3, 2
 	addiw a2, a3, 1
@@ -178,6 +185,7 @@ label88:
 	blt a1, a2, label5
 	j label67
 label92:
+.p2align 2
 	addiw t0, t1, 4
 	li t2, 100000
 	bge t0, t2, label95
@@ -231,6 +239,7 @@ label92:
 	fadd.s f10, f10, f12
 	j label92
 label5:
+.p2align 2
 	fmv.w.x f10, zero
 	mv t1, zero
 	mv a3, zero
@@ -250,6 +259,7 @@ label5:
 	blt a1, a2, label5
 	j label67
 label19:
+.p2align 2
 	addw a5, a3, t1
 	addw t0, a2, t1
 	mulw a4, a5, t0
@@ -287,6 +297,7 @@ label19:
 	blt a1, a2, label5
 	j label67
 label26:
+.p2align 2
 	li a3, 100000
 	blt t2, a3, label27
 	sh2add a4, a2, s1
@@ -307,11 +318,13 @@ label26:
 	blt a1, a2, label5
 	j label67
 label220:
+.p2align 2
 	addiw a4, a2, 1
 	addiw a5, a2, 2
 	addiw t0, a2, 3
 	j label35
 label31:
+.p2align 2
 	addw t0, a2, a4
 	addw t1, a3, a4
 	mulw a5, t0, t1
@@ -347,9 +360,11 @@ label31:
 	blt a1, a2, label5
 	j label67
 label237:
+.p2align 2
 	mv a4, a5
 	j label31
 label35:
+.p2align 2
 	addw t4, a2, t2
 	addw t3, a4, t2
 	mulw t1, t4, t3
@@ -402,10 +417,12 @@ label35:
 	addiw a3, a2, 1
 	j label31
 label286:
+.p2align 2
 	mv t2, a3
 	mv a3, t1
 	j label35
 label95:
+.p2align 2
 	addw a5, a3, t1
 	addw t2, a2, t1
 	mulw a4, a5, t2
@@ -437,6 +454,7 @@ label95:
 	blt a1, a2, label5
 	j label67
 label50:
+.p2align 2
 	li a3, 100000
 	blt t2, a3, label54
 	sh2add a3, a2, s0
@@ -449,17 +467,21 @@ label50:
 	blt a1, a2, label5
 	j label67
 label692:
+.p2align 2
 	mv a3, t2
 	addiw a4, a2, 1
 	j label63
 label54:
+.p2align 2
 	addiw a3, t2, 4
 	li a4, 100000
 	blt a3, a4, label55
 	j label692
 label359:
+.p2align 2
 	addiw a4, a2, 1
 label63:
+.p2align 2
 	addw t0, a2, a3
 	addw t1, a4, a3
 	mulw a5, t0, t1
@@ -486,6 +508,7 @@ label63:
 	blt a1, a2, label5
 	j label67
 label378:
+.p2align 2
 	mv a3, a5
 	j label63
 label67:
@@ -494,6 +517,7 @@ label67:
 	mv a1, zero
 	fmv.w.x f10, zero
 label68:
+.p2align 2
 	addiw a0, a1, 4
 	li a2, 100000
 	blt a0, a2, label87
@@ -530,10 +554,12 @@ label87:
 	fadd.s f10, f10, f12
 	j label68
 label55:
+.p2align 2
 	addiw a4, a2, 1
 	addiw a5, a2, 2
 	addiw t0, a2, 3
 label56:
+.p2align 2
 	addw t4, a2, t2
 	addw t3, a4, t2
 	addiw a6, t2, 2
@@ -586,6 +612,7 @@ label56:
 	mv a3, t1
 	j label56
 label27:
+.p2align 2
 	addiw a3, t2, 4
 	li a4, 100000
 	blt a3, a4, label220
@@ -596,6 +623,7 @@ label401:
 	fmv.w.x f11, zero
 	mv a1, zero
 label74:
+.p2align 2
 	addiw a0, a1, 4
 	li a2, 100000
 	bge a0, a2, label78
@@ -665,9 +693,11 @@ pcrel754:
 	addi sp, sp, 24
 	ret
 label82:
+.p2align 2
 	fadd.s f11, f11, f12
 	lui a0, 258048
 pcrel755:
+.p2align 2
 	auipc a1, %pcrel_hi(__cmmc_fp_constant_pool)
 	fmv.w.x f13, a0
 	addi a0, a1, %pcrel_lo(pcrel755)

@@ -3,6 +3,7 @@
 .text
 .globl main
 main:
+.p2align 2
 	addi sp, sp, -16
 	sd s0, 8(sp)
 	sd ra, 0(sp)
@@ -17,6 +18,7 @@ label14:
 	mv a1, zero
 	mv a0, zero
 label2:
+.p2align 2
 	addiw a2, a1, 4
 	ble s0, a2, label6
 	addiw a0, a0, 60

@@ -6,6 +6,7 @@
 .fpu vfpv4
 .globl X
 X:
+.p2align 4
 	add r0, r0, #14
 	movw r1, #12345
 	cmp r0, r1

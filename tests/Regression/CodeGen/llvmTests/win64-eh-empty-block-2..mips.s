@@ -15,6 +15,7 @@ z:
 .text
 .globl PR35761
 PR35761:
+.p2align 2
 	lui $t0, %hi(x)
 	lb $t0, %lo(x)($t0)
 	lui $t1, %hi(y)

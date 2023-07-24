@@ -10,6 +10,7 @@ sheet2:
 .text
 .globl main
 main:
+.p2align 2
 	addi sp, sp, -64
 	sd s0, 56(sp)
 	sd s5, 48(sp)
@@ -53,12 +54,14 @@ label16:
 	bge s1, s3, label21
 	j label20
 label127:
+.p2align 2
 	li a0, 1
 	bge s1, a0, label27
 	li s3, 1
 	bge s1, s3, label21
 	j label20
 label31:
+.p2align 2
 	li a1, 2000
 	mul a0, s3, a1
 	add s5, s2, a0
@@ -66,11 +69,13 @@ label31:
 	li s6, 1
 	j label33
 label32:
+.p2align 2
 	jal getch
 	addiw s3, s3, 1
 	bge s1, s3, label31
 	j label4
 label33:
+.p2align 2
 	jal getch
 	sh2add a1, s6, s5
 	xori a2, a0, 35
@@ -80,16 +85,19 @@ label33:
 	bge s0, s6, label33
 	j label32
 label5:
+.p2align 2
 	xori a3, a1, 1
 	mv a2, s2
 	sltiu a1, a3, 1
 	bne a1, zero, label212
 	mv a2, s3
 label212:
+.p2align 2
 	mv a3, s3
 	bne a1, zero, label214
 	mv a3, s2
 label214:
+.p2align 2
 	addiw a1, a1, 1
 	li t3, 1
 	addiw a4, t3, -1
@@ -105,12 +113,15 @@ label214:
 	addiw a0, a0, -1
 	bgt a0, zero, label5
 label225:
+.p2align 2
 	mv s4, a1
 	j label16
 label68:
+.p2align 2
 	li t3, 1
 	bge s0, t3, label12
 label71:
+.p2align 2
 	mv t3, t1
 	addiw a4, t1, -1
 	li a5, 2000
@@ -126,6 +137,7 @@ label71:
 	bgt a0, zero, label5
 	j label225
 label12:
+.p2align 2
 	addiw t4, t3, -1
 	sh2add t5, t3, a4
 	sh2add a6, t4, a4
@@ -162,6 +174,7 @@ label12:
 	bge s0, t5, label12
 	j label71
 label14:
+.p2align 2
 	sh2add t4, t3, t2
 	li t6, 1
 	mv t3, t5
@@ -169,6 +182,7 @@ label14:
 	bge s0, t5, label12
 	j label71
 label21:
+.p2align 2
 	li a1, 2000
 	mul a0, s3, a1
 	add s4, s2, a0
@@ -176,12 +190,14 @@ label21:
 	li s5, 1
 	j label22
 label24:
+.p2align 2
 	li a0, 10
 	jal putch
 	addiw s3, s3, 1
 	bge s1, s3, label21
 	j label20
 label22:
+.p2align 2
 	sh2add a1, s5, s4
 	li a2, 1
 	lw a0, 0(a1)
@@ -189,12 +205,14 @@ label22:
 	beq a0, a2, label216
 	li a1, 46
 label216:
+.p2align 2
 	mv a0, a1
 	jal putch
 	addiw s5, s5, 1
 	bge s0, s5, label22
 	j label24
 label27:
+.p2align 2
 	li a2, 2000
 	mul a3, a0, a2
 	add a2, s2, a3
@@ -206,6 +224,7 @@ label27:
 	bge s1, s3, label21
 	j label20
 label158:
+.p2align 2
 	li a3, 1
 	sh2add a5, a3, a1
 	sh2add t0, a3, a2
@@ -230,6 +249,7 @@ label20:
 	addi sp, sp, 64
 	ret
 label29:
+.p2align 2
 	sh2add a5, a3, a1
 	sh2add t0, a3, a2
 	lw a4, 0(a5)

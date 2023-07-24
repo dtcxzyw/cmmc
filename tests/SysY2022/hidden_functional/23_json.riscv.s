@@ -6,6 +6,7 @@ buffer:
 	.zero	200000000
 .text
 detect_item:
+.p2align 2
 	addi sp, sp, -32
 	sd s1, 24(sp)
 	mv s1, a1
@@ -755,6 +756,7 @@ label100:
 	j label96
 .globl main
 main:
+.p2align 2
 	addi sp, sp, -40
 	sd s1, 32(sp)
 	addi s1, sp, 0
@@ -774,6 +776,7 @@ pcrel1207:
 label1131:
 	mv s2, zero
 label1103:
+.p2align 2
 	sh2add a1, s2, s0
 	sw a0, 0(a1)
 	jal getch

@@ -18,6 +18,7 @@ fa:
 .arm
 .fpu vfpv4
 find:
+.p2align 4
 	push { r4, r5, r6, r7, r8, lr }
 	movw r5, #:lower16:fa
 	mov r4, r0
@@ -60,9 +61,11 @@ label13:
 	b label2
 .globl main
 main:
+.p2align 4
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
 	sub sp, sp, #4
 label63:
+.p2align 4
 	bl getch
 	mov r2, #0
 	mov r1, #0
@@ -76,6 +79,7 @@ label63:
 	cmp r0, #10
 	bhs label66
 label65:
+.p2align 4
 	bl getch
 	sub r0, r0, #48
 	cmp r0, #10
@@ -110,6 +114,7 @@ label149:
 	mov r5, r0
 	mov r6, #0
 label70:
+.p2align 4
 	bl getch
 	add r2, r6, r6, lsl #2
 	sub r1, r0, #48
@@ -129,6 +134,7 @@ label160:
 	mov r5, r0
 	b label70
 label118:
+.p2align 4
 	bl getch
 	mov r2, #1
 	mov r1, #0
@@ -166,9 +172,11 @@ label75:
 	movt r5, #:upper16:v
 	mov r2, r1
 label76:
+.p2align 4
 	cmp r2, #0
 	bge label79
 label80:
+.p2align 4
 	ldr r0, [r3, r2, lsl #2]
 	ldr r7, [r5, r2, lsl #2]
 	bl find
@@ -187,6 +195,7 @@ label80:
 	blt label80
 	b label79
 label83:
+.p2align 4
 	bl getch
 	mov r2, #0
 	mov r1, #0
@@ -202,9 +211,11 @@ label83:
 	blo label232
 	b label358
 label218:
+.p2align 4
 	mov r10, r0
 	mov r9, #0
 label85:
+.p2align 4
 	bl getch
 	mov r2, #1
 	mov r1, #0
@@ -221,12 +232,15 @@ label85:
 	blo label232
 	b label358
 label227:
+.p2align 4
 	mov r10, r0
 	b label85
 label232:
+.p2align 4
 	mov r10, r0
 	mov r11, #0
 label91:
+.p2align 4
 	bl getch
 	add r2, r11, r11, lsl #2
 	sub r1, r0, #48
@@ -238,9 +252,11 @@ label91:
 	mov r0, r11
 	b label94
 label243:
+.p2align 4
 	mov r10, r0
 	b label91
 label94:
+.p2align 4
 	cmp r9, #0
 	rsb r1, r0, #0
 	movne r0, r1
@@ -259,12 +275,15 @@ label94:
 	cmp r1, #10
 	blo label269
 label360:
+.p2align 4
 	mov r0, #0
 	b label102
 label255:
+.p2align 4
 	mov r10, r0
 	mov r9, #0
 label96:
+.p2align 4
 	bl getch
 	mov r2, #1
 	mov r1, #0
@@ -281,13 +300,16 @@ label96:
 	blo label269
 	b label360
 label264:
+.p2align 4
 	mov r10, r0
 	b label96
 label269:
+.p2align 4
 	mov r10, r0
 	mov r11, #0
 	b label115
 label102:
+.p2align 4
 	cmp r9, #0
 	rsb r1, r0, #0
 	movne r0, r1
@@ -315,13 +337,16 @@ label102:
 	bgt label83
 	b label75
 label281:
+.p2align 4
 	mov r10, r0
 	mov r9, #0
 	b label112
 label286:
+.p2align 4
 	mov r10, r0
 	mov r11, #0
 label109:
+.p2align 4
 	bl getch
 	add r2, r11, r11, lsl #2
 	sub r1, r0, #48
@@ -340,9 +365,11 @@ label109:
 	bgt label83
 	b label75
 label307:
+.p2align 4
 	mov r10, r0
 	b label109
 label112:
+.p2align 4
 	bl getch
 	mov r2, #1
 	mov r1, #0
@@ -367,9 +394,11 @@ label112:
 	bgt label83
 	b label75
 label316:
+.p2align 4
 	mov r10, r0
 	b label112
 label115:
+.p2align 4
 	bl getch
 	add r2, r11, r11, lsl #2
 	sub r1, r0, #48
@@ -381,9 +410,11 @@ label115:
 	mov r0, r11
 	b label102
 label327:
+.p2align 4
 	mov r10, r0
 	b label115
 label358:
+.p2align 4
 	mov r0, #0
 	b label94
 label79:

@@ -36,6 +36,7 @@ n:
 .text
 .globl shift_left
 shift_left:
+.p2align 2
 pcrel22:
 	auipc a1, %pcrel_hi(a)
 	lw a2, %pcrel_lo(pcrel22)(a1)
@@ -54,6 +55,7 @@ pcrel25:
 	ret
 .globl shift_right
 shift_right:
+.p2align 2
 pcrel47:
 	auipc a1, %pcrel_hi(i)
 	lw a2, %pcrel_lo(pcrel47)(a1)

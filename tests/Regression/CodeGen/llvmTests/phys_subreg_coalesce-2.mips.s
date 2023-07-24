@@ -2,6 +2,7 @@
 .text
 .globl binomial
 binomial:
+.p2align 2
 	sltu $t0, $a0, $a1
 	beq $t0, $zero, label4
 	nop

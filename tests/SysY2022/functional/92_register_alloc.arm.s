@@ -6,6 +6,7 @@
 .fpu vfpv4
 .globl main
 main:
+.p2align 4
 	push { r4, r5, r6, r7, lr }
 	sub sp, sp, #4
 	bl getint

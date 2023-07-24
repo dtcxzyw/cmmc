@@ -10,6 +10,7 @@ c:
 .text
 .globl main
 main:
+.p2align 2
 	addi sp, sp, -16
 pcrel58:
 	auipc a1, %pcrel_hi(c)
@@ -30,6 +31,7 @@ pcrel58:
 	sw a2, 20(a0)
 	addi a0, a0, 24
 label2:
+.p2align 2
 	addi a2, a1, 4
 	li a3, 4090
 	bge a2, a3, label5

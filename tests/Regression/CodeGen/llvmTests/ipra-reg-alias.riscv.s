@@ -3,6 +3,7 @@
 .text
 .globl main
 main:
+.p2align 2
 	li a2, 4294967295
 	and a3, a0, a2
 	addiw a1, a3, 1

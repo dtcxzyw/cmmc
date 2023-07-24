@@ -3,6 +3,7 @@
 .text
 .globl i32_select_0_or_neg1
 i32_select_0_or_neg1:
+.p2align 2
 	sltu a2, zero, a0
 	li a3, 4294967295
 	subw a1, zero, a2

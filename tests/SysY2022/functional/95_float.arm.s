@@ -6,6 +6,7 @@
 .fpu vfpv4
 .globl main
 main:
+.p2align 4
 	push { r4, r5, r6, r7, r8, lr }
 	sub sp, sp, #40
 	mov r0, #111
@@ -78,6 +79,7 @@ main:
 	mov r7, #1
 	mov r5, r0
 label2:
+.p2align 4
 	bl getfloat
 	movw r1, #4059
 	vcvt.s32.f32 s1, s0

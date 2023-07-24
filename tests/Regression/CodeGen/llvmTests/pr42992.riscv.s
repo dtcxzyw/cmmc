@@ -3,6 +3,7 @@
 .text
 .globl hoge
 hoge:
+.p2align 2
 	li a1, -1
 	li a2, 4294967295
 	sllw a3, a1, a0

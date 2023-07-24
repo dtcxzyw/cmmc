@@ -2,6 +2,7 @@
 .text
 .globl basic_3
 basic_3:
+.p2align 2
 	sltu $t0, $zero, $a0
 	xori $t1, $a0, 1
 	sltu $t1, $zero, $t1
@@ -13,6 +14,7 @@ basic_3:
 	nop
 .globl basic_5
 basic_5:
+.p2align 2
 	li $t0, 1
 	sllv $t0, $t0, $a0
 	andi $t0, $t0, 31
@@ -26,6 +28,7 @@ basic_5:
 	nop
 .globl cross_64_with_9
 cross_64_with_9:
+.p2align 2
 	addiu $t0, $a0, -35
 	li $t1, 1
 	sllv $t2, $t1, $t0
@@ -49,6 +52,7 @@ cross_64_with_9:
 	nop
 .globl cross_32_with_5
 cross_32_with_5:
+.p2align 2
 	addiu $t0, $a0, -35
 	li $t1, 1
 	sllv $t1, $t1, $t0
@@ -63,6 +67,7 @@ cross_32_with_5:
 	nop
 .globl negative_5
 negative_5:
+.p2align 2
 	addiu $t0, $a0, 7
 	li $t1, 1
 	sllv $t1, $t1, $t0

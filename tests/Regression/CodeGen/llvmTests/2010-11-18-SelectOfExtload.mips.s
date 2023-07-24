@@ -11,6 +11,7 @@ s:
 .text
 .globl foo
 foo:
+.p2align 2
 	bne $a0, $zero, label2
 	nop
 	lui $t0, %hi(s)

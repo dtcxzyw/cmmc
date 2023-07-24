@@ -23,6 +23,7 @@ write:
     ret
 .globl main
 main:
+.p2align 2
 	addi sp, sp, -8
 	sd ra, 0(sp)
 	jal read

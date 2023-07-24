@@ -3,5 +3,6 @@
 .text
 .globl crash
 crash:
+.p2align 2
 	mv a0, zero
 	ret

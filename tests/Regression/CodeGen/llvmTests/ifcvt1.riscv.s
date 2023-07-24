@@ -3,6 +3,7 @@
 .text
 .globl t1
 t1:
+.p2align 2
 	beq a0, zero, label2
 	addiw a0, a1, 1
 	j label3

@@ -3,5 +3,6 @@
 .text
 .globl test
 test:
+.p2align 2
 	fdiv.s f10, f10, f11
 	ret

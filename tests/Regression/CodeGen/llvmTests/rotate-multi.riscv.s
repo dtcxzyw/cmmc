@@ -3,6 +3,7 @@
 .text
 .globl f0
 f0:
+.p2align 2
 	slliw a2, a0, 7
 	srliw a4, a0, 25
 	slliw a3, a0, 9
@@ -13,6 +14,7 @@ f0:
 	ret
 .globl f1
 f1:
+.p2align 2
 	slliw a4, a0, 7
 	slliw a3, a0, 9
 	or a2, a1, a4
@@ -22,6 +24,7 @@ f1:
 	ret
 .globl f2
 f2:
+.p2align 2
 	slliw a3, a0, 11
 	slliw a4, a1, 19
 	srliw a0, a0, 21
@@ -32,6 +35,7 @@ f2:
 	ret
 .globl f3
 f3:
+.p2align 2
 	slliw a1, a0, 3
 	slliw a3, a0, 5
 	slliw a4, a0, 7

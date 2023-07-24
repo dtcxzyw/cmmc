@@ -3,6 +3,7 @@
 .text
 .globl main
 main:
+.p2align 2
 	addi sp, sp, -96
 	sd s4, 88(sp)
 	addi s4, sp, 0
@@ -22,6 +23,7 @@ main:
 	mv s5, zero
 	mv s3, a0
 label2:
+.p2align 2
 	jal getint
 	sh2add a1, s5, s4
 	addiw s5, s5, 1

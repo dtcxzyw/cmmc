@@ -6,6 +6,7 @@
 .fpu vfpv4
 .globl t
 t:
+.p2align 4
 	uxtb r0, r0
 	uxtb r1, r1
 	add r0, r0, #2

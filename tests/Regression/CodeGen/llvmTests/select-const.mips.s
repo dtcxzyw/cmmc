@@ -7,6 +7,7 @@ __cmmc_fp_constant_pool:
 .text
 .globl select_const_fp
 select_const_fp:
+.p2align 2
 	sltu $t0, $zero, $a0
 	lui $t1, %hi(__cmmc_fp_constant_pool)
 	addiu $t1, $t1, %lo(__cmmc_fp_constant_pool)
@@ -18,11 +19,13 @@ select_const_fp:
 	nop
 .globl select_const_int_easy
 select_const_int_easy:
+.p2align 2
 	sltu $v0, $zero, $a0
 	jr $ra
 	nop
 .globl select_const_int_harder
 select_const_int_harder:
+.p2align 2
 	sltu $t0, $zero, $a0
 	li $t1, 6
 	li $v0, 38
@@ -31,6 +34,7 @@ select_const_int_harder:
 	nop
 .globl select_const_int_one_away
 select_const_int_one_away:
+.p2align 2
 	sltu $t0, $zero, $a0
 	li $t1, 4
 	subu $v0, $t1, $t0
@@ -38,6 +42,7 @@ select_const_int_one_away:
 	nop
 .globl select_const_int_pow2_zero
 select_const_int_pow2_zero:
+.p2align 2
 	sltu $t0, $zero, $a0
 	subu $t0, $zero, $t0
 	andi $v0, $t0, 4
@@ -45,6 +50,7 @@ select_const_int_pow2_zero:
 	nop
 .globl select_eq_10000_10001
 select_eq_10000_10001:
+.p2align 2
 	xor $t0, $a0, $a1
 	sltiu $t0, $t0, 1
 	li $t1, 10002
@@ -53,6 +59,7 @@ select_eq_10000_10001:
 	nop
 .globl select_eq_1_2
 select_eq_1_2:
+.p2align 2
 	xor $t0, $a0, $a1
 	sltiu $t0, $t0, 1
 	li $t1, 2
@@ -61,6 +68,7 @@ select_eq_1_2:
 	nop
 .globl select_eq_zero_negone
 select_eq_zero_negone:
+.p2align 2
 	xor $t0, $a0, $a1
 	sltiu $t0, $t0, 1
 	subu $v0, $zero, $t0
@@ -68,6 +76,7 @@ select_eq_zero_negone:
 	nop
 .globl select_ne_10001_10002
 select_ne_10001_10002:
+.p2align 2
 	xor $t0, $a0, $a1
 	sltu $t0, $zero, $t0
 	li $t1, 10002
@@ -76,6 +85,7 @@ select_ne_10001_10002:
 	nop
 .globl select_ne_1_2
 select_ne_1_2:
+.p2align 2
 	xor $t0, $a0, $a1
 	sltu $t0, $zero, $t0
 	li $t1, 2
@@ -84,6 +94,7 @@ select_ne_1_2:
 	nop
 .globl select_ne_zero_negone
 select_ne_zero_negone:
+.p2align 2
 	xor $t0, $a0, $a1
 	sltu $t0, $zero, $t0
 	subu $v0, $zero, $t0
@@ -91,6 +102,7 @@ select_ne_zero_negone:
 	nop
 .globl select_sge_zero_negone
 select_sge_zero_negone:
+.p2align 2
 	slt $t0, $a0, $a1
 	xori $t0, $t0, 1
 	subu $v0, $zero, $t0
@@ -98,6 +110,7 @@ select_sge_zero_negone:
 	nop
 .globl select_sgt_negative_one_constant1_constant2
 select_sgt_negative_one_constant1_constant2:
+.p2align 2
 	li $t0, -1
 	slt $t0, $t0, $a0
 	li $t1, 7
@@ -107,12 +120,14 @@ select_sgt_negative_one_constant1_constant2:
 	nop
 .globl select_sgt_zero_negone
 select_sgt_zero_negone:
+.p2align 2
 	slt $t0, $a1, $a0
 	subu $v0, $zero, $t0
 	jr $ra
 	nop
 .globl select_sle_zero_negone
 select_sle_zero_negone:
+.p2align 2
 	slt $t0, $a1, $a0
 	xori $t0, $t0, 1
 	subu $v0, $zero, $t0
@@ -120,6 +135,7 @@ select_sle_zero_negone:
 	nop
 .globl select_slt_zero_constant1_constant2
 select_slt_zero_constant1_constant2:
+.p2align 2
 	slti $t0, $a0, 0
 	li $t1, 7
 	li $v0, -3
@@ -128,12 +144,14 @@ select_slt_zero_constant1_constant2:
 	nop
 .globl select_slt_zero_negone
 select_slt_zero_negone:
+.p2align 2
 	slt $t0, $a0, $a1
 	subu $v0, $zero, $t0
 	jr $ra
 	nop
 .globl select_uge_zero_negone
 select_uge_zero_negone:
+.p2align 2
 	sltu $t0, $a0, $a1
 	xori $t0, $t0, 1
 	subu $v0, $zero, $t0
@@ -141,12 +159,14 @@ select_uge_zero_negone:
 	nop
 .globl select_ugt_zero_negone
 select_ugt_zero_negone:
+.p2align 2
 	sltu $t0, $a1, $a0
 	subu $v0, $zero, $t0
 	jr $ra
 	nop
 .globl select_ule_zero_negone
 select_ule_zero_negone:
+.p2align 2
 	sltu $t0, $a1, $a0
 	xori $t0, $t0, 1
 	subu $v0, $zero, $t0
@@ -154,6 +174,7 @@ select_ule_zero_negone:
 	nop
 .globl select_ult_zero_negone
 select_ult_zero_negone:
+.p2align 2
 	sltu $t0, $a0, $a1
 	subu $v0, $zero, $t0
 	jr $ra

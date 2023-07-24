@@ -3,6 +3,7 @@
 .text
 .globl function
 function:
+.p2align 2
 	mulw a2, a0, a0
 	li a3, 4294967295
 	and a4, a2, a3

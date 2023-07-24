@@ -3,12 +3,14 @@
 .text
 .globl fptoint
 fptoint:
+.p2align 2
 	fcvt.w.s a1, f10, rtz
 	li a2, 4294967295
 	and a0, a1, a2
 	ret
 .globl fptouint
 fptouint:
+.p2align 2
 	fcvt.w.s a1, f10, rtz
 	li a2, 4294967295
 	and a0, a1, a2

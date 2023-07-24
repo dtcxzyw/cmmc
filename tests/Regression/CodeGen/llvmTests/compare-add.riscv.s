@@ -3,6 +3,7 @@
 .text
 .globl X
 X:
+.p2align 2
 	addiw a1, a0, 14
 	li a2, 12345
 	xor a0, a1, a2

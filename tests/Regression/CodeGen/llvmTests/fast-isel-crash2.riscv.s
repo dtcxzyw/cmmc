@@ -3,6 +3,7 @@
 .text
 .globl test
 test:
+.p2align 2
 	andi a2, a0, 255
 	li a3, 4294967295
 	sext.b a1, a2

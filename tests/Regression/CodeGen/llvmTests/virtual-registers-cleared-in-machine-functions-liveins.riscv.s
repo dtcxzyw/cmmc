@@ -3,5 +3,6 @@
 .text
 .globl test
 test:
+.p2align 2
 	mulw a0, a0, a1
 	ret

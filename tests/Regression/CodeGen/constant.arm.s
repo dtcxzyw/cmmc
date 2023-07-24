@@ -11,6 +11,7 @@ x:
 .fpu vfpv4
 .globl cse_imm
 cse_imm:
+.p2align 4
 	add r1, r1, r1, lsl #2
 	add r0, r0, r0, lsl #2
 	eor r1, r2, r1, lsl #1
@@ -18,6 +19,7 @@ cse_imm:
 	bx lr
 .globl cse_global
 cse_global:
+.p2align 4
 	movw r0, #:lower16:x
 	movt r0, #:upper16:x
 	ldr r1, [r0, #0]
@@ -26,6 +28,7 @@ cse_global:
 	bx lr
 .globl cse_fp
 cse_fp:
+.p2align 4
 	movw r0, #0
 	movt r0, #16512
 	vmov s2, r0
@@ -35,6 +38,7 @@ cse_fp:
 	bx lr
 .globl imm_build_pattern1
 imm_build_pattern1:
+.p2align 4
 	mov r1, #1
 	str r1, [r0, #0]
 	mov r1, #2
@@ -100,6 +104,7 @@ imm_build_pattern1:
 	bx lr
 .globl imm_build_pattern2
 imm_build_pattern2:
+.p2align 4
 	mov r1, #1024000
 	str r1, [r0, #0]
 	mov r1, #512000
@@ -121,6 +126,7 @@ imm_build_pattern2:
 	bx lr
 .globl imm_build_pattern3
 imm_build_pattern3:
+.p2align 4
 	mov r1, #0
 	str r1, [r0, #0]
 	mov r1, #400

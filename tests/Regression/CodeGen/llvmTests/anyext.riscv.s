@@ -3,6 +3,7 @@
 .text
 .globl bar
 bar:
+.p2align 2
 	li a2, 65535
 	and a1, a1, a2
 	and a3, a0, a2
@@ -13,6 +14,7 @@ bar:
 	ret
 .globl foo
 foo:
+.p2align 2
 	andi a2, a0, 255
 	andi a3, a1, 255
 	li a1, 4294967295

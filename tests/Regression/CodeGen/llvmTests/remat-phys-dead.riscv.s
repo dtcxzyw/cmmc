@@ -3,9 +3,11 @@
 .text
 .globl test_remat
 test_remat:
+.p2align 2
 	mv a0, zero
 	ret
 .globl test_remat32
 test_remat32:
+.p2align 2
 	mv a0, zero
 	ret

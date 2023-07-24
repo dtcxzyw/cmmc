@@ -3,6 +3,7 @@
 .text
 .globl and_1
 and_1:
+.p2align 2
 	andi a0, a0, 255
 	andi a1, a1, 255
 	and a3, a0, a1
@@ -12,6 +13,7 @@ and_1:
 	ret
 .globl and_2
 and_2:
+.p2align 2
 	andi a2, a0, 255
 	andi a0, a1, 255
 	and a3, a2, a0
@@ -21,6 +23,7 @@ and_2:
 	ret
 .globl xor_1
 xor_1:
+.p2align 2
 	andi a0, a0, 255
 	andi a1, a1, 255
 	xor a3, a0, a1
@@ -30,6 +33,7 @@ xor_1:
 	ret
 .globl xor_2
 xor_2:
+.p2align 2
 	andi a2, a0, 255
 	andi a0, a1, 255
 	xor a3, a2, a0

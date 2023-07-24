@@ -15,6 +15,7 @@ g1:
 .fpu vfpv4
 .globl test1
 test1:
+.p2align 4
 	movs r1, r0
 	movw r0, #:lower16:g0
 	movt r0, #:upper16:g0

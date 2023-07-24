@@ -3,4 +3,5 @@
 .text
 .globl test
 test:
+.p2align 2
 	ret

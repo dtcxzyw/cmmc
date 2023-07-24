@@ -2,12 +2,14 @@
 .text
 .globl test1
 test1:
+.p2align 2
 	li $t0, 16711935
 	and $v0, $a0, $t0
 	jr $ra
 	nop
 .globl test10
 test10:
+.p2align 2
 	srl $t0, $a0, 12
 	li $t1, 458759
 	and $t0, $t0, $t1
@@ -19,6 +21,7 @@ test10:
 	nop
 .globl test11
 test11:
+.p2align 2
 	andi $t0, $a0, 3
 	li $t1, 65537
 	sllv $t0, $t1, $t0
@@ -29,6 +32,7 @@ test11:
 	nop
 .globl test2
 test2:
+.p2align 2
 	srl $t0, $a0, 8
 	li $t1, 16711935
 	and $v0, $t0, $t1
@@ -36,6 +40,7 @@ test2:
 	nop
 .globl test3
 test3:
+.p2align 2
 	srl $t0, $a0, 8
 	li $t1, 16711935
 	and $v0, $t0, $t1
@@ -43,6 +48,7 @@ test3:
 	nop
 .globl test4
 test4:
+.p2align 2
 	srl $t0, $a0, 8
 	li $t1, 16711935
 	and $v0, $t0, $t1
@@ -50,6 +56,7 @@ test4:
 	nop
 .globl test5
 test5:
+.p2align 2
 	srl $t0, $a0, 8
 	li $t1, 16711935
 	and $v0, $t0, $t1
@@ -57,6 +64,7 @@ test5:
 	nop
 .globl test6
 test6:
+.p2align 2
 	srl $t0, $a0, 16
 	andi $t0, $t0, 255
 	sll $t1, $a0, 16
@@ -67,6 +75,7 @@ test6:
 	nop
 .globl test7
 test7:
+.p2align 2
 	srl $t0, $a0, 16
 	andi $t0, $t0, 255
 	sll $t1, $a0, 16
@@ -77,6 +86,7 @@ test7:
 	nop
 .globl test8
 test8:
+.p2align 2
 	sll $t0, $a0, 8
 	li $t1, 16711680
 	and $t0, $t0, $t1
@@ -86,6 +96,7 @@ test8:
 	nop
 .globl test9
 test9:
+.p2align 2
 	sll $t0, $a0, 8
 	li $t1, 16711680
 	and $t0, $t0, $t1

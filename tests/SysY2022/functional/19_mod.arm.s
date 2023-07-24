@@ -6,5 +6,6 @@
 .fpu vfpv4
 .globl main
 main:
+.p2align 4
 	mov r0, #3
 	bx lr

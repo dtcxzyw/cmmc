@@ -3,11 +3,13 @@
 .text
 .globl test1
 test1:
+.p2align 2
 	slliw a1, a0, 3
 	addiw a0, a1, 7
 	ret
 .globl test2
 test2:
+.p2align 2
 	li a1, 4
 	bgt a0, a1, label6
 label7:

@@ -9,6 +9,7 @@ count:
 .arm
 .fpu vfpv4
 QuickSort:
+.p2align 4
 	push { r4, r5, r6, r7, lr }
 	mov r5, r2
 	mov r4, r0
@@ -25,6 +26,7 @@ label8:
 	add r1, r6, #1
 	b label2
 label20:
+.p2align 4
 	ldr r7, [r4, r3, lsl #2]
 	str r7, [r4, r6, lsl #2]
 	add r6, r6, #1
@@ -35,6 +37,7 @@ label21:
 	add sp, sp, #4
 	pop { r4, r5, r6, r7, pc }
 label19:
+.p2align 4
 	ldr r7, [r4, r6, lsl #2]
 	str r7, [r4, r3, lsl #2]
 	sub r3, r3, #1
@@ -42,6 +45,7 @@ label19:
 	bgt label9
 	b label8
 label16:
+.p2align 4
 	ldr r7, [r4, r6, lsl #2]
 	cmp r0, r7
 	bgt label17
@@ -49,6 +53,7 @@ label16:
 	bgt label19
 	b label8
 label17:
+.p2align 4
 	add r6, r6, #1
 	cmp r3, r6
 	bgt label16
@@ -61,12 +66,14 @@ label4:
 	cmp r5, r1
 	ble label8
 label9:
+.p2align 4
 	cmp r6, r3
 	blt label11
 	cmp r3, r6
 	bgt label16
 	b label8
 label11:
+.p2align 4
 	ldr r7, [r4, r3, lsl #2]
 	cmp r2, r7
 	blt label12
@@ -76,6 +83,7 @@ label11:
 	bgt label16
 	b label8
 label12:
+.p2align 4
 	sub r3, r3, #1
 	cmp r6, r3
 	blt label11
@@ -84,6 +92,7 @@ label12:
 	b label8
 .globl main
 main:
+.p2align 4
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
 	mov r1, #7
 	mov r5, #26
@@ -237,6 +246,7 @@ main:
 	movt r3, #:upper16:count
 	str r3, [sp, #60]
 label112:
+.p2align 4
 	ldr r3, [sp, #92]
 	ldr r0, [r3, r4, lsl #2]
 	bl putint
@@ -249,8 +259,10 @@ label112:
 	sub r2, r0, #1
 	blt label285
 label821:
+.p2align 4
 	mov r4, #0
 label121:
+.p2align 4
 	ldr r3, [sp, #92]
 	ldr r0, [r3, r4, lsl #2]
 	bl putint
@@ -267,6 +279,7 @@ label121:
 	mov r1, #0
 	b label124
 label285:
+.p2align 4
 	mov r0, #0
 	cmp r2, r0
 	bgt label118
@@ -277,6 +290,7 @@ label285:
 	blt label285
 	b label821
 label118:
+.p2align 4
 	ldr r3, [sp, #92]
 	add r6, r0, #1
 	ldr r4, [r3, r0, lsl #2]
@@ -294,6 +308,7 @@ label118:
 	blt label285
 	b label821
 label119:
+.p2align 4
 	ldr r3, [sp, #92]
 	add r7, r3, r0, lsl #2
 	str r4, [r7, #4]
@@ -308,6 +323,7 @@ label119:
 	blt label285
 	b label821
 label124:
+.p2align 4
 	ldr r3, [sp, #60]
 	mov r2, #0
 	add r0, r3, r1, lsl #2
@@ -403,6 +419,7 @@ label132:
 	bl putint
 	mov r2, #0
 label137:
+.p2align 4
 	add r1, r2, #4
 	cmp r1, #32
 	bge label140
@@ -434,8 +451,10 @@ label140:
 	sub r2, r0, #1
 	blt label441
 label440:
+.p2align 4
 	mov r4, #0
 label149:
+.p2align 4
 	ldr r3, [sp, #92]
 	ldr r0, [r3, r4, lsl #2]
 	bl putint
@@ -448,6 +467,7 @@ label149:
 	blt label153
 	b label154
 label151:
+.p2align 4
 	add r2, r1, #4
 	cmp r2, #32
 	bge label154
@@ -467,6 +487,7 @@ label153:
 	mov r1, r2
 	b label151
 label148:
+.p2align 4
 	ldr r3, [sp, #92]
 	add r7, r3, r0, lsl #2
 	str r4, [r7, #4]
@@ -480,6 +501,7 @@ label148:
 	sub r2, r0, #1
 	bge label440
 label441:
+.p2align 4
 	mov r0, #0
 	cmp r2, r0
 	bgt label147
@@ -490,6 +512,7 @@ label441:
 	blt label441
 	b label440
 label147:
+.p2align 4
 	ldr r3, [sp, #92]
 	add r6, r0, #1
 	ldr r4, [r3, r0, lsl #2]
@@ -518,6 +541,7 @@ label154:
 	cmp r0, #32
 	bge label499
 label158:
+.p2align 4
 	ldr r3, [sp, #92]
 	sub r2, r0, #1
 	ldr r1, [r3, r0, lsl #2]
@@ -530,6 +554,7 @@ label158:
 	blt label158
 	b label499
 label162:
+.p2align 4
 	ldr r3, [sp, #92]
 	ldr r4, [r3, r2, lsl #2]
 	cmp r1, r4
@@ -541,6 +566,7 @@ label162:
 	blt label158
 	b label499
 label163:
+.p2align 4
 	add r5, r2, #1
 	ldr r3, [sp, #92]
 	sub r2, r2, #1
@@ -553,8 +579,10 @@ label163:
 	cmp r0, #32
 	blt label158
 label499:
+.p2align 4
 	mov r4, #0
 label164:
+.p2align 4
 	ldr r3, [sp, #92]
 	ldr r0, [r3, r4, lsl #2]
 	bl putint
@@ -567,6 +595,7 @@ label164:
 	blt label204
 	b label168
 label166:
+.p2align 4
 	add r2, r1, #4
 	cmp r2, #32
 	blt label204
@@ -600,6 +629,7 @@ label204:
 	mov r1, r2
 	b label166
 label171:
+.p2align 4
 	ldr r3, [sp, #92]
 	ldr r0, [r3, r4, lsl #2]
 	bl putint
@@ -612,6 +642,7 @@ label171:
 	blt label203
 	b label175
 label173:
+.p2align 4
 	add r2, r1, #4
 	cmp r2, #32
 	bge label175
@@ -643,9 +674,11 @@ label175:
 	cmp r1, #32
 	blt label180
 label572:
+.p2align 4
 	mov r4, #0
 	b label183
 label180:
+.p2align 4
 	ldr r3, [sp, #92]
 	ldr r2, [r3, r0, lsl #2]
 	add r1, r1, r2
@@ -659,6 +692,7 @@ label180:
 	blt label180
 	b label572
 label182:
+.p2align 4
 	mov r2, #0
 	ldr r3, [sp, #92]
 	str r2, [r3, r0, lsl #2]
@@ -667,6 +701,7 @@ label182:
 	blt label180
 	b label572
 label183:
+.p2align 4
 	ldr r3, [sp, #92]
 	ldr r0, [r3, r4, lsl #2]
 	bl putint
@@ -679,6 +714,7 @@ label183:
 	blt label202
 	b label187
 label185:
+.p2align 4
 	add r2, r1, #4
 	cmp r2, #32
 	bge label187
@@ -709,20 +745,24 @@ label187:
 	mov r1, r2
 	mov r0, r2
 label189:
+.p2align 4
 	cmp r1, #32
 	blt label193
 label614:
+.p2align 4
 	mov r4, #0
 	ldr r3, [sp, #92]
 	str r4, [r3, #120]
 	str r4, [r3, #124]
 	b label199
 label193:
+.p2align 4
 	cmp r1, #2
 	blt label194
 	beq label628
 	b label196
 label194:
+.p2align 4
 	ldr r3, [sp, #92]
 	ldr r3, [r3, r1, lsl #2]
 	add r1, r1, #1
@@ -745,6 +785,7 @@ label196:
 	str r3, [r4, #-8]
 	b label189
 label199:
+.p2align 4
 	ldr r3, [sp, #92]
 	ldr r0, [r3, r4, lsl #2]
 	bl putint

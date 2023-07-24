@@ -11,6 +11,7 @@ v:
 .fpu vfpv4
 .globl f
 f:
+.p2align 4
 	movw r0, #:lower16:v
 	movt r0, #:upper16:v
 	ldr r0, [r0, #0]
@@ -18,6 +19,7 @@ f:
 	bx lr
 .globl f_alias
 f_alias:
+.p2align 4
 	movw r0, #:lower16:v
 	movt r0, #:upper16:v
 	ldr r0, [r0, #0]

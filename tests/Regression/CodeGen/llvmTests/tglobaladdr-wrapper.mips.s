@@ -15,6 +15,7 @@ b:
 .text
 .globl foo
 foo:
+.p2align 2
 	lui $t0, %hi(x)
 	addiu $t1, $t0, %lo(x)
 	lw $t0, %lo(x)($t0)

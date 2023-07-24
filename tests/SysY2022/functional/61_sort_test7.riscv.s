@@ -6,6 +6,7 @@ buf:
 	.zero	800
 .text
 merge_sort:
+.p2align 2
 	addi sp, sp, -32
 	sd s1, 24(sp)
 	mv s1, a0
@@ -40,6 +41,7 @@ pcrel187:
 	bgt s2, s1, label12
 	j label179
 label8:
+.p2align 2
 	sh2add t0, a4, a0
 	sh2add t1, a2, a0
 	lw a5, 0(t0)
@@ -66,6 +68,7 @@ label179:
 	mv a5, a3
 	j label19
 label9:
+.p2align 2
 	sh2add t0, a3, a1
 	addiw a4, a4, 1
 	addiw a3, a3, 1
@@ -160,6 +163,7 @@ label33:
 	j label27
 .globl main
 main:
+.p2align 2
 	addi sp, sp, -16
 pcrel195:
 	auipc a1, %pcrel_hi(buf)

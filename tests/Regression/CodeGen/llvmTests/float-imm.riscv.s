@@ -7,6 +7,7 @@ __cmmc_fp_constant_pool:
 .text
 .globl float_imm
 float_imm:
+.p2align 2
 pcrel6:
 	auipc a0, %pcrel_hi(__cmmc_fp_constant_pool)
 	addi a1, a0, %pcrel_lo(pcrel6)
@@ -14,6 +15,7 @@ pcrel6:
 	ret
 .globl float_imm_op
 float_imm_op:
+.p2align 2
 	lui a0, 260096
 	fmv.w.x f11, a0
 	fadd.s f10, f10, f11

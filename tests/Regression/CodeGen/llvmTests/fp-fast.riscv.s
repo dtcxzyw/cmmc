@@ -3,16 +3,19 @@
 .text
 .globl test1
 test1:
+.p2align 2
 	fadd.s f11, f10, f10
 	fadd.s f10, f11, f11
 	ret
 .globl test10
 test10:
+.p2align 2
 	fneg.s f11, f10
 	fadd.s f10, f10, f11
 	ret
 .globl test2
 test2:
+.p2align 2
 	lui a0, 264192
 	fadd.s f13, f10, f10
 	fmv.w.x f12, a0
@@ -21,6 +24,7 @@ test2:
 	ret
 .globl test3
 test3:
+.p2align 2
 	lui a0, 264192
 	fadd.s f13, f10, f10
 	fmv.w.x f12, a0
@@ -29,6 +33,7 @@ test3:
 	ret
 .globl test4
 test4:
+.p2align 2
 	fadd.s f11, f10, f10
 	lui a0, 264192
 	fmv.w.x f12, a0
@@ -37,6 +42,7 @@ test4:
 	ret
 .globl test5
 test5:
+.p2align 2
 	fadd.s f11, f10, f10
 	lui a0, 264192
 	fmv.w.x f12, a0
@@ -45,15 +51,19 @@ test5:
 	ret
 .globl test6
 test6:
+.p2align 2
 	fmv.w.x f10, zero
 	ret
 .globl test7
 test7:
+.p2align 2
 	fmv.w.x f10, zero
 	ret
 .globl test8
 test8:
+.p2align 2
 	ret
 .globl test9
 test9:
+.p2align 2
 	ret

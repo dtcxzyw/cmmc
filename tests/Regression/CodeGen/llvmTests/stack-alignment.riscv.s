@@ -3,5 +3,6 @@
 .text
 .globl foo1
 foo1:
+.p2align 2
 	li a0, 14
 	ret

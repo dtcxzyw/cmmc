@@ -7,5 +7,6 @@ var:
 .text
 .globl fn
 fn:
+.p2align 2
 	jr $ra
 	nop

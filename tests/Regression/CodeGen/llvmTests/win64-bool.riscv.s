@@ -3,6 +3,7 @@
 .text
 .globl pass_bool
 pass_bool:
+.p2align 2
 	sltu a2, zero, a0
 	subw a3, zero, a2
 	li a2, 4294967295
@@ -11,5 +12,6 @@ pass_bool:
 	ret
 .globl ret_true
 ret_true:
+.p2align 2
 	li a0, 1
 	ret

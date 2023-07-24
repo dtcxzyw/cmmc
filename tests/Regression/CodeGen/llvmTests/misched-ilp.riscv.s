@@ -3,6 +3,7 @@
 .text
 .globl ilpsched
 ilpsched:
+.p2align 2
 	fadd.s f12, f12, f13
 	fadd.s f14, f14, f15
 	fadd.s f11, f10, f11

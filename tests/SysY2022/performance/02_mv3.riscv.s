@@ -13,6 +13,7 @@ C:
 .text
 .globl main
 main:
+.p2align 2
 	addi sp, sp, -48
 	sd s0, 40(sp)
 	sd s2, 32(sp)
@@ -28,11 +29,13 @@ pcrel284:
 	addi s2, a0, %pcrel_lo(pcrel284)
 	ble s0, zero, label13
 label4:
+.p2align 2
 	bgt s0, zero, label54
 	addiw s1, s1, 1
 	bgt s0, s1, label4
 	j label13
 label7:
+.p2align 2
 	jal getint
 	sh2add a1, s4, s3
 	addiw s4, s4, 1
@@ -43,6 +46,7 @@ label7:
 	bgt s0, zero, label10
 	j label13
 label11:
+.p2align 2
 	jal getint
 	sh2add a1, s3, s1
 	addiw s3, s3, 1
@@ -59,6 +63,7 @@ pcrel286:
 	addi s1, a1, %pcrel_lo(pcrel286)
 	mv a1, zero
 label14:
+.p2align 2
 	bgt s0, zero, label85
 	mv a2, zero
 	li a5, 8040
@@ -71,6 +76,7 @@ label14:
 	blt a1, a2, label14
 	j label39
 label85:
+.p2align 2
 	mv a3, zero
 	li a2, 4
 	bgt s0, a2, label42
@@ -90,6 +96,7 @@ label85:
 	blt a1, a2, label14
 	j label39
 label28:
+.p2align 2
 	sh2add a2, a3, a0
 	addiw a3, a3, 1
 	sw zero, 0(a2)
@@ -104,6 +111,7 @@ label28:
 	blt a1, a2, label14
 	j label39
 label40:
+.p2align 2
 	addiw a2, a3, 4
 	bgt s0, a2, label42
 	sh2add a2, a3, s1
@@ -122,6 +130,7 @@ label40:
 	blt a1, a2, label14
 	j label39
 label42:
+.p2align 2
 	sh2add a3, a3, s1
 	sw zero, 0(a3)
 	sw zero, 4(a3)
@@ -130,6 +139,7 @@ label42:
 	mv a3, a2
 	j label40
 label91:
+.p2align 2
 	mv a4, zero
 	bgt s0, zero, label21
 	addiw a2, a2, 1
@@ -146,6 +156,7 @@ label91:
 	blt a1, a2, label14
 	j label39
 label21:
+.p2align 2
 	sh2add t0, a4, a3
 	lw a5, 0(t0)
 	beq a5, zero, label23
@@ -173,8 +184,10 @@ label21:
 	blt a1, a2, label14
 	j label39
 label115:
+.p2align 2
 	mv a3, zero
 label25:
+.p2align 2
 	addiw a2, a3, 4
 	bgt s0, a2, label27
 	sh2add a2, a3, a0
@@ -191,6 +204,7 @@ label25:
 	blt a1, a2, label14
 	j label39
 label27:
+.p2align 2
 	sh2add a3, a3, a0
 	sw zero, 0(a3)
 	sw zero, 4(a3)
@@ -199,6 +213,7 @@ label27:
 	mv a3, a2
 	j label25
 label138:
+.p2align 2
 	mv a4, zero
 	bgt s0, zero, label34
 	addiw a2, a2, 1
@@ -211,6 +226,7 @@ label138:
 	blt a1, a2, label14
 	j label39
 label34:
+.p2align 2
 	sh2add t0, a4, a3
 	lw a5, 0(t0)
 	beq a5, zero, label35
@@ -247,6 +263,7 @@ label39:
 	addi sp, sp, 48
 	ret
 label23:
+.p2align 2
 	addiw a4, a4, 1
 	bgt s0, a4, label21
 	addiw a2, a2, 1
@@ -264,6 +281,7 @@ label23:
 	blt a1, a2, label14
 	j label39
 label35:
+.p2align 2
 	addiw a4, a4, 1
 	bgt s0, a4, label34
 	addiw a2, a2, 1
@@ -276,6 +294,7 @@ label35:
 	blt a1, a2, label14
 	j label39
 label43:
+.p2align 2
 	sh2add a2, a3, s1
 	addiw a3, a3, 1
 	sw zero, 0(a2)
@@ -292,6 +311,7 @@ label43:
 	blt a1, a2, label14
 	j label39
 label54:
+.p2align 2
 	li a1, 8040
 	mv s4, zero
 	mul a0, s1, a1

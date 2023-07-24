@@ -3,6 +3,7 @@
 .text
 .globl test_local_strategy
 test_local_strategy:
+.p2align 2
 	divw a0, a0, a1
 	li t0, 4294967295
 	and a1, a0, t0

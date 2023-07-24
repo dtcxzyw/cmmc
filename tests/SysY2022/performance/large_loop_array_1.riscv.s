@@ -18,6 +18,7 @@ x:
 .text
 .globl main
 main:
+.p2align 2
 	addi sp, sp, -24
 	sd s0, 16(sp)
 	fsw f8, 8(sp)
@@ -41,6 +42,7 @@ pcrel224:
 	li a3, 500000
 	bge zero, a3, label8
 label13:
+.p2align 2
 	li t0, 1717986919
 	li t1, 10
 	mul a3, a2, t0
@@ -50,6 +52,7 @@ label13:
 	mulw t0, a3, t1
 	subw a5, a2, t0
 pcrel225:
+.p2align 2
 	auipc t0, %pcrel_hi(__cmmc_fp_constant_pool)
 	sltu a3, zero, a5
 	addi a5, t0, %pcrel_lo(pcrel225)
@@ -61,6 +64,7 @@ pcrel225:
 	bne a3, zero, label193
 	fmv.s f10, f12
 label193:
+.p2align 2
 	flw f14, 16(a5)
 	fmv.w.x f13, zero
 	fadd.s f12, f11, f14
@@ -68,6 +72,7 @@ label193:
 	bne a3, zero, label195
 	fmv.s f11, f12
 label195:
+.p2align 2
 	bgt s0, a4, label25
 	mv a3, a4
 	bgt s0, zero, label80
@@ -78,9 +83,11 @@ label195:
 	blt a2, a3, label13
 	j label8
 label80:
+.p2align 2
 	fmv.w.x f12, zero
 	mv t0, zero
 label16:
+.p2align 2
 	addiw a4, t0, 4
 	bgt s0, a4, label22
 	sh2add a5, t0, a0
@@ -98,6 +105,7 @@ label16:
 	blt a2, a3, label13
 	j label8
 label19:
+.p2align 2
 	sh2add a5, t0, a0
 	sh2add a4, t0, a1
 	flw f13, 0(a5)
@@ -113,6 +121,7 @@ label19:
 	blt a2, a3, label13
 	j label8
 label22:
+.p2align 2
 	sh2add a5, t0, a0
 	sh2add t0, t0, a1
 	flw f13, 0(a5)
@@ -134,6 +143,7 @@ label22:
 	fadd.s f12, f12, f14
 	j label16
 label25:
+.p2align 2
 	addiw a3, a4, 4
 	bgt s0, a3, label28
 	mv a3, a4
@@ -156,6 +166,7 @@ label25:
 	blt a2, a3, label13
 	j label8
 label28:
+.p2align 2
 	fcvt.s.w f12, a4
 	addiw t1, a4, 1
 	sh2add a5, a4, a0
@@ -202,10 +213,12 @@ label28:
 	blt a2, a3, label13
 	j label8
 label175:
+.p2align 2
 	mv a4, a3
 	mv a3, a5
 	j label28
 label26:
+.p2align 2
 	fcvt.s.w f12, a3
 	sh2add a4, a3, a0
 	fadd.s f13, f11, f12

@@ -6,50 +6,62 @@
 .fpu vfpv4
 .globl sext_16_32
 sext_16_32:
+.p2align 4
 	sxth r0, r0
 	bx lr
 .globl sext_1_16
 sext_1_16:
+.p2align 4
 	sxth r0, r0
 	uxth r0, r0
 	bx lr
 .globl sext_1_32
 sext_1_32:
+.p2align 4
 	bx lr
 .globl sext_1_8
 sext_1_8:
+.p2align 4
 	sxtb r0, r0
 	uxtb r0, r0
 	bx lr
 .globl sext_8_16
 sext_8_16:
+.p2align 4
 	sxtb r0, r0
 	uxth r0, r0
 	bx lr
 .globl sext_8_32
 sext_8_32:
+.p2align 4
 	sxtb r0, r0
 	bx lr
 .globl zext_16_32
 zext_16_32:
+.p2align 4
 	uxth r0, r0
 	bx lr
 .globl zext_1_16
 zext_1_16:
+.p2align 4
 	uxth r0, r0
 	bx lr
 .globl zext_1_32
 zext_1_32:
+.p2align 4
 	bx lr
 .globl zext_1_8
 zext_1_8:
+.p2align 4
 	uxtb r0, r0
 	bx lr
 .globl zext_8_16
 zext_8_16:
+.p2align 4
 	uxtb r0, r0
 	bx lr
 .globl zext_8_32
 zext_8_32:
+.p2align 4
 	uxtb r0, r0
 	bx lr

@@ -2,6 +2,7 @@
 .data
 .text
 reverse:
+.p2align 2
 	addi sp, sp, -24
 	sd s0, 16(sp)
 	mv s0, a0
@@ -27,6 +28,7 @@ label4:
 	j label3
 .globl main
 main:
+.p2align 2
 	addi sp, sp, -8
 	li a0, 200
 	sd ra, 0(sp)

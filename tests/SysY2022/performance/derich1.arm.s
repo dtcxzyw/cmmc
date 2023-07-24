@@ -18,6 +18,7 @@ my_y2:
 .arm
 .fpu vfpv4
 newPow:
+.p2align 4
 	push { lr }
 	cmp r0, #0
 	sub sp, sp, #4
@@ -61,6 +62,7 @@ label6:
 	b label2
 .globl main
 main:
+.p2align 4
 	push { r4, r5, r6, r7, r8, r9, r10, lr }
 	movw r5, #:lower16:imgIn
 	movt r5, #:upper16:imgIn
@@ -86,6 +88,7 @@ main:
 	blt label405
 	b label98
 label54:
+.p2align 4
 	movw r6, #1080
 	mov r9, #0
 	mla r3, r2, r6, r0
@@ -94,11 +97,13 @@ label54:
 	vmov.f32 s5, s4
 	vmov.f32 s2, s4
 label55:
+.p2align 4
 	add r7, r9, #4
 	movw r8, #270
 	cmp r7, r8
 	blt label66
 label60:
+.p2align 4
 	add r7, r6, r9, lsl #2
 	vldr s1, [r7, #0]
 	movw r7, #61929
@@ -136,11 +141,13 @@ label60:
 	blt label405
 	b label98
 label179:
+.p2align 4
 	vmov.f32 s4, s1
 	vmov.f32 s5, s2
 	vmov.f32 s2, s3
 	b label60
 label66:
+.p2align 4
 	add r8, r6, r9, lsl #2
 	movw r10, #61929
 	add r9, r3, r9, lsl #2
@@ -198,11 +205,13 @@ label405:
 	mla r3, r2, r6, r4
 	mla r6, r2, r6, r1
 label100:
+.p2align 4
 	add r7, r10, #4
 	movw r8, #270
 	cmp r7, r8
 	blt label105
 label102:
+.p2align 4
 	add r7, r5, r10, lsl #2
 	vldr s0, [r7, #0]
 	add r7, r6, r10, lsl #2
@@ -219,6 +228,7 @@ label102:
 	blt label405
 	b label98
 label105:
+.p2align 4
 	add r8, r5, r10, lsl #2
 	add r9, r6, r10, lsl #2
 	vldr s0, [r8, #0]
@@ -241,6 +251,7 @@ label105:
 	mov r10, r7
 	b label100
 label300:
+.p2align 4
 	mov r3, #0
 	movw r6, #511
 	vmov s5, r3
@@ -248,6 +259,7 @@ label300:
 	vmov.f32 s7, s5
 	vmov.f32 s6, s5
 label82:
+.p2align 4
 	sub r3, r6, #4
 	cmn r3, #1
 	ble label89
@@ -320,6 +332,7 @@ label82:
 	vldr s5, [r5, #0]
 	b label82
 label89:
+.p2align 4
 	movw r3, #51281
 	movt r3, #48700
 	vmov s1, r3
@@ -355,6 +368,7 @@ label89:
 	blt label405
 	b label98
 label398:
+.p2align 4
 	vmov.f32 s7, s5
 	vmov.f32 s6, s4
 	vmov.f32 s5, s2
@@ -369,6 +383,7 @@ label98:
 	mov r0, #0
 	pop { r4, r5, r6, r7, r8, r9, r10, pc }
 label118:
+.p2align 4
 	movw r6, #1080
 	mov r7, #0
 	movw r9, #269
@@ -379,10 +394,12 @@ label118:
 	vmov.f32 s5, s4
 	vmov.f32 s6, s4
 label119:
+.p2align 4
 	sub r7, r9, #4
 	cmn r7, #1
 	bgt label132
 label125:
+.p2align 4
 	movw r7, #51281
 	movt r7, #48700
 	vmov s1, r7
@@ -419,12 +436,14 @@ label125:
 	blt label405
 	b label98
 label590:
+.p2align 4
 	vmov.f32 s5, s4
 	vmov.f32 s6, s2
 	vmov.f32 s4, s3
 	vmov.f32 s2, s1
 	b label125
 label132:
+.p2align 4
 	movw r8, #51281
 	movt r8, #48700
 	vmov s1, r8
@@ -476,17 +495,20 @@ label132:
 	mov r9, r7
 	b label119
 label71:
+.p2align 4
 	movw r6, #1080
 	mov r10, #0
 	mla r5, r2, r6, r0
 	mla r3, r2, r6, r4
 	mla r6, r2, r6, r1
 label72:
+.p2align 4
 	add r7, r10, #4
 	movw r8, #270
 	cmp r7, r8
 	blt label77
 label74:
+.p2align 4
 	add r7, r5, r10, lsl #2
 	vldr s1, [r7, #0]
 	add r7, r6, r10, lsl #2
@@ -509,6 +531,7 @@ label74:
 	blt label405
 	b label98
 label77:
+.p2align 4
 	add r8, r5, r10, lsl #2
 	add r9, r6, r10, lsl #2
 	vldr s1, [r8, #0]
@@ -531,6 +554,7 @@ label77:
 	mov r10, r7
 	b label72
 label294:
+.p2align 4
 	mov r6, #0
 	vmov s3, r6
 	vmov.f32 s5, s3
@@ -540,10 +564,12 @@ label294:
 	blt label117
 	b label111
 label106:
+.p2align 4
 	add r3, r6, #4
 	cmp r3, #512
 	blt label117
 label111:
+.p2align 4
 	movw r3, #1080
 	mla r5, r6, r3, r4
 	mla r3, r6, r3, r0
@@ -581,11 +607,13 @@ label111:
 	blt label405
 	b label98
 label490:
+.p2align 4
 	vmov.f32 s3, s1
 	vmov.f32 s5, s4
 	vmov.f32 s4, s2
 	b label111
 label117:
+.p2align 4
 	movw r7, #1080
 	mla r5, r6, r7, r4
 	mla r6, r6, r7, r0

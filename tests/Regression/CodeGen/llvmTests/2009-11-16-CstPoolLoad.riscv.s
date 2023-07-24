@@ -7,6 +7,7 @@ __cmmc_fp_constant_pool:
 .text
 .globl h
 h:
+.p2align 2
 pcrel6:
 	auipc a0, %pcrel_hi(__cmmc_fp_constant_pool)
 	addi a1, a0, %pcrel_lo(pcrel6)

@@ -7,6 +7,7 @@ x:
 .text
 .globl foo
 foo:
+.p2align 2
 	lui $t0, %hi(x)
 	lwc1 $f4, %lo(x)($t0)
 	mul.s $f4, $f4, $f4

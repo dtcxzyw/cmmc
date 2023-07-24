@@ -5,6 +5,7 @@
 .arm
 .fpu vfpv4
 my_sqrt:
+.p2align 4
 	push { lr }
 	movw r0, #0
 	sub sp, sp, #4
@@ -71,6 +72,7 @@ label5:
 	vmul.f32 s0, s0, s1
 	b label3
 asr5:
+.p2align 4
 	push { lr }
 	vpush { s16, s17, s18, s19, s20 }
 	vsub.f32 s4, s1, s0
@@ -145,6 +147,7 @@ label66:
 	vadd.f32 s0, s20, s0
 	b label64
 eee:
+.p2align 4
 	push { lr }
 	movw r0, #4719
 	sub sp, sp, #4
@@ -172,6 +175,7 @@ label143:
 	vmul.f32 s0, s0, s0
 	b label141
 label126:
+.p2align 4
 	vmul.f32 s4, s3, s1
 	ands r1, r0, #1
 	vmul.f32 s1, s1, s1
@@ -198,6 +202,7 @@ label126:
 	cmp r0, #0
 	beq label180
 label131:
+.p2align 4
 	vmul.f32 s4, s3, s1
 	ands r1, r0, #1
 	vmul.f32 s1, s1, s1
@@ -207,6 +212,7 @@ label131:
 	cmp r0, #0
 	bne label131
 label180:
+.p2align 4
 	movw r0, #0
 	movt r0, #16832
 	vmov s1, r0
@@ -224,6 +230,7 @@ label180:
 	cmp r0, #0
 	bne label136
 label211:
+.p2align 4
 	movw r0, #0
 	movt r0, #17136
 	vmov s0, r0
@@ -231,6 +238,7 @@ label211:
 	vadd.f32 s0, s1, s0
 	b label141
 label136:
+.p2align 4
 	vmul.f32 s3, s2, s0
 	ands r1, r0, #1
 	vmul.f32 s0, s0, s0
@@ -244,6 +252,7 @@ label141:
 	add sp, sp, #4
 	pop { pc }
 my_exp:
+.p2align 4
 	push { lr }
 	vcmp.f32 s0, #0
 	sub sp, sp, #4
@@ -284,6 +293,7 @@ label217:
 	movt r1, #16429
 	vmov s1, r1
 label218:
+.p2align 4
 	vmul.f32 s3, s2, s1
 	ands r1, r0, #1
 	vmul.f32 s1, s1, s1
@@ -300,6 +310,7 @@ label223:
 	vmul.f32 s0, s5, s0
 	b label214
 label226:
+.p2align 4
 	vmul.f32 s3, s1, s2
 	ands r1, r0, #1
 	vmul.f32 s2, s2, s2
@@ -312,6 +323,7 @@ label226:
 	b label223
 .globl main
 main:
+.p2align 4
 	push { r4, r5, lr }
 	vpush { s16, s17, s18 }
 	bl getint
@@ -322,6 +334,7 @@ label294:
 	vpop { s16, s17, s18 }
 	pop { r4, r5, pc }
 label295:
+.p2align 4
 	bl getfloat
 	vabs.f32 s18, s0
 	vmov.f32 s16, s0
@@ -336,6 +349,7 @@ label295:
 	vmov s0, r0
 	mov r0, #2
 label296:
+.p2align 4
 	vmul.f32 s2, s0, s1
 	ands r1, r0, #1
 	vmul.f32 s1, s1, s1
@@ -370,6 +384,7 @@ label296:
 	bl putch
 	b label303
 label302:
+.p2align 4
 	mov r0, #1065353216
 	vmov s0, r0
 	mov r0, #1056964608
@@ -398,6 +413,7 @@ label302:
 	bl asr5
 	bl putfloat
 label303:
+.p2align 4
 	mov r0, #32
 	bl putch
 	mov r0, #0
@@ -409,6 +425,7 @@ label303:
 	mov r0, #45
 	bl putch
 label305:
+.p2align 4
 	mov r0, #32
 	bl putch
 	vcmp.f32 s16, #0
@@ -418,6 +435,7 @@ label305:
 	bl putch
 	b label307
 label309:
+.p2align 4
 	mov r0, #1065353216
 	vmov s10, r0
 	mov r0, #1056964608
@@ -466,12 +484,14 @@ label309:
 	bl putfloat
 	b label305
 label307:
+.p2align 4
 	mov r0, #10
 	bl putch
 	subs r4, r4, #1
 	bne label295
 	b label294
 label308:
+.p2align 4
 	mov r0, #1065353216
 	vmov s0, r0
 	mov r0, #1056964608

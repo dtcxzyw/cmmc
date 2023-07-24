@@ -15,6 +15,7 @@ P:
 .text
 .globl foo
 foo:
+.p2align 2
 	bgtz $a0, label3
 	nop
 label2:

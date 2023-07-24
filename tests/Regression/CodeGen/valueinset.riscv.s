@@ -3,6 +3,7 @@
 .text
 .globl basic_3
 basic_3:
+.p2align 2
 	sltu a1, zero, a0
 	xori a3, a0, 1
 	sltu a2, zero, a3
@@ -13,6 +14,7 @@ basic_3:
 	ret
 .globl basic_5
 basic_5:
+.p2align 2
 	li a2, 1
 	slti a3, a0, 0
 	sll a1, a2, a0
@@ -25,6 +27,7 @@ basic_5:
 	ret
 .globl cross_64_with_9
 cross_64_with_9:
+.p2align 2
 	addiw a1, a0, -35
 	li a4, 1
 	li a3, 360287970357415681
@@ -39,6 +42,7 @@ cross_64_with_9:
 	ret
 .globl cross_32_with_5
 cross_32_with_5:
+.p2align 2
 	addiw a1, a0, -35
 	li a4, 1
 	li a3, 3841
@@ -53,6 +57,7 @@ cross_32_with_5:
 	ret
 .globl negative_5
 negative_5:
+.p2align 2
 	addiw a1, a0, 7
 	li a4, 1
 	li a3, 5201

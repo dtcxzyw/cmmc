@@ -13,7 +13,9 @@ b:
 .text
 .globl t1
 t1:
+.p2align 2
 	ret
 .globl t2
 t2:
+.p2align 2
 	ret

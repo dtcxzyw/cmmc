@@ -8,6 +8,7 @@ v:
 .text
 .globl f
 f:
+.p2align 2
 pcrel8:
 	auipc a1, %pcrel_hi(v)
 	lw a2, %pcrel_lo(pcrel8)(a1)
@@ -15,6 +16,7 @@ pcrel8:
 	ret
 .globl f_alias
 f_alias:
+.p2align 2
 pcrel16:
 	auipc a1, %pcrel_hi(v)
 	lw a2, %pcrel_lo(pcrel16)(a1)

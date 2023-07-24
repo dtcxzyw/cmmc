@@ -11,6 +11,7 @@ g1:
 .text
 .globl test1
 test1:
+.p2align 2
 	lui $t1, %hi(g0)
 	addiu $t0, $t1, %lo(g0)
 	lw $t1, %lo(g0)($t1)

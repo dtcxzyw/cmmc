@@ -2,6 +2,7 @@
 .data
 .text
 params_f40:
+.p2align 2
 	addi sp, sp, -416
 	fsw f18, 392(sp)
 	fsw f23, 396(sp)
@@ -197,6 +198,7 @@ label1088:
 	jal params_f40
 	j label1086
 params_f40_i24:
+.p2align 2
 	addi sp, sp, -712
 	fsw f19, 576(sp)
 	sd s7, 568(sp)
@@ -509,6 +511,7 @@ label774:
 	jal params_f40_i24
 	j label772
 params_fa40:
+.p2align 2
 	addi sp, sp, -608
 	mv t6, a0
 	sd s5, 264(sp)
@@ -832,6 +835,7 @@ label442:
 	jal params_fa40
 	j label439
 params_mix:
+.p2align 2
 	addi sp, sp, -800
 	sd s10, 672(sp)
 	fsw f8, 656(sp)
@@ -1252,6 +1256,7 @@ label8:
 	j label6
 .globl main
 main:
+.p2align 2
 	addi sp, sp, -1816
 	fsw f26, 712(sp)
 	fsw f20, 732(sp)
@@ -1288,6 +1293,7 @@ main:
 	mv s1, zero
 	sw a0, 1800(sp)
 label1275:
+.p2align 2
 	li a1, 12
 	ld s0, 1792(sp)
 	mul a0, s1, a1
@@ -1298,6 +1304,7 @@ label1275:
 	blt s1, a0, label1275
 	mv s0, zero
 label1277:
+.p2align 2
 	li a0, 12
 	ld s1, 1784(sp)
 	mul a1, s0, a0

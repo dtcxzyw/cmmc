@@ -15,6 +15,7 @@ d:
 .text
 .globl fn1
 fn1:
+.p2align 2
 	lui $t0, %hi(c)
 	lw $t0, %lo(c)($t0)
 	sltiu $t0, $t0, 1

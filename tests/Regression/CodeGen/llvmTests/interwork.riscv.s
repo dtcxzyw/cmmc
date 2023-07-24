@@ -3,7 +3,9 @@
 .text
 .globl ft
 ft:
+.p2align 2
 	ret
 .globl fz
 fz:
+.p2align 2
 	ret

@@ -6,5 +6,6 @@
 .fpu vfpv4
 .globl fn2
 fn2:
+.p2align 4
 	mov r0, #0
 	bx lr

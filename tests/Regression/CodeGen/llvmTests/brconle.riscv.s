@@ -24,6 +24,7 @@ result2:
 .text
 .globl test
 test:
+.p2align 2
 pcrel41:
 	auipc a0, %pcrel_hi(i)
 pcrel42:

@@ -21,6 +21,7 @@ b:
 .fpu vfpv4
 .globl signed_i8
 signed_i8:
+.p2align 4
 	movw r0, #:lower16:x
 	movt r0, #:upper16:x
 	ldr r0, [r0, #0]
@@ -31,6 +32,7 @@ signed_i8:
 	bx lr
 .globl unsigned_i1
 unsigned_i1:
+.p2align 4
 	movw r0, #:lower16:x
 	movt r0, #:upper16:x
 	ldr r0, [r0, #0]
@@ -40,6 +42,7 @@ unsigned_i1:
 	bx lr
 .globl unsigned_i16
 unsigned_i16:
+.p2align 4
 	movw r0, #:lower16:b
 	movt r0, #:upper16:b
 	ldrsh r1, [r0, #0]
@@ -53,6 +56,7 @@ unsigned_i16:
 	bx lr
 .globl unsigned_i8
 unsigned_i8:
+.p2align 4
 	movw r0, #:lower16:x
 	movt r0, #:upper16:x
 	ldr r0, [r0, #0]
@@ -63,6 +67,7 @@ unsigned_i8:
 	bx lr
 .globl use_i1
 use_i1:
+.p2align 4
 	movw r0, #:lower16:x
 	movt r0, #:upper16:x
 	ldr r0, [r0, #0]
@@ -72,6 +77,7 @@ use_i1:
 	bx lr
 .globl use_i16
 use_i16:
+.p2align 4
 	movw r0, #:lower16:b
 	movt r0, #:upper16:b
 	ldrsh r1, [r0, #0]
@@ -86,6 +92,7 @@ use_i16:
 	bx lr
 .globl use_i8
 use_i8:
+.p2align 4
 	movw r0, #:lower16:x
 	movt r0, #:upper16:x
 	ldr r0, [r0, #0]

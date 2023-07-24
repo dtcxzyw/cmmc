@@ -3,6 +3,7 @@
 .text
 .globl rot0
 rot0:
+.p2align 2
 	li a3, 32
 	subw a4, a3, a1
 	sllw a1, a0, a1
@@ -11,12 +12,14 @@ rot0:
 	ret
 .globl rot1
 rot1:
+.p2align 2
 	slliw a1, a0, 10
 	srliw a2, a0, 22
 	or a0, a1, a2
 	ret
 .globl rot2
 rot2:
+.p2align 2
 	li a3, 32
 	subw a4, a3, a1
 	srlw a1, a0, a1
@@ -25,6 +28,7 @@ rot2:
 	ret
 .globl rot3
 rot3:
+.p2align 2
 	srliw a1, a0, 10
 	slliw a2, a0, 22
 	or a0, a1, a2

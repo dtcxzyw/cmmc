@@ -11,6 +11,7 @@ result:
 .text
 .globl test
 test:
+.p2align 2
 	lui $t0, %hi(j)
 	lw $t0, %lo(j)($t0)
 	beq $t0, $zero, label2

@@ -6,6 +6,7 @@
 .fpu vfpv4
 .globl main
 main:
+.p2align 4
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
 	sub sp, sp, #548
 	add r0, sp, #136
@@ -81,6 +82,7 @@ main:
 	cmp r0, #15
 	bge label10
 label4:
+.p2align 4
 	add r1, r0, #1
 	mov r2, r1
 	cmp r1, #16
@@ -90,6 +92,7 @@ label4:
 	blt label4
 	b label10
 label7:
+.p2align 4
 	ldr r4, [sp, #440]
 	ldr r3, [r4, r0, lsl #2]
 	ldr r5, [r4, r2, lsl #2]
@@ -103,6 +106,7 @@ label7:
 	blt label4
 	b label10
 label8:
+.p2align 4
 	ldr r4, [sp, #440]
 	str r5, [r4, r0, lsl #2]
 	str r3, [r4, r2, lsl #2]

@@ -12,6 +12,7 @@ f:
 .text
 .globl foo
 foo:
+.p2align 2
 	lui a0, 262144
 pcrel8:
 	auipc a1, %pcrel_hi(f)
@@ -20,18 +21,22 @@ pcrel8:
 	ret
 .globl fv
 fv:
+.p2align 2
 	lui a0, 260096
 	fmv.w.x f10, a0
 	ret
 .globl iv
 iv:
+.p2align 2
 pcrel18:
 	auipc a1, %pcrel_hi(i)
 	lw a0, %pcrel_lo(pcrel18)(a1)
 	ret
 .globl vif
 vif:
+.p2align 2
 	ret
 .globl vv
 vv:
+.p2align 2
 	ret

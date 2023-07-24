@@ -9,6 +9,7 @@ buf:
 .arm
 .fpu vfpv4
 merge_sort:
+.p2align 4
 	push { r4, r5, r6, r7, r8, r9, r10, lr }
 	mov r4, r1
 	mov r5, r0
@@ -42,6 +43,7 @@ merge_sort:
 	bgt label12
 	b label172
 label8:
+.p2align 4
 	ldr r8, [r0, r7, lsl #2]
 	ldr r9, [r0, r2, lsl #2]
 	cmp r8, r9
@@ -66,6 +68,7 @@ label172:
 	mov r6, r3
 	b label19
 label9:
+.p2align 4
 	str r8, [r1, r3, lsl #2]
 	add r7, r7, #1
 	add r3, r3, #1
@@ -165,6 +168,7 @@ label33:
 	b label27
 .globl main
 main:
+.p2align 4
 	push { r4, r5, lr }
 	movw r4, #:lower16:buf
 	sub sp, sp, #4

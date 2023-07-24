@@ -3,6 +3,7 @@
 .text
 .globl f
 f:
+.p2align 2
 	andi a2, a0, 255
 	li a1, 20
 	beq a2, zero, label9
@@ -13,6 +14,7 @@ label9:
 	ret
 .globl g
 g:
+.p2align 2
 	xori a2, a0, 255
 	li a1, 20
 	beq a2, zero, label18

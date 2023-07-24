@@ -15,6 +15,7 @@ s:
 .fpu vfpv4
 .globl foo
 foo:
+.p2align 4
 	cmp r0, #0
 	bne label2
 	movw r0, #:lower16:s

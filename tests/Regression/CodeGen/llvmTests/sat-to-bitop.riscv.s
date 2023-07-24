@@ -3,6 +3,7 @@
 .text
 .globl no_sat0_incorrect_constant
 no_sat0_incorrect_constant:
+.p2align 2
 	li a1, -1
 	blt a0, zero, label7
 	mv a1, a0
@@ -11,6 +12,7 @@ label7:
 	ret
 .globl no_sat0_incorrect_variable
 no_sat0_incorrect_variable:
+.p2align 2
 	mv a2, zero
 	blt a0, zero, label15
 	mv a2, a1
@@ -19,6 +21,7 @@ label15:
 	ret
 .globl sat0_base_16bit
 sat0_base_16bit:
+.p2align 2
 	sext.h a2, a0
 	li a1, 65535
 	mv a3, zero
@@ -30,6 +33,7 @@ label27:
 	ret
 .globl sat0_base_32bit
 sat0_base_32bit:
+.p2align 2
 	mv a1, zero
 	blt a0, zero, label34
 	mv a1, a0
@@ -38,6 +42,7 @@ label34:
 	ret
 .globl sat0_base_8bit
 sat0_base_8bit:
+.p2align 2
 	sext.b a1, a0
 	andi a2, a0, 255
 	mv a0, zero
@@ -48,12 +53,14 @@ label44:
 	ret
 .globl sat0_lower_1
 sat0_lower_1:
+.p2align 2
 	slt a1, zero, a0
 	subw a2, zero, a1
 	and a0, a0, a2
 	ret
 .globl sat1_base_16bit
 sat1_base_16bit:
+.p2align 2
 	sext.h a2, a0
 	li a1, 65535
 	li a4, -1
@@ -66,6 +73,7 @@ label63:
 	ret
 .globl sat1_base_32bit
 sat1_base_32bit:
+.p2align 2
 	li a2, -1
 	li a1, -1
 	blt a0, a2, label71
@@ -75,6 +83,7 @@ label71:
 	ret
 .globl sat1_base_8bit
 sat1_base_8bit:
+.p2align 2
 	sext.b a1, a0
 	andi a2, a0, 255
 	li a3, -1
@@ -86,6 +95,7 @@ label82:
 	ret
 .globl sat1_lower_1
 sat1_lower_1:
+.p2align 2
 	li a2, -1
 	mv a1, a0
 	bgt a0, a2, label91

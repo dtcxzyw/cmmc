@@ -6,6 +6,7 @@
 .fpu vfpv4
 .globl foo4
 foo4:
+.p2align 4
 	push { r4, r5 }
 	cmp r1, #0
 	mov r2, r0
@@ -13,6 +14,7 @@ foo4:
 	mov r0, #0
 	mov r3, r0
 label2:
+.p2align 4
 	add r4, r3, #4
 	cmp r1, r4
 	ble label6

@@ -8,18 +8,21 @@ a:
 .text
 .globl ext
 ext:
+.p2align 2
 pcrel6:
 	auipc a0, %pcrel_hi(a)
 	sw zero, %pcrel_lo(pcrel6)(a0)
 	ret
 .globl foo
 foo:
+.p2align 2
 pcrel12:
 	auipc a0, %pcrel_hi(a)
 	sw zero, %pcrel_lo(pcrel12)(a0)
 	ret
 .globl main
 main:
+.p2align 2
 pcrel18:
 	auipc a1, %pcrel_hi(a)
 	mv a0, zero

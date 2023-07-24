@@ -16,6 +16,7 @@ __cmmc_fp_constant_pool:
 .text
 .globl foo
 foo:
+.p2align 2
 	lui $t0, %hi(__cmmc_fp_constant_pool)
 	addiu $t0, $t0, %lo(__cmmc_fp_constant_pool)
 	lwc1 $f4, 0($t0)
@@ -25,6 +26,7 @@ foo:
 	nop
 .globl fv
 fv:
+.p2align 2
 	lui $t0, %hi(__cmmc_fp_constant_pool)
 	addiu $t0, $t0, %lo(__cmmc_fp_constant_pool)
 	lwc1 $f0, 4($t0)
@@ -32,15 +34,18 @@ fv:
 	nop
 .globl iv
 iv:
+.p2align 2
 	lui $t0, %hi(i)
 	lw $v0, %lo(i)($t0)
 	jr $ra
 	nop
 .globl vif
 vif:
+.p2align 2
 	jr $ra
 	nop
 .globl vv
 vv:
+.p2align 2
 	jr $ra
 	nop

@@ -11,6 +11,7 @@ j:
 .text
 .globl main
 main:
+.p2align 2
 	lui $t0, %hi(i)
 	lw $t0, %lo(i)($t0)
 	sltiu $t1, $t0, 1

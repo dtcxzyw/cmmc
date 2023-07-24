@@ -2,6 +2,7 @@
 .data
 .text
 fib:
+.p2align 2
 	addi sp, sp, -664
 	sd s1, 408(sp)
 	mv s1, a0
@@ -770,12 +771,14 @@ label4:
 	j label2
 .globl main
 main:
+.p2align 2
 	addi sp, sp, -24
 	sd s0, 16(sp)
 	li s0, 1
 	sd s1, 8(sp)
 	sd ra, 0(sp)
 label805:
+.p2align 2
 	li a0, 102
 	jal putch
 	li a0, 105

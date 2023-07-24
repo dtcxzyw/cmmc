@@ -3,8 +3,10 @@
 .text
 .globl testStackProbesOff
 testStackProbesOff:
+.p2align 2
 	mv a0, zero
 	ret
 .globl testStackProbesOn
 testStackProbesOn:
+.p2align 2
 	ret

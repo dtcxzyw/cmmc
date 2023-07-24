@@ -3,11 +3,13 @@
 .text
 .globl f1
 f1:
+.p2align 2
 	mulw a3, a0, a1
 	subw a0, a2, a3
 	ret
 .globl f2
 f2:
+.p2align 2
 	mulw a3, a0, a1
 	subw a0, a3, a2
 	ret

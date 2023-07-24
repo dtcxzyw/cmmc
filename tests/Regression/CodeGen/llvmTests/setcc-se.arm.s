@@ -11,17 +11,20 @@ g1:
 .fpu vfpv4
 .globl seteq0
 seteq0:
+.p2align 4
 	clz r0, r0
 	lsr r0, r0, #5
 	bx lr
 .globl setne0
 setne0:
+.p2align 4
 	cmp r0, #0
 	mov r0, #0
 	movwne r0, #1
 	bx lr
 .globl slti_beq0
 slti_beq0:
+.p2align 4
 	cmn r0, #32768
 	blt label13
 label14:
@@ -33,6 +36,7 @@ label13:
 	b label14
 .globl slti_beq1
 slti_beq1:
+.p2align 4
 	mvn r1, #32768
 	cmp r0, r1
 	blt label24
@@ -45,6 +49,7 @@ label24:
 	b label25
 .globl slti_beq2
 slti_beq2:
+.p2align 4
 	movw r1, #32767
 	cmp r0, r1
 	blt label36
@@ -57,6 +62,7 @@ label36:
 	b label37
 .globl slti_beq3
 slti_beq3:
+.p2align 4
 	cmp r0, #32768
 	blt label48
 label49:
@@ -68,6 +74,7 @@ label48:
 	b label49
 .globl sltiu_beq0
 sltiu_beq0:
+.p2align 4
 	movw r1, #32767
 	cmp r0, r1
 	blo label59
@@ -80,6 +87,7 @@ label59:
 	b label60
 .globl sltiu_beq1
 sltiu_beq1:
+.p2align 4
 	cmp r0, #32768
 	blo label70
 label71:
@@ -91,6 +99,7 @@ label70:
 	b label71
 .globl sltiu_beq2
 sltiu_beq2:
+.p2align 4
 	cmn r0, #32768
 	blo label80
 label81:
@@ -102,6 +111,7 @@ label80:
 	b label81
 .globl sltiu_beq3
 sltiu_beq3:
+.p2align 4
 	mvn r1, #32768
 	cmp r0, r1
 	blo label90

@@ -16,6 +16,7 @@ c:
 .fpu vfpv4
 .globl main
 main:
+.p2align 4
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
 	mov r5, #0
 	movw r7, #:lower16:b
@@ -58,6 +59,7 @@ label9:
 	mov r2, #0
 	mla r1, r0, r1, r7
 label10:
+.p2align 4
 	mov r3, #4000
 	ldr r4, [sp, #4]
 	mla r3, r2, r3, r4
@@ -202,6 +204,7 @@ label212:
 	mov r4, #0
 	mov r5, r4
 label17:
+.p2align 4
 	mov r6, #4000
 	ldr r7, [sp, #8]
 	ldr r8, [r2, r4, lsl #2]
@@ -256,6 +259,7 @@ label26:
 	mov r2, #0
 	mla r1, r0, r1, r4
 label27:
+.p2align 4
 	mov r3, #4000
 	ldr r4, [sp, #0]
 	mla r3, r2, r3, r4
@@ -393,10 +397,12 @@ label22:
 	blt label26
 	b label610
 label39:
+.p2align 4
 	cmp r3, #1000
 	blt label45
 	mov r4, #0
 label42:
+.p2align 4
 	add r3, r2, r4, lsl #2
 	str r0, [r2, r4, lsl #2]
 	add r4, r4, #16
@@ -429,6 +435,7 @@ label42:
 	str r0, [r3, #28]
 	b label22
 label45:
+.p2align 4
 	ldr r4, [r2, r3, lsl #2]
 	add r3, r3, #1
 	cmp r0, r4
@@ -451,6 +458,7 @@ label33:
 	mov r0, #0
 	b label46
 label35:
+.p2align 4
 	add r2, r1, r3, lsl #2
 	ldr r5, [r1, r3, lsl #2]
 	add r3, r3, #16

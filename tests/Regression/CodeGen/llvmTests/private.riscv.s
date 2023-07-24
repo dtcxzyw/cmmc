@@ -8,10 +8,12 @@ baz:
 .text
 .globl bar
 bar:
+.p2align 2
 pcrel7:
 	auipc a1, %pcrel_hi(baz)
 	lw a0, %pcrel_lo(pcrel7)(a1)
 	ret
 .globl foo
 foo:
+.p2align 2
 	ret

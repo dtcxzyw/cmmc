@@ -3,6 +3,7 @@
 .text
 .globl mulw
 mulw:
+.p2align 2
 	mv a2, a0
 	mv a3, a1
 	blt a0, a1, label2

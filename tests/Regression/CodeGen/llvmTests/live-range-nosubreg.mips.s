@@ -20,6 +20,7 @@ b:
 .text
 .globl main
 main:
+.p2align 2
 	lui $t1, %hi(a)
 	lh $t0, %lo(a)($t1)
 	andi $t2, $t0, 65535

@@ -7,9 +7,11 @@ var:
 .text
 .globl func
 func:
+.p2align 2
 	jr $ra
 	nop
 .globl shrink_wrap
 shrink_wrap:
+.p2align 2
 	jr $ra
 	nop

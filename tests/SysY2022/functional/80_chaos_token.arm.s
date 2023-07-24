@@ -126,6 +126,7 @@ saY_HeI10_To:
 .fpu vfpv4
 .globl main
 main:
+.p2align 4
 	push { r4, r5, r6, r7, r8, r9, r10, lr }
 	sub sp, sp, #24
 	mov r0, #10
@@ -165,6 +166,7 @@ label18:
 	beq label19
 	b label4
 label2:
+.p2align 4
 	add r7, r5, r6, lsl #2
 	ldr r0, [r5, r6, lsl #2]
 	bl putch
@@ -220,6 +222,7 @@ label80:
 	mov r6, #0
 	b label11
 label8:
+.p2align 4
 	add r10, r8, r9, lsl #2
 	ldr r0, [r8, r9, lsl #2]
 	bl putch
@@ -256,6 +259,7 @@ label63:
 	mov r9, #0
 	b label8
 label16:
+.p2align 4
 	add r10, r8, r9, lsl #2
 	ldr r0, [r8, r9, lsl #2]
 	bl putch
@@ -296,6 +300,7 @@ label4:
 	bne label6
 	b label18
 label14:
+.p2align 4
 	add r7, r4, r6, lsl #2
 	ldr r0, [r4, r6, lsl #2]
 	bl putch
@@ -313,6 +318,7 @@ label14:
 	beq label19
 	b label4
 label11:
+.p2align 4
 	add r8, r7, r6, lsl #2
 	ldr r0, [r7, r6, lsl #2]
 	bl putch

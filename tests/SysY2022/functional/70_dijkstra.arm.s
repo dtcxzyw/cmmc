@@ -10,6 +10,7 @@ e:
 .fpu vfpv4
 .globl main
 main:
+.p2align 4
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
 	mov r0, #0
 	sub sp, sp, #132
@@ -84,6 +85,7 @@ label10:
 	mov r0, #0
 	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
 label13:
+.p2align 4
 	cmp r4, r3
 	bge label25
 	mov r3, #1
@@ -97,6 +99,7 @@ label13:
 	bgt label95
 	b label10
 label21:
+.p2align 4
 	add r8, r6, r2, lsl #6
 	movw r9, #65535
 	ldr r8, [r8, r3, lsl #2]
@@ -112,6 +115,7 @@ label21:
 	bgt label95
 	b label10
 label23:
+.p2align 4
 	ldr r9, [r5, r3, lsl #2]
 	ldr r10, [r5, r2, lsl #2]
 	add r8, r8, r10
@@ -127,6 +131,7 @@ label23:
 	bgt label95
 	b label10
 label25:
+.p2align 4
 	ldr r9, [r5, r3, lsl #2]
 	cmp r8, r9
 	bgt label28
@@ -148,6 +153,7 @@ label25:
 	bgt label95
 	b label10
 label28:
+.p2align 4
 	ldr r10, [r7, r3, lsl #2]
 	clz r10, r10
 	lsr r10, r10, #5
@@ -168,6 +174,7 @@ label28:
 	bgt label95
 	b label10
 label24:
+.p2align 4
 	str r8, [r5, r3, lsl #2]
 	add r3, r3, #1
 	cmp r4, r3
@@ -180,6 +187,7 @@ label24:
 label95:
 	mov r6, #1
 label11:
+.p2align 4
 	ldr r0, [r5, r6, lsl #2]
 	bl putint
 	mov r0, #32
@@ -192,6 +200,7 @@ label77:
 	add r1, r6, r0, lsl #6
 	mov r2, #1
 label34:
+.p2align 4
 	mov r3, #0
 	movw r9, #65535
 	cmp r0, r2
@@ -219,6 +228,7 @@ label34:
 label87:
 	mov r2, #1
 label29:
+.p2align 4
 	ldr r3, [r1, r2, lsl #2]
 	str r3, [r5, r2, lsl #2]
 	mov r3, #0
@@ -234,6 +244,7 @@ label29:
 	bgt label95
 	b label10
 label31:
+.p2align 4
 	bl getint
 	add r10, r6, r0, lsl #6
 	bl getint

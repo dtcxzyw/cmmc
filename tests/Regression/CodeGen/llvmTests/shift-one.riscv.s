@@ -8,6 +8,7 @@ x:
 .text
 .globl test
 test:
+.p2align 2
 pcrel8:
 	auipc a1, %pcrel_hi(x)
 	lw a2, %pcrel_lo(pcrel8)(a1)

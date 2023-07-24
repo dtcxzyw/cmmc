@@ -3,18 +3,21 @@
 .text
 .globl f6
 f6:
+.p2align 2
 	addw a2, a0, a1
 	li a3, 4294967295
 	and a0, a2, a3
 	ret
 .globl f7
 f7:
+.p2align 2
 	addw a2, a0, a1
 	li a3, 4294967295
 	and a0, a2, a3
 	ret
 .globl f8
 f8:
+.p2align 2
 	addw a2, a0, a1
 	li a3, 4294967295
 	and a0, a2, a3

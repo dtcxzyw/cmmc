@@ -3,5 +3,6 @@
 .text
 .globl test
 test:
+.p2align 2
 	fmv.w.x f10, zero
 	ret

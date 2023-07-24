@@ -5,6 +5,7 @@
 .arm
 .fpu vfpv4
 params_f40:
+.p2align 4
 	push { r4, r5, lr }
 	vpush { s16, s17, s18, s19, s20, s21, s22, s23, s24, s25, s26, s27, s28, s29, s30, s31 }
 	sub sp, sp, #188
@@ -166,6 +167,7 @@ label1111:
 	bl params_f40
 	b label1109
 params_f40_i24:
+.p2align 4
 	push { r4, r5, r6, r7, r8, r9, r10, lr }
 	vpush { s16, s17, s18, s19, s20, s21, s22, s23, s24, s25, s26, s27 }
 	vmov.f32 s13, s10
@@ -515,6 +517,7 @@ label787:
 	bl params_f40_i24
 	b label785
 params_fa40:
+.p2align 4
 	push { r4, r5, r6, r7, r8, r9, r10, lr }
 	mov r6, r3
 	mov r7, r2
@@ -861,6 +864,7 @@ label449:
 	bl params_fa40
 	b label446
 params_mix:
+.p2align 4
 	push { r4, r5, r6, r7, r8, r9, r10, lr }
 	vpush { s16, s17, s18, s19, s20, s21, s22 }
 	sub sp, sp, #428
@@ -1283,6 +1287,7 @@ label8:
 	b label6
 .globl main
 main:
+.p2align 4
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
 	vpush { s16, s17, s18, s19, s20, s21, s22, s23, s24, s25, s26, s27, s28, s29 }
 	movw r12, #1356
@@ -1298,6 +1303,7 @@ main:
 	mov r5, #0
 	str r0, [sp, #1336]
 label1267:
+.p2align 4
 	mov r0, #12
 	ldr r4, [sp, #1296]
 	mla r0, r5, r0, r4
@@ -1307,6 +1313,7 @@ label1267:
 	blt label1267
 	mov r4, #0
 label1269:
+.p2align 4
 	mov r0, #12
 	ldr r5, [sp, #1292]
 	mla r0, r4, r0, r5

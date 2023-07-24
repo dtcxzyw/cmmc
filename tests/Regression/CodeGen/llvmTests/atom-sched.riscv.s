@@ -28,6 +28,7 @@ f:
 .text
 .globl func
 func:
+.p2align 2
 pcrel40:
 	auipc a2, %pcrel_hi(b)
 pcrel41:

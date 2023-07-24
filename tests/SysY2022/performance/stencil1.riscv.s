@@ -10,6 +10,7 @@ image_out:
 .text
 .globl main
 main:
+.p2align 2
 	addi sp, sp, -32
 pcrel192:
 	auipc a1, %pcrel_hi(image_in)
@@ -30,12 +31,14 @@ pcrel193:
 	li a1, 1023
 	bge a0, a1, label24
 label4:
+.p2align 2
 	addiw a1, a0, -1
 	li a2, 2048
 	li a3, 1024
 	mv a4, zero
 	li a5, 1
 label5:
+.p2align 2
 	addw t0, a0, a3
 	addw t4, a1, a4
 	addiw a5, a5, 1
@@ -81,10 +84,12 @@ label5:
 	li a1, 1023
 	blt a0, a1, label4
 label24:
+.p2align 2
 	li a0, 1024
 	mv a1, zero
 	mv a2, zero
 label11:
+.p2align 2
 	sh2add a4, a1, s0
 	addiw a2, a2, 4
 	sh2add a5, a1, s1
@@ -135,6 +140,7 @@ label11:
 	blt a2, a3, label11
 	mv a1, zero
 label15:
+.p2align 2
 	sh2add a0, a1, s0
 	sh2add a2, a1, s1
 	lw a3, 0(a0)

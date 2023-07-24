@@ -3,6 +3,7 @@
 .text
 .globl foo
 foo:
+.p2align 2
 	addw a0, a0, a1
 	addw a2, a0, a2
 	addw a1, a2, a3

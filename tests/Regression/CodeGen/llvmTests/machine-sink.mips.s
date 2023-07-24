@@ -2,6 +2,7 @@
 .text
 .globl test
 test:
+.p2align 2
 	sltu $t0, $a0, $a1
 	addiu $t1, $a1, 2
 	li $v0, 1

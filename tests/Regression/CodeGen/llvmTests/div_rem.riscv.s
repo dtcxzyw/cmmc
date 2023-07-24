@@ -20,6 +20,7 @@ llll:
 .text
 .globl test
 test:
+.p2align 2
 pcrel28:
 	auipc a1, %pcrel_hi(iiii)
 pcrel29:

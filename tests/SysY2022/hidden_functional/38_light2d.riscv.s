@@ -16,6 +16,7 @@ __cmmc_fp_constant_pool:
 	.4byte	1028443341
 .text
 my_sin_impl:
+.p2align 2
 	addi sp, sp, -16
 	fabs.s f11, f10
 pcrel52:
@@ -75,6 +76,7 @@ label7:
 	j label2
 .globl main
 main:
+.p2align 2
 	addi sp, sp, -40
 	li a0, 80
 	sd s2, 32(sp)
@@ -126,6 +128,7 @@ label58:
 	addi sp, sp, 40
 	ret
 label59:
+.p2align 2
 	fcvt.s.w f10, s1
 	lui a0, 275456
 	fmv.w.x f15, zero
@@ -133,6 +136,7 @@ label59:
 	fmv.w.x f11, a0
 	fdiv.s f14, f10, f11
 label62:
+.p2align 2
 	li a0, 19980130
 	li a3, 23333
 	li a4, 360287945
@@ -150,8 +154,10 @@ label62:
 	blt a0, zero, label357
 	mv s2, a0
 label357:
+.p2align 2
 	fcvt.s.w f10, s2
 pcrel390:
+.p2align 2
 	auipc a1, %pcrel_hi(__cmmc_fp_constant_pool)
 	fcvt.s.w f13, a2
 	addi a0, a1, %pcrel_lo(pcrel390)
@@ -171,6 +177,7 @@ pcrel390:
 	or a0, a1, a3
 	bne a0, zero, label80
 pcrel391:
+.p2align 2
 	auipc a0, %pcrel_hi(__cmmc_fp_constant_pool)
 	addi a3, a0, %pcrel_lo(pcrel391)
 	flw f11, 20(a3)
@@ -186,8 +193,10 @@ pcrel391:
 	fmv.s f10, f12
 	bne a0, zero, label361
 label385:
+.p2align 2
 	fmv.s f10, f11
 label361:
+.p2align 2
 	jal my_sin_impl
 	flt.s a0, f2, f1
 	fmv.s f0, f10
@@ -196,6 +205,7 @@ label361:
 	or a0, a0, a1
 	bne a0, zero, label79
 pcrel392:
+.p2align 2
 	auipc a1, %pcrel_hi(__cmmc_fp_constant_pool)
 	addi a0, a1, %pcrel_lo(pcrel392)
 	flw f10, 20(a0)
@@ -211,15 +221,18 @@ pcrel392:
 	fmv.s f11, f13
 	bne a0, zero, label365
 label386:
+.p2align 2
 	fmv.s f11, f10
 	j label365
 label363:
+.p2align 2
 	flw f12, 24(a0)
 	fadd.s f13, f10, f11
 	flt.s a0, f10, f12
 	fmv.s f11, f13
 	beq a0, zero, label386
 label365:
+.p2align 2
 	fmv.s f10, f11
 	jal my_sin_impl
 	mv a0, zero
@@ -237,8 +250,10 @@ label365:
 	blt a2, a0, label62
 	j label77
 label73:
+.p2align 2
 	fmul.s f12, f0, f11
 pcrel393:
+.p2align 2
 	auipc a3, %pcrel_hi(__cmmc_fp_constant_pool)
 	fmul.s f3, f10, f11
 	addi a1, a3, %pcrel_lo(pcrel393)
@@ -343,6 +358,7 @@ pcrel393:
 	bne a3, zero, label367
 	fmv.s f12, f13
 label367:
+.p2align 2
 	flw f13, 0(a1)
 	fmv.w.x f2, zero
 	lui a1, 263168
@@ -351,6 +367,7 @@ label367:
 	bne a3, zero, label369
 	fmv.s f1, f2
 label369:
+.p2align 2
 	flt.s a1, f12, f13
 	bne a1, zero, label75
 	fadd.s f11, f11, f12
@@ -368,11 +385,13 @@ label369:
 	blt a2, a0, label62
 	j label77
 label75:
+.p2align 2
 	fadd.s f15, f15, f1
 	addiw a2, a2, 1
 	li a0, 24
 	blt a2, a0, label62
 label77:
+.p2align 2
 	lui a0, 269312
 	li a1, 255
 	fmv.w.x f11, a0
@@ -399,6 +418,7 @@ label77:
 	blt s0, a0, label87
 	j label58
 label79:
+.p2align 2
 	auipc a0, %pcrel_hi(__cmmc_fp_constant_pool)
 	addi a1, a0, %pcrel_lo(label79)
 	flw f10, 8(a1)
@@ -408,6 +428,7 @@ label79:
 	fmul.s f10, f12, f10
 	fsub.s f1, f1, f10
 pcrel394:
+.p2align 2
 	auipc a1, %pcrel_hi(__cmmc_fp_constant_pool)
 	addi a0, a1, %pcrel_lo(pcrel394)
 	flw f10, 20(a0)
@@ -424,6 +445,7 @@ pcrel394:
 	bne a0, zero, label365
 	j label386
 label80:
+.p2align 2
 	auipc a0, %pcrel_hi(__cmmc_fp_constant_pool)
 	addi a1, a0, %pcrel_lo(label80)
 	flw f11, 8(a1)
@@ -433,6 +455,7 @@ label80:
 	fmul.s f11, f13, f11
 	fsub.s f10, f10, f11
 pcrel395:
+.p2align 2
 	auipc a0, %pcrel_hi(__cmmc_fp_constant_pool)
 	addi a3, a0, %pcrel_lo(pcrel395)
 	flw f11, 20(a3)
@@ -449,6 +472,7 @@ pcrel395:
 	bne a0, zero, label361
 	j label385
 label359:
+.p2align 2
 	flw f10, 24(a3)
 	fadd.s f12, f11, f2
 	flt.s a0, f11, f10

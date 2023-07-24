@@ -3,6 +3,7 @@
 .text
 .globl t
 t:
+.p2align 2
 	bne a0, a1, label14
 label2:
 	ret

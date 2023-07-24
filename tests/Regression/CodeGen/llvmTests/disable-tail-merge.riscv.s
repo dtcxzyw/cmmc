@@ -12,6 +12,7 @@ g1:
 .text
 .globl test1
 test1:
+.p2align 2
 	mv a1, a0
 pcrel46:
 	auipc a2, %pcrel_hi(g0)

@@ -3,6 +3,7 @@
 .text
 .globl test1
 test1:
+.p2align 2
 	addiw a2, a1, -5
 	sh2add a0, a0, a2
 	ret

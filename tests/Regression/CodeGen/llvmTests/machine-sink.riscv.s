@@ -3,6 +3,7 @@
 .text
 .globl test
 test:
+.p2align 2
 	addiw a3, a1, 2
 	mv a2, a3
 	bltu a0, a1, label8

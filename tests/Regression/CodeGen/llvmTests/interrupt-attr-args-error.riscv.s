@@ -3,5 +3,6 @@
 .text
 .globl isr_user
 isr_user:
+.p2align 2
 	mv a0, zero
 	ret

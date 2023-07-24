@@ -6,6 +6,7 @@
 .fpu vfpv4
 .globl t1
 t1:
+.p2align 4
 	sub r0, r0, #1
 	movw r1, #65535
 	and r0, r1, r0, lsl #1
@@ -13,6 +14,7 @@ t1:
 	bx lr
 .globl t2
 t2:
+.p2align 4
 	sub r0, r0, #1
 	movw r1, #65535
 	and r0, r1, r0, lsl #1

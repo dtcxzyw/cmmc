@@ -3,6 +3,7 @@
 .text
 .globl binomial
 binomial:
+.p2align 2
 	mv a2, a1
 	bgeu a0, a1, label4
 	mv a0, zero

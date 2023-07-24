@@ -3,6 +3,7 @@
 .text
 .globl test5
 test5:
+.p2align 2
 	li a1, 65535
 	and a2, a0, a1
 	slliw a3, a2, 2

@@ -6,6 +6,7 @@ count:
 	.zero	4000
 .text
 QuickSort:
+.p2align 2
 	addi sp, sp, -32
 	sd s0, 24(sp)
 	mv s0, a0
@@ -25,6 +26,7 @@ label8:
 	addiw a1, s2, 1
 	j label2
 label20:
+.p2align 2
 	sh2add t0, a3, s0
 	sh2add a5, s2, s0
 	lw a4, 0(t0)
@@ -40,6 +42,7 @@ label21:
 	addi sp, sp, 32
 	ret
 label19:
+.p2align 2
 	sh2add t0, s2, s0
 	sh2add a5, a3, s0
 	lw a4, 0(t0)
@@ -48,12 +51,14 @@ label19:
 	bgt a3, s2, label9
 	j label8
 label16:
+.p2align 2
 	sh2add a4, s2, s0
 	lw a5, 0(a4)
 	bgt a0, a5, label17
 	bgt a3, s2, label19
 	j label8
 label17:
+.p2align 2
 	addiw s2, s2, 1
 	bgt a3, s2, label16
 	j label8
@@ -65,10 +70,12 @@ label4:
 	addi a2, a0, -1
 	ble s1, a1, label8
 label9:
+.p2align 2
 	blt s2, a3, label11
 	bgt a3, s2, label16
 	j label8
 label11:
+.p2align 2
 	sh2add a5, a3, s0
 	lw a4, 0(a5)
 	blt a2, a4, label12
@@ -76,12 +83,14 @@ label11:
 	bgt a3, s2, label16
 	j label8
 label12:
+.p2align 2
 	addiw a3, a3, -1
 	blt s2, a3, label11
 	bgt a3, s2, label16
 	j label8
 .globl main
 main:
+.p2align 2
 	addi sp, sp, -440
 	li a0, 7
 	li a1, 23
@@ -214,6 +223,7 @@ pcrel883:
 	sw s10, 156(sp)
 	sd a2, 160(sp)
 label116:
+.p2align 2
 	ld a4, 176(sp)
 	sh2add a1, s0, a4
 	lw a0, 0(a1)
@@ -228,8 +238,10 @@ label116:
 	addi a1, a3, -1
 	blt zero, a2, label289
 label841:
+.p2align 2
 	mv s0, zero
 label125:
+.p2align 2
 	ld a4, 176(sp)
 	sh2add a1, s0, a4
 	lw a0, 0(a1)
@@ -246,6 +258,7 @@ label125:
 	jal putint
 	mv a1, zero
 label128:
+.p2align 2
 	ld a2, 160(sp)
 	sh2add a0, a1, a2
 	addiw a1, a1, 16
@@ -283,6 +296,7 @@ label128:
 	mv a2, zero
 	j label131
 label289:
+.p2align 2
 	mv a2, zero
 	bgt a1, zero, label122
 	addiw a0, a0, 1
@@ -293,6 +307,7 @@ label289:
 	blt a0, a2, label289
 	j label841
 label122:
+.p2align 2
 	ld a4, 176(sp)
 	sh2add t0, a2, a4
 	lw a3, 0(t0)
@@ -309,6 +324,7 @@ label122:
 	blt a0, a2, label289
 	j label841
 label123:
+.p2align 2
 	ld a4, 176(sp)
 	sh2add a2, a2, a4
 	sw a3, 4(a2)
@@ -397,6 +413,7 @@ label140:
 	jal putint
 	mv a1, zero
 label141:
+.p2align 2
 	addiw a0, a1, 4
 	li a2, 32
 	bge a0, a2, label144
@@ -430,8 +447,10 @@ label144:
 	addi a1, a3, -1
 	blt zero, a2, label445
 label444:
+.p2align 2
 	mv s0, zero
 label153:
+.p2align 2
 	ld a4, 176(sp)
 	sh2add a1, s0, a4
 	lw a0, 0(a1)
@@ -445,6 +464,7 @@ label153:
 	blt a1, a2, label157
 	j label158
 label155:
+.p2align 2
 	addiw a1, a0, 4
 	li a2, 32
 	bge a1, a2, label158
@@ -464,6 +484,7 @@ label157:
 	mv a0, a1
 	j label155
 label445:
+.p2align 2
 	mv a2, zero
 	bgt a1, zero, label151
 	addiw a0, a0, 1
@@ -474,6 +495,7 @@ label445:
 	blt a0, a2, label445
 	j label444
 label151:
+.p2align 2
 	ld a4, 176(sp)
 	sh2add t0, a2, a4
 	lw a3, 0(t0)
@@ -490,6 +512,7 @@ label151:
 	blt a0, a2, label445
 	j label444
 label152:
+.p2align 2
 	ld a4, 176(sp)
 	sh2add a2, a2, a4
 	sw a3, 4(a2)
@@ -516,6 +539,7 @@ label158:
 	li a0, 1
 	bge a0, a1, label503
 label162:
+.p2align 2
 	ld a4, 176(sp)
 	addiw a2, a0, -1
 	sh2add a3, a0, a4
@@ -529,6 +553,7 @@ label162:
 	blt a0, a1, label162
 	j label503
 label166:
+.p2align 2
 	ld a4, 176(sp)
 	sh2add a5, a2, a4
 	lw a3, 0(a5)
@@ -541,6 +566,7 @@ label166:
 	blt a0, a1, label162
 	j label503
 label167:
+.p2align 2
 	addiw a5, a2, 1
 	ld a4, 176(sp)
 	addiw a2, a2, -1
@@ -554,8 +580,10 @@ label167:
 	li a1, 32
 	blt a0, a1, label162
 label503:
+.p2align 2
 	mv s0, zero
 label168:
+.p2align 2
 	ld a4, 176(sp)
 	sh2add a1, s0, a4
 	lw a0, 0(a1)
@@ -569,6 +597,7 @@ label168:
 	blt a1, a2, label172
 	j label173
 label170:
+.p2align 2
 	addiw a1, a0, 4
 	li a2, 32
 	bge a1, a2, label173
@@ -603,6 +632,7 @@ label173:
 	jal QuickSort
 	mv s0, zero
 label176:
+.p2align 2
 	ld a4, 176(sp)
 	sh2add a1, s0, a4
 	lw a0, 0(a1)
@@ -616,6 +646,7 @@ label176:
 	blt a1, a2, label208
 	j label180
 label178:
+.p2align 2
 	addiw a1, a0, 4
 	li a2, 32
 	bge a1, a2, label180
@@ -648,6 +679,7 @@ label180:
 	mv a0, zero
 	bge zero, a2, label590
 label185:
+.p2align 2
 	ld a4, 176(sp)
 	sh2add a2, a0, a4
 	lw a3, 0(a2)
@@ -663,6 +695,7 @@ label185:
 	blt a0, a2, label185
 	j label590
 label187:
+.p2align 2
 	ld a4, 176(sp)
 	sh2add a2, a0, a4
 	addiw a0, a0, 1
@@ -670,8 +703,10 @@ label187:
 	li a2, 32
 	blt a0, a2, label185
 label590:
+.p2align 2
 	mv s0, zero
 label188:
+.p2align 2
 	ld a4, 176(sp)
 	sh2add a1, s0, a4
 	lw a0, 0(a1)
@@ -685,6 +720,7 @@ label188:
 	blt a1, a2, label192
 	j label193
 label190:
+.p2align 2
 	addiw a1, a0, 4
 	li a2, 32
 	bge a1, a2, label193
@@ -717,9 +753,11 @@ label193:
 	mv a2, zero
 	mv a0, zero
 label195:
+.p2align 2
 	li a3, 32
 	bge a0, a3, label646
 label199:
+.p2align 2
 	li a3, 2
 	blt a0, a3, label203
 	beq a0, a3, label201
@@ -738,6 +776,7 @@ label199:
 	sw a4, -8(a3)
 	j label195
 label203:
+.p2align 2
 	ld a4, 176(sp)
 	sh2add a3, a0, a4
 	addiw a0, a0, 1
@@ -746,10 +785,12 @@ label203:
 	li a3, 32
 	blt a0, a3, label199
 label646:
+.p2align 2
 	sw zero, 152(sp)
 	mv s0, zero
 	sw zero, 156(sp)
 label205:
+.p2align 2
 	ld a4, 176(sp)
 	sh2add a1, s0, a4
 	lw a0, 0(a1)

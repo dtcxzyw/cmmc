@@ -3,6 +3,7 @@
 .text
 .globl t
 t:
+.p2align 2
 	li a2, -65535
 	addw a3, a0, a2
 	andi a2, a0, 1

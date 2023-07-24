@@ -3,10 +3,12 @@
 .text
 .globl mul1
 mul1:
+.p2align 2
 	mulw a0, a0, a1
 	ret
 .globl mul2
 mul2:
+.p2align 2
 	mulw a2, a0, a1
 	li a3, 4294967295
 	and a0, a2, a3

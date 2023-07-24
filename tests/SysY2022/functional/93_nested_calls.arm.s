@@ -6,6 +6,7 @@
 .fpu vfpv4
 .globl main
 main:
+.p2align 4
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
 	sub sp, sp, #84
 	mov r5, sp
@@ -21,6 +22,7 @@ main:
 	str r0, [sp, #56]
 	mov r8, r0
 label2:
+.p2align 4
 	bl getint
 	str r0, [r5, r6, lsl #2]
 	add r6, r6, #1

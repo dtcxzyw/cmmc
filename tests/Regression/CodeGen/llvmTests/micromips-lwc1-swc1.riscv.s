@@ -8,12 +8,14 @@ gf0:
 .text
 .globl test_lwc1
 test_lwc1:
+.p2align 2
 pcrel7:
 	auipc a0, %pcrel_hi(gf0)
 	flw f10, %pcrel_lo(pcrel7)(a0)
 	ret
 .globl test_swc1
 test_swc1:
+.p2align 2
 pcrel14:
 	auipc a0, %pcrel_hi(gf0)
 	fsw f10, %pcrel_lo(pcrel14)(a0)

@@ -23,6 +23,7 @@ result2:
 .text
 .globl test
 test:
+.p2align 2
 	lui $t0, %hi(i)
 	lw $t1, %lo(i)($t0)
 	move $t0, $t1

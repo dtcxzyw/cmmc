@@ -2,6 +2,7 @@
 .data
 .text
 graphColoring:
+.p2align 2
 	addi sp, sp, -40
 	sd s1, 32(sp)
 	mv s1, a0
@@ -89,6 +90,7 @@ label10:
 	j label42
 .globl main
 main:
+.p2align 2
 	addi sp, sp, -88
 	li a1, 1
 	mv a2, zero

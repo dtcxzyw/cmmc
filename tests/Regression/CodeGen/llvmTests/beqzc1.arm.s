@@ -15,6 +15,7 @@ j:
 .fpu vfpv4
 .globl main
 main:
+.p2align 4
 	movw r0, #:lower16:i
 	movt r0, #:upper16:i
 	ldr r0, [r0, #0]

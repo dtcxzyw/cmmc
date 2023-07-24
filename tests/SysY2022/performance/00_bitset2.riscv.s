@@ -7,6 +7,7 @@ a:
 .text
 .globl main
 main:
+.p2align 2
 	addi sp, sp, -24
 	sd s0, 16(sp)
 	sd s1, 8(sp)
@@ -38,6 +39,7 @@ label2:
 	addi a0, a1, %pcrel_lo(label2)
 	mv a1, s0
 label3:
+.p2align 2
 	li a2, 19971231
 	li a5, 19981013
 	li t0, 1152921497
@@ -55,6 +57,7 @@ label3:
 	blt t1, zero, label128
 	mv a4, t1
 label128:
+.p2align 2
 	mulw t1, a4, a2
 	addw a2, t1, a5
 	mul a5, a2, t0
@@ -68,6 +71,7 @@ label128:
 	blt a5, zero, label130
 	mv a2, a5
 label130:
+.p2align 2
 	andi a3, a2, 1
 	li t1, 1876499845
 	li t2, 300000
@@ -108,6 +112,7 @@ label130:
 	bgt a1, zero, label62
 	j label9
 label6:
+.p2align 2
 	andi t2, t1, 1
 	xori t3, a3, 1
 	or t4, t2, t3
@@ -123,6 +128,7 @@ label6:
 	beq t1, zero, label132
 	mv a3, t2
 label132:
+.p2align 2
 	addw a5, a5, a3
 	sh2add a3, a4, a0
 	sw a5, 0(a3)

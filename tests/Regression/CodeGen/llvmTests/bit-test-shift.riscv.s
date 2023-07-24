@@ -3,6 +3,7 @@
 .text
 .globl x
 x:
+.p2align 2
 	andi a2, a0, 256
 	mv a1, zero
 	beq a2, zero, label9

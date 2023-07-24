@@ -3,13 +3,16 @@
 .text
 .globl func1
 func1:
+.p2align 2
 	mv a0, zero
 	ret
 .globl func2
 func2:
+.p2align 2
 	mv a0, zero
 	ret
 .globl func3
 func3:
+.p2align 2
 	mv a0, zero
 	ret

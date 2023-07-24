@@ -6,6 +6,7 @@
 .fpu vfpv4
 .globl bswap_ror_commuted
 bswap_ror_commuted:
+.p2align 4
 	movw r1, #255
 	movw r2, #65280
 	movt r1, #255
@@ -16,12 +17,14 @@ bswap_ror_commuted:
 	bx lr
 .globl different_constant
 different_constant:
+.p2align 4
 	movw r1, #255
 	movt r1, #255
 	and r0, r1, r0, lsr #8
 	bx lr
 .globl different_op
 different_op:
+.p2align 4
 	movw r1, #256
 	movw r2, #255
 	movt r1, #255
@@ -32,6 +35,7 @@ different_op:
 	bx lr
 .globl different_shift_amount
 different_shift_amount:
+.p2align 4
 	movw r1, #65280
 	movw r2, #255
 	movt r1, #65280
@@ -42,6 +46,7 @@ different_shift_amount:
 	bx lr
 .globl different_vars
 different_vars:
+.p2align 4
 	movw r2, #65280
 	movt r2, #65280
 	and r0, r2, r0, lsl #8
@@ -52,6 +57,7 @@ different_vars:
 	bx lr
 .globl extra_maskop_uses2
 extra_maskop_uses2:
+.p2align 4
 	movw r1, #65280
 	movw r2, #255
 	movt r1, #65280
@@ -64,6 +70,7 @@ extra_maskop_uses2:
 	bx lr
 .globl f2
 f2:
+.p2align 4
 	lsl r1, r0, #8
 	lsr r0, r0, #8
 	and r2, r1, #65280
@@ -76,6 +83,7 @@ f2:
 	bx lr
 .globl not_rev16
 not_rev16:
+.p2align 4
 	movw r1, #65280
 	movw r2, #255
 	movt r1, #65280
@@ -86,6 +94,7 @@ not_rev16:
 	bx lr
 .globl rev16
 rev16:
+.p2align 4
 	movw r1, #65280
 	movw r2, #255
 	movt r1, #65280

@@ -12,6 +12,7 @@ s:
 .text
 .globl foo
 foo:
+.p2align 2
 	bne a0, zero, label2
 pcrel26:
 	auipc a2, %pcrel_hi(s)

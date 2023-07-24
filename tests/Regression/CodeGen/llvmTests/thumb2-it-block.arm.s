@@ -6,6 +6,7 @@
 .fpu vfpv4
 .globl test
 test:
+.p2align 4
 	rsb r2, r0, #0
 	cmp r0, #0
 	movlt r0, r2

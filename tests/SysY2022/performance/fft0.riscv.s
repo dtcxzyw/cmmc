@@ -12,6 +12,7 @@ b:
 	.zero	8388608
 .text
 multiply:
+.p2align 2
 	addi sp, sp, -32
 	sd s0, 24(sp)
 	mv s0, a0
@@ -120,6 +121,7 @@ label13:
 	subw a0, a0, a3
 	j label7
 power:
+.p2align 2
 	addi sp, sp, -24
 	sd s0, 16(sp)
 	mv s0, a0
@@ -150,6 +152,7 @@ label290:
 	jal multiply
 	j label288
 fft:
+.p2align 2
 	addi sp, sp, -56
 	sd s1, 48(sp)
 	mv s1, a0
@@ -172,6 +175,7 @@ pcrel286:
 	mv a1, zero
 	ble a2, zero, label136
 label127:
+.p2align 2
 	andi a3, a1, 1
 	bne a3, zero, label129
 	addw a4, s2, a1
@@ -187,6 +191,7 @@ label127:
 	bgt a2, zero, label180
 	j label136
 label129:
+.p2align 2
 	srliw a3, a1, 31
 	add a5, a1, a3
 	sraiw a4, a5, 1
@@ -254,6 +259,7 @@ label136:
 	mv a5, zero
 	li t0, 1
 label137:
+.p2align 2
 	addw a0, s2, a5
 	sh2add t2, a0, s1
 	addw a0, s4, a5
@@ -300,6 +306,7 @@ label140:
 	ret
 .globl main
 main:
+.p2align 2
 	addi sp, sp, -32
 pcrel387:
 	auipc a1, %pcrel_hi(a)
@@ -346,6 +353,7 @@ label318:
 	ble t6, zero, label322
 	mv a5, zero
 label320:
+.p2align 2
 	sh2add t0, a5, s0
 	sh2add a2, a5, s2
 	lw a0, 0(t0)
@@ -367,6 +375,7 @@ label322:
 	bgt t6, zero, label323
 	j label326
 label324:
+.p2align 2
 	sh2add t1, t0, s0
 	lw a0, 0(t1)
 	mv a1, a5
@@ -395,6 +404,7 @@ label323:
 	mv a5, a0
 	j label324
 label316:
+.p2align 2
 	slliw t6, t6, 1
 	bgt s1, t6, label316
 	j label318

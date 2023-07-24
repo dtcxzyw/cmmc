@@ -6,6 +6,7 @@
 .fpu vfpv4
 .globl F
 F:
+.p2align 4
 	movw r0, #39322
 	movt r0, #16521
 	vmov s1, r0

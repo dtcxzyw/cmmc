@@ -22,9 +22,11 @@ return_a:
 .fpu vfpv4
 .globl main
 main:
+.p2align 4
 	push { r4, r5, r6, r7, r8, r9, r10, lr }
 	sub sp, sp, #16
 label2:
+.p2align 4
 	bl getch
 	subs r2, r0, #35
 	mov r1, #1
@@ -59,6 +61,7 @@ label2:
 	ldr r8, [sp, #0]
 	str r0, [r8, r4, lsl #2]
 label58:
+.p2align 4
 	bl getch
 	subs r2, r0, #35
 	mov r1, #1
@@ -100,6 +103,7 @@ label6:
 	movw r0, #:lower16:return_a
 	movt r0, #:upper16:return_a
 label8:
+.p2align 4
 	add r1, r0, r3, lsl #2
 	mov r2, #0
 	str r2, [r0, r3, lsl #2]
@@ -141,6 +145,7 @@ label52:
 	mov r5, #0
 	b label53
 label331:
+.p2align 4
 	str r8, [sp, #8]
 	b label4
 label17:
@@ -152,6 +157,7 @@ label17:
 	ble label20
 	mov r6, #0
 label18:
+.p2align 4
 	ldr r0, [r4, r6, lsl #2]
 	bl putch
 	add r6, r6, #1
@@ -162,10 +168,12 @@ label20:
 	add sp, sp, #16
 	pop { r4, r5, r6, r7, r8, r9, r10, pc }
 label11:
+.p2align 4
 	ldr r8, [sp, #8]
 	cmp r8, r7
 	ble label17
 label21:
+.p2align 4
 	ldr r8, [sp, #0]
 	ldr r8, [r8, r7, lsl #2]
 	cmp r8, #62
@@ -207,6 +215,7 @@ label34:
 	add r7, r7, #1
 	b label11
 label44:
+.p2align 4
 	sub r6, r6, #1
 	add r7, r7, #1
 	ldr r8, [sp, #8]
@@ -214,8 +223,10 @@ label44:
 	bgt label21
 	b label17
 label45:
+.p2align 4
 	add r6, r6, #1
 label46:
+.p2align 4
 	add r7, r7, #1
 	ldr r8, [sp, #8]
 	cmp r8, r7
@@ -230,6 +241,7 @@ label31:
 	str r8, [r1, r6, lsl #2]
 	b label46
 label327:
+.p2align 4
 	mov r8, #0
 	str r8, [sp, #8]
 	b label4
@@ -239,6 +251,7 @@ label38:
 	bne label39
 	mov r9, #1
 label40:
+.p2align 4
 	cmp r9, #0
 	bgt label43
 	add r7, r7, #1
@@ -247,6 +260,7 @@ label40:
 	bgt label21
 	b label17
 label43:
+.p2align 4
 	add r7, r7, #1
 	ldr r8, [sp, #0]
 	ldr r8, [r8, r7, lsl #2]
@@ -265,6 +279,7 @@ label39:
 	add r7, r7, #1
 	b label11
 label53:
+.p2align 4
 	bl getch
 	ldr r8, [sp, #4]
 	str r0, [r8, r5, lsl #2]

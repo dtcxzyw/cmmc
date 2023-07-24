@@ -6,6 +6,7 @@
 .fpu vfpv4
 .globl select_unsigned_lt_10_8_13
 select_unsigned_lt_10_8_13:
+.p2align 4
 	cmp r0, #10
 	mov r1, #8
 	mov r0, #13

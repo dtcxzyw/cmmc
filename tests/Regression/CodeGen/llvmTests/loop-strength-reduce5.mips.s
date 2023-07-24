@@ -13,6 +13,7 @@ Y:
 .text
 .globl foo
 foo:
+.p2align 2
 	bgtz $a0, label2
 	nop
 label5:

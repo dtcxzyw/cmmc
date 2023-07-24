@@ -10,6 +10,7 @@ a:
 .text
 .globl main
 main:
+.p2align 2
 	addi sp, sp, -64
 pcrel223:
 	auipc a0, %pcrel_hi(a)
@@ -24,6 +25,7 @@ pcrel223:
 	sd s0, 8(sp)
 	sd ra, 0(sp)
 label2:
+.p2align 2
 	addi a1, a0, 4
 	li a2, 4087
 	bge a1, a2, label5
@@ -45,6 +47,7 @@ pcrel224:
 	addi a0, a1, %pcrel_lo(pcrel224)
 	mv a1, zero
 label8:
+.p2align 2
 	addi a2, a1, 4
 	li a3, 3127
 	bge a2, a3, label10
@@ -83,6 +86,7 @@ label10:
 	lw s4, 0(a2)
 	lw s5, 0(a0)
 label13:
+.p2align 2
 	sh2add a1, s6, s0
 	lw a0, 0(a1)
 	jal putint
@@ -121,6 +125,7 @@ label17:
 	addi sp, sp, 64
 	ret
 label18:
+.p2align 2
 	sh2add a1, s1, s0
 	lw a0, 0(a1)
 	jal putint
@@ -135,6 +140,7 @@ label16:
 	bge s1, zero, label18
 	j label17
 label20:
+.p2align 2
 	addiw a1, a2, 4
 	li a3, 10
 	blt a1, a3, label26

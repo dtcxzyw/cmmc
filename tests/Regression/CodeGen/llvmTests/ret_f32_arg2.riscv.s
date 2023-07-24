@@ -3,4 +3,5 @@
 .text
 .globl test_f32
 test_f32:
+.p2align 2
 	ret

@@ -22,6 +22,7 @@ write:
     mv a0, x0
     ret
 gcd:
+.p2align 2
 	addi sp, sp, -16
 	addi a1, sp, 0
 	sd ra, 8(sp)
@@ -48,6 +49,7 @@ label2:
 	j label3
 .globl main
 main:
+.p2align 2
 	addi sp, sp, -16
 	addi a1, sp, 0
 	sd ra, 8(sp)

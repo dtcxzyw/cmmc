@@ -3,6 +3,7 @@
 .text
 .globl foo16
 foo16:
+.p2align 2
 	li a1, 65535
 	and a2, a0, a1
 	andi a3, a2, -4
@@ -10,5 +11,6 @@ foo16:
 	ret
 .globl foo32
 foo32:
+.p2align 2
 	andi a0, a0, -4
 	ret

@@ -10,6 +10,7 @@ buffer:
 .fpu vfpv4
 .globl main
 main:
+.p2align 4
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
 	sub sp, sp, #388
 	add r1, sp, #324
@@ -39,6 +40,7 @@ main:
 label58:
 	mov r0, #0
 label5:
+.p2align 4
 	add r1, r3, r3, lsl #13
 	asr r2, r1, #31
 	add r2, r1, r2, lsr #15
@@ -101,12 +103,15 @@ label5:
 	bne label111
 	b label11
 label102:
+.p2align 4
 	ldr r3, [sp, #344]
 	b label5
 label111:
+.p2align 4
 	mov r0, r1
 	b label9
 label11:
+.p2align 4
 	ldr r6, [sp, #320]
 	mov r3, #0
 	add r2, r6, r1, lsl #2
@@ -129,6 +134,7 @@ label43:
 	mov r0, #0
 	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
 label12:
+.p2align 4
 	ldr r7, [sp, #348]
 	mov r2, #0
 	add r1, r7, r0, lsl #2
@@ -174,6 +180,7 @@ label12:
 	cmp r2, r0
 	bgt label143
 label21:
+.p2align 4
 	ldr r0, [sp, #324]
 	add r0, r1, r0
 	rsb r0, r0, #0
@@ -206,23 +213,27 @@ label21:
 	bgt label58
 	b label43
 label35:
+.p2align 4
 	cmp r6, #20
 	blt label309
 	cmp r6, #40
 	blt label313
 	b label37
 label309:
+.p2align 4
 	movw r8, #31129
 	mov r9, #0
 	movt r8, #23170
 	b label39
 label313:
+.p2align 4
 	add r8, r3, r4
 	sub r9, r8, r2
 	movw r8, #60289
 	movt r8, #28377
 	b label39
 label37:
+.p2align 4
 	add r8, r3, r4
 	cmp r6, #60
 	mov r10, #0
@@ -236,6 +247,7 @@ label37:
 	movlt r10, r8
 	mov r8, r10
 label39:
+.p2align 4
 	add r7, r7, r5, lsl #5
 	add r7, r8, r7
 	asr r8, r5, #31
@@ -261,6 +273,7 @@ label39:
 	cmp r6, #80
 	blt label35
 label42:
+.p2align 4
 	add r1, r1, r5
 	add r0, r0, #64
 	ldr r5, [sp, #376]
@@ -279,12 +292,14 @@ label42:
 	cmp r2, r0
 	ble label21
 label143:
+.p2align 4
 	add r2, r0, #4
 	add r3, r0, #8
 	add r4, r0, #12
 	mov r5, #0
 	mov r8, r5
 label23:
+.p2align 4
 	add r9, r0, r5
 	ldr r6, [sp, #320]
 	add r7, r6, r9, lsl #2
@@ -338,6 +353,7 @@ label23:
 	blt label23
 	mov r2, #16
 label26:
+.p2align 4
 	ldr r7, [sp, #348]
 	add r3, r7, r2, lsl #2
 	ldr r4, [r3, #-12]
@@ -402,6 +418,7 @@ label26:
 	blt label35
 	b label42
 label9:
+.p2align 4
 	mov r1, #0
 	ldr r6, [sp, #320]
 	str r1, [r6, r0, lsl #2]

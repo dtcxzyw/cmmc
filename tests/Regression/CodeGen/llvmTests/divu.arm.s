@@ -19,6 +19,7 @@ kkkk:
 .fpu vfpv4
 .globl test
 test:
+.p2align 4
 	movw r0, #:lower16:iiii
 	movw r1, #:lower16:jjjj
 	movt r0, #:upper16:iiii

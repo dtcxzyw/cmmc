@@ -3,6 +3,7 @@
 .text
 .globl main
 main:
+.p2align 2
 	addi sp, sp, -384
 	li a3, 1
 	li a2, 2
@@ -119,6 +120,7 @@ label237:
 	li s1, 1
 	j label18
 label8:
+.p2align 2
 	sh2add a4, a2, a1
 	lw a3, 0(a4)
 	li a4, 19
@@ -130,6 +132,7 @@ label8:
 	bne a0, zero, label17
 	j label237
 label12:
+.p2align 2
 	sh2add t1, a5, s0
 	sh2add t2, a4, a0
 	lw t0, 0(t1)
@@ -150,6 +153,7 @@ label12:
 	bne a0, zero, label17
 	j label237
 label13:
+.p2align 2
 	addiw t1, a5, -1
 	sh2add t3, a5, s0
 	li t4, 1717986919
@@ -174,6 +178,7 @@ label17:
 	jal putint
 	li s1, 1
 label18:
+.p2align 2
 	sh2add a1, s1, s0
 	lw a0, 0(a1)
 	jal putint

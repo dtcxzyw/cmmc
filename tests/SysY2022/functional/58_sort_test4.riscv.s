@@ -3,6 +3,7 @@
 .text
 .globl main
 main:
+.p2align 2
 	addi sp, sp, -64
 	li a0, 4
 	li a1, 3
@@ -31,9 +32,11 @@ main:
 	li a1, 9
 	blt zero, a1, label4
 label29:
+.p2align 2
 	mv s1, zero
 	j label14
 label4:
+.p2align 2
 	addiw a1, a0, 1
 	mv a4, a0
 	mv a3, a1
@@ -56,6 +59,7 @@ label4:
 	blt a0, a1, label4
 	j label29
 label8:
+.p2align 2
 	sh2add a5, a4, s0
 	sh2add t2, a3, s0
 	lw t0, 0(a5)
@@ -64,6 +68,7 @@ label8:
 	bgt t0, t1, label119
 	mv a5, a4
 label119:
+.p2align 2
 	sh2add t1, a5, s0
 	addiw t0, a3, 1
 	lw a4, 0(t1)
@@ -72,6 +77,7 @@ label119:
 	bgt a4, t1, label121
 	mv t0, a5
 label121:
+.p2align 2
 	sh2add t1, t0, s0
 	addiw a4, a3, 2
 	lw a5, 0(t1)
@@ -80,6 +86,7 @@ label121:
 	bgt a5, t1, label123
 	mv a4, t0
 label123:
+.p2align 2
 	sh2add t0, a4, s0
 	addiw a3, a3, 3
 	lw a5, 0(t0)
@@ -89,6 +96,7 @@ label123:
 	bgt a5, t1, label125
 	mv t0, a4
 label125:
+.p2align 2
 	mv a3, a2
 	mv a4, t0
 	addiw a2, a2, 4
@@ -110,6 +118,7 @@ label125:
 	blt a0, a1, label4
 	j label29
 label127:
+.p2align 2
 	addiw a3, a3, 1
 	li a4, 10
 	blt a3, a4, label84
@@ -119,6 +128,7 @@ label127:
 	blt a0, a1, label4
 	j label29
 label84:
+.p2align 2
 	mv a4, a2
 	sh2add a2, a2, s0
 	sh2add t1, a3, s0
@@ -136,6 +146,7 @@ label84:
 	blt a0, a1, label4
 	j label29
 label13:
+.p2align 2
 	sh2add a2, a2, s0
 	sh2add a0, a0, s0
 	lw a3, 0(a2)
@@ -147,6 +158,7 @@ label13:
 	blt a0, a1, label4
 	j label29
 label14:
+.p2align 2
 	sh2add a1, s1, s0
 	lw a0, 0(a1)
 	jal putint

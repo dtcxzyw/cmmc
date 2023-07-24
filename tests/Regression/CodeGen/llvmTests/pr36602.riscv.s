@@ -3,5 +3,6 @@
 .text
 .globl fn2
 fn2:
+.p2align 2
 	mv a0, zero
 	ret

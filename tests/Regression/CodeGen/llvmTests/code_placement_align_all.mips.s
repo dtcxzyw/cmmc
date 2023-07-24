@@ -2,6 +2,7 @@
 .text
 .globl foo
 foo:
+.p2align 2
 	beq $a0, $zero, label2
 	nop
 	addiu $v0, $a0, 2

@@ -2,6 +2,7 @@
 .text
 .globl f
 f:
+.p2align 2
 	sltu $t0, $a1, $a0
 	move $v0, $a1
 	movn $v0, $a0, $t0

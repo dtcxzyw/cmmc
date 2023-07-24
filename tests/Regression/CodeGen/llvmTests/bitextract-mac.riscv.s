@@ -3,6 +3,7 @@
 .text
 .globl f
 f:
+.p2align 2
 	mulw a3, a0, a1
 	li a0, 4294967295
 	and a1, a3, a0

@@ -2,6 +2,7 @@
 .text
 .globl select_unsigned_lt_10_8_13
 select_unsigned_lt_10_8_13:
+.p2align 2
 	sltiu $t0, $a0, 10
 	li $t1, 8
 	li $v0, 13

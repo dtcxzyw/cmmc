@@ -6,6 +6,7 @@
 .fpu vfpv4
 .globl main
 main:
+.p2align 4
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
 	mov r9, #8
 	mov r10, #5
@@ -145,6 +146,7 @@ label294:
 	mov r4, #1
 	b label18
 label8:
+.p2align 4
 	ldr r3, [r1, r2, lsl #2]
 	mov r4, #19
 	cmn r4, #1
@@ -158,6 +160,7 @@ label8:
 	bne label17
 	b label294
 label12:
+.p2align 4
 	ldr r7, [sp, #360]
 	ldr r6, [r7, r5, lsl #2]
 	ldr r7, [r0, r4, lsl #2]
@@ -179,6 +182,7 @@ label12:
 	bne label17
 	b label294
 label13:
+.p2align 4
 	sub r8, r5, #1
 	ldr r7, [sp, #360]
 	movw r9, #26215
@@ -205,6 +209,7 @@ label17:
 	bl putint
 	mov r4, #1
 label18:
+.p2align 4
 	ldr r7, [sp, #360]
 	ldr r0, [r7, r4, lsl #2]
 	bl putint

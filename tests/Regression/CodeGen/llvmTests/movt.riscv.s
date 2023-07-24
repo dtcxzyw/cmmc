@@ -3,11 +3,13 @@
 .text
 .globl t
 t:
+.p2align 2
 	lui a1, 1048560
 	or a0, a0, a1
 	ret
 .globl t2
 t2:
+.p2align 2
 	lui a2, 1048544
 	li a3, -65537
 	or a1, a0, a2

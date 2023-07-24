@@ -3,16 +3,19 @@
 .text
 .globl f1
 f1:
+.p2align 2
 	li a1, -16777201
 	and a0, a0, a1
 	ret
 .globl f2
 f2:
+.p2align 2
 	lui a1, 1046528
 	and a0, a0, a1
 	ret
 .globl f3
 f3:
+.p2align 2
 	li a1, 4095
 	and a0, a0, a1
 	ret

@@ -6,6 +6,7 @@ a:
 	.zero	120000040
 .text
 radixSort:
+.p2align 2
 	addi sp, sp, -248
 	addiw a4, a2, 1
 	xori t0, a0, -1
@@ -71,6 +72,7 @@ label198:
 	blt zero, a0, label23
 	j label44
 label29:
+.p2align 2
 	sh2add a3, a1, s1
 	lw a5, 0(a3)
 	sh2add a4, a5, s0
@@ -104,6 +106,7 @@ label29:
 	blt zero, a0, label23
 	j label44
 label246:
+.p2align 2
 	mv t0, zero
 	mv a4, a3
 	li a5, 4
@@ -150,6 +153,7 @@ label44:
 	addi sp, sp, 248
 	ret
 label34:
+.p2align 2
 	sh2add a4, a4, s1
 	lw a5, 0(a4)
 	sh2add t1, a5, s0
@@ -187,6 +191,7 @@ label34:
 	blt zero, a0, label23
 	j label44
 label36:
+.p2align 2
 	addiw a5, t0, 4
 	bgt a0, a5, label42
 	addiw t0, t0, 1
@@ -222,6 +227,7 @@ label36:
 	blt zero, a0, label23
 	j label44
 label39:
+.p2align 2
 	addiw t0, t0, 1
 	slli t2, a4, 1
 	srli t1, t2, 60
@@ -255,6 +261,7 @@ label39:
 	blt zero, a0, label23
 	j label44
 label42:
+.p2align 2
 	slli t2, a4, 1
 	srli t0, t2, 48
 	add t1, a4, t0
@@ -262,6 +269,7 @@ label42:
 	sraiw a4, t1, 16
 	j label36
 label3:
+.p2align 2
 	sh2add a5, a1, s0
 	lw a4, 0(a5)
 	bgt a0, zero, label117
@@ -274,8 +282,10 @@ label3:
 	bgt a3, a1, label3
 	j label110
 label117:
+.p2align 2
 	mv t0, zero
 label5:
+.p2align 2
 	addiw a5, t0, 4
 	bgt a0, a5, label8
 	addiw t0, t0, 1
@@ -293,6 +303,7 @@ label5:
 	bgt a3, a1, label3
 	j label110
 label8:
+.p2align 2
 	slli t0, a4, 1
 	srli t2, t0, 48
 	mv t0, a5
@@ -300,6 +311,7 @@ label8:
 	sraiw a4, t1, 16
 	j label5
 label9:
+.p2align 2
 	addiw t0, t0, 1
 	slli t2, a4, 1
 	srli a5, t2, 60
@@ -314,6 +326,7 @@ label9:
 	sw a5, 0(a4)
 	bgt a3, a1, label3
 label110:
+.p2align 2
 	sw a2, 128(sp)
 	lw a1, 0(sp)
 	addw a3, a2, a1
@@ -376,8 +389,10 @@ label17:
 	li a0, 16
 	bge zero, a0, label44
 label23:
+.p2align 2
 	bgt s5, zero, label25
 label24:
+.p2align 2
 	sh2add a0, s5, s1
 	sh2add a1, s5, s2
 	lw a2, 0(a0)
@@ -403,6 +418,7 @@ label25:
 	j label24
 .globl main
 main:
+.p2align 2
 	addi sp, sp, -32
 pcrel429:
 	auipc a0, %pcrel_hi(a)
@@ -429,6 +445,7 @@ label378:
 	mv a2, zero
 	mv a0, zero
 label364:
+.p2align 2
 	addiw a1, a0, 4
 	ble s0, a1, label368
 	sh2add a3, a0, s1

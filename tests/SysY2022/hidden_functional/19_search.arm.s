@@ -9,6 +9,7 @@ a:
 .arm
 .fpu vfpv4
 search:
+.p2align 4
 	push { r4, r5, r6, r7, r8, r9, lr }
 	movw r6, #:lower16:a
 	sub sp, sp, #52
@@ -141,6 +142,7 @@ label21:
 	b label106
 .globl main
 main:
+.p2align 4
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
 	mvn r1, #0
 	sub sp, sp, #84
@@ -168,6 +170,7 @@ main:
 	str r10, [sp, #24]
 	str r10, [sp, #16]
 label148:
+.p2align 4
 	bl getint
 	str r0, [sp, #32]
 	mov r8, r0
@@ -178,6 +181,7 @@ label148:
 	mov r0, #0
 	b label151
 label169:
+.p2align 4
 	ldr r0, [sp, #68]
 	mov r2, #1
 	str r0, [sp, #0]
@@ -204,6 +208,7 @@ label170:
 	add sp, sp, #84
 	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
 label237:
+.p2align 4
 	mov r9, #1
 	ldr r0, [sp, #32]
 	cmp r9, r0
@@ -216,6 +221,7 @@ label237:
 	ble label237
 	b label169
 label162:
+.p2align 4
 	bl getint
 	cmp r0, #2
 	str r0, [r8, r9, lsl #2]
@@ -234,6 +240,7 @@ label162:
 	ble label237
 	b label169
 label249:
+.p2align 4
 	mov r10, r9
 	mov r11, r7
 	add r9, r9, #1
@@ -248,6 +255,7 @@ label249:
 	ble label237
 	b label169
 label167:
+.p2align 4
 	str r7, [sp, #24]
 	str r9, [sp, #16]
 	add r9, r9, #1
@@ -262,6 +270,7 @@ label167:
 	ble label237
 	b label169
 label151:
+.p2align 4
 	cmp r0, #30
 	blt label153
 	mov r11, r7
@@ -273,6 +282,7 @@ label151:
 	ble label237
 	b label169
 label153:
+.p2align 4
 	mov r1, #120
 	mov r2, #1
 	mul r3, r0, r1

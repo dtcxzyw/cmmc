@@ -12,6 +12,7 @@ y:
 .text
 .globl f1
 f1:
+.p2align 2
 pcrel12:
 	auipc a2, %pcrel_hi(x)
 	sw a0, %pcrel_lo(pcrel12)(a2)

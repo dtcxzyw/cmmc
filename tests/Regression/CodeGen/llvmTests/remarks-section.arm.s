@@ -6,4 +6,5 @@
 .fpu vfpv4
 .globl func1
 func1:
+.p2align 4
 	bx lr

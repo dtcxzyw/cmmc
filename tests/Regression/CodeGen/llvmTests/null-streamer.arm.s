@@ -6,7 +6,9 @@
 .fpu vfpv4
 .globl f0
 f0:
+.p2align 4
 	bx lr
 .globl f1
 f1:
+.p2align 4
 	bx lr

@@ -9,6 +9,7 @@ X:
 .text
 .globl foo
 foo:
+.p2align 2
 	mv a1, a0
 	bgt a0, zero, label2
 	mv a0, zero

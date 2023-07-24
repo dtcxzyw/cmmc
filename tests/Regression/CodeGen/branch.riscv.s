@@ -3,6 +3,7 @@
 .text
 .globl beqz
 beqz:
+.p2align 2
 	beq a0, zero, label2
 label3:
 	ret
@@ -11,6 +12,7 @@ label2:
 	j label3
 .globl beqi
 beqi:
+.p2align 2
 	li a2, 1
 	beq a0, a2, label11
 label12:
@@ -20,6 +22,7 @@ label11:
 	j label12
 .globl beq
 beq:
+.p2align 2
 	beq a0, a1, label22
 label23:
 	ret
@@ -28,6 +31,7 @@ label22:
 	j label23
 .globl bnez
 bnez:
+.p2align 2
 	bne a0, zero, label33
 label34:
 	ret
@@ -36,6 +40,7 @@ label33:
 	j label34
 .globl bnei
 bnei:
+.p2align 2
 	li a2, 1
 	bne a0, a2, label42
 label43:
@@ -45,6 +50,7 @@ label42:
 	j label43
 .globl bne
 bne:
+.p2align 2
 	bne a0, a1, label53
 label54:
 	ret
@@ -53,6 +59,7 @@ label53:
 	j label54
 .globl bltz
 bltz:
+.p2align 2
 	blt a0, zero, label64
 label65:
 	ret
@@ -61,6 +68,7 @@ label64:
 	j label65
 .globl blti1
 blti1:
+.p2align 2
 	ble a0, zero, label73
 label74:
 	ret
@@ -69,6 +77,7 @@ label73:
 	j label74
 .globl blti2
 blti2:
+.p2align 2
 	li a2, 10
 	blt a0, a2, label82
 label83:
@@ -78,6 +87,7 @@ label82:
 	j label83
 .globl blt
 blt:
+.p2align 2
 	blt a0, a1, label92
 label93:
 	ret
@@ -86,6 +96,7 @@ label92:
 	j label93
 .globl bgez
 bgez:
+.p2align 2
 	bge a0, zero, label102
 label103:
 	ret
@@ -94,6 +105,7 @@ label102:
 	j label103
 .globl bgei1
 bgei1:
+.p2align 2
 	bgt a0, zero, label112
 label113:
 	ret
@@ -102,6 +114,7 @@ label112:
 	j label113
 .globl bgei2
 bgei2:
+.p2align 2
 	li a2, 9
 	bgt a0, a2, label121
 label122:
@@ -111,6 +124,7 @@ label121:
 	j label122
 .globl bge
 bge:
+.p2align 2
 	bge a0, a1, label132
 label133:
 	ret
@@ -119,6 +133,7 @@ label132:
 	j label133
 .globl bgtz
 bgtz:
+.p2align 2
 	bgt a0, zero, label143
 label144:
 	ret
@@ -127,6 +142,7 @@ label143:
 	j label144
 .globl bgti1
 bgti1:
+.p2align 2
 	bge a0, zero, label152
 label153:
 	ret
@@ -135,6 +151,7 @@ label152:
 	j label153
 .globl bgti2
 bgti2:
+.p2align 2
 	li a2, 10
 	bgt a0, a2, label162
 label163:
@@ -144,6 +161,7 @@ label162:
 	j label163
 .globl bgt
 bgt:
+.p2align 2
 	bgt a0, a1, label173
 label174:
 	ret
@@ -152,6 +170,7 @@ label173:
 	j label174
 .globl blez
 blez:
+.p2align 2
 	ble a0, zero, label183
 label184:
 	ret
@@ -160,6 +179,7 @@ label183:
 	j label184
 .globl blei1
 blei1:
+.p2align 2
 	blt a0, zero, label192
 label193:
 	ret
@@ -168,6 +188,7 @@ label192:
 	j label193
 .globl blei2
 blei2:
+.p2align 2
 	li a2, 11
 	blt a0, a2, label201
 label202:
@@ -177,6 +198,7 @@ label201:
 	j label202
 .globl ble
 ble:
+.p2align 2
 	ble a0, a1, label211
 label212:
 	ret
@@ -185,6 +207,7 @@ label211:
 	j label212
 .globl bfeq
 bfeq:
+.p2align 2
 	feq.s a1, f10, f11
 	bne a1, zero, label222
 label223:
@@ -194,6 +217,7 @@ label222:
 	j label223
 .globl bfne
 bfne:
+.p2align 2
 	feq.s a1, f10, f11
 	beq a1, zero, label232
 label233:
@@ -203,6 +227,7 @@ label232:
 	j label233
 .globl bflt
 bflt:
+.p2align 2
 	flt.s a1, f10, f11
 	bne a1, zero, label244
 label245:
@@ -212,6 +237,7 @@ label244:
 	j label245
 .globl bfle
 bfle:
+.p2align 2
 	fle.s a1, f10, f11
 	bne a1, zero, label254
 label255:
@@ -221,6 +247,7 @@ label254:
 	j label255
 .globl bfge
 bfge:
+.p2align 2
 	fle.s a1, f11, f10
 	bne a1, zero, label264
 label265:
@@ -230,6 +257,7 @@ label264:
 	j label265
 .globl bfgt
 bfgt:
+.p2align 2
 	flt.s a1, f11, f10
 	bne a1, zero, label274
 label275:
@@ -239,6 +267,7 @@ label274:
 	j label275
 .globl normal_srem
 normal_srem:
+.p2align 2
 	li a3, 1152921497
 	mul a1, a0, a3
 	srli a3, a1, 63

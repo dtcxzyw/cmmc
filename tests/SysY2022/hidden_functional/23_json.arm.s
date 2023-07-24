@@ -9,6 +9,7 @@ buffer:
 .arm
 .fpu vfpv4
 detect_item:
+.p2align 4
 	push { r4, r5, r6, r7, lr }
 	mov r4, r3
 	mov r6, r2
@@ -796,6 +797,7 @@ label100:
 	b label96
 .globl main
 main:
+.p2align 4
 	push { r4, r5, r6, lr }
 	mov r0, #0
 	sub sp, sp, #8
@@ -814,6 +816,7 @@ main:
 label1123:
 	mov r6, #0
 label1095:
+.p2align 4
 	str r0, [r4, r6, lsl #2]
 	bl getch
 	cmp r0, #35

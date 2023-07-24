@@ -16,6 +16,7 @@ k:
 .text
 .globl t
 t:
+.p2align 2
 pcrel23:
 	auipc a1, %pcrel_hi(i)
 pcrel24:

@@ -3,7 +3,9 @@
 .text
 .globl tnaked
 tnaked:
+.p2align 2
 	ret
 .globl tnonaked
 tnonaked:
+.p2align 2
 	ret

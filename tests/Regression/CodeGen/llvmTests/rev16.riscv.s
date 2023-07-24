@@ -3,6 +3,7 @@
 .text
 .globl bswap_ror_commuted
 bswap_ror_commuted:
+.p2align 2
 	srliw a3, a0, 8
 	li a2, 16711935
 	slliw a0, a0, 8
@@ -13,12 +14,14 @@ bswap_ror_commuted:
 	ret
 .globl different_constant
 different_constant:
+.p2align 2
 	srliw a1, a0, 8
 	li a2, 16711935
 	and a0, a1, a2
 	ret
 .globl different_op
 different_op:
+.p2align 2
 	slliw a3, a0, 8
 	li a2, 16711936
 	srliw a0, a0, 8
@@ -29,6 +32,7 @@ different_op:
 	ret
 .globl different_shift_amount
 different_shift_amount:
+.p2align 2
 	slliw a3, a0, 9
 	li a2, -16711936
 	srliw a0, a0, 8
@@ -39,6 +43,7 @@ different_shift_amount:
 	ret
 .globl different_vars
 different_vars:
+.p2align 2
 	slliw a3, a0, 8
 	li a2, -16711936
 	srliw a1, a1, 8
@@ -49,6 +54,7 @@ different_vars:
 	ret
 .globl extra_maskop_uses2
 extra_maskop_uses2:
+.p2align 2
 	slliw a3, a0, 8
 	li a2, -16711936
 	xori a4, a2, -1
@@ -61,6 +67,7 @@ extra_maskop_uses2:
 	ret
 .globl f2
 f2:
+.p2align 2
 	slliw a1, a0, 8
 	li a3, 65280
 	lui a4, 1044480
@@ -76,6 +83,7 @@ f2:
 	ret
 .globl not_rev16
 not_rev16:
+.p2align 2
 	srliw a3, a0, 8
 	li a2, -16711936
 	slliw a0, a0, 8
@@ -86,6 +94,7 @@ not_rev16:
 	ret
 .globl rev16
 rev16:
+.p2align 2
 	slliw a3, a0, 8
 	li a2, -16711936
 	srliw a0, a0, 8

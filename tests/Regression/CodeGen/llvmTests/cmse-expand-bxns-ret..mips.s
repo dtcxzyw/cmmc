@@ -7,6 +7,7 @@ counter:
 .text
 .globl foo
 foo:
+.p2align 2
 	li $t0, 5
 	lui $t1, %hi(counter)
 	sw $t0, %lo(counter)($t1)

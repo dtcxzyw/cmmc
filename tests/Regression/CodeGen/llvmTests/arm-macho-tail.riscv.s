@@ -3,10 +3,13 @@
 .text
 .globl bar
 bar:
+.p2align 2
 	ret
 .globl foo
 foo:
+.p2align 2
 	ret
 .globl one_inst
 one_inst:
+.p2align 2
 	ret

@@ -8,18 +8,21 @@ g1:
 .text
 .globl seteq0
 seteq0:
+.p2align 2
 	sltiu a1, a0, 1
 	li a2, 4294967295
 	and a0, a1, a2
 	ret
 .globl setne0
 setne0:
+.p2align 2
 	sltu a1, zero, a0
 	li a2, 4294967295
 	and a0, a1, a2
 	ret
 .globl slti_beq0
 slti_beq0:
+.p2align 2
 	lui a1, 1048568
 	blt a0, a1, label14
 label15:
@@ -30,6 +33,7 @@ label14:
 	j label15
 .globl slti_beq1
 slti_beq1:
+.p2align 2
 	li a1, -32769
 	blt a0, a1, label29
 label30:
@@ -40,6 +44,7 @@ label29:
 	j label30
 .globl slti_beq2
 slti_beq2:
+.p2align 2
 	li a1, 32767
 	blt a0, a1, label44
 label45:
@@ -50,6 +55,7 @@ label44:
 	j label45
 .globl slti_beq3
 slti_beq3:
+.p2align 2
 	lui a1, 8
 	blt a0, a1, label59
 label60:
@@ -60,6 +66,7 @@ label59:
 	j label60
 .globl sltiu_beq0
 sltiu_beq0:
+.p2align 2
 	li a1, 32767
 	bltu a0, a1, label74
 label75:
@@ -70,6 +77,7 @@ label74:
 	j label75
 .globl sltiu_beq1
 sltiu_beq1:
+.p2align 2
 	lui a1, 8
 	bltu a0, a1, label88
 label89:
@@ -80,6 +88,7 @@ label88:
 	j label89
 .globl sltiu_beq2
 sltiu_beq2:
+.p2align 2
 	lui a1, 1048568
 	bltu a0, a1, label102
 label103:
@@ -90,6 +99,7 @@ label102:
 	j label103
 .globl sltiu_beq3
 sltiu_beq3:
+.p2align 2
 	li a1, -32769
 	bltu a0, a1, label116
 label117:

@@ -13,12 +13,14 @@ i:
 .text
 .globl LoadGV
 LoadGV:
+.p2align 2
 pcrel7:
 	auipc a1, %pcrel_hi(g)
 	lw a0, %pcrel_lo(pcrel7)(a1)
 	ret
 .globl LoadIndirectSymbol
 LoadIndirectSymbol:
+.p2align 2
 pcrel14:
 	auipc a1, %pcrel_hi(i)
 	lw a0, %pcrel_lo(pcrel14)(a1)

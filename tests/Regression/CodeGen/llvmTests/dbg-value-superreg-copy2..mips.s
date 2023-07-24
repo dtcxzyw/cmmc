@@ -19,6 +19,7 @@ a:
 .text
 .globl PR37060
 PR37060:
+.p2align 2
 	lui $t0, %hi(b)
 	lw $t0, %lo(b)($t0)
 	lui $t1, %hi(c)
@@ -34,6 +35,7 @@ PR37060:
 	nop
 .globl PR37667
 PR37667:
+.p2align 2
 	lui $t0, %hi(b)
 	lw $t0, %lo(b)($t0)
 	lui $t1, %hi(d)

@@ -19,6 +19,7 @@ P:
 .fpu vfpv4
 .globl foo
 foo:
+.p2align 4
 	push { r4, r5, r6 }
 	cmp r0, #0
 	bgt label2

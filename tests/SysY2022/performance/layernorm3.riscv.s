@@ -18,6 +18,7 @@ mean:
 .text
 .globl main
 main:
+.p2align 2
 	addi sp, sp, -48
 pcrel638:
 	auipc a0, %pcrel_hi(a)
@@ -61,6 +62,7 @@ label7:
 	blt zero, a2, label477
 	j label44
 label14:
+.p2align 2
 	sh2add a2, a1, s1
 	li a3, 4000
 	fmv.w.x f12, zero
@@ -69,6 +71,7 @@ label14:
 	mv a3, zero
 	add a2, s0, a4
 label15:
+.p2align 2
 	sh2add a4, a3, a2
 	flw f14, 0(a4)
 	addiw a3, a3, 16
@@ -139,6 +142,7 @@ label15:
 	blt a3, a4, label15
 	sh2add a2, a3, a2
 pcrel641:
+.p2align 2
 	auipc a3, %pcrel_hi(__cmmc_fp_constant_pool)
 	flw f14, 0(a2)
 	flw f15, 4(a2)
@@ -185,6 +189,7 @@ pcrel641:
 	fmv.s f14, f12
 	fmul.s f15, f11, f11
 pcrel642:
+.p2align 2
 	auipc a2, %pcrel_hi(__cmmc_fp_constant_pool)
 	addi a3, a2, %pcrel_lo(pcrel642)
 	fsub.s f1, f15, f12
@@ -210,6 +215,7 @@ pcrel642:
 	blt zero, a2, label477
 	j label44
 label23:
+.p2align 2
 	flt.s a2, f12, f15
 	bne a2, zero, label24
 	fadd.s f13, f11, f14
@@ -220,6 +226,7 @@ label23:
 	fmv.s f11, f15
 	fmul.s f15, f15, f15
 pcrel643:
+.p2align 2
 	auipc a2, %pcrel_hi(__cmmc_fp_constant_pool)
 	addi a3, a2, %pcrel_lo(pcrel643)
 	fsub.s f1, f15, f12
@@ -245,6 +252,7 @@ pcrel643:
 	blt zero, a2, label477
 	j label44
 label24:
+.p2align 2
 	fadd.s f14, f11, f13
 	lui a2, 258048
 	fmv.w.x f0, a2
@@ -253,6 +261,7 @@ label24:
 	fmv.s f11, f15
 	fmul.s f15, f15, f15
 pcrel644:
+.p2align 2
 	auipc a2, %pcrel_hi(__cmmc_fp_constant_pool)
 	addi a3, a2, %pcrel_lo(pcrel644)
 	fsub.s f1, f15, f12
@@ -300,6 +309,7 @@ label65:
 	blt zero, a2, label477
 	j label44
 label69:
+.p2align 2
 	li a4, 4000
 	fmv.w.x f11, zero
 	mul a3, a1, a4
@@ -307,6 +317,7 @@ label69:
 	add a2, s0, a3
 	j label37
 label32:
+.p2align 2
 	sh2add a1, a4, a3
 	addiw a4, a4, 16
 	flw f14, 0(a1)
@@ -445,6 +456,7 @@ label32:
 	blt zero, a2, label477
 	j label44
 label37:
+.p2align 2
 	sh2add a3, a4, a2
 	flw f13, 0(a3)
 	addiw a4, a4, 16
@@ -525,6 +537,7 @@ label41:
 	blt a0, a2, label477
 	j label44
 label46:
+.p2align 2
 	sh2add a2, a3, a1
 	flw f11, 0(a2)
 	addiw a3, a3, 16

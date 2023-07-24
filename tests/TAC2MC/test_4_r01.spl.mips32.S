@@ -26,6 +26,7 @@ write:
     jr $ra
     nop
 hanoi:
+.p2align 2
 	addiu $sp, $sp, -40
 	sw $s2, 32($sp)
 	sw $s3, 28($sp)
@@ -82,6 +83,7 @@ label2:
 	nop
 .globl main
 main:
+.p2align 2
 	addiu $sp, $sp, -8
 	sw $ra, 0($sp)
 	li $a0, 3

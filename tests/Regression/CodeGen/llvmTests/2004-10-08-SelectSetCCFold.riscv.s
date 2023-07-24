@@ -3,6 +3,7 @@
 .text
 .globl test
 test:
+.p2align 2
 	bne a0, zero, label11
 	slt a1, a2, a3
 	li a2, 4294967295

@@ -19,6 +19,7 @@ b:
 .fpu vfpv4
 .globl foo
 foo:
+.p2align 4
 	movw r1, #:lower16:x
 	movt r1, #:upper16:x
 	ldr r0, [r1, #0]

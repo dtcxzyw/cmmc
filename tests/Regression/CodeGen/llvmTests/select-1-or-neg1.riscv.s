@@ -3,6 +3,7 @@
 .text
 .globl PR28968
 PR28968:
+.p2align 2
 	li a2, 1
 	li a1, 1
 	beq a0, a2, label10

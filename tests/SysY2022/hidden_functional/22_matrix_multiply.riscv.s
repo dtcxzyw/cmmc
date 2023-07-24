@@ -13,6 +13,7 @@ res:
 .text
 .globl main
 main:
+.p2align 2
 	addi sp, sp, -88
 	sd s0, 80(sp)
 	sd s5, 72(sp)
@@ -56,6 +57,7 @@ label8:
 	mv s3, zero
 	j label33
 label19:
+.p2align 2
 	bgt s3, zero, label21
 	addiw a0, a0, 1
 	bgt s2, a0, label19
@@ -69,10 +71,12 @@ label19:
 	bgt s0, zero, label34
 	j label33
 label21:
+.p2align 2
 	sh2add a4, a0, a3
 	mv t0, zero
 	lw t1, 0(a4)
 label22:
+.p2align 2
 	addiw a4, t0, 4
 	ble s3, a4, label26
 	li t2, 400
@@ -105,6 +109,7 @@ label22:
 	mv t0, a4
 	j label22
 label26:
+.p2align 2
 	li a4, 400
 	sh2add t3, t0, a1
 	mul a5, t0, a4
@@ -144,12 +149,14 @@ label33:
 	addi sp, sp, 88
 	ret
 label34:
+.p2align 2
 	li a1, 400
 	mul a0, s3, a1
 	add s4, s1, a0
 	ble s2, zero, label37
 	mv s5, zero
 label35:
+.p2align 2
 	sh2add a1, s5, s4
 	lw a0, 0(a1)
 	jal putint
@@ -158,12 +165,14 @@ label35:
 	addiw s5, s5, 1
 	bgt s2, s5, label35
 label37:
+.p2align 2
 	li a0, 10
 	jal putch
 	addiw s3, s3, 1
 	bgt s0, s3, label34
 	j label33
 label4:
+.p2align 2
 	li a0, 400
 	mul a1, s2, a0
 	add s6, s5, a1
@@ -172,8 +181,10 @@ label4:
 	bgt s0, s2, label4
 	j label8
 label54:
+.p2align 2
 	mv s7, zero
 label5:
+.p2align 2
 	jal getint
 	sh2add a1, s7, s6
 	addiw s7, s7, 1
@@ -183,6 +194,7 @@ label5:
 	bgt s0, s2, label4
 	j label8
 label11:
+.p2align 2
 	li a0, 400
 	mul a1, s7, a0
 	add s8, s4, a1
@@ -198,8 +210,10 @@ label11:
 	mv s3, zero
 	j label33
 label75:
+.p2align 2
 	mv s9, zero
 label12:
+.p2align 2
 	jal getint
 	sh2add a1, s9, s8
 	addiw s9, s9, 1
@@ -216,6 +230,7 @@ label12:
 	mv s3, zero
 	j label33
 label92:
+.p2align 2
 	mv a0, zero
 	bgt s2, zero, label19
 	addiw a2, a2, 1

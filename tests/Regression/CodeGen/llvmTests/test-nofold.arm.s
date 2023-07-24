@@ -6,6 +6,7 @@
 .fpu vfpv4
 .globl t1
 t1:
+.p2align 4
 	ands r1, r0, #15
 	mov r0, #42
 	moveq r0, r1

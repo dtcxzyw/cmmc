@@ -3,6 +3,7 @@
 .text
 .globl PR15705
 PR15705:
+.p2align 2
 	mv a4, a3
 	beq a0, a2, label13
 	mv a4, a1

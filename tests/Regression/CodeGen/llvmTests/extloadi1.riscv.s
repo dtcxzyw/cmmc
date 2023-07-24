@@ -8,4 +8,5 @@ handler_installed_6144_b:
 .text
 .globl __mf_sigusr1_respond
 __mf_sigusr1_respond:
+.p2align 2
 	ret

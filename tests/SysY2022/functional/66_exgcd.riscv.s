@@ -2,6 +2,7 @@
 .data
 .text
 exgcd:
+.p2align 2
 	addi sp, sp, -48
 	sd s0, 40(sp)
 	mv s0, a0
@@ -68,6 +69,7 @@ label9:
 	j label3
 .globl main
 main:
+.p2align 2
 	addi sp, sp, -16
 	li a0, 1
 	li a1, 15

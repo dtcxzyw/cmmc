@@ -3,6 +3,7 @@
 .text
 .globl test1
 test1:
+.p2align 2
 	slli a1, a0, 1
 	srli a2, a1, 60
 	add a0, a0, a2
@@ -12,6 +13,7 @@ test1:
 	ret
 .globl test2
 test2:
+.p2align 2
 	slli a1, a0, 1
 	srli a2, a1, 60
 	add a0, a0, a2
@@ -21,6 +23,7 @@ test2:
 	ret
 .globl test3
 test3:
+.p2align 2
 	slli a1, a0, 1
 	srli a2, a1, 60
 	add a0, a0, a2

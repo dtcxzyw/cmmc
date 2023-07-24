@@ -19,6 +19,7 @@ r2:
 .text
 .globl test
 test:
+.p2align 2
 	lui $t0, %hi(i)
 	lw $t0, %lo(i)($t0)
 	sltiu $t0, $t0, 1

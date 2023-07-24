@@ -3,6 +3,7 @@
 .text
 .globl main
 main:
+.p2align 2
 	addi sp, sp, -24
 	sd s0, 16(sp)
 	sd s1, 8(sp)
@@ -12,12 +13,14 @@ main:
 	mv s0, a0
 	ble a0, zero, label104
 label4:
+.p2align 2
 	jal getint
 	li a2, 99
 	addiw a1, a0, -1
 	bltu a1, a2, label5
 	li a0, 100
 label102:
+.p2align 2
 	jal putint
 	li a0, 10
 	jal putch
@@ -31,11 +34,13 @@ label104:
 	addi sp, sp, 24
 	ret
 label5:
+.p2align 2
 	li a1, 99
 	blt a0, a1, label6
 	li a0, 99
 	j label102
 label6:
+.p2align 2
 	li a1, 98
 	blt a0, a1, label7
 	li a0, 98

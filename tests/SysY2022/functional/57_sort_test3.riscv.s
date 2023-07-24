@@ -2,6 +2,7 @@
 .data
 .text
 QuickSort:
+.p2align 2
 	addi sp, sp, -48
 	sd s0, 40(sp)
 	mv s0, a0
@@ -28,6 +29,7 @@ label10:
 	and s2, s2, a0
 	j label2
 label22:
+.p2align 2
 	sh2add a5, a3, s0
 	sh2add t0, s4, s0
 	lw a4, 0(a5)
@@ -47,6 +49,7 @@ label23:
 	addi sp, sp, 48
 	ret
 label21:
+.p2align 2
 	sh2add t0, s4, s0
 	sh2add a5, a3, s0
 	lw a4, 0(t0)
@@ -55,12 +58,14 @@ label21:
 	bgt a3, s4, label11
 	j label10
 label18:
+.p2align 2
 	sh2add a4, s4, s0
 	lw a5, 0(a4)
 	bgt a0, a5, label19
 	bgt a3, s4, label21
 	j label10
 label19:
+.p2align 2
 	addiw s4, s4, 1
 	bgt a3, s4, label18
 	j label10
@@ -72,10 +77,12 @@ label6:
 	addi a2, a0, -1
 	ble s1, a1, label10
 label11:
+.p2align 2
 	blt s4, a3, label13
 	bgt a3, s4, label18
 	j label10
 label13:
+.p2align 2
 	sh2add a4, a3, s0
 	lw a5, 0(a4)
 	blt a2, a5, label14
@@ -83,12 +90,14 @@ label13:
 	bgt a3, s4, label18
 	j label10
 label14:
+.p2align 2
 	addiw a3, a3, -1
 	blt s4, a3, label13
 	bgt a3, s4, label18
 	j label10
 .globl main
 main:
+.p2align 2
 	addi sp, sp, -64
 	li a1, 4
 	li a0, 3
@@ -120,6 +129,7 @@ main:
 	bge a0, a1, label127
 	mv s1, a0
 label125:
+.p2align 2
 	sh2add a1, s1, s0
 	lw a0, 0(a1)
 	jal putint

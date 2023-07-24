@@ -11,4 +11,5 @@ c:
 .fpu vfpv4
 .globl _Z1av
 _Z1av:
+.p2align 4
 	bx lr

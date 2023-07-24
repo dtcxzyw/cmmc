@@ -11,6 +11,7 @@ counter:
 .fpu vfpv4
 .globl foo
 foo:
+.p2align 4
 	movw r0, #:lower16:counter
 	mov r1, #5
 	movt r0, #:upper16:counter

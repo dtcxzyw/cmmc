@@ -3,6 +3,7 @@
 .text
 .globl test_minsize
 test_minsize:
+.p2align 2
 	li a2, 5
 	remuw a1, a0, a2
 	li a0, 42
@@ -14,6 +15,7 @@ label10:
 	ret
 .globl test_optsize
 test_optsize:
+.p2align 2
 	li a2, 5
 	remuw a1, a0, a2
 	li a0, 42

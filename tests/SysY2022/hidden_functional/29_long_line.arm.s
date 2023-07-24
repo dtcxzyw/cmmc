@@ -5,6 +5,7 @@
 .arm
 .fpu vfpv4
 fib:
+.p2align 4
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
 	cmp r0, #3
 	mov r4, r0
@@ -828,10 +829,12 @@ label4:
 	b label2
 .globl main
 main:
+.p2align 4
 	push { r4, r5, lr }
 	mov r4, #1
 	sub sp, sp, #4
 label782:
+.p2align 4
 	mov r0, #102
 	bl putch
 	mov r0, #105

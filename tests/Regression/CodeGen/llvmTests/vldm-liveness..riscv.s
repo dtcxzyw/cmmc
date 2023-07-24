@@ -3,6 +3,7 @@
 .text
 .globl t1
 t1:
+.p2align 2
 	li a1, 10
 	bne a0, zero, label8
 	li a1, 20
@@ -12,6 +13,7 @@ label8:
 	ret
 .globl t2
 t2:
+.p2align 2
 	bne a0, zero, label15
 	li a1, 20
 label15:
@@ -19,6 +21,7 @@ label15:
 	ret
 .globl t3
 t3:
+.p2align 2
 	mv a3, a1
 	bne a0, zero, label24
 	mv a3, a2
@@ -27,6 +30,7 @@ label24:
 	ret
 .globl t4
 t4:
+.p2align 2
 	li a1, -10
 	bne a0, zero, label32
 	li a1, -1
@@ -36,6 +40,7 @@ label32:
 	ret
 .globl t5
 t5:
+.p2align 2
 	bne a0, zero, label39
 	li a1, -2
 label39:
@@ -43,6 +48,7 @@ label39:
 	ret
 .globl t6
 t6:
+.p2align 2
 	bne a0, zero, label46
 	li a1, -978945
 label46:

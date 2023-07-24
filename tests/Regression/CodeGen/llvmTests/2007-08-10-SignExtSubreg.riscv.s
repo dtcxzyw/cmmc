@@ -8,6 +8,7 @@ X:
 .text
 .globl _Z3fooi
 _Z3fooi:
+.p2align 2
 	andi a1, a0, 255
 	li a3, 4294967295
 	sext.b a2, a1

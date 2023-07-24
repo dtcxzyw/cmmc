@@ -12,6 +12,7 @@ dst:
 .text
 .globl imm32_cse
 imm32_cse:
+.p2align 2
 pcrel13:
 	auipc a0, %pcrel_hi(src)
 	li a2, 4099

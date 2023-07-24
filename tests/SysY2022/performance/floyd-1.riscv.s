@@ -13,6 +13,7 @@ dst:
 .text
 .globl main
 main:
+.p2align 2
 	addi sp, sp, -32
 	sd s0, 24(sp)
 	sd s2, 16(sp)
@@ -51,6 +52,7 @@ label68:
 	bne s0, zero, label120
 	j label26
 label74:
+.p2align 2
 	mv t0, zero
 	bgt s0, zero, label18
 	addiw a3, a3, 1
@@ -64,6 +66,7 @@ label74:
 	bne s0, zero, label120
 	j label26
 label18:
+.p2align 2
 	sh2add t2, a4, a0
 	lw t1, 0(t2)
 	bge t1, zero, label19
@@ -80,6 +83,7 @@ label18:
 	bne s0, zero, label120
 	j label26
 label22:
+.p2align 2
 	sh2add t3, t3, a0
 	addw t1, t1, t2
 	sw t1, 0(t3)
@@ -96,6 +100,7 @@ label22:
 	bne s0, zero, label120
 	j label26
 label19:
+.p2align 2
 	addw t3, a2, t0
 	sh2add t4, t3, a0
 	lw t2, 0(t4)
@@ -113,6 +118,7 @@ label19:
 	bne s0, zero, label120
 	j label26
 label20:
+.p2align 2
 	addw t3, a5, t0
 	sh2add t4, t3, a0
 	lw t5, 0(t4)
@@ -149,6 +155,7 @@ label120:
 	mv a2, zero
 	j label27
 label4:
+.p2align 2
 	bgt s0, zero, label46
 	addiw a1, a1, 1
 	bgt s0, a1, label4
@@ -158,8 +165,10 @@ label4:
 	bne s0, zero, label120
 	j label26
 label46:
+.p2align 2
 	mv a2, zero
 label5:
+.p2align 2
 	mulw a4, s0, a2
 	addw a3, a1, a4
 	ble s0, a2, label52
@@ -178,6 +187,7 @@ label5:
 	bne s0, zero, label120
 	j label26
 label52:
+.p2align 2
 	li a4, -1
 	addiw a2, a2, 1
 	sh2add a3, a3, a0
@@ -192,6 +202,7 @@ label52:
 	bne s0, zero, label120
 	j label26
 label27:
+.p2align 2
 	addiw a1, a2, 4
 	bgt s2, a1, label31
 label29:

@@ -16,6 +16,8 @@
 #include <cmmc/CodeGen/InstInfo.hpp>
 #include <cmmc/CodeGen/MIR.hpp>
 #include <cmmc/CodeGen/Target.hpp>
+#include <cmmc/Support/Bits.hpp>
+#include <cmmc/Transforms/Hyperparameters.hpp>
 #include <cstdint>
 #include <iostream>
 #include <iterator>
@@ -112,6 +114,7 @@ void dumpAssembly(std::ostream& out, const CodeGenContext& ctx, const MIRModule&
 
     out << ".text\n"sv;
     emitText();
+    const auto p2Align = ilog2(ctx.dataLayout.getCodeAlignment());
     for(auto& global : module.globals()) {
         if(global->reloc->isFunc()) {
             auto& func = dynamic_cast<MIRFunction&>(*global->reloc);
@@ -122,6 +125,9 @@ void dumpAssembly(std::ostream& out, const CodeGenContext& ctx, const MIRModule&
                 if(&block != &func.blocks().front()) {
                     block->dumpAsTarget(out);
                     out << ":\n";
+                }
+                if(&block == &func.blocks().front() || block->getTripCount() >= primaryPathThreshold) {
+                    out << ".p2align " << p2Align << '\n';
                 }
                 for(auto& inst : block->instructions()) {
                     out << '\t';

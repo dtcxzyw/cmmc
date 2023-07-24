@@ -3,6 +3,7 @@
 .text
 .globl f
 f:
+.p2align 2
 	mv a2, a0
 	bgtu a0, a1, label7
 	mv a2, a1

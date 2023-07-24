@@ -3,15 +3,19 @@
 .text
 .globl test_movb
 test_movb:
+.p2align 2
 	ret
 .globl test_movb_Os
 test_movb_Os:
+.p2align 2
 	ret
 .globl test_movb_Oz
 test_movb_Oz:
+.p2align 2
 	ret
 .globl test_movb_hreg
 test_movb_hreg:
+.p2align 2
 	li a1, 65535
 	and a3, a0, a1
 	andi a0, a0, 255
@@ -23,4 +27,5 @@ test_movb_hreg:
 	ret
 .globl test_movw
 test_movw:
+.p2align 2
 	ret

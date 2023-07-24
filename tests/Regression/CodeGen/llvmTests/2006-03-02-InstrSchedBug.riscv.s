@@ -3,6 +3,7 @@
 .text
 .globl g
 g:
+.p2align 2
 	sh1add a3, a1, a0
 	mulw a1, a1, a1
 	mulw a2, a0, a3

@@ -3,6 +3,7 @@
 .text
 .globl testsize1
 testsize1:
+.p2align 2
 	slli a1, a0, 1
 	srli a2, a1, 59
 	add a0, a0, a2
@@ -12,6 +13,7 @@ testsize1:
 	ret
 .globl testsize2
 testsize2:
+.p2align 2
 	li a2, 1041204193
 	li a3, 4294967295
 	mul a1, a0, a2
@@ -22,11 +24,13 @@ testsize2:
 	ret
 .globl testsize3
 testsize3:
+.p2align 2
 	li a1, 32
 	divuw a0, a0, a1
 	ret
 .globl testsize4
 testsize4:
+.p2align 2
 	li a1, 33
 	divuw a0, a0, a1
 	ret

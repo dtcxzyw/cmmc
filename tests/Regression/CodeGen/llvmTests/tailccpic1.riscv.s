@@ -3,7 +3,9 @@
 .text
 .globl tailcallee
 tailcallee:
+.p2align 2
 	ret
 .globl tailcaller
 tailcaller:
+.p2align 2
 	ret

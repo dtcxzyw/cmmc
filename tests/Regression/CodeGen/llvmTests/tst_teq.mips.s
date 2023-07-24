@@ -2,6 +2,7 @@
 .text
 .globl f
 f:
+.p2align 2
 	andi $t0, $a0, 255
 	sltiu $t0, $t0, 1
 	li $t1, 20
@@ -11,6 +12,7 @@ f:
 	nop
 .globl g
 g:
+.p2align 2
 	xori $t0, $a0, 255
 	sltiu $t0, $t0, 1
 	li $t1, 20

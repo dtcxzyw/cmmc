@@ -12,6 +12,7 @@ rev:
 	.zero	400
 .text
 dfs:
+.p2align 2
 	addi sp, sp, -80
 	sd s1, 72(sp)
 	mv s1, a0
@@ -109,6 +110,7 @@ pcrel102:
 	j label2
 .globl main
 main:
+.p2align 2
 	addi sp, sp, -168
 	sd s1, 160(sp)
 	addi s1, sp, 0
@@ -148,6 +150,7 @@ pcrel264:
 	addi s5, a0, %pcrel_lo(pcrel264)
 	mv a0, zero
 label104:
+.p2align 2
 	addiw a1, a0, 4
 	li a2, 10
 	bge a1, a2, label107
@@ -177,6 +180,7 @@ label107:
 	blt a1, a0, label117
 	j label119
 label110:
+.p2align 2
 	jal getint
 	sh2add s7, a0, s0
 	mv s8, a0
@@ -227,6 +231,7 @@ label110:
 	blt a1, a0, label117
 	j label119
 label114:
+.p2align 2
 	addiw a0, a1, 4
 	li a2, 10
 	blt a0, a2, label116
@@ -237,6 +242,7 @@ label114:
 	blt a1, a0, label117
 	j label119
 label116:
+.p2align 2
 	sh2add a1, a1, s1
 	sw zero, 0(a1)
 	sw zero, 4(a1)
@@ -245,6 +251,7 @@ label116:
 	mv a1, a0
 	j label114
 label117:
+.p2align 2
 	sh2add a0, a1, s1
 	addiw a1, a1, 1
 	sw zero, 0(a0)

@@ -7,6 +7,7 @@ x:
 .text
 .globl t
 t:
+.p2align 2
 	lui $t0, %hi(x)
 	lw $v0, %lo(x)($t0)
 	jr $ra

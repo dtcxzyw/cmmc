@@ -16,12 +16,14 @@ c:
 .text
 .globl fn1
 fn1:
+.p2align 2
 	sltu a2, zero, a1
 	subw a3, zero, a2
 	and a0, a0, a3
 	ret
 .globl fn2
 fn2:
+.p2align 2
 pcrel30:
 	auipc a2, %pcrel_hi(b)
 pcrel31:

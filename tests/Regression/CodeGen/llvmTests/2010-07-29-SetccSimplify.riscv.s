@@ -3,6 +3,7 @@
 .text
 .globl extend2bit_v2
 extend2bit_v2:
+.p2align 2
 	andi a1, a0, 255
 	sext.b a2, a1
 	xori a0, a2, 3

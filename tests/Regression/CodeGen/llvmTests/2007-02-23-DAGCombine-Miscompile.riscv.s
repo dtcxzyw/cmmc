@@ -3,6 +3,7 @@
 .text
 .globl test
 test:
+.p2align 2
 	li a2, -1
 	li a3, 2
 	slt a1, a2, a0

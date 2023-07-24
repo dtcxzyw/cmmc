@@ -10,6 +10,7 @@ dp:
 .text
 .globl main
 main:
+.p2align 2
 	addi sp, sp, -56
 	sd s3, 48(sp)
 	sd s2, 40(sp)
@@ -44,15 +45,18 @@ pcrel135:
 	bge s3, a0, label57
 	bge s0, zero, label86
 label122:
+.p2align 2
 	mv a1, zero
 	j label16
 label28:
+.p2align 2
 	li s5, 1
 	j label2
 label86:
 	mv a0, zero
 	mv a1, zero
 label13:
+.p2align 2
 	sh2add a3, a0, s1
 	addiw a0, a0, 1
 	lw a2, 0(a3)
@@ -84,6 +88,7 @@ label57:
 	bge s0, zero, label86
 	j label122
 label8:
+.p2align 2
 	addiw a5, a4, 1
 	sh2add t1, a4, a1
 	andi t0, a5, 1
@@ -110,6 +115,7 @@ label8:
 	bge s0, zero, label86
 	j label122
 label9:
+.p2align 2
 	sh2add t1, a4, a3
 	mv a4, a5
 	sw t0, 0(t1)
@@ -126,6 +132,7 @@ label9:
 	bge s0, zero, label86
 	j label122
 label2:
+.p2align 2
 	jal getint
 	andi a1, a0, 1
 	sh3add a0, s5, s4

@@ -24,6 +24,7 @@ var_370:
 .text
 .globl _Z3foov
 _Z3foov:
+.p2align 2
 pcrel42:
 	auipc a2, %pcrel_hi(var_21)
 pcrel43:

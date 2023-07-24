@@ -6,6 +6,7 @@
 .fpu vfpv4
 .globl foo
 foo:
+.p2align 4
 	uxtb r0, r0
 	mov r1, #37
 	movw r2, #51367

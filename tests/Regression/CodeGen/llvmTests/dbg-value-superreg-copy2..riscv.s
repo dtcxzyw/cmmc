@@ -20,6 +20,7 @@ a:
 .text
 .globl PR37060
 PR37060:
+.p2align 2
 pcrel23:
 	auipc a2, %pcrel_hi(b)
 pcrel24:
@@ -38,6 +39,7 @@ pcrel25:
 	ret
 .globl PR37667
 PR37667:
+.p2align 2
 pcrel49:
 	auipc a2, %pcrel_hi(b)
 pcrel50:

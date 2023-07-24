@@ -3,7 +3,9 @@
 .text
 .globl f
 f:
+.p2align 2
 	ret
 .globl g
 g:
+.p2align 2
 	ret

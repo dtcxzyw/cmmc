@@ -3,6 +3,7 @@
 .text
 .globl foo
 foo:
+.p2align 2
 	beq a0, zero, label2
 	addiw a1, a0, 2
 	li a2, 4294967295

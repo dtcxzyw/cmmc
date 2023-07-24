@@ -20,6 +20,7 @@ c:
 .fpu vfpv4
 .globl t1
 t1:
+.p2align 4
 	movw r0, #:lower16:a
 	movt r0, #:upper16:a
 	ldrsb r0, [r0, #0]
@@ -29,6 +30,7 @@ t1:
 	bx lr
 .globl t2
 t2:
+.p2align 4
 	movw r0, #:lower16:b
 	movt r0, #:upper16:b
 	ldrsh r0, [r0, #0]
@@ -38,6 +40,7 @@ t2:
 	bx lr
 .globl t3
 t3:
+.p2align 4
 	movw r0, #:lower16:c
 	movt r0, #:upper16:c
 	ldr r0, [r0, #0]
@@ -45,6 +48,7 @@ t3:
 	bx lr
 .globl t4
 t4:
+.p2align 4
 	sxtb r0, r0
 	movw r1, #:lower16:a
 	add r0, r0, #1
@@ -54,6 +58,7 @@ t4:
 	bx lr
 .globl t5
 t5:
+.p2align 4
 	sxth r0, r0
 	movw r1, #:lower16:b
 	add r0, r0, #1
@@ -63,6 +68,7 @@ t5:
 	bx lr
 .globl t6
 t6:
+.p2align 4
 	add r0, r0, #1
 	movw r1, #:lower16:c
 	movt r1, #:upper16:c

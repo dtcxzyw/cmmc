@@ -3,6 +3,7 @@
 .text
 .globl sdiv_exact_even_even_fail_unknown
 sdiv_exact_even_even_fail_unknown:
+.p2align 2
 	andi a3, a0, 255
 	andi a2, a3, -2
 	andi a3, a1, 255
@@ -15,6 +16,7 @@ sdiv_exact_even_even_fail_unknown:
 	ret
 .globl sdiv_exact_odd_odd
 sdiv_exact_odd_odd:
+.p2align 2
 	andi a3, a0, 255
 	ori a2, a3, 1
 	andi a3, a1, 255
@@ -27,6 +29,7 @@ sdiv_exact_odd_odd:
 	ret
 .globl sdiv_neg_neg_high_bits
 sdiv_neg_neg_high_bits:
+.p2align 2
 	andi a3, a0, 255
 	ori a2, a3, -128
 	andi a3, a1, 255
@@ -39,6 +42,7 @@ sdiv_neg_neg_high_bits:
 	ret
 .globl udiv_exact_even_even_fail_unknown
 udiv_exact_even_even_fail_unknown:
+.p2align 2
 	andi a2, a0, 255
 	andi a1, a1, 255
 	andi a0, a2, -2
@@ -49,6 +53,7 @@ udiv_exact_even_even_fail_unknown:
 	ret
 .globl udiv_exact_even_odd
 udiv_exact_even_odd:
+.p2align 2
 	andi a2, a0, 255
 	andi a1, a1, 255
 	andi a0, a2, -2

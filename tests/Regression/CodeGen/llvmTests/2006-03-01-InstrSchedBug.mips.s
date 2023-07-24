@@ -2,6 +2,7 @@
 .text
 .globl f
 f:
+.p2align 2
 	mult $a0, $a0
 	mflo $t0
 	mult $a1, $a1

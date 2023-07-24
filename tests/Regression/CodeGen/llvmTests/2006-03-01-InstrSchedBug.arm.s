@@ -6,6 +6,7 @@
 .fpu vfpv4
 .globl f
 f:
+.p2align 4
 	mul r2, r0, r0
 	lsl r0, r0, #1
 	mla r2, r1, r1, r2

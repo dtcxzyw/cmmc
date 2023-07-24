@@ -7,12 +7,14 @@ var:
 .text
 .globl big_global
 big_global:
+.p2align 2
 	lui $t0, %hi(var)
 	lw $v0, %lo(var)($t0)
 	jr $ra
 	nop
 .globl small_global
 small_global:
+.p2align 2
 	lui $t0, %hi(var)
 	lw $v0, %lo(var)($t0)
 	jr $ra

@@ -3,4 +3,5 @@
 .text
 .globl main
 main:
+.p2align 2
 	ret

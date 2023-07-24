@@ -3,6 +3,7 @@
 .text
 .globl test
 test:
+.p2align 2
 	bne a0, zero, label8
 	mv a1, a2
 label8:

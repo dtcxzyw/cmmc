@@ -15,6 +15,7 @@ arr:
 .text
 .globl load
 load:
+.p2align 2
 	sll $t0, $a1, 2
 	addu $t0, $a0, $t0
 	lw $v0, 0($t0)
@@ -22,12 +23,14 @@ load:
 	nop
 .globl load_byte
 load_byte:
+.p2align 2
 	addu $t0, $a0, $a1
 	lb $v0, 0($t0)
 	jr $ra
 	nop
 .globl load_float
 load_float:
+.p2align 2
 	sll $t0, $a1, 2
 	addu $t0, $a0, $t0
 	lwc1 $f0, 0($t0)
@@ -35,6 +38,7 @@ load_float:
 	nop
 .globl store
 store:
+.p2align 2
 	sll $t0, $a1, 2
 	addu $t0, $a0, $t0
 	sw $a2, 0($t0)
@@ -42,6 +46,7 @@ store:
 	nop
 .globl store_float
 store_float:
+.p2align 2
 	mtc1 $a2, $f4
 	sll $t0, $a1, 2
 	addu $t0, $a0, $t0
@@ -50,6 +55,7 @@ store_float:
 	nop
 .globl store_float_constant
 store_float_constant:
+.p2align 2
 	sll $t0, $a1, 2
 	addu $t0, $a0, $t0
 	lui $t1, %hi(__cmmc_fp_constant_pool)
@@ -60,11 +66,13 @@ store_float_constant:
 	nop
 .globl gep_const
 gep_const:
+.p2align 2
 	lw $v0, 12($a0)
 	jr $ra
 	nop
 .globl gep1
 gep1:
+.p2align 2
 	sll $t0, $a1, 2
 	addu $t0, $a0, $t0
 	lw $v0, 0($t0)
@@ -72,6 +80,7 @@ gep1:
 	nop
 .globl gep2
 gep2:
+.p2align 2
 	addiu $t0, $a1, 3
 	sll $t0, $t0, 2
 	addu $t0, $a0, $t0
@@ -80,6 +89,7 @@ gep2:
 	nop
 .globl gepseq
 gepseq:
+.p2align 2
 	sll $t0, $a1, 2
 	addu $t0, $a0, $t0
 	lw $t1, 0($t0)
@@ -93,22 +103,26 @@ gepseq:
 	nop
 .globl lb
 lb:
+.p2align 2
 	lb $v0, 1($a0)
 	jr $ra
 	nop
 .globl sb
 sb:
+.p2align 2
 	sb $a1, 1($a0)
 	jr $ra
 	nop
 .globl global_addressing_scalar
 global_addressing_scalar:
+.p2align 2
 	lui $t0, %hi(y)
 	lw $v0, %lo(y)($t0)
 	jr $ra
 	nop
 .globl global_addressing_array
 global_addressing_array:
+.p2align 2
 	lui $t0, %hi(arr)
 	addiu $t0, $t0, %lo(arr)
 	sll $t1, $a0, 2
@@ -118,8 +132,10 @@ global_addressing_array:
 	nop
 .globl memset_impl
 memset_impl:
+.p2align 2
 	move $t0, $zero
 label98:
+.p2align 2
 	sll $t1, $t0, 2
 	addu $t1, $a0, $t1
 	sw $zero, 0($t1)

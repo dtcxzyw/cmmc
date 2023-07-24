@@ -6,4 +6,5 @@
 .fpu vfpv4
 .globl _test
 _test:
+.p2align 4
 	bx lr

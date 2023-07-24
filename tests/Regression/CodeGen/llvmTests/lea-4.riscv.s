@@ -3,6 +3,7 @@
 .text
 .globl t1
 t1:
+.p2align 2
 	addiw a3, a0, -1
 	li a1, 65535
 	slliw a2, a3, 1
@@ -11,6 +12,7 @@ t1:
 	ret
 .globl t2
 t2:
+.p2align 2
 	addiw a2, a0, -1
 	li a3, 65535
 	slliw a1, a2, 1

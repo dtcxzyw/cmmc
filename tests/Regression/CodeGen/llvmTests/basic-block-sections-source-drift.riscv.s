@@ -3,6 +3,7 @@
 .text
 .globl foo
 foo:
+.p2align 2
 	sltu a3, zero, a1
 	subw a2, zero, a3
 	li a3, 4294967295

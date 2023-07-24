@@ -8,6 +8,7 @@ x:
 .text
 .globl cse_imm
 cse_imm:
+.p2align 2
 	sh2add a3, a1, a1
 	slliw a4, a3, 1
 	xor a1, a2, a4
@@ -16,6 +17,7 @@ cse_imm:
 	ret
 .globl cse_global
 cse_global:
+.p2align 2
 pcrel22:
 	auipc a0, %pcrel_hi(x)
 	lw a2, %pcrel_lo(pcrel22)(a0)
@@ -25,6 +27,7 @@ pcrel22:
 	ret
 .globl cse_fp
 cse_fp:
+.p2align 2
 	lui a0, 264192
 	fmv.w.x f12, a0
 	fmul.s f11, f11, f12
@@ -33,6 +36,7 @@ cse_fp:
 	ret
 .globl imm_build_pattern1
 imm_build_pattern1:
+.p2align 2
 	li a1, 1
 	li a2, 2
 	lui a3, 16384
@@ -98,6 +102,7 @@ imm_build_pattern1:
 	ret
 .globl imm_build_pattern2
 imm_build_pattern2:
+.p2align 2
 	lui a1, 250
 	lui a2, 125
 	sw a1, 0(a0)
@@ -119,6 +124,7 @@ imm_build_pattern2:
 	ret
 .globl imm_build_pattern3
 imm_build_pattern3:
+.p2align 2
 	sw zero, 0(a0)
 	li a1, 400
 	li a2, 800

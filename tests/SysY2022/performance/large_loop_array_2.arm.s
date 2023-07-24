@@ -13,6 +13,7 @@ x:
 .fpu vfpv4
 .globl main
 main:
+.p2align 4
 	push { r4, r5, r6, r7, r8, lr }
 	vpush { s16 }
 	sub sp, sp, #4
@@ -35,6 +36,7 @@ main:
 	cmp r5, r3
 	bge label8
 label13:
+.p2align 4
 	mov r3, #10
 	movw r6, #26215
 	movt r6, #26214
@@ -73,17 +75,21 @@ label13:
 	blt label13
 	b label8
 label189:
+.p2align 4
 	mov r3, r5
 	b label26
 label25:
+.p2align 4
 	add r3, r5, #4
 	cmp r4, r3
 	bgt label28
 	b label189
 label77:
+.p2align 4
 	mov r7, #0
 	vmov s2, r7
 label16:
+.p2align 4
 	add r5, r7, #4
 	cmp r4, r5
 	bgt label22
@@ -105,6 +111,7 @@ label16:
 	blt label13
 	b label8
 label19:
+.p2align 4
 	add r5, r0, r7, lsl #2
 	vldr s3, [r5, #0]
 	add r5, r1, r7, lsl #2
@@ -123,6 +130,7 @@ label19:
 	blt label13
 	b label8
 label22:
+.p2align 4
 	add r6, r0, r7, lsl #2
 	add r7, r1, r7, lsl #2
 	vldr s3, [r6, #0]
@@ -144,6 +152,7 @@ label22:
 	vadd.f32 s2, s2, s3
 	b label16
 label26:
+.p2align 4
 	vmov s2, r3
 	add r5, r0, r3, lsl #2
 	vcvt.f32.s32 s2, s2
@@ -168,6 +177,7 @@ label26:
 	blt label13
 	b label8
 label28:
+.p2align 4
 	vmov s2, r5
 	add r6, r0, r5, lsl #2
 	add r8, r5, #1

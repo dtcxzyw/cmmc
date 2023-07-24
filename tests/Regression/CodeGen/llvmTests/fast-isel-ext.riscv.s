@@ -3,60 +3,72 @@
 .text
 .globl sext_16_32
 sext_16_32:
+.p2align 2
 	sext.h a1, a0
 	li a2, 4294967295
 	and a0, a1, a2
 	ret
 .globl sext_1_16
 sext_1_16:
+.p2align 2
 	sext.h a1, a0
 	li a2, 65535
 	and a0, a1, a2
 	ret
 .globl sext_1_32
 sext_1_32:
+.p2align 2
 	li a1, 4294967295
 	and a0, a0, a1
 	ret
 .globl sext_1_8
 sext_1_8:
+.p2align 2
 	sext.b a1, a0
 	andi a0, a1, 255
 	ret
 .globl sext_8_16
 sext_8_16:
+.p2align 2
 	sext.b a1, a0
 	li a2, 65535
 	and a0, a1, a2
 	ret
 .globl sext_8_32
 sext_8_32:
+.p2align 2
 	sext.b a1, a0
 	li a2, 4294967295
 	and a0, a1, a2
 	ret
 .globl zext_16_32
 zext_16_32:
+.p2align 2
 	li a1, 65535
 	and a0, a0, a1
 	ret
 .globl zext_1_16
 zext_1_16:
+.p2align 2
 	li a1, 65535
 	and a0, a0, a1
 	ret
 .globl zext_1_32
 zext_1_32:
+.p2align 2
 	ret
 .globl zext_1_8
 zext_1_8:
+.p2align 2
 	andi a0, a0, 255
 	ret
 .globl zext_8_16
 zext_8_16:
+.p2align 2
 	andi a0, a0, 255
 	ret
 .globl zext_8_32
 zext_8_32:
+.p2align 2
 	andi a0, a0, 255
 	ret

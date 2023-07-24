@@ -3,6 +3,7 @@
 .text
 .globl test1
 test1:
+.p2align 2
 	xori a1, a0, 31
 	li a2, 32
 	subw a0, a2, a1

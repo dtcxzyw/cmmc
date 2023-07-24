@@ -8,6 +8,7 @@ x:
 .text
 .globl t
 t:
+.p2align 2
 pcrel7:
 	auipc a1, %pcrel_hi(x)
 	lw a0, %pcrel_lo(pcrel7)(a1)

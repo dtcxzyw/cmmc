@@ -27,6 +27,7 @@ var_370:
 .fpu vfpv4
 .globl _Z3foov
 _Z3foov:
+.p2align 4
 	movw r0, #:lower16:var_21
 	movw r1, #:lower16:var_29
 	movt r0, #:upper16:var_21

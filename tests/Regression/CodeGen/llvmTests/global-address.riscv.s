@@ -12,4 +12,5 @@ G:
 .text
 .globl foo
 foo:
+.p2align 2
 	ret

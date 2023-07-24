@@ -7,6 +7,7 @@ a:
 .text
 .globl main
 main:
+.p2align 2
 	addi sp, sp, -48
 pcrel111:
 	auipc a0, %pcrel_hi(a)
@@ -34,6 +35,7 @@ pcrel111:
 	addiw a4, s4, 1
 	mv a5, zero
 label8:
+.p2align 2
 	bgt a4, a5, label22
 	beq a4, a5, label16
 label104:
@@ -45,6 +47,7 @@ label104:
 	sw t1, 0(t2)
 	j label8
 label22:
+.p2align 2
 	addiw a4, a4, -1
 	sh2add t0, a4, s0
 	lw t1, 0(t0)
@@ -53,13 +56,16 @@ label22:
 	beq a4, a5, label16
 	j label104
 label11:
+.p2align 2
 	bgt a4, a5, label21
 	beq a4, a5, label16
 	j label104
 label14:
+.p2align 2
 	beq a4, a5, label16
 	j label104
 label21:
+.p2align 2
 	addiw a5, a5, 1
 	sh2add t0, a5, s0
 	lw t1, 0(t0)

@@ -3,6 +3,7 @@
 .text
 .globl A
 A:
+.p2align 2
 	andi a2, a0, 255
 	andi a3, a1, 255
 	addw a1, a2, a3
@@ -10,6 +11,7 @@ A:
 	ret
 .globl B
 B:
+.p2align 2
 	li a2, 65535
 	and a1, a1, a2
 	and a0, a0, a2

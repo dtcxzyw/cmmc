@@ -6,4 +6,5 @@
 .fpu vfpv4
 .globl count
 count:
+.p2align 4
 	.inst 0xdeff

@@ -12,6 +12,7 @@ right_child:
 	.zero	40000
 .text
 insert:
+.p2align 2
 	addi sp, sp, -40
 	sd s0, 32(sp)
 	mv s0, a0
@@ -115,6 +116,7 @@ pcrel120:
 	mv a0, s0
 	j label3
 delete:
+.p2align 2
 	addi sp, sp, -24
 	sd s0, 16(sp)
 	mv s0, a0
@@ -242,6 +244,7 @@ label190:
 	lw a0, 0(a1)
 	j label139
 inorder:
+.p2align 2
 	addi sp, sp, -16
 	li a1, -1
 	sd s0, 8(sp)
@@ -276,6 +279,7 @@ label293:
 	ret
 .globl main
 main:
+.p2align 2
 	addi sp, sp, -40
 	sd s0, 32(sp)
 	addi s0, sp, 0
@@ -324,6 +328,7 @@ label368:
 	mv s0, zero
 	mv s2, zero
 label335:
+.p2align 2
 	jal getint
 	mv a1, a0
 	mv a0, s2
@@ -338,6 +343,7 @@ label338:
 	jal putch
 	j label330
 label332:
+.p2align 2
 	jal getint
 	mv a2, s0
 	mv a1, a0

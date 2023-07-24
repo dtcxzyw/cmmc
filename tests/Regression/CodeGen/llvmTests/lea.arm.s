@@ -6,11 +6,13 @@
 .fpu vfpv4
 .globl test1
 test1:
+.p2align 4
 	lsl r0, r0, #3
 	add r0, r0, #7
 	bx lr
 .globl test2
 test2:
+.p2align 4
 	cmp r0, #4
 	bgt label6
 label7:

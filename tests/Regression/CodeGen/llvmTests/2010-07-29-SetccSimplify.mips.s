@@ -2,6 +2,7 @@
 .text
 .globl extend2bit_v2
 extend2bit_v2:
+.p2align 2
 	andi $t0, $a0, 255
 	sll $t0, $t0, 24
 	sra $t0, $t0, 24

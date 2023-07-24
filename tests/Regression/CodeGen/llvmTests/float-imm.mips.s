@@ -7,6 +7,7 @@ __cmmc_fp_constant_pool:
 .text
 .globl float_imm
 float_imm:
+.p2align 2
 	lui $t0, %hi(__cmmc_fp_constant_pool)
 	addiu $t0, $t0, %lo(__cmmc_fp_constant_pool)
 	lwc1 $f0, 0($t0)
@@ -14,6 +15,7 @@ float_imm:
 	nop
 .globl float_imm_op
 float_imm_op:
+.p2align 2
 	lui $t0, %hi(__cmmc_fp_constant_pool)
 	addiu $t0, $t0, %lo(__cmmc_fp_constant_pool)
 	lwc1 $f4, 4($t0)

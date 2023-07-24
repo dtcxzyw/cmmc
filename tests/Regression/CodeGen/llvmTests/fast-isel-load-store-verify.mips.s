@@ -16,6 +16,7 @@ c:
 .text
 .globl t1
 t1:
+.p2align 2
 	lui $t0, %hi(a)
 	lb $t0, %lo(a)($t0)
 	sll $t0, $t0, 24
@@ -26,6 +27,7 @@ t1:
 	nop
 .globl t2
 t2:
+.p2align 2
 	lui $t0, %hi(b)
 	lh $t0, %lo(b)($t0)
 	sll $t0, $t0, 16
@@ -36,6 +38,7 @@ t2:
 	nop
 .globl t3
 t3:
+.p2align 2
 	lui $t0, %hi(c)
 	lw $t0, %lo(c)($t0)
 	addiu $v0, $t0, 1
@@ -43,6 +46,7 @@ t3:
 	nop
 .globl t4
 t4:
+.p2align 2
 	sll $t0, $a0, 24
 	sra $t0, $t0, 24
 	addiu $t0, $t0, 1
@@ -53,6 +57,7 @@ t4:
 	nop
 .globl t5
 t5:
+.p2align 2
 	sll $t0, $a0, 16
 	sra $t0, $t0, 16
 	addiu $t0, $t0, 1
@@ -63,6 +68,7 @@ t5:
 	nop
 .globl t6
 t6:
+.p2align 2
 	addiu $t0, $a0, 1
 	lui $t1, %hi(c)
 	sw $t0, %lo(c)($t1)

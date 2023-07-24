@@ -3,10 +3,12 @@
 .text
 .globl my_fabs
 my_fabs:
+.p2align 2
 	fabs.s f10, f10
 	ret
 .globl my_fmin
 my_fmin:
+.p2align 2
 	flt.s a0, f10, f11
 	bne a0, zero, label10
 	fmv.s f10, f11
@@ -14,6 +16,7 @@ label10:
 	ret
 .globl my_fmax
 my_fmax:
+.p2align 2
 	flt.s a0, f11, f10
 	bne a0, zero, label17
 	fmv.s f10, f11
@@ -21,6 +24,7 @@ label17:
 	ret
 .globl my_trunc
 my_trunc:
+.p2align 2
 	fcvt.w.s a0, f10, rtz
 	fcvt.s.w f10, a0
 	ret

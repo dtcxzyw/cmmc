@@ -3,5 +3,6 @@
 .text
 .globl main
 main:
+.p2align 2
 	li a0, 4900
 	ret

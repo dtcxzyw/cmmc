@@ -3,6 +3,7 @@
 .text
 .globl sgt
 sgt:
+.p2align 2
 	li a2, 32767
 	li a1, 7
 	bgt a0, a2, label11
@@ -13,6 +14,7 @@ label11:
 	ret
 .globl slt
 slt:
+.p2align 2
 	slti a1, a0, 7
 	li a3, 4
 	subw a2, a3, a1

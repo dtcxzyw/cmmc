@@ -5,6 +5,7 @@
 .arm
 .fpu vfpv4
 QuickSort:
+.p2align 4
 	push { r4, r5, r6, r7, r8, r9, lr }
 	mov r7, #0
 	mov r5, r2
@@ -28,6 +29,7 @@ label10:
 	mov r6, r0
 	b label2
 label22:
+.p2align 4
 	ldr r9, [r4, r3, lsl #2]
 	str r9, [r4, r8, lsl #2]
 	add r8, r8, #1
@@ -41,6 +43,7 @@ label23:
 	movne r0, r6
 	pop { r4, r5, r6, r7, r8, r9, pc }
 label21:
+.p2align 4
 	ldr r9, [r4, r8, lsl #2]
 	str r9, [r4, r3, lsl #2]
 	sub r3, r3, #1
@@ -48,6 +51,7 @@ label21:
 	bgt label11
 	b label10
 label18:
+.p2align 4
 	ldr r9, [r4, r8, lsl #2]
 	cmp r0, r9
 	bgt label19
@@ -55,6 +59,7 @@ label18:
 	bgt label21
 	b label10
 label19:
+.p2align 4
 	add r8, r8, #1
 	cmp r3, r8
 	bgt label18
@@ -67,12 +72,14 @@ label6:
 	cmp r5, r1
 	ble label10
 label11:
+.p2align 4
 	cmp r8, r3
 	blt label13
 	cmp r3, r8
 	bgt label18
 	b label10
 label13:
+.p2align 4
 	ldr r9, [r4, r3, lsl #2]
 	cmp r2, r9
 	blt label14
@@ -82,6 +89,7 @@ label13:
 	bgt label18
 	b label10
 label14:
+.p2align 4
 	sub r3, r3, #1
 	cmp r8, r3
 	blt label13
@@ -90,6 +98,7 @@ label14:
 	b label10
 .globl main
 main:
+.p2align 4
 	push { r4, r5, lr }
 	sub sp, sp, #44
 	mov r0, #4
@@ -119,6 +128,7 @@ main:
 	bge label119
 	mov r5, r0
 label117:
+.p2align 4
 	ldr r0, [r4, r5, lsl #2]
 	bl putint
 	mov r0, #10

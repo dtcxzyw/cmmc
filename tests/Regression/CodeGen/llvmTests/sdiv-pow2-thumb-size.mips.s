@@ -2,6 +2,7 @@
 .text
 .globl f0
 f0:
+.p2align 2
 	sll $t0, $a0, 16
 	sra $t0, $t0, 16
 	li $t1, 2
@@ -12,6 +13,7 @@ f0:
 	nop
 .globl f1
 f1:
+.p2align 2
 	li $t0, 4
 	div $zero, $a0, $t0
 	mflo $v0
@@ -19,6 +21,7 @@ f1:
 	nop
 .globl f2
 f2:
+.p2align 2
 	li $t0, 5
 	div $zero, $a0, $t0
 	mflo $v0
@@ -26,6 +29,7 @@ f2:
 	nop
 .globl f3
 f3:
+.p2align 2
 	li $t0, 256
 	div $zero, $a0, $t0
 	mflo $v0
@@ -33,6 +37,7 @@ f3:
 	nop
 .globl f4
 f4:
+.p2align 2
 	sll $t0, $a0, 16
 	sra $t0, $t0, 16
 	li $t1, 2
@@ -43,6 +48,7 @@ f4:
 	nop
 .globl f5
 f5:
+.p2align 2
 	li $t0, 4
 	div $zero, $a0, $t0
 	mflo $v0

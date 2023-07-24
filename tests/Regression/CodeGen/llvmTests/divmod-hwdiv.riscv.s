@@ -3,11 +3,13 @@
 .text
 .globl test_i32_srem
 test_i32_srem:
+.p2align 2
 	remw a2, a0, a1
 	li a3, 4294967295
 	and a0, a2, a3
 	ret
 .globl test_i32_urem
 test_i32_urem:
+.p2align 2
 	remuw a0, a0, a1
 	ret

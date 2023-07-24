@@ -3,5 +3,6 @@
 .text
 .globl foo
 foo:
+.p2align 2
 	andi a0, a0, 255
 	ret

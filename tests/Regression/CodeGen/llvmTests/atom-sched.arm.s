@@ -31,6 +31,7 @@ f:
 .fpu vfpv4
 .globl func
 func:
+.p2align 4
 	movw r0, #:lower16:b
 	movw r1, #:lower16:c
 	movt r0, #:upper16:b

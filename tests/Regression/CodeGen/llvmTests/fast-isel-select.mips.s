@@ -2,6 +2,7 @@
 .text
 .globl fastisel_select
 fastisel_select:
+.p2align 2
 	subu $t0, $a0, $a1
 	sltu $t0, $zero, $t0
 	subu $t0, $zero, $t0

@@ -3,6 +3,7 @@
 .text
 .globl foo
 foo:
+.p2align 2
 	addiw a2, a0, 4
 	sh2add a3, a1, a2
 	sh1add a0, a1, a2
@@ -12,6 +13,7 @@ foo:
 	ret
 .globl foo1
 foo1:
+.p2align 2
 	addiw a2, a0, 4
 	sh3add a3, a1, a2
 	sh2add a0, a1, a2
@@ -21,6 +23,7 @@ foo1:
 	ret
 .globl foo1_mult_basic_blocks
 foo1_mult_basic_blocks:
+.p2align 2
 	addiw a2, a0, 4
 	li a3, 10
 	sh2add a0, a1, a2
@@ -36,6 +39,7 @@ label28:
 	j label29
 .globl foo1_mult_basic_blocks_illegal_scale
 foo1_mult_basic_blocks_illegal_scale:
+.p2align 2
 	addiw a2, a0, 4
 	li a3, 10
 	sh1add a0, a1, a2
