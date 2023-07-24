@@ -665,6 +665,11 @@
       "parent": "f6a0c7c82f287a6ab73b0fba501e12f6b73922c8",
       "time": "2023-07-11 06:23:01 +0800"
     },
+    "c9b592907cc2c04e794b0e49594c46bc8b7912ee": {
+      "message": "feat(codegen): align entry point and branch targets",
+      "parent": "1c8acc1c21e3b23e27da33f663e1f7c2e06fbb42",
+      "time": "2023-07-24 14:47:19 +0800"
+    },
     "c9c373ab7eefd99835ddc5441c452517ef6c17ad": {
       "message": "feat(codegen): remove unused loads from stack",
       "parent": "5b63fc5dd7525b10e8fde57012f4b83cb0e82697",
@@ -816,5 +821,5 @@
       "time": "2023-07-06 01:05:50 +0800"
     }
   },
-  "head": "1c8acc1c21e3b23e27da33f663e1f7c2e06fbb42"
+  "head": "c9b592907cc2c04e794b0e49594c46bc8b7912ee"
 }
