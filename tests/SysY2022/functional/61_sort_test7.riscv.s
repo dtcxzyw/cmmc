@@ -40,8 +40,8 @@ pcrel187:
 	bne t0, zero, label8
 	bgt s2, s1, label12
 	j label179
-label8:
 .p2align 2
+label8:
 	sh2add t0, a4, a0
 	sh2add t1, a2, a0
 	lw a5, 0(t0)
@@ -67,8 +67,8 @@ label2:
 label179:
 	mv a5, a3
 	j label19
-label9:
 .p2align 2
+label9:
 	sh2add t0, a3, a1
 	addiw a4, a4, 1
 	addiw a3, a3, 1

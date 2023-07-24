@@ -14,15 +14,15 @@ main:
 	mov r4, r0
 	cmp r0, r5
 	ble label104
-label4:
 .p2align 4
+label4:
 	bl getint
 	sub r1, r0, #1
 	cmp r1, #99
 	blo label5
 	mov r0, #100
-label102:
 .p2align 4
+label102:
 	bl putint
 	mov r0, #10
 	bl putch
@@ -33,14 +33,14 @@ label104:
 	mov r0, #0
 	add sp, sp, #4
 	pop { r4, r5, pc }
-label5:
 .p2align 4
+label5:
 	cmp r0, #99
 	blt label6
 	mov r0, #99
 	b label102
-label6:
 .p2align 4
+label6:
 	cmp r0, #98
 	blt label7
 	mov r0, #98

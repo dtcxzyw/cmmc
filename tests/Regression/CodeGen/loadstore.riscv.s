@@ -108,8 +108,8 @@ pcrel95:
 memset_impl:
 .p2align 2
 	mv a1, zero
-label97:
 .p2align 2
+label97:
 	sh2add a2, a1, a0
 	addiw a1, a1, 16
 	sw zero, 0(a2)

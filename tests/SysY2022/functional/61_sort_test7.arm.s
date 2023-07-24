@@ -42,8 +42,8 @@ merge_sort:
 	cmp r6, r5
 	bgt label12
 	b label172
-label8:
 .p2align 4
+label8:
 	ldr r8, [r0, r7, lsl #2]
 	ldr r9, [r0, r2, lsl #2]
 	cmp r8, r9
@@ -67,8 +67,8 @@ label2:
 label172:
 	mov r6, r3
 	b label19
-label9:
 .p2align 4
+label9:
 	str r8, [r1, r3, lsl #2]
 	add r7, r7, #1
 	add r3, r3, #1

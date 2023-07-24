@@ -236,8 +236,8 @@ label234:
 	blt a1, a3, label234
 	bgt s0, zero, label309
 	j label205
-label197:
 .p2align 2
+label197:
 	li t4, 28
 	mul t6, t5, t4
 	addiw t5, t5, 4
@@ -317,8 +317,8 @@ label197:
 	blt a1, a3, label234
 	bgt s0, zero, label309
 	j label205
-label240:
 .p2align 2
+label240:
 	mv a5, zero
 	li t1, 9072
 	mv t2, zero
@@ -339,8 +339,8 @@ label240:
 	blt a1, a3, label234
 	bgt s0, zero, label309
 	j label205
-label246:
 .p2align 2
+label246:
 	mv t1, zero
 	li t3, 504
 	mv t4, zero
@@ -367,14 +367,14 @@ label246:
 	blt a1, a3, label234
 	bgt s0, zero, label309
 	j label205
-label253:
 .p2align 2
+label253:
 	mv t5, zero
 	j label197
 label309:
 	mv s2, zero
-label203:
 .p2align 2
+label203:
 	jal getint
 	addiw s2, s2, 1
 	sh2add a0, a0, s1

@@ -12,22 +12,22 @@ main:
 	jal _sysy_starttime
 	jal getint
 	mv a1, zero
-label2:
 .p2align 2
+label2:
 	li a3, 100
 	blt a1, a3, label4
 	mv a2, zero
 	mv a1, zero
 	bgt a0, zero, label8
 	j label13
-label4:
 .p2align 2
+label4:
 	sh2add a2, a1, s0
 	addiw a1, a1, 1
 	sw zero, 0(a2)
 	j label2
-label8:
 .p2align 2
+label8:
 	li a4, 1
 	li a3, 2
 	li a5, 4
@@ -229,8 +229,8 @@ label8:
 	mv a3, zero
 	sw a4, 396(sp)
 	mv a4, a2
-label9:
 .p2align 2
+label9:
 	sh2add a2, a3, s0
 	lw a5, 0(a2)
 	addiw a3, a3, 16
@@ -269,8 +269,8 @@ label9:
 	bge a3, a4, label12
 	mv a4, a2
 	j label9
-label12:
 .p2align 2
+label12:
 	sh2add a3, a3, s0
 	lw a5, 0(a3)
 	lw a4, 4(a3)

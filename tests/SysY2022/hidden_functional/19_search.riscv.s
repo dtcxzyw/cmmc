@@ -179,8 +179,8 @@ pcrel328:
 	sw zero, 72(sp)
 	sw zero, 56(sp)
 	mv s6, zero
-label145:
 .p2align 2
+label145:
 	jal getint
 	sw a0, 92(sp)
 	mv s7, a0
@@ -189,8 +189,8 @@ label145:
 	beq s7, zero, label167
 	mv a1, zero
 	j label148
-label166:
 .p2align 2
+label166:
 	mv a0, s10
 	li a2, 1
 	mv a1, s9
@@ -204,8 +204,8 @@ label166:
 	li a2, 11
 	blt a0, a2, label303
 	li a1, -1
-label303:
 .p2align 2
+label303:
 	mv a0, a1
 	jal putint
 	li a0, 10
@@ -228,8 +228,8 @@ label167:
 	ld s1, 80(sp)
 	addi sp, sp, 152
 	ret
-label234:
 .p2align 2
+label234:
 	li s8, 1
 	lw a0, 92(sp)
 	ble s8, a0, label159
@@ -240,8 +240,8 @@ label234:
 	add s7, s0, a1
 	ble s6, a0, label234
 	j label166
-label159:
 .p2align 2
+label159:
 	jal getint
 	li a2, 2
 	sh2add a1, s8, s7
@@ -259,8 +259,8 @@ label159:
 	add s7, s0, a1
 	ble s6, a0, label234
 	j label166
-label246:
 .p2align 2
+label246:
 	mv s9, s8
 	mv s10, s6
 	addiw s8, s8, 1
@@ -273,8 +273,8 @@ label246:
 	add s7, s0, a1
 	ble s6, a0, label234
 	j label166
-label164:
 .p2align 2
+label164:
 	sw s6, 72(sp)
 	sw s8, 56(sp)
 	addiw s8, s8, 1
@@ -287,8 +287,8 @@ label164:
 	add s7, s0, a1
 	ble s6, a0, label234
 	j label166
-label148:
 .p2align 2
+label148:
 	li a0, 30
 	blt a1, a0, label150
 	mv s10, s6
@@ -299,8 +299,8 @@ label148:
 	add s7, s0, a1
 	ble s6, a0, label234
 	j label166
-label150:
 .p2align 2
+label150:
 	li a2, 120
 	mul a3, a1, a2
 	addiw a1, a1, 1

@@ -13,8 +13,8 @@ foo4:
 	ble label9
 	mov r0, #0
 	mov r3, r0
-label2:
 .p2align 4
+label2:
 	add r4, r3, #4
 	cmp r1, r4
 	ble label6

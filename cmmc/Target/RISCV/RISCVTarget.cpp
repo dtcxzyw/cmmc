@@ -267,7 +267,8 @@ public:
                 if(runtime == RuntimeType::SplRuntime) {
                     out << rarsRuntimeText;
                 }
-            });
+            },
+            runtime != RuntimeType::SplRuntime);
     }
     void addExternalFuncIPRAInfo(MIRRelocable* symbol, IPRAUsageCache& infoIPRA) const override {
         const auto symbolName = symbol->symbol();
@@ -327,8 +328,6 @@ void RISCVFrameInfo::emitPrologue(MIRFunction& mfunc, LoweringContext& ctx) cons
     for(uint32_t idx = 0; idx < args.size(); ++idx) {
         const auto offset = offsets[idx];
         const auto& arg = args[idx];
-        const auto size = getOperandSize(arg.type());
-        const auto alignment = size;
 
         if(offset >= passingByRegBase) {
             // $a0-$a7 $fa0-$fa7
@@ -339,7 +338,16 @@ void RISCVFrameInfo::emitPrologue(MIRFunction& mfunc, LoweringContext& ctx) cons
                 src = MIROperand::asISAReg(RISCV::X10 + static_cast<uint32_t>(offset - passingByRegBase), OperandType::Int64);
             }
             ctx.emitCopy(arg, src);
-        } else {
+        }
+    }
+
+    for(uint32_t idx = 0; idx < args.size(); ++idx) {
+        const auto offset = offsets[idx];
+        const auto& arg = args[idx];
+        const auto size = getOperandSize(arg.type());
+        const auto alignment = size;
+
+        if(offset < passingByRegBase) {
             auto obj = mfunc.addStackObject(ctx.getCodeGenContext(), size, alignment, offset, StackObjectUsage::Argument);
             ctx.emitInst(MIRInst{ InstLoadRegFromStack }.setOperand<0>(arg).setOperand<1>(obj));
         }

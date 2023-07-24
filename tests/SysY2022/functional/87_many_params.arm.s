@@ -81,8 +81,8 @@ main:
 	mov r0, #0
 	cmp r0, #15
 	bge label10
-label4:
 .p2align 4
+label4:
 	add r1, r0, #1
 	mov r2, r1
 	cmp r1, #16
@@ -91,8 +91,8 @@ label4:
 	cmp r1, #15
 	blt label4
 	b label10
-label7:
 .p2align 4
+label7:
 	ldr r4, [sp, #440]
 	ldr r3, [r4, r0, lsl #2]
 	ldr r5, [r4, r2, lsl #2]
@@ -105,8 +105,8 @@ label7:
 	cmp r1, #15
 	blt label4
 	b label10
-label8:
 .p2align 4
+label8:
 	ldr r4, [sp, #440]
 	str r5, [r4, r0, lsl #2]
 	str r3, [r4, r2, lsl #2]

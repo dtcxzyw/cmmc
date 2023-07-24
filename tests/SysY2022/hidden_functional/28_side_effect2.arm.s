@@ -32,8 +32,8 @@ main:
 	str r1, [r0, #68]
 	str r1, [r0, #72]
 	str r1, [r0, #76]
-label2:
 .p2align 4
+label2:
 	cmp r2, #20
 	blt label116
 	mov r2, #0
@@ -57,8 +57,8 @@ label14:
 	cmp r3, #0
 	bne label16
 	b label18
-label116:
 .p2align 4
+label116:
 	add r3, r1, #1
 	cmp r2, #1
 	blt label600
@@ -81,13 +81,13 @@ label959:
 	mov r1, r3
 	add r2, r2, #1
 	b label2
-label124:
 .p2align 4
+label124:
 	cmp r4, #0
 	bne label126
 	b label959
-label52:
 .p2align 4
+label52:
 	add r3, r1, #2
 	cmp r2, #1
 	blt label376
@@ -127,8 +127,8 @@ label52:
 	cmp r4, #0
 	bne label380
 	b label1087
-label376:
 .p2align 4
+label376:
 	mov r4, #1
 	cmp r4, #0
 	bne label380
@@ -165,14 +165,14 @@ label376:
 	cmp r4, #0
 	bne label380
 	b label1059
-label1087:
 .p2align 4
+label1087:
 	add r3, r1, #12
 	cmp r2, #6
 	blt label380
 	b label1075
-label386:
 .p2align 4
+label386:
 	mov r4, #1
 	cmp r4, #0
 	bne label392
@@ -209,32 +209,32 @@ label386:
 	cmp r4, #0
 	bne label380
 	b label1044
-label1059:
 .p2align 4
+label1059:
 	add r3, r1, #12
 	cmp r2, #6
 	blt label380
-label1075:
 .p2align 4
+label1075:
 	mov r4, #0
 	str r4, [r0, #20]
 	ldr r4, [r0, #16]
 	cmp r4, #0
 	bne label380
 	b label1090
-label1044:
 .p2align 4
+label1044:
 	add r3, r1, #14
 	cmp r2, #7
 	blt label380
 	b label1061
-label1090:
 .p2align 4
+label1090:
 	add r3, r1, #14
 	cmp r2, #7
 	blt label380
-label1061:
 .p2align 4
+label1061:
 	mov r4, #0
 	str r4, [r0, #24]
 	ldr r4, [r0, #20]
@@ -268,8 +268,8 @@ label1061:
 	cmp r2, #11
 	blt label490
 	b label1098
-label119:
 .p2align 4
+label119:
 	add r3, r1, #2
 	cmp r2, #2
 	blt label609
@@ -289,8 +289,8 @@ label119:
 	cmp r2, #20
 	blt label11
 	b label18
-label609:
 .p2align 4
+label609:
 	mov r4, #0
 	cmp r4, #0
 	bne label122
@@ -305,8 +305,8 @@ label609:
 	cmp r2, #20
 	blt label11
 	b label18
-label122:
 .p2align 4
+label122:
 	add r3, r1, #3
 	cmp r2, #3
 	blt label618
@@ -424,8 +424,8 @@ label136:
 	bge label713
 	mov r4, #0
 	b label142
-label600:
 .p2align 4
+label600:
 	mov r4, #0
 	cmp r4, #0
 	bne label119
@@ -440,11 +440,11 @@ label600:
 	cmp r2, #20
 	blt label11
 	b label18
+.p2align 4
 label380:
-.p2align 4
 	mov r1, r3
-label56:
 .p2align 4
+label56:
 	add r2, r2, #1
 	cmp r2, #20
 	blt label52
@@ -452,8 +452,8 @@ label56:
 	cmp r2, #20
 	blt label11
 	b label18
-label392:
 .p2align 4
+label392:
 	mov r1, r3
 	add r2, r2, #1
 	cmp r2, #20

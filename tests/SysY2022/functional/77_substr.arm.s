@@ -60,8 +60,8 @@ main:
 	mov r1, r6
 	movw r0, #:lower16:p
 	movt r0, #:upper16:p
-label2:
 .p2align 4
+label2:
 	add r2, r0, r1, lsl #2
 	mov r3, #0
 	str r3, [r0, r1, lsl #2]
@@ -108,8 +108,8 @@ label73:
 	sub r7, r3, #64
 	blt label73
 	b label12
-label8:
 .p2align 4
+label8:
 	sub r8, r2, #1
 	ldr r9, [r5, r6, lsl #2]
 	ldr r10, [r4, r8, lsl #2]
@@ -131,8 +131,8 @@ label8:
 	sub r7, r3, #64
 	blt label73
 	b label12
-label9:
 .p2align 4
+label9:
 	ldr r8, [r7, r8, lsl #2]
 	add r8, r8, #1
 	str r8, [r3, r2, lsl #2]

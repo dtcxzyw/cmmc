@@ -41,19 +41,19 @@ main:
 	ldr r8, [sp, #4]
 	cmn r8, #1
 	bgt label86
-label114:
 .p2align 4
+label114:
 	mov r0, #0
 	b label16
-label28:
 .p2align 4
+label28:
 	mov r7, #1
 	b label2
 label86:
 	mov r1, #0
 	mov r0, r1
-label13:
 .p2align 4
+label13:
 	ldr r2, [sp, #0]
 	ldr r2, [r2, r1, lsl #2]
 	ldr r8, [sp, #4]
@@ -81,8 +81,8 @@ label57:
 	cmn r8, #1
 	bgt label86
 	b label114
-label8:
 .p2align 4
+label8:
 	add r8, r2, #1
 	add r10, r1, r2, lsl #2
 	ldr r9, [r1, r2, lsl #2]
@@ -109,8 +109,8 @@ label8:
 	cmn r8, #1
 	bgt label86
 	b label114
-label9:
 .p2align 4
+label9:
 	str r9, [r7, r2, lsl #2]
 	mov r2, r8
 	ldr r8, [sp, #4]
@@ -127,8 +127,8 @@ label9:
 	cmn r8, #1
 	bgt label86
 	b label114
-label2:
 .p2align 4
+label2:
 	bl getint
 	and r1, r0, #1
 	mov r2, #1

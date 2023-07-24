@@ -241,8 +241,8 @@ label231:
 	cmp r0, #0
 	bgt label306
 	b label202
-label194:
 .p2align 4
+label194:
 	mov r8, #28
 	mvn r9, #0
 	mul r11, r10, r8
@@ -322,8 +322,8 @@ label194:
 	cmp r0, #0
 	bgt label306
 	b label202
-label237:
 .p2align 4
+label237:
 	mov r4, #0
 	movw r5, #9072
 	cmp r4, #18
@@ -346,8 +346,8 @@ label237:
 	cmp r0, #0
 	bgt label306
 	b label202
-label243:
 .p2align 4
+label243:
 	mov r6, #0
 	mov r7, #504
 	cmp r6, #18
@@ -375,14 +375,14 @@ label243:
 	cmp r0, #0
 	bgt label306
 	b label202
-label250:
 .p2align 4
+label250:
 	mov r10, #0
 	b label194
 label306:
 	mov r4, #0
-label200:
 .p2align 4
+label200:
 	bl getint
 	add r4, r4, #1
 	ldr r1, [sp, #88]

@@ -34,11 +34,11 @@ main:
 	cmp r1, #9
 	sub r2, r0, #1
 	blt label27
+.p2align 4
 label26:
-.p2align 4
 	mov r5, #0
-label9:
 .p2align 4
+label9:
 	ldr r0, [r4, r5, lsl #2]
 	bl putint
 	mov r0, #10
@@ -49,8 +49,8 @@ label9:
 	mov r0, #0
 	add sp, sp, #44
 	pop { r4, r5, r6, r7, pc }
-label27:
 .p2align 4
+label27:
 	mov r0, #0
 	cmp r2, r0
 	bgt label6
@@ -60,8 +60,8 @@ label27:
 	sub r2, r0, #1
 	blt label27
 	b label26
-label6:
 .p2align 4
+label6:
 	add r5, r4, r0, lsl #2
 	ldr r3, [r4, r0, lsl #2]
 	add r6, r0, #1
@@ -77,8 +77,8 @@ label6:
 	sub r2, r0, #1
 	blt label27
 	b label26
-label7:
 .p2align 4
+label7:
 	add r7, r4, r0, lsl #2
 	str r3, [r7, #4]
 	str r5, [r4, r0, lsl #2]

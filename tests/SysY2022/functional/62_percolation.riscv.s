@@ -88,8 +88,8 @@ pcrel497:
 	sd s4, 8(sp)
 	sd ra, 0(sp)
 	beq s1, zero, label108
-label69:
 .p2align 2
+label69:
 	addiw s1, s1, -1
 	li a0, -1
 	mv s3, zero
@@ -113,8 +113,8 @@ label69:
 	mv s2, zero
 	li a0, 10
 	bge zero, a0, label74
-label75:
 .p2align 2
+label75:
 	jal getint
 	mv s4, a0
 	jal getint
@@ -125,8 +125,8 @@ label75:
 	blt s2, a0, label75
 	bne s1, zero, label69
 	j label108
-label78:
 .p2align 2
+label78:
 	addiw a0, s4, -1
 	sh2add a2, a0, a3
 	li a0, 1
@@ -152,16 +152,16 @@ label78:
 	beq s3, zero, label74
 	bne s1, zero, label69
 	j label108
-label74:
 .p2align 2
+label74:
 	li a0, -1
 	jal putint
 	li a0, 10
 	jal putch
 	bne s1, zero, label69
 	j label108
-label98:
 .p2align 2
+label98:
 	mv a0, zero
 	jal findfa
 	mv a2, a0
@@ -176,8 +176,8 @@ label98:
 	beq s3, zero, label74
 	bne s1, zero, label69
 	j label108
-label101:
 .p2align 2
+label101:
 	addiw a0, s2, 1
 	jal putint
 	li a0, 10
@@ -189,8 +189,8 @@ label101:
 	beq s3, zero, label74
 	bne s1, zero, label69
 	j label108
-label79:
 .p2align 2
+label79:
 	sw zero, 0(s0)
 	mv a0, a2
 	jal findfa
@@ -217,8 +217,8 @@ label79:
 	beq s3, zero, label74
 	bne s1, zero, label69
 	j label108
-label102:
 .p2align 2
+label102:
 	addiw a3, a2, -1
 	li a4, -1
 	sh2add a1, a3, s0
@@ -238,8 +238,8 @@ label102:
 	beq s3, zero, label74
 	bne s1, zero, label69
 	j label108
-label91:
 .p2align 2
+label91:
 	addiw a3, a2, -4
 	li a1, -1
 	sh2add a4, a3, s0
@@ -254,8 +254,8 @@ label91:
 	beq s3, zero, label74
 	bne s1, zero, label69
 	j label108
-label83:
 .p2align 2
+label83:
 	sh2add a1, a4, s0
 	sw a0, 0(a1)
 	li a0, 4
@@ -276,8 +276,8 @@ label83:
 	beq s3, zero, label74
 	bne s1, zero, label69
 	j label108
-label105:
 .p2align 2
+label105:
 	addiw a4, a2, 1
 	li a1, -1
 	sh2add a5, a4, s0
@@ -298,8 +298,8 @@ label105:
 	beq s3, zero, label74
 	bne s1, zero, label69
 	j label108
-label106:
 .p2align 2
+label106:
 	mv a0, a2
 	jal findfa
 	mv a5, a0
@@ -322,8 +322,8 @@ label106:
 	beq s3, zero, label74
 	bne s1, zero, label69
 	j label108
-label80:
 .p2align 2
+label80:
 	sh2add a1, a4, s0
 	sw a0, 0(a1)
 	li a0, 4
@@ -345,8 +345,8 @@ label80:
 	beq s3, zero, label74
 	bne s1, zero, label69
 	j label108
-label82:
 .p2align 2
+label82:
 	li a5, 17
 	sw a5, 68(s0)
 	mv a0, a2
@@ -373,8 +373,8 @@ label82:
 	beq s3, zero, label74
 	bne s1, zero, label69
 	j label108
-label87:
 .p2align 2
+label87:
 	addiw a3, a2, 4
 	li a4, -1
 	sh2add a1, a3, s0
@@ -392,8 +392,8 @@ label87:
 	beq s3, zero, label74
 	bne s1, zero, label69
 	j label108
-label103:
 .p2align 2
+label103:
 	mv a0, a2
 	jal findfa
 	mv a4, a0
@@ -423,8 +423,8 @@ label108:
 	ld s0, 40(sp)
 	addi sp, sp, 48
 	ret
-label104:
 .p2align 2
+label104:
 	sh2add a1, a4, s0
 	sw a0, 0(a1)
 	li a0, 4
@@ -441,8 +441,8 @@ label104:
 	beq s3, zero, label74
 	bne s1, zero, label69
 	j label108
-label88:
 .p2align 2
+label88:
 	mv a0, a2
 	jal findfa
 	mv a4, a0
@@ -461,8 +461,8 @@ label88:
 	beq s3, zero, label74
 	bne s1, zero, label69
 	j label108
-label89:
 .p2align 2
+label89:
 	sh2add a1, a4, s0
 	sw a0, 0(a1)
 	li a0, 1
@@ -477,8 +477,8 @@ label89:
 	beq s3, zero, label74
 	bne s1, zero, label69
 	j label108
-label95:
 .p2align 2
+label95:
 	lw a2, 68(s0)
 	xori a1, a2, -1
 	sltu a0, zero, a1
@@ -490,8 +490,8 @@ label95:
 	beq s3, zero, label74
 	bne s1, zero, label69
 	j label108
-label92:
 .p2align 2
+label92:
 	mv a0, a2
 	jal findfa
 	mv a2, a0
@@ -508,8 +508,8 @@ label92:
 	beq s3, zero, label74
 	bne s1, zero, label69
 	j label108
-label93:
 .p2align 2
+label93:
 	sh2add a1, a2, s0
 	sw a0, 0(a1)
 	lw a0, 0(s0)
@@ -522,8 +522,8 @@ label93:
 	beq s3, zero, label74
 	bne s1, zero, label69
 	j label108
-label107:
 .p2align 2
+label107:
 	sh2add a1, a5, s0
 	sw a0, 0(a1)
 	li a0, 1

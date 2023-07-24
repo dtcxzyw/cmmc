@@ -10,14 +10,14 @@ main:
 	sd s1, 408(sp)
 	mv s1, zero
 	sd ra, 400(sp)
-label2:
 .p2align 2
+label2:
 	jal getint
 	bne a0, zero, label4
 	bne s1, zero, label24
 	j label47
-label4:
 .p2align 2
+label4:
 	jal getint
 	sh2add a1, s1, s0
 	addiw s1, s1, 1
@@ -25,8 +25,8 @@ label4:
 	j label2
 label24:
 	mv a1, zero
-label6:
 .p2align 2
+label6:
 	addiw a0, s1, -1
 	sh2add a2, a0, s0
 	lw a3, 0(a2)
@@ -37,8 +37,8 @@ label6:
 label33:
 	mv s1, a0
 	j label6
-label47:
 .p2align 2
+label47:
 	mv a0, zero
 label9:
 	li a3, 1739733589

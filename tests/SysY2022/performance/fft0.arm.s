@@ -161,8 +161,8 @@ fft:
 	cmp r2, #0
 	bgt label153
 	b label109
-label100:
 .p2align 4
+label100:
 	ands r1, r0, #1
 	bne label102
 	ldr r7, [sp, #0]
@@ -180,8 +180,8 @@ label100:
 	cmp r2, #0
 	bgt label153
 	b label109
-label102:
 .p2align 4
+label102:
 	add r1, r0, r0, lsr #31
 	ldr r6, [sp, #12]
 	ldr r7, [sp, #0]
@@ -260,8 +260,8 @@ label109:
 	ble label113
 	mov r4, #0
 	mov r6, #1
-label110:
 .p2align 4
+label110:
 	ldr r7, [sp, #0]
 	ldr r5, [sp, #4]
 	add r8, r7, r4
@@ -345,8 +345,8 @@ label277:
 	cmp r6, #0
 	ble label281
 	mov r9, #0
-label279:
 .p2align 4
+label279:
 	ldr r0, [r4, r9, lsl #2]
 	ldr r1, [r7, r9, lsl #2]
 	bl multiply
@@ -366,8 +366,8 @@ label281:
 	cmp r6, #0
 	bgt label282
 	b label285
-label283:
 .p2align 4
+label283:
 	ldr r0, [r4, r8, lsl #2]
 	mov r1, r7
 	bl multiply
@@ -392,8 +392,8 @@ label282:
 	mov r8, #0
 	mov r7, r0
 	b label283
-label275:
 .p2align 4
+label275:
 	lsl r6, r6, #1
 	cmp r5, r6
 	bgt label275

@@ -3,68 +3,68 @@
 .text
 params_f40:
 .p2align 2
-	addi sp, sp, -416
+	addi sp, sp, -408
+	sd s0, 384(sp)
+	mv s0, a0
 	fsw f18, 392(sp)
 	fsw f23, 396(sp)
 	fsw f22, 400(sp)
-	fsw f9, 404(sp)
-	fsw f8, 256(sp)
-	fsw f21, 260(sp)
-	fsw f20, 264(sp)
-	fsw f19, 268(sp)
-	fsw f24, 272(sp)
-	fsw f25, 276(sp)
-	fsw f26, 280(sp)
-	sd s0, 288(sp)
-	mv s0, a0
-	sd s1, 296(sp)
-	addi s1, sp, 348
-	sd ra, 304(sp)
-	flw f0, 416(sp)
-	flw f18, 424(sp)
-	flw f23, 432(sp)
-	flw f22, 440(sp)
-	flw f5, 448(sp)
-	flw f8, 456(sp)
-	flw f31, 464(sp)
-	flw f21, 472(sp)
-	flw f4, 480(sp)
-	flw f28, 488(sp)
-	flw f29, 496(sp)
-	flw f30, 504(sp)
-	flw f2, 512(sp)
-	flw f9, 520(sp)
-	flw f20, 528(sp)
-	flw f19, 536(sp)
-	flw f3, 544(sp)
-	flw f24, 552(sp)
-	flw f6, 560(sp)
-	flw f7, 568(sp)
-	flw f1, 576(sp)
-	flw f25, 584(sp)
-	fsw f25, 312(sp)
-	flw f26, 592(sp)
-	fsw f26, 316(sp)
-	flw f25, 600(sp)
-	fsw f25, 408(sp)
-	flw f26, 608(sp)
+	fsw f9, 256(sp)
+	fsw f8, 260(sp)
+	fsw f21, 264(sp)
+	fsw f20, 268(sp)
+	fsw f19, 272(sp)
+	fsw f24, 276(sp)
+	fsw f25, 280(sp)
+	fsw f26, 284(sp)
+	sd s1, 288(sp)
+	addi s1, sp, 340
+	sd ra, 296(sp)
+	flw f0, 408(sp)
+	flw f18, 416(sp)
+	flw f23, 424(sp)
+	flw f22, 432(sp)
+	flw f5, 440(sp)
+	flw f8, 448(sp)
+	flw f31, 456(sp)
+	flw f21, 464(sp)
+	flw f4, 472(sp)
+	flw f28, 480(sp)
+	flw f29, 488(sp)
+	flw f30, 496(sp)
+	flw f2, 504(sp)
+	flw f9, 512(sp)
+	flw f20, 520(sp)
+	flw f19, 528(sp)
+	flw f3, 536(sp)
+	flw f24, 544(sp)
+	flw f6, 552(sp)
+	flw f7, 560(sp)
+	flw f1, 568(sp)
+	flw f25, 576(sp)
+	fsw f25, 304(sp)
+	flw f26, 584(sp)
+	fsw f26, 308(sp)
+	flw f25, 592(sp)
+	fsw f25, 404(sp)
+	flw f26, 600(sp)
+	fsw f26, 312(sp)
+	flw f25, 608(sp)
+	fsw f25, 316(sp)
+	flw f26, 616(sp)
 	fsw f26, 320(sp)
-	flw f25, 616(sp)
+	flw f25, 624(sp)
 	fsw f25, 324(sp)
-	flw f26, 624(sp)
+	flw f26, 632(sp)
 	fsw f26, 328(sp)
-	flw f25, 632(sp)
+	flw f25, 640(sp)
 	fsw f25, 332(sp)
-	flw f26, 640(sp)
+	flw f26, 648(sp)
 	fsw f26, 336(sp)
-	flw f25, 648(sp)
-	fsw f25, 340(sp)
-	flw f26, 656(sp)
-	fsw f26, 344(sp)
 	fmv.w.x f26, zero
-	flw f25, 664(sp)
+	flw f25, 656(sp)
 	feq.s a0, f25, f26
-	fsw f25, 388(sp)
+	fsw f25, 380(sp)
 	bne a0, zero, label1088
 	fadd.s f11, f10, f11
 	li a0, 10
@@ -72,73 +72,73 @@ params_f40:
 	fadd.s f11, f14, f15
 	fadd.s f12, f10, f13
 	fadd.s f13, f5, f8
-	fsw f12, 348(sp)
+	fsw f12, 340(sp)
 	fadd.s f12, f11, f16
 	fadd.s f11, f0, f18
 	fadd.s f10, f12, f17
-	fsw f10, 352(sp)
+	fsw f10, 344(sp)
 	fadd.s f10, f11, f23
 	fadd.s f12, f10, f22
 	fadd.s f10, f13, f31
-	fsw f12, 356(sp)
+	fsw f12, 348(sp)
 	fadd.s f11, f10, f21
 	fadd.s f12, f4, f28
-	fsw f11, 360(sp)
+	fsw f11, 352(sp)
 	fadd.s f10, f12, f29
 	fadd.s f12, f2, f9
 	fadd.s f11, f10, f30
 	fadd.s f10, f12, f20
 	fadd.s f12, f3, f24
-	fsw f11, 364(sp)
+	fsw f11, 356(sp)
 	fadd.s f11, f10, f19
-	fsw f11, 368(sp)
+	fsw f11, 360(sp)
 	fadd.s f11, f12, f6
 	fadd.s f10, f11, f7
-	fsw f10, 372(sp)
-	flw f25, 312(sp)
-	flw f26, 316(sp)
+	fsw f10, 364(sp)
+	flw f25, 304(sp)
+	flw f26, 308(sp)
 	fadd.s f10, f1, f25
-	flw f25, 408(sp)
+	flw f25, 404(sp)
 	fadd.s f11, f10, f26
 	fadd.s f10, f11, f25
-	fsw f10, 376(sp)
-	flw f25, 324(sp)
-	flw f26, 320(sp)
+	fsw f10, 368(sp)
+	flw f25, 316(sp)
+	flw f26, 312(sp)
 	fadd.s f10, f26, f25
-	flw f26, 328(sp)
-	flw f25, 332(sp)
+	flw f26, 320(sp)
+	flw f25, 324(sp)
 	fadd.s f11, f10, f26
 	fadd.s f10, f11, f25
-	fsw f10, 380(sp)
-	flw f25, 340(sp)
-	flw f26, 336(sp)
+	fsw f10, 372(sp)
+	flw f25, 332(sp)
+	flw f26, 328(sp)
 	fadd.s f11, f26, f25
-	flw f26, 344(sp)
-	flw f25, 388(sp)
+	flw f26, 336(sp)
+	flw f25, 380(sp)
 	fadd.s f10, f11, f26
 	fadd.s f11, f10, f25
-	fsw f11, 384(sp)
+	fsw f11, 376(sp)
 	mv a1, s1
 	jal putfarray
 	lw a0, 0(s0)
 	sh2add a1, a0, s1
 	flw f10, 0(a1)
 label1086:
-	ld ra, 304(sp)
-	ld s1, 296(sp)
-	ld s0, 288(sp)
-	flw f26, 280(sp)
-	flw f25, 276(sp)
-	flw f24, 272(sp)
-	flw f19, 268(sp)
-	flw f20, 264(sp)
-	flw f21, 260(sp)
-	flw f8, 256(sp)
-	flw f9, 404(sp)
+	ld ra, 296(sp)
+	ld s1, 288(sp)
+	flw f26, 284(sp)
+	flw f25, 280(sp)
+	flw f24, 276(sp)
+	flw f19, 272(sp)
+	flw f20, 268(sp)
+	flw f21, 264(sp)
+	flw f8, 260(sp)
+	flw f9, 256(sp)
 	flw f22, 400(sp)
 	flw f23, 396(sp)
 	flw f18, 392(sp)
-	addi sp, sp, 416
+	ld s0, 384(sp)
+	addi sp, sp, 408
 	ret
 label1088:
 	fadd.s f25, f10, f11
@@ -163,27 +163,27 @@ label1088:
 	fsw f6, 136(sp)
 	fsw f7, 144(sp)
 	fsw f1, 152(sp)
-	flw f25, 312(sp)
+	flw f25, 304(sp)
 	fsw f25, 160(sp)
-	flw f26, 316(sp)
+	flw f26, 308(sp)
 	fsw f26, 168(sp)
-	flw f25, 408(sp)
+	flw f25, 404(sp)
 	fsw f25, 176(sp)
-	flw f26, 320(sp)
+	flw f26, 312(sp)
 	fsw f26, 184(sp)
-	flw f25, 324(sp)
+	flw f25, 316(sp)
 	fsw f25, 192(sp)
-	flw f26, 328(sp)
+	flw f26, 320(sp)
 	fsw f26, 200(sp)
-	flw f25, 332(sp)
+	flw f25, 324(sp)
 	fsw f25, 208(sp)
-	flw f26, 336(sp)
+	flw f26, 328(sp)
 	fsw f26, 216(sp)
-	flw f25, 340(sp)
+	flw f25, 332(sp)
 	fsw f25, 224(sp)
-	flw f26, 344(sp)
+	flw f26, 336(sp)
 	fsw f26, 232(sp)
-	flw f25, 388(sp)
+	flw f25, 380(sp)
 	fsw f25, 240(sp)
 	fsw f10, 248(sp)
 	fmv.s f10, f11
@@ -225,9 +225,9 @@ params_f40_i24:
 	addi s0, sp, 680
 	sd ra, 408(sp)
 	fsw f15, 552(sp)
+	fsw f17, 508(sp)
 	fsw f16, 484(sp)
 	ld t0, 712(sp)
-	fsw f17, 508(sp)
 	flw f2, 720(sp)
 	flw f7, 728(sp)
 	flw f3, 736(sp)
@@ -1292,8 +1292,8 @@ main:
 	jal getint
 	mv s1, zero
 	sw a0, 1800(sp)
-label1275:
 .p2align 2
+label1275:
 	li a1, 12
 	ld s0, 1792(sp)
 	mul a0, s1, a1
@@ -1303,8 +1303,8 @@ label1275:
 	addiw s1, s1, 1
 	blt s1, a0, label1275
 	mv s0, zero
-label1277:
 .p2align 2
+label1277:
 	li a0, 12
 	ld s1, 1784(sp)
 	mul a1, s0, a0

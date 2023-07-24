@@ -112,13 +112,13 @@ label8:
 	add sp, sp, #4
 	mov r0, #0
 	pop { r4, r5, pc }
-label4:
 .p2align 4
+label4:
 	mov r0, #400
 	mla r3, r2, r0, r1
 	mov r0, #0
-label5:
 .p2align 4
+label5:
 	add r4, r3, r0, lsl #2
 	str r0, [r3, r0, lsl #2]
 	add r5, r0, #1
@@ -166,7 +166,7 @@ label5:
 	cmp r2, #20
 	blt label4
 	b label8
-label52:
 .p2align 4
+label52:
 	mov r0, r4
 	b label5

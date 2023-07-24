@@ -57,8 +57,8 @@ label5:
 	ld s1, 408(sp)
 	addi sp, sp, 416
 	ret
-label22:
 .p2align 2
+label22:
 	lw t2, 328(sp)
 	addiw a1, a1, -1
 	addw a2, t3, t2
@@ -82,8 +82,8 @@ label22:
 	sw a3, 344(sp)
 	bgt a1, zero, label58
 	j label5
-label27:
 .p2align 2
+label27:
 	sh2add t5, t4, s1
 	addiw t4, t4, 4
 	lw t6, -12(t5)
@@ -153,8 +153,8 @@ label27:
 	addiw t2, t2, 64
 	bgt a2, t2, label143
 	j label22
-label6:
 .p2align 2
+label6:
 	slliw a5, a4, 13
 	addw a3, a5, a4
 	slli a4, a3, 1
@@ -230,8 +230,8 @@ label6:
 	sw zero, 0(a5)
 	andi a5, a3, 63
 	bne a5, t0, label111
-label437:
 .p2align 2
+label437:
 	sh2add a3, a3, a0
 	li a5, 125
 	addiw a2, a2, 5
@@ -241,20 +241,20 @@ label437:
 	sw zero, 12(a3)
 	mv a3, zero
 	j label13
-label111:
 .p2align 2
+label111:
 	mv a2, a3
 	j label10
-label143:
 .p2align 2
+label143:
 	addiw t4, t2, 4
 	addiw t5, t2, 8
 	addiw t6, t2, 12
 	mv a6, zero
 	mv a7, zero
 	j label24
-label36:
 .p2align 2
+label36:
 	li s3, 20
 	blt a7, s3, label309
 	li s4, 40
@@ -267,27 +267,27 @@ label36:
 	mv s3, s5
 	li s5, -1894007588
 	j label443
-label309:
 .p2align 2
+label309:
 	li s4, 1518500249
 	mv s3, zero
 	j label40
-label313:
 .p2align 2
+label313:
 	addw s5, t4, a6
 	li s4, 1859775361
 	subw s3, s5, t5
 	j label40
-label418:
 .p2align 2
+label418:
 	li s5, -1894007588
 	bne s4, zero, label420
 	li s5, -899497722
+.p2align 2
 label420:
-.p2align 2
 	mv s4, s5
-label40:
 .p2align 2
+label40:
 	slliw s5, t6, 5
 	addw s6, s2, s5
 	addw s4, s4, s6
@@ -325,8 +325,8 @@ label40:
 	addiw t2, t2, 64
 	bgt a2, t2, label143
 	j label22
-label24:
 .p2align 2
+label24:
 	addw s4, t2, a6
 	sh2add s2, s4, a0
 	lw s3, 0(s2)
@@ -386,13 +386,13 @@ label24:
 	blt a7, s2, label24
 	li t4, 16
 	j label27
-label443:
 .p2align 2
+label443:
 	li s5, -899497722
 	mv s4, s5
 	j label40
-label13:
 .p2align 2
+label13:
 	sh2add a5, a3, s1
 	sw zero, 0(a5)
 	addi a3, a3, 16
@@ -421,8 +421,8 @@ label13:
 	xori t3, t0, -1
 	bgt a2, zero, label143
 	j label22
-label10:
 .p2align 2
+label10:
 	sh2add a5, a2, a0
 	addiw a3, a2, 1
 	li t0, 60

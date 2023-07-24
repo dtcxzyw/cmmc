@@ -174,8 +174,8 @@ pcrel286:
 	beq a2, a3, label140
 	mv a1, zero
 	ble a2, zero, label136
-label127:
 .p2align 2
+label127:
 	andi a3, a1, 1
 	bne a3, zero, label129
 	addw a4, s2, a1
@@ -190,8 +190,8 @@ label127:
 	bgt a2, a1, label127
 	bgt a2, zero, label180
 	j label136
-label129:
 .p2align 2
+label129:
 	srliw a3, a1, 31
 	add a5, a1, a3
 	sraiw a4, a5, 1
@@ -258,8 +258,8 @@ label136:
 	ble s3, zero, label140
 	mv a5, zero
 	li t0, 1
-label137:
 .p2align 2
+label137:
 	addw a0, s2, a5
 	sh2add t2, a0, s1
 	addw a0, s4, a5
@@ -352,8 +352,8 @@ label318:
 	jal fft
 	ble t6, zero, label322
 	mv a5, zero
-label320:
 .p2align 2
+label320:
 	sh2add t0, a5, s0
 	sh2add a2, a5, s2
 	lw a0, 0(t0)
@@ -374,8 +374,8 @@ label322:
 	jal fft
 	bgt t6, zero, label323
 	j label326
-label324:
 .p2align 2
+label324:
 	sh2add t1, t0, s0
 	lw a0, 0(t1)
 	mv a1, a5
@@ -403,8 +403,8 @@ label323:
 	mv t0, zero
 	mv a5, a0
 	j label324
-label316:
 .p2align 2
+label316:
 	slliw t6, t6, 1
 	bgt s1, t6, label316
 	j label318

@@ -12,8 +12,8 @@ main:
 	sd ra, 0(sp)
 	li a3, 3
 	bge zero, a3, label10
-label7:
 .p2align 2
+label7:
 	addiw a3, a1, 10
 	addiw a5, a0, 1
 	addw a4, a4, a3
@@ -39,8 +39,8 @@ label7:
 	li a3, 3
 	blt a2, a3, label7
 	j label10
-label9:
 .p2align 2
+label9:
 	addiw a1, a0, 7
 	addw a3, a3, a4
 	addiw a2, a2, 1

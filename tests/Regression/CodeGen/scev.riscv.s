@@ -8,8 +8,8 @@ foo4:
 	ble a1, zero, label9
 	mv a0, zero
 	mv a4, zero
-label2:
 .p2align 2
+label2:
 	addiw a3, a4, 4
 	ble a1, a3, label6
 	sh2add a4, a4, a2

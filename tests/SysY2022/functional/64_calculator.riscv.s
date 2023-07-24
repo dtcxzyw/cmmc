@@ -60,8 +60,8 @@ label350:
 	li a0, 1
 	mv a1, zero
 	j label80
-label115:
 .p2align 2
+label115:
 	sh2add a1, s4, s3
 	sw a0, 0(a1)
 	jal getch
@@ -83,8 +83,8 @@ label115:
 	lw a1, 4(s0)
 	bne a1, a0, label350
 	j label79
-label80:
 .p2align 2
+label80:
 	sh2add a2, a0, s0
 	lw a3, 0(a2)
 	xori t2, a3, 47
@@ -108,8 +108,8 @@ label80:
 	li a2, 32
 	bne a3, a2, label89
 	j label620
-label95:
 .p2align 2
+label95:
 	sh2add t2, a1, s1
 	subw t1, zero, t1
 	lw a4, 0(t2)
@@ -120,14 +120,14 @@ label95:
 	mv t1, t3
 	bne t0, zero, label592
 	mv t1, t2
-label592:
 .p2align 2
+label592:
 	mulw t2, a4, a2
 	mv t0, t2
 	bne a5, zero, label594
 	mv t0, t1
-label594:
 .p2align 2
+label594:
 	li t1, 47
 	beq a3, t1, label96
 	mv a5, t0
@@ -145,11 +145,11 @@ label594:
 	lw a2, 0(a3)
 	bne a2, a4, label80
 	j label79
+.p2align 2
 label443:
-.p2align 2
 	li a3, 1
-label104:
 .p2align 2
+label104:
 	mulw a3, a2, a3
 	addiw a4, a4, -1
 	bne a4, zero, label104
@@ -163,13 +163,13 @@ label104:
 	lw a2, 0(a3)
 	bne a2, a4, label80
 	j label79
-label14:
 .p2align 2
+label14:
 	sh2add t0, a3, s2
 	addiw a3, a3, -1
 	lw a5, 0(t0)
-label15:
 .p2align 2
+label15:
 	li t0, 40
 	bne a5, t0, label19
 	li t0, 43
@@ -201,8 +201,8 @@ label15:
 	lw a1, 4(s0)
 	bne a1, a0, label350
 	j label79
-label19:
 .p2align 2
+label19:
 	sh2add t0, a4, s0
 	li t1, 32
 	addiw a4, a4, 2
@@ -212,8 +212,8 @@ label19:
 	addiw a3, a3, -1
 	lw a5, 0(t0)
 	j label15
-label23:
 .p2align 2
+label23:
 	sh2add t0, a3, s2
 	lw a5, 0(t0)
 	xori t3, a5, 45
@@ -265,8 +265,8 @@ label23:
 	lw a1, 4(s0)
 	bne a1, a0, label350
 	j label79
-label26:
 .p2align 2
+label26:
 	sh2add t0, a4, s0
 	li t1, 32
 	addiw a3, a3, -1
@@ -282,8 +282,8 @@ label77:
 	lw a1, 4(s0)
 	bne a1, a0, label350
 	j label79
-label108:
 .p2align 2
+label108:
 	addiw a0, a3, -4
 	ble a0, zero, label112
 	sh2add a2, a3, s2
@@ -315,8 +315,8 @@ label112:
 	sw a0, 4(a1)
 	bgt a3, zero, label112
 	j label77
-label63:
 .p2align 2
+label63:
 	addiw a3, a3, 1
 	li a5, 37
 	sh2add a4, a3, s2
@@ -346,12 +346,12 @@ label79:
 	ld s3, 40(sp)
 	addi sp, sp, 48
 	ret
-label134:
 .p2align 2
+label134:
 	bgt a3, zero, label108
 	j label601
-label8:
 .p2align 2
+label8:
 	sh2add t0, a1, s3
 	lw a2, 0(t0)
 	li t0, 10
@@ -386,8 +386,8 @@ label8:
 	sw a5, 0(a2)
 	bgt a0, a1, label8
 	j label134
-label74:
 .p2align 2
+label74:
 	addiw a3, a3, 1
 	li t0, 40
 	sh2add a5, a3, s2
@@ -425,8 +425,8 @@ label74:
 	lw a1, 4(s0)
 	bne a1, a0, label350
 	j label79
-label75:
 .p2align 2
+label75:
 	sh2add a5, a4, s0
 	addiw a1, a1, 1
 	addiw a4, a4, 1
@@ -462,8 +462,8 @@ label89:
 label393:
 	li a2, 1
 	j label90
-label103:
 .p2align 2
+label103:
 	bne a4, zero, label443
 	li a2, 1
 	addiw a1, a1, -1
@@ -475,8 +475,8 @@ label103:
 	lw a2, 0(a3)
 	bne a2, a4, label80
 	j label79
-label96:
 .p2align 2
+label96:
 	divw a5, a2, a4
 	li t0, 37
 	beq a3, t0, label107
@@ -492,8 +492,8 @@ label96:
 	lw a2, 0(a3)
 	bne a2, a4, label80
 	j label79
-label107:
 .p2align 2
+label107:
 	remw a5, a2, a4
 	li t0, 94
 	beq a3, t0, label103
@@ -507,8 +507,8 @@ label107:
 	lw a2, 0(a3)
 	bne a2, a4, label80
 	j label79
-label50:
 .p2align 2
+label50:
 	addiw a5, a4, 1
 	li t0, 47
 	sh2add a4, a5, s2
@@ -530,11 +530,11 @@ label50:
 	lw a1, 4(s0)
 	bne a1, a0, label350
 	j label79
+.p2align 2
 label274:
-.p2align 2
 	mv a2, a4
-label59:
 .p2align 2
+label59:
 	sh2add a5, a3, s2
 	lw a4, 0(a5)
 	xori t2, a4, 94
@@ -567,8 +567,8 @@ label59:
 	lw a1, 4(s0)
 	bne a1, a0, label350
 	j label79
-label62:
 .p2align 2
+label62:
 	sh2add a5, a2, s0
 	li t0, 32
 	addiw a3, a3, -1
@@ -577,8 +577,8 @@ label62:
 	sw a4, 4(a5)
 	beq a3, zero, label63
 	j label59
-label66:
 .p2align 2
+label66:
 	sh2add t0, a4, s2
 	lw a5, 0(t0)
 	xori t1, a5, 47
@@ -616,8 +616,8 @@ label66:
 	lw a1, 4(s0)
 	bne a1, a0, label350
 	j label79
-label69:
 .p2align 2
+label69:
 	addiw a5, a4, 1
 	li t0, 42
 	sh2add a4, a5, s2
@@ -641,8 +641,8 @@ label69:
 	lw a1, 4(s0)
 	bne a1, a0, label350
 	j label79
-label72:
 .p2align 2
+label72:
 	sh2add t0, a3, s0
 	li t1, 32
 	addiw a4, a4, -1
@@ -651,11 +651,11 @@ label72:
 	sw a5, 4(t0)
 	beq a4, zero, label69
 	j label66
+.p2align 2
 label245:
-.p2align 2
 	mv a4, a5
-label46:
 .p2align 2
+label46:
 	sh2add t0, a4, s2
 	lw a5, 0(t0)
 	xori t2, a5, 47
@@ -691,8 +691,8 @@ label46:
 	lw a1, 4(s0)
 	bne a1, a0, label350
 	j label79
-label49:
 .p2align 2
+label49:
 	sh2add t0, a3, s0
 	li t1, 32
 	addiw a4, a4, -1
@@ -701,8 +701,8 @@ label49:
 	sw a5, 4(t0)
 	beq a4, zero, label50
 	j label46
-label27:
 .p2align 2
+label27:
 	addiw t0, a3, 1
 	li t1, 43
 	mv a5, a4
@@ -734,11 +734,11 @@ label27:
 	lw a1, 4(s0)
 	bne a1, a0, label350
 	j label79
+.p2align 2
 label208:
-.p2align 2
 	mv a3, a5
-label33:
 .p2align 2
+label33:
 	sh2add t0, a4, s2
 	lw a5, 0(t0)
 	xori t3, a5, 42
@@ -785,8 +785,8 @@ label33:
 	lw a1, 4(s0)
 	bne a1, a0, label350
 	j label79
-label36:
 .p2align 2
+label36:
 	sh2add t0, a3, s0
 	li t1, 32
 	addiw a4, a4, -1
@@ -795,8 +795,8 @@ label36:
 	sw a5, 4(t0)
 	beq a4, zero, label37
 	j label33
-label73:
 .p2align 2
+label73:
 	addiw a3, a3, 1
 	li t0, 94
 	sh2add a5, a3, s2
@@ -832,8 +832,8 @@ label73:
 	lw a1, 4(s0)
 	bne a1, a0, label350
 	j label79
-label37:
 .p2align 2
+label37:
 	addiw a4, a4, 1
 	li t0, 45
 	sh2add a5, a4, s2
@@ -860,23 +860,23 @@ label37:
 	lw a1, 4(s0)
 	bne a1, a0, label350
 	j label79
-label601:
 .p2align 2
+label601:
 	sh2add a1, a4, s0
 	li a0, 64
 	sw a0, 0(a1)
 	lw a1, 4(s0)
 	bne a1, a0, label350
 	j label79
-label85:
 .p2align 2
+label85:
 	sh2add a3, a0, s0
 	li a4, 64
 	lw a2, 0(a3)
 	bne a2, a4, label80
 	j label79
-label90:
 .p2align 2
+label90:
 	addw t0, a0, a2
 	sh2add a4, a4, a4
 	sh2add t1, t0, s0

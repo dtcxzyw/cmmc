@@ -30,8 +30,8 @@ main:
 	sw a1, 36(sp)
 	li a1, 10
 	bge a0, a1, label25
-label7:
 .p2align 2
+label7:
 	sh2add a3, a0, s0
 	addiw a2, a0, -1
 	lw a1, 0(a3)
@@ -42,11 +42,11 @@ label7:
 	sw a1, 0(a2)
 	li a1, 10
 	blt a0, a1, label7
+.p2align 2
 label25:
-.p2align 2
 	mv s1, zero
-label4:
 .p2align 2
+label4:
 	sh2add a1, s1, s0
 	lw a0, 0(a1)
 	jal putint
@@ -61,8 +61,8 @@ label4:
 	ld s0, 56(sp)
 	addi sp, sp, 64
 	ret
-label10:
 .p2align 2
+label10:
 	sh2add a4, a2, s0
 	lw a3, 0(a4)
 	blt a1, a3, label11
@@ -73,8 +73,8 @@ label10:
 	li a1, 10
 	blt a0, a1, label7
 	j label25
-label11:
 .p2align 2
+label11:
 	addiw a4, a2, 1
 	addiw a2, a2, -1
 	sh2add a5, a4, s0

@@ -20,8 +20,8 @@ main:
 label14:
 	mov r1, #0
 	mov r0, r1
-label2:
 .p2align 4
+label2:
 	add r2, r1, #4
 	cmp r4, r2
 	ble label6

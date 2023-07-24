@@ -27,7 +27,6 @@ write:
     nop
 .globl main
 main:
-.p2align 2
 	addiu $sp, $sp, -24
 	sw $ra, 16($sp)
 	li $a0, 19

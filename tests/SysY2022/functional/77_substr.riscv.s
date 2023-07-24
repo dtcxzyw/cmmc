@@ -59,8 +59,8 @@ main:
 pcrel151:
 	auipc a1, %pcrel_hi(p)
 	addi a0, a1, %pcrel_lo(pcrel151)
-label2:
 .p2align 2
+label2:
 	sh2add a1, a2, a0
 	li a3, 256
 	sw zero, 0(a1)
@@ -111,8 +111,8 @@ label73:
 	addi a5, a4, -64
 	blt a1, a2, label73
 	j label12
-label8:
 .p2align 2
+label8:
 	addiw t0, a2, -1
 	sh2add t3, a3, s1
 	sh2add t1, t0, s0
@@ -136,8 +136,8 @@ label8:
 	addi a5, a4, -64
 	blt a1, a2, label73
 	j label12
-label9:
 .p2align 2
+label9:
 	sh2add t1, t0, a5
 	lw t2, 0(t1)
 	sh2add t1, a2, a4

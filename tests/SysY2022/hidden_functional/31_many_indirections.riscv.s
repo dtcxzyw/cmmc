@@ -156,14 +156,14 @@ label8:
 	mv a0, zero
 	addi sp, sp, 8
 	ret
-label4:
 .p2align 2
+label4:
 	li a0, 400
 	mul a4, a2, a0
 	mv a0, zero
 	add a3, a1, a4
-label5:
 .p2align 2
+label5:
 	sh2add a4, a0, a3
 	addiw t0, a0, 1
 	addiw a5, a0, 2
@@ -211,7 +211,7 @@ label5:
 	li a0, 20
 	blt a2, a0, label4
 	j label8
-label52:
 .p2align 2
+label52:
 	mv a0, a4
 	j label5

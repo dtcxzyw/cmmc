@@ -10,8 +10,8 @@ main:
 	push { lr }
 	mov r0, #4
 	sub sp, sp, #4
-label2:
 .p2align 4
+label2:
 	add r0, r0, #42
 	mov r1, #168
 	cmp r0, #99

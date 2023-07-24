@@ -51,8 +51,8 @@ label5:
 	cmp r2, #0
 	bne label17
 	b label123
-label20:
 .p2align 4
+label20:
 	cmn r0, #1
 	beq label21
 	ldr r3, [r4, r0, lsl #2]
@@ -87,8 +87,8 @@ label17:
 	lsr r2, r2, #5
 	add r1, r1, r2
 	b label12
-label21:
 .p2align 4
+label21:
 	add r1, r1, #1
 	add r0, r0, #1
 	str r0, [r5, r1, lsl #2]

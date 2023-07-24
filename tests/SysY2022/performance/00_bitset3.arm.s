@@ -22,8 +22,8 @@ main:
 	cmp r4, #0
 	bgt label2
 	b label9
-label3:
 .p2align 4
+label3:
 	movw r3, #58069
 	movw r5, #48287
 	movw r6, #12185
@@ -82,8 +82,8 @@ label3:
 	cmp r1, #0
 	bgt label3
 	b label9
-label6:
 .p2align 4
+label6:
 	and r8, r7, #1
 	eor r9, r3, #1
 	and r7, r7, #-2147483647

@@ -68,8 +68,8 @@ main:
 	jal getint
 	ble a0, zero, label35
 	mv s0, a0
-label33:
 .p2align 2
+label33:
 	jal getint
 	li a3, 3
 	li a2, 2

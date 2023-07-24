@@ -815,8 +815,8 @@ main:
 	b label1104
 label1123:
 	mov r6, #0
-label1095:
 .p2align 4
+label1095:
 	str r0, [r4, r6, lsl #2]
 	bl getch
 	cmp r0, #35

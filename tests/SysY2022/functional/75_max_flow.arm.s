@@ -126,8 +126,8 @@ main:
 	movt r6, #:upper16:cap
 	movt r5, #:upper16:to
 	mov r0, r9
-label96:
 .p2align 4
+label96:
 	add r1, r0, #4
 	cmp r1, #10
 	bge label99
@@ -159,8 +159,8 @@ label99:
 	cmp r0, #10
 	blt label109
 	b label111
-label102:
 .p2align 4
+label102:
 	bl getint
 	mov r10, r0
 	bl getint
@@ -202,8 +202,8 @@ label102:
 	cmp r0, #10
 	blt label109
 	b label111
-label106:
 .p2align 4
+label106:
 	add r1, r0, #4
 	cmp r1, #10
 	blt label108
@@ -214,8 +214,8 @@ label106:
 	cmp r0, #10
 	blt label109
 	b label111
-label108:
 .p2align 4
+label108:
 	ldr r3, [sp, #48]
 	mov r6, #0
 	add r2, r3, r0, lsl #2
@@ -225,8 +225,8 @@ label108:
 	str r6, [r2, #8]
 	str r6, [r2, #12]
 	b label106
-label109:
 .p2align 4
+label109:
 	mov r1, #0
 	ldr r3, [sp, #48]
 	str r1, [r3, r0, lsl #2]

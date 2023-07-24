@@ -30,8 +30,8 @@ main:
 	mov r1, #4
 	str r1, [r4, #20]
 	add r1, r4, #24
-label2:
 .p2align 4
+label2:
 	add r2, r0, #4
 	movw r3, #4090
 	cmp r2, r3

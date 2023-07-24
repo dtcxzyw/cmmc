@@ -26,16 +26,16 @@ label3:
 label6:
 	bgt s1, zero, label9
 	j label22
-label115:
 .p2align 2
+label115:
 	mv a0, zero
 	j label19
-label63:
 .p2align 2
+label63:
 	mv a3, s2
 	mv a0, zero
-label14:
 .p2align 2
+label14:
 	sh2add a1, a0, s0
 	li a5, 1717986919
 	addiw a0, a0, 1
@@ -51,15 +51,15 @@ label14:
 	sw a5, 0(a1)
 	bgt a2, zero, label14
 	bgt a0, zero, label20
-label19:
 .p2align 2
+label19:
 	li a0, 10
 	jal putch
 	addiw s1, s1, -1
 	bgt s1, zero, label9
 	j label22
-label20:
 .p2align 2
+label20:
 	addiw s2, a0, -1
 	sh2add a1, s2, s0
 	lw a0, 0(a1)
@@ -75,22 +75,22 @@ label22:
 	ld s0, 64(sp)
 	addi sp, sp, 96
 	ret
-label9:
 .p2align 2
+label9:
 	jal getch
 	li a1, 9
 	addiw s2, a0, -48
 	bgtu s2, a1, label9
-label10:
 .p2align 2
+label10:
 	jal getch
 	li a1, 9
 	addiw a0, a0, -48
 	bleu a0, a1, label12
 	bgt s2, zero, label63
 	j label115
-label12:
 .p2align 2
+label12:
 	sh2add a1, s2, s2
 	sh1add s2, a1, a0
 	j label10

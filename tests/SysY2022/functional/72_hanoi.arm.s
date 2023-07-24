@@ -61,8 +61,8 @@ main:
 	cmp r0, #0
 	ble label28
 	mov r4, r0
-label26:
 .p2align 4
+label26:
 	bl getint
 	mov r3, #3
 	mov r2, #2

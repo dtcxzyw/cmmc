@@ -64,8 +64,8 @@ main:
 	str r4, [sp, #32]
 	str r0, [sp, #160]
 	str r4, [sp, #28]
-label2:
 .p2align 4
+label2:
 	ldr r1, [sp, #64]
 	ldr r11, [sp, #28]
 	add r3, r1, r11, lsl #2
@@ -296,8 +296,8 @@ label2:
 	mov r0, #0
 	str r0, [sp, #12]
 	b label21
-label135:
 .p2align 4
+label135:
 	str r3, [sp, #168]
 	str r2, [sp, #148]
 	str r1, [sp, #76]
@@ -325,8 +325,8 @@ label135:
 	ldr r11, [sp, #72]
 	str r11, [sp, #28]
 	b label2
-label21:
 .p2align 4
+label21:
 	ldr r1, [sp, #64]
 	ldr r0, [sp, #12]
 	add r0, r1, r0, lsl #2
@@ -524,12 +524,12 @@ label21:
 	mov r0, #0
 	str r0, [sp, #156]
 	b label23
-label222:
 .p2align 4
+label222:
 	str r0, [sp, #12]
 	b label21
-label23:
 .p2align 4
+label23:
 	ldr r1, [sp, #68]
 	ldr r0, [sp, #156]
 	add r0, r1, r0, lsl #2
@@ -615,18 +615,18 @@ label23:
 	cmp r1, r2
 	blt label29
 	b label28
-label262:
 .p2align 4
+label262:
 	str r0, [sp, #156]
 	b label23
-label25:
 .p2align 4
+label25:
 	movw r2, #10000
 	ldr r0, [sp, #124]
 	cmp r0, r2
 	bge label28
-label29:
 .p2align 4
+label29:
 	ldr r0, [sp, #124]
 	cmp r0, #10
 	blt label45
@@ -647,8 +647,8 @@ label36:
 	add r0, r0, #1
 	str r0, [sp, #124]
 	b label25
-label37:
 .p2align 4
+label37:
 	movw r0, #2233
 	cmp r3, r0
 	bgt label39
@@ -671,8 +671,8 @@ label37:
 	cmp r3, r0
 	blt label37
 	b label36
-label39:
 .p2align 4
+label39:
 	ldr r1, [sp, #68]
 	ldr r0, [sp, #124]
 	ldr r0, [r1, r0, lsl #2]
@@ -689,8 +689,8 @@ label28:
 	mov r0, r1
 	add sp, sp, #196
 	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
-label274:
 .p2align 4
+label274:
 	ldr r2, [sp, #176]
 	ldr r0, [sp, #124]
 	ldr r0, [r2, r0, lsl #2]
@@ -698,8 +698,8 @@ label274:
 	str r0, [sp, #180]
 	movw r0, #5000
 	str r0, [sp, #172]
-label41:
 .p2align 4
+label41:
 	ldr r1, [sp, #64]
 	ldr r0, [sp, #172]
 	add r0, r1, r0, lsl #2
@@ -791,8 +791,8 @@ label41:
 	bge label44
 	str r0, [sp, #172]
 	b label41
-label44:
 .p2align 4
+label44:
 	ldr r1, [sp, #64]
 	add r3, r1, r0, lsl #2
 	ldr r1, [r1, r0, lsl #2]
@@ -855,8 +855,8 @@ label32:
 	add r0, r0, #1
 	str r0, [sp, #124]
 	b label25
-label45:
 .p2align 4
+label45:
 	ldr r2, [sp, #176]
 	ldr r0, [sp, #124]
 	ldr r0, [r2, r0, lsl #2]

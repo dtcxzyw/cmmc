@@ -241,7 +241,8 @@ public:
                 if(runtime == RuntimeType::SplRuntime) {
                     out << spimRuntimeText;
                 }
-            });
+            },
+            runtime != RuntimeType::SplRuntime);
     }
     void addExternalFuncIPRAInfo(MIRRelocable* symbol, IPRAUsageCache& infoIPRA) const override {
         const auto symbolName = symbol->symbol();

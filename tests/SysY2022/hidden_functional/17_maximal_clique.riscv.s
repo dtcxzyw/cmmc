@@ -30,8 +30,8 @@ pcrel98:
 	sd ra, 0(sp)
 	lw a0, 0(a2)
 	bgt s5, a0, label18
-label5:
 .p2align 2
+label5:
 	sh2add a1, s2, s0
 	li a0, 1
 	sw s5, 0(a1)
@@ -41,8 +41,8 @@ label5:
 	lw a0, 0(s3)
 	ble s5, a0, label5
 	j label18
-label13:
 .p2align 2
+label13:
 	addiw a1, a0, 1
 	mv a2, a1
 	bgt s1, a1, label16
@@ -53,8 +53,8 @@ label13:
 	lw a0, 0(s3)
 	ble s5, a0, label5
 	j label18
-label16:
 .p2align 2
+label16:
 	sh2add a4, a0, s0
 	li a5, 120
 	lw a3, 0(a4)
@@ -75,8 +75,8 @@ label16:
 	lw a0, 0(s3)
 	ble s5, a0, label5
 	j label18
-label62:
 .p2align 2
+label62:
 	mv a0, zero
 	addiw s5, s5, 1
 	lw a0, 0(s3)
@@ -93,8 +93,8 @@ label18:
 	ld s2, 56(sp)
 	addi sp, sp, 64
 	ret
-label10:
 .p2align 2
+label10:
 	mv a0, s1
 	mv a1, s0
 	mv a2, s3
@@ -146,8 +146,8 @@ pcrel275:
 	addi s4, a0, %pcrel_lo(pcrel275)
 	ble s3, zero, label108
 	mv s5, zero
-label100:
 .p2align 2
+label100:
 	jal getint
 	sh3add s6, s5, s4
 	sw a0, 0(s6)

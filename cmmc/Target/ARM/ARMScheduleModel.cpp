@@ -271,7 +271,7 @@ static bool optimizeFusedCompareWithZero(MIRBasicBlock& block, const CodeGenCont
                             case ORN:
                             case BIC:
                             case RSB: {
-                                assert(dst == src);
+                                assert(prevInst.getOperand(0) == src);
                                 prevInst.setOpcode(prevInst.opcode() - ADD + ADDS);
                                 prevInst.setOperand<3>(cc);
                                 changed = true;
@@ -279,7 +279,7 @@ static bool optimizeFusedCompareWithZero(MIRBasicBlock& block, const CodeGenCont
                             }
                             case MOV:
                             case MVN: {
-                                assert(dst == src);
+                                assert(prevInst.getOperand(0) == src);
                                 prevInst.setOpcode(prevInst.opcode() - MOV + MOVS);
                                 prevInst.setOperand<2>(cc);
                                 changed = true;

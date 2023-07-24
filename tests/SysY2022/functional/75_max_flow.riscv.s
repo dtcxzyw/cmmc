@@ -149,8 +149,8 @@ pcrel264:
 	auipc a0, %pcrel_hi(rev)
 	addi s5, a0, %pcrel_lo(pcrel264)
 	mv a0, zero
-label104:
 .p2align 2
+label104:
 	addiw a1, a0, 4
 	li a2, 10
 	bge a1, a2, label107
@@ -179,8 +179,8 @@ label107:
 	li a0, 10
 	blt a1, a0, label117
 	j label119
-label110:
 .p2align 2
+label110:
 	jal getint
 	sh2add s7, a0, s0
 	mv s8, a0
@@ -230,8 +230,8 @@ label110:
 	li a0, 10
 	blt a1, a0, label117
 	j label119
-label114:
 .p2align 2
+label114:
 	addiw a0, a1, 4
 	li a2, 10
 	blt a0, a2, label116
@@ -241,8 +241,8 @@ label114:
 	li a0, 10
 	blt a1, a0, label117
 	j label119
-label116:
 .p2align 2
+label116:
 	sh2add a1, a1, s1
 	sw zero, 0(a1)
 	sw zero, 4(a1)
@@ -250,8 +250,8 @@ label116:
 	sw zero, 12(a1)
 	mv a1, a0
 	j label114
-label117:
 .p2align 2
+label117:
 	sh2add a0, a1, s1
 	addiw a1, a1, 1
 	sw zero, 0(a0)

@@ -34,11 +34,11 @@ main:
 	li a2, 9
 	addi a1, a3, -1
 	blt zero, a2, label27
+.p2align 2
 label26:
-.p2align 2
 	mv s1, zero
-label9:
 .p2align 2
+label9:
 	sh2add a1, s1, s0
 	lw a0, 0(a1)
 	jal putint
@@ -53,8 +53,8 @@ label9:
 	ld s0, 56(sp)
 	addi sp, sp, 64
 	ret
-label27:
 .p2align 2
+label27:
 	mv a2, zero
 	bgt a1, zero, label6
 	addiw a0, a0, 1
@@ -64,8 +64,8 @@ label27:
 	addi a1, a3, -1
 	blt a0, a2, label27
 	j label26
-label6:
 .p2align 2
+label6:
 	sh2add a5, a2, s0
 	lw a3, 0(a5)
 	lw a4, 4(a5)
@@ -80,8 +80,8 @@ label6:
 	addi a1, a3, -1
 	blt a0, a2, label27
 	j label26
-label7:
 .p2align 2
+label7:
 	sh2add a2, a2, s0
 	sw a3, 4(a2)
 	sw a4, 0(a2)

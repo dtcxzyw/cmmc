@@ -11,8 +11,8 @@ main:
 	mov r0, #5
 	cmp r0, #100
 	bge label16
-label5:
 .p2align 4
+label5:
 	add r0, r0, #30
 	cmp r1, #100
 	blt label6
@@ -20,8 +20,8 @@ label5:
 	cmp r0, #100
 	blt label5
 	b label16
-label6:
 .p2align 4
+label6:
 	add r2, r1, #384
 	cmp r2, #100
 	blt label29
@@ -38,12 +38,12 @@ label6:
 	cmp r0, #100
 	blt label5
 	b label16
-label29:
 .p2align 4
+label29:
 	mov r1, r2
 	b label6
-label8:
 .p2align 4
+label8:
 	add r2, r1, #96
 	cmp r2, #100
 	blt label34
@@ -57,12 +57,12 @@ label8:
 	cmp r0, #100
 	blt label5
 	b label16
-label34:
 .p2align 4
+label34:
 	mov r1, r2
 	b label8
-label10:
 .p2align 4
+label10:
 	add r2, r1, #24
 	cmp r2, #100
 	blt label39
@@ -73,12 +73,12 @@ label10:
 	cmp r0, #100
 	blt label5
 	b label16
-label39:
 .p2align 4
+label39:
 	mov r1, r2
 	b label10
-label12:
 .p2align 4
+label12:
 	add r1, r1, #6
 	cmp r1, #100
 	blt label12

@@ -22,7 +22,6 @@ write:
     mv a0, x0
     ret
 merge:
-.p2align 2
 	addi sp, sp, -48
 	sd s0, 40(sp)
 	mv s0, a0
@@ -38,7 +37,6 @@ merge:
 	bgt a3, a0, label2
 	j label15
 label7:
-.p2align 2
 	xor a4, s4, a1
 	xor a5, s1, a2
 	sltu a3, zero, a4
@@ -64,10 +62,8 @@ label15:
 	addi sp, sp, 48
 	ret
 label12:
-.p2align 2
 	beq s1, s3, label15
 label14:
-.p2align 2
 	sh2add a1, s3, s2
 	sh2add a2, s3, s0
 	lw a0, 0(a1)
@@ -75,7 +71,6 @@ label14:
 	sw a0, 0(a2)
 	j label12
 label9:
-.p2align 2
 	sh2add a4, a1, s0
 	sh2add a5, a0, s2
 	addiw a1, a1, 1
@@ -86,7 +81,6 @@ label9:
 	bne s1, s3, label14
 	j label15
 label8:
-.p2align 2
 	sh2add a4, a1, s0
 	sh2add a5, a2, s0
 	lw a3, 0(a4)
@@ -123,7 +117,6 @@ label2:
 	j label15
 .globl main
 main:
-.p2align 2
 	addi sp, sp, -808
 	addi t1, sp, 400
 	addi a1, sp, 0
@@ -133,7 +126,6 @@ main:
 	ble a0, zero, label104
 	mv a2, zero
 label102:
-.p2align 2
 	jal read
 	sh2add a3, a2, t1
 	addiw a2, a2, 1
@@ -147,7 +139,6 @@ label104:
 	ble t0, zero, label107
 	mv a1, zero
 label105:
-.p2align 2
 	sh2add a2, a1, t1
 	lw a0, 0(a2)
 	jal write

@@ -108,8 +108,8 @@ label50:
 	add sp, sp, #4
 	vpop { s16 }
 	pop { r4, r5, r6, pc }
-label51:
 .p2align 4
+label51:
 	vmov s0, r5
 	movw r0, #0
 	mov r1, #0
@@ -118,8 +118,8 @@ label51:
 	vmov s1, r0
 	vcvt.f32.s32 s0, s0
 	vdiv.f32 s3, s0, s1
-label54:
 .p2align 4
+label54:
 	movw r0, #23333
 	movw r2, #57186
 	movw r3, #36553
@@ -170,8 +170,8 @@ label54:
 	orrs r0, r0, r2
 	bne label114
 	b label58
-label135:
 .p2align 4
+label135:
 	movw r0, #4059
 	movt r0, #16585
 	vmov s0, r0
@@ -180,8 +180,8 @@ label135:
 	vcvt.f32.s32 s1, s1
 	vmul.f32 s0, s1, s0
 	vsub.f32 s6, s6, s0
-label60:
 .p2align 4
+label60:
 	movw r0, #4059
 	vmov.f32 s1, s6
 	movt r0, #16457
@@ -204,8 +204,8 @@ label60:
 	bl my_sin_impl
 	mov r0, #0
 	vmov s1, r0
-label62:
 .p2align 4
+label62:
 	cmp r0, #10
 	mov r2, #0
 	mov r3, #1073741824
@@ -224,8 +224,8 @@ label62:
 	cmp r1, #24
 	blt label54
 	b label69
-label65:
 .p2align 4
+label65:
 	vmul.f32 s2, s5, s1
 	movw r2, #52429
 	movt r2, #16076
@@ -351,14 +351,14 @@ label65:
 	vadd.f32 s1, s1, s2
 	add r0, r0, #1
 	b label62
-label67:
 .p2align 4
+label67:
 	vadd.f32 s4, s4, s7
 	add r1, r1, #1
 	cmp r1, #24
 	blt label54
-label69:
 .p2align 4
+label69:
 	movw r0, #0
 	movt r0, #16832
 	vmov s0, r0
@@ -389,8 +389,8 @@ label69:
 	vdiv.f32 s16, s0, s1
 	blt label79
 	b label50
-label114:
 .p2align 4
+label114:
 	movw r0, #4059
 	movt r0, #16585
 	vmov s1, r0
@@ -399,8 +399,8 @@ label114:
 	vcvt.f32.s32 s2, s2
 	vmul.f32 s1, s2, s1
 	vsub.f32 s0, s0, s1
-label58:
 .p2align 4
+label58:
 	movw r0, #4059
 	movt r0, #16457
 	vmov s1, r0

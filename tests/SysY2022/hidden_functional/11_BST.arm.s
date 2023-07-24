@@ -258,8 +258,8 @@ label269:
 label303:
 	mov r5, #0
 	mov r6, r5
-label270:
 .p2align 4
+label270:
 	bl getint
 	mov r1, r0
 	mov r0, r6
@@ -274,8 +274,8 @@ label273:
 	mov r0, #10
 	bl putch
 	b label265
-label267:
 .p2align 4
+label267:
 	bl getint
 	mov r2, r4
 	mov r1, r0

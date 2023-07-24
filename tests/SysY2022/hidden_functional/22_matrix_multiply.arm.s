@@ -37,8 +37,8 @@ main:
 	ldr r0, [sp, #0]
 	cmp r0, r4
 	ble label8
-label4:
 .p2align 4
+label4:
 	mov r0, #400
 	ldr r1, [sp, #12]
 	ldr r6, [sp, #8]
@@ -50,11 +50,11 @@ label4:
 	cmp r0, r4
 	bgt label4
 	b label8
+.p2align 4
 label54:
-.p2align 4
 	mov r6, #0
-label5:
 .p2align 4
+label5:
 	bl getint
 	str r0, [r5, r6, lsl #2]
 	add r0, r6, #1
@@ -66,8 +66,8 @@ label5:
 	cmp r0, r4
 	bgt label4
 	b label8
-label62:
 .p2align 4
+label62:
 	mov r6, r0
 	b label5
 label8:
@@ -92,8 +92,8 @@ label8:
 	cmp r0, r4
 	bgt label34
 	b label33
-label92:
 .p2align 4
+label92:
 	mov r0, #0
 	ldr r7, [sp, #20]
 	cmp r7, r0
@@ -111,8 +111,8 @@ label92:
 	cmp r0, r4
 	bgt label34
 	b label33
-label19:
 .p2align 4
+label19:
 	ldr r6, [sp, #8]
 	cmp r6, #0
 	bgt label21
@@ -133,12 +133,12 @@ label19:
 	cmp r0, r4
 	bgt label34
 	b label33
-label21:
 .p2align 4
+label21:
 	ldr r5, [r3, r0, lsl #2]
 	mov r8, #0
-label22:
 .p2align 4
+label22:
 	add r4, r8, #4
 	ldr r6, [sp, #8]
 	cmp r6, r4
@@ -171,8 +171,8 @@ label22:
 	cmp r0, r4
 	bgt label34
 	b label33
-label25:
 .p2align 4
+label25:
 	mov r6, #400
 	ldr r7, [sp, #16]
 	mla r6, r8, r6, r7
@@ -194,8 +194,8 @@ label25:
 	mov r8, r4
 	mla r5, r7, r6, r5
 	b label22
-label26:
 .p2align 4
+label26:
 	mov r4, #400
 	ldr r7, [sp, #16]
 	mla r6, r8, r4, r7
@@ -224,8 +224,8 @@ label26:
 	cmp r0, r4
 	bgt label34
 	b label33
-label11:
 .p2align 4
+label11:
 	mov r0, #400
 	ldr r7, [sp, #16]
 	mla r6, r5, r0, r7
@@ -247,11 +247,11 @@ label11:
 	cmp r0, r4
 	bgt label34
 	b label33
+.p2align 4
 label75:
-.p2align 4
 	mov r7, #0
-label12:
 .p2align 4
+label12:
 	bl getint
 	str r0, [r6, r7, lsl #2]
 	add r0, r7, #1
@@ -274,12 +274,12 @@ label12:
 	cmp r0, r4
 	bgt label34
 	b label33
-label83:
 .p2align 4
+label83:
 	mov r7, r0
 	b label12
-label34:
 .p2align 4
+label34:
 	mov r0, #400
 	ldr r1, [sp, #4]
 	ldr r7, [sp, #20]
@@ -287,8 +287,8 @@ label34:
 	cmp r7, #0
 	ble label37
 	mov r6, #0
-label35:
 .p2align 4
+label35:
 	ldr r0, [r5, r6, lsl #2]
 	bl putint
 	mov r0, #32
@@ -297,8 +297,8 @@ label35:
 	add r6, r6, #1
 	cmp r7, r6
 	bgt label35
-label37:
 .p2align 4
+label37:
 	mov r0, #10
 	bl putch
 	add r4, r4, #1

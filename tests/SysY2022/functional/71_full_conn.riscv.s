@@ -24,15 +24,15 @@ label17:
 	mv s0, zero
 	li a0, 5
 	bge zero, a0, label10
-label6:
 .p2align 2
+label6:
 	li a2, 20
 	mv s2, zero
 	ld a1, 392(sp)
 	mul a0, s0, a2
 	add s1, a1, a0
-label7:
 .p2align 2
+label7:
 	jal getint
 	sh2add a1, s2, s1
 	addiw s2, s2, 1
@@ -41,8 +41,8 @@ label7:
 	blt s2, a0, label7
 	addiw s0, s0, 1
 	blt s0, a0, label6
-label10:
 .p2align 2
+label10:
 	lw s3, 272(sp)
 	li s5, -106
 	sh2add a1, s3, s3
@@ -1341,14 +1341,14 @@ label10:
 	li a0, 97
 	bne s0, zero, label1451
 	li a0, 111
-label1451:
 .p2align 2
+label1451:
 	jal putch
 	li a0, 116
 	bne s0, zero, label1453
 	li a0, 103
-label1453:
 .p2align 2
+label1453:
 	jal putch
 	li a0, 10
 	jal putch

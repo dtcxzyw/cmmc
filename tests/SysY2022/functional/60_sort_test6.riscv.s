@@ -36,8 +36,8 @@ main:
 	sd zero, 16(sp)
 	sd zero, 24(sp)
 	sd zero, 32(sp)
-label2:
 .p2align 2
+label2:
 	addiw a2, a3, 4
 	li a4, 10
 	blt a2, a4, label15
@@ -105,8 +105,8 @@ label15:
 	sw a5, 0(a3)
 	mv a3, a2
 	j label2
-label7:
 .p2align 2
+label7:
 	addiw a2, a4, -4
 	bgt a2, zero, label14
 label9:
@@ -156,8 +156,8 @@ label14:
 	j label7
 label101:
 	mv s1, zero
-label11:
 .p2align 2
+label11:
 	sh2add a1, s1, s0
 	lw a0, 0(a1)
 	jal putint

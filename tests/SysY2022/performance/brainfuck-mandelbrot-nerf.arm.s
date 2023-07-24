@@ -25,8 +25,8 @@ main:
 .p2align 4
 	push { r4, r5, r6, r7, r8, r9, r10, lr }
 	sub sp, sp, #16
-label2:
 .p2align 4
+label2:
 	bl getch
 	subs r2, r0, #35
 	mov r1, #1
@@ -60,8 +60,8 @@ label2:
 	mov r4, #0
 	ldr r8, [sp, #0]
 	str r0, [r8, r4, lsl #2]
-label58:
 .p2align 4
+label58:
 	bl getch
 	subs r2, r0, #35
 	mov r1, #1
@@ -102,8 +102,8 @@ label6:
 	mov r3, #0
 	movw r0, #:lower16:return_a
 	movt r0, #:upper16:return_a
-label8:
 .p2align 4
+label8:
 	add r1, r0, r3, lsl #2
 	mov r2, #0
 	str r2, [r0, r3, lsl #2]
@@ -144,8 +144,8 @@ label52:
 	ble label6
 	mov r5, #0
 	b label53
-label331:
 .p2align 4
+label331:
 	str r8, [sp, #8]
 	b label4
 label17:
@@ -156,8 +156,8 @@ label17:
 	movt r4, #:upper16:output
 	ble label20
 	mov r6, #0
-label18:
 .p2align 4
+label18:
 	ldr r0, [r4, r6, lsl #2]
 	bl putch
 	add r6, r6, #1
@@ -167,13 +167,13 @@ label20:
 	mov r0, #0
 	add sp, sp, #16
 	pop { r4, r5, r6, r7, r8, r9, r10, pc }
-label11:
 .p2align 4
+label11:
 	ldr r8, [sp, #8]
 	cmp r8, r7
 	ble label17
-label21:
 .p2align 4
+label21:
 	ldr r8, [sp, #0]
 	ldr r8, [r8, r7, lsl #2]
 	cmp r8, #62
@@ -214,19 +214,19 @@ label34:
 	add r5, r5, #1
 	add r7, r7, #1
 	b label11
-label44:
 .p2align 4
+label44:
 	sub r6, r6, #1
 	add r7, r7, #1
 	ldr r8, [sp, #8]
 	cmp r8, r7
 	bgt label21
 	b label17
+.p2align 4
 label45:
-.p2align 4
 	add r6, r6, #1
-label46:
 .p2align 4
+label46:
 	add r7, r7, #1
 	ldr r8, [sp, #8]
 	cmp r8, r7
@@ -240,8 +240,8 @@ label31:
 	add r2, r2, #1
 	str r8, [r1, r6, lsl #2]
 	b label46
-label327:
 .p2align 4
+label327:
 	mov r8, #0
 	str r8, [sp, #8]
 	b label4
@@ -250,8 +250,8 @@ label38:
 	cmp r8, #0
 	bne label39
 	mov r9, #1
-label40:
 .p2align 4
+label40:
 	cmp r9, #0
 	bgt label43
 	add r7, r7, #1
@@ -259,8 +259,8 @@ label40:
 	cmp r8, r7
 	bgt label21
 	b label17
-label43:
 .p2align 4
+label43:
 	add r7, r7, #1
 	ldr r8, [sp, #0]
 	ldr r8, [r8, r7, lsl #2]
@@ -278,8 +278,8 @@ label39:
 	add r3, r3, #1
 	add r7, r7, #1
 	b label11
-label53:
 .p2align 4
+label53:
 	bl getch
 	ldr r8, [sp, #4]
 	str r0, [r8, r5, lsl #2]

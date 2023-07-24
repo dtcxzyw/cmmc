@@ -22,7 +22,6 @@ write:
     mv a0, x0
     ret
 hanoi:
-.p2align 2
 	addi sp, sp, -40
 	sd s2, 32(sp)
 	mv s2, a3
@@ -69,7 +68,6 @@ label2:
 	ret
 .globl main
 main:
-.p2align 2
 	addi sp, sp, -8
 	li a0, 3
 	li a1, 1

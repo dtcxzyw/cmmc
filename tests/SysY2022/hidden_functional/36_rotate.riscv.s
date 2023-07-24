@@ -140,8 +140,8 @@ label63:
 	fmul.s f20, f10, f18
 	ble s0, zero, label70
 	mv s6, zero
-label64:
 .p2align 2
+label64:
 	subw a0, s6, s3
 	fcvt.s.w f10, a0
 	fmul.s f12, f10, f18
@@ -165,11 +165,11 @@ label64:
 	sh2add a1, a2, s1
 	lw a0, 0(a1)
 	j label68
+.p2align 2
 label189:
-.p2align 2
 	mv a0, zero
-label68:
 .p2align 2
+label68:
 	jal putint
 	li a0, 32
 	jal putch
@@ -286,8 +286,8 @@ label206:
 label71:
 	bgt s0, zero, label207
 	j label206
-label74:
 .p2align 2
+label74:
 	jal getint
 	addw a2, s6, s7
 	addiw s7, s7, 1

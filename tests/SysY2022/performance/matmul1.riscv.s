@@ -64,8 +64,8 @@ label9:
 	mul a3, a0, a2
 	mv a2, zero
 	add a1, s1, a3
-label10:
 .p2align 2
+label10:
 	li a5, 4000
 	mul a4, a2, a5
 	add a3, s2, a4
@@ -236,8 +236,8 @@ label261:
 label212:
 	mv a4, zero
 	mv a5, zero
-label17:
 .p2align 2
+label17:
 	li t2, 4000
 	mul t0, a4, t2
 	add t1, s1, t0
@@ -299,8 +299,8 @@ label26:
 	mul a3, a0, a2
 	mv a2, zero
 	add a1, s0, a3
-label27:
 .p2align 2
+label27:
 	li a5, 4000
 	mul t0, a2, a5
 	add a3, s0, t0
@@ -466,13 +466,13 @@ label22:
 	li a1, 1000
 	blt zero, a1, label26
 	j label634
-label39:
 .p2align 2
+label39:
 	li a5, 1000
 	blt a3, a5, label45
 	mv a4, zero
-label42:
 .p2align 2
+label42:
 	sh2add a3, a4, a2
 	sw a0, 0(a3)
 	addiw a4, a4, 16
@@ -504,8 +504,8 @@ label42:
 	sw a0, 24(a2)
 	sw a0, 28(a2)
 	j label22
-label45:
 .p2align 2
+label45:
 	sh2add a5, a3, a2
 	addiw a3, a3, 1
 	lw a4, 0(a5)
@@ -527,8 +527,8 @@ label33:
 	jal putint
 	mv a0, zero
 	j label46
-label35:
 .p2align 2
+label35:
 	sh2add a2, a3, a1
 	lw a5, 0(a2)
 	addiw a3, a3, 16

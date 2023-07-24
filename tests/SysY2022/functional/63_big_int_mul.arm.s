@@ -145,8 +145,8 @@ label2:
 label294:
 	mov r4, #1
 	b label18
-label8:
 .p2align 4
+label8:
 	ldr r3, [r1, r2, lsl #2]
 	mov r4, #19
 	cmn r4, #1
@@ -159,8 +159,8 @@ label8:
 	cmp r0, #0
 	bne label17
 	b label294
-label12:
 .p2align 4
+label12:
 	ldr r7, [sp, #360]
 	ldr r6, [r7, r5, lsl #2]
 	ldr r7, [r0, r4, lsl #2]
@@ -181,8 +181,8 @@ label12:
 	cmp r0, #0
 	bne label17
 	b label294
-label13:
 .p2align 4
+label13:
 	sub r8, r5, #1
 	ldr r7, [sp, #360]
 	movw r9, #26215
@@ -208,8 +208,8 @@ label13:
 label17:
 	bl putint
 	mov r4, #1
-label18:
 .p2align 4
+label18:
 	ldr r7, [sp, #360]
 	ldr r0, [r7, r4, lsl #2]
 	bl putint

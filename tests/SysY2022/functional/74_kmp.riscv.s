@@ -62,8 +62,8 @@ label45:
 label126:
 	li a0, -1
 	j label15
-label20:
 .p2align 2
+label20:
 	li a3, -1
 	beq a0, a3, label21
 	sh2add a4, a0, s0
@@ -98,8 +98,8 @@ label17:
 label120:
 	addw a1, a1, a3
 	j label12
-label21:
 .p2align 2
+label21:
 	addiw a1, a1, 1
 	addiw a0, a0, 1
 	sh2add a2, a1, s1

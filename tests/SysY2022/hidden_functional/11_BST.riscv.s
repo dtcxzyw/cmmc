@@ -327,8 +327,8 @@ label334:
 label368:
 	mv s0, zero
 	mv s2, zero
-label335:
 .p2align 2
+label335:
 	jal getint
 	mv a1, a0
 	mv a0, s2
@@ -342,8 +342,8 @@ label338:
 	li a0, 10
 	jal putch
 	j label330
-label332:
 .p2align 2
+label332:
 	jal getint
 	mv a2, s0
 	mv a1, a0

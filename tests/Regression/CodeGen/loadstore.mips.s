@@ -134,8 +134,8 @@ global_addressing_array:
 memset_impl:
 .p2align 2
 	move $t0, $zero
-label98:
 .p2align 2
+label98:
 	sll $t1, $t0, 2
 	addu $t1, $a0, $t1
 	sw $zero, 0($t1)

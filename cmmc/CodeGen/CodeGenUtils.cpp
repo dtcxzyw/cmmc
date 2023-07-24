@@ -70,9 +70,7 @@ void forEachUseOperands(MIRBasicBlock& block, const CodeGenContext& ctx,
 }
 
 void dumpAssembly(std::ostream& out, const CodeGenContext& ctx, const MIRModule& module, const std::function<void()>& emitData,
-                  const std::function<void()>& emitText) {
-    //  TODO: rodata/bss
-
+                  const std::function<void()>& emitText, bool emitAlignment) {
     out << ".data\n"sv;
     emitData();
     const auto dumpSymbol = [&](const MIRGlobal& global) {
@@ -122,12 +120,12 @@ void dumpAssembly(std::ostream& out, const CodeGenContext& ctx, const MIRModule&
                 continue;
             dumpSymbol(*global);
             for(auto& block : func.blocks()) {
+                if(emitAlignment && (&block == &func.blocks().front() || block->getTripCount() >= primaryPathThreshold)) {
+                    out << ".p2align " << p2Align << '\n';
+                }
                 if(&block != &func.blocks().front()) {
                     block->dumpAsTarget(out);
                     out << ":\n";
-                }
-                if(&block == &func.blocks().front() || block->getTripCount() >= primaryPathThreshold) {
-                    out << ".p2align " << p2Align << '\n';
                 }
                 for(auto& inst : block->instructions()) {
                     out << '\t';

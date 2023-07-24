@@ -775,8 +775,8 @@ pcrel1207:
 	j label1114
 label1131:
 	mv s2, zero
-label1103:
 .p2align 2
+label1103:
 	sh2add a1, s2, s0
 	sw a0, 0(a1)
 	jal getch

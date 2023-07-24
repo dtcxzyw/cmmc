@@ -28,8 +28,8 @@ label10:
 	movne r0, r6
 	mov r6, r0
 	b label2
-label22:
 .p2align 4
+label22:
 	ldr r9, [r4, r3, lsl #2]
 	str r9, [r4, r8, lsl #2]
 	add r8, r8, #1
@@ -42,24 +42,24 @@ label23:
 	add sp, sp, #4
 	movne r0, r6
 	pop { r4, r5, r6, r7, r8, r9, pc }
-label21:
 .p2align 4
+label21:
 	ldr r9, [r4, r8, lsl #2]
 	str r9, [r4, r3, lsl #2]
 	sub r3, r3, #1
 	cmp r3, r8
 	bgt label11
 	b label10
-label18:
 .p2align 4
+label18:
 	ldr r9, [r4, r8, lsl #2]
 	cmp r0, r9
 	bgt label19
 	cmp r3, r8
 	bgt label21
 	b label10
-label19:
 .p2align 4
+label19:
 	add r8, r8, #1
 	cmp r3, r8
 	bgt label18
@@ -71,15 +71,15 @@ label6:
 	sub r2, r0, #1
 	cmp r5, r1
 	ble label10
-label11:
 .p2align 4
+label11:
 	cmp r8, r3
 	blt label13
 	cmp r3, r8
 	bgt label18
 	b label10
-label13:
 .p2align 4
+label13:
 	ldr r9, [r4, r3, lsl #2]
 	cmp r2, r9
 	blt label14
@@ -88,8 +88,8 @@ label13:
 	cmp r3, r8
 	bgt label18
 	b label10
-label14:
 .p2align 4
+label14:
 	sub r3, r3, #1
 	cmp r8, r3
 	blt label13
@@ -127,8 +127,8 @@ main:
 	cmp r0, #10
 	bge label119
 	mov r5, r0
-label117:
 .p2align 4
+label117:
 	ldr r0, [r4, r5, lsl #2]
 	bl putint
 	mov r0, #10

@@ -38,8 +38,8 @@ label2:
 	mv a3, s1
 	addi a0, a1, %pcrel_lo(label2)
 	mv a1, s0
-label3:
 .p2align 2
+label3:
 	li a2, 19971231
 	li a5, 19981013
 	li t0, 1152921497
@@ -56,8 +56,8 @@ label3:
 	mv a4, t2
 	blt t1, zero, label128
 	mv a4, t1
-label128:
 .p2align 2
+label128:
 	mulw t1, a4, a2
 	addw a2, t1, a5
 	mul a5, a2, t0
@@ -70,8 +70,8 @@ label128:
 	mv a2, a3
 	blt a5, zero, label130
 	mv a2, a5
-label130:
 .p2align 2
+label130:
 	andi a3, a2, 1
 	li t1, 1876499845
 	li t2, 300000
@@ -111,8 +111,8 @@ label130:
 	sw a5, 0(a3)
 	bgt a1, zero, label62
 	j label9
-label6:
 .p2align 2
+label6:
 	andi t2, t1, 1
 	xori t3, a3, 1
 	or t4, t2, t3
@@ -127,8 +127,8 @@ label6:
 	mv a3, t0
 	beq t1, zero, label132
 	mv a3, t2
-label132:
 .p2align 2
+label132:
 	addw a5, a5, a3
 	sh2add a3, a4, a0
 	sw a5, 0(a3)

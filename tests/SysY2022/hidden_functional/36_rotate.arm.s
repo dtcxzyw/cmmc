@@ -131,8 +131,8 @@ label68:
 	add sp, sp, #4
 	vpop { s16, s17, s18, s19, s20, s21 }
 	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
-label56:
 .p2align 4
+label56:
 	sub r0, r10, r7
 	mov r1, #0
 	mov r3, #0
@@ -161,11 +161,11 @@ label56:
 	mla r0, r4, r2, r0
 	ldr r0, [r5, r0, lsl #2]
 	b label60
+.p2align 4
 label176:
-.p2align 4
 	mov r0, #0
-label60:
 .p2align 4
+label60:
 	bl putint
 	mov r0, #32
 	bl putch
@@ -273,8 +273,8 @@ label63:
 	cmp r4, #0
 	bgt label194
 	b label193
-label66:
 .p2align 4
+label66:
 	bl getint
 	add r1, r10, r11
 	add r11, r11, #1

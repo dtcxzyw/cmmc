@@ -50,16 +50,16 @@ label7:
 	cmp r0, #1000
 	blt label479
 	b label44
-label14:
 .p2align 4
+label14:
 	add r2, r5, r1, lsl #2
 	mov r3, #0
 	vmov s2, r3
 	vldr s1, [r2, #0]
 	mov r2, #4000
 	mla r2, r1, r2, r4
-label15:
 .p2align 4
+label15:
 	add r7, r2, r3, lsl #2
 	add r3, r3, #16
 	vldr s3, [r7, #0]
@@ -201,8 +201,8 @@ label15:
 	cmp r0, #1000
 	blt label479
 	b label44
-label23:
 .p2align 4
+label23:
 	vcmp.f32 s5, s2
 	vmrs APSR_nzcv, FPSCR
 	bgt label24
@@ -238,8 +238,8 @@ label23:
 	cmp r0, #1000
 	blt label479
 	b label44
-label24:
 .p2align 4
+label24:
 	vadd.f32 s4, s1, s3
 	mov r2, #1056964608
 	vmov s5, r2
@@ -293,15 +293,15 @@ label66:
 	cmp r0, #1000
 	blt label479
 	b label44
-label70:
 .p2align 4
+label70:
 	mov r2, #4000
 	mov r7, #0
 	mla r2, r1, r2, r4
 	vmov s1, r7
 	b label37
-label32:
 .p2align 4
+label32:
 	add r1, r3, r7, lsl #2
 	add r7, r7, #16
 	vldr s3, [r1, #0]
@@ -439,8 +439,8 @@ label32:
 	cmp r0, #1000
 	blt label479
 	b label44
-label37:
 .p2align 4
+label37:
 	add r3, r2, r7, lsl #2
 	add r7, r7, #16
 	vldr s2, [r3, #0]
@@ -522,8 +522,8 @@ label41:
 	cmp r0, #1000
 	blt label479
 	b label44
-label46:
 .p2align 4
+label46:
 	add r2, r1, r3, lsl #2
 	add r3, r3, #16
 	vldr s1, [r2, #0]

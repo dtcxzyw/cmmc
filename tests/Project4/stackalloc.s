@@ -27,7 +27,6 @@ write:
     nop
 .globl main
 main:
-.p2align 2
 	addiu $sp, $sp, -424
 	sw $ra, 416($sp)
 	addiu $t1, $sp, 16
@@ -45,10 +44,8 @@ main:
 	b label15
 	nop
 label22:
-.p2align 2
 	move $t2, $zero
 label2:
-.p2align 2
 	jal read
 	nop
 	sll $t3, $t2, 2
@@ -67,7 +64,6 @@ label2:
 label61:
 	move $t2, $zero
 label13:
-.p2align 2
 	sll $t3, $t2, 2
 	addu $t3, $t1, $t3
 	lw $a0, 0($t3)
@@ -84,7 +80,6 @@ label15:
 	jr $ra
 	nop
 label6:
-.p2align 2
 	sll $t3, $t2, 2
 	addu $t3, $t1, $t3
 	lw $t3, 0($t3)
@@ -105,7 +100,6 @@ label6:
 	b label15
 	nop
 label9:
-.p2align 2
 	sll $t5, $t4, 2
 	addu $t5, $t1, $t5
 	lw $t5, 0($t5)
@@ -125,7 +119,6 @@ label9:
 	b label15
 	nop
 label10:
-.p2align 2
 	addiu $t6, $t4, 1
 	sll $t6, $t6, 2
 	addu $t6, $t1, $t6

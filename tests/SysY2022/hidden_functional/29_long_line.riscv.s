@@ -777,8 +777,8 @@ main:
 	li s0, 1
 	sd s1, 8(sp)
 	sd ra, 0(sp)
-label805:
 .p2align 2
+label805:
 	li a0, 102
 	jal putch
 	li a0, 105

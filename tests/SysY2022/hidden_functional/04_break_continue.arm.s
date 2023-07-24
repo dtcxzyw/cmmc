@@ -20,8 +20,8 @@ label25:
 	cmp r0, #20
 	blt label25
 	b label22
-label19:
 .p2align 4
+label19:
 	add r2, r2, #1
 	cmp r2, #5
 	blt label33
@@ -32,8 +32,8 @@ label19:
 	cmp r0, #20
 	blt label25
 	b label22
-label29:
 .p2align 4
+label29:
 	mov r2, #0
 	cmp r2, #5
 	blt label33
@@ -44,8 +44,8 @@ label29:
 	cmp r0, #20
 	blt label25
 	b label22
-label33:
 .p2align 4
+label33:
 	mov r5, #0
 	cmp r5, #3
 	blt label14
@@ -59,8 +59,8 @@ label33:
 	cmp r0, #20
 	blt label25
 	b label22
-label14:
 .p2align 4
+label14:
 	add r4, r5, #1
 	cmp r4, #2
 	bgt label18
@@ -82,8 +82,8 @@ label14:
 	cmp r0, #20
 	blt label25
 	b label22
-label15:
 .p2align 4
+label15:
 	add r5, r5, #1
 	cmp r5, #2
 	blt label15
@@ -101,8 +101,8 @@ label15:
 	cmp r0, #20
 	blt label25
 	b label22
-label18:
 .p2align 4
+label18:
 	cmp r5, #0
 	bne label19
 	mov r5, #0

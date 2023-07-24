@@ -92,8 +92,8 @@ label16:
 	remw t4, t1, s0
 	sh2add t3, t4, a3
 	lw t2, 0(t3)
-label19:
 .p2align 2
+label19:
 	bne t2, zero, label21
 	mv t1, zero
 	addiw t2, t0, 1
@@ -101,8 +101,8 @@ label19:
 	sw zero, 0(t0)
 	bgt s1, t2, label160
 	j label15
-label23:
 .p2align 2
+label23:
 	sh2add t4, t2, a0
 	lw t3, 0(t4)
 	sh2add t4, t2, a1
@@ -139,8 +139,8 @@ pcrel206:
 	ld s0, 48(sp)
 	addi sp, sp, 56
 	ret
-label21:
 .p2align 2
+label21:
 	sh2add t3, t2, a2
 	lw t4, 0(t3)
 	beq t1, t4, label139
@@ -153,8 +153,8 @@ label21:
 	sw zero, 0(t0)
 	bgt s1, t2, label160
 	j label15
-label139:
 .p2align 2
+label139:
 	mv t1, zero
 	sh2add t4, t2, a0
 	lw t3, 0(t4)
@@ -167,8 +167,8 @@ label139:
 	sw t3, 0(t0)
 	bgt s1, t2, label160
 	j label15
-label2:
 .p2align 2
+label2:
 	sh2add t1, a5, s3
 	sh2add t5, a5, s5
 	lw t2, 0(t1)
@@ -180,8 +180,8 @@ label2:
 	mv t5, t4
 	bne t4, zero, label11
 	j label10
-label5:
 .p2align 2
+label5:
 	addiw t0, t0, 1
 	sh2add t3, t3, a3
 	sh2add t4, t0, a2
@@ -193,8 +193,8 @@ label5:
 	sh2add t1, t0, a1
 	sw zero, 0(t2)
 	sw zero, 0(t1)
-label6:
 .p2align 2
+label6:
 	addiw a5, a5, 1
 	bgt s4, a5, label2
 	bgt s1, zero, label16
@@ -212,8 +212,8 @@ label10:
 	sh2add t1, t0, a1
 	sw zero, 0(t1)
 	j label6
-label11:
 .p2align 2
+label11:
 	sh2add a6, t5, a2
 	lw t6, 0(a6)
 	beq t2, t6, label12
@@ -221,8 +221,8 @@ label11:
 	lw t5, 0(t6)
 	bne t5, zero, label11
 	j label10
-label12:
 .p2align 2
+label12:
 	addiw t0, t0, 1
 	sh2add t2, t5, a1
 	sh2add t3, t0, a1

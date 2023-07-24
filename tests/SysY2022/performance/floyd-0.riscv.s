@@ -51,8 +51,8 @@ label68:
 	mulw s2, s0, s0
 	bne s0, zero, label120
 	j label26
-label74:
 .p2align 2
+label74:
 	mv t0, zero
 	bgt s0, zero, label18
 	addiw a3, a3, 1
@@ -65,8 +65,8 @@ label74:
 	mulw s2, s0, s0
 	bne s0, zero, label120
 	j label26
-label18:
 .p2align 2
+label18:
 	sh2add t2, a4, a0
 	lw t1, 0(t2)
 	bge t1, zero, label19
@@ -82,8 +82,8 @@ label18:
 	mulw s2, s0, s0
 	bne s0, zero, label120
 	j label26
-label22:
 .p2align 2
+label22:
 	sh2add t3, t3, a0
 	addw t1, t1, t2
 	sw t1, 0(t3)
@@ -99,8 +99,8 @@ label22:
 	mulw s2, s0, s0
 	bne s0, zero, label120
 	j label26
-label19:
 .p2align 2
+label19:
 	addw t3, a2, t0
 	sh2add t4, t3, a0
 	lw t2, 0(t4)
@@ -117,8 +117,8 @@ label19:
 	mulw s2, s0, s0
 	bne s0, zero, label120
 	j label26
-label20:
 .p2align 2
+label20:
 	addw t3, a5, t0
 	sh2add t4, t3, a0
 	lw t5, 0(t4)
@@ -154,8 +154,8 @@ label26:
 label120:
 	mv a2, zero
 	j label27
-label4:
 .p2align 2
+label4:
 	bgt s0, zero, label46
 	addiw a1, a1, 1
 	bgt s0, a1, label4
@@ -164,11 +164,11 @@ label4:
 	mulw s2, s0, s0
 	bne s0, zero, label120
 	j label26
+.p2align 2
 label46:
-.p2align 2
 	mv a2, zero
-label5:
 .p2align 2
+label5:
 	mulw a4, s0, a2
 	addw a3, a1, a4
 	ble s0, a2, label52
@@ -186,8 +186,8 @@ label5:
 	mulw s2, s0, s0
 	bne s0, zero, label120
 	j label26
-label52:
 .p2align 2
+label52:
 	li a4, -1
 	addiw a2, a2, 1
 	sh2add a3, a3, a0
@@ -201,8 +201,8 @@ label52:
 	mulw s2, s0, s0
 	bne s0, zero, label120
 	j label26
-label27:
 .p2align 2
+label27:
 	addiw a1, a2, 4
 	bgt s2, a1, label31
 label29:

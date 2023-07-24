@@ -65,8 +65,8 @@ label4:
 	ld s0, 96(sp)
 	addi sp, sp, 104
 	ret
-label5:
 .p2align 2
+label5:
 	sh2add a3, s6, s3
 	li a2, 1
 	lw a1, 0(a3)
@@ -75,8 +75,8 @@ label5:
 	lw a0, 0(s1)
 	ble s6, a0, label5
 	j label4
-label7:
 .p2align 2
+label7:
 	addw s9, s0, s6
 	sh2add a1, s9, s7
 	lw a2, 0(a1)
@@ -85,15 +85,15 @@ label7:
 	lw a0, 0(s1)
 	ble s6, a0, label5
 	j label4
-label8:
 .p2align 2
+label8:
 	addw a1, s0, a0
 	subw a3, a1, s6
 	sh2add a2, a3, s8
 	lw a1, 0(a2)
 	beq a1, zero, label9
-label6:
 .p2align 2
+label6:
 	addiw s6, s6, 1
 	lw a0, 0(s1)
 	ble s6, a0, label5
@@ -168,8 +168,8 @@ main:
 	j label136
 label145:
 	mv s2, a0
-label133:
 .p2align 2
+label133:
 	jal getint
 	sw a0, 0(sp)
 	mv a1, s1

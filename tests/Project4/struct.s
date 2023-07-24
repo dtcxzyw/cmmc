@@ -26,7 +26,6 @@ write:
     jr $ra
     nop
 gcd:
-.p2align 2
 	addiu $sp, $sp, -32
 	sw $ra, 24($sp)
 	move $t0, $a0
@@ -55,7 +54,6 @@ label2:
 	nop
 .globl main
 main:
-.p2align 2
 	addiu $sp, $sp, -32
 	sw $ra, 24($sp)
 	addiu $t0, $sp, 16

@@ -55,8 +55,8 @@ pcrel785:
 	sd s10, 8(sp)
 	sd ra, 0(sp)
 	mv s5, zero
-label2:
 .p2align 2
+label2:
 	sh2add s6, s5, s0
 	li s7, 1717986919
 	addiw s5, s5, 16
@@ -223,8 +223,8 @@ label2:
 	li s6, 10000
 	blt s5, s6, label2
 	mv a2, zero
-label21:
 .p2align 2
+label21:
 	sh2add a0, a2, s0
 	li a1, 1717986919
 	lw a3, 0(a0)
@@ -377,8 +377,8 @@ label21:
 	sw a0, 60(a4)
 	blt a2, a1, label21
 	mv a0, zero
-label23:
 .p2align 2
+label23:
 	sh2add a1, a0, s1
 	li a2, 1374389535
 	lw a3, 0(a1)
@@ -435,12 +435,12 @@ label23:
 	mv s3, zero
 	blt zero, a2, label29
 	j label28
-label25:
 .p2align 2
+label25:
 	li a2, 10000
 	bge s3, a2, label28
-label29:
 .p2align 2
+label29:
 	li a2, 10
 	blt s3, a2, label45
 	li a0, 20
@@ -457,8 +457,8 @@ label36:
 	mv a1, s4
 	addiw s3, s3, 1
 	j label25
-label37:
 .p2align 2
+label37:
 	li a1, 2233
 	bgt a0, a1, label39
 	sh2add a1, a0, s2
@@ -479,8 +479,8 @@ label37:
 	li a1, 10000
 	blt a0, a1, label37
 	j label36
-label39:
 .p2align 2
+label39:
 	sh2add a3, s3, s1
 	lw a2, 0(a3)
 	sh2add a3, a0, s0
@@ -508,14 +508,14 @@ label28:
 	ld s0, 96(sp)
 	addi sp, sp, 104
 	ret
-label274:
 .p2align 2
+label274:
 	sh2add a3, s3, s2
 	li a2, 5000
 	lw a0, 0(a3)
 	mv a3, a1
-label41:
 .p2align 2
+label41:
 	sh2add a1, a2, s0
 	addw a5, a0, a3
 	addiw a2, a2, 16
@@ -570,8 +570,8 @@ label41:
 	bge a2, a3, label44
 	mv a3, a1
 	j label41
-label44:
 .p2align 2
+label44:
 	sh2add a2, a2, s0
 	addw a4, a0, a1
 	lw a3, 0(a2)
@@ -619,8 +619,8 @@ label32:
 	mulw a2, a1, a4
 	subw a1, a0, a2
 	j label25
-label45:
 .p2align 2
+label45:
 	sh2add a3, s3, s2
 	lw a2, 0(a3)
 	li a3, 824839931

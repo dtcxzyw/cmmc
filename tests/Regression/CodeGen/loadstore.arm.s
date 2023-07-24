@@ -104,8 +104,8 @@ global_addressing_array:
 memset_impl:
 .p2align 4
 	mov r1, #0
-label92:
 .p2align 4
+label92:
 	add r2, r0, r1, lsl #2
 	mov r3, #0
 	str r3, [r0, r1, lsl #2]

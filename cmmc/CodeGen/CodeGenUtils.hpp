@@ -54,7 +54,7 @@ bool applySSAPropagation(MIRFunction& func, const CodeGenContext& ctx);
 bool redirectGoto(MIRFunction& func, const CodeGenContext& ctx);
 
 void dumpAssembly(std::ostream& out, const CodeGenContext& ctx, const MIRModule& module, const std::function<void()>& emitData,
-                  const std::function<void()>& emitText);
+                  const std::function<void()>& emitText, bool emitAlignment = true);
 
 [[noreturn]] void reportLegalizationFailure(const MIRInst& inst, const CodeGenContext& ctx, const DiagLocation& location);
 

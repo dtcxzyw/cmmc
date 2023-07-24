@@ -15,8 +15,8 @@ main:
 	sub sp, sp, #4
 	cmp r2, #3
 	bge label10
-label7:
 .p2align 4
+label7:
 	add r3, r1, #10
 	add r5, r0, #1
 	cmp r2, #1
@@ -42,8 +42,8 @@ label7:
 	cmp r2, #3
 	blt label7
 	b label10
-label9:
 .p2align 4
+label9:
 	add r1, r0, #7
 	add r3, r3, r4
 	add r2, r2, #1

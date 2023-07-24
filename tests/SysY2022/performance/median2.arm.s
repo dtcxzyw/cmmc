@@ -29,8 +29,8 @@ main:
 	ldr r3, [r7, #0]
 	add r7, r8, #1
 	mov r8, r2
-label8:
 .p2align 4
+label8:
 	cmp r7, r8
 	bgt label22
 	beq label16
@@ -40,8 +40,8 @@ label95:
 	str r10, [r4, r8, lsl #2]
 	str r9, [r4, r7, lsl #2]
 	b label8
-label22:
 .p2align 4
+label22:
 	sub r7, r7, #1
 	ldr r9, [r4, r7, lsl #2]
 	cmp r3, r9
@@ -50,19 +50,19 @@ label22:
 	bgt label22
 	beq label16
 	b label95
-label11:
 .p2align 4
+label11:
 	cmp r7, r8
 	bgt label21
 	beq label16
 	b label95
-label14:
 .p2align 4
+label14:
 	cmp r7, r8
 	beq label16
 	b label95
-label21:
 .p2align 4
+label21:
 	add r8, r8, #1
 	ldr r9, [r4, r8, lsl #2]
 	cmp r3, r9

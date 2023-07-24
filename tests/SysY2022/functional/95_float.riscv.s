@@ -84,12 +84,12 @@ main:
 	mv s2, zero
 	li s3, 1
 	mv s1, a0
-label2:
 .p2align 2
+label2:
 	jal getfloat
 	fcvt.w.s a0, f10, rtz
-pcrel64:
 .p2align 2
+pcrel64:
 	auipc a1, %pcrel_hi(__cmmc_fp_constant_pool)
 	addi a2, a1, %pcrel_lo(pcrel64)
 	flw f11, 0(a2)

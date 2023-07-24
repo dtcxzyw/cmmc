@@ -33,8 +33,8 @@ main:
 	str r6, [r4, #68]
 	str r6, [r4, #72]
 	str r6, [r4, #76]
-label2:
 .p2align 4
+label2:
 	add r0, r4, r5, lsl #2
 	ldr r8, [r4, r5, lsl #2]
 	ldr r7, [r0, #-4]

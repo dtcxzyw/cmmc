@@ -30,8 +30,8 @@ pcrel58:
 	mv a1, zero
 	sw a2, 20(a0)
 	addi a0, a0, 24
-label2:
 .p2align 2
+label2:
 	addi a2, a1, 4
 	li a3, 4090
 	bge a2, a3, label5

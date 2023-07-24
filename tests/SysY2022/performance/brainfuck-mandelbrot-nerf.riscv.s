@@ -27,8 +27,8 @@ main:
 	sd s2, 16(sp)
 	sd s4, 8(sp)
 	sd ra, 0(sp)
-label2:
 .p2align 2
+label2:
 	jal getch
 	li a3, 360287970357415681
 	li a4, 1
@@ -42,12 +42,12 @@ label2:
 	slt a2, a4, a0
 	or a1, a1, a2
 	bne a1, zero, label2
-pcrel323:
 .p2align 2
+pcrel323:
 	auipc a1, %pcrel_hi(program)
 	addi s0, a1, %pcrel_lo(pcrel323)
-pcrel324:
 .p2align 2
+pcrel324:
 	auipc a1, %pcrel_hi(input)
 	addi s1, a1, %pcrel_lo(pcrel324)
 	li a1, 35
@@ -55,8 +55,8 @@ pcrel324:
 	mv s2, zero
 	mv a1, s0
 	sw a0, 0(s0)
-label7:
 .p2align 2
+label7:
 	jal getch
 	li a4, 360287970357415681
 	li a3, 1
@@ -96,16 +96,16 @@ label57:
 	jal getch
 	ble s2, zero, label11
 	mv s4, zero
-label58:
 .p2align 2
+label58:
 	jal getch
 	sh2add a1, s4, s1
 	addiw s4, s4, 1
 	sw a0, 0(a1)
 	bgt s2, s4, label58
 	j label11
-label13:
 .p2align 2
+label13:
 	sh2add a1, a2, a0
 	sw zero, 0(a1)
 	addi a2, a2, 16
@@ -126,8 +126,8 @@ label13:
 	sw zero, 60(a1)
 	li a1, 512
 	blt a2, a1, label13
-pcrel326:
 .p2align 2
+pcrel326:
 	auipc a3, %pcrel_hi(tape)
 	mv s4, zero
 	addi a1, a3, %pcrel_lo(pcrel326)
@@ -144,8 +144,8 @@ pcrel327:
 	addi s0, a1, %pcrel_lo(pcrel327)
 	ble s4, zero, label25
 	mv s1, zero
-label23:
 .p2align 2
+label23:
 	sh2add a1, s1, s0
 	lw a0, 0(a1)
 	jal putch
@@ -161,11 +161,11 @@ label25:
 	ld s0, 40(sp)
 	addi sp, sp, 48
 	ret
+.p2align 2
 label16:
-.p2align 2
 	ble s3, a5, label22
-label26:
 .p2align 2
+label26:
 	sh2add t1, a5, s0
 	li t2, 62
 	lw t0, 0(t1)
@@ -183,8 +183,8 @@ label26:
 	li t1, 46
 	bne t0, t1, label35
 	sh2add t1, a4, a1
-pcrel328:
 .p2align 2
+pcrel328:
 	auipc t3, %pcrel_hi(output)
 	lw t0, 0(t1)
 	addi t1, t3, %pcrel_lo(pcrel328)
@@ -217,20 +217,20 @@ label48:
 	sw t1, 0(t0)
 	addiw a5, a5, 1
 	j label16
-label56:
 .p2align 2
+label56:
 	addiw a4, a4, 1
 	addiw a5, a5, 1
 	bgt s3, a5, label26
 	j label22
-label43:
 .p2align 2
+label43:
 	bgt t0, zero, label46
 	addiw a5, a5, 1
 	bgt s3, a5, label26
 	j label22
-label46:
 .p2align 2
+label46:
 	addiw a5, a5, 1
 	sh2add t2, a5, s0
 	lw t1, 0(t2)
@@ -254,12 +254,12 @@ label38:
 	sw zero, 0(t0)
 	addiw a5, a5, 1
 	j label16
-label310:
 .p2align 2
+label310:
 	mv s3, zero
 	j label9
-label28:
 .p2align 2
+label28:
 	addiw a4, a4, -1
 	addiw a5, a5, 1
 	bgt s3, a5, label26
@@ -269,8 +269,8 @@ label164:
 	lw t1, 0(t0)
 	addi t2, t1, 1
 	sw t2, 0(t0)
-label50:
 .p2align 2
+label50:
 	addiw a5, a5, 1
 	bgt s3, a5, label26
 	j label22

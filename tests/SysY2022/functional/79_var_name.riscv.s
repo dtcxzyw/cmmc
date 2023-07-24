@@ -27,8 +27,8 @@ main:
 	sd zero, 56(sp)
 	sd zero, 64(sp)
 	sd zero, 72(sp)
-label2:
 .p2align 2
+label2:
 	sh2add a0, s1, s0
 	lw s3, 0(a0)
 	lw s4, -4(a0)

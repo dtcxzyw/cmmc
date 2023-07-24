@@ -21,8 +21,8 @@ main:
 	mov r6, #0
 	str r0, [sp, #56]
 	mov r8, r0
-label2:
 .p2align 4
+label2:
 	bl getint
 	str r0, [r5, r6, lsl #2]
 	add r6, r6, #1

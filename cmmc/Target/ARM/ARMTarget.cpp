@@ -274,8 +274,6 @@ void ARMFrameInfo::emitPrologue(MIRFunction& mfunc, LoweringContext& ctx) const 
     for(uint32_t idx = 0; idx < args.size(); ++idx) {
         const auto offset = offsets[idx];
         const auto& arg = args[idx];
-        const auto size = getOperandSize(arg.type());
-        const auto alignment = size;
 
         if(offset >= passingByRegBase) {
             // $r0-$r3 $s0-$s3
@@ -283,7 +281,15 @@ void ARMFrameInfo::emitPrologue(MIRFunction& mfunc, LoweringContext& ctx) const 
                                                       static_cast<uint32_t>(offset - passingByRegBase),
                                                   ARM::isOperandFPR(arg) ? OperandType::Float32 : OperandType::Int32);
             ctx.emitCopy(arg, src);
-        } else {
+        }
+    }
+    for(uint32_t idx = 0; idx < args.size(); ++idx) {
+        const auto offset = offsets[idx];
+        const auto& arg = args[idx];
+        const auto size = getOperandSize(arg.type());
+        const auto alignment = size;
+
+        if(offset < passingByRegBase) {
             auto obj = mfunc.addStackObject(ctx.getCodeGenContext(), size, alignment, offset, StackObjectUsage::Argument);
             ctx.emitInst(MIRInst{ InstLoadRegFromStack }.setOperand<0>(arg).setOperand<1>(obj));
         }

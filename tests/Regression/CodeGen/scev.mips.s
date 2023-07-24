@@ -7,8 +7,8 @@ foo4:
 	nop
 	move $t0, $zero
 	move $t2, $zero
-label2:
 .p2align 2
+label2:
 	addiu $t1, $t2, 4
 	subu $t3, $a1, $t1
 	blez $t3, label6

@@ -52,8 +52,8 @@ pcrel681:
 	jal _sysy_starttime
 	bgt s5, zero, label2
 	j label62
-label3:
 .p2align 2
+label3:
 	sh2add a5, a2, s4
 	mv a4, zero
 	lw a3, 0(a5)
@@ -92,8 +92,8 @@ label3:
 	mv s8, zero
 	addiw a6, t3, 1
 	ble t4, a6, label26
-label532:
 .p2align 2
+label532:
 	mv a7, s8
 	slti s7, a6, 0
 	slt s8, a6, s0
@@ -101,8 +101,8 @@ label532:
 	xori s7, s8, 1
 	or s6, s6, s7
 	beq s6, zero, label567
-label101:
 .p2align 2
+label101:
 	mv s6, zero
 	beq a3, zero, label17
 	li s7, 1
@@ -130,17 +130,17 @@ label101:
 	li s7, 1
 	beq a3, s7, label186
 	j label568
-label29:
 .p2align 2
+label29:
 	bgt a1, zero, label149
 	addiw a2, a2, 1
 	bgt s5, a2, label3
 	j label62
+.p2align 2
 label149:
-.p2align 2
 	mv a5, zero
-label30:
 .p2align 2
+label30:
 	addiw a3, a5, 4
 	bgt a1, a3, label32
 	sh2add t0, a5, a0
@@ -152,8 +152,8 @@ label30:
 	addiw a2, a2, 1
 	bgt s5, a2, label3
 	j label62
-label32:
 .p2align 2
+label32:
 	sh2add a4, a5, a0
 	sh2add a5, a5, s1
 	lw t0, 0(a4)
@@ -166,8 +166,8 @@ label32:
 	sw a4, 12(a5)
 	mv a5, a3
 	j label30
-label33:
 .p2align 2
+label33:
 	sh2add t0, a5, a0
 	sh2add a4, a5, s1
 	lw a3, 0(t0)
@@ -198,19 +198,19 @@ label62:
 	ld s3, 96(sp)
 	addi sp, sp, 104
 	ret
-label602:
 .p2align 2
+label602:
 	li s7, 1
 	beq a3, s7, label186
-label568:
 .p2align 2
+label568:
 	li s8, 2
 	beq a3, s8, label54
 	li s7, 3
 	beq a3, s7, label192
 	j label614
-label26:
 .p2align 2
+label26:
 	addiw t5, t5, 1
 	ble t0, t5, label27
 	mv a7, s8
@@ -253,13 +253,13 @@ label26:
 	sh2add s7, s8, s1
 	lw s6, 0(s7)
 	j label602
-label614:
 .p2align 2
+label614:
 	li s9, 4
 	beq a3, s9, label217
 	j label616
-label18:
 .p2align 2
+label18:
 	lui a7, 786432
 	addw s8, s8, a7
 	lui a7, 262144
@@ -298,8 +298,8 @@ label18:
 	or s6, s6, s7
 	bne s6, zero, label101
 	j label607
-label22:
 .p2align 2
+label22:
 	lui a7, 262144
 	addw s8, s8, a7
 	blt s8, zero, label22
@@ -340,8 +340,8 @@ label22:
 	sh2add s7, s8, s1
 	lw s6, 0(s7)
 	j label610
-label54:
 .p2align 2
+label54:
 	max s8, a7, s6
 	addiw a6, a6, 1
 	ble t4, a6, label26
@@ -380,8 +380,8 @@ label54:
 	sh2add s7, s8, s1
 	lw s6, 0(s7)
 	bne a3, zero, label610
-label17:
 .p2align 2
+label17:
 	addw s8, a7, s6
 	lui a7, 262144
 	bgt s8, a7, label18
@@ -418,16 +418,16 @@ label17:
 	xori s7, s8, 1
 	or s6, s6, s7
 	bne s6, zero, label101
-label607:
 .p2align 2
+label607:
 	mulw s6, s0, t5
 	addw s8, a6, s6
 	sh2add s7, s8, s1
 	lw s6, 0(s7)
 	beq a3, zero, label17
 	j label610
-label217:
 .p2align 2
+label217:
 	mv s8, zero
 	li s7, 1
 	lui s9, 262144
@@ -457,8 +457,8 @@ label217:
 	mv s8, zero
 	addiw a6, a6, 1
 	ble t4, a6, label26
-label591:
 .p2align 2
+label591:
 	mv a7, s8
 	slti s7, a6, 0
 	slt s8, a6, s0
@@ -467,8 +467,8 @@ label591:
 	or s6, s6, s7
 	bne s6, zero, label101
 	j label626
-label50:
 .p2align 2
+label50:
 	divw s10, a7, s7
 	li s11, -2147483647
 	and s9, s10, s11
@@ -504,8 +504,8 @@ label50:
 	addiw a6, a6, 1
 	ble t4, a6, label26
 	j label591
-label51:
 .p2align 2
+label51:
 	divw s10, s6, s7
 	li s11, -2147483647
 	and s9, s10, s11
@@ -541,16 +541,16 @@ label51:
 	addiw a6, a6, 1
 	ble t4, a6, label26
 	j label591
-label626:
 .p2align 2
+label626:
 	mulw s6, s0, t5
 	addw s8, a6, s6
 	sh2add s7, s8, s1
 	lw s6, 0(s7)
 	beq a3, zero, label17
 	j label610
-label52:
 .p2align 2
+label52:
 	slliw s9, s8, 1
 	slliw s7, s7, 1
 	addiw s8, s9, 1
@@ -589,8 +589,8 @@ label52:
 	or s6, s6, s7
 	bne s6, zero, label101
 	j label626
-label616:
 .p2align 2
+label616:
 	mv s8, zero
 	addiw a6, a6, 1
 	ble t4, a6, label26
@@ -602,8 +602,8 @@ label616:
 	or s6, s6, s7
 	bne s6, zero, label101
 	j label625
-label192:
 .p2align 2
+label192:
 	mv s8, zero
 	li s7, 1
 	lui s9, 262144
@@ -630,8 +630,8 @@ label192:
 	beq a3, s7, label192
 	li s9, 4
 	beq a3, s9, label217
-label549:
 .p2align 2
+label549:
 	mv s8, zero
 	addiw a6, a6, 1
 	ble t4, a6, label26
@@ -643,8 +643,8 @@ label549:
 	or s6, s6, s7
 	bne s6, zero, label101
 	j label619
-label42:
 .p2align 2
+label42:
 	divw s10, a7, s7
 	li s11, -2147483647
 	and s9, s10, s11
@@ -681,24 +681,24 @@ label42:
 	li s9, 4
 	beq a3, s9, label217
 	j label549
+.p2align 2
 label625:
-.p2align 2
 	mulw s6, s0, t5
 	addw s8, a6, s6
 	sh2add s7, s8, s1
 	lw s6, 0(s7)
 	beq a3, zero, label17
 	j label610
+.p2align 2
 label619:
-.p2align 2
 	mulw s6, s0, t5
 	addw s8, a6, s6
 	sh2add s7, s8, s1
 	lw s6, 0(s7)
 	beq a3, zero, label17
 	j label610
-label43:
 .p2align 2
+label43:
 	slliw s9, s8, 1
 	slliw s7, s7, 1
 	addiw s8, s9, 1
@@ -737,16 +737,16 @@ label43:
 	or s6, s6, s7
 	bne s6, zero, label101
 	j label619
-label567:
 .p2align 2
+label567:
 	mulw s6, s0, t5
 	addw s8, a6, s6
 	sh2add s7, s8, s1
 	lw s6, 0(s7)
 	beq a3, zero, label17
 	j label602
-label27:
 .p2align 2
+label27:
 	addw t4, t1, t2
 	addiw t2, t2, 1
 	sh2add t3, t4, a0
@@ -790,8 +790,8 @@ label27:
 	or s6, s6, s7
 	bne s6, zero, label101
 	j label567
-label28:
 .p2align 2
+label28:
 	addiw a4, a4, 1
 	ble s2, a4, label29
 	subw a5, a4, s3
@@ -830,12 +830,12 @@ label28:
 	addiw a6, t3, 1
 	ble t4, a6, label26
 	j label532
-label610:
 .p2align 2
+label610:
 	li s7, 1
 	bne a3, s7, label568
-label186:
 .p2align 2
+label186:
 	mv s8, zero
 	li s7, 1
 	lui s9, 262144
@@ -871,16 +871,16 @@ label186:
 	xori s7, s8, 1
 	or s6, s6, s7
 	bne s6, zero, label101
-label632:
 .p2align 2
+label632:
 	mulw s6, s0, t5
 	addw s8, a6, s6
 	sh2add s7, s8, s1
 	lw s6, 0(s7)
 	beq a3, zero, label17
 	j label610
-label597:
 .p2align 2
+label597:
 	mv a7, s8
 	slti s7, a6, 0
 	slt s8, a6, s0
@@ -889,8 +889,8 @@ label597:
 	or s6, s6, s7
 	bne s6, zero, label101
 	j label632
-label58:
 .p2align 2
+label58:
 	divw s9, a7, s7
 	srliw s10, s9, 31
 	add s10, s9, s10
@@ -933,8 +933,8 @@ label58:
 	addiw a6, a6, 1
 	ble t4, a6, label26
 	j label597
-label59:
 .p2align 2
+label59:
 	slliw s8, s8, 1
 	slliw s7, s7, 1
 	lui s9, 262144

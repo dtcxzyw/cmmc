@@ -31,8 +31,8 @@ main:
 	addiw a1, a2, -2
 	addiw a3, a2, 1
 	mv a2, a0
-label5:
 .p2align 2
+label5:
 	li a4, 10
 	blt a3, a4, label8
 	addiw a0, a0, -1
@@ -48,20 +48,20 @@ label143:
 	mv a2, zero
 	addiw a1, a0, -1
 	j label16
-label8:
 .p2align 2
+label8:
 	li a5, 9
 	blt a3, a5, label47
 	mv a4, zero
 	j label9
-label47:
 .p2align 2
+label47:
 	sh2add a4, a3, s0
 	lw a5, 0(a4)
 	lw t0, 4(a4)
 	slt a4, a5, t0
-label9:
 .p2align 2
+label9:
 	addw a3, a3, a4
 	sh2add t0, a2, s0
 	sh2add a5, a3, s0
@@ -81,16 +81,16 @@ label13:
 	addiw a0, a0, -1
 	bge a0, zero, label76
 	j label143
-label16:
 .p2align 2
+label16:
 	bgt a0, a3, label23
 	bgt a1, zero, label89
-label144:
 .p2align 2
+label144:
 	mv s1, zero
 	j label20
-label89:
 .p2align 2
+label89:
 	mv a0, a1
 	sh2add a1, a1, s0
 	lw a2, 0(sp)
@@ -103,8 +103,8 @@ label89:
 	bgt a0, a3, label23
 	bgt a1, zero, label89
 	j label144
-label20:
 .p2align 2
+label20:
 	sh2add a1, s1, s0
 	lw a0, 0(a1)
 	jal putint
@@ -119,8 +119,8 @@ label20:
 	ld s0, 56(sp)
 	addi sp, sp, 64
 	ret
-label23:
 .p2align 2
+label23:
 	bgt a1, a3, label27
 	mv a4, zero
 	sext.w a3, a3
@@ -140,8 +140,8 @@ label23:
 	bgt a0, a4, label23
 	bgt a1, zero, label89
 	j label144
-label27:
 .p2align 2
+label27:
 	sh2add a4, a3, s0
 	lw a5, 0(a4)
 	lw t0, 4(a4)
@@ -163,12 +163,12 @@ label27:
 	bgt a0, a4, label23
 	bgt a1, zero, label89
 	j label144
-label19:
 .p2align 2
+label19:
 	bgt a1, zero, label89
 	j label144
-label76:
 .p2align 2
+label76:
 	mv a2, a1
 	addiw a1, a1, -2
 	addiw a3, a2, 1

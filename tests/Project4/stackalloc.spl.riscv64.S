@@ -23,7 +23,6 @@ write:
     ret
 .globl main
 main:
-.p2align 2
 	addi sp, sp, -408
 	addi a2, sp, 0
 	sd ra, 400(sp)
@@ -35,10 +34,8 @@ main:
 	bgt a1, zero, label59
 	j label15
 label21:
-.p2align 2
 	mv a3, zero
 label2:
-.p2align 2
 	jal read
 	sh2add a4, a3, a2
 	addiw a3, a3, 1
@@ -50,7 +47,6 @@ label2:
 label59:
 	mv a3, zero
 label13:
-.p2align 2
 	sh2add a4, a3, a2
 	lw a0, 0(a4)
 	jal write
@@ -62,7 +58,6 @@ label15:
 	addi sp, sp, 408
 	ret
 label6:
-.p2align 2
 	sh2add a5, a0, a2
 	addiw a4, a0, -1
 	lw a3, 0(a5)
@@ -75,7 +70,6 @@ label6:
 	bgt a1, zero, label59
 	j label15
 label9:
-.p2align 2
 	sh2add t0, a4, a2
 	lw a5, 0(t0)
 	blt a3, a5, label10
@@ -87,7 +81,6 @@ label9:
 	bgt a1, zero, label59
 	j label15
 label10:
-.p2align 2
 	addiw t1, a4, 1
 	addiw a4, a4, -1
 	sh2add t0, t1, a2

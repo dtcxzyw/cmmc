@@ -29,15 +29,15 @@ main:
 	movw r1, #511
 	cmp r0, r1
 	bge label24
-label4:
 .p2align 4
+label4:
 	sub r1, r0, #1
 	mov r2, #1024
 	mov r3, #512
 	mov r6, #0
 	mov r7, #1
-label5:
 .p2align 4
+label5:
 	add r8, r0, r3
 	add r10, r1, r6
 	add r11, r0, r6
@@ -77,13 +77,13 @@ label5:
 	movw r1, #511
 	cmp r0, r1
 	blt label4
-label24:
 .p2align 4
+label24:
 	mov r0, #512
 	mov r1, #0
 	mov r2, r1
-label11:
 .p2align 4
+label11:
 	ldr r3, [r4, r1, lsl #2]
 	add r2, r2, #4
 	cmp r2, #1024
@@ -116,8 +116,8 @@ label11:
 	str r6, [r5, r3, lsl #2]
 	blt label11
 	mov r0, #0
-label15:
 .p2align 4
+label15:
 	add r2, r4, r0, lsl #2
 	ldr r3, [r4, r0, lsl #2]
 	add r1, r5, r0, lsl #2

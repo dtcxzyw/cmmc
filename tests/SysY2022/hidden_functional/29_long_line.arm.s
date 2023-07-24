@@ -833,8 +833,8 @@ main:
 	push { r4, r5, lr }
 	mov r4, #1
 	sub sp, sp, #4
-label782:
 .p2align 4
+label782:
 	mov r0, #102
 	bl putch
 	mov r0, #105

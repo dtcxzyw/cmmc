@@ -22,8 +22,8 @@ main:
 	jal getint
 	mv s5, zero
 	mv s3, a0
-label2:
 .p2align 2
+label2:
 	jal getint
 	sh2add a1, s5, s4
 	addiw s5, s5, 1

@@ -165,8 +165,8 @@ label18:
 	cmp r5, #0
 	beq label19
 	b label4
-label2:
 .p2align 4
+label2:
 	add r7, r5, r6, lsl #2
 	ldr r0, [r5, r6, lsl #2]
 	bl putch
@@ -221,8 +221,8 @@ label56:
 label80:
 	mov r6, #0
 	b label11
-label8:
 .p2align 4
+label8:
 	add r10, r8, r9, lsl #2
 	ldr r0, [r8, r9, lsl #2]
 	bl putch
@@ -258,8 +258,8 @@ label19:
 label63:
 	mov r9, #0
 	b label8
-label16:
 .p2align 4
+label16:
 	add r10, r8, r9, lsl #2
 	ldr r0, [r8, r9, lsl #2]
 	bl putch
@@ -299,8 +299,8 @@ label4:
 	cmp r0, r7
 	bne label6
 	b label18
-label14:
 .p2align 4
+label14:
 	add r7, r4, r6, lsl #2
 	ldr r0, [r4, r6, lsl #2]
 	bl putch
@@ -317,8 +317,8 @@ label14:
 	cmp r5, #0
 	beq label19
 	b label4
-label11:
 .p2align 4
+label11:
 	add r8, r7, r6, lsl #2
 	ldr r0, [r7, r6, lsl #2]
 	bl putch
