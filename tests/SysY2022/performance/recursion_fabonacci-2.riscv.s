@@ -35,15 +35,17 @@ label2:
 label25:
 	lui a0, 260096
 	fmv.w.x f8, a0
+label5:
+	lui a0, 260096
 	lui a1, 262144
 	fmv.w.x f10, a0
 	fsub.s f18, f9, f10
 	fmv.w.x f10, a1
 	flt.s a0, f18, f10
 	beq a0, zero, label9
-label36:
 	lui a0, 260096
 	fmv.w.x f10, a0
+label7:
 	fadd.s f10, f8, f10
 	j label2
 label9:
@@ -57,8 +59,7 @@ label9:
 	fsub.s f10, f18, f11
 	jal fibFP
 	fadd.s f10, f9, f10
-	fadd.s f10, f8, f10
-	j label2
+	j label7
 label10:
 	lui a0, 262144
 	fmv.w.x f11, a0
@@ -70,14 +71,7 @@ label10:
 	fsub.s f10, f18, f11
 	jal fibFP
 	fadd.s f8, f8, f10
-	lui a0, 260096
-	lui a1, 262144
-	fmv.w.x f10, a0
-	fsub.s f18, f9, f10
-	fmv.w.x f10, a1
-	flt.s a0, f18, f10
-	bne a0, zero, label36
-	j label9
+	j label5
 takFP:
 	addi sp, sp, -48
 	fsw f8, 44(sp)
@@ -94,37 +88,111 @@ takFP:
 	fsw f23, 12(sp)
 	fsw f24, 8(sp)
 	sd ra, 0(sp)
-	flt.s a0, f11, f10
-	beq a0, zero, label87
-label70:
+label65:
+	flt.s a0, f9, f18
+	beq a0, zero, label86
 	lui a0, 260096
 	fmv.w.x f10, a0
 	fsub.s f20, f18, f10
 	flt.s a0, f9, f20
-	bne a0, zero, label100
+	bne a0, zero, label99
 	fmv.s f19, f8
+	j label70
+label99:
+	fmv.s f19, f9
+	fmv.s f21, f8
+	j label82
+label86:
+	fmv.s f10, f8
+	ld ra, 0(sp)
+	flw f24, 8(sp)
+	flw f23, 12(sp)
+	flw f25, 16(sp)
+	flw f19, 20(sp)
+	flw f20, 24(sp)
+	flw f18, 28(sp)
+	flw f22, 32(sp)
+	flw f9, 36(sp)
+	flw f21, 40(sp)
+	flw f8, 44(sp)
+	addi sp, sp, 48
+	ret
+label70:
 	lui a0, 260096
 	fmv.w.x f10, a0
 	fsub.s f20, f9, f10
 	flt.s a0, f8, f20
-	bne a0, zero, label107
+	bne a0, zero, label106
 	fmv.s f21, f18
+	j label76
+label106:
+	fmv.s f21, f8
+	fmv.s f22, f18
+	j label72
+label82:
+	lui a0, 260096
+	fmv.s f11, f19
+	fmv.w.x f24, a0
+	fmv.s f12, f21
+	fsub.s f10, f20, f24
+	jal takFP
+	fmv.s f11, f21
+	fmv.s f22, f10
+	fmv.s f12, f20
+	fsub.s f10, f19, f24
+	jal takFP
+	fmv.s f11, f20
+	fmv.s f23, f10
+	fmv.s f12, f19
+	fsub.s f10, f21, f24
+	jal takFP
+	flt.s a0, f23, f22
+	bne a0, zero, label150
+	fmv.s f19, f10
+	j label70
+label150:
+	fmv.s f20, f22
+	fmv.s f19, f23
+	fmv.s f21, f10
+	j label82
+label72:
+	lui a0, 260096
+	fmv.s f11, f21
+	fmv.w.x f25, a0
+	fmv.s f12, f22
+	fsub.s f10, f20, f25
+	jal takFP
+	fmv.s f11, f22
+	fmv.s f23, f10
+	fmv.s f12, f20
+	fsub.s f10, f21, f25
+	jal takFP
+	fmv.s f11, f20
+	fmv.s f24, f10
+	fmv.s f12, f21
+	fsub.s f10, f22, f25
+	jal takFP
+	flt.s a0, f24, f23
+	bne a0, zero, label118
+	fmv.s f21, f10
+	j label76
+label118:
+	fmv.s f20, f23
+	fmv.s f21, f24
+	fmv.s f22, f10
+	j label72
+label76:
 	lui a0, 260096
 	fmv.w.x f10, a0
 	fsub.s f8, f8, f10
 	flt.s a0, f18, f8
-	bne a0, zero, label79
+	bne a0, zero, label78
+label124:
 	fmv.s f8, f9
 	fmv.s f18, f19
 	fmv.s f9, f21
-	flt.s a0, f21, f19
-	bne a0, zero, label70
-	j label87
-label100:
-	fmv.s f19, f9
-	fmv.s f21, f8
-	j label83
-label79:
+	j label65
+label78:
 	lui a0, 260096
 	fmv.s f11, f18
 	fmv.w.x f23, a0
@@ -143,113 +211,10 @@ label79:
 	jal takFP
 	flt.s a0, f22, f20
 	fmv.s f9, f10
-	bne a0, zero, label139
-	fmv.s f8, f10
-	fmv.s f18, f19
-	fmv.s f9, f21
-	flt.s a0, f21, f19
-	bne a0, zero, label70
-	j label87
-label139:
+	beq a0, zero, label124
 	fmv.s f8, f20
 	fmv.s f18, f22
-	j label79
-label83:
-	lui a0, 260096
-	fmv.s f11, f19
-	fmv.w.x f24, a0
-	fmv.s f12, f21
-	fsub.s f10, f20, f24
-	jal takFP
-	fmv.s f11, f21
-	fmv.s f22, f10
-	fmv.s f12, f20
-	fsub.s f10, f19, f24
-	jal takFP
-	fmv.s f11, f20
-	fmv.s f23, f10
-	fmv.s f12, f19
-	fsub.s f10, f21, f24
-	jal takFP
-	flt.s a0, f23, f22
-	bne a0, zero, label151
-	fmv.s f19, f10
-	lui a0, 260096
-	fmv.w.x f10, a0
-	fsub.s f20, f9, f10
-	flt.s a0, f8, f20
-	bne a0, zero, label107
-	fmv.s f21, f18
-	lui a0, 260096
-	fmv.w.x f10, a0
-	fsub.s f8, f8, f10
-	flt.s a0, f18, f8
-	bne a0, zero, label79
-	fmv.s f8, f9
-	fmv.s f18, f19
-	fmv.s f9, f21
-	flt.s a0, f21, f19
-	bne a0, zero, label70
-	j label87
-label151:
-	fmv.s f20, f22
-	fmv.s f19, f23
-	fmv.s f21, f10
-	j label83
-label87:
-	fmv.s f10, f8
-	ld ra, 0(sp)
-	flw f24, 8(sp)
-	flw f23, 12(sp)
-	flw f25, 16(sp)
-	flw f19, 20(sp)
-	flw f20, 24(sp)
-	flw f18, 28(sp)
-	flw f22, 32(sp)
-	flw f9, 36(sp)
-	flw f21, 40(sp)
-	flw f8, 44(sp)
-	addi sp, sp, 48
-	ret
-label107:
-	fmv.s f21, f8
-	fmv.s f22, f18
-label73:
-	lui a0, 260096
-	fmv.s f11, f21
-	fmv.w.x f25, a0
-	fmv.s f12, f22
-	fsub.s f10, f20, f25
-	jal takFP
-	fmv.s f11, f22
-	fmv.s f23, f10
-	fmv.s f12, f20
-	fsub.s f10, f21, f25
-	jal takFP
-	fmv.s f11, f20
-	fmv.s f24, f10
-	fmv.s f12, f21
-	fsub.s f10, f22, f25
-	jal takFP
-	flt.s a0, f24, f23
-	bne a0, zero, label119
-	fmv.s f21, f10
-	lui a0, 260096
-	fmv.w.x f10, a0
-	fsub.s f8, f8, f10
-	flt.s a0, f18, f8
-	bne a0, zero, label79
-	fmv.s f8, f9
-	fmv.s f18, f19
-	fmv.s f9, f21
-	flt.s a0, f21, f19
-	bne a0, zero, label70
-	j label87
-label119:
-	fmv.s f20, f23
-	fmv.s f21, f24
-	fmv.s f22, f10
-	j label73
+	j label78
 .globl main
 main:
 	addi sp, sp, -24
@@ -276,22 +241,22 @@ main:
 	fcvt.s.w f10, s0
 	fadd.s f10, f10, f11
 	jal fibFP
-pcrel212:
+pcrel198:
 	auipc a0, %pcrel_hi(__cmmc_fp_constant_pool)
-	addi a1, a0, %pcrel_lo(pcrel212)
+	addi a1, a0, %pcrel_lo(pcrel198)
 	flw f11, 0(a1)
 	feq.s a0, f10, f11
-	beq a0, zero, label182
+	beq a0, zero, label169
 	li a0, 112
 	jal putch
+label165:
 	lui a0, 260096
 	fmv.w.x f10, a0
 	feq.s a1, f8, f10
-	beq a1, zero, label181
-label179:
+	beq a1, zero, label168
 	li a0, 112
 	jal putch
-label180:
+label167:
 	li a0, 41
 	jal _sysy_stoptime
 	ld ra, 0(sp)
@@ -301,15 +266,11 @@ label180:
 	ld s0, 16(sp)
 	addi sp, sp, 24
 	ret
-label181:
+label168:
 	li a0, 1
 	jal putint
-	j label180
-label182:
+	j label167
+label169:
 	li a0, 1
 	jal putint
-	lui a0, 260096
-	fmv.w.x f10, a0
-	feq.s a1, f8, f10
-	bne a1, zero, label179
-	j label181
+	j label165

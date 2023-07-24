@@ -11,10 +11,10 @@ image_out:
 .globl main
 main:
 	addi sp, sp, -32
-pcrel189:
+pcrel188:
 	auipc a1, %pcrel_hi(image_in)
 	sd s0, 24(sp)
-	addi a0, a1, %pcrel_lo(pcrel189)
+	addi a0, a1, %pcrel_lo(pcrel188)
 	sd s2, 16(sp)
 	mv s0, a0
 	sd s1, 8(sp)
@@ -24,11 +24,16 @@ pcrel189:
 	li a0, 23
 	jal _sysy_starttime
 	li a0, 1
-pcrel190:
+pcrel189:
 	auipc a1, %pcrel_hi(image_out)
-	addi s1, a1, %pcrel_lo(pcrel190)
+	addi s1, a1, %pcrel_lo(pcrel189)
 	li a1, 511
-	bge a0, a1, label24
+	blt a0, a1, label4
+label24:
+	li a0, 512
+	mv a1, zero
+	mv a2, zero
+	j label11
 label4:
 	addiw a1, a0, -1
 	li a2, 1024
@@ -80,10 +85,7 @@ label5:
 	addiw a0, a0, 1
 	li a1, 511
 	blt a0, a1, label4
-label24:
-	li a0, 512
-	mv a1, zero
-	mv a2, zero
+	j label24
 label11:
 	sh2add a4, a1, s0
 	addiw a2, a2, 4

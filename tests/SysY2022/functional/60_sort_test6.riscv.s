@@ -126,7 +126,7 @@ label7:
 	sh2add a3, a5, s0
 	sw a2, 0(a3)
 	bgt a4, zero, label9
-	j label188
+	j label101
 label14:
 	addiw a5, a4, -1
 	sh2add a3, a5, a1
@@ -160,9 +160,6 @@ label14:
 	mv a4, a2
 	sw a3, 0(t0)
 	j label7
-label188:
-	mv s1, zero
-	j label11
 label9:
 	addiw a4, a4, -1
 	sh2add a5, a4, a1
@@ -174,7 +171,8 @@ label9:
 	sh2add a3, a5, s0
 	sw a2, 0(a3)
 	bgt a4, zero, label9
-	j label188
+label101:
+	mv s1, zero
 label11:
 	sh2add a1, s1, s0
 	lw a0, 0(a1)

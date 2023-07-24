@@ -97,6 +97,7 @@ label12:
 	pop { r4, r5, r6, r7, r8, r9, r10, pc }
 label73:
 	mov r2, #1
+label6:
 	cmp r2, #14
 	blt label8
 	add r1, r1, #1
@@ -119,26 +120,10 @@ label8:
 	movle r8, r9
 	str r8, [r3, r2, lsl #2]
 	add r2, r2, #1
-	cmp r2, #14
-	blt label8
-	add r1, r1, #1
-	sub r6, r1, #1
-	add r3, r0, r1, lsl #6
-	cmp r1, #16
-	sub r7, r3, #64
-	blt label73
-	b label12
+	b label6
 label9:
 	ldr r8, [r7, r8, lsl #2]
 	add r8, r8, #1
 	str r8, [r3, r2, lsl #2]
 	add r2, r2, #1
-	cmp r2, #14
-	blt label8
-	add r1, r1, #1
-	sub r6, r1, #1
-	add r3, r0, r1, lsl #6
-	cmp r1, #16
-	sub r7, r3, #64
-	blt label73
-	b label12
+	b label6

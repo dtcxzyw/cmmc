@@ -55,9 +55,9 @@ main:
 	li a0, 10
 	jal putch
 	mv a2, zero
-pcrel151:
+pcrel143:
 	auipc a1, %pcrel_hi(p)
-	addi a0, a1, %pcrel_lo(pcrel151)
+	addi a0, a1, %pcrel_lo(pcrel143)
 label2:
 	sh2add a1, a2, a0
 	li a3, 256
@@ -99,6 +99,7 @@ label12:
 	ret
 label73:
 	li a2, 1
+label6:
 	li t0, 14
 	blt a2, t0, label8
 	addiw a1, a1, 1
@@ -123,16 +124,7 @@ label8:
 	lw t2, -4(t0)
 	max t1, t1, t2
 	sw t1, 0(t0)
-	li t0, 14
-	blt a2, t0, label8
-	addiw a1, a1, 1
-	addiw a3, a1, -1
-	slli a2, a1, 6
-	add a4, a0, a2
-	li a2, 16
-	addi a5, a4, -64
-	blt a1, a2, label73
-	j label12
+	j label6
 label9:
 	sh2add t1, t0, a5
 	lw t2, 0(t1)
@@ -140,13 +132,4 @@ label9:
 	addi t0, t2, 1
 	addiw a2, a2, 1
 	sw t0, 0(t1)
-	li t0, 14
-	blt a2, t0, label8
-	addiw a1, a1, 1
-	addiw a3, a1, -1
-	slli a2, a1, 6
-	add a4, a0, a2
-	li a2, 16
-	addi a5, a4, -64
-	blt a1, a2, label73
-	j label12
+	j label6

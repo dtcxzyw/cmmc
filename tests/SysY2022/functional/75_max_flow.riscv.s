@@ -37,29 +37,17 @@ label4:
 	li a2, 40
 	mv s6, zero
 	sw a0, 0(a1)
-pcrel105:
+pcrel101:
 	auipc a1, %pcrel_hi(cap)
-	addi a0, a1, %pcrel_lo(pcrel105)
+	addi a0, a1, %pcrel_lo(pcrel101)
 	mul a1, s1, a2
 	mv s3, a0
 	add s8, a0, a1
-pcrel106:
+pcrel102:
 	auipc a0, %pcrel_hi(to)
-	addi a2, a0, %pcrel_lo(pcrel106)
+	addi a2, a0, %pcrel_lo(pcrel102)
 	add s7, a2, a1
-	sh2add a0, s1, s4
-	lw a1, 0(a0)
-	bge zero, a1, label35
-label7:
-	sh2add a1, s6, s7
-	lw a0, 0(a1)
-	sh2add a2, a0, s5
-	lw a1, 0(a2)
-	bne a1, zero, label8
-	sh2add a2, s6, s8
-	lw a1, 0(a2)
-	ble a1, zero, label8
-	j label10
+	j label5
 label2:
 	ld ra, 0(sp)
 	ld s7, 8(sp)
@@ -73,36 +61,39 @@ label2:
 	ld s1, 72(sp)
 	addi sp, sp, 80
 	ret
-label35:
-	mv a0, zero
-	j label2
-label8:
-	addiw s6, s6, 1
+label5:
 	sh2add a0, s1, s4
 	lw a1, 0(a0)
 	blt s6, a1, label7
-	j label35
+	mv a0, zero
+	j label2
+label7:
+	sh2add a1, s6, s7
+	lw a0, 0(a1)
+	sh2add a2, a0, s5
+	lw a1, 0(a2)
+	bne a1, zero, label8
+	sh2add a2, s6, s8
+	lw a1, 0(a2)
+	bgt a1, zero, label10
+label8:
+	addiw s6, s6, 1
+	j label5
 label10:
 	min a2, s0, a1
 	mv a1, s2
 	mv a3, s4
 	mv a4, s5
 	jal dfs
-	bgt a0, zero, label11
-	addiw s6, s6, 1
-	sh2add a0, s1, s4
-	lw a1, 0(a0)
-	blt s6, a1, label7
-	j label35
-label11:
+	ble a0, zero, label8
 	sh2add a1, s6, s8
 	lw a3, 0(a1)
 	subw a2, a3, a0
-pcrel107:
+pcrel103:
 	auipc a3, %pcrel_hi(rev)
 	sw a2, 0(a1)
 	li a1, 40
-	addi a2, a3, %pcrel_lo(pcrel107)
+	addi a2, a3, %pcrel_lo(pcrel103)
 	mul a4, s1, a1
 	add a3, a2, a4
 	sh2add a4, s6, s7
@@ -146,63 +137,49 @@ main:
 	mv s2, a0
 	jal getint
 	mv s6, a0
-pcrel283:
+pcrel263:
 	auipc a0, %pcrel_hi(to)
-	addi s3, a0, %pcrel_lo(pcrel283)
-pcrel284:
+	addi s3, a0, %pcrel_lo(pcrel263)
+pcrel264:
 	auipc a0, %pcrel_hi(cap)
-	addi s4, a0, %pcrel_lo(pcrel284)
-pcrel285:
+	addi s4, a0, %pcrel_lo(pcrel264)
+pcrel265:
 	auipc a0, %pcrel_hi(rev)
-	addi s5, a0, %pcrel_lo(pcrel285)
+	addi s5, a0, %pcrel_lo(pcrel265)
 	mv a0, zero
-label109:
+label105:
 	addiw a1, a0, 4
 	li a2, 10
-	blt a1, a2, label111
+	blt a1, a2, label107
 	sh2add a1, a0, s0
 	addiw a0, a0, 1
 	sw zero, 0(a1)
 	li a1, 10
-	blt a0, a1, label112
-	bgt s6, zero, label115
-	mv a5, zero
-	mv a1, zero
-	li a0, 4
-	blt a0, a2, label121
-	mv a0, s1
-	li a1, 1
-	sw zero, 0(s1)
-	li a0, 10
-	blt a1, a0, label122
-	j label124
-label111:
+	blt a0, a1, label108
+	j label167
+label107:
 	sh2add a0, a0, s0
 	sw zero, 0(a0)
 	sw zero, 4(a0)
 	sw zero, 8(a0)
 	sw zero, 12(a0)
 	mv a0, a1
-	j label109
-label112:
+	j label105
+label108:
 	sh2add a1, a0, s0
 	addiw a0, a0, 1
 	sw zero, 0(a1)
 	li a1, 10
-	blt a0, a1, label112
-	bgt s6, zero, label115
+	blt a0, a1, label108
+label167:
+	bgt s6, zero, label111
 	mv a5, zero
 	mv a1, zero
 	li a0, 4
 	li a2, 10
-	blt a0, a2, label121
-	mv a0, s1
-	li a1, 1
-	sw zero, 0(s1)
-	li a0, 10
-	blt a1, a0, label122
-	j label124
-label115:
+	blt a0, a2, label117
+	j label217
+label111:
 	jal getint
 	sh2add s7, a0, s0
 	mv s8, a0
@@ -240,67 +217,57 @@ label115:
 	lw a2, 0(a1)
 	addi a0, a2, 1
 	sw a0, 0(a1)
-	bgt s6, zero, label115
+	bgt s6, zero, label111
 	mv a5, zero
 	mv a1, zero
 	li a0, 4
 	li a2, 10
-	blt a0, a2, label121
-	mv a0, s1
-	li a1, 1
-	sw zero, 0(s1)
-	li a0, 10
-	bge a1, a0, label124
-label122:
-	sh2add a0, a1, s1
-	addiw a1, a1, 1
-	sw zero, 0(a0)
-	li a0, 10
-	blt a1, a0, label122
-label124:
-	li a0, 1
-	mv a1, s2
-	lui a2, 458752
-	mv a3, s0
-	mv a4, s1
-	jal dfs
-	beq a0, zero, label125
-	addw a5, a5, a0
+	blt a0, a2, label117
+	j label217
+label113:
 	mv a1, zero
-	li a0, 4
-	li a2, 10
-	blt a0, a2, label121
-	mv a0, s1
-	li a1, 1
-	sw zero, 0(s1)
-	li a0, 10
-	blt a1, a0, label122
-	j label124
-label119:
+label115:
 	addiw a0, a1, 4
 	li a2, 10
-	blt a0, a2, label121
+	blt a0, a2, label117
+label217:
 	sh2add a0, a1, s1
 	addiw a1, a1, 1
 	sw zero, 0(a0)
 	li a0, 10
-	blt a1, a0, label122
-	j label124
-label121:
+	blt a1, a0, label118
+	j label120
+label117:
 	sh2add a1, a1, s1
 	sw zero, 0(a1)
 	sw zero, 4(a1)
 	sw zero, 8(a1)
 	sw zero, 12(a1)
 	mv a1, a0
-	j label119
-label125:
+	j label115
+label118:
+	sh2add a0, a1, s1
+	addiw a1, a1, 1
+	sw zero, 0(a0)
+	li a0, 10
+	blt a1, a0, label118
+label120:
+	li a0, 1
+	mv a1, s2
+	lui a2, 458752
+	mv a3, s0
+	mv a4, s1
+	jal dfs
+	beq a0, zero, label121
+	addw a5, a5, a0
+	j label113
+label121:
 	mv a0, a5
 	jal putint
 	li a0, 10
 	jal putch
-	ld ra, 96(sp)
 	mv a0, zero
+	ld ra, 96(sp)
 	ld s9, 104(sp)
 	ld s7, 112(sp)
 	ld s8, 120(sp)

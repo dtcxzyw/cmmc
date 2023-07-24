@@ -37,13 +37,10 @@ label2:
 	li a2, 1
 	addiw a0, a0, -1
 	bne a0, a2, label2
-	j label16
+	mulw a0, a1, a0
 label6:
 	jal write
 	ld ra, 0(sp)
 	mv a0, zero
 	addi sp, sp, 8
 	ret
-label16:
-	mulw a0, a1, a0
-	j label6

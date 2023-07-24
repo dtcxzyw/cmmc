@@ -35,6 +35,7 @@ test:
 	ldr r1, [r1, #0]
 	cmp r0, r1
 	blt label2
+label3:
 	movw r1, #:lower16:k
 	movt r1, #:upper16:k
 	ldr r1, [r1, #0]
@@ -47,11 +48,7 @@ label2:
 	mov r2, #1
 	movt r1, #:upper16:result1
 	str r2, [r1, #0]
-	movw r1, #:lower16:k
-	movt r1, #:upper16:k
-	ldr r1, [r1, #0]
-	cmp r0, r1
-	bge label5
+	b label3
 label4:
 	movw r0, #:lower16:result1
 	mov r1, #1

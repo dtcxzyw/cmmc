@@ -18,14 +18,17 @@ label3:
 	bl getch
 	sub r0, r0, #48
 	cmp r0, #9
-	bls label5
-	cmp r5, #0
-	bgt label9
-	b label22
-label5:
+	bhi label6
 	add r1, r5, r5, lsl #2
 	add r5, r0, r1, lsl #1
 	b label3
+label6:
+	cmp r5, #0
+	bgt label9
+label22:
+	mov r0, #0
+	add sp, sp, #64
+	pop { r4, r5, r6, pc }
 label9:
 	bl getch
 	sub r6, r0, #48
@@ -41,24 +44,7 @@ label10:
 	mov r0, #0
 	cmp r0, #0
 	bgt label20
-label19:
-	mov r0, #10
-	bl putch
-	subs r5, r5, #1
-	bgt label9
-	b label22
-label20:
-	sub r6, r0, #1
-	ldr r0, [r4, r6, lsl #2]
-	bl putch
-	cmp r6, #0
-	ble label19
-	mov r0, r6
-	b label20
-label22:
-	mov r0, #0
-	add sp, sp, #64
-	pop { r4, r5, r6, pc }
+	b label19
 label63:
 	mov r1, r6
 	mov r0, #0
@@ -81,6 +67,20 @@ label14:
 label73:
 	mov r1, r3
 	b label14
+label19:
+	mov r0, #10
+	bl putch
+	subs r5, r5, #1
+	bgt label9
+	b label22
+label20:
+	sub r6, r0, #1
+	ldr r0, [r4, r6, lsl #2]
+	bl putch
+	cmp r6, #0
+	ble label19
+	mov r0, r6
+	b label20
 label12:
 	add r1, r6, r6, lsl #2
 	add r6, r0, r1, lsl #1

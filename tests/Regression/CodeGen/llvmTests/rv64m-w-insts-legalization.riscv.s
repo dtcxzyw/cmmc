@@ -12,7 +12,7 @@ label8:
 label2:
 	addiw a1, a0, 1
 	bgt a3, a1, label3
-label20:
+label6:
 	li a1, 4294967295
 	and a0, a0, a1
 	j label8
@@ -20,4 +20,4 @@ label3:
 	mulw a0, a1, a0
 	addiw a1, a1, 1
 	bgt a3, a1, label3
-	j label20
+	j label6

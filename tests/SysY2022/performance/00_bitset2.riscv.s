@@ -17,25 +17,11 @@ main:
 	mv s1, a0
 	li a0, 56
 	jal _sysy_starttime
-	bgt s0, zero, label2
-label9:
-	li a0, 64
-	jal _sysy_stoptime
-	li a0, 10000
-pcrel138:
-	auipc a2, %pcrel_hi(a)
-	addi a1, a2, %pcrel_lo(pcrel138)
-	jal putarray
-	ld ra, 0(sp)
-	mv a0, zero
-	ld s1, 8(sp)
-	ld s0, 16(sp)
-	addi sp, sp, 24
-	ret
-label2:
+	ble s0, zero, label9
+pcrel136:
 	auipc a1, %pcrel_hi(a)
 	mv a3, s1
-	addi a0, a1, %pcrel_lo(label2)
+	addi a0, a1, %pcrel_lo(pcrel136)
 	mv a1, s0
 label3:
 	li a2, 19971231
@@ -103,10 +89,29 @@ label130:
 	andi t3, t4, -2
 	subw t2, t1, t3
 	bne a3, t2, label6
+	j label8
+label7:
+	ble a1, zero, label9
+	mv a3, a2
+	j label3
+label8:
 	sh2add a3, a4, a0
 	sw a5, 0(a3)
-	bgt a1, zero, label62
-	j label9
+	j label7
+label9:
+	li a0, 64
+	jal _sysy_stoptime
+	li a0, 10000
+pcrel137:
+	auipc a2, %pcrel_hi(a)
+	addi a1, a2, %pcrel_lo(pcrel137)
+	jal putarray
+	ld ra, 0(sp)
+	mv a0, zero
+	ld s1, 8(sp)
+	ld s0, 16(sp)
+	addi sp, sp, 24
+	ret
 label6:
 	andi t2, t1, 1
 	xori t3, a3, 1
@@ -126,7 +131,4 @@ label132:
 	addw a5, a5, a3
 	sh2add a3, a4, a0
 	sw a5, 0(a3)
-	ble a1, zero, label9
-label62:
-	mv a3, a2
-	j label3
+	j label7

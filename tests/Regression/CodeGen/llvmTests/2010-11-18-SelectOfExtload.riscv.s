@@ -12,17 +12,17 @@ s:
 .text
 .globl foo
 foo:
-	bne a0, zero, label2
+	beq a0, zero, label5
 pcrel26:
+	auipc a1, %pcrel_hi(u)
+	lb a2, %pcrel_lo(pcrel26)(a1)
+	andi a0, a2, 255
+label3:
+	ret
+label5:
 	auipc a2, %pcrel_hi(s)
-	lb a0, %pcrel_lo(pcrel26)(a2)
+	lb a0, %pcrel_lo(label5)(a2)
 	li a2, 4294967295
 	sext.b a1, a0
 	and a0, a1, a2
 	j label3
-label2:
-	auipc a1, %pcrel_hi(u)
-	lb a2, %pcrel_lo(label2)(a1)
-	andi a0, a2, 255
-label3:
-	ret

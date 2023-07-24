@@ -25,48 +25,21 @@ label6:
 	add r2, r1, #96
 	cmp r2, #100
 	blt label34
-	add r2, r1, #24
-	cmp r2, #100
-	blt label39
-	add r1, r1, #6
-	cmp r1, #100
-	blt label12
-	sub r1, r1, #100
-	cmp r0, #100
-	blt label5
-	b label16
+	b label10
 label29:
 	mov r1, r2
 	b label6
 label8:
 	add r2, r1, #96
 	cmp r2, #100
-	blt label34
-	add r2, r1, #24
-	cmp r2, #100
-	blt label39
-	add r1, r1, #6
-	cmp r1, #100
-	blt label12
-	sub r1, r1, #100
-	cmp r0, #100
-	blt label5
-	b label16
+	bge label10
 label34:
 	mov r1, r2
 	b label8
 label10:
 	add r2, r1, #24
 	cmp r2, #100
-	blt label39
-	add r1, r1, #6
-	cmp r1, #100
-	blt label12
-	sub r1, r1, #100
-	cmp r0, #100
-	blt label5
-	b label16
-label39:
+	bge label12
 	mov r1, r2
 	b label10
 label12:

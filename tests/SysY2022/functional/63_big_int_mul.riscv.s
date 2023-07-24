@@ -113,22 +113,20 @@ label2:
 	sw zero, 24(a3)
 	sw zero, 28(a3)
 	bge a2, zero, label8
+label136:
 	lw a0, 0(sp)
 	bne a0, zero, label17
-label237:
-	li s1, 1
-	j label18
+	j label175
 label8:
 	sh2add a4, a2, a1
 	lw a3, 0(a4)
 	li a4, 19
+label9:
 	bge a4, zero, label12
 	addiw a5, a5, 19
 	addiw a2, a2, -1
 	bge a2, zero, label8
-	lw a0, 0(sp)
-	bne a0, zero, label17
-	j label237
+	j label136
 label12:
 	sh2add t1, a5, s0
 	sh2add t2, a4, a0
@@ -137,19 +135,7 @@ label12:
 	mulw t3, a3, t1
 	li t1, 9
 	addw t0, t0, t3
-	bgt t0, t1, label13
-	sh2add t1, a5, s0
-	addiw a4, a4, -1
-	addiw a5, a5, -1
-	sw t0, 0(t1)
-	bge a4, zero, label12
-	addiw a5, a5, 19
-	addiw a2, a2, -1
-	bge a2, zero, label8
-	lw a0, 0(sp)
-	bne a0, zero, label17
-	j label237
-label13:
+	ble t0, t1, label14
 	addiw t1, a5, -1
 	sh2add t3, a5, s0
 	li t4, 1717986919
@@ -164,12 +150,16 @@ label13:
 	addw a5, a5, t0
 	sw a5, 0(t2)
 	mv a5, t1
-	bge a4, zero, label12
-	addiw a5, t1, 19
-	addiw a2, a2, -1
-	bge a2, zero, label8
-	lw a0, 0(sp)
-	beq a0, zero, label237
+	j label9
+label14:
+	sh2add t1, a5, s0
+	addiw a4, a4, -1
+	addiw a5, a5, -1
+	sw t0, 0(t1)
+	j label9
+label175:
+	li s1, 1
+	j label18
 label17:
 	jal putint
 	li s1, 1

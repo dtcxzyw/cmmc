@@ -27,7 +27,12 @@ main:
 	movt r5, #:upper16:image_out
 	movw r1, #1023
 	cmp r0, r1
-	bge label24
+	blt label4
+label24:
+	mov r0, #1024
+	mov r1, #0
+	mov r2, r1
+	b label11
 label4:
 	sub r1, r0, #1
 	mov r2, #2048
@@ -74,10 +79,7 @@ label5:
 	movw r1, #1023
 	cmp r0, r1
 	blt label4
-label24:
-	mov r0, #1024
-	mov r1, #0
-	mov r2, r1
+	b label24
 label11:
 	ldr r3, [r4, r1, lsl #2]
 	add r2, r2, #4

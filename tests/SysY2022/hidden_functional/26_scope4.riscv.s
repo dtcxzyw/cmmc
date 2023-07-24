@@ -9,9 +9,9 @@ main:
 	li a1, 2
 	mv a2, zero
 	sd ra, 0(sp)
+label2:
 	li a3, 3
-	bge zero, a3, label10
-label7:
+	bge a2, a3, label10
 	addiw a3, a1, 10
 	addiw a5, a0, 1
 	addw a4, a4, a3
@@ -34,9 +34,7 @@ label7:
 	sh1add a5, a3, a3
 	addw a4, a2, a5
 	li a2, 2
-	li a3, 3
-	blt a2, a3, label7
-	j label10
+	j label2
 label9:
 	addiw a1, a0, 7
 	addw a3, a3, a4
@@ -48,8 +46,7 @@ label9:
 	addw a4, a1, a5
 	addiw a1, a0, 13
 	mv a0, a1
-	li a3, 3
-	blt a2, a3, label7
+	j label2
 label10:
 	mv a0, a4
 	jal putint

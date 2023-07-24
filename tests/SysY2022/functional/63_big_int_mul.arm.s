@@ -138,47 +138,29 @@ label2:
 	str r4, [r3, #28]
 	cmn r2, #1
 	bgt label8
+label136:
 	ldr r0, [sp, #0]
 	cmp r0, #0
 	bne label17
-label294:
-	mov r4, #1
-	b label18
+	b label175
 label8:
 	ldr r3, [r1, r2, lsl #2]
 	mov r4, #19
+label9:
 	cmn r4, #1
 	bgt label12
 	add r5, r5, #19
 	sub r2, r2, #1
 	cmn r2, #1
 	bgt label8
-	ldr r0, [sp, #0]
-	cmp r0, #0
-	bne label17
-	b label294
+	b label136
 label12:
 	ldr r7, [sp, #360]
 	ldr r6, [r7, r5, lsl #2]
 	ldr r7, [r0, r4, lsl #2]
 	mla r6, r3, r7, r6
 	cmp r6, #9
-	bgt label13
-	ldr r7, [sp, #360]
-	sub r4, r4, #1
-	str r6, [r7, r5, lsl #2]
-	sub r5, r5, #1
-	cmn r4, #1
-	bgt label12
-	add r5, r5, #19
-	sub r2, r2, #1
-	cmn r2, #1
-	bgt label8
-	ldr r0, [sp, #0]
-	cmp r0, #0
-	bne label17
-	b label294
-label13:
+	ble label14
 	sub r8, r5, #1
 	ldr r7, [sp, #360]
 	movw r9, #26215
@@ -192,15 +174,16 @@ label13:
 	add r5, r5, r6
 	str r5, [r7, r8, lsl #2]
 	mov r5, r8
-	cmn r4, #1
-	bgt label12
-	add r5, r8, #19
-	sub r2, r2, #1
-	cmn r2, #1
-	bgt label8
-	ldr r0, [sp, #0]
-	cmp r0, #0
-	beq label294
+	b label9
+label14:
+	ldr r7, [sp, #360]
+	sub r4, r4, #1
+	str r6, [r7, r5, lsl #2]
+	sub r5, r5, #1
+	b label9
+label175:
+	mov r4, #1
+	b label18
 label17:
 	bl putint
 	mov r4, #1

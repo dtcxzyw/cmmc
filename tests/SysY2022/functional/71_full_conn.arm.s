@@ -12,12 +12,12 @@ main:
 	str r5, [sp, #144]
 	bl getint
 	str r0, [sp, #140]
+label2:
+	ldr r0, [sp, #140]
 	cmp r0, #0
 	ble label11
-label17:
 	mov r4, #0
-	cmp r4, #5
-	bge label10
+	b label4
 label6:
 	mov r0, #20
 	ldr r5, [sp, #144]
@@ -1134,10 +1134,14 @@ label10:
 	mov r0, #10
 	bl putch
 	ldr r0, [sp, #140]
-	subs r0, r0, #1
+	sub r0, r0, #1
 	str r0, [sp, #140]
-	bgt label17
+	b label2
 label11:
 	mov r0, #0
 	add sp, sp, #512
 	pop { r4, r5, r6, r7, r8, r9, r10, pc }
+label4:
+	cmp r4, #5
+	blt label6
+	b label10

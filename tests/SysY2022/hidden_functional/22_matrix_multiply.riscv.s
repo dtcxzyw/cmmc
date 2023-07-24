@@ -30,16 +30,34 @@ main:
 	jal getint
 	mv s2, zero
 	mv s3, a0
-pcrel234:
+pcrel209:
 	auipc a0, %pcrel_hi(a)
-	addi s5, a0, %pcrel_lo(pcrel234)
-pcrel235:
+	addi s5, a0, %pcrel_lo(pcrel209)
+pcrel210:
 	auipc a0, %pcrel_hi(b)
-	addi s4, a0, %pcrel_lo(pcrel235)
-pcrel236:
+	addi s4, a0, %pcrel_lo(pcrel210)
+pcrel211:
 	auipc a0, %pcrel_hi(res)
-	addi s1, a0, %pcrel_lo(pcrel236)
-	bgt s0, zero, label4
+	addi s1, a0, %pcrel_lo(pcrel211)
+	ble s0, zero, label8
+label4:
+	li a0, 400
+	mul a1, s2, a0
+	add s6, s5, a1
+	bgt s3, zero, label54
+	addiw s2, s2, 1
+	bgt s0, s2, label4
+	j label8
+label54:
+	mv s7, zero
+label5:
+	jal getint
+	sh2add a1, s7, s6
+	addiw s7, s7, 1
+	sw a0, 0(a1)
+	bgt s3, s7, label5
+	addiw s2, s2, 1
+	bgt s0, s2, label4
 label8:
 	jal getint
 	mv s6, a0
@@ -47,40 +65,51 @@ label8:
 	mv s7, zero
 	mv s2, a0
 	bgt s6, zero, label11
+label69:
 	mv a2, zero
+	j label15
+label11:
+	li a0, 400
+	mul a1, s7, a0
+	add s8, s4, a1
+	bgt s2, zero, label75
+	addiw s7, s7, 1
+	bgt s6, s7, label11
+	j label69
+label75:
+	mv s9, zero
+label12:
+	jal getint
+	sh2add a1, s9, s8
+	addiw s9, s9, 1
+	sw a0, 0(a1)
+	bgt s2, s9, label12
+	addiw s7, s7, 1
+	bgt s6, s7, label11
+	j label69
+label15:
 	li a1, 400
-	mv a0, zero
-	mv a1, s5
-	mv a3, s1
-	bgt s0, zero, label92
+	mul a0, a2, a1
+	add a1, s5, a0
+	add a3, s1, a0
+	bgt s0, a2, label92
+label91:
 	mv s3, zero
+	bgt s0, zero, label34
 	j label33
 label92:
 	mv a0, zero
-	bgt s2, zero, label19
+	j label17
+label95:
 	addiw a2, a2, 1
 	li a1, 400
 	mul a0, a2, a1
 	add a1, s5, a0
 	add a3, s1, a0
 	bgt s0, a2, label92
-	mv s3, zero
-	bgt s0, zero, label34
-	j label33
+	j label91
 label19:
-	bgt s3, zero, label21
-	addiw a0, a0, 1
-	bgt s2, a0, label19
-	addiw a2, a2, 1
-	li a1, 400
-	mul a0, a2, a1
-	add a1, s5, a0
-	add a3, s1, a0
-	bgt s0, a2, label92
-	mv s3, zero
-	bgt s0, zero, label34
-	j label33
-label21:
+	ble s3, zero, label20
 	sh2add a4, a0, a3
 	mv t0, zero
 	lw t1, 0(a4)
@@ -132,30 +161,22 @@ label26:
 	sw t1, 0(a4)
 	addiw a0, a0, 1
 	bgt s2, a0, label19
-	addiw a2, a2, 1
+	j label95
+label34:
 	li a1, 400
-	mul a0, a2, a1
-	add a1, s5, a0
-	add a3, s1, a0
-	bgt s0, a2, label92
-	mv s3, zero
-	bgt s0, zero, label34
-	j label33
-label12:
-	jal getint
-	sh2add a1, s9, s8
-	addiw s9, s9, 1
-	sw a0, 0(a1)
-	bgt s2, s9, label12
-	addiw s7, s7, 1
-	bgt s6, s7, label11
-	mv a2, zero
-	li a1, 400
-	mv a0, zero
-	mv a1, s5
-	mv a3, s1
-	bgt s0, zero, label92
-	mv s3, zero
+	mul a0, s3, a1
+	add s4, s1, a0
+	ble s2, zero, label37
+	mv s5, zero
+	j label35
+label17:
+	bgt s2, a0, label19
+	j label95
+label20:
+	addiw a0, a0, 1
+	j label17
+label31:
+	bgt s0, s3, label34
 label33:
 	mv a0, zero
 	ld ra, 0(sp)
@@ -171,56 +192,6 @@ label33:
 	ld s0, 80(sp)
 	addi sp, sp, 88
 	ret
-label34:
-	li a1, 400
-	mul a0, s3, a1
-	add s4, s1, a0
-	ble s2, zero, label37
-	mv s5, zero
-	j label35
-label37:
-	li a0, 10
-	jal putch
-	addiw s3, s3, 1
-	bgt s0, s3, label34
-	j label33
-label4:
-	li a0, 400
-	mul a1, s2, a0
-	add s6, s5, a1
-	bgt s3, zero, label54
-	addiw s2, s2, 1
-	bgt s0, s2, label4
-	j label8
-label54:
-	mv s7, zero
-label5:
-	jal getint
-	sh2add a1, s7, s6
-	addiw s7, s7, 1
-	sw a0, 0(a1)
-	bgt s3, s7, label5
-	addiw s2, s2, 1
-	bgt s0, s2, label4
-	j label8
-label11:
-	li a0, 400
-	mul a1, s7, a0
-	add s8, s4, a1
-	bgt s2, zero, label75
-	addiw s7, s7, 1
-	bgt s6, s7, label11
-	mv a2, zero
-	li a1, 400
-	mv a0, zero
-	mv a1, s5
-	mv a3, s1
-	bgt s0, zero, label92
-	mv s3, zero
-	j label33
-label75:
-	mv s9, zero
-	j label12
 label35:
 	sh2add a1, s5, s4
 	lw a0, 0(a1)
@@ -229,4 +200,8 @@ label35:
 	jal putch
 	addiw s5, s5, 1
 	bgt s2, s5, label35
-	j label37
+label37:
+	li a0, 10
+	jal putch
+	addiw s3, s3, 1
+	j label31

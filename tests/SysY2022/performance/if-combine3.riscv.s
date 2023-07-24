@@ -16,14 +16,14 @@ label2:
 	blt a1, a3, label4
 	mv a2, zero
 	mv a1, zero
-	bgt a0, zero, label8
-	j label13
+	j label5
 label4:
 	sh2add a2, a1, s0
 	addiw a1, a1, 1
 	sw zero, 0(a2)
 	j label2
-label8:
+label5:
+	ble a0, a1, label13
 	li a4, 1
 	li a3, 2
 	li a5, 4
@@ -284,7 +284,7 @@ label12:
 	li a4, 65535
 	mulw a5, a3, a4
 	subw a2, a2, a5
-	bgt a0, a1, label8
+	j label5
 label13:
 	mv a0, a2
 	jal putint

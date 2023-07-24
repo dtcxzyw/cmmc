@@ -28,8 +28,87 @@ main:
 	bgt label2
 	cmp r4, #0
 	bgt label9
-	ble label168
-label24:
+	b label21
+label2:
+	movw r0, #:lower16:matrix
+	mov r1, #0
+	movt r0, #:upper16:matrix
+label3:
+	add r2, r1, #4
+	cmp r6, r2
+	bgt label5
+	str r1, [r0, r1, lsl #2]
+	add r1, r1, #1
+	cmp r6, r1
+	bgt label6
+	b label63
+label5:
+	add r3, r0, r1, lsl #2
+	str r1, [r0, r1, lsl #2]
+	add r7, r1, #1
+	str r7, [r3, #4]
+	add r7, r1, #2
+	add r1, r1, #3
+	str r7, [r3, #8]
+	str r1, [r3, #12]
+	mov r1, r2
+	b label3
+label6:
+	str r1, [r0, r1, lsl #2]
+	add r1, r1, #1
+	cmp r6, r1
+	bgt label6
+label63:
+	cmp r4, #0
+	ble label21
+label9:
+	movw r0, #:lower16:matrix
+	mov r1, #0
+	movt r0, #:upper16:matrix
+	b label10
+label21:
+	cmp r4, #0
+	bgt label106
+	b label105
+label10:
+	ldr r3, [r5, r1, lsl #2]
+	mov r2, #0
+	sdiv r7, r6, r3
+	b label12
+label78:
+	add r1, r1, #1
+	cmp r4, r1
+	bgt label10
+	b label102
+label79:
+	mov r8, #0
+label14:
+	cmp r3, r8
+	bgt label16
+	add r2, r2, #1
+	mul r9, r3, r2
+	cmp r7, r2
+	bgt label79
+	b label78
+label16:
+	cmp r2, r8
+	bge label18
+	add r8, r8, #1
+	b label14
+label18:
+	mla r10, r7, r8, r2
+	add r11, r9, r8
+	add r8, r8, #1
+	ldr r11, [r0, r11, lsl #2]
+	str r11, [r0, r10, lsl #2]
+	b label14
+label102:
+	cmp r4, #0
+	bgt label106
+label105:
+	mov r4, #0
+	b label22
+label106:
 	movw r0, #:lower16:matrix
 	mov r1, #0
 	mov r2, #1
@@ -37,69 +116,11 @@ label24:
 	mov r6, r1
 	mov r5, r1
 	b label25
-label10:
-	ldr r3, [r5, r1, lsl #2]
-	mov r2, #0
-	sdiv r7, r6, r3
+label12:
 	mul r9, r3, r2
 	cmp r7, r2
 	bgt label79
-	add r1, r1, #1
-	cmp r4, r1
-	bgt label10
-	cmp r4, #0
-	bgt label24
-	b label168
-label79:
-	mov r8, #0
-	cmp r3, r8
-	bgt label16
-	add r2, r2, #1
-	mul r9, r3, r2
-	cmp r7, r2
-	bgt label79
-	add r1, r1, #1
-	cmp r4, r1
-	bgt label10
-	cmp r4, #0
-	bgt label24
-	b label168
-label16:
-	cmp r2, r8
-	blt label17
-	mla r10, r7, r8, r2
-	add r11, r9, r8
-	add r8, r8, #1
-	ldr r11, [r0, r11, lsl #2]
-	str r11, [r0, r10, lsl #2]
-	cmp r3, r8
-	bgt label16
-	add r2, r2, #1
-	mul r9, r3, r2
-	cmp r7, r2
-	bgt label79
-	add r1, r1, #1
-	cmp r4, r1
-	bgt label10
-	cmp r4, #0
-	bgt label24
-	b label168
-label17:
-	add r8, r8, #1
-	cmp r3, r8
-	bgt label16
-	add r2, r2, #1
-	mul r9, r3, r2
-	cmp r7, r2
-	bgt label79
-	add r1, r1, #1
-	cmp r4, r1
-	bgt label10
-	cmp r4, #0
-	bgt label24
-	b label168
-label188:
-	mov r4, r3
+	b label78
 label22:
 	mov r0, #47
 	bl _sysy_stoptime
@@ -122,7 +143,7 @@ label25:
 	add r1, r1, r2
 	add r2, r2, #2
 	bgt label155
-	b label188
+	b label154
 label30:
 	add r7, r0, r5, lsl #2
 	add r9, r1, r2
@@ -151,48 +172,10 @@ label31:
 	mla r3, r1, r3, r6
 	add r1, r1, r2
 	add r2, r2, #2
-	ble label188
+	bgt label155
+label154:
+	mov r4, r3
+	b label22
 label155:
 	mov r6, r3
 	b label31
-label2:
-	movw r0, #:lower16:matrix
-	mov r1, #0
-	movt r0, #:upper16:matrix
-label3:
-	add r2, r1, #4
-	cmp r6, r2
-	bgt label5
-	str r1, [r0, r1, lsl #2]
-	add r1, r1, #1
-	cmp r6, r1
-	bgt label6
-	cmp r4, #0
-	bgt label9
-	b label168
-label5:
-	add r3, r0, r1, lsl #2
-	str r1, [r0, r1, lsl #2]
-	add r7, r1, #1
-	str r7, [r3, #4]
-	add r7, r1, #2
-	add r1, r1, #3
-	str r7, [r3, #8]
-	str r1, [r3, #12]
-	mov r1, r2
-	b label3
-label6:
-	str r1, [r0, r1, lsl #2]
-	add r1, r1, #1
-	cmp r6, r1
-	bgt label6
-	cmp r4, #0
-	ble label168
-label9:
-	movw r0, #:lower16:matrix
-	mov r1, #0
-	movt r0, #:upper16:matrix
-	b label10
-label168:
-	mov r4, #0
-	b label22

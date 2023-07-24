@@ -18,19 +18,13 @@ label3:
 	jal getch
 	li a2, 9
 	addiw a1, a0, -48
-	bleu a1, a2, label5
-	bgt s1, zero, label9
-	j label22
-label5:
+	bgtu a1, a2, label6
 	sh2add a0, s1, s1
 	sh1add s1, a0, a1
 	j label3
-label116:
-	mv a0, zero
-	j label19
-label63:
-	mv a3, s2
-	mv a0, zero
+label6:
+	bgt s1, zero, label9
+	j label22
 label14:
 	sh2add a1, a0, s0
 	li a5, 1717986919
@@ -80,7 +74,12 @@ label10:
 	addiw a0, a0, -48
 	bleu a0, a1, label12
 	bgt s2, zero, label63
-	j label116
+	mv a0, zero
+	j label19
+label63:
+	mv a3, s2
+	mv a0, zero
+	j label14
 label12:
 	sh2add a1, s2, s2
 	sh1add s2, a1, a0

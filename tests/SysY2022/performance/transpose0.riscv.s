@@ -16,10 +16,10 @@ main:
 	sd s0, 8(sp)
 	sd ra, 0(sp)
 	jal getint
-pcrel207:
+pcrel174:
 	auipc a1, %pcrel_hi(a)
 	mv s1, a0
-	addi a0, a1, %pcrel_lo(pcrel207)
+	addi a0, a1, %pcrel_lo(pcrel174)
 	mv s2, a0
 	jal getarray
 	mv s0, a0
@@ -27,38 +27,68 @@ pcrel207:
 	jal _sysy_starttime
 	bgt s1, zero, label2
 	bgt s0, zero, label9
-	ble s0, zero, label178
-label24:
+	j label21
+label2:
 	auipc a1, %pcrel_hi(matrix)
-	li a2, 1
-	mv a5, zero
-	addi a0, a1, %pcrel_lo(label24)
-	mv a4, zero
+	addi a0, a1, %pcrel_lo(label2)
 	mv a1, zero
-	j label25
+label3:
+	addiw a2, a1, 4
+	bgt s1, a2, label5
+	sh2add a2, a1, a0
+	sw a1, 0(a2)
+	addiw a1, a1, 1
+	bgt s1, a1, label6
+	j label63
+label5:
+	sh2add a3, a1, a0
+	addiw a4, a1, 1
+	addiw a5, a1, 2
+	sw a1, 0(a3)
+	sw a4, 4(a3)
+	addiw a4, a1, 3
+	sw a5, 8(a3)
+	mv a1, a2
+	sw a4, 12(a3)
+	j label3
+label6:
+	sh2add a2, a1, a0
+	sw a1, 0(a2)
+	addiw a1, a1, 1
+	bgt s1, a1, label6
+label63:
+	ble s0, zero, label21
+label9:
+	auipc a1, %pcrel_hi(matrix)
+	addi a0, a1, %pcrel_lo(label9)
+	mv a1, zero
+	j label10
+label21:
+	bgt s0, zero, label106
+	j label105
 label10:
 	sh2add a2, a1, s2
 	lw a3, 0(a2)
 	mv a2, zero
 	divw a4, s1, a3
-	mv t0, zero
-	bgt a4, zero, label79
+	j label12
+label78:
 	addiw a1, a1, 1
 	bgt s0, a1, label10
-	bgt s0, zero, label24
-	j label178
+	j label102
 label79:
 	mv a5, zero
-	bgt a3, zero, label16
+label14:
+	bgt a3, a5, label16
 	addiw a2, a2, 1
 	mulw t0, a3, a2
 	bgt a4, a2, label79
-	addiw a1, a1, 1
-	bgt s0, a1, label10
-	bgt s0, zero, label24
-	j label178
+	j label78
 label16:
-	blt a2, a5, label17
+	bge a2, a5, label18
+	addiw a5, a5, 1
+	j label14
+label18:
 	mulw t2, a4, a5
 	addw t3, t0, a5
 	addw t4, a2, t2
@@ -67,28 +97,24 @@ label16:
 	sh2add t1, t4, a0
 	lw t4, 0(t2)
 	sw t4, 0(t1)
-	bgt a3, a5, label16
-	addiw a2, a2, 1
-	mulw t0, a3, a2
-	bgt a4, a2, label79
-	addiw a1, a1, 1
-	bgt s0, a1, label10
-	bgt s0, zero, label24
-	j label178
-label17:
-	addiw a5, a5, 1
-	bgt a3, a5, label16
-	addiw a2, a2, 1
-	mulw t0, a3, a2
-	bgt a4, a2, label79
-	addiw a1, a1, 1
-	bgt s0, a1, label10
-	bgt s0, zero, label24
-label178:
+	j label14
+label102:
+	bgt s0, zero, label106
+label105:
 	mv s0, zero
 	j label22
-label198:
-	mv s0, a4
+label106:
+	auipc a1, %pcrel_hi(matrix)
+	li a2, 1
+	mv a5, zero
+	addi a0, a1, %pcrel_lo(label106)
+	mv a4, zero
+	mv a1, zero
+	j label25
+label12:
+	mulw t0, a3, a2
+	bgt a4, a2, label79
+	j label78
 label22:
 	li a0, 47
 	jal _sysy_stoptime
@@ -115,7 +141,7 @@ label25:
 	addw a4, a4, t1
 	addiw a2, a2, 2
 	bgt s0, a5, label31
-	j label198
+	j label154
 label30:
 	sh2add a5, a5, a0
 	addw t3, a1, a2
@@ -141,37 +167,6 @@ label30:
 	mv a5, a3
 	addiw a2, a2, 8
 	j label25
-label2:
-	auipc a1, %pcrel_hi(matrix)
-	addi a0, a1, %pcrel_lo(label2)
-	mv a1, zero
-label3:
-	addiw a2, a1, 4
-	bgt s1, a2, label5
-	sh2add a2, a1, a0
-	sw a1, 0(a2)
-	addiw a1, a1, 1
-	bgt s1, a1, label6
-	bgt s0, zero, label9
-	j label178
-label5:
-	sh2add a3, a1, a0
-	addiw a4, a1, 1
-	addiw a5, a1, 2
-	sw a1, 0(a3)
-	sw a4, 4(a3)
-	addiw a4, a1, 3
-	sw a5, 8(a3)
-	mv a1, a2
-	sw a4, 12(a3)
-	j label3
-label6:
-	sh2add a2, a1, a0
-	sw a1, 0(a2)
-	addiw a1, a1, 1
-	bgt s1, a1, label6
-	bgt s0, zero, label9
-	j label178
 label31:
 	sh2add t0, a5, a0
 	addiw a5, a5, 1
@@ -181,9 +176,6 @@ label31:
 	addw a4, a4, t1
 	addiw a2, a2, 2
 	bgt s0, a5, label31
-	j label198
-label9:
-	auipc a1, %pcrel_hi(matrix)
-	addi a0, a1, %pcrel_lo(label9)
-	mv a1, zero
-	j label10
+label154:
+	mv s0, a4
+	j label22

@@ -31,16 +31,23 @@ main:
 	ldr r6, [sp, #0]
 	mla r1, r0, r1, r5
 	cmp r6, r0
-	ble label37
+	bgt label38
+label37:
+	mov r4, #1
+	mov r0, r4
+	b label15
 label38:
 	mov r2, #0
+label4:
 	ldr r6, [sp, #0]
 	cmp r6, r2
 	bgt label7
+label41:
 	add r0, r0, #1
 	movw r1, #63744
 	ldr r5, [sp, #4]
 	movt r1, #21
+	ldr r6, [sp, #0]
 	mla r1, r0, r1, r5
 	cmp r6, r0
 	bgt label38
@@ -49,17 +56,7 @@ label7:
 	ldr r6, [sp, #0]
 	cmp r6, #0
 	bgt label8
-	add r2, r2, #1
-	cmp r6, r2
-	bgt label7
-	add r0, r0, #1
-	movw r1, #63744
-	ldr r5, [sp, #4]
-	movt r1, #21
-	mla r1, r0, r1, r5
-	cmp r6, r0
-	bgt label38
-	b label37
+	b label14
 label9:
 	add r4, r5, #4
 	ldr r6, [sp, #0]
@@ -70,17 +67,7 @@ label9:
 	add r5, r5, #1
 	cmp r6, r5
 	bgt label12
-	add r2, r2, #1
-	cmp r6, r2
-	bgt label7
-	add r0, r0, #1
-	movw r1, #63744
-	ldr r5, [sp, #4]
-	movt r1, #21
-	mla r1, r0, r1, r5
-	cmp r6, r0
-	bgt label38
-	b label37
+	b label64
 label11:
 	add r6, r3, r5, lsl #2
 	mov r7, #1
@@ -97,19 +84,15 @@ label12:
 	add r5, r5, #1
 	cmp r6, r5
 	bgt label12
+label64:
 	add r2, r2, #1
+	ldr r6, [sp, #0]
 	cmp r6, r2
 	bgt label7
-	add r0, r0, #1
-	movw r1, #63744
-	ldr r5, [sp, #4]
-	movt r1, #21
-	mla r1, r0, r1, r5
-	cmp r6, r0
-	bgt label38
-label37:
-	mov r4, #1
-	mov r0, r4
+	b label41
+label14:
+	add r2, r2, #1
+	b label4
 label15:
 	movw r2, #63744
 	ldr r5, [sp, #4]
@@ -128,9 +111,7 @@ label15:
 	cmp r3, r0
 	ble label18
 	mov r0, #1
-	cmp r3, r0
-	bgt label21
-	b label254
+	b label19
 label18:
 	mov r0, #53
 	bl _sysy_stoptime
@@ -156,6 +137,10 @@ label18:
 	add sp, sp, #52
 	mov r0, #0
 	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
+label19:
+	ldr r3, [sp, #8]
+	cmp r3, r0
+	ble label86
 label21:
 	add r1, r0, #1
 	mov r2, #2400
@@ -178,9 +163,15 @@ label21:
 	mov r0, r1
 	cmp r3, r1
 	bgt label21
-	b label254
+	b label86
 label100:
 	mov r9, #1
+	b label22
+label86:
+	mov r4, r0
+	ldr r1, [sp, #28]
+	mov r0, r1
+	b label15
 label22:
 	add r2, r9, #4
 	ldr r3, [sp, #8]
@@ -213,7 +204,7 @@ label24:
 	mov r0, r1
 	cmp r3, r1
 	bgt label21
-	b label254
+	b label86
 label26:
 	add r3, r1, r9, lsl #2
 	ldr r5, [r1, r9, lsl #2]
@@ -283,8 +274,3 @@ label8:
 	mov r5, #0
 	mla r3, r2, r3, r1
 	b label9
-label254:
-	mov r4, r0
-	ldr r1, [sp, #28]
-	mov r0, r1
-	b label15

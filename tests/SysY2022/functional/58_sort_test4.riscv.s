@@ -28,33 +28,26 @@ main:
 	mv a0, zero
 	sw a2, 32(sp)
 	sw a1, 36(sp)
+label2:
 	li a1, 9
-	blt zero, a1, label4
-label29:
+	blt a0, a1, label4
 	mv s1, zero
 	j label14
 label4:
 	addiw a1, a0, 1
 	mv a4, a0
 	mv a3, a1
-	addiw a2, a1, 4
+label5:
+	addiw a2, a3, 4
 	li a5, 10
 	blt a2, a5, label8
-	sh2add a2, a0, s0
-	sh2add t1, a1, s0
+	sh2add a2, a4, s0
+	sh2add t1, a3, s0
 	lw a5, 0(a2)
-	mv a2, a1
+	mv a2, a3
 	lw t0, 0(t1)
 	bgt a5, t0, label127
-	mv a2, a0
-	addiw a3, a1, 1
-	li a4, 10
-	blt a3, a4, label84
-	bne a0, a0, label13
-	mv a0, a1
-	li a1, 9
-	blt a0, a1, label4
-	j label29
+	j label126
 label8:
 	sh2add a5, a4, s0
 	sh2add t2, a3, s0
@@ -91,50 +84,28 @@ label123:
 label125:
 	mv a3, a2
 	mv a4, t0
-	addiw a2, a2, 4
-	li a5, 10
-	blt a2, a5, label8
-	sh2add a2, t0, s0
+	j label5
+label9:
+	sh2add a2, a4, s0
 	sh2add t1, a3, s0
 	lw a5, 0(a2)
 	mv a2, a3
 	lw t0, 0(t1)
 	bgt a5, t0, label127
+label126:
 	mv a2, a4
-	addiw a3, a3, 1
-	li a4, 10
-	blt a3, a4, label84
-	bne a0, a2, label13
-	mv a0, a1
-	li a1, 9
-	blt a0, a1, label4
-	j label29
 label127:
 	addiw a3, a3, 1
 	li a4, 10
 	blt a3, a4, label84
 	bne a0, a2, label13
-	mv a0, a1
-	li a1, 9
-	blt a0, a1, label4
-	j label29
+	j label87
 label84:
 	mv a4, a2
-	sh2add a2, a2, s0
-	sh2add t1, a3, s0
-	lw a5, 0(a2)
-	mv a2, a3
-	lw t0, 0(t1)
-	bgt a5, t0, label127
-	mv a2, a4
-	addiw a3, a3, 1
-	li a4, 10
-	blt a3, a4, label84
-	bne a0, a2, label13
+	j label9
+label87:
 	mv a0, a1
-	li a1, 9
-	blt a0, a1, label4
-	j label29
+	j label2
 label13:
 	sh2add a2, a2, s0
 	sh2add a0, a0, s0
@@ -143,9 +114,7 @@ label13:
 	sw a4, 0(a2)
 	sw a3, 0(a0)
 	mv a0, a1
-	li a1, 9
-	blt a0, a1, label4
-	j label29
+	j label2
 label14:
 	sh2add a1, s1, s0
 	lw a0, 0(a1)

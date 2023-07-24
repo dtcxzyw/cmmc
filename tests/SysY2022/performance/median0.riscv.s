@@ -8,10 +8,10 @@ a:
 .globl main
 main:
 	addi sp, sp, -48
-pcrel225:
+pcrel102:
 	auipc a0, %pcrel_hi(a)
 	sd s3, 40(sp)
-	addi s3, a0, %pcrel_lo(pcrel225)
+	addi s3, a0, %pcrel_lo(pcrel102)
 	sd s0, 32(sp)
 	mv s0, s3
 	sd s1, 24(sp)
@@ -30,113 +30,11 @@ pcrel225:
 	mv a1, s3
 	mv a2, zero
 	mv a0, s4
-	lw a3, 0(s3)
-	addiw a4, s4, 1
-	mv a5, zero
-	bgt a4, zero, label22
-	beq a4, zero, label16
-	mv t0, s0
-	sh2add t2, a4, s0
-	lw t1, 0(s0)
-	lw t3, 0(t2)
-	sw t3, 0(s0)
-	sw t1, 0(t2)
-	lw t1, 0(s0)
-	lw t3, 0(t2)
-	sw t3, 0(s0)
-	sw t1, 0(t2)
-	j label198
-label22:
-	addiw a4, a4, -1
-	sh2add t0, a4, s0
-	lw t1, 0(t0)
-	bgt a3, t1, label11
-	bgt a4, a5, label22
-	beq a4, a5, label16
-	sh2add t0, a5, s0
-	sh2add t2, a4, s0
-	lw t1, 0(t0)
-	lw t3, 0(t2)
-	sw t3, 0(t0)
-	sw t1, 0(t2)
-	lw t1, 0(t0)
-	lw t3, 0(t2)
-	sw t3, 0(t0)
-	sw t1, 0(t2)
-	lw t1, 0(t0)
-	lw t3, 0(t2)
-	sw t3, 0(t0)
-	sw t1, 0(t2)
-label172:
-	bgt a4, a5, label21
-label185:
-	beq a4, a5, label16
-label198:
-	sh2add t0, a5, s0
-	sh2add t2, a4, s0
-	lw t1, 0(t0)
-	lw t3, 0(t2)
-	sw t3, 0(t0)
-	sw t1, 0(t2)
-	bgt a4, a5, label22
-	j label172
-label11:
-	bgt a4, a5, label21
-	beq a4, a5, label16
-	sh2add t0, a5, s0
-	sh2add t2, a4, s0
-	lw t1, 0(t0)
-	lw t3, 0(t2)
-	sw t3, 0(t0)
-	sw t1, 0(t2)
-	lw t1, 0(t0)
-	lw t3, 0(t2)
-	sw t3, 0(t0)
-	sw t1, 0(t2)
-	lw t1, 0(t0)
-	lw t3, 0(t2)
-	sw t3, 0(t0)
-	sw t1, 0(t2)
-	j label185
-label14:
-	beq a4, a5, label16
-	sh2add t0, a5, s0
-	sh2add t2, a4, s0
-	lw t1, 0(t0)
-	lw t3, 0(t2)
-	sw t3, 0(t0)
-	sw t1, 0(t2)
-	bgt a4, a5, label22
-	lw t1, 0(t0)
-	lw t3, 0(t2)
-	sw t3, 0(t0)
-	sw t1, 0(t2)
-	lw t1, 0(t0)
-	lw t3, 0(t2)
-	sw t3, 0(t0)
-	sw t1, 0(t2)
-	j label198
-label21:
-	addiw a5, a5, 1
-	sh2add t0, a5, s0
-	lw t1, 0(t0)
-	ble a3, t1, label14
-	bgt a4, a5, label21
-	beq a4, a5, label16
-	sh2add t2, a4, s0
-	lw t1, 0(t0)
-	lw t3, 0(t2)
-	sw t3, 0(t0)
-	sw t1, 0(t2)
-	lw t1, 0(t0)
-	lw t3, 0(t2)
-	sw t3, 0(t0)
-	sw t1, 0(t2)
-	lw t1, 0(t0)
-	lw t3, 0(t2)
-	sw t3, 0(t0)
-	sw t1, 0(t2)
-	j label185
+label6:
+	lw a3, 0(a1)
+	addiw a4, a0, 1
+	mv a5, a2
+	j label8
 label16:
 	sw a3, 0(a1)
 	sh2add a4, a5, s0
@@ -148,41 +46,37 @@ label16:
 	j label19
 label47:
 	mv a0, a5
-	lw a3, 0(a1)
-	addiw a4, a5, 1
-	mv a5, a2
-	bgt a4, a2, label22
-	beq a4, a2, label16
-	sh2add t0, a2, s0
-	sh2add t2, a4, s0
-	lw t1, 0(t0)
-	lw t3, 0(t2)
-	sw t3, 0(t0)
-	sw t1, 0(t2)
-	lw t1, 0(t0)
-	lw t3, 0(t2)
-	sw t3, 0(t0)
-	sw t1, 0(t2)
-	j label198
+	j label6
 label18:
 	addiw a2, a5, 1
 	sh2add a1, a2, s0
-	lw a3, 0(a1)
-	addiw a4, a0, 1
-	mv a5, a2
-	bgt a4, a2, label22
-	beq a4, a2, label16
-	sh2add t0, a2, s0
+	j label6
+label20:
+	sh2add t0, a5, s0
 	sh2add t2, a4, s0
 	lw t1, 0(t0)
 	lw t3, 0(t2)
 	sw t3, 0(t0)
 	sw t1, 0(t2)
+label8:
+	ble a4, a5, label11
+	addiw a4, a4, -1
+	sh2add t0, a4, s0
 	lw t1, 0(t0)
-	lw t3, 0(t2)
-	sw t3, 0(t0)
-	sw t1, 0(t2)
-	j label198
+	ble a3, t1, label8
+label11:
+	bgt a4, a5, label21
+	beq a4, a5, label16
+	j label20
+label14:
+	beq a4, a5, label16
+	j label20
+label21:
+	addiw a5, a5, 1
+	sh2add t0, a5, s0
+	lw t1, 0(t0)
+	ble a3, t1, label14
+	j label11
 label19:
 	li a0, 61
 	jal _sysy_stoptime

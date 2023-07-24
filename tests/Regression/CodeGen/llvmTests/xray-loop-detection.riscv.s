@@ -6,9 +6,7 @@ foo:
 	mv a1, a0
 	beq a0, zero, label9
 	mv a0, zero
-	li a0, 1
-	bne a1, a0, label4
-	j label2
+	j label4
 label9:
 	mv a0, zero
 label2:

@@ -121,7 +121,7 @@ label7:
 	str r5, [r0, r2, lsl #2]
 	str r2, [r4, r5, lsl #2]
 	bgt label9
-	b label193
+	b label101
 label14:
 	sub r5, r3, #1
 	add r3, r1, r5, lsl #2
@@ -147,9 +147,6 @@ label14:
 	str r3, [r4, r5, lsl #2]
 	mov r3, r2
 	b label7
-label193:
-	mov r5, #0
-	b label11
 label9:
 	subs r3, r3, #1
 	ldr r2, [r1, r3, lsl #2]
@@ -158,7 +155,8 @@ label9:
 	str r5, [r0, r2, lsl #2]
 	str r2, [r4, r5, lsl #2]
 	bgt label9
-	b label193
+label101:
+	mov r5, #0
 label11:
 	ldr r0, [r4, r5, lsl #2]
 	bl putint

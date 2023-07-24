@@ -31,6 +31,7 @@ test:
 	subu $t1, $t1, $t2
 	bltz $t1, label2
 	nop
+label3:
 	lui $t1, %hi(k)
 	lw $t1, %lo(k)($t1)
 	subu $t0, $t0, $t1
@@ -43,10 +44,7 @@ label2:
 	li $t1, 1
 	lui $t2, %hi(result1)
 	sw $t1, %lo(result1)($t2)
-	lui $t1, %hi(k)
-	lw $t1, %lo(k)($t1)
-	subu $t0, $t0, $t1
-	bgez $t0, label5
+	b label3
 	nop
 label4:
 	li $t0, 1

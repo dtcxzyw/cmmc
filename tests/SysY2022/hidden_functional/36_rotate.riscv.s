@@ -64,15 +64,7 @@ label7:
 	fmul.s f12, f10, f8
 	fmul.s f11, f13, f10
 	fsub.s f10, f12, f11
-	fmv.w.x f11, a0
-	lui a0, 263168
-	fmul.s f13, f10, f11
-	fmul.s f12, f13, f10
-	fmv.w.x f13, a0
-	fmul.s f11, f12, f10
-	fmul.s f12, f10, f13
-	fsub.s f10, f12, f11
-	j label2
+	j label5
 .globl main
 main:
 	addi sp, sp, -104
@@ -116,92 +108,16 @@ main:
 	sraiw s4, a2, 1
 	add a2, s0, a1
 	fcvt.s.w f8, s4
-pcrel273:
+pcrel266:
 	auipc a1, %pcrel_hi(image)
 	sraiw s3, a2, 1
-	addi s1, a1, %pcrel_lo(pcrel273)
+	addi s1, a1, %pcrel_lo(pcrel266)
 	fcvt.s.w f9, s3
 	li a1, 255
 	bne a0, a1, label84
 	mv s5, zero
-	ble s2, zero, label61
-label72:
-	bgt s0, zero, label208
-	addiw s5, s5, 1
+label59:
 	bgt s2, s5, label72
-	j label61
-label75:
-	jal getint
-	addw a2, s6, s7
-	addiw s7, s7, 1
-	sh2add a1, a2, s1
-	sw a0, 0(a1)
-	bgt s0, s7, label75
-	addiw s5, s5, 1
-	bgt s2, s5, label72
-	j label61
-label84:
-	li a0, -1
-	j label77
-label164:
-	mv a0, zero
-	j label77
-label65:
-	subw a0, s6, s3
-	fcvt.s.w f10, a0
-	fmul.s f12, f10, f18
-	fmul.s f10, f10, f19
-	fsub.s f13, f12, f21
-	fadd.s f11, f13, f9
-	fcvt.w.s a0, f11, rtz
-	fadd.s f11, f10, f20
-	slti a3, a0, 0
-	slt a1, a0, s0
-	xori a2, a1, 1
-	or a1, a2, a3
-	fadd.s f12, f11, f8
-	fcvt.w.s a2, f12, rtz
-	slti a3, a2, 0
-	or a1, a1, a3
-	bne a1, zero, label190
-	ble s2, a2, label190
-	mulw a3, s0, a2
-	addw a2, a0, a3
-	sh2add a1, a2, s1
-	lw a0, 0(a1)
-	j label69
-label190:
-	mv a0, zero
-label69:
-	jal putint
-	li a0, 32
-	jal putch
-	addiw s6, s6, 1
-	bgt s0, s6, label65
-label71:
-	li a0, 10
-	jal putch
-	addiw s5, s5, 1
-	bgt s2, s5, label64
-	j label164
-label77:
-	ld ra, 32(sp)
-	ld s7, 16(sp)
-	flw f19, 40(sp)
-	ld s0, 48(sp)
-	ld s5, 56(sp)
-	ld s1, 64(sp)
-	ld s3, 72(sp)
-	ld s2, 80(sp)
-	ld s4, 88(sp)
-	flw f8, 96(sp)
-	flw f21, 100(sp)
-	flw f9, 8(sp)
-	ld s6, 0(sp)
-	flw f18, 24(sp)
-	flw f20, 12(sp)
-	addi sp, sp, 104
-	ret
 label61:
 	auipc a1, %pcrel_hi(__cmmc_fp_constant_pool)
 	addi a0, a1, %pcrel_lo(label61)
@@ -281,7 +197,25 @@ label248:
 	li a0, 10
 	jal putch
 	mv s5, zero
-	ble s2, zero, label164
+	j label62
+label72:
+	bgt s0, zero, label208
+	addiw s5, s5, 1
+	j label59
+label75:
+	jal getint
+	addw a2, s6, s7
+	addiw s7, s7, 1
+	sh2add a1, a2, s1
+	sw a0, 0(a1)
+	bgt s0, s7, label75
+	addiw s5, s5, 1
+	bgt s2, s5, label72
+	j label61
+label62:
+	bgt s2, s5, label64
+	mv a0, zero
+	j label77
 label64:
 	subw a0, s5, s4
 	fcvt.s.w f10, a0
@@ -289,7 +223,65 @@ label64:
 	fmul.s f20, f10, f18
 	ble s0, zero, label71
 	mv s6, zero
-	j label65
+label65:
+	subw a0, s6, s3
+	fcvt.s.w f10, a0
+	fmul.s f12, f10, f18
+	fmul.s f10, f10, f19
+	fsub.s f13, f12, f21
+	fadd.s f11, f13, f9
+	fcvt.w.s a0, f11, rtz
+	fadd.s f11, f10, f20
+	slti a3, a0, 0
+	slt a1, a0, s0
+	xori a2, a1, 1
+	or a1, a2, a3
+	fadd.s f12, f11, f8
+	fcvt.w.s a2, f12, rtz
+	slti a3, a2, 0
+	or a1, a1, a3
+	bne a1, zero, label190
+	bgt s2, a2, label193
+label190:
+	mv a0, zero
+	j label69
+label193:
+	mulw a3, s0, a2
+	addw a2, a0, a3
+	sh2add a1, a2, s1
+	lw a0, 0(a1)
+label69:
+	jal putint
+	li a0, 32
+	jal putch
+	addiw s6, s6, 1
+	bgt s0, s6, label65
+label71:
+	li a0, 10
+	jal putch
+	addiw s5, s5, 1
+	j label62
+label77:
+	ld ra, 32(sp)
+	ld s7, 16(sp)
+	flw f19, 40(sp)
+	ld s0, 48(sp)
+	ld s5, 56(sp)
+	ld s1, 64(sp)
+	ld s3, 72(sp)
+	ld s2, 80(sp)
+	ld s4, 88(sp)
+	flw f8, 96(sp)
+	flw f21, 100(sp)
+	flw f9, 8(sp)
+	ld s6, 0(sp)
+	flw f18, 24(sp)
+	flw f20, 12(sp)
+	addi sp, sp, 104
+	ret
+label84:
+	li a0, -1
+	j label77
 label208:
 	mulw s6, s0, s5
 	mv s7, zero

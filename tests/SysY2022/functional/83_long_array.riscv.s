@@ -14,7 +14,7 @@ a3:
 .globl main
 main:
 	addi sp, sp, -104
-pcrel790:
+pcrel775:
 	auipc a0, %pcrel_hi(a1)
 	li a1, 15
 	li a2, 14
@@ -31,17 +31,17 @@ pcrel790:
 	li a7, 3
 	li t3, 1
 	sd s0, 96(sp)
-	addi s0, a0, %pcrel_lo(pcrel790)
+	addi s0, a0, %pcrel_lo(pcrel775)
 	sd s5, 88(sp)
-pcrel791:
+pcrel776:
 	auipc a0, %pcrel_hi(a2)
 	sd s1, 80(sp)
-	addi s1, a0, %pcrel_lo(pcrel791)
+	addi s1, a0, %pcrel_lo(pcrel776)
 	sd s6, 72(sp)
-pcrel792:
+pcrel777:
 	auipc a0, %pcrel_hi(a3)
 	sd s2, 64(sp)
-	addi s2, a0, %pcrel_lo(pcrel792)
+	addi s2, a0, %pcrel_lo(pcrel777)
 	sd s4, 56(sp)
 	li a0, 16
 	li s4, 2
@@ -429,15 +429,53 @@ label23:
 	blt a0, a2, label23
 	mv a1, zero
 	mv s3, zero
-	bge zero, a2, label28
+	blt zero, a2, label29
+	j label28
+label25:
+	li a2, 10000
+	blt s3, a2, label29
+label28:
+	mv a0, a1
+	ld ra, 0(sp)
+	ld s10, 8(sp)
+	ld s11, 16(sp)
+	ld s9, 24(sp)
+	ld s8, 32(sp)
+	ld s7, 40(sp)
+	ld s3, 48(sp)
+	ld s4, 56(sp)
+	ld s2, 64(sp)
+	ld s6, 72(sp)
+	ld s1, 80(sp)
+	ld s5, 88(sp)
+	ld s0, 96(sp)
+	addi sp, sp, 104
+	ret
 label29:
 	li a2, 10
 	blt s3, a2, label45
 	li a0, 20
-	blt s3, a0, label274
+	blt s3, a0, label40
 	li a0, 30
-	blt s3, a0, label278
-	j label32
+	bge s3, a0, label32
+	mv s4, a1
+	li a0, 5000
+	j label33
+label32:
+	sh2add a3, s3, s2
+	addiw s3, s3, 1
+	lw a2, 0(a3)
+	li a3, 1407543789
+	sh3add a4, a2, a2
+	addw a0, a1, a4
+	li a4, 99988
+	mul a1, a0, a3
+	srli a3, a1, 63
+	srai a2, a1, 47
+	add a1, a3, a2
+	mulw a2, a1, a4
+	subw a1, a0, a2
+	j label25
 label45:
 	sh2add a3, s3, s2
 	lw a2, 0(a3)
@@ -454,10 +492,8 @@ label45:
 	jal putint
 	mv a1, s4
 	addiw s3, s3, 1
-	li a2, 10000
-	blt s3, a2, label29
-	j label28
-label274:
+	j label25
+label40:
 	sh2add a3, s3, s2
 	li a2, 5000
 	lw a0, 0(a3)
@@ -547,55 +583,15 @@ label44:
 	jal putint
 	mv a1, s4
 	addiw s3, s3, 1
-	li a2, 10000
-	blt s3, a2, label29
-label28:
-	mv a0, a1
-	ld ra, 0(sp)
-	ld s10, 8(sp)
-	ld s11, 16(sp)
-	ld s9, 24(sp)
-	ld s8, 32(sp)
-	ld s7, 40(sp)
-	ld s3, 48(sp)
-	ld s4, 56(sp)
-	ld s2, 64(sp)
-	ld s6, 72(sp)
-	ld s1, 80(sp)
-	ld s5, 88(sp)
-	ld s0, 96(sp)
-	addi sp, sp, 104
-	ret
-label32:
-	sh2add a3, s3, s2
-	addiw s3, s3, 1
-	lw a2, 0(a3)
-	li a3, 1407543789
-	sh3add a4, a2, a2
-	addw a0, a1, a4
-	li a4, 99988
-	mul a1, a0, a3
-	srli a3, a1, 63
-	srai a2, a1, 47
-	add a1, a3, a2
-	mulw a2, a1, a4
-	subw a1, a0, a2
-	li a2, 10000
-	blt s3, a2, label29
-	j label28
-label278:
-	mv s4, a1
-	li a0, 5000
+	j label25
+label33:
 	li a1, 10000
 	blt a0, a1, label37
-label36:
 	mv a0, s4
 	jal putint
 	mv a1, s4
 	addiw s3, s3, 1
-	li a2, 10000
-	blt s3, a2, label29
-	j label28
+	j label25
 label37:
 	li a1, 2233
 	bgt a0, a1, label39
@@ -614,9 +610,7 @@ label37:
 	li a3, 13333
 	mulw a4, a2, a3
 	subw s4, a1, a4
-	li a1, 10000
-	blt a0, a1, label37
-	j label36
+	j label33
 label39:
 	sh2add a3, s3, s1
 	lw a2, 0(a3)
@@ -625,6 +619,4 @@ label39:
 	addiw a0, a0, 1
 	lw a2, 0(a3)
 	subw s4, a1, a2
-	li a1, 10000
-	blt a0, a1, label37
-	j label36
+	j label33

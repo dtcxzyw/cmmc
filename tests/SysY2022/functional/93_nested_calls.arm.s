@@ -130,29 +130,10 @@ label9:
 	moveq r2, r1
 	cmp r7, #0
 	mla r0, r2, r0, r2
-	bne label11
-	ldr r7, [sp, #60]
-	ldr r8, [sp, #72]
-	cmp r8, #0
-	sub r1, r7, r8
-	moveq r1, r7
-	cmp r3, #0
-	add r1, r1, #1
-	bne label19
-	clz r2, r6
-	ldr r8, [sp, #68]
-	cmp r6, #0
-	lsr r2, r2, #5
-	sub r2, r8, r2
-	movne r2, r8
-	cmp r5, #0
-	mul r1, r1, r2
-	bne label16
-	b label17
-label11:
-	ldr r7, [sp, #64]
+	beq label12
 	sdiv r1, r0, r7
 	mls r0, r1, r7, r0
+label12:
 	ldr r7, [sp, #60]
 	ldr r8, [sp, #72]
 	cmp r8, #0
@@ -160,7 +141,11 @@ label11:
 	moveq r1, r7
 	cmp r3, #0
 	add r1, r1, #1
-	bne label19
+	beq label14
+	rsb r2, r3, #0
+	sdiv r3, r1, r2
+	mls r1, r3, r2, r1
+label14:
 	clz r2, r6
 	ldr r8, [sp, #68]
 	cmp r6, #0
@@ -169,7 +154,10 @@ label11:
 	movne r2, r8
 	cmp r5, #0
 	mul r1, r1, r2
-	bne label16
+	beq label17
+	rsb r2, r5, #0
+	sdiv r3, r1, r2
+	mls r1, r3, r2, r1
 label17:
 	ldr r8, [sp, #40]
 	add r2, r8, r1
@@ -183,21 +171,3 @@ label17:
 	moveq r1, r3
 	mul r0, r0, r1
 	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
-label19:
-	rsb r2, r3, #0
-	sdiv r3, r1, r2
-	mls r1, r3, r2, r1
-	clz r2, r6
-	ldr r8, [sp, #68]
-	cmp r6, #0
-	lsr r2, r2, #5
-	sub r2, r8, r2
-	movne r2, r8
-	cmp r5, #0
-	mul r1, r1, r2
-	beq label17
-label16:
-	rsb r2, r5, #0
-	sdiv r3, r1, r2
-	mls r1, r3, r2, r1
-	b label17

@@ -50,33 +50,18 @@ calc_seleq:
 	movt r0, #:upper16:b
 	ldr r2, [r0, #0]
 	cmp r1, r2
-	beq label2
-	movw r0, #:lower16:t
-	movt r0, #:upper16:t
-	ldr r0, [r0, #0]
-	movw r3, #:lower16:z1
-	movt r3, #:upper16:z1
-	str r0, [r3, #0]
-	b label34
-label2:
+	bne label17
 	movw r0, #:lower16:f
 	movt r0, #:upper16:f
 	ldr r0, [r0, #0]
+label3:
 	movw r3, #:lower16:z1
 	cmp r1, r2
 	movt r3, #:upper16:z1
 	str r0, [r3, #0]
 	beq label5
-	b label34
-label90:
-	movw r0, #:lower16:f
-	movt r0, #:upper16:f
-	ldr r0, [r0, #0]
-	b label14
-label5:
-	movw r0, #:lower16:f
-	movt r0, #:upper16:f
-	ldr r0, [r0, #0]
+	b label16
+label6:
 	movw r2, #:lower16:z2
 	movt r2, #:upper16:z2
 	str r0, [r2, #0]
@@ -88,45 +73,42 @@ label5:
 	movw r0, #:lower16:f
 	movt r0, #:upper16:f
 	ldr r0, [r0, #0]
+label10:
 	movw r3, #:lower16:z3
+	cmp r1, r2
 	movt r3, #:upper16:z3
 	str r0, [r3, #0]
-	b label90
-label34:
-	movw r0, #:lower16:t
-	movt r0, #:upper16:t
-	ldr r0, [r0, #0]
-	movw r2, #:lower16:z2
-	movt r2, #:upper16:z2
-	str r0, [r2, #0]
-	movw r0, #:lower16:c
-	movt r0, #:upper16:c
-	ldr r2, [r0, #0]
-	cmp r1, r2
-	beq label8
+	beq label12
 	movw r0, #:lower16:f
 	movt r0, #:upper16:f
-	ldr r0, [r0, #0]
-	movw r3, #:lower16:z3
-	movt r3, #:upper16:z3
-	str r0, [r3, #0]
-	bne label90
-label12:
-	movw r0, #:lower16:t
-	movt r0, #:upper16:t
 	ldr r0, [r0, #0]
 label14:
 	movw r1, #:lower16:z4
 	movt r1, #:upper16:z4
 	str r0, [r1, #0]
 	bx lr
+label16:
+	movw r0, #:lower16:t
+	movt r0, #:upper16:t
+	ldr r0, [r0, #0]
+	b label6
+label17:
+	movw r0, #:lower16:t
+	movt r0, #:upper16:t
+	ldr r0, [r0, #0]
+	b label3
+label12:
+	movw r0, #:lower16:t
+	movt r0, #:upper16:t
+	ldr r0, [r0, #0]
+	b label14
 label8:
 	movw r0, #:lower16:t
 	movt r0, #:upper16:t
 	ldr r0, [r0, #0]
-	movw r3, #:lower16:z3
-	cmp r1, r2
-	movt r3, #:upper16:z3
-	str r0, [r3, #0]
-	beq label12
-	b label90
+	b label10
+label5:
+	movw r0, #:lower16:f
+	movt r0, #:upper16:f
+	ldr r0, [r0, #0]
+	b label6

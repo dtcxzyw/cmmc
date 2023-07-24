@@ -13,13 +13,16 @@ label2:
 	jal getint
 	bne a0, zero, label4
 	bne s1, zero, label24
-	j label47
+	j label23
 label4:
 	jal getint
 	sh2add a1, s1, s0
 	addiw s1, s1, 1
 	sw a0, 0(a1)
 	j label2
+label23:
+	mv a0, zero
+	j label9
 label24:
 	mv a1, zero
 label6:
@@ -33,8 +36,6 @@ label6:
 label33:
 	mv s1, a0
 	j label6
-label47:
-	mv a0, zero
 label9:
 	li a3, 1739733589
 	li a4, 79

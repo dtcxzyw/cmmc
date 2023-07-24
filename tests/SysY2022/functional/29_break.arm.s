@@ -8,14 +8,13 @@
 main:
 	mov r0, #0
 	mov r1, r0
-	cmp r0, #100
+label2:
+	cmp r1, #100
 	bge label7
-label5:
 	cmp r1, #50
 	beq label7
 	add r0, r0, r1
 	add r1, r1, #1
-	cmp r1, #100
-	blt label5
+	b label2
 label7:
 	bx lr

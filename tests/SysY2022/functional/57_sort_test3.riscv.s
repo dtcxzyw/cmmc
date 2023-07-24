@@ -13,7 +13,35 @@ QuickSort:
 	sd s4, 8(sp)
 	sd ra, 0(sp)
 	mv s2, zero
-	bgt a2, a1, label6
+label2:
+	bgt s1, a1, label6
+	j label23
+label7:
+	bgt a3, s4, label11
+	sh2add a4, s4, s0
+	addiw a2, s4, -1
+	sw a0, 0(a4)
+	mv a0, s0
+	jal QuickSort
+	addiw a1, s4, 1
+	subw a0, zero, s3
+	li s3, 1
+	and s2, s2, a0
+	j label2
+label11:
+	blt s4, a3, label13
+label15:
+	bge s4, a3, label16
+	sh2add a5, a3, s0
+	sh2add t0, s4, s0
+	lw a4, 0(a5)
+	addiw s4, s4, 1
+	sw a4, 0(t0)
+label16:
+	bgt a3, s4, label18
+label20:
+	bgt a3, s4, label21
+	j label7
 label23:
 	subw a1, zero, s3
 	ld ra, 0(sp)
@@ -25,65 +53,32 @@ label23:
 	ld s0, 40(sp)
 	addi sp, sp, 48
 	ret
-label6:
-	sh2add a3, a1, s0
-	mv s4, a1
-	lw a0, 0(a3)
-	mv a3, s1
-	addi a2, a0, -1
-	ble s1, a1, label10
-label11:
-	blt s4, a3, label13
-	bgt a3, s4, label18
-label10:
-	sh2add a4, s4, s0
-	addiw a2, s4, -1
-	sw a0, 0(a4)
-	mv a0, s0
-	jal QuickSort
-	addiw a1, s4, 1
-	subw a0, zero, s3
-	li s3, 1
-	and s2, s2, a0
-	bgt s1, a1, label6
-	j label23
-label22:
-	sh2add a5, a3, s0
-	sh2add t0, s4, s0
-	lw a4, 0(a5)
-	addiw s4, s4, 1
-	sw a4, 0(t0)
-	bgt a3, s4, label18
-	j label10
 label21:
 	sh2add t0, s4, s0
 	sh2add a5, a3, s0
 	lw a4, 0(t0)
 	addiw a3, a3, -1
 	sw a4, 0(a5)
-	bgt a3, s4, label11
-	j label10
-label13:
-	sh2add a4, a3, s0
-	lw a5, 0(a4)
-	blt a2, a5, label14
-	blt s4, a3, label22
-	ble a3, s4, label10
+	j label7
 label18:
 	sh2add a4, s4, s0
 	lw a5, 0(a4)
-	bgt a0, a5, label19
-	bgt a3, s4, label21
-	j label10
-label19:
+	ble a0, a5, label20
 	addiw s4, s4, 1
-	bgt a3, s4, label18
-	j label10
-label14:
+	j label16
+label13:
+	sh2add a4, a3, s0
+	lw a5, 0(a4)
+	bge a2, a5, label15
 	addiw a3, a3, -1
-	blt s4, a3, label13
-	bgt a3, s4, label18
-	j label10
+	j label11
+label6:
+	sh2add a3, a1, s0
+	mv s4, a1
+	lw a0, 0(a3)
+	mv a3, s1
+	addi a2, a0, -1
+	j label7
 .globl main
 main:
 	addi sp, sp, -64
@@ -114,9 +109,9 @@ main:
 	mv a0, s0
 	jal QuickSort
 	li a1, 10
-	bge a0, a1, label133
+	bge a0, a1, label99
 	mv s1, a0
-label131:
+label97:
 	sh2add a1, s1, s0
 	lw a0, 0(a1)
 	jal putint
@@ -124,8 +119,8 @@ label131:
 	jal putch
 	li a0, 10
 	addiw s1, s1, 1
-	blt s1, a0, label131
-label133:
+	blt s1, a0, label97
+label99:
 	mv a0, zero
 	ld ra, 40(sp)
 	ld s1, 48(sp)

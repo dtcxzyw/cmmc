@@ -11,30 +11,29 @@ main:
 	bl getint
 	mov r5, #0
 	mov r4, r0
-	cmp r0, r5
+label2:
+	cmp r4, r5
 	ble label104
-label4:
 	bl getint
 	sub r1, r0, #1
 	cmp r1, #99
 	blo label5
 	mov r0, #100
+	b label102
+label5:
+	cmp r0, #99
+	blt label6
+	mov r0, #99
 label102:
 	bl putint
 	mov r0, #10
 	bl putch
 	add r5, r5, #1
-	cmp r4, r5
-	bgt label4
+	b label2
 label104:
 	mov r0, #0
 	add sp, sp, #4
 	pop { r4, r5, pc }
-label5:
-	cmp r0, #99
-	blt label6
-	mov r0, #99
-	b label102
 label6:
 	cmp r0, #98
 	blt label7

@@ -105,8 +105,9 @@ void tailDuplication(MIRFunction& func, CodeGenContext& ctx) {
                    targetBlock->instructions().size() <= heuristic.duplicationThreshold &&
                    (!dontCopyBranchJumps ||
                     isUnconditionalBranch(
-                        targetBlock->instructions().back()))  // don't duplicate branch jumps that needs BTB/RAS entries
-                   && !hasCall(*targetBlock)) {
+                        targetBlock->instructions().back())) &&  // don't duplicate branch jumps that needs BTB/RAS entries
+                   block->getTripCount() > targetBlock->getTripCount() &&
+                   !hasCall(*targetBlock)) {
                     instructions.pop_back();
                     instructions.insert(instructions.cend(), targetBlock->instructions().cbegin(),
                                         targetBlock->instructions().cend());

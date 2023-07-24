@@ -27,13 +27,14 @@ main:
 	li a0, 13
 	jal _sysy_starttime
 	mv a0, zero
-pcrel276:
+pcrel252:
 	auipc a1, %pcrel_hi(x)
-	addi s3, a1, %pcrel_lo(pcrel276)
+	addi s3, a1, %pcrel_lo(pcrel252)
 	li a2, 1440000
 	mv a3, zero
 	mv a1, s3
 	bgt s1, zero, label38
+label37:
 	li s5, 1
 	mv a3, s5
 	li a0, 1440000
@@ -47,43 +48,21 @@ pcrel276:
 	j label18
 label38:
 	mv a2, zero
-	bgt s1, zero, label7
-	addiw a0, a0, 1
-	li a2, 1440000
-	mul a3, a0, a2
-	add a1, s3, a3
-	bgt s1, a0, label38
-	li s5, 1
-	mv a3, s5
-	li a0, 1440000
-	sub a4, zero, a0
-	mul a2, s5, a0
-	add a1, s3, a2
-	add a2, a1, a0
-	add s4, a1, a4
-	addiw a0, s5, 1
-	bgt s2, s5, label75
-	j label18
-label7:
-	bgt s1, zero, label8
-	addiw a2, a2, 1
+label4:
 	bgt s1, a2, label7
+label41:
 	addiw a0, a0, 1
 	li a2, 1440000
 	mul a3, a0, a2
 	add a1, s3, a3
 	bgt s1, a0, label38
-	li s5, 1
-	mv a3, s5
-	li a0, 1440000
-	sub a4, zero, a0
-	mul a2, s5, a0
-	add a1, s3, a2
-	add a2, a1, a0
-	add s4, a1, a4
-	addiw a0, s5, 1
-	bgt s2, s5, label75
-	j label18
+	j label37
+label7:
+	ble s1, zero, label14
+	li a4, 2400
+	mv a5, zero
+	mul t0, a2, a4
+	add a3, a1, t0
 label9:
 	addiw a4, a5, 4
 	bgt s1, a4, label11
@@ -92,24 +71,7 @@ label9:
 	addiw a5, a5, 1
 	sw t0, 0(a4)
 	bgt s1, a5, label12
-	addiw a2, a2, 1
-	bgt s1, a2, label7
-	addiw a0, a0, 1
-	li a2, 1440000
-	mul a3, a0, a2
-	add a1, s3, a3
-	bgt s1, a0, label38
-	li s5, 1
-	mv a3, s5
-	li a0, 1440000
-	sub a4, zero, a0
-	mul a2, s5, a0
-	add a1, s3, a2
-	add a2, a1, a0
-	add s4, a1, a4
-	addiw a0, s5, 1
-	bgt s2, s5, label75
-	j label18
+	j label64
 label11:
 	sh2add a5, a5, a3
 	li t0, 1
@@ -125,23 +87,35 @@ label12:
 	addiw a5, a5, 1
 	sw t0, 0(a4)
 	bgt s1, a5, label12
+label64:
 	addiw a2, a2, 1
 	bgt s1, a2, label7
-	addiw a0, a0, 1
-	li a2, 1440000
-	mul a3, a0, a2
-	add a1, s3, a3
-	bgt s1, a0, label38
-	li s5, 1
-	mv a3, s5
-	li a0, 1440000
-	sub a4, zero, a0
-	mul a2, s5, a0
-	add a1, s3, a2
-	add a2, a1, a0
-	add s4, a1, a4
-	addiw a0, s5, 1
-	bgt s2, s5, label75
+	j label41
+label14:
+	addiw a2, a2, 1
+	j label4
+label75:
+	li t0, 1
+	ble s2, t0, label86
+label21:
+	addiw a3, t0, 1
+	li t1, 2400
+	li t3, -4800
+	mul t2, t0, t1
+	mul a5, a3, t1
+	add t0, a2, t2
+	add t1, s4, t2
+	add a4, a1, a5
+	add t2, a1, t2
+	add a5, a4, t3
+	li t3, 1
+	bgt s2, t3, label100
+	mv t0, a3
+	bgt s2, a3, label21
+	j label86
+label100:
+	li t4, 1
+	j label22
 label18:
 	li a0, 53
 	jal _sysy_stoptime
@@ -178,15 +152,7 @@ label18:
 	ld s1, 80(sp)
 	addi sp, sp, 88
 	ret
-label8:
-	li a4, 2400
-	mv a5, zero
-	mul t0, a2, a4
-	add a3, a1, t0
-	j label9
-label75:
-	li t0, 1
-	bgt s2, t0, label21
+label86:
 	mv s5, t0
 	mv a3, a0
 	li a0, 1440000
@@ -198,34 +164,6 @@ label75:
 	addiw a0, a3, 1
 	bgt s2, a3, label75
 	j label18
-label21:
-	addiw a3, t0, 1
-	li t1, 2400
-	li t3, -4800
-	mul t2, t0, t1
-	mul a5, a3, t1
-	add t0, a2, t2
-	add t1, s4, t2
-	add a4, a1, a5
-	add t2, a1, t2
-	add a5, a4, t3
-	li t3, 1
-	bgt s2, t3, label100
-	mv t0, a3
-	bgt s2, a3, label21
-	mv s5, a3
-	mv a3, a0
-	li a0, 1440000
-	sub a4, zero, a0
-	mul a2, a3, a0
-	add a1, s3, a2
-	add a2, a1, a0
-	add s4, a1, a4
-	addiw a0, a3, 1
-	bgt s2, a3, label75
-	j label18
-label100:
-	li t4, 1
 label22:
 	addiw t3, t4, 4
 	bgt s2, t3, label26
@@ -252,17 +190,7 @@ label24:
 	bgt s2, t4, label24
 	mv t0, a3
 	bgt s2, a3, label21
-	mv s5, a3
-	mv a3, a0
-	li a0, 1440000
-	sub a4, zero, a0
-	mul a2, a3, a0
-	add a1, s3, a2
-	add a2, a1, a0
-	add s4, a1, a4
-	addiw a0, a3, 1
-	bgt s2, a3, label75
-	j label18
+	j label86
 label26:
 	sh2add t5, t4, t1
 	sh2add t6, t4, t0

@@ -9,94 +9,61 @@ main:
 	push { r4, r5, r6, r7, r8, r9, r10, r11 }
 	mov r1, #0
 	mov r0, r1
-	cmp r1, #3
-	blt label33
+label2:
+	cmp r0, #3
+	bge label30
+	mov r4, r1
+	mov r1, #0
+label5:
+	cmp r1, #4
+	bge label8
+	mov r2, #0
+	b label9
+label8:
+	add r0, r0, #1
+	mov r1, r4
+	b label2
 label30:
 	mov r0, r1
 	pop { r4, r5, r6, r7, r8, r9, r10, r11 }
 	bx lr
-label33:
-	mov r4, r1
-	mov r1, #0
-	cmp r1, #4
-	blt label37
-	add r0, r0, #1
-	mov r1, r4
-	cmp r0, #3
-	blt label33
-	b label30
-label52:
+label9:
+	cmp r2, #5
+	bge label12
+	mov r3, #0
+	b label13
+label12:
+	add r1, r1, #1
+	b label5
+label13:
+	cmp r3, #3
+	bge label16
+	mov r5, r4
+	mov r4, #0
+	b label17
+label16:
+	add r2, r2, #1
+	b label9
+label17:
+	cmp r4, #5
+	bge label20
 	mov r6, #0
-	cmp r6, #4
-	blt label57
-	add r4, r4, #1
-	cmp r4, #5
-	blt label52
+	b label21
+label20:
 	add r3, r3, #1
 	mov r4, r5
-	cmp r3, #3
-	blt label47
-	add r2, r2, #1
-	cmp r2, #5
-	blt label42
-	add r1, r1, #1
-	cmp r1, #4
-	blt label37
-	add r0, r0, #1
-	mov r1, r5
-	cmp r0, #3
-	blt label33
-	b label30
-label57:
+	b label13
+label21:
+	cmp r6, #4
+	bge label24
 	mov r7, #0
-	cmp r7, #6
-	blt label28
-	add r6, r6, #1
-	cmp r6, #4
-	blt label57
+	b label25
+label24:
 	add r4, r4, #1
-	cmp r4, #5
-	blt label52
-	add r3, r3, #1
-	mov r4, r5
-	cmp r3, #3
-	blt label47
-	add r2, r2, #1
-	cmp r2, #5
-	blt label42
-	add r1, r1, #1
-	cmp r1, #4
-	blt label37
-	add r0, r0, #1
-	mov r1, r5
-	cmp r0, #3
-	blt label33
-	b label30
+	b label17
 label25:
 	cmp r7, #6
-	blt label28
-	add r6, r6, #1
-	cmp r6, #4
-	blt label57
-	add r4, r4, #1
-	cmp r4, #5
-	blt label52
-	add r3, r3, #1
-	mov r4, r5
-	cmp r3, #3
-	blt label47
-	add r2, r2, #1
-	cmp r2, #5
-	blt label42
-	add r1, r1, #1
-	cmp r1, #4
-	blt label37
-	add r0, r0, #1
-	mov r1, r5
-	cmp r0, #3
-	blt label33
-	b label30
-label28:
+	bge label29
 	add r9, r5, #3
 	movw r8, #1313
 	add r7, r7, #1
@@ -113,50 +80,6 @@ label28:
 	add r8, r10, r8, lsr #31
 	mls r5, r8, r5, r9
 	b label25
-label37:
-	mov r2, #0
-	cmp r2, #5
-	blt label42
-	add r1, r1, #1
-	cmp r1, #4
-	blt label37
-	add r0, r0, #1
-	mov r1, r4
-	cmp r0, #3
-	blt label33
-	b label30
-label42:
-	mov r3, #0
-	cmp r3, #3
-	blt label47
-	add r2, r2, #1
-	cmp r2, #5
-	blt label42
-	add r1, r1, #1
-	cmp r1, #4
-	blt label37
-	add r0, r0, #1
-	mov r1, r4
-	cmp r0, #3
-	blt label33
-	b label30
-label47:
-	mov r5, r4
-	mov r4, #0
-	cmp r4, #5
-	blt label52
-	add r3, r3, #1
-	mov r4, r5
-	cmp r3, #3
-	blt label47
-	add r2, r2, #1
-	cmp r2, #5
-	blt label42
-	add r1, r1, #1
-	cmp r1, #4
-	blt label37
-	add r0, r0, #1
-	mov r1, r5
-	cmp r0, #3
-	blt label33
-	b label30
+label29:
+	add r6, r6, #1
+	b label21

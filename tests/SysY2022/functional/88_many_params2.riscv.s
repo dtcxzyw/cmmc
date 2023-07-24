@@ -11,10 +11,10 @@ a:
 .globl main
 main:
 	addi sp, sp, -64
-pcrel237:
+pcrel226:
 	auipc a0, %pcrel_hi(a)
 	sd s3, 56(sp)
-	addi s3, a0, %pcrel_lo(pcrel237)
+	addi s3, a0, %pcrel_lo(pcrel226)
 	sd s1, 48(sp)
 	mv a0, zero
 	sd s6, 40(sp)
@@ -32,19 +32,7 @@ label2:
 	sw zero, 0(a1)
 	li a1, 4087
 	blt a0, a1, label5
-pcrel238:
-	auipc a1, %pcrel_hi(b)
-	addi a0, a1, %pcrel_lo(pcrel238)
-	mv a1, zero
-	li a2, 4
-	li a3, 3127
-	blt a2, a3, label27
-	mv a2, a0
-	li a1, 1
-	sw zero, 0(a0)
-	li a2, 3127
-	blt a1, a2, label10
-	j label12
+	j label44
 label4:
 	sh2add a0, a0, s3
 	sw zero, 0(a0)
@@ -59,25 +47,10 @@ label5:
 	sw zero, 0(a1)
 	li a1, 4087
 	blt a0, a1, label5
-pcrel239:
+label44:
 	auipc a1, %pcrel_hi(b)
-	addi a0, a1, %pcrel_lo(pcrel239)
+	addi a0, a1, %pcrel_lo(label44)
 	mv a1, zero
-	li a2, 4
-	li a3, 3127
-	blt a2, a3, label27
-	mv a2, a0
-	li a1, 1
-	sw zero, 0(a0)
-	li a2, 3127
-	bge a1, a2, label12
-label10:
-	sh2add a2, a1, a0
-	addi a1, a1, 1
-	sw zero, 0(a2)
-	li a2, 3127
-	blt a1, a2, label10
-	j label12
 label8:
 	addi a2, a1, 4
 	li a3, 3127
@@ -86,16 +59,13 @@ label8:
 	addi a1, a1, 1
 	sw zero, 0(a2)
 	li a2, 3127
+	bge a1, a2, label12
+label10:
+	sh2add a2, a1, a0
+	addi a1, a1, 1
+	sw zero, 0(a2)
+	li a2, 3127
 	blt a1, a2, label10
-	j label12
-label27:
-	sh2add a1, a1, a0
-	sw zero, 0(a1)
-	sw zero, 4(a1)
-	sw zero, 8(a1)
-	sw zero, 12(a1)
-	mv a1, a2
-	j label8
 label12:
 	li a3, 4584
 	li a1, 9
@@ -141,10 +111,24 @@ label13:
 label85:
 	mv a2, s5
 	mv a0, s4
-	addiw a1, s5, 4
-	li a3, 10
-	blt a1, a3, label26
-	j label23
+	j label20
+label18:
+	sh2add a1, s1, s0
+	lw a0, 0(a1)
+	jal putint
+	li a0, 32
+	jal putch
+	addiw s1, s1, -1
+	bge s1, zero, label18
+	j label17
+label27:
+	sh2add a1, a1, a0
+	sw zero, 0(a1)
+	sw zero, 4(a1)
+	sw zero, 8(a1)
+	sw zero, 12(a1)
+	mv a1, a2
+	j label8
 label17:
 	li a0, 10
 	jal putch
@@ -159,15 +143,10 @@ label17:
 	ld s3, 56(sp)
 	addi sp, sp, 64
 	ret
-label18:
-	sh2add a1, s1, s0
-	lw a0, 0(a1)
-	jal putint
-	li a0, 32
-	jal putch
-	addiw s1, s1, -1
-	bge s1, zero, label18
-	j label17
+label20:
+	addiw a1, a2, 4
+	li a3, 10
+	blt a1, a3, label26
 label23:
 	sh2add a1, a2, s1
 	li a4, 128875
@@ -191,10 +170,6 @@ label23:
 	sh1add s1, a1, a1
 	bge s1, zero, label18
 	j label17
-label20:
-	addiw a1, a2, 4
-	li a3, 10
-	bge a1, a3, label23
 label26:
 	sh2add a2, a2, s1
 	li a3, 128875

@@ -82,25 +82,17 @@ main:
 	bl putch
 	mov r6, #0
 	mov r4, r6
-	vmov s0, r6
+label47:
+	vmov s0, r4
 	movw r0, #0
-	cmp r6, #192
+	cmp r4, #192
 	movt r0, #17216
 	vmov s1, r0
 	vcvt.f32.s32 s0, s0
 	vdiv.f32 s16, s0, s1
 	bge label50
-label79:
 	mov r5, #0
-	vmov s0, r5
-	movw r0, #0
-	mov r1, #0
-	movt r0, #17216
-	vmov s4, r1
-	vmov s1, r0
-	vcvt.f32.s32 s0, s0
-	vdiv.f32 s3, s0, s1
-	b label54
+	b label51
 label50:
 	mov r0, #0
 	add sp, sp, #4
@@ -164,9 +156,48 @@ label54:
 	vmrs APSR_nzcv, FPSCR
 	movwmi r2, #1
 	orrs r0, r0, r2
-	bne label114
-	b label58
-label135:
+	beq label58
+	movw r0, #4059
+	movt r0, #16585
+	vmov s1, r0
+	vdiv.f32 s2, s0, s1
+	vcvt.s32.f32 s2, s2
+	vcvt.f32.s32 s2, s2
+	vmul.f32 s1, s2, s1
+	vsub.f32 s0, s0, s1
+label58:
+	movw r0, #4059
+	movt r0, #16457
+	vmov s1, r0
+	movw r0, #4059
+	movt r0, #16585
+	vmov s7, r0
+	movw r0, #4059
+	vcmp.f32 s0, s1
+	movt r0, #49225
+	vsub.f32 s1, s0, s7
+	vmrs APSR_nzcv, FPSCR
+	vmovgt.f32 s0, s1
+	vmov s1, r0
+	vcmp.f32 s0, s1
+	vadd.f32 s1, s0, s7
+	vmrs APSR_nzcv, FPSCR
+	vmovmi.f32 s0, s1
+	bl my_sin_impl
+	mov r0, #0
+	vcmp.f32 s6, s7
+	movw r2, #4059
+	movt r2, #49353
+	vmov.f32 s5, s0
+	vmrs APSR_nzcv, FPSCR
+	vmov s0, r2
+	movwgt r0, #1
+	mov r2, #0
+	vcmp.f32 s6, s0
+	vmrs APSR_nzcv, FPSCR
+	movwmi r2, #1
+	orrs r0, r0, r2
+	beq label60
 	movw r0, #4059
 	movt r0, #16585
 	vmov s0, r0
@@ -370,55 +401,4 @@ label69:
 	mov r0, #10
 	bl putch
 	add r4, r4, #1
-	vmov s0, r4
-	movw r0, #0
-	cmp r4, #192
-	movt r0, #17216
-	vmov s1, r0
-	vcvt.f32.s32 s0, s0
-	vdiv.f32 s16, s0, s1
-	blt label79
-	b label50
-label114:
-	movw r0, #4059
-	movt r0, #16585
-	vmov s1, r0
-	vdiv.f32 s2, s0, s1
-	vcvt.s32.f32 s2, s2
-	vcvt.f32.s32 s2, s2
-	vmul.f32 s1, s2, s1
-	vsub.f32 s0, s0, s1
-label58:
-	movw r0, #4059
-	movt r0, #16457
-	vmov s1, r0
-	movw r0, #4059
-	movt r0, #16585
-	vmov s7, r0
-	movw r0, #4059
-	vcmp.f32 s0, s1
-	movt r0, #49225
-	vsub.f32 s1, s0, s7
-	vmrs APSR_nzcv, FPSCR
-	vmovgt.f32 s0, s1
-	vmov s1, r0
-	vcmp.f32 s0, s1
-	vadd.f32 s1, s0, s7
-	vmrs APSR_nzcv, FPSCR
-	vmovmi.f32 s0, s1
-	bl my_sin_impl
-	mov r0, #0
-	vcmp.f32 s6, s7
-	movw r2, #4059
-	movt r2, #49353
-	vmov.f32 s5, s0
-	vmrs APSR_nzcv, FPSCR
-	vmov s0, r2
-	movwgt r0, #1
-	mov r2, #0
-	vcmp.f32 s6, s0
-	vmrs APSR_nzcv, FPSCR
-	movwmi r2, #1
-	orrs r0, r0, r2
-	bne label135
-	b label60
+	b label47

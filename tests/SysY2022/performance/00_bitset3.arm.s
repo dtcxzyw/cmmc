@@ -75,12 +75,7 @@ label3:
 	asr r8, r8, #1
 	sub r8, r7, r8, lsl #1
 	cmp r3, r8
-	bne label6
-	str r5, [r0, r4, lsl #2]
-	cmp r1, #0
-	bgt label3
-	b label9
-label6:
+	beq label8
 	and r8, r7, #1
 	eor r9, r3, #1
 	and r7, r7, #-2147483647
@@ -94,8 +89,13 @@ label6:
 	moveq r3, r6
 	add r3, r5, r3
 	str r3, [r0, r4, lsl #2]
+label7:
 	cmp r1, #0
 	bgt label3
+	b label9
+label8:
+	str r5, [r0, r4, lsl #2]
+	b label7
 label9:
 	mov r0, #64
 	bl _sysy_stoptime
