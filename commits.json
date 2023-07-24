@@ -90,6 +90,11 @@
       "parent": "c9c373ab7eefd99835ddc5441c452517ef6c17ad",
       "time": "2023-07-07 00:43:43 +0800"
     },
+    "1c8acc1c21e3b23e27da33f663e1f7c2e06fbb42": {
+      "message": "feat(codegen): opt tail dup",
+      "parent": "7772c5ac1efaeddccba4acf809de06b868b6c670",
+      "time": "2023-07-24 14:00:52 +0800"
+    },
     "1c9c17bbd7b24fabfa48b8c00cc043dee604737e": {
       "message": "feat(codegen): optimize select",
       "parent": "58025f21e1f21fc2e594897cd87e1cc6f2adff63",
@@ -811,5 +816,5 @@
       "time": "2023-07-06 01:05:50 +0800"
     }
   },
-  "head": "7772c5ac1efaeddccba4acf809de06b868b6c670"
+  "head": "1c8acc1c21e3b23e27da33f663e1f7c2e06fbb42"
 }
