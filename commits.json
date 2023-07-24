@@ -275,6 +275,11 @@
       "parent": "aab1a0a63041678fdafb3988b7e797ea536758ec",
       "time": "2023-07-05 23:54:00 +0800"
     },
+    "4a029f8a1a034df77bc01d7abd75b619b56d2ac6": {
+      "message": "feat(transform): canonicalize loops",
+      "parent": "aa4929e70bd9e93a7b8952c78a68675eb0a06c7a",
+      "time": "2023-07-24 01:11:40 +0800"
+    },
     "4b7168be87eea9ff5ddf64cec1114c0450920b8f": {
       "message": "feat(transform): add more optimizations for trunc/bitwise ops",
       "parent": "56c9086846a535e80a65c5d5b88c5b2f7398c1bf",
@@ -399,6 +404,11 @@
       "message": "misc: update ref",
       "parent": "4d6d8fc8749723ae232ca54588f127c495075ac8",
       "time": "2023-07-02 02:26:54 +0800"
+    },
+    "7772c5ac1efaeddccba4acf809de06b868b6c670": {
+      "message": "feat(codegen): opt tail duplication",
+      "parent": "4a029f8a1a034df77bc01d7abd75b619b56d2ac6",
+      "time": "2023-07-24 13:12:50 +0800"
     },
     "78a95e6f941947103f9f1d6b8d70881e9f9c384a": {
       "message": "fix(transform): fix wrong folding",
@@ -801,5 +811,5 @@
       "time": "2023-07-06 01:05:50 +0800"
     }
   },
-  "head": "aa4929e70bd9e93a7b8952c78a68675eb0a06c7a"
+  "head": "7772c5ac1efaeddccba4acf809de06b868b6c670"
 }
