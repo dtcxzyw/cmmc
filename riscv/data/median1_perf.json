@@ -186,6 +186,28 @@
         "sysy_time": 0.00163
       }
     ],
+    "7772c5ac1efaeddccba4acf809de06b868b6c670": [
+      {
+        "sysy_time": 0.00178
+      },
+      {
+        "sysy_time": 0.001785
+      },
+      {
+        "sysy_time": 0.00179
+      },
+      {
+        "branch-instructions": 417059,
+        "branch-misses": 5946,
+        "cycles": 1797538,
+        "instructions": 1251783,
+        "sysy_time": 0.001879,
+        "task-clock": 1.23
+      },
+      {
+        "sysy_time": 0.001792
+      }
+    ],
     "79d0c32350816fb89f5c807773c6ab5a17fc8c4b": [
       {
         "branch-instructions": 316069,
