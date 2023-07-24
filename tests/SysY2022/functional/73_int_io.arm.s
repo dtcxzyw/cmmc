@@ -24,11 +24,7 @@ label3:
 	b label3
 label6:
 	cmp r5, #0
-	bgt label9
-label22:
-	mov r0, #0
-	add sp, sp, #64
-	pop { r4, r5, r6, pc }
+	ble label22
 label9:
 	bl getch
 	sub r6, r0, #48
@@ -81,6 +77,10 @@ label20:
 	ble label19
 	mov r0, r6
 	b label20
+label22:
+	mov r0, #0
+	add sp, sp, #64
+	pop { r4, r5, r6, pc }
 label12:
 	add r1, r6, r6, lsl #2
 	add r6, r0, r1, lsl #1

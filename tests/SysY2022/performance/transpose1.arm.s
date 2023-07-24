@@ -26,23 +26,11 @@ main:
 	bl _sysy_starttime
 	cmp r6, #0
 	bgt label2
-	cmp r4, #0
-	bgt label9
-	b label21
-label2:
-	movw r0, #:lower16:matrix
-	mov r1, #0
-	movt r0, #:upper16:matrix
+	b label8
 label3:
 	add r2, r1, #4
 	cmp r6, r2
-	bgt label5
-	str r1, [r0, r1, lsl #2]
-	add r1, r1, #1
-	cmp r6, r1
-	bgt label6
-	b label63
-label5:
+	ble label6
 	add r3, r0, r1, lsl #2
 	str r1, [r0, r1, lsl #2]
 	add r7, r1, #1
@@ -58,56 +46,72 @@ label6:
 	add r1, r1, #1
 	cmp r6, r1
 	bgt label6
-label63:
+label8:
 	cmp r4, #0
-	ble label21
-label9:
-	movw r0, #:lower16:matrix
-	mov r1, #0
-	movt r0, #:upper16:matrix
-	b label10
-label21:
-	cmp r4, #0
-	bgt label106
-	b label105
+	bgt label9
+	b label162
 label10:
 	ldr r3, [r5, r1, lsl #2]
 	mov r2, #0
 	sdiv r7, r6, r3
-	b label12
-label78:
+	mul r9, r3, r2
+	cmp r7, r2
+	bgt label79
 	add r1, r1, #1
 	cmp r4, r1
 	bgt label10
-	b label102
+	cmp r4, #0
+	bgt label106
+label162:
+	mov r4, #0
+	b label22
 label79:
 	mov r8, #0
-label14:
 	cmp r3, r8
 	bgt label16
 	add r2, r2, #1
 	mul r9, r3, r2
 	cmp r7, r2
 	bgt label79
-	b label78
+	add r1, r1, #1
+	cmp r4, r1
+	bgt label10
+	cmp r4, #0
+	bgt label106
+	b label162
 label16:
 	cmp r2, r8
-	bge label18
-	add r8, r8, #1
-	b label14
-label18:
+	blt label17
 	mla r10, r7, r8, r2
 	add r11, r9, r8
 	add r8, r8, #1
 	ldr r11, [r0, r11, lsl #2]
 	str r11, [r0, r10, lsl #2]
-	b label14
-label102:
+	cmp r3, r8
+	bgt label16
+	add r2, r2, #1
+	mul r9, r3, r2
+	cmp r7, r2
+	bgt label79
+	add r1, r1, #1
+	cmp r4, r1
+	bgt label10
 	cmp r4, #0
 	bgt label106
-label105:
-	mov r4, #0
-	b label22
+	b label162
+label17:
+	add r8, r8, #1
+	cmp r3, r8
+	bgt label16
+	add r2, r2, #1
+	mul r9, r3, r2
+	cmp r7, r2
+	bgt label79
+	add r1, r1, #1
+	cmp r4, r1
+	bgt label10
+	cmp r4, #0
+	ble label162
 label106:
 	movw r0, #:lower16:matrix
 	mov r1, #0
@@ -116,11 +120,6 @@ label106:
 	mov r6, r1
 	mov r5, r1
 	b label25
-label12:
-	mul r9, r3, r2
-	cmp r7, r2
-	bgt label79
-	b label78
 label22:
 	mov r0, #47
 	bl _sysy_stoptime
@@ -135,16 +134,7 @@ label22:
 label25:
 	add r3, r5, #4
 	cmp r4, r3
-	bgt label30
-	ldr r3, [r0, r5, lsl #2]
-	add r5, r5, #1
-	cmp r4, r5
-	mla r3, r1, r3, r6
-	add r1, r1, r2
-	add r2, r2, #2
-	bgt label155
-	b label154
-label30:
+	ble label31
 	add r7, r0, r5, lsl #2
 	add r9, r1, r2
 	ldr r5, [r0, r5, lsl #2]
@@ -173,9 +163,18 @@ label31:
 	add r1, r1, r2
 	add r2, r2, #2
 	bgt label155
-label154:
 	mov r4, r3
 	b label22
 label155:
 	mov r6, r3
 	b label31
+label9:
+	movw r0, #:lower16:matrix
+	mov r1, #0
+	movt r0, #:upper16:matrix
+	b label10
+label2:
+	movw r0, #:lower16:matrix
+	mov r1, #0
+	movt r0, #:upper16:matrix
+	b label3

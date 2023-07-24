@@ -121,21 +121,20 @@ delete:
 	sd s1, 8(sp)
 	li a0, -1
 	sd ra, 0(sp)
-	beq s0, a0, label145
-pcrel292:
-	auipc a3, %pcrel_hi(value)
-	addi a0, a3, %pcrel_lo(pcrel292)
-	sh2add a3, s0, a0
-	mv a2, a0
-	lw a0, 0(a3)
-	bgt a1, a0, label123
-	j label124
+	bne s0, a0, label122
 label145:
 	li a0, -1
 	j label139
-label123:
+label122:
+	auipc a3, %pcrel_hi(value)
+	addi a0, a3, %pcrel_lo(label122)
+	sh2add a3, s0, a0
+	mv a2, a0
+	lw a0, 0(a3)
+	ble a1, a0, label124
+pcrel286:
 	auipc a0, %pcrel_hi(right_child)
-	addi a2, a0, %pcrel_lo(label123)
+	addi a2, a0, %pcrel_lo(pcrel286)
 	sh2add s1, s0, a2
 	lw a0, 0(s1)
 	jal delete
@@ -144,21 +143,35 @@ label123:
 	j label139
 label124:
 	blt a1, a0, label138
-pcrel293:
+pcrel287:
 	auipc a0, %pcrel_hi(left_child)
-	addi a1, a0, %pcrel_lo(pcrel293)
+	addi a1, a0, %pcrel_lo(pcrel287)
 	sh2add a3, s0, a1
 	li a1, -1
 	lw a0, 0(a3)
 	beq a0, a1, label137
-pcrel294:
+	j label126
+label139:
+	ld ra, 0(sp)
+	ld s1, 8(sp)
+	ld s0, 16(sp)
+	addi sp, sp, 24
+	ret
+label126:
 	auipc a0, %pcrel_hi(left_child)
-	addi a3, a0, %pcrel_lo(pcrel294)
+	addi a3, a0, %pcrel_lo(label126)
 	sh2add a1, s0, a3
 	li a3, -1
 	lw a0, 0(a1)
 	beq a0, a3, label127
-	j label181
+pcrel288:
+	auipc a4, %pcrel_hi(right_child)
+	addi a1, a4, %pcrel_lo(pcrel288)
+	sh2add a3, s0, a1
+	li a1, -1
+	lw a0, 0(a3)
+	beq a0, a1, label127
+	j label209
 label137:
 	auipc a1, %pcrel_hi(right_child)
 	addi a4, a1, %pcrel_lo(label137)
@@ -166,7 +179,7 @@ label137:
 	sh2add a3, s0, a4
 	lw a0, 0(a3)
 	beq a0, a1, label145
-	j label244
+	j label126
 label138:
 	auipc a2, %pcrel_hi(left_child)
 	addi a3, a2, %pcrel_lo(label138)
@@ -175,37 +188,6 @@ label138:
 	jal delete
 	sw a0, 0(s1)
 	mv a0, s0
-label139:
-	ld ra, 0(sp)
-	ld s1, 8(sp)
-	ld s0, 16(sp)
-	addi sp, sp, 24
-	ret
-label181:
-	auipc a4, %pcrel_hi(right_child)
-	addi a1, a4, %pcrel_lo(label181)
-	sh2add a3, s0, a1
-	li a1, -1
-	lw a0, 0(a3)
-	bne a0, a1, label209
-label127:
-	auipc a0, %pcrel_hi(left_child)
-	addi a2, a0, %pcrel_lo(label127)
-	sh2add a1, s0, a2
-	li a2, -1
-	lw a0, 0(a1)
-	beq a0, a2, label129
-pcrel295:
-	auipc a0, %pcrel_hi(left_child)
-	addi a2, a0, %pcrel_lo(pcrel295)
-	sh2add a1, s0, a2
-	lw a0, 0(a1)
-	j label139
-label129:
-	auipc a2, %pcrel_hi(right_child)
-	addi a1, a2, %pcrel_lo(label129)
-	sh2add a3, s0, a1
-	lw a0, 0(a3)
 	j label139
 label209:
 	auipc a1, %pcrel_hi(right_child)
@@ -214,24 +196,18 @@ label209:
 	mv s1, a0
 	lw a1, 0(a3)
 	mv a0, a1
-	li a3, -1
-	beq a1, a3, label219
-	j label218
 label132:
 	li a3, -1
-	beq a0, a3, label219
-label218:
+	bne a0, a3, label134
+	li a0, -1
+	j label135
+label134:
 	auipc a3, %pcrel_hi(left_child)
-	addi a5, a3, %pcrel_lo(label218)
+	addi a5, a3, %pcrel_lo(label134)
 	sh2add a4, a0, a5
 	li a5, -1
 	lw a3, 0(a4)
-	bne a3, a5, label228
-	j label135
-label219:
-	li a0, -1
-	j label135
-label228:
+	beq a3, a5, label135
 	mv a0, a3
 	j label132
 label135:
@@ -246,43 +222,54 @@ label135:
 	sw a0, 0(a1)
 	mv a0, s0
 	j label139
-label244:
+label127:
 	auipc a0, %pcrel_hi(left_child)
-	addi a3, a0, %pcrel_lo(label244)
-	sh2add a1, s0, a3
-	li a3, -1
+	addi a2, a0, %pcrel_lo(label127)
+	sh2add a1, s0, a2
+	li a2, -1
 	lw a0, 0(a1)
-	beq a0, a3, label127
-	j label181
+	bne a0, a2, label190
+pcrel289:
+	auipc a2, %pcrel_hi(right_child)
+	addi a1, a2, %pcrel_lo(pcrel289)
+	sh2add a3, s0, a1
+	lw a0, 0(a3)
+	j label139
+label190:
+	auipc a0, %pcrel_hi(left_child)
+	addi a2, a0, %pcrel_lo(label190)
+	sh2add a1, s0, a2
+	lw a0, 0(a1)
+	j label139
 inorder:
 	addi sp, sp, -16
 	li a1, -1
 	sd s0, 8(sp)
 	sd ra, 0(sp)
-	beq a0, a1, label299
+	beq a0, a1, label293
 	mv s0, a0
-label297:
+label291:
 	auipc a0, %pcrel_hi(left_child)
-	addi a1, a0, %pcrel_lo(label297)
+	addi a1, a0, %pcrel_lo(label291)
 	sh2add a2, s0, a1
 	lw a0, 0(a2)
 	jal inorder
-pcrel333:
+pcrel327:
 	auipc a2, %pcrel_hi(value)
-	addi a3, a2, %pcrel_lo(pcrel333)
+	addi a3, a2, %pcrel_lo(pcrel327)
 	sh2add a1, s0, a3
 	lw a0, 0(a1)
 	jal putint
 	li a0, 32
 	jal putch
-pcrel334:
+pcrel328:
 	auipc a1, %pcrel_hi(right_child)
-	addi a0, a1, %pcrel_lo(pcrel334)
+	addi a0, a1, %pcrel_lo(pcrel328)
 	sh2add a2, s0, a0
 	li a0, -1
 	lw s0, 0(a2)
-	bne s0, a0, label297
-label299:
+	bne s0, a0, label291
+label293:
 	ld ra, 0(sp)
 	ld s0, 8(sp)
 	addi sp, sp, 16
@@ -297,8 +284,8 @@ main:
 	sd ra, 8(sp)
 	jal getint
 	mv s1, a0
-	bne a0, zero, label337
-label336:
+	bne a0, zero, label331
+label330:
 	mv a0, zero
 	ld ra, 8(sp)
 	ld s2, 16(sp)
@@ -306,56 +293,56 @@ label336:
 	ld s0, 32(sp)
 	addi sp, sp, 40
 	ret
-label337:
+label331:
 	jal getint
-pcrel398:
+pcrel392:
 	auipc a2, %pcrel_hi(right_child)
-pcrel399:
+pcrel393:
 	auipc a1, %pcrel_hi(value)
-	sw a0, %pcrel_lo(pcrel399)(a1)
-pcrel400:
+	sw a0, %pcrel_lo(pcrel393)(a1)
+pcrel394:
 	auipc a1, %pcrel_hi(left_child)
 	li a0, -1
-	sw a0, %pcrel_lo(pcrel400)(a1)
-	sw a0, %pcrel_lo(pcrel398)(a2)
+	sw a0, %pcrel_lo(pcrel394)(a1)
+	sw a0, %pcrel_lo(pcrel392)(a2)
 	li a0, 1
 	sw a0, 0(sp)
-	ble s1, a0, label340
+	ble s1, a0, label334
 	li s2, 1
-	j label338
-label340:
+	j label332
+label334:
 	mv a0, zero
 	jal inorder
 	li a0, 10
 	jal putch
 	jal getint
 	mv s1, a0
-	bgt a0, zero, label374
+	bgt a0, zero, label368
 	mv a0, zero
-	j label344
-label374:
+	j label338
+label368:
 	mv s0, zero
 	mv s2, zero
-label341:
+label335:
 	jal getint
 	mv a1, a0
 	mv a0, s2
 	jal delete
 	addiw s0, s0, 1
-	ble s1, s0, label344
+	ble s1, s0, label338
 	mv s2, a0
-	j label341
-label344:
+	j label335
+label338:
 	jal inorder
 	li a0, 10
 	jal putch
-	j label336
-label338:
+	j label330
+label332:
 	jal getint
 	mv a2, s0
 	mv a1, a0
 	mv a0, zero
 	jal insert
 	addiw s2, s2, 1
-	bgt s1, s2, label338
-	j label340
+	bgt s1, s2, label332
+	j label334

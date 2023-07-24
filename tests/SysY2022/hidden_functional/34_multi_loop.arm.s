@@ -14,56 +14,51 @@ label2:
 	bge label30
 	mov r4, r1
 	mov r1, #0
-label5:
-	cmp r1, #4
-	bge label8
-	mov r2, #0
-	b label9
-label8:
-	add r0, r0, #1
-	mov r1, r4
-	b label2
+	b label5
 label30:
 	mov r0, r1
 	pop { r4, r5, r6, r7, r8, r9, r10, r11 }
 	bx lr
-label9:
-	cmp r2, #5
-	bge label12
-	mov r3, #0
-	b label13
-label12:
+label5:
+	cmp r1, #4
+	bge label36
+	mov r2, #0
+	b label9
+label41:
 	add r1, r1, #1
 	b label5
-label13:
-	cmp r3, #3
-	bge label16
-	mov r5, r4
-	mov r4, #0
-	b label17
-label16:
+label9:
+	cmp r2, #5
+	bge label41
+	mov r3, #0
+	b label13
+label46:
 	add r2, r2, #1
 	b label9
+label13:
+	cmp r3, #3
+	bge label46
+	mov r5, r4
+	mov r4, #0
 label17:
 	cmp r4, #5
-	bge label20
-	mov r6, #0
-	b label21
-label20:
+	blt label52
 	add r3, r3, #1
 	mov r4, r5
 	b label13
+label52:
+	mov r6, #0
 label21:
 	cmp r6, #4
-	bge label24
+	bge label56
 	mov r7, #0
 	b label25
-label24:
-	add r4, r4, #1
-	b label17
+label61:
+	add r6, r6, #1
+	b label21
 label25:
 	cmp r7, #6
-	bge label29
+	bge label61
 	add r9, r5, #3
 	movw r8, #1313
 	add r7, r7, #1
@@ -80,6 +75,10 @@ label25:
 	add r8, r10, r8, lsr #31
 	mls r5, r8, r5, r9
 	b label25
-label29:
-	add r6, r6, #1
-	b label21
+label56:
+	add r4, r4, #1
+	b label17
+label36:
+	add r0, r0, #1
+	mov r1, r4
+	b label2

@@ -43,16 +43,27 @@ merge:
 	nop
 	b label15
 	nop
-label12:
-	beq $s1, $s3, label15
+label7:
+	xor $t3, $s4, $t1
+	sltu $t3, $zero, $t3
+	xor $t4, $s1, $t2
+	sltu $t4, $zero, $t4
+	and $t3, $t3, $t4
+	bne $t3, $zero, label8
 	nop
-	sll $t0, $s3, 2
-	addu $t1, $s2, $t0
-	lw $t1, 0($t1)
-	addu $t0, $s0, $t0
-	sw $t1, 0($t0)
-	addiu $s3, $s3, 1
-	b label12
+	bne $s4, $t1, label9
+	nop
+	sll $t3, $t2, 2
+	addu $t3, $s0, $t3
+	lw $t3, 0($t3)
+	sll $t4, $t0, 2
+	addu $t4, $s2, $t4
+	sw $t3, 0($t4)
+	addiu $t2, $t2, 1
+	addiu $t0, $t0, 1
+	bne $s1, $t0, label7
+	nop
+	bne $s1, $s3, label14
 	nop
 label15:
 	lw $ra, 0($sp)
@@ -63,6 +74,57 @@ label15:
 	lw $s0, 20($sp)
 	addiu $sp, $sp, 24
 	jr $ra
+	nop
+label12:
+	beq $s1, $s3, label15
+	nop
+label14:
+	sll $t0, $s3, 2
+	addu $t1, $s2, $t0
+	lw $t1, 0($t1)
+	addu $t0, $s0, $t0
+	sw $t1, 0($t0)
+	addiu $s3, $s3, 1
+	b label12
+	nop
+label9:
+	sll $t3, $t1, 2
+	addu $t3, $s0, $t3
+	lw $t3, 0($t3)
+	sll $t4, $t0, 2
+	addu $t4, $s2, $t4
+	sw $t3, 0($t4)
+	addiu $t1, $t1, 1
+	addiu $t0, $t0, 1
+	bne $s1, $t0, label7
+	nop
+	bne $s1, $s3, label14
+	nop
+	b label15
+	nop
+label8:
+	sll $t3, $t1, 2
+	addu $t3, $s0, $t3
+	lw $t3, 0($t3)
+	sll $t4, $t2, 2
+	addu $t4, $s0, $t4
+	lw $t4, 0($t4)
+	subu $t3, $t3, $t4
+	bltz $t3, label9
+	nop
+	sll $t3, $t2, 2
+	addu $t3, $s0, $t3
+	lw $t3, 0($t3)
+	sll $t4, $t0, 2
+	addu $t4, $s2, $t4
+	sw $t3, 0($t4)
+	addiu $t2, $t2, 1
+	addiu $t0, $t0, 1
+	bne $s1, $t0, label7
+	nop
+	bne $s1, $s3, label14
+	nop
+	b label15
 	nop
 label2:
 	addu $t0, $s3, $s1
@@ -84,52 +146,11 @@ label2:
 	move $t2, $s4
 	move $t1, $s3
 	move $t0, $s3
-label3:
-	bne $s1, $t0, label7
+	bne $s1, $s3, label7
 	nop
-	b label12
+	bne $s1, $s3, label14
 	nop
-label8:
-	sll $t3, $t1, 2
-	addu $t3, $s0, $t3
-	lw $t3, 0($t3)
-	sll $t4, $t2, 2
-	addu $t4, $s0, $t4
-	lw $t4, 0($t4)
-	subu $t3, $t3, $t4
-	bltz $t3, label9
-	nop
-label10:
-	sll $t3, $t2, 2
-	addu $t3, $s0, $t3
-	lw $t3, 0($t3)
-	sll $t4, $t0, 2
-	addu $t4, $s2, $t4
-	sw $t3, 0($t4)
-	addiu $t2, $t2, 1
-	addiu $t0, $t0, 1
-	b label3
-	nop
-label7:
-	xor $t3, $s4, $t1
-	sltu $t3, $zero, $t3
-	xor $t4, $s1, $t2
-	sltu $t4, $zero, $t4
-	and $t3, $t3, $t4
-	bne $t3, $zero, label8
-	nop
-	beq $s4, $t1, label10
-	nop
-label9:
-	sll $t3, $t1, 2
-	addu $t3, $s0, $t3
-	lw $t3, 0($t3)
-	sll $t4, $t0, 2
-	addu $t4, $s2, $t4
-	sw $t3, 0($t4)
-	addiu $t1, $t1, 1
-	addiu $t0, $t0, 1
-	b label3
+	b label15
 	nop
 .globl main
 main:
@@ -140,10 +161,10 @@ main:
 	jal read
 	nop
 	move $t5, $v0
-	blez $v0, label91
+	blez $v0, label105
 	nop
 	move $t0, $zero
-label89:
+label103:
 	jal read
 	nop
 	sll $t1, $t0, 2
@@ -151,18 +172,18 @@ label89:
 	sw $v0, 0($t1)
 	addiu $t0, $t0, 1
 	subu $t1, $t5, $t0
-	bgtz $t1, label89
+	bgtz $t1, label103
 	nop
-label91:
+label105:
 	move $a0, $t6
 	move $a2, $zero
 	move $a3, $t5
 	jal merge
 	nop
-	blez $t5, label94
+	blez $t5, label108
 	nop
 	move $t0, $zero
-label92:
+label106:
 	sll $t1, $t0, 2
 	addu $t1, $t6, $t1
 	lw $a0, 0($t1)
@@ -170,9 +191,9 @@ label92:
 	nop
 	addiu $t0, $t0, 1
 	subu $t1, $t5, $t0
-	bgtz $t1, label92
+	bgtz $t1, label106
 	nop
-label94:
+label108:
 	move $v0, $zero
 	lw $ra, 816($sp)
 	addiu $sp, $sp, 824

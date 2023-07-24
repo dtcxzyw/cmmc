@@ -45,13 +45,6 @@ label2:
 	add r2, r3, #4
 	cmp r2, #10
 	blt label15
-	ldr r2, [r1, r3, lsl #2]
-	add r3, r3, #1
-	cmp r3, #10
-	ldr r5, [r0, r2, lsl #2]
-	add r5, r5, #1
-	str r5, [r0, r2, lsl #2]
-	bge label6
 label4:
 	ldr r2, [r1, r3, lsl #2]
 	add r3, r3, #1
@@ -60,7 +53,6 @@ label4:
 	add r5, r5, #1
 	str r5, [r0, r2, lsl #2]
 	blt label4
-label6:
 	ldr r2, [r0, #4]
 	ldr r3, [sp, #0]
 	add r2, r2, r3
@@ -114,6 +106,7 @@ label15:
 label7:
 	subs r2, r3, #4
 	bgt label14
+label9:
 	subs r3, r3, #1
 	ldr r2, [r1, r3, lsl #2]
 	ldr r5, [r0, r2, lsl #2]
@@ -147,14 +140,6 @@ label14:
 	str r3, [r4, r5, lsl #2]
 	mov r3, r2
 	b label7
-label9:
-	subs r3, r3, #1
-	ldr r2, [r1, r3, lsl #2]
-	ldr r5, [r0, r2, lsl #2]
-	sub r5, r5, #1
-	str r5, [r0, r2, lsl #2]
-	str r2, [r4, r5, lsl #2]
-	bgt label9
 label101:
 	mov r5, #0
 label11:

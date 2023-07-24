@@ -35,10 +35,19 @@ main:
 	blt label27
 label26:
 	mov r5, #0
-	b label9
+label9:
+	ldr r0, [r4, r5, lsl #2]
+	bl putint
+	mov r0, #10
+	bl putch
+	add r5, r5, #1
+	cmp r5, #10
+	blt label9
+	mov r0, #0
+	add sp, sp, #44
+	pop { r4, r5, r6, r7, pc }
 label27:
 	mov r0, #0
-label4:
 	cmp r2, r0
 	bgt label6
 	add r1, r1, #1
@@ -55,21 +64,24 @@ label6:
 	cmp r3, r5
 	bgt label7
 	mov r0, r6
-	b label4
+	cmp r2, r6
+	bgt label6
+	add r1, r1, #1
+	rsb r0, r1, #10
+	cmp r1, #9
+	sub r2, r0, #1
+	blt label27
+	b label26
 label7:
 	add r7, r4, r0, lsl #2
 	str r3, [r7, #4]
 	str r5, [r4, r0, lsl #2]
 	mov r0, r6
-	b label4
-label9:
-	ldr r0, [r4, r5, lsl #2]
-	bl putint
-	mov r0, #10
-	bl putch
-	add r5, r5, #1
-	cmp r5, #10
-	blt label9
-	mov r0, #0
-	add sp, sp, #44
-	pop { r4, r5, r6, r7, pc }
+	cmp r2, r6
+	bgt label6
+	add r1, r1, #1
+	rsb r0, r1, #10
+	cmp r1, #9
+	sub r2, r0, #1
+	blt label27
+	b label26

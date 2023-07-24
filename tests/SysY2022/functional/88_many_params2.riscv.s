@@ -11,10 +11,10 @@ a:
 .globl main
 main:
 	addi sp, sp, -64
-pcrel226:
+pcrel223:
 	auipc a0, %pcrel_hi(a)
 	sd s3, 56(sp)
-	addi s3, a0, %pcrel_lo(pcrel226)
+	addi s3, a0, %pcrel_lo(pcrel223)
 	sd s1, 48(sp)
 	mv a0, zero
 	sd s6, 40(sp)
@@ -26,14 +26,7 @@ pcrel226:
 label2:
 	addi a1, a0, 4
 	li a2, 4087
-	blt a1, a2, label4
-	sh2add a1, a0, s3
-	addi a0, a0, 1
-	sw zero, 0(a1)
-	li a1, 4087
-	blt a0, a1, label5
-	j label44
-label4:
+	bge a1, a2, label5
 	sh2add a0, a0, s3
 	sw zero, 0(a0)
 	sw zero, 4(a0)
@@ -47,26 +40,27 @@ label5:
 	sw zero, 0(a1)
 	li a1, 4087
 	blt a0, a1, label5
-label44:
+pcrel224:
 	auipc a1, %pcrel_hi(b)
-	addi a0, a1, %pcrel_lo(label44)
+	addi a0, a1, %pcrel_lo(pcrel224)
 	mv a1, zero
 label8:
 	addi a2, a1, 4
 	li a3, 3127
-	blt a2, a3, label27
-	sh2add a2, a1, a0
-	addi a1, a1, 1
-	sw zero, 0(a2)
-	li a2, 3127
-	bge a1, a2, label12
+	bge a2, a3, label10
+	sh2add a1, a1, a0
+	sw zero, 0(a1)
+	sw zero, 4(a1)
+	sw zero, 8(a1)
+	sw zero, 12(a1)
+	mv a1, a2
+	j label8
 label10:
 	sh2add a2, a1, a0
 	addi a1, a1, 1
 	sw zero, 0(a2)
 	li a2, 3127
 	blt a1, a2, label10
-label12:
 	li a3, 4584
 	li a1, 9
 	addi s1, a0, 1416
@@ -112,23 +106,6 @@ label85:
 	mv a2, s5
 	mv a0, s4
 	j label20
-label18:
-	sh2add a1, s1, s0
-	lw a0, 0(a1)
-	jal putint
-	li a0, 32
-	jal putch
-	addiw s1, s1, -1
-	bge s1, zero, label18
-	j label17
-label27:
-	sh2add a1, a1, a0
-	sw zero, 0(a1)
-	sw zero, 4(a1)
-	sw zero, 8(a1)
-	sw zero, 12(a1)
-	mv a1, a2
-	j label8
 label17:
 	li a0, 10
 	jal putch
@@ -143,6 +120,20 @@ label17:
 	ld s3, 56(sp)
 	addi sp, sp, 64
 	ret
+label18:
+	sh2add a1, s1, s0
+	lw a0, 0(a1)
+	jal putint
+	li a0, 32
+	jal putch
+	addiw s1, s1, -1
+	bge s1, zero, label18
+	j label17
+label16:
+	addiw a1, s2, 3
+	sh1add s1, a1, a1
+	bge s1, zero, label18
+	j label17
 label20:
 	addiw a1, a2, 4
 	li a3, 10
@@ -166,10 +157,7 @@ label23:
 	sw a3, 0(a1)
 	li a1, 10
 	blt a2, a1, label23
-	addiw a1, s2, 3
-	sh1add s1, a1, a1
-	bge s1, zero, label18
-	j label17
+	j label16
 label26:
 	sh2add a2, a2, s1
 	li a3, 128875

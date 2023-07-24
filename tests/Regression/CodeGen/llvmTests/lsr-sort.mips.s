@@ -22,12 +22,7 @@ label2:
 	beq $a0, $t1, label17
 	nop
 	li $v0, 1
-	andi $t1, $v0, 65535
-	sh $t1, 0($t0)
-	addiu $v0, $v0, 1
-	bne $a0, $v0, label3
-	nop
-	b label5
+	b label3
 	nop
 label17:
 	li $v0, 1

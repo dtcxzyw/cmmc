@@ -29,15 +29,16 @@ main:
 	str r1, [r4, #32]
 	mov r1, #8
 	str r1, [r4, #36]
-label2:
 	cmp r0, #9
-	blt label4
-	mov r5, #0
-	b label14
+	bge label29
 label4:
 	add r1, r0, #1
 	mov r5, r0
 	mov r3, r1
+	b label5
+label29:
+	mov r5, #0
+	b label14
 label5:
 	add r2, r3, #4
 	cmp r2, #10
@@ -49,7 +50,12 @@ label5:
 	add r3, r3, #1
 	cmp r3, #10
 	blt label9
-	b label83
+	cmp r0, r5
+	bne label13
+	mov r0, r1
+	cmp r1, #9
+	blt label4
+	b label29
 label8:
 	ldr r6, [r4, r5, lsl #2]
 	ldr r7, [r4, r3, lsl #2]
@@ -80,18 +86,21 @@ label9:
 	add r3, r3, #1
 	cmp r3, #10
 	blt label9
-label83:
 	cmp r0, r5
 	bne label13
 	mov r0, r1
-	b label2
+	cmp r1, #9
+	blt label4
+	b label29
 label13:
 	ldr r2, [r4, r5, lsl #2]
 	ldr r3, [r4, r0, lsl #2]
 	str r3, [r4, r5, lsl #2]
 	str r2, [r4, r0, lsl #2]
 	mov r0, r1
-	b label2
+	cmp r1, #9
+	blt label4
+	b label29
 label14:
 	ldr r0, [r4, r5, lsl #2]
 	bl putint

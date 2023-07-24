@@ -17,31 +17,30 @@ image:
 my_sin_impl:
 	addi sp, sp, -16
 	fabs.s f11, f10
-pcrel53:
+pcrel52:
 	auipc a0, %pcrel_hi(__cmmc_fp_constant_pool)
 	fsw f8, 8(sp)
-	addi a1, a0, %pcrel_lo(pcrel53)
+	addi a1, a0, %pcrel_lo(pcrel52)
 	sd ra, 0(sp)
 	flw f12, 0(a1)
 	fle.s a0, f11, f12
-	bne a0, zero, label2
-	lui a0, 263168
-	fmv.w.x f12, a0
-pcrel54:
-	auipc a0, %pcrel_hi(__cmmc_fp_constant_pool)
-	fdiv.s f10, f10, f12
-	addi a1, a0, %pcrel_lo(pcrel54)
-	flw f12, 0(a1)
-	fabs.s f11, f10
-	fle.s a0, f11, f12
-	bne a0, zero, label5
-	j label7
+	beq a0, zero, label4
 label2:
 	ld ra, 0(sp)
 	flw f8, 8(sp)
 	addi sp, sp, 16
 	ret
-label5:
+label4:
+	lui a0, 263168
+	fmv.w.x f12, a0
+pcrel53:
+	auipc a0, %pcrel_hi(__cmmc_fp_constant_pool)
+	fdiv.s f10, f10, f12
+	addi a1, a0, %pcrel_lo(pcrel53)
+	flw f12, 0(a1)
+	fabs.s f11, f10
+	fle.s a0, f11, f12
+	beq a0, zero, label7
 	lui a0, 264192
 	fmv.w.x f11, a0
 	lui a0, 263168
@@ -64,7 +63,15 @@ label7:
 	fmul.s f12, f10, f8
 	fmul.s f11, f13, f10
 	fsub.s f10, f12, f11
-	j label5
+	fmv.w.x f11, a0
+	lui a0, 263168
+	fmul.s f13, f10, f11
+	fmul.s f12, f13, f10
+	fmv.w.x f13, a0
+	fmul.s f11, f12, f10
+	fmul.s f12, f10, f13
+	fsub.s f10, f12, f11
+	j label2
 .globl main
 main:
 	addi sp, sp, -104
@@ -88,10 +95,10 @@ main:
 	jal getch
 	jal getch
 	li a1, 80
-	bne a0, a1, label84
+	bne a0, a1, label83
 	jal getch
 	li a1, 50
-	bne a0, a1, label84
+	bne a0, a1, label83
 	jal getint
 	li s1, 1024
 	mv s0, a0
@@ -100,7 +107,7 @@ main:
 	slt a1, s1, a0
 	mv s2, a0
 	or a0, s3, a1
-	bne a0, zero, label84
+	bne a0, zero, label83
 	jal getint
 	srliw a1, s2, 31
 	add a2, s2, a1
@@ -114,13 +121,83 @@ pcrel266:
 	addi s1, a1, %pcrel_lo(pcrel266)
 	fcvt.s.w f9, s3
 	li a1, 255
-	bne a0, a1, label84
+	bne a0, a1, label83
 	mv s5, zero
-label59:
-	bgt s2, s5, label72
+	j label58
+label83:
+	li a0, -1
+	j label76
 label61:
+	bgt s2, s5, label63
+	mv a0, zero
+	j label76
+label63:
+	subw a0, s5, s4
+	fcvt.s.w f10, a0
+	fmul.s f21, f10, f19
+	fmul.s f20, f10, f18
+	ble s0, zero, label70
+	mv s6, zero
+label64:
+	subw a0, s6, s3
+	fcvt.s.w f10, a0
+	fmul.s f12, f10, f18
+	fmul.s f10, f10, f19
+	fsub.s f13, f12, f21
+	fadd.s f11, f13, f9
+	fcvt.w.s a0, f11, rtz
+	fadd.s f11, f10, f20
+	slti a3, a0, 0
+	slt a1, a0, s0
+	xori a2, a1, 1
+	or a1, a2, a3
+	fadd.s f12, f11, f8
+	fcvt.w.s a2, f12, rtz
+	slti a3, a2, 0
+	or a1, a1, a3
+	bne a1, zero, label189
+	ble s2, a2, label189
+	mulw a3, s0, a2
+	addw a2, a0, a3
+	sh2add a1, a2, s1
+	lw a0, 0(a1)
+	j label68
+label189:
+	mv a0, zero
+label68:
+	jal putint
+	li a0, 32
+	jal putch
+	addiw s6, s6, 1
+	bgt s0, s6, label64
+label70:
+	li a0, 10
+	jal putch
+	addiw s5, s5, 1
+	j label61
+label76:
+	ld ra, 32(sp)
+	ld s7, 16(sp)
+	flw f19, 40(sp)
+	ld s0, 48(sp)
+	ld s5, 56(sp)
+	ld s1, 64(sp)
+	ld s3, 72(sp)
+	ld s2, 80(sp)
+	ld s4, 88(sp)
+	flw f8, 96(sp)
+	flw f21, 100(sp)
+	flw f9, 8(sp)
+	ld s6, 0(sp)
+	flw f18, 24(sp)
+	flw f20, 12(sp)
+	addi sp, sp, 104
+	ret
+label58:
+	bgt s2, s5, label71
+label60:
 	auipc a1, %pcrel_hi(__cmmc_fp_constant_pool)
-	addi a0, a1, %pcrel_lo(label61)
+	addi a0, a1, %pcrel_lo(label60)
 	flw f11, 4(a0)
 	flw f14, 8(a0)
 	fadd.s f10, f19, f11
@@ -134,23 +211,23 @@ label61:
 	or a1, a1, a2
 	fsub.s f11, f10, f13
 	fmv.s f12, f11
-	bne a1, zero, label238
+	bne a1, zero, label237
 	fmv.s f12, f10
-label238:
+label237:
 	flw f0, 16(a0)
 	fsub.s f10, f12, f14
 	flt.s a1, f0, f12
 	fmv.s f11, f10
-	bne a1, zero, label240
+	bne a1, zero, label239
 	fmv.s f11, f12
-label240:
+label239:
 	flw f1, 20(a0)
 	fadd.s f12, f11, f14
 	flt.s a0, f11, f1
 	fmv.s f10, f12
-	bne a0, zero, label242
+	bne a0, zero, label241
 	fmv.s f10, f11
-label242:
+label241:
 	jal my_sin_impl
 	flt.s a2, f19, f15
 	fmv.s f18, f10
@@ -161,21 +238,21 @@ label242:
 	or a0, a1, a2
 	fmul.s f11, f12, f14
 	fsub.s f10, f19, f11
-	bne a0, zero, label244
+	bne a0, zero, label243
 	fmv.s f10, f19
-label244:
+label243:
 	flt.s a0, f0, f10
 	fsub.s f12, f10, f14
 	fmv.s f11, f12
-	bne a0, zero, label246
+	bne a0, zero, label245
 	fmv.s f11, f10
-label246:
+label245:
 	flt.s a0, f11, f1
 	fadd.s f12, f11, f14
 	fmv.s f10, f12
-	bne a0, zero, label248
+	bne a0, zero, label247
 	fmv.s f10, f11
-label248:
+label247:
 	jal my_sin_impl
 	li a0, 80
 	fmv.s f19, f10
@@ -197,92 +274,24 @@ label248:
 	li a0, 10
 	jal putch
 	mv s5, zero
-	j label62
-label72:
-	bgt s0, zero, label208
+	j label61
+label206:
 	addiw s5, s5, 1
-	j label59
-label75:
+	j label58
+label71:
+	bgt s0, zero, label207
+	j label206
+label74:
 	jal getint
 	addw a2, s6, s7
 	addiw s7, s7, 1
 	sh2add a1, a2, s1
 	sw a0, 0(a1)
-	bgt s0, s7, label75
+	bgt s0, s7, label74
 	addiw s5, s5, 1
-	bgt s2, s5, label72
-	j label61
-label62:
-	bgt s2, s5, label64
-	mv a0, zero
-	j label77
-label64:
-	subw a0, s5, s4
-	fcvt.s.w f10, a0
-	fmul.s f21, f10, f19
-	fmul.s f20, f10, f18
-	ble s0, zero, label71
-	mv s6, zero
-label65:
-	subw a0, s6, s3
-	fcvt.s.w f10, a0
-	fmul.s f12, f10, f18
-	fmul.s f10, f10, f19
-	fsub.s f13, f12, f21
-	fadd.s f11, f13, f9
-	fcvt.w.s a0, f11, rtz
-	fadd.s f11, f10, f20
-	slti a3, a0, 0
-	slt a1, a0, s0
-	xori a2, a1, 1
-	or a1, a2, a3
-	fadd.s f12, f11, f8
-	fcvt.w.s a2, f12, rtz
-	slti a3, a2, 0
-	or a1, a1, a3
-	bne a1, zero, label190
-	bgt s2, a2, label193
-label190:
-	mv a0, zero
-	j label69
-label193:
-	mulw a3, s0, a2
-	addw a2, a0, a3
-	sh2add a1, a2, s1
-	lw a0, 0(a1)
-label69:
-	jal putint
-	li a0, 32
-	jal putch
-	addiw s6, s6, 1
-	bgt s0, s6, label65
-label71:
-	li a0, 10
-	jal putch
-	addiw s5, s5, 1
-	j label62
-label77:
-	ld ra, 32(sp)
-	ld s7, 16(sp)
-	flw f19, 40(sp)
-	ld s0, 48(sp)
-	ld s5, 56(sp)
-	ld s1, 64(sp)
-	ld s3, 72(sp)
-	ld s2, 80(sp)
-	ld s4, 88(sp)
-	flw f8, 96(sp)
-	flw f21, 100(sp)
-	flw f9, 8(sp)
-	ld s6, 0(sp)
-	flw f18, 24(sp)
-	flw f20, 12(sp)
-	addi sp, sp, 104
-	ret
-label84:
-	li a0, -1
-	j label77
-label208:
+	bgt s2, s5, label71
+	j label60
+label207:
 	mulw s6, s0, s5
 	mv s7, zero
-	j label75
+	j label74

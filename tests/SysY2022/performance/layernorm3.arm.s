@@ -28,11 +28,6 @@ main:
 label2:
 	cmp r7, #1000
 	blt label50
-	b label6
-label4:
-	vpop { s16 }
-	pop { r4, r5, r6, r7, pc }
-label6:
 	mov r0, #42
 	bl _sysy_starttime
 	mov r0, #0
@@ -49,29 +44,11 @@ label50:
 label7:
 	cmp r0, #100
 	blt label66
-label65:
 	vmov.f32 s16, s0
 	mov r0, #0
 	cmp r0, #1000
-	blt label45
+	blt label479
 	b label44
-label66:
-	mov r1, #0
-label10:
-	cmp r1, #1000
-	blt label70
-	mov r1, #0
-	b label12
-label70:
-	mov r2, #4000
-	mov r7, #0
-	mla r2, r1, r2, r4
-	vmov s1, r7
-	b label37
-label73:
-	vmov.f32 s2, s0
-	mov r2, #0
-	b label27
 label14:
 	add r2, r5, r1, lsl #2
 	mov r3, #0
@@ -195,7 +172,6 @@ label15:
 	vmov s3, r2
 	vmov.f32 s4, s2
 	vmul.f32 s1, s2, s1
-label19:
 	vmul.f32 s5, s1, s1
 	movw r2, #4719
 	movt r2, #14979
@@ -210,7 +186,18 @@ label19:
 	vstr s1, [r2, #0]
 	cmp r1, #1000
 	blt label14
-	b label73
+	vmov.f32 s2, s0
+	mov r2, #0
+	cmp r2, #1000
+	blt label249
+	add r0, r0, #1
+	cmp r0, #100
+	blt label66
+	vmov.f32 s16, s0
+	mov r0, #0
+	cmp r0, #1000
+	blt label479
+	b label44
 label23:
 	vcmp.f32 s5, s2
 	vmrs APSR_nzcv, FPSCR
@@ -221,23 +208,92 @@ label23:
 	vmul.f32 s5, s3, s5
 	vmov.f32 s3, s1
 	vmov.f32 s1, s5
-	b label19
-label27:
+	vmul.f32 s5, s5, s5
+	movw r2, #4719
+	movt r2, #14979
+	vmov s7, r2
+	vsub.f32 s6, s5, s2
+	vabs.f32 s6, s6
+	vcmp.f32 s6, s7
+	vmrs APSR_nzcv, FPSCR
+	bgt label23
+	add r2, r6, r1, lsl #2
+	add r1, r1, #1
+	vstr s1, [r2, #0]
+	cmp r1, #1000
+	blt label14
+	vmov.f32 s2, s0
+	mov r2, #0
 	cmp r2, #1000
-	blt label31
+	blt label249
 	add r0, r0, #1
-	vmov.f32 s0, s2
 	cmp r0, #100
 	blt label66
-	b label65
-label31:
-	add r1, r6, r2, lsl #2
-	mov r7, #0
-	vldr s0, [r1, #0]
-	add r1, r5, r2, lsl #2
-	vldr s1, [r1, #0]
+	vmov.f32 s16, s0
+	mov r0, #0
+	cmp r0, #1000
+	blt label479
+	b label44
+label24:
+	vadd.f32 s4, s1, s3
+	mov r2, #1056964608
+	vmov s5, r2
+	vmul.f32 s5, s4, s5
+	vmov.f32 s4, s1
+	vmov.f32 s1, s5
+	vmul.f32 s5, s5, s5
+	movw r2, #4719
+	movt r2, #14979
+	vmov s7, r2
+	vsub.f32 s6, s5, s2
+	vabs.f32 s6, s6
+	vcmp.f32 s6, s7
+	vmrs APSR_nzcv, FPSCR
+	bgt label23
+	add r2, r6, r1, lsl #2
+	add r1, r1, #1
+	vstr s1, [r2, #0]
+	cmp r1, #1000
+	blt label14
+	vmov.f32 s2, s0
+	mov r2, #0
+	cmp r2, #1000
+	blt label249
+	add r0, r0, #1
+	cmp r0, #100
+	blt label66
+	vmov.f32 s16, s0
+	mov r0, #0
+	cmp r0, #1000
+	bge label44
+label479:
 	mov r1, #4000
-	mla r3, r2, r1, r4
+	mov r3, #0
+	vmov.f32 s0, s16
+	mla r1, r0, r1, r4
+	b label46
+label66:
+	mov r1, #0
+	cmp r1, #1000
+	blt label70
+	vmov.f32 s2, s0
+	mov r2, #0
+	cmp r2, #1000
+	blt label249
+	add r0, r0, #1
+	cmp r0, #100
+	blt label66
+	vmov.f32 s16, s0
+	mov r0, #0
+	cmp r0, #1000
+	blt label479
+	b label44
+label70:
+	mov r2, #4000
+	mov r7, #0
+	mla r2, r1, r2, r4
+	vmov s1, r7
+	b label37
 label32:
 	add r1, r3, r7, lsl #2
 	add r7, r7, #16
@@ -365,7 +421,17 @@ label32:
 	vdiv.f32 s0, s1, s0
 	vstr s0, [r1, #28]
 	vadd.f32 s2, s2, s0
-	b label27
+	cmp r2, #1000
+	blt label249
+	add r0, r0, #1
+	vmov.f32 s0, s2
+	cmp r0, #100
+	blt label66
+	vmov.f32 s16, s2
+	mov r0, #0
+	cmp r0, #1000
+	blt label479
+	b label44
 label37:
 	add r3, r2, r7, lsl #2
 	add r7, r7, #16
@@ -427,22 +493,27 @@ label37:
 	add r1, r1, #1
 	vdiv.f32 s1, s1, s2
 	vstr s1, [r2, #0]
-	b label10
+	cmp r1, #1000
+	blt label70
+	mov r1, #0
+	cmp r1, #1000
+	blt label14
+	vmov.f32 s2, s0
+	mov r2, #0
+	cmp r2, #1000
+	blt label249
+	add r0, r0, #1
+	cmp r0, #100
+	blt label66
+	vmov.f32 s16, s0
+	mov r0, #0
+	cmp r0, #1000
+	blt label479
+	b label44
 label41:
 	cmp r0, #1000
-	blt label45
-label44:
-	mov r0, #95
-	bl _sysy_stoptime
-	vmov.f32 s0, s16
-	bl putfloat
-	mov r0, #0
-	b label4
-label45:
-	mov r1, #4000
-	mov r3, #0
-	vmov.f32 s0, s16
-	mla r1, r0, r1, r4
+	blt label479
+	b label44
 label46:
 	add r2, r1, r3, lsl #2
 	add r3, r3, #16
@@ -499,15 +570,21 @@ label46:
 	vldr s1, [r1, #28]
 	vadd.f32 s16, s0, s1
 	b label41
-label24:
-	vadd.f32 s4, s1, s3
-	mov r2, #1056964608
-	vmov s5, r2
-	vmul.f32 s5, s4, s5
-	vmov.f32 s4, s1
-	vmov.f32 s1, s5
-	b label19
-label12:
-	cmp r1, #1000
-	blt label14
-	b label73
+label249:
+	add r1, r6, r2, lsl #2
+	mov r7, #0
+	vldr s0, [r1, #0]
+	add r1, r5, r2, lsl #2
+	vldr s1, [r1, #0]
+	mov r1, #4000
+	mla r3, r2, r1, r4
+	b label32
+label44:
+	mov r0, #95
+	bl _sysy_stoptime
+	vmov.f32 s0, s16
+	bl putfloat
+	mov r0, #0
+label4:
+	vpop { s16 }
+	pop { r4, r5, r6, r7, pc }

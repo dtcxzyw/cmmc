@@ -101,9 +101,80 @@ main:
 	vcvt.f32.s32 s17, s0
 	bne label75
 	mov r9, #0
+	b label50
+label75:
+	mvn r0, #0
+	b label68
+label53:
+	cmp r6, r9
+	bgt label55
+	mov r0, #0
+	b label68
+label55:
+	sub r0, r9, r8
+	cmp r4, #0
+	vmov s0, r0
+	vcvt.f32.s32 s0, s0
+	vmul.f32 s21, s0, s19
+	vmul.f32 s20, s0, s18
+	ble label62
+	mov r10, #0
+	b label56
+label62:
+	mov r0, #10
+	bl putch
+	add r9, r9, #1
+	b label53
+label68:
+	add sp, sp, #4
+	vpop { s16, s17, s18, s19, s20, s21 }
+	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
+label56:
+	sub r0, r10, r7
+	mov r1, #0
+	mov r3, #0
+	vmov s0, r0
+	vcvt.f32.s32 s0, s0
+	vmul.f32 s1, s0, s18
+	vmul.f32 s0, s0, s19
+	vsub.f32 s1, s1, s21
+	vadd.f32 s0, s0, s20
+	vadd.f32 s1, s1, s17
+	vadd.f32 s0, s0, s16
+	vcvt.s32.f32 s1, s1
+	vcvt.s32.f32 s0, s0
+	vmov r0, s1
+	vmov r2, s0
+	cmp r4, r0
+	movwle r1, #1
+	cmp r0, #0
+	orrlt r1, r1, #1
+	cmp r2, #0
+	movwlt r3, #1
+	orrs r1, r1, r3
+	bne label176
+	cmp r6, r2
+	ble label176
+	mla r0, r4, r2, r0
+	ldr r0, [r5, r0, lsl #2]
+	b label60
+label176:
+	mov r0, #0
+label60:
+	bl putint
+	mov r0, #32
+	bl putch
+	add r10, r10, #1
+	cmp r4, r10
+	bgt label56
+	b label62
 label50:
 	cmp r6, r9
 	bgt label63
+	b label52
+label193:
+	add r9, r9, #1
+	b label50
 label52:
 	movw r0, #4059
 	movw r1, #4059
@@ -196,8 +267,7 @@ label52:
 label63:
 	cmp r4, #0
 	bgt label194
-	add r9, r9, #1
-	b label50
+	b label193
 label66:
 	bl getint
 	add r1, r10, r11
@@ -209,73 +279,6 @@ label66:
 	cmp r6, r9
 	bgt label63
 	b label52
-label53:
-	cmp r6, r9
-	bgt label55
-	mov r0, #0
-	b label68
-label55:
-	sub r0, r9, r8
-	cmp r4, #0
-	vmov s0, r0
-	vcvt.f32.s32 s0, s0
-	vmul.f32 s21, s0, s19
-	vmul.f32 s20, s0, s18
-	ble label62
-	mov r10, #0
-	b label56
-label62:
-	mov r0, #10
-	bl putch
-	add r9, r9, #1
-	b label53
-label68:
-	add sp, sp, #4
-	vpop { s16, s17, s18, s19, s20, s21 }
-	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
-label56:
-	sub r0, r10, r7
-	mov r1, #0
-	mov r3, #0
-	vmov s0, r0
-	vcvt.f32.s32 s0, s0
-	vmul.f32 s1, s0, s18
-	vmul.f32 s0, s0, s19
-	vsub.f32 s1, s1, s21
-	vadd.f32 s0, s0, s20
-	vadd.f32 s1, s1, s17
-	vadd.f32 s0, s0, s16
-	vcvt.s32.f32 s1, s1
-	vcvt.s32.f32 s0, s0
-	vmov r0, s1
-	vmov r2, s0
-	cmp r4, r0
-	movwle r1, #1
-	cmp r0, #0
-	orrlt r1, r1, #1
-	cmp r2, #0
-	movwlt r3, #1
-	orrs r1, r1, r3
-	bne label176
-	cmp r6, r2
-	bgt label179
-label176:
-	mov r0, #0
-	b label60
-label179:
-	mla r0, r4, r2, r0
-	ldr r0, [r5, r0, lsl #2]
-label60:
-	bl putint
-	mov r0, #32
-	bl putch
-	add r10, r10, #1
-	cmp r4, r10
-	bgt label56
-	b label62
-label75:
-	mvn r0, #0
-	b label68
 label194:
 	mul r10, r4, r9
 	mov r11, #0

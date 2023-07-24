@@ -34,7 +34,6 @@ label5:
 	sw a0, 0(s3)
 	mv a0, s1
 	sw zero, 0(s2)
-label7:
 	lw a1, 0(s3)
 	divw a2, s0, s1
 	lw a3, 0(s2)
@@ -58,7 +57,15 @@ label9:
 	mulw a3, a2, a4
 	subw a1, a1, a3
 	sw a1, 0(s2)
-	j label7
+	lw a1, 0(s3)
+	divw a2, s0, s1
+	lw a3, 0(s2)
+	sw a3, 0(s3)
+	lw a4, 0(s2)
+	mulw a3, a2, a4
+	subw a1, a1, a3
+	sw a1, 0(s2)
+	j label3
 .globl main
 main:
 	addi sp, sp, -16

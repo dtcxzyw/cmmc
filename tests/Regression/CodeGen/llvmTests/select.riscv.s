@@ -263,35 +263,35 @@ label274:
 select_xor_1:
 	andi a2, a1, 255
 	andi a3, a2, 1
-	bne a3, zero, label289
+	beq a3, zero, label286
+	li a1, 65535
+	and a2, a0, a1
+	xori a0, a2, 43
+	j label287
+label286:
 	li a1, 65535
 	and a0, a0, a1
 label287:
 	li a1, 65535
 	and a0, a0, a1
 	ret
-label289:
-	li a1, 65535
-	and a2, a0, a1
-	xori a0, a2, 43
-	j label287
 .globl select_xor_1b
 select_xor_1b:
 	andi a3, a1, 255
 	li a1, 1
 	andi a2, a3, 1
-	beq a2, a1, label309
+	bne a2, a1, label306
+	li a1, 65535
+	and a2, a0, a1
+	xori a0, a2, 43
+	j label307
+label306:
 	li a1, 65535
 	and a0, a0, a1
 label307:
 	li a1, 65535
 	and a0, a0, a1
 	ret
-label309:
-	li a1, 65535
-	and a2, a0, a1
-	xori a0, a2, 43
-	j label307
 .globl select_xor_2
 select_xor_2:
 	andi a4, a2, 255
@@ -315,7 +315,11 @@ label350:
 select_xor_3:
 	andi a2, a1, 255
 	andi a3, a2, 1
-	bne a3, zero, label355
+	beq a3, zero, label352
+	li a1, 65535
+	and a0, a0, a1
+	j label353
+label352:
 	li a1, 65535
 	and a2, a0, a1
 	xori a0, a2, 43
@@ -323,16 +327,16 @@ label353:
 	li a1, 65535
 	and a0, a0, a1
 	ret
-label355:
-	li a1, 65535
-	and a0, a0, a1
-	j label353
 .globl select_xor_3b
 select_xor_3b:
 	andi a3, a1, 255
 	li a1, 1
 	andi a2, a3, 1
-	beq a2, a1, label375
+	bne a2, a1, label372
+	li a1, 65535
+	and a0, a0, a1
+	j label373
+label372:
 	li a1, 65535
 	and a2, a0, a1
 	xori a0, a2, 43
@@ -340,10 +344,6 @@ label373:
 	li a1, 65535
 	and a0, a0, a1
 	ret
-label375:
-	li a1, 65535
-	and a0, a0, a1
-	j label373
 .globl select_xor_4
 select_xor_4:
 	andi a4, a2, 255

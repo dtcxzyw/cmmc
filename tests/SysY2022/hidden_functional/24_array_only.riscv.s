@@ -27,9 +27,70 @@ label2:
 	li a0, 5
 	blt s4, a0, label53
 	beq s0, zero, label28
-	j label93
+label130:
+	mv a1, s0
+	j label35
 label53:
 	mv s3, s4
+	j label5
+label15:
+	addiw a0, a0, -1
+	slliw s3, s3, 1
+	bne a0, zero, label15
+	addw s3, s1, s3
+	beq s0, zero, label24
+	lw a0, 0(sp)
+	mv a1, s0
+	addiw a1, s0, -1
+	slliw a0, a0, 1
+	bne a1, zero, label21
+	mv a1, a0
+	subw s4, a0, s1
+	li a0, 5
+	sw s4, 0(sp)
+	blt s3, a0, label5
+	j label130
+label18:
+	addw s3, s1, s3
+	beq s0, zero, label24
+	lw a0, 0(sp)
+	mv a1, s0
+	addiw a1, s0, -1
+	slliw a0, a0, 1
+	bne a1, zero, label21
+	mv a1, a0
+	subw s4, a0, s1
+	li a0, 5
+	sw s4, 0(sp)
+	blt s3, a0, label5
+	j label130
+label24:
+	lw a1, 0(sp)
+	subw s4, a1, s1
+	li a0, 5
+	sw s4, 0(sp)
+	blt s3, a0, label5
+	bne s0, zero, label130
+label28:
+	addiw a0, s2, 1
+	beq s0, zero, label98
+	mv a2, s0
+	j label30
+label98:
+	mv a1, a0
+	j label33
+label30:
+	addiw a2, a2, -1
+	slliw a1, a0, 1
+	beq a2, zero, label33
+	mv a0, a1
+	j label30
+label33:
+	lw a3, 0(sp)
+	lw a0, 4(sp)
+	addw s2, a1, a3
+	beq s2, a0, label38
+	j label2
 label5:
 	mv a0, s2
 	jal putint
@@ -42,34 +103,60 @@ label5:
 	beq s0, zero, label8
 	lw a0, 0(sp)
 	mv a1, s0
-	j label10
+	addiw a1, s0, -1
+	slliw a0, a0, 1
+	bne a1, zero, label10
+	mv a1, a0
+	addw a0, s1, a0
+	sw a0, 0(sp)
+	mv a0, s0
+	addiw a0, s0, -1
+	slliw s3, s3, 1
+	bne a0, zero, label15
+	addw s3, s1, s3
+	lw a0, 0(sp)
+	mv a1, s0
+	addiw a1, s0, -1
+	slliw a0, a0, 1
+	bne a1, zero, label21
+	mv a1, a0
+	subw s4, a0, s1
+	li a0, 5
+	sw s4, 0(sp)
+	blt s3, a0, label5
+	j label130
+label8:
+	lw a1, 0(sp)
+	addw a0, s1, a1
+	sw a0, 0(sp)
+	beq s0, zero, label18
+	mv a0, s0
+	addiw a0, s0, -1
+	slliw s3, s3, 1
+	bne a0, zero, label15
+	addw s3, s1, s3
+	lw a0, 0(sp)
+	mv a1, s0
+	addiw a1, s0, -1
+	slliw a0, a0, 1
+	bne a1, zero, label21
+	mv a1, a0
+	subw s4, a0, s1
+	li a0, 5
+	sw s4, 0(sp)
+	blt s3, a0, label5
+	j label130
 label21:
 	addiw a1, a1, -1
 	slliw a0, a0, 1
 	bne a1, zero, label21
 	mv a1, a0
-label25:
-	subw s4, a1, s1
+	subw s4, a0, s1
 	li a0, 5
 	sw s4, 0(sp)
 	blt s3, a0, label5
 	beq s0, zero, label28
-label93:
-	mv a1, s0
-	j label35
-label28:
-	addiw a0, s2, 1
-	beq s0, zero, label98
-	mv a2, s0
-	j label30
-label98:
-	mv a1, a0
-label33:
-	lw a3, 0(sp)
-	lw a0, 4(sp)
-	addw s2, a1, a3
-	beq s2, a0, label38
-	j label2
+	j label130
 label10:
 	addiw a1, a1, -1
 	slliw a0, a0, 1
@@ -78,27 +165,22 @@ label10:
 	addw a0, s1, a0
 	sw a0, 0(sp)
 	beq s0, zero, label18
-label67:
 	mv a0, s0
-label15:
-	addiw a0, a0, -1
+	addiw a0, s0, -1
 	slliw s3, s3, 1
 	bne a0, zero, label15
-label18:
 	addw s3, s1, s3
-	beq s0, zero, label24
 	lw a0, 0(sp)
 	mv a1, s0
-	j label21
-label24:
-	lw a1, 0(sp)
-	j label25
-label8:
-	lw a1, 0(sp)
-	addw a0, s1, a1
-	sw a0, 0(sp)
-	beq s0, zero, label18
-	j label67
+	addiw a1, s0, -1
+	slliw a0, a0, 1
+	bne a1, zero, label21
+	mv a1, a0
+	subw s4, a0, s1
+	li a0, 5
+	sw s4, 0(sp)
+	blt s3, a0, label5
+	j label130
 label38:
 	li a0, 10
 	jal putch
@@ -116,9 +198,3 @@ label35:
 	slliw s2, s2, 1
 	bne a1, zero, label35
 	j label28
-label30:
-	addiw a2, a2, -1
-	slliw a1, a0, 1
-	beq a2, zero, label33
-	mv a0, a1
-	j label30

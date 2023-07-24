@@ -19,7 +19,7 @@ f:
 	sd s0, 96(sp)
 	mv s0, a0
 	sd s5, 88(sp)
-pcrel123:
+pcrel128:
 	auipc a0, %pcrel_hi(ans)
 	addiw s5, s0, 1
 	sd s2, 80(sp)
@@ -29,26 +29,26 @@ pcrel123:
 	sd s6, 64(sp)
 	li s6, 1
 	sd s4, 56(sp)
-	addi s4, a0, %pcrel_lo(pcrel123)
+	addi s4, a0, %pcrel_lo(pcrel128)
 	sd s3, 48(sp)
-pcrel124:
+pcrel129:
 	auipc a0, %pcrel_hi(row)
 	sd s7, 40(sp)
-	addi s3, a0, %pcrel_lo(pcrel124)
+	addi s3, a0, %pcrel_lo(pcrel129)
 	sd s8, 32(sp)
-pcrel125:
+pcrel130:
 	auipc a0, %pcrel_hi(line1)
 	sd s9, 24(sp)
-	addi s7, a0, %pcrel_lo(pcrel125)
+	addi s7, a0, %pcrel_lo(pcrel130)
 	sd s10, 16(sp)
-pcrel126:
+pcrel131:
 	auipc a0, %pcrel_hi(line2)
 	sd s11, 8(sp)
-	addi s8, a0, %pcrel_lo(pcrel126)
+	addi s8, a0, %pcrel_lo(pcrel131)
 	sd ra, 0(sp)
-label2:
-	lw a0, 0(s1)
+	lw a0, 0(a2)
 	ble s6, a0, label5
+label4:
 	ld ra, 0(sp)
 	ld s11, 8(sp)
 	ld s10, 16(sp)
@@ -69,23 +69,39 @@ label5:
 	li a2, 1
 	lw a1, 0(a3)
 	bne a1, a2, label7
-label6:
 	addiw s6, s6, 1
-	j label2
+	lw a0, 0(s1)
+	ble s6, a0, label5
+	j label4
 label7:
 	addw s9, s0, s6
 	sh2add a1, s9, s7
 	lw a2, 0(a1)
-	bne a2, zero, label6
+	beq a2, zero, label8
+	addiw s6, s6, 1
+	lw a0, 0(s1)
+	ble s6, a0, label5
+	j label4
+label8:
 	addw a1, s0, a0
 	subw a3, a1, s6
 	sh2add a2, a3, s8
 	lw a1, 0(a2)
-	bne a1, zero, label6
+	beq a1, zero, label9
+label6:
+	addiw s6, s6, 1
+	lw a0, 0(s1)
+	ble s6, a0, label5
+	j label4
+label9:
 	sh2add a1, s0, s4
 	sw s6, 0(a1)
-	beq s0, a0, label65
-	j label18
+	bne s0, a0, label64
+	lw a0, 0(s2)
+	li s10, 1
+	addi a1, a0, 1
+	sw a1, 0(s2)
+	j label13
 label10:
 	addw a2, s0, a0
 	sh2add s10, s6, s3
@@ -108,14 +124,6 @@ label10:
 	sh2add a1, a2, s8
 	sw zero, 0(a1)
 	j label6
-label18:
-	lw a0, 0(s1)
-	j label10
-label65:
-	lw a0, 0(s2)
-	li s10, 1
-	addi a1, a0, 1
-	sw a1, 0(s2)
 label13:
 	lw s11, 0(s1)
 	ble s10, s11, label15
@@ -125,15 +133,19 @@ label15:
 	sh2add a1, s10, s4
 	lw a0, 0(a1)
 	jal putint
-	bne s10, s11, label17
-	li a0, 10
-	jal putch
-	j label18
-label17:
+	beq s10, s11, label16
 	li a0, 32
 	jal putch
 	addiw s10, s10, 1
 	j label13
+label64:
+	lw a0, 0(s1)
+	j label10
+label16:
+	li a0, 10
+	jal putch
+	lw a0, 0(s1)
+	j label10
 .globl main
 main:
 	addi sp, sp, -40
@@ -145,12 +157,12 @@ main:
 	sd ra, 8(sp)
 	sw zero, 4(sp)
 	jal getint
-	bgt a0, zero, label140
+	bgt a0, zero, label145
 	mv a0, zero
-	j label131
-label140:
+	j label136
+label145:
 	mv s2, a0
-label128:
+label133:
 	jal getint
 	sw a0, 0(sp)
 	mv a1, s1
@@ -158,9 +170,9 @@ label128:
 	mv a2, s0
 	jal f
 	addiw s2, s2, -1
-	bgt s2, zero, label128
+	bgt s2, zero, label133
 	lw a0, 4(sp)
-label131:
+label136:
 	ld ra, 8(sp)
 	ld s2, 16(sp)
 	ld s1, 24(sp)

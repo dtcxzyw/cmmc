@@ -3,10 +3,10 @@
 .text
 .globl t1
 t1:
-	bne a0, zero, label5
+	beq a0, zero, label2
+	addiw a0, a1, 1
+	j label3
+label2:
 	addiw a0, a1, -1
 label3:
 	ret
-label5:
-	addiw a0, a1, 1
-	j label3

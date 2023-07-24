@@ -16,15 +16,12 @@ label2:
 	bne label4
 	cmp r5, #0
 	bne label24
-	b label23
+	b label41
 label4:
 	bl getint
 	str r0, [r4, r5, lsl #2]
 	add r5, r5, #1
 	b label2
-label23:
-	mov r0, #0
-	b label9
 label24:
 	mov r1, #0
 label6:
@@ -37,6 +34,8 @@ label6:
 label33:
 	mov r5, r0
 	b label6
+label41:
+	mov r0, #0
 label9:
 	mov r1, #79
 	movw r2, #14933

@@ -9,14 +9,7 @@ foo4:
 	mv a4, zero
 label2:
 	addiw a3, a4, 4
-	bgt a1, a3, label5
-	sh2add a3, a4, a2
-	addiw a4, a4, 1
-	sw a0, 0(a3)
-	addiw a0, a0, 4
-	bgt a1, a4, label6
-	j label9
-label5:
+	ble a1, a3, label6
 	sh2add a4, a4, a2
 	addiw a5, a0, 4
 	addiw t0, a0, 8

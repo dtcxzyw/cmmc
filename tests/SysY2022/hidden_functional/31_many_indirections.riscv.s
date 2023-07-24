@@ -8,10 +8,10 @@ array:
 .globl main
 main:
 	addi sp, sp, -8
-pcrel258:
+pcrel259:
 	auipc a0, %pcrel_hi(array)
 	mv a2, zero
-	addi a1, a0, %pcrel_lo(pcrel258)
+	addi a1, a0, %pcrel_lo(pcrel259)
 	sd ra, 0(sp)
 	li a0, 20
 	blt zero, a0, label4

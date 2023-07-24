@@ -10,24 +10,19 @@ main:
 	jal getint
 	mv s1, zero
 	mv s0, a0
-label2:
-	ble s0, s1, label104
+	ble a0, zero, label104
+label4:
 	jal getint
 	li a2, 99
 	addiw a1, a0, -1
 	bltu a1, a2, label5
 	li a0, 100
-	j label102
-label5:
-	li a1, 99
-	blt a0, a1, label6
-	li a0, 99
 label102:
 	jal putint
 	li a0, 10
 	jal putch
 	addiw s1, s1, 1
-	j label2
+	bgt s0, s1, label4
 label104:
 	mv a0, zero
 	ld ra, 0(sp)
@@ -35,6 +30,11 @@ label104:
 	ld s0, 16(sp)
 	addi sp, sp, 24
 	ret
+label5:
+	li a1, 99
+	blt a0, a1, label6
+	li a0, 99
+	j label102
 label6:
 	li a1, 98
 	blt a0, a1, label7

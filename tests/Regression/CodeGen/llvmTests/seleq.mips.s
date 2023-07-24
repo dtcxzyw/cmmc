@@ -43,7 +43,7 @@ calc_seleq:
 	lw $t1, %lo(a)($t0)
 	lui $t0, %hi(b)
 	lw $t2, %lo(b)($t0)
-	bne $t1, $t2, label17
+	bne $t1, $t2, label25
 	nop
 	lui $t0, %hi(f)
 	lw $t0, %lo(f)($t0)
@@ -52,8 +52,21 @@ label3:
 	sw $t0, %lo(z1)($t3)
 	beq $t1, $t2, label5
 	nop
-	b label16
+	b label34
 	nop
+label25:
+	lui $t0, %hi(t)
+	lw $t0, %lo(t)($t0)
+	b label3
+	nop
+label34:
+	lui $t0, %hi(t)
+	lw $t0, %lo(t)($t0)
+	b label6
+	nop
+label5:
+	lui $t0, %hi(f)
+	lw $t0, %lo(f)($t0)
 label6:
 	lui $t2, %hi(z2)
 	sw $t0, %lo(z2)($t2)
@@ -70,33 +83,18 @@ label10:
 	nop
 	lui $t0, %hi(f)
 	lw $t0, %lo(f)($t0)
+	b label14
+	nop
+label12:
+	lui $t0, %hi(t)
+	lw $t0, %lo(t)($t0)
 label14:
 	lui $t1, %hi(z4)
 	sw $t0, %lo(z4)($t1)
 	jr $ra
 	nop
-label16:
-	lui $t0, %hi(t)
-	lw $t0, %lo(t)($t0)
-	b label6
-	nop
-label17:
-	lui $t0, %hi(t)
-	lw $t0, %lo(t)($t0)
-	b label3
-	nop
-label12:
-	lui $t0, %hi(t)
-	lw $t0, %lo(t)($t0)
-	b label14
-	nop
 label8:
 	lui $t0, %hi(t)
 	lw $t0, %lo(t)($t0)
 	b label10
-	nop
-label5:
-	lui $t0, %hi(f)
-	lw $t0, %lo(f)($t0)
-	b label6
 	nop

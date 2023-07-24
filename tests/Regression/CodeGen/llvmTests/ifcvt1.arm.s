@@ -7,10 +7,10 @@
 .globl t1
 t1:
 	cmp r0, #0
-	bne label5
+	beq label2
+	add r0, r1, #1
+	b label3
+label2:
 	sub r0, r1, #1
 label3:
 	bx lr
-label5:
-	add r0, r1, #1
-	b label3

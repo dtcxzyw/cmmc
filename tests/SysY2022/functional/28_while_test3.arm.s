@@ -40,68 +40,71 @@ label11:
 label12:
 	cmp r1, #10
 	blt label20
-	b label63
-label21:
-	cmp r0, #7
-	bne label62
-	mov r0, r2
-label28:
-	cmp r1, #20
-	blt label34
-	b label61
-label35:
-	cmp r0, #1
-	ble label60
-	sub r0, r0, #1
-	mov r2, r3
-	str r0, [sp, #12]
-label41:
-	cmp r1, #2
-	bgt label45
-	add r1, r1, #1
-	mov r3, r2
-	ldr r0, [sp, #12]
-	b label35
-label60:
-	add r0, r0, #1
-	mov r4, r1
-	ldr r1, [sp, #8]
-	b label28
-label61:
-	sub r1, r1, #1
-	mov r2, r0
-	mov r0, #6
-	b label21
-label62:
-	add r0, r0, #1
-	str r5, [sp, #20]
-	mov r6, r1
-	str r1, [sp, #24]
-	ldr r1, [sp, #4]
-	b label12
-label63:
 	sub r1, r1, #2
 	ldr r5, [sp, #20]
 	str r5, [sp, #16]
 	ldr r6, [sp, #24]
 	ldr r5, [sp, #0]
 	b label2
-label45:
+label20:
+	add r1, r1, #1
+	str r1, [sp, #4]
+	ldr r5, [sp, #20]
+	ldr r6, [sp, #24]
+	mov r1, r6
+label21:
+	cmp r0, #7
+	bne label76
+	mov r0, r2
+label28:
+	cmp r1, #20
+	blt label34
+	b label80
+label85:
+	add r0, r0, #1
+	mov r4, r1
+	ldr r1, [sp, #8]
+	b label28
+label80:
+	sub r1, r1, #1
+	mov r2, r0
+	mov r0, #6
+	b label21
+label76:
+	add r0, r0, #1
+	str r5, [sp, #20]
+	mov r6, r1
+	str r1, [sp, #24]
+	ldr r1, [sp, #4]
+	b label12
+label34:
+	add r1, r1, #3
+	str r1, [sp, #8]
+	mov r1, r4
+label35:
+	cmp r0, #1
+	bgt label40
+	b label85
+label90:
+	add r1, r1, #1
+	mov r3, r2
+	ldr r0, [sp, #12]
+	b label35
+label40:
+	sub r0, r0, #1
+	mov r2, r3
+	str r0, [sp, #12]
+label41:
+	cmp r1, #2
+	ble label90
 	sub r1, r1, #2
 	mov r0, r5
 label46:
 	cmp r2, #3
-	blt label49
-	sub r2, r2, #8
-	mov r5, r0
-	b label41
-label49:
+	bge label95
 	add r2, r2, #10
 	cmp r0, #10
-	blt label52
-label50:
-	sub r0, r0, #1
-	b label46
+	bge label100
 label52:
 	add r3, r0, #128
 	cmp r3, #10
@@ -118,16 +121,10 @@ label56:
 	add r0, r0, #8
 	cmp r0, #10
 	blt label56
-	b label50
-label20:
-	add r1, r1, #1
-	str r1, [sp, #4]
-	ldr r5, [sp, #20]
-	ldr r6, [sp, #24]
-	mov r1, r6
-	b label21
-label34:
-	add r1, r1, #3
-	str r1, [sp, #8]
-	mov r1, r4
-	b label35
+label100:
+	sub r0, r0, #1
+	b label46
+label95:
+	sub r2, r2, #8
+	mov r5, r0
+	b label41

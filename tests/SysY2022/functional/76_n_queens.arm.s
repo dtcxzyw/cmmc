@@ -36,35 +36,59 @@ f:
 	movt r8, #:upper16:line2
 	str r0, [sp, #12]
 	movt r7, #:upper16:line1
-label2:
-	ldr r11, [sp, #4]
-	ldr r0, [r11, #0]
+	ldr r0, [r2, #0]
 	cmp r6, r0
 	ble label5
+label4:
 	add sp, sp, #20
 	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
 label5:
 	ldr r1, [r4, r6, lsl #2]
 	cmp r1, #1
 	bne label7
-label6:
 	add r6, r6, #1
-	b label2
+	ldr r11, [sp, #4]
+	ldr r0, [r11, #0]
+	cmp r6, r0
+	ble label5
+	b label4
 label7:
 	ldr r10, [sp, #8]
 	add r9, r10, r6
 	ldr r1, [r7, r9, lsl #2]
 	cmp r1, #0
-	bne label6
+	beq label8
+	add r6, r6, #1
+	ldr r11, [sp, #4]
+	ldr r0, [r11, #0]
+	cmp r6, r0
+	ble label5
+	b label4
+label8:
+	ldr r10, [sp, #8]
 	add r1, r10, r0
 	sub r1, r1, r6
 	ldr r1, [r8, r1, lsl #2]
 	cmp r1, #0
-	bne label6
+	beq label9
+label6:
+	add r6, r6, #1
+	ldr r11, [sp, #4]
+	ldr r0, [r11, #0]
+	cmp r6, r0
+	ble label5
+	b label4
+label9:
+	ldr r10, [sp, #8]
 	cmp r10, r0
 	str r6, [r5, r10, lsl #2]
-	beq label65
-	b label18
+	bne label64
+	ldr r1, [sp, #0]
+	mov r10, #1
+	ldr r0, [r1, #0]
+	add r0, r0, #1
+	str r0, [r1, #0]
+	b label13
 label10:
 	ldr r10, [sp, #8]
 	mov r1, #1
@@ -86,16 +110,6 @@ label10:
 	sub r1, r1, r6
 	str r0, [r8, r1, lsl #2]
 	b label6
-label18:
-	ldr r11, [sp, #4]
-	ldr r0, [r11, #0]
-	b label10
-label65:
-	ldr r1, [sp, #0]
-	mov r10, #1
-	ldr r0, [r1, #0]
-	add r0, r0, #1
-	str r0, [r1, #0]
 label13:
 	ldr r11, [sp, #4]
 	ldr r11, [r11, #0]
@@ -107,15 +121,21 @@ label15:
 	ldr r0, [r5, r10, lsl #2]
 	bl putint
 	cmp r10, r11
-	bne label17
-	mov r0, #10
-	bl putch
-	b label18
-label17:
+	beq label16
 	mov r0, #32
 	bl putch
 	add r10, r10, #1
 	b label13
+label64:
+	ldr r11, [sp, #4]
+	ldr r0, [r11, #0]
+	b label10
+label16:
+	mov r0, #10
+	bl putch
+	ldr r11, [sp, #4]
+	ldr r0, [r11, #0]
+	b label10
 .globl main
 main:
 	push { r4, r5, r6, lr }
@@ -126,12 +146,12 @@ main:
 	mov r4, sp
 	bl getint
 	cmp r0, #0
-	bgt label126
+	bgt label131
 	mov r0, #0
-	b label117
-label126:
+	b label122
+label131:
 	mov r6, r0
-label114:
+label119:
 	bl getint
 	str r0, [sp, #0]
 	mov r1, r5
@@ -139,8 +159,8 @@ label114:
 	mov r2, r4
 	bl f
 	subs r6, r6, #1
-	bgt label114
+	bgt label119
 	ldr r0, [sp, #4]
-label117:
+label122:
 	add sp, sp, #8
 	pop { r4, r5, r6, pc }

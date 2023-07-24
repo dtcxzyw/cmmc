@@ -8,10 +8,10 @@ a:
 .globl main
 main:
 	addi sp, sp, -48
-pcrel102:
+pcrel111:
 	auipc a0, %pcrel_hi(a)
 	sd s3, 40(sp)
-	addi s3, a0, %pcrel_lo(pcrel102)
+	addi s3, a0, %pcrel_lo(pcrel111)
 	sd s0, 32(sp)
 	mv s0, s3
 	sd s1, 24(sp)
@@ -30,54 +30,55 @@ pcrel102:
 	mv a1, s3
 	mv a2, zero
 	mv a0, s4
-label6:
-	lw a3, 0(a1)
-	addiw a4, a0, 1
-	mv a5, a2
-	j label8
-label16:
-	sw a3, 0(a1)
-	sh2add a4, a5, s0
-	lw t0, 0(a4)
-	sw t0, 0(a1)
-	sw a3, 0(a4)
-	blt s2, a5, label47
-	bgt s2, a5, label18
-	j label19
-label47:
-	mv a0, a5
-	j label6
-label18:
-	addiw a2, a5, 1
-	sh2add a1, a2, s0
-	j label6
-label20:
+	lw a3, 0(s3)
+	addiw a4, s4, 1
+	mv a5, zero
+label8:
+	bgt a4, a5, label22
+	beq a4, a5, label16
+label104:
 	sh2add t0, a5, s0
 	sh2add t2, a4, s0
 	lw t1, 0(t0)
 	lw t3, 0(t2)
 	sw t3, 0(t0)
 	sw t1, 0(t2)
-label8:
-	ble a4, a5, label11
+	j label8
+label22:
 	addiw a4, a4, -1
 	sh2add t0, a4, s0
 	lw t1, 0(t0)
-	ble a3, t1, label8
+	bgt a3, t1, label11
+	bgt a4, a5, label22
+	beq a4, a5, label16
+	j label104
 label11:
 	bgt a4, a5, label21
 	beq a4, a5, label16
-	j label20
+	j label104
 label14:
 	beq a4, a5, label16
-	j label20
+	j label104
 label21:
 	addiw a5, a5, 1
 	sh2add t0, a5, s0
 	lw t1, 0(t0)
 	ble a3, t1, label14
 	j label11
-label19:
+label16:
+	sw a3, 0(a1)
+	sh2add a4, a5, s0
+	lw t0, 0(a4)
+	sw t0, 0(a1)
+	sw a3, 0(a4)
+	bge s2, a5, label17
+	mv a0, a5
+	lw a3, 0(a1)
+	addiw a4, a5, 1
+	mv a5, a2
+	j label8
+label17:
+	bgt s2, a5, label18
 	li a0, 61
 	jal _sysy_stoptime
 	mv a0, s1
@@ -98,3 +99,10 @@ label19:
 	ld s3, 40(sp)
 	addi sp, sp, 48
 	ret
+label18:
+	addiw a2, a5, 1
+	sh2add a1, a2, s0
+	lw a3, 0(a1)
+	addiw a4, a0, 1
+	mv a5, a2
+	j label8

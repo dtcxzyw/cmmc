@@ -216,16 +216,16 @@ label271:
 select_cross_fpr:
 	slt a0, a0, a1
 	mv a3, a0
-	bge a1, a2, label276
+	blt a1, a2, label273
+	fcvt.s.w f10, a0
+	j label274
+label273:
 	lui a1, 260096
 	lui a2, 266752
 	fmv.w.x f10, a1
 	fmv.w.x f11, a2
 	bne a0, zero, label274
 	fmv.s f10, f11
-	j label274
-label276:
-	fcvt.s.w f10, a3
 label274:
 	ret
 .globl select_round

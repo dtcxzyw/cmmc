@@ -18,11 +18,11 @@ main:
 	sd a1, 392(sp)
 	jal getint
 	sd a0, 400(sp)
-label2:
-	ld a0, 400(sp)
 	ble a0, zero, label11
+label17:
 	mv s0, zero
-	j label4
+	li a0, 5
+	bge zero, a0, label10
 label6:
 	li a2, 20
 	mv s2, zero
@@ -1349,7 +1349,7 @@ label1453:
 	ld a0, 400(sp)
 	addiw a0, a0, -1
 	sd a0, 400(sp)
-	j label2
+	bgt a0, zero, label17
 label11:
 	mv a0, zero
 	ld ra, 720(sp)
@@ -1364,7 +1364,3 @@ label11:
 	ld s0, 648(sp)
 	addi sp, sp, 928
 	ret
-label4:
-	li a0, 5
-	blt s0, a0, label6
-	j label10

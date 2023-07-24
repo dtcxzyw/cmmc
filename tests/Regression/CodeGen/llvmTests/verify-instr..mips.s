@@ -16,7 +16,7 @@ label2:
 	subu $t3, $t2, $t1
 	bgtz $t3, label3
 	nop
-label6:
+label20:
 	move $v0, $t0
 	b label8
 	nop
@@ -27,5 +27,5 @@ label3:
 	subu $t3, $t2, $t1
 	bgtz $t3, label3
 	nop
-	b label6
+	b label20
 	nop

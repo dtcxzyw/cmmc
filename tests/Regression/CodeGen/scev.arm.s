@@ -15,14 +15,7 @@ foo4:
 label2:
 	add r4, r3, #4
 	cmp r1, r4
-	bgt label5
-	str r0, [r2, r3, lsl #2]
-	add r0, r0, #4
-	add r3, r3, #1
-	cmp r1, r3
-	bgt label6
-	b label9
-label5:
+	ble label6
 	add r5, r2, r3, lsl #2
 	str r0, [r2, r3, lsl #2]
 	add r3, r0, #4

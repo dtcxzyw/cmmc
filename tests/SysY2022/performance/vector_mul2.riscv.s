@@ -24,9 +24,9 @@ main:
 	sd s1, 8(sp)
 	sd ra, 0(sp)
 	jal _sysy_starttime
-pcrel701:
+pcrel750:
 	auipc a1, %pcrel_hi(vectorA)
-	addi s0, a1, %pcrel_lo(pcrel701)
+	addi s0, a1, %pcrel_lo(pcrel750)
 	mv a1, zero
 label2:
 	sh2add a0, a1, s0
@@ -51,19 +51,31 @@ label2:
 	fsw f10, 60(a0)
 	li a0, 100000
 	blt a1, a0, label2
-pcrel702:
+pcrel751:
 	auipc a0, %pcrel_hi(vectorB)
-pcrel703:
+pcrel752:
 	auipc a1, %pcrel_hi(Vectortm)
-	addi s1, a0, %pcrel_lo(pcrel702)
-	addi a0, a1, %pcrel_lo(pcrel703)
+	addi s1, a0, %pcrel_lo(pcrel751)
+	addi a0, a1, %pcrel_lo(pcrel752)
 	mv a1, zero
 	fmv.w.x f10, zero
 	mv t1, zero
 	mv a3, zero
-label7:
 	li a2, 100000
-	bge a3, a2, label131
+	blt zero, a2, label11
+	mv t2, zero
+	mv a2, zero
+	li a3, 100000
+	blt zero, a3, label26
+	mv a3, zero
+	li a4, 100000
+	blt zero, a4, label88
+	li a3, 100000
+	blt zero, a3, label50
+	li a1, 1
+	li a2, 1000
+	blt a1, a2, label5
+	j label67
 label11:
 	addiw a4, a3, 3
 	addiw a5, a3, 2
@@ -76,11 +88,21 @@ label11:
 	mv a3, a2
 	li a2, 100000
 	blt a3, a2, label11
-label131:
 	fmv.w.x f10, zero
 	mv t2, zero
 	mv a2, zero
-	j label22
+	li a3, 100000
+	blt zero, a3, label26
+	mv t1, zero
+	mv a3, zero
+	li a4, 100000
+	blt zero, a4, label88
+	li a3, 100000
+	blt zero, a3, label50
+	addiw a1, a1, 1
+	li a2, 1000
+	blt a1, a2, label5
+	j label67
 label15:
 	addiw t0, t1, 4
 	li t2, 100000
@@ -134,6 +156,99 @@ label15:
 	fdiv.s f12, f13, f11
 	fadd.s f10, f10, f12
 	j label15
+label88:
+	addiw a4, a3, 3
+	addiw a5, a3, 2
+	addiw a2, a3, 1
+	li t0, 100000
+	blt t1, t0, label92
+	mv a4, t1
+	sh2add a3, a3, a0
+	fsw f10, 0(a3)
+	mv a3, a2
+	li a4, 100000
+	blt a2, a4, label88
+	fmv.w.x f10, zero
+	mv t2, zero
+	mv a2, zero
+	li a3, 100000
+	blt zero, a3, label50
+	addiw a1, a1, 1
+	li a2, 1000
+	blt a1, a2, label5
+	j label67
+label92:
+	addiw t0, t1, 4
+	li t2, 100000
+	bge t0, t2, label95
+	addw t4, a3, t1
+	addw t3, a2, t1
+	mulw t2, t4, t3
+	srliw t5, t2, 31
+	add t4, t2, t5
+	sraiw t2, t4, 1
+	addw t5, a2, t2
+	sh2add t2, t1, s1
+	flw f12, 0(t2)
+	fcvt.s.w f11, t5
+	addiw t5, t1, 1
+	fdiv.s f11, f12, f11
+	addw t4, a2, t5
+	flw f12, 4(t2)
+	mulw t3, t3, t4
+	srliw t5, t3, 31
+	add t4, t3, t5
+	sraiw t6, t4, 1
+	addw t3, a2, t6
+	addw t6, a5, t1
+	fadd.s f10, f10, f11
+	fcvt.s.w f11, t3
+	addiw t3, t1, 2
+	fdiv.s f13, f12, f11
+	addw t4, a2, t3
+	flw f12, 8(t2)
+	mulw t3, t4, t6
+	srliw t5, t3, 31
+	add t4, t3, t5
+	sraiw t3, t4, 1
+	addw t4, a4, t1
+	addw t5, a2, t3
+	fcvt.s.w f11, t5
+	addiw t5, t1, 3
+	addw t3, a2, t5
+	mulw t1, t3, t4
+	srliw t5, t1, 31
+	add t3, t1, t5
+	sraiw t1, t3, 1
+	addw t4, a2, t1
+	mv t1, t0
+	fadd.s f10, f10, f13
+	fdiv.s f13, f12, f11
+	fcvt.s.w f11, t4
+	fadd.s f10, f10, f13
+	flw f13, 12(t2)
+	fdiv.s f12, f13, f11
+	fadd.s f10, f10, f12
+	j label92
+label5:
+	fmv.w.x f10, zero
+	mv t1, zero
+	mv a3, zero
+	li a2, 100000
+	blt zero, a2, label11
+	mv t2, zero
+	mv a2, zero
+	li a3, 100000
+	blt zero, a3, label26
+	mv a3, zero
+	li a4, 100000
+	blt zero, a4, label88
+	li a3, 100000
+	blt zero, a3, label50
+	addiw a1, a1, 1
+	li a2, 1000
+	blt a1, a2, label5
+	j label67
 label19:
 	addw a5, a3, t1
 	addw t0, a2, t1
@@ -157,19 +272,40 @@ label19:
 	mv a3, a2
 	li a2, 100000
 	blt a3, a2, label11
-	j label131
-label22:
-	li a3, 100000
-	blt a2, a3, label26
-label209:
 	fmv.w.x f10, zero
+	mv t2, zero
+	mv a2, zero
+	li a3, 100000
+	blt zero, a3, label26
 	mv t1, zero
 	mv a3, zero
-	j label42
+	blt zero, a4, label88
+	li a3, 100000
+	blt zero, a3, label50
+	addiw a1, a1, 1
+	li a2, 1000
+	blt a1, a2, label5
+	j label67
 label26:
 	li a3, 100000
 	blt t2, a3, label27
-	j label39
+	sh2add a4, a2, s1
+	addiw a2, a2, 1
+	fsw f10, 0(a4)
+	blt a2, a3, label26
+	fmv.w.x f10, zero
+	mv t1, zero
+	mv a3, zero
+	li a4, 100000
+	blt zero, a4, label88
+	mv t2, zero
+	mv a2, zero
+	li a3, 100000
+	blt zero, a3, label50
+	addiw a1, a1, 1
+	li a2, 1000
+	blt a1, a2, label5
+	j label67
 label220:
 	addiw a4, a2, 1
 	addiw a5, a2, 2
@@ -197,7 +333,19 @@ label31:
 	fsw f10, 0(a4)
 	li a3, 100000
 	blt a2, a3, label26
-	j label209
+	fmv.w.x f10, zero
+	mv t1, zero
+	mv a3, zero
+	li a4, 100000
+	blt zero, a4, label88
+	mv t2, zero
+	mv a2, zero
+	li a3, 100000
+	blt zero, a3, label50
+	addiw a1, a1, 1
+	li a2, 1000
+	blt a1, a2, label5
+	j label67
 label237:
 	mv a4, a5
 	j label31
@@ -257,38 +405,6 @@ label286:
 	mv t2, a3
 	mv a3, t1
 	j label35
-label39:
-	sh2add a4, a2, s1
-	addiw a2, a2, 1
-	fsw f10, 0(a4)
-	j label22
-label42:
-	li a4, 100000
-	bge a3, a4, label293
-label88:
-	addiw a4, a3, 3
-	addiw a5, a3, 2
-	addiw a2, a3, 1
-	li t0, 100000
-	blt t1, t0, label92
-	mv a4, t1
-	sh2add a3, a3, a0
-	fsw f10, 0(a3)
-	mv a3, a2
-	li a4, 100000
-	blt a2, a4, label88
-label293:
-	fmv.w.x f10, zero
-	mv t2, zero
-	mv a2, zero
-label46:
-	li a3, 100000
-	blt a2, a3, label50
-	j label298
-label92:
-	addiw t0, t1, 4
-	li t2, 100000
-	blt t0, t2, label98
 label95:
 	addw a5, a3, t1
 	addw t2, a2, t1
@@ -311,63 +427,11 @@ label95:
 	fsw f10, 0(a3)
 	mv a3, a2
 	blt a2, a4, label88
-	j label293
-label98:
-	addw t4, a3, t1
-	addw t3, a2, t1
-	mulw t2, t4, t3
-	srliw t5, t2, 31
-	add t4, t2, t5
-	sraiw t2, t4, 1
-	addw t5, a2, t2
-	sh2add t2, t1, s1
-	flw f12, 0(t2)
-	fcvt.s.w f11, t5
-	addiw t5, t1, 1
-	fdiv.s f11, f12, f11
-	addw t4, a2, t5
-	flw f12, 4(t2)
-	mulw t3, t3, t4
-	srliw t5, t3, 31
-	add t4, t3, t5
-	sraiw t6, t4, 1
-	addw t3, a2, t6
-	addw t6, a5, t1
-	fadd.s f10, f10, f11
-	fcvt.s.w f11, t3
-	addiw t3, t1, 2
-	fdiv.s f13, f12, f11
-	addw t4, a2, t3
-	flw f12, 8(t2)
-	mulw t3, t4, t6
-	srliw t5, t3, 31
-	add t4, t3, t5
-	sraiw t3, t4, 1
-	addw t4, a4, t1
-	addw t5, a2, t3
-	fcvt.s.w f11, t5
-	addiw t5, t1, 3
-	addw t3, a2, t5
-	mulw t1, t3, t4
-	srliw t5, t1, 31
-	add t3, t1, t5
-	sraiw t1, t3, 1
-	addw t4, a2, t1
-	mv t1, t0
-	fadd.s f10, f10, f13
-	fdiv.s f13, f12, f11
-	fcvt.s.w f11, t4
-	fadd.s f10, f10, f13
-	flw f13, 12(t2)
-	fdiv.s f12, f13, f11
-	fadd.s f10, f10, f12
-	j label92
-label5:
 	fmv.w.x f10, zero
-	mv t1, zero
-	mv a3, zero
-	j label7
-label298:
+	mv t2, zero
+	mv a2, zero
+	li a3, 100000
+	blt zero, a3, label50
 	addiw a1, a1, 1
 	li a2, 1000
 	blt a1, a2, label5
@@ -378,12 +442,21 @@ label50:
 	sh2add a3, a2, s0
 	addiw a2, a2, 1
 	fsw f10, 0(a3)
-	j label46
+	li a3, 100000
+	blt a2, a3, label50
+	addiw a1, a1, 1
+	li a2, 1000
+	blt a1, a2, label5
+	j label67
+label692:
+	mv a3, t2
+	addiw a4, a2, 1
+	j label63
 label54:
 	addiw a3, t2, 4
 	li a4, 100000
 	blt a3, a4, label55
-	j label310
+	j label692
 label359:
 	addiw a4, a2, 1
 label63:
@@ -408,10 +481,54 @@ label63:
 	fsw f10, 0(a3)
 	li a3, 100000
 	blt a2, a3, label50
-	j label298
+	addiw a1, a1, 1
+	li a2, 1000
+	blt a1, a2, label5
+	j label67
 label378:
 	mv a3, a5
 	j label63
+label67:
+	li a0, 76
+	jal _sysy_stoptime
+	mv a1, zero
+	fmv.w.x f10, zero
+label68:
+	addiw a0, a1, 4
+	li a2, 100000
+	blt a0, a2, label87
+label71:
+	sh2add a0, a1, s0
+	sh2add a2, a1, s1
+	flw f11, 0(a0)
+	addiw a1, a1, 1
+	li a0, 100000
+	flw f12, 0(a2)
+	fmul.s f11, f11, f12
+	fadd.s f10, f10, f11
+	blt a1, a0, label71
+	j label401
+label87:
+	sh2add a2, a1, s0
+	sh2add a1, a1, s1
+	flw f11, 0(a2)
+	flw f12, 0(a1)
+	fmul.s f13, f11, f12
+	flw f11, 4(a2)
+	flw f12, 4(a1)
+	fadd.s f10, f10, f13
+	fmul.s f13, f11, f12
+	flw f11, 8(a2)
+	flw f12, 8(a1)
+	fadd.s f10, f10, f13
+	fmul.s f13, f11, f12
+	flw f11, 12(a2)
+	fadd.s f10, f10, f13
+	flw f13, 12(a1)
+	mv a1, a0
+	fmul.s f12, f11, f13
+	fadd.s f10, f10, f12
+	j label68
 label55:
 	addiw a4, a2, 1
 	addiw a5, a2, 2
@@ -475,43 +592,13 @@ label27:
 	mv a4, t2
 	addiw a3, a2, 1
 	j label31
-label310:
-	mv a3, t2
-	j label359
-label67:
-	li a0, 76
-	jal _sysy_stoptime
-	mv a1, zero
-	fmv.w.x f10, zero
-label68:
-	addiw a0, a1, 4
-	li a2, 100000
-	blt a0, a2, label87
-	sh2add a0, a1, s0
-	sh2add a2, a1, s1
-	flw f11, 0(a0)
-	addiw a1, a1, 1
-	li a0, 100000
-	flw f12, 0(a2)
-	fmul.s f11, f11, f12
-	fadd.s f10, f10, f11
-	blt a1, a0, label71
 label401:
 	fmv.w.x f11, zero
 	mv a1, zero
 label74:
 	addiw a0, a1, 4
 	li a2, 100000
-	blt a0, a2, label77
-	sh2add a0, a1, s1
-	addiw a1, a1, 1
-	flw f12, 0(a0)
-	li a0, 100000
-	fmul.s f13, f12, f12
-	fadd.s f11, f11, f13
-	blt a1, a0, label78
-	j label81
-label77:
+	bge a0, a2, label78
 	sh2add a1, a1, s1
 	flw f12, 0(a1)
 	fmul.s f13, f12, f12
@@ -535,13 +622,12 @@ label78:
 	fmul.s f13, f12, f12
 	fadd.s f11, f11, f13
 	blt a1, a0, label78
-label81:
 	fdiv.s f10, f10, f11
 	lui a0, 260096
-pcrel704:
+pcrel753:
 	auipc a1, %pcrel_hi(__cmmc_fp_constant_pool)
 	fmv.w.x f12, a0
-	addi a0, a1, %pcrel_lo(pcrel704)
+	addi a0, a1, %pcrel_lo(pcrel753)
 	flw f13, 0(a0)
 	fsub.s f11, f12, f10
 	flw f12, 4(a0)
@@ -557,49 +643,12 @@ label451:
 	fmv.s f12, f10
 	fmv.w.x f11, a0
 	j label82
-label87:
-	sh2add a2, a1, s0
-	sh2add a1, a1, s1
-	flw f11, 0(a2)
-	flw f12, 0(a1)
-	fmul.s f13, f11, f12
-	flw f11, 4(a2)
-	flw f12, 4(a1)
-	fadd.s f10, f10, f13
-	fmul.s f13, f11, f12
-	flw f11, 8(a2)
-	flw f12, 8(a1)
-	fadd.s f10, f10, f13
-	fmul.s f13, f11, f12
-	flw f11, 12(a2)
-	fadd.s f10, f10, f13
-	flw f13, 12(a1)
-	mv a1, a0
-	fmul.s f12, f11, f13
-	fadd.s f10, f10, f12
-	j label68
-label82:
-	fadd.s f11, f11, f12
-	lui a0, 258048
-pcrel705:
-	auipc a1, %pcrel_hi(__cmmc_fp_constant_pool)
-	fmv.w.x f13, a0
-	addi a0, a1, %pcrel_lo(pcrel705)
-	flw f15, 0(a0)
-	flw f14, 4(a0)
-	fmul.s f11, f11, f13
-	fdiv.s f12, f10, f11
-	fsub.s f13, f11, f12
-	flt.s a2, f13, f14
-	flt.s a1, f15, f13
-	or a0, a1, a2
-	bne a0, zero, label82
 label85:
 	lui a0, 260096
-pcrel706:
+pcrel754:
 	auipc a1, %pcrel_hi(__cmmc_fp_constant_pool)
 	fmv.w.x f12, a0
-	addi a0, a1, %pcrel_lo(pcrel706)
+	addi a0, a1, %pcrel_lo(pcrel754)
 	fsub.s f10, f11, f12
 	flw f11, 0(a0)
 	flw f12, 4(a0)
@@ -615,14 +664,20 @@ pcrel706:
 	ld s0, 16(sp)
 	addi sp, sp, 24
 	ret
-label71:
-	sh2add a0, a1, s0
-	sh2add a2, a1, s1
-	flw f11, 0(a0)
-	addiw a1, a1, 1
-	li a0, 100000
-	flw f12, 0(a2)
-	fmul.s f11, f11, f12
-	fadd.s f10, f10, f11
-	blt a1, a0, label71
-	j label401
+label82:
+	fadd.s f11, f11, f12
+	lui a0, 258048
+pcrel755:
+	auipc a1, %pcrel_hi(__cmmc_fp_constant_pool)
+	fmv.w.x f13, a0
+	addi a0, a1, %pcrel_lo(pcrel755)
+	flw f15, 0(a0)
+	flw f14, 4(a0)
+	fmul.s f11, f11, f13
+	fdiv.s f12, f10, f11
+	fsub.s f13, f11, f12
+	flt.s a2, f13, f14
+	flt.s a1, f15, f13
+	or a0, a1, a2
+	bne a0, zero, label82
+	j label85

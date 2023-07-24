@@ -21,12 +21,7 @@ label2:
 	addi a2, a0, %pcrel_lo(label2)
 	beq a1, a3, label17
 	li a0, 1
-	li a4, 65535
-	and a3, a0, a4
-	addiw a0, a0, 1
-	sh a3, 0(a2)
-	bne a1, a0, label3
-	j label5
+	j label3
 label17:
 	li a0, 1
 	j label5

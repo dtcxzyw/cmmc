@@ -3,7 +3,12 @@
 .text
 .globl foo
 foo:
-	bne a0, zero, label5
+	beq a0, zero, label2
+	addiw a1, a0, 2
+	li a2, 4294967295
+	and a0, a1, a2
+	j label3
+label2:
 	mv a0, zero
 	beq a1, zero, label21
 	li a0, 5
@@ -12,8 +17,3 @@ label21:
 	and a0, a0, a1
 label3:
 	ret
-label5:
-	addiw a1, a0, 2
-	li a2, 4294967295
-	and a0, a1, a2
-	j label3

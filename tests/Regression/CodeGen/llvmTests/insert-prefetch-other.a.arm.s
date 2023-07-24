@@ -25,12 +25,7 @@ label2:
 	strh r0, [r2, #0]
 	beq label17
 	mov r0, #1
-	uxth r3, r0
-	add r0, r0, #1
-	strh r3, [r2, #0]
-	cmp r1, r0
-	bne label3
-	b label5
+	b label3
 label17:
 	mov r0, #1
 	b label5

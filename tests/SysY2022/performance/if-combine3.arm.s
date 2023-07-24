@@ -18,15 +18,15 @@ label2:
 	blt label4
 	mov r2, #0
 	mov r1, r2
-	b label5
+	cmp r0, r2
+	bgt label8
+	b label13
 label4:
 	mov r2, #0
 	str r2, [r4, r1, lsl #2]
 	add r1, r1, #1
 	b label2
-label5:
-	cmp r0, r1
-	ble label13
+label8:
 	mov r3, #1
 	add r1, r1, #1
 	mov r5, r2
@@ -284,7 +284,8 @@ label12:
 	asr r6, r5, #15
 	add r5, r6, r5, lsr #31
 	mls r2, r5, r3, r2
-	b label5
+	cmp r0, r1
+	bgt label8
 label13:
 	mov r0, r2
 	bl putint

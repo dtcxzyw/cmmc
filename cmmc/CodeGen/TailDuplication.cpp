@@ -63,7 +63,7 @@ void tailDuplication(MIRFunction& func, CodeGenContext& ctx) {
             for(auto& block : func.blocks()) {
                 if(isConditionalBranch(block->instructions().back())) {
                     ++branchCount;
-                    if(branchCount >= heuristic.branchLimit / 2) {
+                    if(branchCount >= heuristic.branchLimit) {
                         dontCopyBranchJumps = true;
                         break;
                     }
@@ -103,10 +103,10 @@ void tailDuplication(MIRFunction& func, CodeGenContext& ctx) {
                    !(nextIter != func.blocks().end() && nextIter->get() == targetBlock) &&  // should be handled by SimplifyCFG
                    !isReturn(targetBlock->instructions().back()) &&                         // unify return
                    targetBlock->instructions().size() <= heuristic.duplicationThreshold &&
-                   (!dontCopyBranchJumps ||
+                   ((!dontCopyBranchJumps &&
+                     block->getTripCount() > static_cast<double>(heuristic.branchPredictionWarmupThreshold)) ||
                     isUnconditionalBranch(
                         targetBlock->instructions().back())) &&  // don't duplicate branch jumps that needs BTB/RAS entries
-                   block->getTripCount() > targetBlock->getTripCount() &&
                    !hasCall(*targetBlock)) {
                     instructions.pop_back();
                     instructions.insert(instructions.cend(), targetBlock->instructions().cbegin(),

@@ -39,15 +39,6 @@ label2:
 	addiw a2, a3, 4
 	li a4, 10
 	blt a2, a4, label15
-	sh2add a5, a3, a1
-	addiw a3, a3, 1
-	lw a4, 0(a5)
-	sh2add a2, a4, a0
-	lw a5, 0(a2)
-	addi a4, a5, 1
-	sw a4, 0(a2)
-	li a2, 10
-	bge a3, a2, label6
 label4:
 	sh2add a5, a3, a1
 	addiw a3, a3, 1
@@ -58,7 +49,6 @@ label4:
 	sw a4, 0(a2)
 	li a2, 10
 	blt a3, a2, label4
-label6:
 	lw a4, 4(sp)
 	lw a3, 0(sp)
 	addw a2, a4, a3
@@ -116,6 +106,7 @@ label15:
 label7:
 	addiw a2, a4, -4
 	bgt a2, zero, label14
+label9:
 	addiw a4, a4, -1
 	sh2add a5, a4, a1
 	lw a2, 0(a5)
@@ -160,17 +151,6 @@ label14:
 	mv a4, a2
 	sw a3, 0(t0)
 	j label7
-label9:
-	addiw a4, a4, -1
-	sh2add a5, a4, a1
-	lw a2, 0(a5)
-	sh2add a3, a2, a0
-	lw t0, 0(a3)
-	addiw a5, t0, -1
-	sw a5, 0(a3)
-	sh2add a3, a5, s0
-	sw a2, 0(a3)
-	bgt a4, zero, label9
 label101:
 	mv s1, zero
 label11:

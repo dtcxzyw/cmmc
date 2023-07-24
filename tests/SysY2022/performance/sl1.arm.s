@@ -36,27 +36,21 @@ label37:
 	mov r4, #1
 	mov r0, r4
 	b label15
-label38:
-	mov r2, #0
-label4:
-	ldr r6, [sp, #0]
-	cmp r6, r2
-	bgt label7
-label41:
-	add r0, r0, #1
-	movw r1, #63744
-	ldr r5, [sp, #4]
-	movt r1, #21
-	ldr r6, [sp, #0]
-	mla r1, r0, r1, r5
-	cmp r6, r0
-	bgt label38
-	b label37
 label7:
 	ldr r6, [sp, #0]
 	cmp r6, #0
 	bgt label8
-	b label14
+	add r2, r2, #1
+	cmp r6, r2
+	bgt label7
+	add r0, r0, #1
+	movw r1, #63744
+	ldr r5, [sp, #4]
+	movt r1, #21
+	mla r1, r0, r1, r5
+	cmp r6, r0
+	bgt label38
+	b label37
 label9:
 	add r4, r5, #4
 	ldr r6, [sp, #0]
@@ -67,7 +61,17 @@ label9:
 	add r5, r5, #1
 	cmp r6, r5
 	bgt label12
-	b label64
+	add r2, r2, #1
+	cmp r6, r2
+	bgt label7
+	add r0, r0, #1
+	movw r1, #63744
+	ldr r5, [sp, #4]
+	movt r1, #21
+	mla r1, r0, r1, r5
+	cmp r6, r0
+	bgt label38
+	b label37
 label11:
 	add r6, r3, r5, lsl #2
 	mov r7, #1
@@ -84,15 +88,17 @@ label12:
 	add r5, r5, #1
 	cmp r6, r5
 	bgt label12
-label64:
 	add r2, r2, #1
-	ldr r6, [sp, #0]
 	cmp r6, r2
 	bgt label7
-	b label41
-label14:
-	add r2, r2, #1
-	b label4
+	add r0, r0, #1
+	movw r1, #63744
+	ldr r5, [sp, #4]
+	movt r1, #21
+	mla r1, r0, r1, r5
+	cmp r6, r0
+	bgt label38
+	b label37
 label15:
 	movw r2, #63744
 	ldr r5, [sp, #4]
@@ -274,3 +280,16 @@ label8:
 	mov r5, #0
 	mla r3, r2, r3, r1
 	b label9
+label38:
+	mov r2, #0
+	ldr r6, [sp, #0]
+	cmp r6, r2
+	bgt label7
+	add r0, r0, #1
+	movw r1, #63744
+	ldr r5, [sp, #4]
+	movt r1, #21
+	mla r1, r0, r1, r5
+	cmp r6, r0
+	bgt label38
+	b label37

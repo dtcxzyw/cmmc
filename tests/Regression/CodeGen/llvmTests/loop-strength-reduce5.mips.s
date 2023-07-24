@@ -28,14 +28,6 @@ label2:
 	li $t2, 1
 	beq $a0, $t2, label5
 	nop
-	andi $t3, $t2, 65535
-	sh $t3, 0($t0)
-	sll $t3, $t3, 2
-	andi $t3, $t3, 65535
-	sh $t3, 0($t1)
-	addiu $t2, $t2, 1
-	beq $a0, $t2, label5
-	nop
 label3:
 	andi $t3, $t2, 65535
 	sh $t3, 0($t0)

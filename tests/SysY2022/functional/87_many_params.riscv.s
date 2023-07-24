@@ -105,9 +105,8 @@ main:
 label4:
 	addiw a1, a0, 1
 	mv a2, a1
-label5:
 	li a3, 16
-	blt a2, a3, label7
+	blt a1, a3, label7
 	mv a0, a1
 	li a1, 15
 	blt a0, a1, label4
@@ -117,13 +116,25 @@ label7:
 	sh2add a5, a0, s0
 	lw a3, 0(a5)
 	lw a4, 0(a4)
-	bge a3, a4, label9
+	blt a3, a4, label8
+	addiw a2, a2, 1
+	li a3, 16
+	blt a2, a3, label7
+	mv a0, a1
+	li a1, 15
+	blt a0, a1, label4
+	j label10
+label8:
+	sh2add a5, a0, s0
 	sw a4, 0(a5)
 	sh2add a4, a2, s0
 	sw a3, 0(a4)
-label9:
 	addiw a2, a2, 1
-	j label5
+	li a3, 16
+	blt a2, a3, label7
+	mv a0, a1
+	li a1, 15
+	blt a0, a1, label4
 label10:
 	lw s4, 488(sp)
 	lw s2, 492(sp)
@@ -207,58 +218,6 @@ label11:
 	sd zero, 336(sp)
 	sd zero, 344(sp)
 	sd zero, 352(sp)
-	j label13
-label16:
-	addw s2, s2, s4
-	li s11, 288737297
-	mul s4, s2, s11
-	srai s11, s4, 58
-	srli s4, s4, 63
-	add s4, s4, s11
-	li s11, 998244353
-	mulw s4, s4, s11
-	subw s2, s2, s4
-	ld s4, 64(sp)
-	addiw s4, s4, -1
-	beq s4, zero, label11
-	sd s4, 64(sp)
-	ld s11, 56(sp)
-	mv s4, s11
-	ld s11, 48(sp)
-	sd s11, 56(sp)
-	ld s11, 40(sp)
-	sd s11, 48(sp)
-	ld s11, 32(sp)
-	sd s11, 40(sp)
-	ld s11, 24(sp)
-	sd s11, 32(sp)
-	sd a1, 24(sp)
-	mv s11, a1
-	mv a1, a0
-	mv a0, a2
-	mv a2, a3
-	mv a3, a4
-	mv a4, a5
-	mv a5, t0
-	mv t0, t1
-	mv t1, t2
-	mv t2, t3
-	mv t3, t4
-	mv t4, t5
-	mv t5, t6
-	mv t6, a6
-	mv a6, a7
-	mv a7, s0
-	mv s0, s1
-	mv s1, s3
-	mv s3, s5
-	mv s5, s6
-	mv s6, s7
-	mv s7, s8
-	mv s8, s9
-	mv s9, s10
-	mv s10, zero
-	j label16
 label13:
 	ld a3, 368(sp)
 	sh3add a1, a0, a3
@@ -445,3 +404,54 @@ label13:
 	ld s0, 464(sp)
 	addi sp, sp, 608
 	ret
+label16:
+	addw s2, s2, s4
+	li s11, 288737297
+	mul s4, s2, s11
+	srai s11, s4, 58
+	srli s4, s4, 63
+	add s4, s4, s11
+	li s11, 998244353
+	mulw s4, s4, s11
+	subw s2, s2, s4
+	ld s4, 64(sp)
+	addiw s4, s4, -1
+	beq s4, zero, label11
+	sd s4, 64(sp)
+	ld s11, 56(sp)
+	mv s4, s11
+	ld s11, 48(sp)
+	sd s11, 56(sp)
+	ld s11, 40(sp)
+	sd s11, 48(sp)
+	ld s11, 32(sp)
+	sd s11, 40(sp)
+	ld s11, 24(sp)
+	sd s11, 32(sp)
+	sd a1, 24(sp)
+	mv s11, a1
+	mv a1, a0
+	mv a0, a2
+	mv a2, a3
+	mv a3, a4
+	mv a4, a5
+	mv a5, t0
+	mv t0, t1
+	mv t1, t2
+	mv t2, t3
+	mv t3, t4
+	mv t4, t5
+	mv t5, t6
+	mv t6, a6
+	mv a6, a7
+	mv a7, s0
+	mv s0, s1
+	mv s1, s3
+	mv s3, s5
+	mv s5, s6
+	mv s6, s7
+	mv s7, s8
+	mv s8, s9
+	mv s9, s10
+	mv s10, zero
+	j label16

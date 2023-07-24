@@ -172,6 +172,7 @@ public:
             .branchLimit = 1000U,
             .mulByConstThreshold = 7U,
             .disableSelectionOpt = true,
+            .branchPredictionWarmupThreshold = 8U,
         };
 
         return defaultHeuristic;
