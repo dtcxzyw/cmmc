@@ -147,6 +147,7 @@ enum class AddressingImmRange {
 MIROperand getInvertedCondField(const MIROperand& operand);
 AddressingImmRange getAddressingImmRange(OperandType type, uint32_t opcode);
 bool isLegalAddrImm(intmax_t imm, AddressingImmRange range);
+uint32_t estimateDivLatency(const MIROperand& logDividend, const MIROperand& logDivisor);
 void legalizeAddrBaseOffsetPostRA(MIRInstList& instructions, MIRInstList::iterator iter, MIROperand& base, int64_t& imm,
                                   AddressingImmRange range);
 // dst = src + imm

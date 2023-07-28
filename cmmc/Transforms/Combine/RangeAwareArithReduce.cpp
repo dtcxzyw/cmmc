@@ -14,6 +14,7 @@
 
 #include <cmmc/Analysis/AnalysisPass.hpp>
 #include <cmmc/Analysis/DominateAnalysis.hpp>
+#include <cmmc/Analysis/IntegerRange.hpp>
 #include <cmmc/Analysis/IntegerRangeAnalysis.hpp>
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
@@ -238,6 +239,15 @@ class RangeAwareArithReduce final : public TransformPass<Function> {
                         if(cmp2 == CompareOp::ICmpSignedGreaterThan)
                             return builder.makeOp<CompareInst>(InstructionID::ICmp, CompareOp::ICmpUnsignedGreaterThan, v2, v3);
                     }
+                }
+            }
+            if(srem(capture(add(capture(srem(any(v1), any(v2)), v3), exactly(v2)), v4), exactly(v2))(matchCtx)) {
+                const auto r = rangeAnalysis.query(v2, dom, inst, depth);
+                if(r.minSignedValue() > 1 && (r + (r - IntegerRange{ 1 })).isNoSignedOverflow()) {
+                    return builder.makeOp<SelectInst>(builder.makeOp<CompareInst>(InstructionID::ICmp,
+                                                                                  CompareOp::ICmpSignedLessThan, v3,
+                                                                                  ConstantInteger::get(v3->getType(), 0)),
+                                                      v4, v3);
                 }
             }
 

@@ -38,8 +38,8 @@ main:
 	li a2, 10
 	bltu a1, a2, label91
 	mv a0, zero
-	subw a1, zero, zero
-	mv s2, a1
+	mv a1, zero
+	mv s2, zero
 label398:
 	mv s2, a0
 	j label352
@@ -65,8 +65,8 @@ label350:
 	li a2, 10
 	bltu a1, a2, label91
 	mv a0, zero
-	subw a1, zero, zero
-	mv s2, a1
+	mv a1, zero
+	mv s2, zero
 	bne s0, zero, label352
 	j label398
 label86:
@@ -220,8 +220,7 @@ label13:
 	li a2, 10
 	bltu a1, a2, label136
 	mv a0, zero
-	subw a2, zero, zero
-	mv a1, a2
+	mv a2, zero
 	mv a1, zero
 	sh2add a2, s4, s0
 	sh2add a0, s4, s3
@@ -269,10 +268,9 @@ label354:
 	li a2, 10
 	bltu a1, a2, label136
 	mv a0, zero
-	subw a2, zero, zero
-	mv a1, a2
-	bne s5, zero, label356
+	mv a2, zero
 	mv a1, zero
+	bne s5, zero, label356
 	sh2add a2, s4, s0
 	sh2add a0, s4, s3
 	sw zero, 0(a2)

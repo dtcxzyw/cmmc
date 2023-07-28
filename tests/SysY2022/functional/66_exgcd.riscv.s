@@ -80,26 +80,22 @@ main:
 	sw a0, 4(sp)
 	li a0, 7
 	jal exgcd
-	lw a1, 0(sp)
-	li a0, -2004318071
-	mul a4, a1, a0
-	srli a3, a4, 32
-	add a2, a3, a1
-	srliw a5, a2, 31
-	sraiw a4, a2, 3
-	li a2, 15
-	add a3, a5, a4
-	mulw a4, a3, a2
-	subw a5, a1, a4
-	addiw a1, a5, 15
-	mul a3, a1, a0
-	srli a4, a3, 32
-	add a0, a4, a1
-	srliw a4, a0, 31
-	sraiw a3, a0, 3
-	add a5, a4, a3
-	mulw a2, a5, a2
-	subw a0, a1, a2
+	lw a0, 0(sp)
+	li a1, -2004318071
+	mul a2, a0, a1
+	srli a3, a2, 32
+	add a1, a3, a0
+	li a3, 15
+	srliw a4, a1, 31
+	sraiw a2, a1, 3
+	add a1, a4, a2
+	mulw a2, a1, a3
+	subw a1, a0, a2
+	addiw a3, a1, 15
+	mv a0, a3
+	blt a1, zero, label68
+	mv a0, a1
+label68:
 	jal putint
 	ld ra, 8(sp)
 	mv a0, zero

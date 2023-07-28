@@ -77,6 +77,7 @@ static std::ostream& operator<<(std::ostream& out, const OperandDumper& operand)
     reportUnreachable(CMMC_LOCATION());
 }
 
+using mir::isOperandImm;
 using mir::isOperandIRegOrImm;
 using mir::isOperandProb;
 using mir::isOperandReloc;

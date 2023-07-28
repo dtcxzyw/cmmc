@@ -101,6 +101,7 @@ constexpr bool isOperandFPR(const MIROperand& operand) {
     return FPRBegin <= reg && reg < FPREnd;
 }
 
+uint32_t estimateDivRemLatency(const MIROperand& logDividend, const MIROperand& logDivisor, const MIROperand& nonNegativeHint);
 void legalizeAddrBaseOffsetPostRA(MIRInstList& instructions, MIRInstList::iterator iter, MIROperand& base, int64_t& imm);
 // dst = src + imm
 void adjustReg(MIRInstList& instructions, MIRInstList::iterator iter, const MIROperand& dst, const MIROperand& src, int64_t imm);

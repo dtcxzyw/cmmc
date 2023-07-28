@@ -106,15 +106,14 @@ InstInfo:
       UXTH:
         Mnemonic: uxth
 
-  IntegerBinary:
-    Format: $Mnemonic:Template $Rd:GPR[Def], $Rn:GPR[Use], $Rm:GPR[Use]
-    Instances:
-      SDIV:
-        Mnemonic: sdiv
-      UDIV:
-        Mnemonic: udiv
-      SEL:
-        Mnemonic: sel
+  SDIV:
+    Format: "sdiv $Rd:GPR[Def], $Rn:GPR[Use], $Rm:GPR[Use] @ $LogDividend:Imm[Metadata], $LogDivisor:Imm[Metadata]"
+
+  UDIV:
+    Format: udiv $Rd:GPR[Def], $Rn:GPR[Use], $Rm:GPR[Use]
+
+  SEL:
+    Format: sel $Rd:GPR[Def], $Rn:GPR[Use], $Rm:GPR[Use]
 
   MoveConstant:
     Format: $Mnemonic:Template $Rd:GPR[Def], $Op2:Op2Constant[Use]
@@ -717,7 +716,9 @@ InstSelection:
         Dst: $Dst
         Lhs: $Lhs
         Rhs: $Rhs
-        $Predicate: isOperandIReg($Dst) && isOperandIReg($Lhs) && selectSDiv32ByConstant($Rhs, [$Magic], [$Shift], [$Factor]) && buildMulHiImm(ctx, $Lhs, $Magic, $Factor, [$Out]) && buildASR(ctx, $Out, $Shift, [$ASROut])
+        LogDividend: $LogDividend
+        LogDivisor: $LogDivisor
+        $Predicate: isOperandIReg($Dst) && isOperandIReg($Lhs) && selectSDiv32ByConstant($Rhs, [$Magic], [$Shift], [$Factor]) && isSDivExpandProfitable($LogDividend, $LogDivisor, $Factor) && buildMulHiImm(ctx, $Lhs, $Magic, $Factor, [$Out]) && buildASR(ctx, $Out, $Shift, [$ASROut])
     Replace:
       ADD_Fused:
         Rd: $Dst
@@ -731,12 +732,37 @@ InstSelection:
         Dst: $Dst
         Lhs: $Lhs
         Rhs: $Rhs
+        LogDividend: $LogDividend
+        LogDivisor: $LogDivisor
+        NonNegativeHint: $NonNegativeHint
+        $Predicate: isOperandIReg($Dst) && isOperandIReg($Lhs) && !isOperandIReg($Rhs)
+    Replace:
+      InstSDiv:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs:
+          InstLoadImm:
+            Dst: getVRegAs(ctx, $Dst)
+            Imm: $Rhs
+        LogDividend: $LogDividend
+        LogDivisor: $LogDivisor
+        NonNegativeHint: $NonNegativeHint
+
+  - Pattern:
+      InstSDiv:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        LogDividend: $LogDividend
+        LogDivisor: $LogDivisor
         $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs)
     Replace:
       SDIV:
         Rd: $Dst
         Rn: $Lhs
         Rm: $Rhs
+        LogDividend: $LogDividend
+        LogDivisor: $LogDivisor
 
   - Pattern:
       InstUDiv:
@@ -782,7 +808,7 @@ InstSelection:
         LogDividend: $LogDividend
         LogDivisor: $LogDivisor
         NonNegativeHint: $NonNegativeHint
-        $Predicate: isOperandIReg($Lhs) && isOperandImm($Rhs) && buildIReg(ctx, $Rhs, [$RegRhs])
+        $Predicate: isOperandIReg($Lhs) && isOperandImm($Rhs) && selectSDiv32ByConstant($Rhs, [$Magic], [$Shift], [$Factor]) && isSDivExpandProfitable($LogDividend, $LogDivisor, $Factor) && buildIReg(ctx, $Rhs, [$RegRhs])
     Replace:
       MLS:
         Rd: $Dst
@@ -802,6 +828,29 @@ InstSelection:
         Dst: $Dst
         Lhs: $Lhs
         Rhs: $Rhs
+        LogDividend: $LogDividend
+        LogDivisor: $LogDivisor
+        NonNegativeHint: $NonNegativeHint
+        $Predicate: isOperandIReg($Dst) && isOperandIReg($Lhs) && !isOperandIReg($Rhs)
+    Replace:
+      InstSRem:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs:
+          InstLoadImm:
+            Dst: getVRegAs(ctx, $Dst)
+            Imm: $Rhs
+        LogDividend: $LogDividend
+        LogDivisor: $LogDivisor
+        NonNegativeHint: $NonNegativeHint
+
+  - Pattern:
+      InstSRem:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        LogDividend: $LogDividend
+        LogDivisor: $LogDivisor
         $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs)
     Replace:
       MLS:
@@ -812,6 +861,8 @@ InstSelection:
             Rd: getVRegAs(ctx, $Dst)
             Rn: $Lhs
             Rm: $Rhs
+            LogDividend: $LogDividend
+            LogDivisor: $LogDivisor
         Rz: $Rhs
 
   - Pattern:
@@ -1703,8 +1754,9 @@ ScheduleModel:
         - MLS
         - SMMLA
       Divide: # latency: 4-12, throughput: 1/latency, pipeline: M
-        - SDIV
         - UDIV
+      SignedDivide: # latency: 4-12, throughput: 1/latency, pipeline: M
+        - SDIV
       Branch: # latency: 1, throughput: 1, pipeline: B
         # 3.2 Branch Instructions
         - B

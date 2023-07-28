@@ -183,8 +183,8 @@ label563:
 	li a2, 10
 	bltu a1, a2, label240
 	mv s7, zero
-	subw a0, zero, zero
-	mv s5, a0
+	mv a0, zero
+	mv s5, zero
 label619:
 	mv s5, s7
 	mv a2, zero
@@ -211,8 +211,8 @@ label565:
 	li a2, 10
 	bltu a1, a2, label240
 	mv s7, zero
-	subw a0, zero, zero
-	mv s5, a0
+	mv a0, zero
+	mv s5, zero
 	bne s6, zero, label567
 	j label619
 label235:
@@ -334,8 +334,7 @@ label577:
 	li a2, 10
 	bltu a1, a2, label417
 	mv s10, zero
-	subw a0, zero, zero
-	mv a1, a0
+	mv a0, zero
 	mv a1, zero
 	bgt s4, zero, label423
 	j label170
@@ -399,10 +398,9 @@ label581:
 	li a2, 10
 	bltu a1, a2, label417
 	mv s10, zero
-	subw a0, zero, zero
-	mv a1, a0
-	bne s8, zero, label579
+	mv a0, zero
 	mv a1, zero
+	bne s8, zero, label579
 	bgt s4, zero, label423
 	j label170
 .p2align 2
@@ -515,8 +513,8 @@ label569:
 	li a2, 10
 	bltu a1, a2, label341
 	mv s10, zero
-	subw a1, zero, zero
-	mv a0, a1
+	mv a1, zero
+	mv a0, zero
 .p2align 2
 label621:
 	mv a0, s10
@@ -544,8 +542,8 @@ label571:
 	li a2, 10
 	bltu a1, a2, label341
 	mv s10, zero
-	subw a1, zero, zero
-	mv a0, a1
+	mv a1, zero
+	mv a0, zero
 	bne s8, zero, label573
 	j label621
 .p2align 2

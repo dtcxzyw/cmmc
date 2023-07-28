@@ -506,6 +506,17 @@ static uint32_t getSExtOpcode(OperandType type) {
     }
 }
 
+uint32_t estimateDivLatency(const MIROperand& logDividend, const MIROperand& logDivisor) {
+    const auto sdivLatency =
+        4U + static_cast<uint32_t>(std::max(0, static_cast<int32_t>((logDividend.imm() + 3) / 4 - logDivisor.imm() / 4)));
+    return sdivLatency;
+}
+
+static bool isSDivExpandProfitable(const MIROperand& logDividend, const MIROperand& logDivisor, const MIROperand& factor) {
+    const auto expandLatency = isZero(factor) ? 6U : 8U;
+    return expandLatency <= estimateDivLatency(logDividend, logDivisor);
+}
+
 static bool buildMulHiImm(ISelContext& ctx, const MIROperand& lhs, const MIROperand& rhsImm, const MIROperand& factor,
                           MIROperand& out) {
     out = getVRegAs(ctx, lhs);

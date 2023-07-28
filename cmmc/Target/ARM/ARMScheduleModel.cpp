@@ -87,6 +87,24 @@ using ARMScheduleClassFPConvert = ARMScheduleClassSimpleGeneric<ARMPipelineFP0, 
 using ARMScheduleClassFPMoveWithCore = ARMScheduleClassSimpleGeneric<ARMPipelineLoad, 0, 5, 1>;
 using ARMScheduleClassMisc = ARMScheduleClassSimpleGeneric<ARMPipelineNop, 0, 0, 0>;
 
+class ARMScheduleClassSignedDivide final : public ScheduleClass {
+public:
+    bool schedule(ScheduleState& state, const MIRInst& inst, const InstInfo& instInfo) const override {
+        if(!state.isPipelineReady(ARMPipelineMultiCycle))
+            return false;
+        if(!checkRegisterDependency(state, inst, instInfo))
+            return false;
+
+        const auto logDividend = inst.getOperand(3);
+        const auto logDivisor = inst.getOperand(4);
+        const auto latency = estimateDivLatency(logDividend, logDivisor);
+
+        state.resetPipeline(ARMPipelineMultiCycle, latency);
+        state.makeRegisterReady(inst, 0, latency);
+        return true;
+    }
+};
+
 class ARMScheduleClassBranchLink final : public ScheduleClass {
 public:
     bool schedule(ScheduleState& state, const MIRInst& inst, const InstInfo& instInfo) const override {

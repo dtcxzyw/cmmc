@@ -30,7 +30,7 @@ main:
 	mv a0, zero
 	sw a1, 36(sp)
 	li a2, 10
-	subw a3, a2, zero
+	mv a3, a2
 	li a2, 9
 	addi a1, a3, -1
 	blt zero, a2, label27

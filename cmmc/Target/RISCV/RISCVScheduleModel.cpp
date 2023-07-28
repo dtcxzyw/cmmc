@@ -168,9 +168,32 @@ public:
             }
         }
 
-        // TODO: estimate latency using the range info?
         state.resetPipeline(RISCVIDivPipeline, 65);
         state.makeRegisterReady(inst, 0, 68);
+        state.setIssued(RISCVPipelineB);
+        return true;
+    }
+};
+class RISCVScheduleClassSDivRemW final : public ScheduleClass {
+public:
+    bool schedule(ScheduleState& state, const MIRInst& inst, const InstInfo&) const override {
+        if(!state.isAvailable(RISCVPipelineB))
+            return false;
+        if(!state.isPipelineReady(RISCVIDivPipeline))
+            return false;
+
+        // consumes operands in the AG stage
+        if(state.queryRegisterLatency(inst, 1) > 0)
+            return false;
+        if(state.queryRegisterLatency(inst, 2) > 0)
+            return false;
+        const auto logDividend = inst.getOperand(3);
+        const auto logDivisor = inst.getOperand(4);
+        const auto hint = inst.getOperand(5);
+        const auto latency = estimateDivRemLatency(logDividend, logDivisor, hint);
+
+        state.resetPipeline(RISCVIDivPipeline, latency - 3);
+        state.makeRegisterReady(inst, 0, latency);
         state.setIssued(RISCVPipelineB);
         return true;
     }
@@ -533,6 +556,16 @@ static bool simplifyOpWithZero(MIRFunction& func, const CodeGenContext&) {
                         resetToLoadImm(2);
                     break;
                 }
+                case SUBW: {
+                    if(isZero(2))
+                        resetToSignExtend(1);
+                    break;
+                }
+                case REMW: {
+                    if(isZero(1))
+                        resetToZero();
+                    break;
+                }
                 case SLLI:
                 case SLLIW:
                 case SRLI:
@@ -621,6 +654,7 @@ static bool isWProvider(uint32_t opcode) {
         case LW:
         case LH:
         case LB:
+        case LoadImm12:
             return true;
         default:
             return false;

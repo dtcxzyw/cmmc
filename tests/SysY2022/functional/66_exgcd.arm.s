@@ -62,30 +62,28 @@ label9:
 .globl main
 main:
 .p2align 4
-	push { r4, lr }
-	mov r0, #1
+	push { lr }
 	mov r1, #15
-	sub sp, sp, #8
+	mov r0, #1
+	sub sp, sp, #12
 	str r0, [sp, #0]
 	add r3, sp, #4
 	mov r2, sp
 	str r0, [sp, #4]
 	mov r0, #7
 	bl exgcd
-	mov r0, #15
-	ldr r2, [sp, #0]
-	movw r1, #34953
-	movt r1, #34952
-	smmla r3, r2, r1, r2
-	asr r4, r3, #3
-	add r3, r4, r3, lsr #31
-	mls r2, r3, r0, r2
-	add r2, r2, #15
-	smmla r1, r2, r1, r2
-	asr r3, r1, #3
-	add r1, r3, r1, lsr #31
-	mls r0, r1, r0, r2
+	movw r2, #34953
+	mov r1, #15
+	ldr r0, [sp, #0]
+	movt r2, #34952
+	smmla r2, r0, r2, r0
+	asr r3, r2, #3
+	add r2, r3, r2, lsr #31
+	mls r0, r2, r1, r0
+	cmp r0, #0
+	add r1, r0, #15
+	movlt r0, r1
 	bl putint
-	add sp, sp, #8
+	add sp, sp, #12
 	mov r0, #0
-	pop { r4, pc }
+	pop { pc }

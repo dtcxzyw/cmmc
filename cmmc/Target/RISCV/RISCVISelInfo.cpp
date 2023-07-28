@@ -330,6 +330,24 @@ static bool buildSRAIW(ISelContext& ctx, const MIROperand& lhs, const MIROperand
     return true;
 }
 
+uint32_t estimateDivRemLatency(const MIROperand& logDividend, const MIROperand& logDivisor, const MIROperand& nonNegativeHint) {
+    const auto imm = nonNegativeHint.imm();
+    const auto signDividend = imm & 0b100;
+    const auto signDivisor = imm & 0b010;
+    const auto signRes = imm & 0b001;
+    const auto mayHaveNegativeInput = !(signDividend && signDivisor);
+    const auto mayHaveNagativeResult = !signRes;
+    const auto sdivLatency = 2U + static_cast<uint32_t>(std::max(4, static_cast<int32_t>(logDividend.imm() - logDivisor.imm()))) +
+        (mayHaveNegativeInput ? 1 : 0) + (mayHaveNagativeResult ? 1 : 0);
+    return sdivLatency;
+}
+
+static bool isSDivExpandProfitable(const MIROperand& logDividend, const MIROperand& logDivisor, const MIROperand& nonNegativeHint,
+                                   const MIROperand& factor, bool isRem) {
+    const auto expandLatency = (isZero(factor) ? 5U : 8U) + (isRem ? 4U : 0U);
+    return expandLatency <= estimateDivRemLatency(logDividend, logDivisor, nonNegativeHint);
+}
+
 static bool selectShiftImm12Mask(const MIROperand& shiftImm, MIROperand& maskImm) {
     const auto val = shiftImm.imm();
     if(0 < val && val < 32) {

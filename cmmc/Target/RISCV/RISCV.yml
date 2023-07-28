@@ -187,14 +187,19 @@ InstInfo:
       Mnemonic: rem
     REMU:
       Mnemonic: remu
-    DIVW:
-      Mnemonic: divw
     DIVUW:
       Mnemonic: divuw
-    REMW:
-      Mnemonic: remw
     REMUW:
       Mnemonic: remuw
+
+  InstSDivRemW:
+    Format: "$Mnemonic:Template $Rd:GPR[Def], $Rs1:GPR[Use], $Rs2:GPR[Use] # $LogDividend:Imm[Metadata], $LogDivisor:Imm[Metadata], $NonNegativeHint:Imm[Metadata]"
+    Instances:
+      DIVW:
+        Mnemonic: divw
+      REMW:
+        Mnemonic: remw
+
   # "F" Standard Extension for Single-Precision Floating-Point
   FRType:
     Format: $Mnemonic:Template $Rd:FPR[Def], $Rs1:FPR[Use], $Rs2:FPR[Use]
@@ -988,7 +993,10 @@ InstSelection:
         Dst: $Dst
         Lhs: $Lhs
         Rhs: $Rhs
-        $Predicate: isOperandI32($Dst) && isOperandIReg($Lhs) && selectSDiv32ByConstant($Rhs, [$Magic], [$Shift], [$Factor]) && buildMul64Imm(ctx, $Lhs, $Magic, $Factor, [$Out]) && buildSRAIW(ctx, $Out, $Shift, [$SRAOut])
+        LogDividend: $LogDividend
+        LogDivisor: $LogDivisor
+        NonNegativeHint: $NonNegativeHint
+        $Predicate: isOperandI32($Dst) && isOperandIReg($Lhs) && selectSDiv32ByConstant($Rhs, [$Magic], [$Shift], [$Factor]) && isSDivExpandProfitable($LogDividend, $LogDivisor, $NonNegativeHint, $Factor, false) && buildMul64Imm(ctx, $Lhs, $Magic, $Factor, [$Out]) && buildSRAIW(ctx, $Out, $Shift, [$SRAOut])
     Replace:
       ADD:
         Rd: $Dst
@@ -998,6 +1006,27 @@ InstSelection:
             Rs1: $Out
             Imm: MIROperand::asImm(31, OperandType::Int32)
         Rs2: $SRAOut
+
+  - Pattern:
+      InstSDiv:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        LogDividend: $LogDividend
+        LogDivisor: $LogDivisor
+        NonNegativeHint: $NonNegativeHint
+        $Predicate: isOperandI32($Dst) && isOperandIReg($Lhs) && !isOperandIReg($Rhs)
+    Replace:
+      InstSDiv:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs:
+          InstLoadImm:
+            Dst: getVRegAs(ctx, $Dst)
+            Imm: $Rhs
+        LogDividend: $LogDividend
+        LogDivisor: $LogDivisor
+        NonNegativeHint: $NonNegativeHint
 
   - Pattern:
       SRLIW:
@@ -1036,12 +1065,18 @@ InstSelection:
         Dst: $Dst
         Lhs: $Lhs
         Rhs: $Rhs
+        LogDividend: $LogDividend
+        LogDivisor: $LogDivisor
+        NonNegativeHint: $NonNegativeHint
         $Predicate: isOperandI32($Dst) && isOperandIReg($Lhs) && isOperandIReg($Rhs)
     Replace:
       DIVW:
         Rd: $Dst
         Rs1: $Lhs
         Rs2: $Rhs
+        LogDividend: $LogDividend
+        LogDivisor: $LogDivisor
+        NonNegativeHint: $NonNegativeHint
 
   - Pattern:
       InstSRem:
@@ -1051,7 +1086,7 @@ InstSelection:
         LogDividend: $LogDividend
         LogDivisor: $LogDivisor
         NonNegativeHint: $NonNegativeHint
-        $Predicate: isOperandI32($Dst) && isOperandIReg($Lhs) && isOperandImm($Rhs)
+        $Predicate: isOperandI32($Dst) && isOperandIReg($Lhs) && isOperandImm($Rhs) && selectSDiv32ByConstant($Rhs, [$Magic], [$Shift], [$Factor]) && isSDivExpandProfitable($LogDividend, $LogDivisor, $NonNegativeHint, $Factor, true)
     Replace:
       SUBW:
         Rd: $Dst
@@ -1074,12 +1109,39 @@ InstSelection:
         Dst: $Dst
         Lhs: $Lhs
         Rhs: $Rhs
+        LogDividend: $LogDividend
+        LogDivisor: $LogDivisor
+        NonNegativeHint: $NonNegativeHint
+        $Predicate: isOperandI32($Dst) && isOperandIReg($Lhs) && !isOperandIReg($Rhs)
+    Replace:
+      InstSRem:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs:
+          InstLoadImm:
+            Dst: getVRegAs(ctx, $Dst)
+            Imm: $Rhs
+        LogDividend: $LogDividend
+        LogDivisor: $LogDivisor
+        NonNegativeHint: $NonNegativeHint
+
+  - Pattern:
+      InstSRem:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        LogDividend: $LogDividend
+        LogDivisor: $LogDivisor
+        NonNegativeHint: $NonNegativeHint
         $Predicate: isOperandI32($Dst) && isOperandIReg($Lhs) && isOperandIReg($Rhs)
     Replace:
       REMW:
         Rd: $Dst
         Rs1: $Lhs
         Rs2: $Rhs
+        LogDividend: $LogDividend
+        LogDivisor: $LogDivisor
+        NonNegativeHint: $NonNegativeHint
 
   - Pattern:
       InstUDiv:
@@ -1867,7 +1929,8 @@ ScheduleModel:
       LoadStore:
         [LB, LH, LW, LBU, LHU, SB, SH, SW, LD, LWU, SD, InstStoreRegToStack]
       Multi: [MUL, MULH, MULHSU, MULHU, MULW]
-      DivRem: [DIV, DIVU, REM, REMU, DIVW, DIVUW, REMW, REMUW]
+      DivRem: [DIV, DIVU, REM, REMU, DIVUW, REMUW]
+      SDivRemW: [DIVW, REMW]
       FPCycle1: [FMV_X_W]
       FPCycle2:
         [

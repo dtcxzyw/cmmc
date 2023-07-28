@@ -233,7 +233,7 @@ label116:
 	blt s0, a1, label116
 	mv a0, zero
 	li a2, 32
-	subw a3, a2, zero
+	mv a3, a2
 	li a2, 31
 	addi a1, a3, -1
 	blt zero, a2, label289
@@ -442,7 +442,7 @@ label144:
 	li a2, 32
 	blt a1, a2, label144
 	mv a0, zero
-	subw a3, a2, zero
+	mv a3, a2
 	li a2, 31
 	addi a1, a3, -1
 	blt zero, a2, label445
