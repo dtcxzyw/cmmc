@@ -336,6 +336,48 @@
         "task-clock": 3523.65
       }
     ],
+    "68cba9aba7f9c31af280650e8b47dce79eaab030": [
+      {
+        "branch-instructions": 801044943,
+        "branch-misses": 3815723,
+        "cycles": 5369615084,
+        "instructions": 3425879621,
+        "sysy_time": 3.590163,
+        "task-clock": 3579.79
+      },
+      {
+        "branch-instructions": 799982167,
+        "branch-misses": 3804989,
+        "cycles": 5353016501,
+        "instructions": 3421227367,
+        "sysy_time": 3.585411,
+        "task-clock": 3568.69
+      },
+      {
+        "branch-instructions": 800914175,
+        "branch-misses": 3748171,
+        "cycles": 5337215446,
+        "instructions": 3425131233,
+        "sysy_time": 3.569117,
+        "task-clock": 3558.2
+      },
+      {
+        "branch-instructions": 799991928,
+        "branch-misses": 3778797,
+        "cycles": 5394564583,
+        "instructions": 3421391284,
+        "sysy_time": 3.613229,
+        "task-clock": 3596.39
+      },
+      {
+        "branch-instructions": 799877298,
+        "branch-misses": 3793856,
+        "cycles": 5352929036,
+        "instructions": 3420783787,
+        "sysy_time": 3.586003,
+        "task-clock": 3568.65
+      }
+    ],
     "69691ffe05325859c09ffdf2c52e25cb30c3594f": [
       {
         "branch-instructions": 800819539,
