@@ -12,8 +12,8 @@
     limitations under the License.
 */
 
-#include "cmmc/CodeGen/MultiplyByConstant.hpp"
 #include <MIPS/ScheduleModelImpl.hpp>
+#include <cmmc/CodeGen/MultiplyByConstant.hpp>
 #include <cmmc/Target/MIPS/MIPS.hpp>
 #include <iterator>
 

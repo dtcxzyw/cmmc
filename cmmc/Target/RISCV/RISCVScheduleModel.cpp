@@ -12,10 +12,10 @@
     limitations under the License.
 */
 
-#include "cmmc/CodeGen/MultiplyByConstant.hpp"
 #include <RISCV/InstInfoDecl.hpp>
 #include <cmmc/CodeGen/InstInfo.hpp>
 #include <cmmc/CodeGen/MIR.hpp>
+#include <cmmc/CodeGen/MultiplyByConstant.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Target/RISCV/RISCV.hpp>
 #include <cstdint>
