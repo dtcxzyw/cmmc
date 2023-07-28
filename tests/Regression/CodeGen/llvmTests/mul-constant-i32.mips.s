@@ -26,10 +26,9 @@ test_mul_by_10:
 .globl test_mul_by_11
 test_mul_by_11:
 .p2align 2
-	sll $t0, $a0, 1
-	addu $t0, $t0, $a0
-	sll $t0, $t0, 2
-	subu $v0, $t0, $a0
+	li $t0, 11
+	mult $a0, $t0
+	mflo $v0
 	jr $ra
 	nop
 .globl test_mul_by_12
@@ -43,10 +42,9 @@ test_mul_by_12:
 .globl test_mul_by_13
 test_mul_by_13:
 .p2align 2
-	sll $t0, $a0, 3
-	subu $t0, $t0, $a0
-	sll $t0, $t0, 1
-	subu $v0, $t0, $a0
+	li $t0, 13
+	mult $a0, $t0
+	mflo $v0
 	jr $ra
 	nop
 .globl test_mul_by_14
@@ -88,10 +86,9 @@ test_mul_by_18:
 .globl test_mul_by_19
 test_mul_by_19:
 .p2align 2
-	sll $t0, $a0, 2
-	addu $t0, $t0, $a0
-	sll $t0, $t0, 2
-	subu $v0, $t0, $a0
+	li $t0, 19
+	mult $a0, $t0
+	mflo $v0
 	jr $ra
 	nop
 .globl test_mul_by_2
@@ -111,29 +108,25 @@ test_mul_by_20:
 .globl test_mul_by_21
 test_mul_by_21:
 .p2align 2
-	sll $t0, $a0, 1
-	addu $t0, $t0, $a0
-	sll $t1, $t0, 3
-	subu $v0, $t1, $t0
+	li $t0, 21
+	mult $a0, $t0
+	mflo $v0
 	jr $ra
 	nop
 .globl test_mul_by_22
 test_mul_by_22:
 .p2align 2
-	sll $t0, $a0, 1
-	addu $t0, $t0, $a0
-	sll $t0, $t0, 2
-	subu $t0, $t0, $a0
-	sll $v0, $t0, 1
+	li $t0, 22
+	mult $a0, $t0
+	mflo $v0
 	jr $ra
 	nop
 .globl test_mul_by_23
 test_mul_by_23:
 .p2align 2
-	sll $t0, $a0, 1
-	addu $t0, $t0, $a0
-	sll $t0, $t0, 3
-	subu $v0, $t0, $a0
+	li $t0, 23
+	mult $a0, $t0
+	mflo $v0
 	jr $ra
 	nop
 .globl test_mul_by_24
@@ -147,29 +140,25 @@ test_mul_by_24:
 .globl test_mul_by_25
 test_mul_by_25:
 .p2align 2
-	sll $t0, $a0, 2
-	addu $t0, $t0, $a0
-	sll $t1, $t0, 2
-	addu $v0, $t1, $t0
+	li $t0, 25
+	mult $a0, $t0
+	mflo $v0
 	jr $ra
 	nop
 .globl test_mul_by_26
 test_mul_by_26:
 .p2align 2
-	sll $t0, $a0, 3
-	subu $t0, $t0, $a0
-	sll $t0, $t0, 1
-	subu $t0, $t0, $a0
-	sll $v0, $t0, 1
+	li $t0, 26
+	mult $a0, $t0
+	mflo $v0
 	jr $ra
 	nop
 .globl test_mul_by_27
 test_mul_by_27:
 .p2align 2
-	sll $t0, $a0, 1
-	addu $t0, $t0, $a0
-	sll $t1, $t0, 3
-	addu $v0, $t1, $t0
+	li $t0, 27
+	mult $a0, $t0
+	mflo $v0
 	jr $ra
 	nop
 .globl test_mul_by_28
@@ -183,10 +172,9 @@ test_mul_by_28:
 .globl test_mul_by_29
 test_mul_by_29:
 .p2align 2
-	sll $t0, $a0, 4
-	subu $t0, $t0, $a0
-	sll $t0, $t0, 1
-	subu $v0, $t0, $a0
+	li $t0, 29
+	mult $a0, $t0
+	mflo $v0
 	jr $ra
 	nop
 .globl test_mul_by_3
@@ -220,10 +208,9 @@ test_mul_by_32:
 .globl test_mul_by_37
 test_mul_by_37:
 .p2align 2
-	sll $t0, $a0, 3
-	addu $t0, $t0, $a0
-	sll $t0, $t0, 2
-	addu $v0, $t0, $a0
+	li $t0, 37
+	mult $a0, $t0
+	mflo $v0
 	jr $ra
 	nop
 .globl test_mul_by_4
@@ -235,10 +222,9 @@ test_mul_by_4:
 .globl test_mul_by_41
 test_mul_by_41:
 .p2align 2
-	sll $t0, $a0, 2
-	addu $t0, $t0, $a0
-	sll $t0, $t0, 3
-	addu $v0, $t0, $a0
+	li $t0, 41
+	mult $a0, $t0
+	mflo $v0
 	jr $ra
 	nop
 .globl test_mul_by_5
@@ -290,10 +276,9 @@ test_mul_by_7:
 .globl test_mul_by_73
 test_mul_by_73:
 .p2align 2
-	sll $t0, $a0, 3
-	addu $t0, $t0, $a0
-	sll $t0, $t0, 3
-	addu $v0, $t0, $a0
+	li $t0, 73
+	mult $a0, $t0
+	mflo $v0
 	jr $ra
 	nop
 .globl test_mul_by_8

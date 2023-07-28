@@ -29,10 +29,10 @@ main:
 label2:
 	bl getch
 	subs r2, r0, #35
-	mov r1, #1
 	movw r3, #3841
-	lsl r2, r1, r2
+	mov r1, #1
 	movt r3, #2560
+	lsl r2, r1, r2
 	and r2, r3, r2
 	clz r2, r2
 	lsr r2, r2, #5
@@ -56,7 +56,7 @@ label2:
 	movw r8, #:lower16:input
 	movt r8, #:upper16:input
 	str r8, [sp, #4]
-	beq label327
+	beq label344
 	mov r4, #0
 	ldr r8, [sp, #0]
 	str r0, [r8, r4, lsl #2]
@@ -86,7 +86,7 @@ label58:
 	bne label58
 	add r8, r4, #1
 	cmp r0, #35
-	beq label331
+	beq label348
 	mov r4, r8
 	ldr r8, [sp, #0]
 	str r0, [r8, r4, lsl #2]
@@ -145,7 +145,7 @@ label52:
 	mov r5, #0
 	b label53
 .p2align 4
-label331:
+label348:
 	str r8, [sp, #8]
 	b label4
 label17:
@@ -241,7 +241,7 @@ label31:
 	str r8, [r1, r6, lsl #2]
 	b label46
 .p2align 4
-label327:
+label344:
 	mov r8, #0
 	str r8, [sp, #8]
 	b label4

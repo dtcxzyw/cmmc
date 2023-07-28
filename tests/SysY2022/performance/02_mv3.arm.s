@@ -19,8 +19,8 @@ main:
 .p2align 4
 	push { r4, r5, r6, r7, r8, r9, r10, lr }
 	bl getint
-	movw r6, #:lower16:A
 	mov r5, #0
+	movw r6, #:lower16:A
 	mov r4, r0
 	movt r6, #:upper16:A
 	cmp r0, r5

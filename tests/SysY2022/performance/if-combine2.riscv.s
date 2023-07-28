@@ -28,44 +28,44 @@ label4:
 	j label2
 .p2align 2
 label8:
-	li a4, 1
-	li a3, 2
-	li a5, 4
+	li a3, 1
+	li a4, 2
+	li a5, 7
 	addiw a1, a1, 1
-	sw a4, 4(sp)
-	li a4, 3
-	sw a3, 8(sp)
+	sw a3, 4(sp)
+	li a3, 3
+	sw a4, 8(sp)
+	li a4, 4
+	sw a3, 12(sp)
 	li a3, 5
-	sw a4, 12(sp)
+	sw a4, 16(sp)
 	li a4, 6
-	sw a5, 16(sp)
-	li a5, 9
 	sw a3, 20(sp)
-	li a3, 7
+	li a3, 8
 	sw a4, 24(sp)
-	li a4, 8
-	sw a3, 28(sp)
+	li a4, 9
+	sw a5, 28(sp)
+	li a5, 11
+	sw a3, 32(sp)
 	li a3, 10
-	sw a4, 32(sp)
-	li a4, 11
-	sw a5, 36(sp)
-	li a5, 17
+	sw a4, 36(sp)
+	li a4, 12
 	sw a3, 40(sp)
-	li a3, 12
-	sw a4, 44(sp)
-	li a4, 13
-	sw a3, 48(sp)
-	li a3, 14
-	sw a4, 52(sp)
-	li a4, 15
-	sw a3, 56(sp)
-	li a3, 16
-	sw a4, 60(sp)
+	li a3, 13
+	sw a5, 44(sp)
+	li a5, 34
+	sw a4, 48(sp)
+	li a4, 14
+	sw a3, 52(sp)
+	li a3, 15
+	sw a4, 56(sp)
+	li a4, 16
+	sw a3, 60(sp)
+	li a3, 17
+	sw a4, 64(sp)
 	li a4, 18
-	sw a3, 64(sp)
+	sw a3, 68(sp)
 	li a3, 19
-	sw a5, 68(sp)
-	li a5, 43
 	sw a4, 72(sp)
 	li a4, 20
 	sw a3, 76(sp)
@@ -95,29 +95,29 @@ label8:
 	sw a3, 124(sp)
 	li a3, 33
 	sw a4, 128(sp)
-	li a4, 34
+	li a4, 35
 	sw a3, 132(sp)
-	li a3, 35
-	sw a4, 136(sp)
-	li a4, 36
-	sw a3, 140(sp)
-	li a3, 37
-	sw a4, 144(sp)
-	li a4, 38
-	sw a3, 148(sp)
-	li a3, 39
-	sw a4, 152(sp)
-	li a4, 40
-	sw a3, 156(sp)
-	li a3, 41
-	sw a4, 160(sp)
-	li a4, 42
-	sw a3, 164(sp)
+	li a3, 36
+	sw a5, 136(sp)
+	li a5, 52
+	sw a4, 140(sp)
+	li a4, 37
+	sw a3, 144(sp)
+	li a3, 38
+	sw a4, 148(sp)
+	li a4, 39
+	sw a3, 152(sp)
+	li a3, 40
+	sw a4, 156(sp)
+	li a4, 41
+	sw a3, 160(sp)
+	li a3, 42
+	sw a4, 164(sp)
+	li a4, 43
+	sw a3, 168(sp)
 	li a3, 44
-	sw a4, 168(sp)
+	sw a4, 172(sp)
 	li a4, 45
-	sw a5, 172(sp)
-	li a5, 54
 	sw a3, 176(sp)
 	li a3, 46
 	sw a4, 180(sp)
@@ -131,15 +131,15 @@ label8:
 	sw a4, 196(sp)
 	li a4, 51
 	sw a3, 200(sp)
-	li a3, 52
+	li a3, 53
 	sw a4, 204(sp)
-	li a4, 53
-	sw a3, 208(sp)
-	li a3, 55
-	sw a4, 212(sp)
-	li a4, 56
-	sw a5, 216(sp)
+	li a4, 54
+	sw a5, 208(sp)
 	li a5, 68
+	sw a3, 212(sp)
+	li a3, 55
+	sw a4, 216(sp)
+	li a4, 56
 	sw a3, 220(sp)
 	li a3, 57
 	sw a4, 224(sp)
@@ -232,22 +232,22 @@ label8:
 .p2align 2
 label9:
 	sh2add a2, a3, s0
-	lw a5, 0(a2)
+	lw t0, 0(a2)
 	addiw a3, a3, 16
 	lw t1, 4(a2)
-	addw a4, a4, a5
+	addw a5, a4, t0
 	lw t0, 8(a2)
-	addw a5, a4, t1
-	addw a4, a5, t0
-	lw a5, 12(a2)
-	addw t0, a4, a5
-	lw a4, 16(a2)
-	addw a5, t0, a4
-	lw t0, 20(a2)
-	lw t2, 24(a2)
-	addw a4, a5, t0
+	addw a4, a5, t1
+	lw t1, 12(a2)
+	addw a5, a4, t0
+	lw t0, 16(a2)
+	addw a4, a5, t1
+	lw t1, 20(a2)
+	addw a5, a4, t0
+	lw t0, 24(a2)
+	addw a4, a5, t1
 	lw t1, 28(a2)
-	addw a5, a4, t2
+	addw a5, a4, t0
 	lw t0, 32(a2)
 	addw a4, a5, t1
 	lw t1, 36(a2)
@@ -256,15 +256,15 @@ label9:
 	addw a4, a5, t1
 	lw t1, 44(a2)
 	addw a5, a4, t0
-	lw t0, 48(a2)
 	addw a4, a5, t1
-	lw t1, 52(a2)
-	addw a5, a4, t0
+	lw a5, 48(a2)
+	addw t0, a4, a5
+	lw a4, 52(a2)
+	addw a5, t0, a4
 	lw t0, 56(a2)
-	addw a4, a5, t1
-	addw a5, a4, t0
-	lw a4, 60(a2)
-	addw a2, a5, a4
+	addw a4, a5, t0
+	lw a5, 60(a2)
+	addw a2, a4, a5
 	li a4, 96
 	bge a3, a4, label12
 	mv a4, a2
@@ -287,8 +287,8 @@ label12:
 	srliw a5, a3, 31
 	sraiw a4, a3, 15
 	add a3, a5, a4
-	li a4, 65535
-	mulw a5, a3, a4
+	slliw a4, a3, 16
+	subw a5, a4, a3
 	subw a2, a2, a5
 	bgt a0, a1, label8
 label13:

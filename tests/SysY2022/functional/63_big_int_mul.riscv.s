@@ -4,7 +4,7 @@
 .globl main
 main:
 .p2align 2
-	addi sp, sp, -384
+	addi sp, sp, -392
 	li a3, 1
 	li a2, 2
 	li a4, 3
@@ -14,12 +14,12 @@ main:
 	li t1, 7
 	li t2, 8
 	li t4, 9
+	sd s0, 384(sp)
 	addi a1, sp, 160
-	addi a0, sp, 260
-	sd s0, 376(sp)
+	addi a0, sp, 272
 	addi s0, sp, 0
-	sd s1, 368(sp)
-	sd ra, 360(sp)
+	sd s1, 264(sp)
+	sd ra, 376(sp)
 	sd zero, 0(sp)
 	sd zero, 8(sp)
 	sd zero, 16(sp)
@@ -40,26 +40,26 @@ main:
 	sd zero, 136(sp)
 	sd zero, 144(sp)
 	sd zero, 152(sp)
-	sw a3, 260(sp)
-	sw a2, 264(sp)
-	sw a4, 268(sp)
-	sw a5, 272(sp)
-	sw t3, 276(sp)
-	sw t0, 280(sp)
-	sw t1, 284(sp)
-	sw t2, 288(sp)
-	sw t4, 292(sp)
-	sw zero, 296(sp)
-	sw a3, 300(sp)
-	sw a2, 304(sp)
-	sw a4, 308(sp)
-	sw a5, 312(sp)
-	sw t3, 316(sp)
-	sw t0, 320(sp)
-	sw t1, 324(sp)
-	sw t2, 328(sp)
-	sw t4, 332(sp)
-	sw zero, 336(sp)
+	sw a3, 272(sp)
+	sw a2, 276(sp)
+	sw a4, 280(sp)
+	sw a5, 284(sp)
+	sw t3, 288(sp)
+	sw t0, 292(sp)
+	sw t1, 296(sp)
+	sw t2, 300(sp)
+	sw t4, 304(sp)
+	sw zero, 308(sp)
+	sw a3, 312(sp)
+	sw a2, 316(sp)
+	sw a4, 320(sp)
+	sw a5, 324(sp)
+	sw t3, 328(sp)
+	sw t0, 332(sp)
+	sw t1, 336(sp)
+	sw t2, 340(sp)
+	sw t4, 344(sp)
+	sw zero, 348(sp)
 	sw a2, 160(sp)
 	sw a4, 164(sp)
 	sw a5, 168(sp)
@@ -116,7 +116,7 @@ label2:
 	bge a2, zero, label8
 	lw a0, 0(sp)
 	bne a0, zero, label17
-label237:
+label246:
 	li s1, 1
 	j label18
 .p2align 2
@@ -130,7 +130,7 @@ label8:
 	bge a2, zero, label8
 	lw a0, 0(sp)
 	bne a0, zero, label17
-	j label237
+	j label246
 .p2align 2
 label12:
 	sh2add t1, a5, s0
@@ -151,7 +151,7 @@ label12:
 	bge a2, zero, label8
 	lw a0, 0(sp)
 	bne a0, zero, label17
-	j label237
+	j label246
 .p2align 2
 label13:
 	addiw t1, a5, -1
@@ -173,7 +173,7 @@ label13:
 	addiw a2, a2, -1
 	bge a2, zero, label8
 	lw a0, 0(sp)
-	beq a0, zero, label237
+	beq a0, zero, label246
 label17:
 	jal putint
 	li s1, 1
@@ -186,8 +186,8 @@ label18:
 	addiw s1, s1, 1
 	blt s1, a0, label18
 	mv a0, zero
-	ld ra, 360(sp)
-	ld s1, 368(sp)
-	ld s0, 376(sp)
-	addi sp, sp, 384
+	ld ra, 376(sp)
+	ld s1, 264(sp)
+	ld s0, 384(sp)
+	addi sp, sp, 392
 	ret

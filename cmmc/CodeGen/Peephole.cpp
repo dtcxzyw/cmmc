@@ -587,7 +587,7 @@ bool createIndirectCopy(MIRFunction& func, const CodeGenContext& ctx) {
     return modified;
 }
 
-bool genericPeepholeOpt(MIRFunction& func, const CodeGenContext& ctx) {
+bool genericPeepholeOpt(MIRFunction& func, CodeGenContext& ctx) {
     bool modified = false;
     modified |= eliminateStackLoads(func, ctx);
     modified |= removeIndirectCopy(func, ctx);

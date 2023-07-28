@@ -21,17 +21,17 @@ main:
 	mv s0, a0
 	bgt a0, zero, label37
 	mv a0, zero
-pcrel162:
+pcrel171:
 	auipc a2, %pcrel_hi(program)
 	mv s2, zero
-	addi a1, a2, %pcrel_lo(pcrel162)
-	mv a2, a1
+	addi a1, a2, %pcrel_lo(pcrel171)
+	mv a0, a1
 	mv s0, a1
-pcrel163:
-	auipc a0, %pcrel_hi(tape)
 	sw zero, 0(a1)
-	addi s1, a0, %pcrel_lo(pcrel163)
+pcrel172:
+	auipc a1, %pcrel_hi(tape)
 	mv s3, zero
+	addi s1, a1, %pcrel_lo(pcrel172)
 	j label4
 label37:
 	auipc a1, %pcrel_hi(program)
@@ -55,20 +55,19 @@ label32:
 	sw a0, 0(a1)
 	bgt s0, s2, label32
 	mv a0, s0
-.p2align 2
-pcrel164:
+pcrel173:
 	auipc a2, %pcrel_hi(program)
 	mv s2, zero
-	addi a1, a2, %pcrel_lo(pcrel164)
-	sh2add a2, s0, a1
+	addi a1, a2, %pcrel_lo(pcrel173)
+	sh2add a0, s0, a1
 	mv s0, a1
-.p2align 2
-pcrel165:
-	auipc a0, %pcrel_hi(tape)
-	sw zero, 0(a2)
-	addi s1, a0, %pcrel_lo(pcrel165)
+	sw zero, 0(a0)
+pcrel174:
+	auipc a1, %pcrel_hi(tape)
 	mv s3, zero
-	lw a0, 0(a1)
+	addi s1, a1, %pcrel_lo(pcrel174)
+	mv a1, s0
+	lw a0, 0(s0)
 	bne a0, zero, label7
 	j label30
 .p2align 2
@@ -147,9 +146,9 @@ label25:
 	j label21
 label73:
 	sh2add a0, s2, s1
-	lw a2, 0(a0)
-	addi a1, a2, -1
-	sw a1, 0(a0)
+	lw a1, 0(a0)
+	addi a2, a1, -1
+	sw a2, 0(a0)
 	j label9
 label28:
 	sh2add a1, s2, s1

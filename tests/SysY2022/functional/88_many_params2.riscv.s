@@ -12,10 +12,10 @@ a:
 main:
 .p2align 2
 	addi sp, sp, -64
-pcrel223:
+pcrel232:
 	auipc a0, %pcrel_hi(a)
 	sd s3, 56(sp)
-	addi s3, a0, %pcrel_lo(pcrel223)
+	addi s3, a0, %pcrel_lo(pcrel232)
 	sd s1, 48(sp)
 	mv a0, zero
 	sd s6, 40(sp)
@@ -42,9 +42,9 @@ label5:
 	sw zero, 0(a1)
 	li a1, 4087
 	blt a0, a1, label5
-pcrel224:
+pcrel233:
 	auipc a1, %pcrel_hi(b)
-	addi a0, a1, %pcrel_lo(pcrel224)
+	addi a0, a1, %pcrel_lo(pcrel233)
 	mv a1, zero
 .p2align 2
 label8:
@@ -70,13 +70,13 @@ label10:
 	mv s6, zero
 	add a2, s3, a3
 	mv s0, s1
-	li a3, 2
+	li a3, 1
 	sw a1, 0(a2)
-	li a2, 1
-	sw a2, 1420(a0)
-	li a2, 3
-	sw a3, 1424(a0)
-	sw a2, 1428(a0)
+	li a2, 2
+	sw a3, 1420(a0)
+	li a3, 3
+	sw a2, 1424(a0)
+	sw a3, 1428(a0)
 	sw a1, 1452(a0)
 	li a1, 8040
 	lw s2, 1416(a0)
@@ -94,17 +94,18 @@ label13:
 	addiw s6, s6, 1
 	blt s6, a0, label13
 	jal putch
-	li a2, 4584
-	add a1, s3, a2
-	lw a0, 0(a1)
+	li a1, 4584
+	add a2, s3, a1
+	lw a0, 0(a2)
 	jal putint
 	li a0, 10
 	jal putch
 	li a1, 10
 	blt s5, a1, label85
 	addiw a1, s2, 3
-	sh1add s1, a1, a1
-	bge s1, zero, label18
+	sh1add a0, a1, a1
+	mv s1, a0
+	bge a0, zero, label18
 	j label17
 label85:
 	mv a2, s5
@@ -136,8 +137,9 @@ label18:
 	j label17
 label16:
 	addiw a1, s2, 3
-	sh1add s1, a1, a1
-	bge s1, zero, label18
+	sh1add a0, a1, a1
+	mv s1, a0
+	bge a0, zero, label18
 	j label17
 .p2align 2
 label20:
@@ -170,15 +172,15 @@ label26:
 	li a4, -1932965947
 	mulw t0, a0, a3
 	mul t1, t0, a4
-	srli t3, t1, 32
-	add a5, t3, t0
+	srli t2, t1, 32
+	add a5, t2, t0
 	srliw t3, a5, 31
-	sraiw t2, a5, 11
+	sraiw t1, a5, 11
 	li a5, 3724
-	add t1, t3, t2
-	mulw t2, t1, a5
+	add t2, t3, t1
+	mulw t1, t2, a5
+	subw t0, t0, t1
 	addiw t1, a0, 7
-	subw t0, t0, t2
 	sw t0, 0(a2)
 	mulw t0, t1, a3
 	mul t2, t0, a4
@@ -186,19 +188,19 @@ label26:
 	add t1, t3, t0
 	srliw t3, t1, 31
 	sraiw t2, t1, 11
-	add t4, t3, t2
-	mulw t1, t4, a5
-	subw t0, t0, t1
+	add t1, t3, t2
+	mulw t2, t1, a5
 	addiw t1, a0, 14
+	subw t0, t0, t2
 	sw t0, 4(a2)
 	mulw t0, t1, a3
 	mul t2, t0, a4
 	srli t3, t2, 32
 	add t1, t3, t0
-	srliw t3, t1, 31
+	srliw t4, t1, 31
 	sraiw t2, t1, 11
-	add t4, t3, t2
-	mulw t1, t4, a5
+	add t3, t4, t2
+	mulw t1, t3, a5
 	subw t0, t0, t1
 	addiw t1, a0, 21
 	addiw a0, a0, 28

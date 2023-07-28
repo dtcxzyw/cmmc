@@ -23,9 +23,9 @@ label9:
 	li a0, 64
 	jal _sysy_stoptime
 	li a0, 10000
-pcrel138:
+pcrel142:
 	auipc a2, %pcrel_hi(a)
-	addi a1, a2, %pcrel_lo(pcrel138)
+	addi a1, a2, %pcrel_lo(pcrel142)
 	jal putarray
 	ld ra, 0(sp)
 	mv a0, zero
@@ -54,35 +54,35 @@ label3:
 	subw t1, a4, t3
 	addw t2, t1, a3
 	mv a4, t2
-	blt t1, zero, label128
+	blt t1, zero, label132
 	mv a4, t1
 .p2align 2
-label128:
+label132:
 	mulw t1, a4, a2
 	addw a2, t1, a5
 	mul a5, a2, t0
-	srli t1, a5, 63
+	srli t2, a5, 63
 	srai t0, a5, 60
-	add t2, t1, t0
-	mulw t0, t2, a3
+	add t1, t2, t0
+	mulw t0, t1, a3
 	subw a5, a2, t0
 	addw a3, a5, a3
 	mv a2, a3
-	blt a5, zero, label130
+	blt a5, zero, label134
 	mv a2, a5
 .p2align 2
-label130:
+label134:
 	andi a3, a2, 1
 	li t1, 1876499845
-	li t2, 300000
 	li t3, 1
 	addiw a1, a1, -1
 	mul a5, a4, t1
-	srli t1, a5, 63
+	li t1, 300000
+	srli t2, a5, 63
 	srai t0, a5, 49
-	add a5, t1, t0
-	mulw t1, a5, t2
-	subw t0, a4, t1
+	add a5, t2, t0
+	mulw t2, a5, t1
+	subw t0, a4, t2
 	li a4, -2004318071
 	mul a5, t0, a4
 	srli t1, a5, 32
@@ -96,14 +96,14 @@ label130:
 	lw a5, 0(t1)
 	slli t2, a5, 1
 	subw t1, t0, t4
-	li t4, 64
 	sllw t0, t3, t1
-	subw t3, t4, t1
-	srl t5, t2, t3
-	add t2, a5, t5
-	sraw t1, t2, t1
-	srliw t5, t1, 31
-	add t4, t1, t5
+	li t3, 64
+	subw t4, t3, t1
+	srl t2, t2, t4
+	add t3, a5, t2
+	sraw t1, t3, t1
+	srliw t2, t1, 31
+	add t4, t1, t2
 	andi t3, t4, -2
 	subw t2, t1, t3
 	bne a3, t2, label6
@@ -125,10 +125,10 @@ label6:
 	xori t4, t3, 1
 	or t1, a3, t4
 	mv a3, t0
-	beq t1, zero, label132
+	beq t1, zero, label136
 	mv a3, t2
 .p2align 2
-label132:
+label136:
 	addw a5, a5, a3
 	sh2add a3, a4, a0
 	sw a5, 0(a3)

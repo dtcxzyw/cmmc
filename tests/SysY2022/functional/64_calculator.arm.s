@@ -24,9 +24,9 @@ main:
 	sub sp, sp, #4
 	bl getch
 	cmp r0, #13
+	mov r2, #0
 	movw r4, #:lower16:get2
 	mov r1, #0
-	mov r2, #0
 	movw r7, #:lower16:get
 	movw r6, #:lower16:chas
 	movw r5, #:lower16:ints
@@ -91,7 +91,7 @@ label80:
 	bne label95
 	cmp r3, #32
 	bne label89
-	b label624
+	b label663
 .p2align 4
 label95:
 	add r2, r5, r1, lsl #2
@@ -123,7 +123,7 @@ label95:
 	bne label80
 	b label79
 .p2align 4
-label442:
+label440:
 	mov r3, #1
 .p2align 4
 label104:
@@ -142,7 +142,7 @@ label104:
 label134:
 	cmp r3, #0
 	bgt label108
-	b label605
+	b label644
 .p2align 4
 label8:
 	ldr r2, [r7, r1, lsl #2]
@@ -344,7 +344,7 @@ label26:
 	str r9, [r10, #4]
 	beq label27
 	b label23
-label624:
+label663:
 	add r0, r0, #1
 	b label85
 label89:
@@ -367,7 +367,7 @@ label393:
 .p2align 4
 label103:
 	cmp r6, #0
-	bne label442
+	bne label440
 	mov r2, #1
 	sub r1, r1, #1
 	str r2, [r5, r1, lsl #2]
@@ -830,7 +830,7 @@ label63:
 	bne label350
 	b label79
 .p2align 4
-label605:
+label644:
 	mov r0, #64
 	str r0, [r4, r8, lsl #2]
 	ldr r0, [r4, #4]

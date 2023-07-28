@@ -67,7 +67,7 @@ label13:
 	cmp r0, #0
 	bne label154
 .p2align 4
-label547:
+label564:
 	mov r6, r1
 	b label26
 .p2align 4
@@ -116,14 +116,14 @@ label63:
 	bne label92
 	sub r0, r0, #48
 	cmp r0, #10
-	blo label307
+	blo label303
 	b label71
 .p2align 4
 label65:
 	add r0, r5, r5, lsl #2
 	add r5, r1, r0, lsl #1
 	b label63
-label307:
+label303:
 	mov r5, r0
 	b label89
 label71:
@@ -135,7 +135,7 @@ label71:
 	cmp r6, #0
 	bne label77
 .p2align 4
-label312:
+label308:
 	ldr r3, [sp, #0]
 	mov r6, r0
 	mov r7, r2
@@ -178,7 +178,7 @@ label77:
 	ldr r6, [r3, #0]
 	cmp r6, #0
 	bne label77
-	b label312
+	b label308
 .p2align 4
 label86:
 	mul r5, r6, r7
@@ -191,7 +191,7 @@ label86:
 	ldr r6, [r3, #0]
 	cmp r6, #0
 	bne label77
-	b label312
+	b label308
 .p2align 4
 label87:
 	sub r5, r7, r6
@@ -204,7 +204,7 @@ label87:
 	ldr r6, [r3, #0]
 	cmp r6, #0
 	bne label77
-	b label312
+	b label308
 .p2align 4
 label88:
 	add r5, r6, r7
@@ -217,7 +217,7 @@ label88:
 	ldr r6, [r3, #0]
 	cmp r6, #0
 	bne label77
-	b label312
+	b label308
 .p2align 4
 label92:
 	bl getch
@@ -231,7 +231,7 @@ label92:
 	bne label92
 	sub r0, r0, #48
 	cmp r0, #10
-	blo label307
+	blo label303
 	b label71
 .p2align 4
 label93:
@@ -278,7 +278,7 @@ label89:
 	ldr r6, [r3, #0]
 	cmp r6, #0
 	bne label77
-	b label312
+	b label308
 .p2align 4
 label91:
 	add r1, r5, r5, lsl #2
@@ -297,7 +297,7 @@ label85:
 	ldr r6, [r3, #0]
 	cmp r6, #0
 	bne label77
-	b label312
+	b label308
 .p2align 4
 label22:
 	mov r0, #112
@@ -434,7 +434,7 @@ label66:
 	bne label92
 	sub r0, r0, #48
 	cmp r0, #10
-	blo label307
+	blo label303
 	b label71
 .p2align 4
 label17:
@@ -449,7 +449,7 @@ label17:
 	blt label19
 	cmp r0, #0
 	bne label154
-	b label547
+	b label564
 .p2align 4
 label99:
 	ldr r3, [sp, #4]
@@ -481,7 +481,7 @@ label15:
 	blt label19
 	cmp r0, #0
 	bne label154
-	b label547
+	b label564
 .p2align 4
 label19:
 	mov r2, #0
@@ -491,7 +491,7 @@ label19:
 	cmp r6, #256
 	blt label19
 	cmp r0, #0
-	beq label547
+	beq label564
 .p2align 4
 label154:
 	mov r6, r1
@@ -509,7 +509,7 @@ label83:
 	ldr r6, [r3, #0]
 	cmp r6, #0
 	bne label77
-	b label312
+	b label308
 label198:
 	mov r5, r0
 	b label58

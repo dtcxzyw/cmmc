@@ -161,10 +161,10 @@ main:
 	jal read
 	nop
 	move $t5, $v0
-	blez $v0, label105
+	blez $v0, label112
 	nop
 	move $t0, $zero
-label103:
+label110:
 	jal read
 	nop
 	sll $t1, $t0, 2
@@ -172,18 +172,18 @@ label103:
 	sw $v0, 0($t1)
 	addiu $t0, $t0, 1
 	subu $t1, $t5, $t0
-	bgtz $t1, label103
+	bgtz $t1, label110
 	nop
-label105:
+label112:
 	move $a0, $t6
 	move $a2, $zero
 	move $a3, $t5
 	jal merge
 	nop
-	blez $t5, label108
+	blez $t5, label115
 	nop
 	move $t0, $zero
-label106:
+label113:
 	sll $t1, $t0, 2
 	addu $t1, $t6, $t1
 	lw $a0, 0($t1)
@@ -191,9 +191,9 @@ label106:
 	nop
 	addiu $t0, $t0, 1
 	subu $t1, $t5, $t0
-	bgtz $t1, label106
+	bgtz $t1, label113
 	nop
-label108:
+label115:
 	move $v0, $zero
 	lw $ra, 816($sp)
 	addiu $sp, $sp, 824

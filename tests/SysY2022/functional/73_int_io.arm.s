@@ -39,35 +39,35 @@ label10:
 	cmp r0, #9
 	bls label12
 	cmp r6, #0
-	bgt label63
+	bgt label59
 	mov r0, #0
 	cmp r0, #0
 	bgt label20
 	b label19
 .p2align 4
-label63:
+label59:
 	mov r1, r6
 	mov r0, #0
 .p2align 4
 label14:
-	mov r2, #10
-	movw r3, #26215
-	movt r3, #26214
-	smmul r3, r1, r3
-	asr r6, r3, #2
-	add r3, r6, r3, lsr #31
-	cmp r3, #0
-	mls r1, r3, r2, r1
+	movw r2, #26215
+	movt r2, #26214
+	smmul r2, r1, r2
+	asr r3, r2, #2
+	add r2, r3, r2, lsr #31
+	cmp r2, #0
+	add r3, r2, r2, lsl #2
+	sub r1, r1, r3, lsl #1
 	add r1, r1, #48
 	str r1, [r4, r0, lsl #2]
 	add r0, r0, #1
-	bgt label73
+	bgt label69
 	cmp r0, #0
 	bgt label20
 	b label19
 .p2align 4
-label73:
-	mov r1, r3
+label69:
+	mov r1, r2
 	b label14
 .p2align 4
 label19:

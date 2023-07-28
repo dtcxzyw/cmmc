@@ -37,7 +37,7 @@ label35:
 	str r2, [r5, r1, lsl #2]
 	beq label69
 	blt label81
-label102:
+label110:
 	add r0, r6, #1
 	b label6
 .p2align 4
@@ -55,7 +55,7 @@ label12:
 	str r2, [r5, r1, lsl #2]
 	beq label69
 	blt label81
-	b label102
+	b label110
 label69:
 	mov r4, #0
 	b label17
@@ -93,7 +93,7 @@ label13:
 	str r2, [r5, r1, lsl #2]
 	beq label69
 	blt label81
-	b label102
+	b label110
 .p2align 4
 label17:
 	cmp r6, r4

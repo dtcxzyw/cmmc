@@ -476,31 +476,25 @@ mul_with_constant_neg_1:
 .globl mul_with_constant_100
 mul_with_constant_100:
 .p2align 2
-	sll $t0, $a0, 2
-	addu $t0, $t0, $a0
-	sll $t1, $t0, 2
-	addu $t0, $t1, $t0
-	sll $v0, $t0, 2
+	li $t0, 100
+	mult $a0, $t0
+	mflo $v0
 	jr $ra
 	nop
 .globl mul_with_constant_1000
 mul_with_constant_1000:
 .p2align 2
-	sll $t0, $a0, 6
-	subu $t0, $t0, $a0
-	sll $t0, $t0, 1
-	subu $t0, $t0, $a0
-	sll $v0, $t0, 3
+	li $t0, 1000
+	mult $a0, $t0
+	mflo $v0
 	jr $ra
 	nop
 .globl mul_with_constant_400
 mul_with_constant_400:
 .p2align 2
-	sll $t0, $a0, 2
-	addu $t0, $t0, $a0
-	sll $t1, $t0, 2
-	addu $t0, $t1, $t0
-	sll $v0, $t0, 4
+	li $t0, 400
+	mult $a0, $t0
+	mflo $v0
 	jr $ra
 	nop
 .globl mul_with_constant_1000000
@@ -522,11 +516,9 @@ mul_with_constant_10:
 .globl mul_with_constant_270
 mul_with_constant_270:
 .p2align 2
-	sll $t0, $a0, 3
-	addu $t0, $t0, $a0
-	sll $t1, $t0, 4
-	subu $t0, $t1, $t0
-	sll $v0, $t0, 1
+	li $t0, 270
+	mult $a0, $t0
+	mflo $v0
 	jr $ra
 	nop
 .globl mul_with_constant_3
@@ -539,62 +531,49 @@ mul_with_constant_3:
 .globl mul_with_constant_85
 mul_with_constant_85:
 .p2align 2
-	sll $t0, $a0, 2
-	addu $t0, $t0, $a0
-	sll $t1, $t0, 4
-	addu $v0, $t1, $t0
+	li $t0, 85
+	mult $a0, $t0
+	mflo $v0
 	jr $ra
 	nop
 .globl mul_with_constant_23
 mul_with_constant_23:
 .p2align 2
-	sll $t0, $a0, 1
-	addu $t0, $t0, $a0
-	sll $t0, $t0, 3
-	subu $v0, $t0, $a0
+	li $t0, 23
+	mult $a0, $t0
+	mflo $v0
 	jr $ra
 	nop
 .globl mul_with_constant_neg_23
 mul_with_constant_neg_23:
 .p2align 2
-	sll $t0, $a0, 1
-	addu $t0, $t0, $a0
-	sll $t0, $t0, 3
-	subu $t0, $t0, $a0
-	subu $v0, $zero, $t0
+	li $t0, -23
+	mult $a0, $t0
+	mflo $v0
 	jr $ra
 	nop
 .globl mul_with_constant_neg_82
 mul_with_constant_neg_82:
 .p2align 2
-	sll $t0, $a0, 2
-	addu $t0, $t0, $a0
-	sll $t0, $t0, 3
-	addu $t0, $t0, $a0
-	sll $t0, $t0, 1
-	subu $v0, $zero, $t0
+	li $t0, -82
+	mult $a0, $t0
+	mflo $v0
 	jr $ra
 	nop
 .globl mul_with_constant_neg_103
 mul_with_constant_neg_103:
 .p2align 2
-	sll $t0, $a0, 3
-	subu $t0, $t0, $a0
-	sll $t0, $t0, 1
-	subu $t0, $t0, $a0
-	sll $t0, $t0, 3
-	subu $t0, $t0, $a0
-	subu $v0, $zero, $t0
+	li $t0, -103
+	mult $a0, $t0
+	mflo $v0
 	jr $ra
 	nop
 .globl mul_with_constant_neg_59
 mul_with_constant_neg_59:
 .p2align 2
-	sll $t0, $a0, 4
-	subu $t0, $t0, $a0
-	sll $t0, $t0, 2
-	subu $t0, $t0, $a0
-	subu $v0, $zero, $t0
+	li $t0, -59
+	mult $a0, $t0
+	mflo $v0
 	jr $ra
 	nop
 .globl mul_with_constant_17
@@ -638,10 +617,9 @@ mul_with_constant_8193:
 .globl mul_with_constant_270369
 mul_with_constant_270369:
 .p2align 2
-	sll $t0, $a0, 5
-	addu $t0, $t0, $a0
-	sll $t1, $t0, 13
-	addu $v0, $t1, $t0
+	li $t0, 270369
+	mult $a0, $t0
+	mflo $v0
 	jr $ra
 	nop
 .globl mul_with_constant_33
@@ -674,11 +652,9 @@ mul_with_constant_60:
 .globl mul_with_constant_300
 mul_with_constant_300:
 .p2align 2
-	sll $t0, $a0, 2
-	addu $t0, $t0, $a0
-	sll $t1, $t0, 4
-	subu $t0, $t1, $t0
-	sll $v0, $t0, 2
+	li $t0, 300
+	mult $a0, $t0
+	mflo $v0
 	jr $ra
 	nop
 .globl mul_with_constant_10000

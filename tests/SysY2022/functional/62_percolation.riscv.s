@@ -8,12 +8,12 @@ array:
 findfa:
 .p2align 2
 	addi sp, sp, -48
-pcrel65:
+pcrel73:
 	auipc a1, %pcrel_hi(array)
 	sd s0, 40(sp)
 	mv s0, a0
 	sd s1, 32(sp)
-	addi a0, a1, %pcrel_lo(pcrel65)
+	addi a0, a1, %pcrel_lo(pcrel73)
 	sd s2, 24(sp)
 	sh2add a1, s0, a0
 	mv s1, a0
@@ -77,19 +77,19 @@ label12:
 main:
 .p2align 2
 	addi sp, sp, -48
-pcrel497:
+pcrel517:
 	auipc a0, %pcrel_hi(array)
 	sd s0, 40(sp)
-	addi s0, a0, %pcrel_lo(pcrel497)
+	addi s0, a0, %pcrel_lo(pcrel517)
 	sd s1, 32(sp)
 	li s1, 1
 	sd s3, 24(sp)
 	sd s2, 16(sp)
 	sd s4, 8(sp)
 	sd ra, 0(sp)
-	beq s1, zero, label108
+	beq s1, zero, label116
 .p2align 2
-label69:
+label77:
 	addiw s1, s1, -1
 	li a0, -1
 	mv s3, zero
@@ -112,56 +112,56 @@ label69:
 	sw a0, 68(s0)
 	mv s2, zero
 	li a0, 10
-	bge zero, a0, label74
+	bge zero, a0, label82
 .p2align 2
-label75:
+label83:
 	jal getint
 	mv s4, a0
 	jal getint
 	mv a3, a0
-	beq s3, zero, label78
+	beq s3, zero, label86
 	addiw s2, s2, 1
 	li a0, 10
-	blt s2, a0, label75
-	bne s1, zero, label69
-	j label108
+	blt s2, a0, label83
+	bne s1, zero, label77
+	j label116
 .p2align 2
-label78:
+label86:
 	addiw a0, s4, -1
 	sh2add a2, a0, a3
 	li a0, 1
 	sh2add a1, a2, s0
 	sw a2, 0(a1)
-	beq s4, a0, label79
+	beq s4, a0, label87
 	li a0, 4
-	beq s4, a0, label82
-	blt a3, a0, label105
+	beq s4, a0, label90
+	blt a3, a0, label113
 	li a0, 1
-	bgt a3, a0, label102
+	bgt a3, a0, label110
 	li a0, 4
-	blt s4, a0, label87
+	blt s4, a0, label95
 	li a0, 1
-	bgt s4, a0, label91
+	bgt s4, a0, label99
 	lw a0, 0(s0)
 	li a1, -1
-	bne a0, a1, label95
+	bne a0, a1, label103
 	mv a0, zero
 	addiw s2, s2, 1
 	li a0, 10
-	blt s2, a0, label75
-	beq s3, zero, label74
-	bne s1, zero, label69
-	j label108
+	blt s2, a0, label83
+	beq s3, zero, label82
+	bne s1, zero, label77
+	j label116
 .p2align 2
-label74:
+label82:
 	li a0, -1
 	jal putint
 	li a0, 10
 	jal putch
-	bne s1, zero, label69
-	j label108
+	bne s1, zero, label77
+	j label116
 .p2align 2
-label98:
+label106:
 	mv a0, zero
 	jal findfa
 	mv a2, a0
@@ -169,15 +169,15 @@ label98:
 	jal findfa
 	xor a1, a2, a0
 	sltiu a0, a1, 1
-	bne a0, zero, label101
+	bne a0, zero, label109
 	addiw s2, s2, 1
 	li a0, 10
-	blt s2, a0, label75
-	beq s3, zero, label74
-	bne s1, zero, label69
-	j label108
+	blt s2, a0, label83
+	beq s3, zero, label82
+	bne s1, zero, label77
+	j label116
 .p2align 2
-label101:
+label109:
 	addiw a0, s2, 1
 	jal putint
 	li a0, 10
@@ -185,168 +185,167 @@ label101:
 	li s3, 1
 	addiw s2, s2, 1
 	li a0, 10
-	blt s2, a0, label75
-	beq s3, zero, label74
-	bne s1, zero, label69
-	j label108
+	blt s2, a0, label83
+	beq s3, zero, label82
+	bne s1, zero, label77
+	j label116
 .p2align 2
-label79:
+label87:
 	sw zero, 0(s0)
 	mv a0, a2
 	jal findfa
 	mv a4, a0
 	mv a0, zero
 	jal findfa
-	bne a4, a0, label80
+	bne a4, a0, label88
 	li a0, 4
-	beq s4, a0, label82
-	blt a3, a0, label105
+	beq s4, a0, label90
+	blt a3, a0, label113
 	li a0, 1
-	bgt a3, a0, label102
+	bgt a3, a0, label110
 	li a0, 4
-	blt s4, a0, label87
+	blt s4, a0, label95
 	li a0, 1
-	bgt s4, a0, label91
+	bgt s4, a0, label99
 	lw a0, 0(s0)
 	li a1, -1
-	bne a0, a1, label95
+	bne a0, a1, label103
 	mv a0, zero
 	addiw s2, s2, 1
 	li a0, 10
-	blt s2, a0, label75
-	beq s3, zero, label74
-	bne s1, zero, label69
-	j label108
+	blt s2, a0, label83
+	beq s3, zero, label82
+	bne s1, zero, label77
+	j label116
 .p2align 2
-label102:
+label110:
 	addiw a3, a2, -1
-	li a4, -1
-	sh2add a1, a3, s0
-	lw a0, 0(a1)
-	bne a0, a4, label103
-	li a0, 4
-	blt s4, a0, label87
-	li a0, 1
-	bgt s4, a0, label91
-	lw a0, 0(s0)
 	li a1, -1
-	bne a0, a1, label95
+	sh2add a4, a3, s0
+	lw a0, 0(a4)
+	bne a0, a1, label111
+	li a0, 4
+	blt s4, a0, label95
+	li a0, 1
+	bgt s4, a0, label99
+	lw a0, 0(s0)
+	bne a0, a1, label103
 	mv a0, zero
 	addiw s2, s2, 1
 	li a0, 10
-	blt s2, a0, label75
-	beq s3, zero, label74
-	bne s1, zero, label69
-	j label108
+	blt s2, a0, label83
+	beq s3, zero, label82
+	bne s1, zero, label77
+	j label116
 .p2align 2
-label91:
+label99:
 	addiw a3, a2, -4
 	li a1, -1
 	sh2add a4, a3, s0
 	lw a0, 0(a4)
-	bne a0, a1, label92
+	bne a0, a1, label100
 	lw a0, 0(s0)
-	bne a0, a1, label95
+	bne a0, a1, label103
 	mv a0, zero
 	addiw s2, s2, 1
 	li a0, 10
-	blt s2, a0, label75
-	beq s3, zero, label74
-	bne s1, zero, label69
-	j label108
+	blt s2, a0, label83
+	beq s3, zero, label82
+	bne s1, zero, label77
+	j label116
 .p2align 2
-label83:
+label91:
 	sh2add a1, a4, s0
 	sw a0, 0(a1)
 	li a0, 4
-	blt a3, a0, label105
+	blt a3, a0, label113
 	li a0, 1
-	bgt a3, a0, label102
+	bgt a3, a0, label110
 	li a0, 4
-	blt s4, a0, label87
+	blt s4, a0, label95
 	li a0, 1
-	bgt s4, a0, label91
+	bgt s4, a0, label99
 	lw a0, 0(s0)
 	li a1, -1
-	bne a0, a1, label95
+	bne a0, a1, label103
 	mv a0, zero
 	addiw s2, s2, 1
 	li a0, 10
-	blt s2, a0, label75
-	beq s3, zero, label74
-	bne s1, zero, label69
-	j label108
+	blt s2, a0, label83
+	beq s3, zero, label82
+	bne s1, zero, label77
+	j label116
 .p2align 2
-label105:
+label113:
 	addiw a4, a2, 1
 	li a1, -1
 	sh2add a5, a4, s0
 	lw a0, 0(a5)
-	bne a0, a1, label106
+	bne a0, a1, label114
 	li a0, 1
-	bgt a3, a0, label102
+	bgt a3, a0, label110
 	li a0, 4
-	blt s4, a0, label87
+	blt s4, a0, label95
 	li a0, 1
-	bgt s4, a0, label91
+	bgt s4, a0, label99
 	lw a0, 0(s0)
-	bne a0, a1, label95
+	bne a0, a1, label103
 	mv a0, zero
 	addiw s2, s2, 1
 	li a0, 10
-	blt s2, a0, label75
-	beq s3, zero, label74
-	bne s1, zero, label69
-	j label108
+	blt s2, a0, label83
+	beq s3, zero, label82
+	bne s1, zero, label77
+	j label116
 .p2align 2
-label106:
+label114:
 	mv a0, a2
 	jal findfa
 	mv a5, a0
 	mv a0, a4
 	jal findfa
-	bne a5, a0, label107
+	bne a5, a0, label115
 	li a0, 1
-	bgt a3, a0, label102
+	bgt a3, a0, label110
 	li a0, 4
-	blt s4, a0, label87
+	blt s4, a0, label95
 	li a0, 1
-	bgt s4, a0, label91
+	bgt s4, a0, label99
 	lw a0, 0(s0)
 	li a1, -1
-	bne a0, a1, label95
+	bne a0, a1, label103
 	mv a0, zero
 	addiw s2, s2, 1
 	li a0, 10
-	blt s2, a0, label75
-	beq s3, zero, label74
-	bne s1, zero, label69
-	j label108
+	blt s2, a0, label83
+	beq s3, zero, label82
+	bne s1, zero, label77
+	j label116
 .p2align 2
-label80:
+label88:
 	sh2add a1, a4, s0
 	sw a0, 0(a1)
 	li a0, 4
-	beq s4, a0, label82
-	blt a3, a0, label105
+	beq s4, a0, label90
+	blt a3, a0, label113
 	li a0, 1
-	bgt a3, a0, label102
+	bgt a3, a0, label110
 	li a0, 4
-	blt s4, a0, label87
+	blt s4, a0, label95
 	li a0, 1
-	bgt s4, a0, label91
+	bgt s4, a0, label99
 	lw a0, 0(s0)
 	li a1, -1
-	bne a0, a1, label95
+	bne a0, a1, label103
 	mv a0, zero
 	addiw s2, s2, 1
 	li a0, 10
-	blt s2, a0, label75
-	beq s3, zero, label74
-	bne s1, zero, label69
-	j label108
+	blt s2, a0, label83
+	beq s3, zero, label82
+	bne s1, zero, label77
+	j label116
 .p2align 2
-label82:
+label90:
 	li a5, 17
 	sw a5, 68(s0)
 	mv a0, a2
@@ -354,66 +353,66 @@ label82:
 	mv a4, a0
 	mv a0, a5
 	jal findfa
-	bne a4, a0, label83
+	bne a4, a0, label91
 	li a0, 4
-	blt a3, a0, label105
+	blt a3, a0, label113
 	li a0, 1
-	bgt a3, a0, label102
+	bgt a3, a0, label110
 	li a0, 4
-	blt s4, a0, label87
+	blt s4, a0, label95
 	li a0, 1
-	bgt s4, a0, label91
+	bgt s4, a0, label99
 	lw a0, 0(s0)
 	li a1, -1
-	bne a0, a1, label95
+	bne a0, a1, label103
 	mv a0, zero
 	addiw s2, s2, 1
 	li a0, 10
-	blt s2, a0, label75
-	beq s3, zero, label74
-	bne s1, zero, label69
-	j label108
+	blt s2, a0, label83
+	beq s3, zero, label82
+	bne s1, zero, label77
+	j label116
 .p2align 2
-label87:
+label95:
 	addiw a3, a2, 4
 	li a4, -1
 	sh2add a1, a3, s0
 	lw a0, 0(a1)
-	bne a0, a4, label88
+	bne a0, a4, label96
 	li a0, 1
-	bgt s4, a0, label91
+	bgt s4, a0, label99
 	lw a0, 0(s0)
 	li a1, -1
-	bne a0, a1, label95
+	bne a0, a1, label103
 	mv a0, zero
 	addiw s2, s2, 1
 	li a0, 10
-	blt s2, a0, label75
-	beq s3, zero, label74
-	bne s1, zero, label69
-	j label108
+	blt s2, a0, label83
+	beq s3, zero, label82
+	bne s1, zero, label77
+	j label116
 .p2align 2
-label103:
+label111:
 	mv a0, a2
 	jal findfa
 	mv a4, a0
 	mv a0, a3
 	jal findfa
-	bne a4, a0, label104
+	bne a4, a0, label112
 	li a0, 4
-	blt s4, a0, label87
+	blt s4, a0, label95
 	li a0, 1
-	bgt s4, a0, label91
+	bgt s4, a0, label99
 	lw a0, 0(s0)
 	li a1, -1
-	bne a0, a1, label95
+	bne a0, a1, label103
 	mv a0, zero
 	addiw s2, s2, 1
 	li a0, 10
-	blt s2, a0, label75
-	beq s3, zero, label74
-	bne s1, zero, label69
-label108:
+	blt s2, a0, label83
+	beq s3, zero, label82
+	bne s1, zero, label77
+label116:
 	mv a0, zero
 	ld ra, 0(sp)
 	ld s4, 8(sp)
@@ -424,121 +423,121 @@ label108:
 	addi sp, sp, 48
 	ret
 .p2align 2
-label104:
+label112:
 	sh2add a1, a4, s0
 	sw a0, 0(a1)
 	li a0, 4
-	blt s4, a0, label87
+	blt s4, a0, label95
 	li a0, 1
-	bgt s4, a0, label91
+	bgt s4, a0, label99
 	lw a0, 0(s0)
 	li a1, -1
-	bne a0, a1, label95
+	bne a0, a1, label103
 	mv a0, zero
 	addiw s2, s2, 1
 	li a0, 10
-	blt s2, a0, label75
-	beq s3, zero, label74
-	bne s1, zero, label69
-	j label108
+	blt s2, a0, label83
+	beq s3, zero, label82
+	bne s1, zero, label77
+	j label116
 .p2align 2
-label88:
+label96:
 	mv a0, a2
 	jal findfa
 	mv a4, a0
 	mv a0, a3
 	jal findfa
-	bne a4, a0, label89
+	bne a4, a0, label97
 	li a0, 1
-	bgt s4, a0, label91
+	bgt s4, a0, label99
 	lw a0, 0(s0)
 	li a1, -1
-	bne a0, a1, label95
+	bne a0, a1, label103
 	mv a0, zero
 	addiw s2, s2, 1
 	li a0, 10
-	blt s2, a0, label75
-	beq s3, zero, label74
-	bne s1, zero, label69
-	j label108
+	blt s2, a0, label83
+	beq s3, zero, label82
+	bne s1, zero, label77
+	j label116
 .p2align 2
-label89:
+label97:
 	sh2add a1, a4, s0
 	sw a0, 0(a1)
 	li a0, 1
-	bgt s4, a0, label91
+	bgt s4, a0, label99
 	lw a0, 0(s0)
 	li a1, -1
-	bne a0, a1, label95
+	bne a0, a1, label103
 	mv a0, zero
 	addiw s2, s2, 1
 	li a0, 10
-	blt s2, a0, label75
-	beq s3, zero, label74
-	bne s1, zero, label69
-	j label108
+	blt s2, a0, label83
+	beq s3, zero, label82
+	bne s1, zero, label77
+	j label116
 .p2align 2
-label95:
+label103:
 	lw a2, 68(s0)
 	xori a1, a2, -1
 	sltu a0, zero, a1
-	bne a0, zero, label98
+	bne a0, zero, label106
 	mv a0, zero
 	addiw s2, s2, 1
 	li a0, 10
-	blt s2, a0, label75
-	beq s3, zero, label74
-	bne s1, zero, label69
-	j label108
+	blt s2, a0, label83
+	beq s3, zero, label82
+	bne s1, zero, label77
+	j label116
 .p2align 2
-label92:
+label100:
 	mv a0, a2
 	jal findfa
 	mv a2, a0
 	mv a0, a3
 	jal findfa
-	bne a2, a0, label93
+	bne a2, a0, label101
 	lw a0, 0(s0)
 	li a1, -1
-	bne a0, a1, label95
+	bne a0, a1, label103
 	mv a0, zero
 	addiw s2, s2, 1
 	li a0, 10
-	blt s2, a0, label75
-	beq s3, zero, label74
-	bne s1, zero, label69
-	j label108
+	blt s2, a0, label83
+	beq s3, zero, label82
+	bne s1, zero, label77
+	j label116
 .p2align 2
-label93:
+label101:
 	sh2add a1, a2, s0
 	sw a0, 0(a1)
 	lw a0, 0(s0)
 	li a1, -1
-	bne a0, a1, label95
+	bne a0, a1, label103
 	mv a0, zero
 	addiw s2, s2, 1
 	li a0, 10
-	blt s2, a0, label75
-	beq s3, zero, label74
-	bne s1, zero, label69
-	j label108
+	blt s2, a0, label83
+	beq s3, zero, label82
+	bne s1, zero, label77
+	j label116
 .p2align 2
-label107:
+label115:
 	sh2add a1, a5, s0
 	sw a0, 0(a1)
 	li a0, 1
-	bgt a3, a0, label102
+	bgt a3, a0, label110
 	li a0, 4
-	blt s4, a0, label87
+	blt s4, a0, label95
 	li a0, 1
-	bgt s4, a0, label91
+	bgt s4, a0, label99
 	lw a0, 0(s0)
 	li a1, -1
-	bne a0, a1, label95
+	bne a0, a1, label103
 	mv a0, zero
 	addiw s2, s2, 1
 	li a0, 10
-	blt s2, a0, label75
-	beq s3, zero, label74
-	bne s1, zero, label69
-	j label108
+	blt s2, a0, label83
+	beq s3, zero, label82
+	bne s1, zero, label77
+	j label116

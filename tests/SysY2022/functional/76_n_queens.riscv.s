@@ -20,7 +20,7 @@ f:
 	sd s0, 96(sp)
 	mv s0, a0
 	sd s5, 88(sp)
-pcrel128:
+pcrel137:
 	auipc a0, %pcrel_hi(ans)
 	addiw s5, s0, 1
 	sd s2, 80(sp)
@@ -30,22 +30,22 @@ pcrel128:
 	sd s6, 64(sp)
 	li s6, 1
 	sd s4, 56(sp)
-	addi s4, a0, %pcrel_lo(pcrel128)
+	addi s4, a0, %pcrel_lo(pcrel137)
 	sd s3, 48(sp)
-pcrel129:
+pcrel138:
 	auipc a0, %pcrel_hi(row)
 	sd s7, 40(sp)
-	addi s3, a0, %pcrel_lo(pcrel129)
+	addi s3, a0, %pcrel_lo(pcrel138)
 	sd s8, 32(sp)
-pcrel130:
+pcrel139:
 	auipc a0, %pcrel_hi(line1)
 	sd s9, 24(sp)
-	addi s7, a0, %pcrel_lo(pcrel130)
+	addi s7, a0, %pcrel_lo(pcrel139)
 	sd s10, 16(sp)
-pcrel131:
+pcrel140:
 	auipc a0, %pcrel_hi(line2)
 	sd s11, 8(sp)
-	addi s8, a0, %pcrel_lo(pcrel131)
+	addi s8, a0, %pcrel_lo(pcrel140)
 	sd ra, 0(sp)
 	lw a0, 0(a2)
 	ble s6, a0, label5
@@ -78,20 +78,20 @@ label5:
 .p2align 2
 label7:
 	addw s9, s0, s6
-	sh2add a1, s9, s7
-	lw a2, 0(a1)
-	beq a2, zero, label8
+	sh2add a2, s9, s7
+	lw a1, 0(a2)
+	beq a1, zero, label8
 	addiw s6, s6, 1
 	lw a0, 0(s1)
 	ble s6, a0, label5
 	j label4
 .p2align 2
 label8:
-	addw a1, s0, a0
-	subw a3, a1, s6
-	sh2add a2, a3, s8
-	lw a1, 0(a2)
-	beq a1, zero, label9
+	addw a2, s0, a0
+	subw a1, a2, s6
+	sh2add a3, a1, s8
+	lw a2, 0(a3)
+	beq a2, zero, label9
 .p2align 2
 label6:
 	addiw s6, s6, 1
@@ -163,13 +163,13 @@ main:
 	sd ra, 8(sp)
 	sw zero, 4(sp)
 	jal getint
-	bgt a0, zero, label145
+	bgt a0, zero, label154
 	mv a0, zero
-	j label136
-label145:
+	j label145
+label154:
 	mv s2, a0
 .p2align 2
-label133:
+label142:
 	jal getint
 	sw a0, 0(sp)
 	mv a1, s1
@@ -177,9 +177,9 @@ label133:
 	mv a2, s0
 	jal f
 	addiw s2, s2, -1
-	bgt s2, zero, label133
+	bgt s2, zero, label142
 	lw a0, 4(sp)
-label136:
+label145:
 	ld ra, 8(sp)
 	ld s2, 16(sp)
 	ld s1, 24(sp)

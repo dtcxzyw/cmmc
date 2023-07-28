@@ -29,7 +29,7 @@
 
 CMMC_MIR_NAMESPACE_BEGIN
 
-void registerCoalescing(MIRFunction& func, const CodeGenContext& ctx) {
+void registerCoalescing(MIRFunction& func, CodeGenContext& ctx) {
     while(genericPeepholeOpt(func, ctx))
         ;
     // func.dump(std::cerr, ctx);

@@ -20,20 +20,20 @@ mean:
 main:
 .p2align 2
 	addi sp, sp, -48
-pcrel638:
+pcrel650:
 	auipc a0, %pcrel_hi(a)
 	sd s0, 40(sp)
-	addi s0, a0, %pcrel_lo(pcrel638)
+	addi s0, a0, %pcrel_lo(pcrel650)
 	sd s1, 32(sp)
-pcrel639:
+pcrel651:
 	auipc a0, %pcrel_hi(mean)
 	sd s2, 24(sp)
-	addi s1, a0, %pcrel_lo(pcrel639)
+	addi s1, a0, %pcrel_lo(pcrel651)
 	sd s3, 16(sp)
-pcrel640:
+pcrel652:
 	auipc a0, %pcrel_hi(var)
 	mv s3, zero
-	addi s2, a0, %pcrel_lo(pcrel640)
+	addi s2, a0, %pcrel_lo(pcrel652)
 	fsw f8, 8(sp)
 	sd ra, 0(sp)
 label2:
@@ -141,9 +141,6 @@ label15:
 	fadd.s f12, f12, f14
 	blt a3, a4, label15
 	sh2add a2, a3, a2
-.p2align 2
-pcrel641:
-	auipc a3, %pcrel_hi(__cmmc_fp_constant_pool)
 	flw f14, 0(a2)
 	flw f15, 4(a2)
 	fsub.s f13, f14, f11
@@ -178,9 +175,11 @@ pcrel641:
 	fmul.s f14, f13, f13
 	fadd.s f11, f12, f14
 	fmv.w.x f12, a2
-	addi a2, a3, %pcrel_lo(pcrel641)
-	flw f13, 0(a2)
+pcrel653:
+	auipc a2, %pcrel_hi(__cmmc_fp_constant_pool)
+	addi a3, a2, %pcrel_lo(pcrel653)
 	lui a2, 258048
+	flw f13, 0(a3)
 	fdiv.s f11, f11, f12
 	fmv.w.x f14, a2
 	fadd.s f12, f11, f13
@@ -188,10 +187,9 @@ pcrel641:
 	fmul.s f11, f12, f14
 	fmv.s f14, f12
 	fmul.s f15, f11, f11
-.p2align 2
-pcrel642:
+pcrel654:
 	auipc a2, %pcrel_hi(__cmmc_fp_constant_pool)
-	addi a3, a2, %pcrel_lo(pcrel642)
+	addi a3, a2, %pcrel_lo(pcrel654)
 	fsub.s f1, f15, f12
 	fabs.s f0, f1
 	flw f1, 4(a3)
@@ -225,10 +223,9 @@ label23:
 	fmv.s f13, f11
 	fmv.s f11, f15
 	fmul.s f15, f15, f15
-.p2align 2
-pcrel643:
+pcrel655:
 	auipc a2, %pcrel_hi(__cmmc_fp_constant_pool)
-	addi a3, a2, %pcrel_lo(pcrel643)
+	addi a3, a2, %pcrel_lo(pcrel655)
 	fsub.s f1, f15, f12
 	fabs.s f0, f1
 	flw f1, 4(a3)
@@ -260,10 +257,9 @@ label24:
 	fmv.s f14, f11
 	fmv.s f11, f15
 	fmul.s f15, f15, f15
-.p2align 2
-pcrel644:
+pcrel656:
 	auipc a2, %pcrel_hi(__cmmc_fp_constant_pool)
-	addi a3, a2, %pcrel_lo(pcrel644)
+	addi a3, a2, %pcrel_lo(pcrel656)
 	fsub.s f1, f15, f12
 	fabs.s f0, f1
 	flw f1, 4(a3)
@@ -594,11 +590,11 @@ label46:
 	fadd.s f8, f11, f10
 	j label41
 label248:
-	sh2add a1, a2, s2
+	sh2add a3, a2, s2
 	li a4, 4000
-	sh2add a3, a2, s1
-	flw f10, 0(a1)
-	flw f11, 0(a3)
+	sh2add a1, a2, s1
+	flw f10, 0(a3)
+	flw f11, 0(a1)
 	mul a1, a2, a4
 	mv a4, zero
 	add a3, s0, a1

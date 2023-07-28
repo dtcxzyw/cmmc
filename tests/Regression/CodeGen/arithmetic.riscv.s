@@ -178,9 +178,8 @@ mod_imm:
 	srli a3, a1, 63
 	srli a2, a1, 32
 	add a1, a3, a2
-	li a2, 3
-	mulw a3, a1, a2
-	subw a0, a0, a3
+	sh1add a2, a1, a1
+	subw a0, a0, a2
 	ret
 .globl mod_reg
 mod_reg:
@@ -364,9 +363,9 @@ fp_imm0:
 .globl fp_imm1
 fp_imm1:
 .p2align 2
-pcrel262:
+pcrel266:
 	auipc a0, %pcrel_hi(__cmmc_fp_constant_pool)
-	addi a1, a0, %pcrel_lo(pcrel262)
+	addi a1, a0, %pcrel_lo(pcrel266)
 	flw f10, 0(a1)
 	ret
 .globl and_trunc
@@ -428,25 +427,20 @@ mul_with_constant_neg_1:
 .globl mul_with_constant_100
 mul_with_constant_100:
 .p2align 2
-	sh2add a1, a0, a0
-	sh2add a2, a1, a1
-	slliw a0, a2, 2
+	li a1, 100
+	mulw a0, a0, a1
 	ret
 .globl mul_with_constant_1000
 mul_with_constant_1000:
 .p2align 2
-	slliw a1, a0, 6
-	subw a2, a1, a0
-	slli a3, a2, 1
-	subw a1, a3, a0
-	slliw a0, a1, 3
+	li a1, 1000
+	mulw a0, a0, a1
 	ret
 .globl mul_with_constant_400
 mul_with_constant_400:
 .p2align 2
-	sh2add a1, a0, a0
-	sh2add a2, a1, a1
-	slliw a0, a2, 4
+	li a1, 400
+	mulw a0, a0, a1
 	ret
 .globl mul_with_constant_1000000
 mul_with_constant_1000000:
@@ -457,16 +451,14 @@ mul_with_constant_1000000:
 .globl mul_with_constant_10
 mul_with_constant_10:
 .p2align 2
-	sh2add a1, a0, a0
-	slliw a0, a1, 1
+	li a1, 10
+	mulw a0, a0, a1
 	ret
 .globl mul_with_constant_270
 mul_with_constant_270:
 .p2align 2
-	sh3add a1, a0, a0
-	slliw a2, a1, 4
-	subw a3, a2, a1
-	slliw a0, a3, 1
+	li a1, 270
+	mulw a0, a0, a1
 	ret
 .globl mul_with_constant_3
 mul_with_constant_3:
@@ -476,49 +468,38 @@ mul_with_constant_3:
 .globl mul_with_constant_85
 mul_with_constant_85:
 .p2align 2
-	sh2add a1, a0, a0
-	slliw a2, a1, 4
-	addw a0, a2, a1
+	li a1, 85
+	mulw a0, a0, a1
 	ret
 .globl mul_with_constant_23
 mul_with_constant_23:
 .p2align 2
-	sh1add a1, a0, a0
-	slliw a2, a1, 3
-	subw a0, a2, a0
+	li a1, 23
+	mulw a0, a0, a1
 	ret
 .globl mul_with_constant_neg_23
 mul_with_constant_neg_23:
 .p2align 2
-	sh1add a1, a0, a0
-	slliw a2, a1, 3
-	subw a0, a0, a2
+	li a1, -23
+	mulw a0, a0, a1
 	ret
 .globl mul_with_constant_neg_82
 mul_with_constant_neg_82:
 .p2align 2
-	sh2add a1, a0, a0
-	sh3add a2, a1, a0
-	slliw a3, a2, 1
-	subw a0, zero, a3
+	li a1, -82
+	mulw a0, a0, a1
 	ret
 .globl mul_with_constant_neg_103
 mul_with_constant_neg_103:
 .p2align 2
-	slliw a3, a0, 3
-	subw a1, a3, a0
-	slli a2, a1, 1
-	subw a3, a2, a0
-	slli a1, a3, 3
-	subw a0, a0, a1
+	li a1, -103
+	mulw a0, a0, a1
 	ret
 .globl mul_with_constant_neg_59
 mul_with_constant_neg_59:
 .p2align 2
-	slliw a1, a0, 4
-	subw a2, a1, a0
-	slli a3, a2, 2
-	subw a0, a0, a3
+	li a1, -59
+	mulw a0, a0, a1
 	ret
 .globl mul_with_constant_17
 mul_with_constant_17:
@@ -553,10 +534,8 @@ mul_with_constant_8193:
 .globl mul_with_constant_270369
 mul_with_constant_270369:
 .p2align 2
-	slliw a2, a0, 5
-	addw a1, a2, a0
-	slli a3, a1, 13
-	addw a0, a3, a1
+	li a1, 270369
+	mulw a0, a0, a1
 	ret
 .globl mul_with_constant_33
 mul_with_constant_33:
@@ -577,17 +556,14 @@ mul_with_constant_1073741824:
 .globl mul_with_constant_60
 mul_with_constant_60:
 .p2align 2
-	slliw a1, a0, 4
-	subw a2, a1, a0
-	slliw a0, a2, 2
+	li a1, 60
+	mulw a0, a0, a1
 	ret
 .globl mul_with_constant_300
 mul_with_constant_300:
 .p2align 2
-	sh2add a1, a0, a0
-	slliw a2, a1, 4
-	subw a3, a2, a1
-	slliw a0, a3, 2
+	li a1, 300
+	mulw a0, a0, a1
 	ret
 .globl mul_with_constant_10000
 mul_with_constant_10000:

@@ -9,10 +9,10 @@ array:
 main:
 .p2align 2
 	addi sp, sp, -8
-pcrel259:
+pcrel280:
 	auipc a0, %pcrel_hi(array)
 	mv a2, zero
-	addi a1, a0, %pcrel_lo(pcrel259)
+	addi a1, a0, %pcrel_lo(pcrel280)
 	sd ra, 0(sp)
 	li a0, 20
 	blt zero, a0, label4
@@ -25,25 +25,9 @@ label8:
 	add a4, a1, a2
 	addi a2, a2, -400
 	sh2add a5, a3, a4
-	lw a3, 0(a5)
-	add a5, a1, a2
-	addi a2, a2, -400
-	sh2add a4, a3, a5
-	add a5, a1, a2
-	addi a2, a2, -400
-	lw a3, 0(a4)
-	sh2add a4, a3, a5
-	add a5, a1, a2
-	addi a2, a2, -400
-	lw a3, 0(a4)
-	sh2add a4, a3, a5
-	add a5, a1, a2
-	addi a2, a2, -400
-	lw a3, 0(a4)
-	sh2add a4, a3, a5
-	lw a3, 0(a4)
 	add a4, a1, a2
 	addi a2, a2, -400
+	lw a3, 0(a5)
 	sh2add a5, a3, a4
 	lw a3, 0(a5)
 	add a5, a1, a2
@@ -61,6 +45,14 @@ label8:
 	addi a2, a2, -400
 	lw a3, 0(a5)
 	sh2add a5, a3, a4
+	add a4, a1, a2
+	addi a2, a2, -400
+	lw a3, 0(a5)
+	sh2add a5, a3, a4
+	add a4, a1, a2
+	addi a2, a2, -400
+	lw a3, 0(a5)
+	sh2add a5, a3, a4
 	lw a3, 0(a5)
 	add a5, a1, a2
 	addi a2, a2, -400
@@ -69,14 +61,23 @@ label8:
 	add a4, a1, a2
 	addi a2, a2, -400
 	sh2add a5, a3, a4
+	add a4, a1, a2
+	addi a2, a2, -400
 	lw a3, 0(a5)
-	add a5, a1, a2
-	sh2add a4, a3, a5
-	addi a3, a1, 2000
-	lw a2, 0(a4)
-	sh2add a4, a2, a3
+	sh2add a5, a3, a4
+	add a4, a1, a2
+	addi a2, a2, -400
+	lw a3, 0(a5)
+	sh2add a5, a3, a4
+	add a4, a1, a2
+	lw a3, 0(a5)
+	sh2add a3, a3, a4
+	addi a4, a1, 2000
+	lw a2, 0(a3)
 	addi a3, a1, 1600
-	lw a2, 0(a4)
+	sh2add a5, a2, a4
+	lw a2, 0(a5)
+	addi a5, a1, 400
 	sh2add a4, a2, a3
 	addi a3, a1, 1200
 	lw a2, 0(a4)
@@ -84,36 +85,35 @@ label8:
 	addi a3, a1, 800
 	lw a2, 0(a4)
 	sh2add a4, a2, a3
-	addi a3, a1, 400
 	lw a2, 0(a4)
-	sh2add a4, a2, a3
-	lw a5, 0(a4)
+	sh2add a4, a2, a5
+	lw a3, 0(a4)
 	add a4, a1, a0
-	sh2add a3, a5, a1
+	sh2add a5, a3, a1
 	li a0, 400
-	lw a2, 0(a3)
+	lw a2, 0(a5)
 	lw a3, 0(a4)
 	mul a4, a3, a0
-	add a5, a1, a4
-	lw a3, 68(a5)
+	add a3, a1, a4
+	lw a5, 68(a3)
+	mul a4, a5, a0
+	add t0, a1, a4
+	lw a3, 64(t0)
+	mul a5, a3, a0
+	add a4, a1, a5
+	lw a3, 60(a4)
 	mul t0, a3, a0
 	add a4, a1, t0
-	lw a3, 64(a4)
-	mul t0, a3, a0
-	add a4, a1, t0
-	lw a5, 60(a4)
-	mul a3, a5, a0
-	add a4, a1, a3
 	lw a5, 56(a4)
-	mul a3, a5, a0
-	add a4, a1, a3
-	lw a5, 52(a4)
-	mul a3, a5, a0
-	add t0, a1, a3
-	lw a4, 48(t0)
-	mul a5, a4, a0
-	add a3, a1, a5
-	lw a4, 44(a3)
+	mul t1, a5, a0
+	add a3, a1, t1
+	lw t0, 52(a3)
+	mul a4, t0, a0
+	add a5, a1, a4
+	lw a3, 48(a5)
+	mul t1, a3, a0
+	add t0, a1, t1
+	lw a4, 44(t0)
 	mul a5, a4, a0
 	add a3, a1, a5
 	lw a4, 40(a3)
@@ -178,25 +178,25 @@ label5:
 	sw a5, 16(a4)
 	addiw a5, a0, 7
 	sw t1, 20(a4)
-	addiw t1, a0, 8
+	addiw t1, a0, 10
 	sw t0, 24(a4)
-	addiw t0, a0, 9
+	addiw t0, a0, 8
 	sw a5, 28(a4)
-	addiw a5, a0, 10
-	sw t1, 32(a4)
-	addiw t1, a0, 12
-	sw t0, 36(a4)
+	addiw a5, a0, 9
+	sw t0, 32(a4)
 	addiw t0, a0, 11
-	sw a5, 40(a4)
-	addiw a5, a0, 13
+	sw a5, 36(a4)
+	addiw a5, a0, 12
+	sw t1, 40(a4)
 	sw t0, 44(a4)
-	addiw t0, a0, 14
-	sw t1, 48(a4)
-	sw a5, 52(a4)
-	addiw a5, a0, 15
-	sw t0, 56(a4)
-	sw a5, 60(a4)
+	addiw t0, a0, 13
+	sw a5, 48(a4)
+	addiw a5, a0, 14
+	sw t0, 52(a4)
+	addiw t0, a0, 15
+	sw a5, 56(a4)
 	li a5, 96
+	sw t0, 60(a4)
 	addiw a4, a0, 16
 	blt a4, a5, label52
 	sh2add a3, a4, a3

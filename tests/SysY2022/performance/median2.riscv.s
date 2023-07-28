@@ -9,10 +9,10 @@ a:
 main:
 .p2align 2
 	addi sp, sp, -48
-pcrel111:
+pcrel119:
 	auipc a0, %pcrel_hi(a)
 	sd s3, 40(sp)
-	addi s3, a0, %pcrel_lo(pcrel111)
+	addi s3, a0, %pcrel_lo(pcrel119)
 	sd s0, 32(sp)
 	mv s0, s3
 	sd s1, 24(sp)
@@ -38,7 +38,7 @@ pcrel111:
 label8:
 	bgt a4, a5, label22
 	beq a4, a5, label16
-label104:
+label112:
 	sh2add t0, a5, s0
 	sh2add t2, a4, s0
 	lw t1, 0(t0)
@@ -54,16 +54,16 @@ label22:
 	bgt a3, t1, label11
 	bgt a4, a5, label22
 	beq a4, a5, label16
-	j label104
+	j label112
 .p2align 2
 label11:
 	bgt a4, a5, label21
 	beq a4, a5, label16
-	j label104
+	j label112
 .p2align 2
 label14:
 	beq a4, a5, label16
-	j label104
+	j label112
 .p2align 2
 label21:
 	addiw a5, a5, 1
@@ -95,11 +95,11 @@ label17:
 	ld ra, 0(sp)
 	slli a2, a0, 1
 	ld s2, 8(sp)
-	srli a3, a2, 56
+	srli a1, a2, 56
 	ld s4, 16(sp)
-	add a1, a0, a3
+	add a3, a0, a1
 	ld s1, 24(sp)
-	andi a2, a1, -256
+	andi a2, a3, -256
 	ld s0, 32(sp)
 	subw a0, a0, a2
 	ld s3, 40(sp)

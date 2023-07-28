@@ -129,11 +129,11 @@ main:
 .p2align 4
 	push { r4, r5, r6, r7, r8, r9, r10, lr }
 	sub sp, sp, #24
-	movw r5, #:lower16:__HELLO
 	mov r0, #10
+	movw r5, #:lower16:__HELLO
 	mov r4, sp
-	movt r5, #:upper16:__HELLO
 	str r0, [sp, #0]
+	movt r5, #:upper16:__HELLO
 	mov r0, #0
 	str r0, [r4, #4]
 	str r0, [r4, #8]
@@ -143,9 +143,10 @@ main:
 	cmp r0, #0
 	bne label31
 	mov r5, #0
-	mov r1, #6
-	sdiv r0, r5, r1
-	mls r7, r0, r1, r5
+	mov r0, #6
+	sdiv r0, r5, r0
+	add r1, r0, r0, lsl #1
+	sub r7, r5, r1, lsl #1
 	cmp r0, r7
 	bne label6
 	b label18
@@ -172,9 +173,10 @@ label2:
 	cmp r0, #0
 	bne label2
 	mov r5, #0
-	mov r1, #6
-	sdiv r0, r5, r1
-	mls r7, r0, r1, r5
+	mov r0, #6
+	sdiv r0, r5, r0
+	add r1, r0, r0, lsl #1
+	sub r7, r5, r1, lsl #1
 	cmp r0, r7
 	beq label18
 label6:
@@ -284,9 +286,10 @@ label16:
 	cmp r5, #0
 	beq label19
 label4:
-	mov r1, #6
-	sdiv r0, r5, r1
-	mls r7, r0, r1, r5
+	mov r0, #6
+	sdiv r0, r5, r0
+	add r1, r0, r0, lsl #1
+	sub r7, r5, r1, lsl #1
 	cmp r0, r7
 	bne label6
 	b label18

@@ -49,14 +49,14 @@ label116:
 	li a2, 1
 	blt a2, a3, label11
 	j label18
-label958:
+label960:
 	mv a1, a3
 	addiw a2, a2, 1
 	j label2
 .p2align 2
 label124:
 	bne a4, zero, label126
-	j label958
+	j label960
 .p2align 2
 label52:
 	addiw a3, a1, 2
@@ -87,7 +87,7 @@ label52:
 	sw zero, 16(sp)
 	lw a4, 12(sp)
 	bne a4, zero, label380
-	j label1093
+	j label1095
 .p2align 2
 label376:
 	li a4, 1
@@ -116,24 +116,24 @@ label376:
 	sw zero, 16(sp)
 	lw a4, 12(sp)
 	bne a4, zero, label380
-	j label1063
+	j label1065
 .p2align 2
-label1093:
+label1095:
 	addiw a3, a1, 12
 	li a4, 6
 	blt a2, a4, label380
-	j label1080
+	j label1082
 .p2align 2
-label1063:
+label1065:
 	addiw a3, a1, 12
 	li a4, 6
 	blt a2, a4, label380
 .p2align 2
-label1080:
+label1082:
 	sw zero, 20(sp)
 	lw a4, 16(sp)
 	bne a4, zero, label380
-	j label1096
+	j label1098
 .p2align 2
 label392:
 	mv a1, a3
@@ -144,12 +144,12 @@ label392:
 	blt a2, a3, label11
 	j label18
 .p2align 2
-label1096:
+label1098:
 	addiw a3, a1, 14
 	li a4, 7
 	blt a2, a4, label380
 .p2align 2
-label1065:
+label1067:
 	sw zero, 24(sp)
 	lw a4, 20(sp)
 	bne a4, zero, label380
@@ -174,7 +174,7 @@ label1065:
 	addiw a3, a1, 22
 	li a4, 11
 	blt a2, a4, label490
-	j label1104
+	j label1106
 .p2align 2
 label386:
 	li a4, 1
@@ -203,16 +203,16 @@ label386:
 	sw zero, 20(sp)
 	lw a4, 16(sp)
 	bne a4, zero, label380
-	j label1047
+	j label1049
 label397:
 	li a4, 1
 	j label63
 .p2align 2
-label1047:
+label1049:
 	addiw a3, a1, 14
 	li a4, 7
 	blt a2, a4, label380
-	j label1065
+	j label1067
 .p2align 2
 label119:
 	addiw a3, a1, 2
@@ -252,70 +252,67 @@ label122:
 	sw a5, 8(sp)
 	lw a4, 4(sp)
 	bne a4, zero, label126
-	j label958
+	j label960
 label618:
 	mv a4, zero
 	j label124
 label126:
 	addiw a3, a1, 4
 	li a4, 4
-	blt a2, a4, label958
+	blt a2, a4, label960
 	li a5, 1
 	sw a5, 12(sp)
 	lw a4, 8(sp)
-	beq a4, zero, label958
+	beq a4, zero, label960
 	addiw a3, a1, 5
 	li a4, 5
-	blt a2, a4, label958
-	li a4, 1
-	sw a4, 16(sp)
-	lw a5, 12(sp)
-	beq a5, zero, label958
+	blt a2, a4, label960
+	sw a5, 16(sp)
+	lw a4, 12(sp)
+	beq a4, zero, label960
 	addiw a3, a1, 6
 	li a4, 6
-	blt a2, a4, label958
-	li a5, 1
+	blt a2, a4, label960
 	sw a5, 20(sp)
 	lw a4, 16(sp)
-	beq a4, zero, label958
+	beq a4, zero, label960
 	addiw a3, a1, 7
 	li a4, 7
-	blt a2, a4, label958
-	li a4, 1
-	sw a4, 24(sp)
-	lw a5, 20(sp)
-	beq a5, zero, label958
+	blt a2, a4, label960
+	sw a5, 24(sp)
+	lw a4, 20(sp)
+	beq a4, zero, label960
 	addiw a3, a1, 8
 	li a4, 8
-	blt a2, a4, label958
-	li a5, 1
+	blt a2, a4, label960
 	sw a5, 28(sp)
 	lw a4, 24(sp)
-	beq a4, zero, label958
+	beq a4, zero, label960
 	addiw a3, a1, 9
 	li a4, 9
-	blt a2, a4, label958
+	blt a2, a4, label960
 	li a4, 1
 	sw a4, 32(sp)
 	lw a5, 28(sp)
-	beq a5, zero, label958
+	beq a5, zero, label960
 	addiw a3, a1, 10
 	li a4, 10
-	blt a2, a4, label958
-	li a5, 1
-	sw a5, 36(sp)
-	lw a4, 32(sp)
-	beq a4, zero, label958
+	blt a2, a4, label960
+	li a4, 1
+	sw a4, 36(sp)
+	lw a5, 32(sp)
+	beq a5, zero, label960
 	addiw a3, a1, 11
 	li a4, 11
 	blt a2, a4, label714
+	li a5, 1
 	sw a5, 40(sp)
 	lw a4, 36(sp)
 	j label142
 label714:
 	mv a4, zero
 label142:
-	beq a4, zero, label958
+	beq a4, zero, label960
 	addiw a3, a1, 12
 	li a4, 12
 	blt a2, a4, label726
@@ -326,7 +323,7 @@ label142:
 label726:
 	mv a4, zero
 label145:
-	beq a4, zero, label958
+	beq a4, zero, label960
 	addiw a3, a1, 13
 	li a4, 13
 	blt a2, a4, label735
@@ -337,7 +334,7 @@ label145:
 label735:
 	mv a4, zero
 label148:
-	beq a4, zero, label958
+	beq a4, zero, label960
 	addiw a3, a1, 14
 	li a4, 14
 	blt a2, a4, label744
@@ -348,7 +345,7 @@ label148:
 label744:
 	mv a4, zero
 label152:
-	beq a4, zero, label958
+	beq a4, zero, label960
 	addiw a3, a1, 15
 	li a4, 15
 	bge a2, a4, label755
@@ -407,11 +404,11 @@ label63:
 	sw zero, 20(sp)
 	lw a4, 16(sp)
 	bne a4, zero, label380
-	j label1047
+	j label1049
 label490:
 	li a4, 1
 	j label80
-label1104:
+label1106:
 	sw zero, 40(sp)
 	lw a4, 36(sp)
 label80:
@@ -640,7 +637,7 @@ label755:
 	sw a5, 56(sp)
 	lw a4, 52(sp)
 label156:
-	beq a4, zero, label958
+	beq a4, zero, label960
 	addiw a3, a1, 16
 	li a4, 16
 	blt a2, a4, label768
@@ -651,7 +648,7 @@ label156:
 label768:
 	mv a4, zero
 label159:
-	beq a4, zero, label958
+	beq a4, zero, label960
 	addiw a3, a1, 17
 	li a4, 17
 	blt a2, a4, label777
@@ -662,7 +659,7 @@ label159:
 label777:
 	mv a4, zero
 label162:
-	beq a4, zero, label958
+	beq a4, zero, label960
 	addiw a3, a1, 18
 	li a4, 18
 	bge a2, a4, label785
@@ -673,7 +670,7 @@ label785:
 	sw a5, 68(sp)
 	lw a4, 64(sp)
 label165:
-	beq a4, zero, label958
+	beq a4, zero, label960
 	addiw a4, a1, 19
 	li a3, 19
 	blt a2, a3, label795

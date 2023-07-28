@@ -282,14 +282,14 @@ label12:
 	ldr r3, [r5, #8]
 	add r2, r2, r3
 	ldr r3, [r5, #12]
-	movw r5, #32769
-	movt r5, #32768
 	add r2, r2, r3
-	smmla r5, r2, r5, r2
-	movw r3, #65535
-	asr r6, r5, #15
-	add r5, r6, r5, lsr #31
-	mls r2, r5, r3, r2
+	movw r3, #32769
+	movt r3, #32768
+	smmla r3, r2, r3, r2
+	asr r5, r3, #15
+	add r3, r5, r3, lsr #31
+	rsb r3, r3, r3, lsl #16
+	sub r2, r2, r3
 	cmp r0, r1
 	bgt label8
 label13:

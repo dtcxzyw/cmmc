@@ -168,12 +168,9 @@ fused_mul_sub:
 .globl fused_mul_sub_imm
 fused_mul_sub_imm:
 .p2align 2
-	sll $t0, $a1, 3
-	subu $t0, $t0, $a1
-	sll $t0, $t0, 4
-	subu $t0, $t0, $a1
-	sll $t1, $t0, 3
-	subu $t0, $t1, $t0
+	li $t0, 777
+	mult $a1, $t0
+	mflo $t0
 	subu $v0, $a0, $t0
 	jr $ra
 	nop

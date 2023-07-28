@@ -72,15 +72,14 @@ main:
 	str r0, [sp, #4]
 	mov r0, #7
 	bl exgcd
-	movw r2, #34953
-	mov r1, #15
+	movw r1, #34953
 	ldr r0, [sp, #0]
-	movt r2, #34952
-	smmla r2, r0, r2, r0
-	asr r3, r2, #3
-	add r2, r3, r2, lsr #31
-	mls r0, r2, r1, r0
-	cmp r0, #0
+	movt r1, #34952
+	smmla r1, r0, r1, r0
+	asr r2, r1, #3
+	add r1, r2, r1, lsr #31
+	rsb r1, r1, r1, lsl #4
+	subs r0, r0, r1
 	add r1, r0, #15
 	movlt r0, r1
 	bl putint

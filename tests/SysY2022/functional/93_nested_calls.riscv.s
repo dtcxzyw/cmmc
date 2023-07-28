@@ -9,8 +9,8 @@ main:
 	addi s4, sp, 0
 	sd s0, 80(sp)
 	sd s5, 72(sp)
-	sd s1, 40(sp)
-	sd s2, 64(sp)
+	sd s1, 64(sp)
+	sd s2, 40(sp)
 	sd s3, 56(sp)
 	sd ra, 48(sp)
 	jal getint
@@ -46,24 +46,24 @@ label5:
 	sltiu a4, a1, 1
 	and t2, a4, t3
 	lw a4, 20(sp)
-	beq a4, zero, label149
+	beq a4, zero, label150
 	mv t4, a5
-label149:
+label150:
 	mv t3, t2
-	bne t0, zero, label151
+	bne t0, zero, label152
 	mv t3, t4
-label151:
+label152:
 	lw t2, 24(sp)
 	addw t4, t3, t2
-	beq t2, zero, label153
+	beq t2, zero, label154
 	mv t3, t4
-label153:
+label154:
 	addiw t4, t3, 1
 	sltiu t6, s3, 1
 	addw t3, s3, a2
-	bne t6, zero, label155
+	bne t6, zero, label156
 	mv a2, t3
-label155:
+label156:
 	addiw a6, a2, 1
 	lw t3, 28(sp)
 	bne t3, zero, label78
@@ -77,45 +77,46 @@ label7:
 	sltiu a7, t4, 1
 	addw s4, t5, a7
 	mv a7, t5
-	bne t4, zero, label157
+	bne t4, zero, label158
 	mv a7, s4
-label157:
-	addiw a7, a7, 1
-	subw s4, a7, s0
-	bne a0, zero, label159
-	mv a7, s4
-label159:
-	mulw a7, a2, a7
+label158:
+	addiw s4, a7, 1
+	mv s5, s4
+	subw a7, s4, s0
+	bne a0, zero, label160
+	mv s5, a7
+label160:
+	mulw a7, a2, s5
 	mv a2, t1
-	bne a6, zero, label161
+	bne a6, zero, label162
 	mv a2, a7
-label161:
+label162:
 	sltiu a7, s2, 1
 	addw a6, s3, a7
-	bne t6, zero, label163
+	bne t6, zero, label164
 	mv a7, a6
-label163:
+label164:
 	addiw t6, a7, 1
 	beq t6, zero, label9
 	remw s1, s1, t6
 label9:
 	addw t6, a2, s1
-	beq s1, zero, label165
+	beq s1, zero, label166
 	mv a2, t6
-label165:
+label166:
 	addiw a2, a2, 1
 	subw t6, t1, t0
-	beq t0, zero, label167
+	beq t0, zero, label168
 	mv t1, t6
-label167:
+label168:
 	mulw a2, a2, t1
 	beq a3, zero, label12
 	remw a2, a2, a3
 label12:
 	subw a3, a5, a4
-	beq a4, zero, label169
+	beq a4, zero, label170
 	mv a5, a3
-label169:
+label170:
 	addiw a3, a5, 1
 	beq t2, zero, label14
 	subw a4, zero, t2
@@ -124,28 +125,28 @@ label14:
 	sltiu t0, t5, 1
 	mv a4, t3
 	subw a5, t3, t0
-	bne t5, zero, label171
+	bne t5, zero, label172
 	mv a4, a5
-label171:
+label172:
 	mulw a3, a3, a4
 	beq t4, zero, label17
 	subw a4, zero, t4
 	remw a3, a3, a4
 label17:
 	addw a4, s0, a3
-	bne a0, zero, label173
+	bne a0, zero, label174
 	mv a3, a4
-label173:
+label174:
 	addiw a0, a3, 1
 	subw a3, a1, a0
-	beq a0, zero, label175
+	beq a0, zero, label176
 	mv a1, a3
-label175:
+label176:
 	mulw a0, a2, a1
 	ld ra, 48(sp)
 	ld s3, 56(sp)
-	ld s2, 64(sp)
-	ld s1, 40(sp)
+	ld s2, 40(sp)
+	ld s1, 64(sp)
 	ld s5, 72(sp)
 	ld s0, 80(sp)
 	ld s4, 88(sp)

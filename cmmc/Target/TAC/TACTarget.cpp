@@ -99,7 +99,6 @@ public:
             .duplicationThreshold = 10U,
             .duplicationIterations = 10U,
             .branchLimit = std::numeric_limits<uint32_t>::max(),
-            .mulByConstThreshold = 0U,
             .disableSelectionOpt = true,
             .branchPredictionWarmupThreshold = 0U,
         };

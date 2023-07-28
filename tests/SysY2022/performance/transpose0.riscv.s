@@ -17,10 +17,10 @@ main:
 	sd s0, 8(sp)
 	sd ra, 0(sp)
 	jal getint
-pcrel187:
+pcrel197:
 	auipc a1, %pcrel_hi(a)
 	mv s1, a0
-	addi a0, a1, %pcrel_lo(pcrel187)
+	addi a0, a1, %pcrel_lo(pcrel197)
 	mv s2, a0
 	jal getarray
 	mv s0, a0
@@ -33,14 +33,14 @@ label3:
 	addiw a2, a1, 4
 	ble s1, a2, label6
 	sh2add a3, a1, a0
-	addiw a4, a1, 1
-	addiw a5, a1, 2
+	addiw a5, a1, 1
+	addiw a4, a1, 2
 	sw a1, 0(a3)
-	sw a4, 4(a3)
-	addiw a4, a1, 3
-	sw a5, 8(a3)
+	sw a5, 4(a3)
+	addiw a5, a1, 3
+	sw a4, 8(a3)
 	mv a1, a2
-	sw a4, 12(a3)
+	sw a5, 12(a3)
 	j label3
 label6:
 	sh2add a2, a1, a0
@@ -49,7 +49,7 @@ label6:
 	bgt s1, a1, label6
 label8:
 	bgt s0, zero, label9
-	j label171
+	j label181
 .p2align 2
 label10:
 	sh2add a2, a1, s2
@@ -61,7 +61,7 @@ label10:
 	addiw a1, a1, 1
 	bgt s0, a1, label10
 	bgt s0, zero, label106
-label171:
+label181:
 	mv s0, zero
 	j label22
 .p2align 2
@@ -74,18 +74,18 @@ label79:
 	addiw a1, a1, 1
 	bgt s0, a1, label10
 	bgt s0, zero, label106
-	j label171
+	j label181
 .p2align 2
 label16:
 	blt a2, a5, label17
 	mulw t2, a4, a5
-	addw t3, t0, a5
-	addw t4, a2, t2
+	addw t3, a2, t2
+	addw t2, t0, a5
+	sh2add t1, t3, a0
 	addiw a5, a5, 1
-	sh2add t2, t3, a0
-	sh2add t1, t4, a0
-	lw t4, 0(t2)
-	sw t4, 0(t1)
+	sh2add t4, t2, a0
+	lw t3, 0(t4)
+	sw t3, 0(t1)
 	bgt a3, a5, label16
 	addiw a2, a2, 1
 	mulw t0, a3, a2
@@ -93,7 +93,7 @@ label16:
 	addiw a1, a1, 1
 	bgt s0, a1, label10
 	bgt s0, zero, label106
-	j label171
+	j label181
 .p2align 2
 label17:
 	addiw a5, a5, 1
@@ -103,7 +103,7 @@ label17:
 	bgt a4, a2, label79
 	addiw a1, a1, 1
 	bgt s0, a1, label10
-	ble s0, zero, label171
+	ble s0, zero, label181
 label106:
 	auipc a1, %pcrel_hi(matrix)
 	li a2, 1
@@ -135,22 +135,22 @@ label25:
 	addw t3, a1, a2
 	lw t0, 0(a5)
 	lw t2, 4(a5)
-	mulw t0, a1, t0
 	mulw t1, t2, t3
-	addiw t3, a1, 2
-	addw t2, a4, t0
-	sh1add t0, a2, t3
-	addw a4, t1, t2
-	lw t1, 8(a5)
+	mulw t2, a1, t0
+	addw t0, a4, t2
+	lw t2, 8(a5)
+	addw a4, t1, t0
 	lw a5, 12(a5)
-	mulw t2, t0, t1
-	sh1add t1, a2, a2
-	addw a4, a4, t2
+	addiw t1, a1, 2
+	sh1add t0, a2, t1
+	mulw t1, t0, t2
 	addiw t2, a1, 6
-	addw t0, t1, t2
-	mulw t1, t0, a5
-	addiw a5, a1, 12
+	sh1add t0, a2, a2
 	addw a4, a4, t1
+	addw t1, t0, t2
+	mulw t0, t1, a5
+	addiw a5, a1, 12
+	addw a4, a4, t0
 	sh2add a1, a2, a5
 	mv a5, a3
 	addiw a2, a2, 8

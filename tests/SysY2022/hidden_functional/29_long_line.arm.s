@@ -456,9 +456,9 @@ label4:
 	asr r0, r5, #31
 	str r2, [sp, #136]
 	and r2, r3, r2
-	orr r3, r1, r2
 	str r2, [sp, #124]
-	str r3, [sp, #160]
+	orr r2, r1, r2
+	str r2, [sp, #160]
 	str r0, [sp, #20]
 	add r0, r5, r0, lsr #30
 	asr r0, r0, #2
@@ -469,13 +469,12 @@ label4:
 	str r3, [sp, #28]
 	asr r0, r0, #2
 	and r0, r0, #1
-	orr r2, r1, r0
+	orr r3, r1, r0
 	and r1, r1, r0
-	str r2, [sp, #168]
-	ldr r3, [sp, #160]
-	str r1, [sp, #180]
-	and r2, r3, r2
+	and r2, r2, r3
+	str r3, [sp, #168]
 	bic r2, r2, r1
+	str r1, [sp, #180]
 	orr r3, r1, r2
 	str r2, [sp, #172]
 	str r3, [sp, #192]
@@ -514,9 +513,9 @@ label4:
 	str r1, [sp, #84]
 	and r2, r3, r2
 	bic r2, r2, r1
-	orr r3, r1, r2
 	str r2, [sp, #88]
-	str r3, [sp, #72]
+	orr r2, r1, r2
+	str r2, [sp, #72]
 	ldr r0, [sp, #20]
 	add r0, r5, r0, lsr #27
 	asr r0, r0, #5
@@ -526,13 +525,12 @@ label4:
 	add r0, r0, r3, lsr #27
 	asr r0, r0, #5
 	and r0, r0, #1
-	orr r2, r1, r0
+	orr r3, r1, r0
 	and r1, r1, r0
-	str r2, [sp, #56]
-	ldr r3, [sp, #72]
-	str r1, [sp, #44]
-	and r2, r3, r2
+	and r2, r2, r3
+	str r3, [sp, #56]
 	bic r2, r2, r1
+	str r1, [sp, #44]
 	orr r3, r1, r2
 	str r2, [sp, #52]
 	str r3, [sp, #32]
@@ -590,9 +588,9 @@ label4:
 	str r1, [sp, #368]
 	and r2, r3, r2
 	bic r2, r2, r1
-	orr r3, r1, r2
 	str r2, [sp, #372]
-	str r3, [sp, #352]
+	orr r2, r1, r2
+	str r2, [sp, #352]
 	ldr r0, [sp, #20]
 	add r0, r5, r0, lsr #23
 	asr r0, r0, #9
@@ -602,13 +600,12 @@ label4:
 	add r0, r0, r3, lsr #23
 	asr r0, r0, #9
 	and r0, r0, #1
-	orr r2, r1, r0
+	orr r3, r1, r0
 	and r1, r1, r0
-	str r2, [sp, #344]
-	ldr r3, [sp, #352]
-	str r1, [sp, #332]
-	and r2, r3, r2
+	and r2, r2, r3
+	str r3, [sp, #344]
 	bic r2, r2, r1
+	str r1, [sp, #332]
 	str r2, [sp, #336]
 	orr r2, r1, r2
 	str r2, [sp, #188]
@@ -622,8 +619,8 @@ label4:
 	asr r0, r0, #10
 	and r0, r0, #1
 	orr r3, r1, r0
-	and r2, r2, r3
 	and r1, r1, r0
+	and r2, r2, r3
 	str r3, [sp, #204]
 	bic r2, r2, r1
 	str r1, [sp, #228]
@@ -747,14 +744,14 @@ label4:
 	bic r1, r3, r1
 	orr r1, r2, r1
 	ldr r2, [sp, #220]
+	ldr r3, [sp, #344]
 	bic r1, r1, r2
-	ldr r2, [sp, #344]
 	add r0, r1, r0, lsl #1
 	ldr r1, [sp, #332]
-	ldr r3, [sp, #352]
-	bic r1, r2, r1
+	ldr r2, [sp, #352]
+	bic r1, r3, r1
+	orr r1, r2, r1
 	ldr r2, [sp, #336]
-	orr r1, r3, r1
 	bic r1, r1, r2
 	ldr r2, [sp, #376]
 	add r0, r1, r0, lsl #1
@@ -779,14 +776,14 @@ label4:
 	bic r1, r2, r1
 	ldr r2, [sp, #4]
 	orr r1, r3, r1
+	ldr r3, [sp, #56]
 	bic r1, r1, r2
-	ldr r2, [sp, #56]
 	add r0, r1, r0, lsl #1
 	ldr r1, [sp, #44]
-	ldr r3, [sp, #72]
-	bic r1, r2, r1
+	ldr r2, [sp, #72]
+	bic r1, r3, r1
+	orr r1, r2, r1
 	ldr r2, [sp, #52]
-	orr r1, r3, r1
 	bic r1, r1, r2
 	ldr r2, [sp, #96]
 	add r0, r1, r0, lsl #1
@@ -803,14 +800,14 @@ label4:
 	bic r1, r2, r1
 	ldr r2, [sp, #216]
 	orr r1, r3, r1
+	ldr r3, [sp, #168]
 	bic r1, r1, r2
-	ldr r2, [sp, #168]
 	add r0, r1, r0, lsl #1
 	ldr r1, [sp, #180]
-	ldr r3, [sp, #160]
-	bic r1, r2, r1
+	ldr r2, [sp, #160]
+	bic r1, r3, r1
+	orr r1, r2, r1
 	ldr r2, [sp, #172]
-	orr r1, r3, r1
 	bic r1, r1, r2
 	ldr r2, [sp, #136]
 	add r1, r1, r0, lsl #1
@@ -834,7 +831,7 @@ main:
 	mov r4, #1
 	sub sp, sp, #4
 .p2align 4
-label782:
+label827:
 	mov r0, #102
 	bl putch
 	mov r0, #105
@@ -862,7 +859,7 @@ label782:
 	bl putch
 	add r4, r4, #1
 	cmp r4, #21
-	blt label782
+	blt label827
 	mov r0, #0
 	add sp, sp, #4
 	pop { r4, r5, pc }

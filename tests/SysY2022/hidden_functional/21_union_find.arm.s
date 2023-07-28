@@ -61,21 +61,21 @@ main:
 	movw r4, #:lower16:parent
 	mov r6, r0
 	movt r4, #:upper16:parent
-	bgt label84
+	bgt label92
 	cmp r0, #0
-	bgt label108
+	bgt label116
 	mov r0, #0
 	mov r1, r0
 	cmp r5, r0
-	bgt label76
-	b label77
-label84:
+	bgt label84
+	b label85
+label92:
 	mov r0, #0
 .p2align 4
-label63:
+label71:
 	add r1, r0, #4
 	cmp r5, r1
-	ble label66
+	ble label74
 	add r2, r4, r0, lsl #2
 	str r0, [r4, r0, lsl #2]
 	add r3, r0, #1
@@ -85,42 +85,42 @@ label63:
 	str r3, [r2, #8]
 	str r0, [r2, #12]
 	mov r0, r1
-	b label63
-label66:
+	b label71
+label74:
 	str r0, [r4, r0, lsl #2]
 	add r0, r0, #1
 	cmp r5, r0
-	bgt label66
+	bgt label74
 	cmp r6, #0
-	bgt label108
+	bgt label116
 	mov r0, #0
 	mov r1, r0
 	cmp r5, r0
-	bgt label76
+	bgt label84
+	b label85
+.p2align 4
+label116:
+	mov r7, #0
 	b label77
 .p2align 4
-label108:
-	mov r7, #0
-	b label69
-.p2align 4
-label73:
+label81:
 	cmp r5, r1
-	ble label77
+	ble label85
 .p2align 4
-label76:
+label84:
 	ldr r2, [r4, r1, lsl #2]
 	sub r2, r1, r2
 	add r1, r1, #1
 	clz r2, r2
 	lsr r2, r2, #5
 	add r0, r0, r2
-	b label73
-label77:
+	b label81
+label85:
 	bl putint
 	mov r0, #0
 	pop { r4, r5, r6, r7, r8, pc }
 .p2align 4
-label69:
+label77:
 	bl getint
 	mov r8, r0
 	bl getint
@@ -131,23 +131,23 @@ label69:
 	mov r0, r2
 	bl find
 	cmp r1, r0
-	bne label71
+	bne label79
 	add r7, r7, #1
 	cmp r6, r7
-	bgt label69
+	bgt label77
 	mov r0, #0
 	mov r1, r0
 	cmp r5, r0
-	bgt label76
-	b label77
+	bgt label84
+	b label85
 .p2align 4
-label71:
+label79:
 	str r1, [r4, r0, lsl #2]
 	add r7, r7, #1
 	cmp r6, r7
-	bgt label69
+	bgt label77
 	mov r0, #0
 	mov r1, r0
 	cmp r5, r0
-	bgt label76
-	b label77
+	bgt label84
+	b label85

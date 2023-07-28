@@ -807,25 +807,25 @@ main:
 	cmp r0, #35
 	movw r4, #:lower16:buffer
 	movt r4, #:upper16:buffer
-	bne label1123
+	bne label1169
 	mov r0, #0
 	mov r6, r0
 	cmp r0, r0
-	ble label1106
-	b label1104
-label1123:
+	ble label1152
+	b label1150
+label1169:
 	mov r6, #0
 .p2align 4
-label1095:
+label1141:
 	str r0, [r4, r6, lsl #2]
 	bl getch
 	cmp r0, #35
 	add r6, r6, #1
-	bne label1095
+	bne label1141
 	ldr r0, [sp, #0]
 	cmp r6, r0
-	bgt label1104
-label1106:
+	bgt label1150
+label1152:
 	mov r0, #0
 	mov r1, r4
 	mov r2, r6
@@ -833,9 +833,9 @@ label1106:
 	bl detect_item
 	mov r1, r0
 	ldr r0, [sp, #0]
-label1107:
+label1153:
 	cmp r6, r0
-	ble label1111
+	ble label1157
 	ldr r0, [sp, #0]
 	ldr r2, [r4, r0, lsl #2]
 	sub r5, r2, #9
@@ -853,12 +853,12 @@ label1107:
 	lsr r2, r2, #5
 	orr r3, r3, r5
 	orrs r2, r3, r2
-	bne label1110
-	b label1111
-label1102:
+	bne label1156
+	b label1157
+label1148:
 	cmp r6, r0
-	ble label1106
-label1104:
+	ble label1152
+label1150:
 	ldr r0, [sp, #0]
 	ldr r1, [r4, r0, lsl #2]
 	sub r3, r1, #9
@@ -876,17 +876,17 @@ label1104:
 	lsr r1, r1, #5
 	orr r2, r2, r3
 	orrs r1, r2, r1
-	beq label1106
+	beq label1152
 	add r0, r0, #1
 	str r0, [sp, #0]
-	b label1102
-label1110:
+	b label1148
+label1156:
 	add r0, r0, #1
 	str r0, [sp, #0]
-	b label1107
-label1111:
+	b label1153
+label1157:
 	cmp r1, #0
-	bne label1115
+	bne label1161
 	mov r0, #110
 	bl putch
 	mov r0, #111
@@ -902,10 +902,10 @@ label1111:
 	mov r0, #10
 	bl putch
 	mov r0, #1
-label1113:
+label1159:
 	add sp, sp, #8
 	pop { r4, r5, r6, pc }
-label1115:
+label1161:
 	mov r0, #111
 	bl putch
 	mov r0, #107
@@ -913,4 +913,4 @@ label1115:
 	mov r0, #10
 	bl putch
 	mov r0, #0
-	b label1113
+	b label1159

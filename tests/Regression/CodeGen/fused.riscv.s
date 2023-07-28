@@ -147,13 +147,9 @@ fused_mul_sub:
 .globl fused_mul_sub_imm
 fused_mul_sub_imm:
 .p2align 2
-	slliw a4, a1, 3
-	subw a3, a4, a1
-	slli a2, a3, 4
-	subw a1, a2, a1
-	slli a3, a1, 3
-	subw a2, a3, a1
-	subw a0, a0, a2
+	li a2, 777
+	mulw a3, a1, a2
+	subw a0, a0, a3
 	ret
 .globl fused_mul_sub2
 fused_mul_sub2:
@@ -177,10 +173,9 @@ fused_div_rem_constant:
 	srli a3, a1, 63
 	srli a2, a1, 32
 	add a1, a3, a2
-	li a2, 3
-	mulw a3, a1, a2
-	subw a4, a0, a3
-	addw a0, a1, a4
+	sh1add a2, a1, a1
+	subw a3, a0, a2
+	addw a0, a1, a3
 	ret
 .globl fused_mvn_and
 fused_mvn_and:

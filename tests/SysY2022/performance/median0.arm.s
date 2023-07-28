@@ -34,7 +34,7 @@ label8:
 	cmp r7, r8
 	bgt label22
 	beq label16
-label95:
+label102:
 	ldr r9, [r4, r8, lsl #2]
 	ldr r10, [r4, r7, lsl #2]
 	str r10, [r4, r8, lsl #2]
@@ -49,18 +49,18 @@ label22:
 	cmp r7, r8
 	bgt label22
 	beq label16
-	b label95
+	b label102
 .p2align 4
 label11:
 	cmp r7, r8
 	bgt label21
 	beq label16
-	b label95
+	b label102
 .p2align 4
 label14:
 	cmp r7, r8
 	beq label16
-	b label95
+	b label102
 .p2align 4
 label21:
 	add r8, r8, #1

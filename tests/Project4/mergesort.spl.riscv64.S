@@ -97,10 +97,10 @@ label8:
 	j label15
 label2:
 	addw a0, s3, s1
-	srliw a1, a0, 31
-	add a2, a0, a1
+	srliw a2, a0, 31
+	add a1, a0, a2
 	mv a0, s0
-	sraiw s4, a2, 1
+	sraiw s4, a1, 1
 	mv a1, s2
 	mv a2, s3
 	mv a3, s4
@@ -123,28 +123,28 @@ main:
 	sd ra, 800(sp)
 	jal read
 	mv t0, a0
-	ble a0, zero, label104
+	ble a0, zero, label111
 	mv a2, zero
-label102:
+label109:
 	jal read
 	sh2add a3, a2, t1
 	addiw a2, a2, 1
 	sw a0, 0(a3)
-	bgt t0, a2, label102
-label104:
+	bgt t0, a2, label109
+label111:
 	mv a0, t1
 	mv a2, zero
 	mv a3, t0
 	jal merge
-	ble t0, zero, label107
+	ble t0, zero, label114
 	mv a1, zero
-label105:
+label112:
 	sh2add a2, a1, t1
 	lw a0, 0(a2)
 	jal write
 	addiw a1, a1, 1
-	bgt t0, a1, label105
-label107:
+	bgt t0, a1, label112
+label114:
 	mv a0, zero
 	ld ra, 800(sp)
 	addi sp, sp, 808

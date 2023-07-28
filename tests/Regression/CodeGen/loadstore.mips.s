@@ -135,7 +135,7 @@ memset_impl:
 .p2align 2
 	move $t0, $zero
 .p2align 2
-label98:
+label107:
 	sll $t1, $t0, 2
 	addu $t1, $a0, $t1
 	sw $zero, 0($t1)
@@ -156,7 +156,7 @@ label98:
 	sw $zero, 60($t1)
 	addiu $t0, $t0, 16
 	addiu $t1, $t0, -128
-	bltz $t1, label98
+	bltz $t1, label107
 	nop
 	jr $ra
 	nop

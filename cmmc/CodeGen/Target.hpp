@@ -50,8 +50,6 @@ struct TargetOptHeuristic final {
     uint32_t duplicationThreshold = 10U;
     uint32_t duplicationIterations = 10U;
     uint32_t branchLimit = 1000U;
-    // multiplication by constant
-    uint32_t mulByConstThreshold = 5U;
     // don't fold select x, y, 0 into -x & y
     bool disableSelectionOpt = false;
     uint32_t branchPredictionWarmupThreshold = 8U;

@@ -29,68 +29,6 @@
 
 CMMC_NAMESPACE_BEGIN
 
-class Mul2Shl final : public TransformPass<Function> {
-public:
-    bool run(Function& func, AnalysisPassManager& analysis) const override {
-        const auto& target = analysis.module().getTarget();
-        assert(target.isNativeSupported(InstructionID::Shl));
-        IRBuilder builder{ target };
-
-        bool modified = false;
-        for(auto block : func.blocks()) {
-            reduceBlock(builder, *block, [&](Instruction* inst) -> Value* {
-                Value* v1;
-                intmax_t v2;
-                if(mul(any(v1), int_(v2))(MatchContext<Value>{ inst })) {
-                    if(v2 == 0)
-                        return nullptr;
-
-                    const auto& expand = [&](auto& self, const auto plan) {
-                        if(!plan)
-                            return v1;
-
-                        auto v = self(self, plan->parent);
-                        auto ret = v;
-                        if(plan->shamt > 0)
-                            ret = builder.makeOp<BinaryInst>(InstructionID::Shl, ret,
-                                                             ConstantInteger::get(v1->getType(), plan->shamt));
-
-                        auto rhs = plan->rhs == ShiftArithNode::RhsType::CHAIN ? v : v1;
-                        switch(plan->artihmetic) {
-                            case ShiftArithNode::ArtihType::ADD:
-                                ret = builder.makeOp<BinaryInst>(InstructionID::Add, ret, rhs);
-                                break;
-                            case ShiftArithNode::ArtihType::SUB:
-                                ret = builder.makeOp<BinaryInst>(InstructionID::Sub, ret, rhs);
-                                break;
-                            case ShiftArithNode::ArtihType::NOP:
-                                break;
-                        }
-
-                        return ret;
-                    };
-
-                    const auto plan = findMultiplyPlan(std::abs(v2), target.getOptHeuristic().mulByConstThreshold);
-                    if(!plan)
-                        return nullptr;
-                    auto value = expand(expand, plan);
-                    if(v2 < 0)
-                        value = builder.makeOp<UnaryInst>(InstructionID::Neg, value);
-                    return value;
-                }
-                return nullptr;
-            });
-        }
-        return modified;
-    }
-
-    [[nodiscard]] std::string_view name() const noexcept override {
-        return "Mul2Shl"sv;
-    }
-};
-
-CMMC_TRANSFORM_PASS(Mul2Shl);
-
 class DuplicateGEP final : public TransformPass<Function> {
 public:
     bool run(Function& func, AnalysisPassManager&) const override {

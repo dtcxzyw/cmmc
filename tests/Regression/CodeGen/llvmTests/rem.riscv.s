@@ -11,8 +11,8 @@ test1:
 	srliw a3, a1, 31
 	sraiw a2, a1, 7
 	add a1, a3, a2
-	li a2, 255
-	mulw a3, a1, a2
+	slliw a2, a1, 8
+	subw a3, a2, a1
 	li a2, 4294967295
 	subw a1, a0, a3
 	and a0, a1, a2

@@ -186,13 +186,13 @@ label25:
 	ldr r8, [r7, #8]
 	add r9, r6, #800
 	mla r5, r10, r11, r5
-	add r6, r6, #1200
 	ldr r9, [r9, r0, lsl #2]
-	ldr r7, [r7, #12]
-	ldr r6, [r6, r0, lsl #2]
 	mla r5, r8, r9, r5
+	add r8, r6, #1200
+	ldr r6, [r7, #12]
+	ldr r7, [r8, r0, lsl #2]
 	mov r8, r4
-	mla r5, r7, r6, r5
+	mla r5, r6, r7, r5
 	b label22
 .p2align 4
 label26:

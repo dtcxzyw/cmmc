@@ -20,13 +20,13 @@ line2:
 f:
 .p2align 4
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
-	mov r6, #1
 	sub sp, sp, #20
 	mov r11, r2
 	movw r4, #:lower16:row
-	str r0, [sp, #8]
 	mov r10, r0
+	str r0, [sp, #8]
 	movw r5, #:lower16:ans
+	mov r6, #1
 	str r2, [sp, #4]
 	movw r8, #:lower16:line2
 	movw r7, #:lower16:line1
@@ -152,13 +152,13 @@ main:
 	mov r4, sp
 	bl getint
 	cmp r0, #0
-	bgt label131
+	bgt label140
 	mov r0, #0
-	b label122
-label131:
+	b label131
+label140:
 	mov r6, r0
 .p2align 4
-label119:
+label128:
 	bl getint
 	str r0, [sp, #0]
 	mov r1, r5
@@ -166,8 +166,8 @@ label119:
 	mov r2, r4
 	bl f
 	subs r6, r6, #1
-	bgt label119
+	bgt label128
 	ldr r0, [sp, #4]
-label122:
+label131:
 	add sp, sp, #8
 	pop { r4, r5, r6, pc }

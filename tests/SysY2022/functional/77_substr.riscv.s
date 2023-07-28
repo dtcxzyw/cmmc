@@ -56,9 +56,9 @@ main:
 	li a0, 10
 	jal putch
 	mv a2, zero
-pcrel151:
+pcrel158:
 	auipc a1, %pcrel_hi(p)
-	addi a0, a1, %pcrel_lo(pcrel151)
+	addi a0, a1, %pcrel_lo(pcrel158)
 .p2align 2
 label2:
 	sh2add a1, a2, a0

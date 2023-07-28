@@ -12,14 +12,14 @@ c:
 main:
 .p2align 2
 	addi sp, sp, -16
-pcrel58:
+pcrel60:
 	auipc a1, %pcrel_hi(c)
 	li a2, 1
-	addi a0, a1, %pcrel_lo(pcrel58)
+	addi a0, a1, %pcrel_lo(pcrel60)
 	sd s0, 8(sp)
 	mv s0, a0
 	sd ra, 0(sp)
-	sw a2, %pcrel_lo(pcrel58)(a1)
+	sw a2, %pcrel_lo(pcrel60)(a1)
 	li a2, 4
 	li a1, 2
 	sw a1, 4(a0)
@@ -48,10 +48,10 @@ label5:
 	sw zero, 0(a2)
 	li a2, 4090
 	blt a1, a2, label5
-pcrel59:
+pcrel61:
 	auipc a2, %pcrel_hi(a)
 	li a0, 4000
-	addi a1, a2, %pcrel_lo(pcrel59)
+	addi a1, a2, %pcrel_lo(pcrel61)
 	slli a2, a0, 2
 	sw a0, 20(a1)
 	add a3, a1, a2

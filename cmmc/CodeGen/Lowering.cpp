@@ -960,7 +960,6 @@ static void lower(GetElementPtrInst* inst, LoweringContext& ctx) {
     const auto [constantOffset, offsets] = inst->gatherOffsets(ctx.getDataLayout());
     const auto indexType = inst->operands().front()->getType();  // must be index type
     const auto base = ctx.mapOperand(inst->lastOperand());
-    const auto useShl = ctx.getCodeGenContext().target.isNativeSupported(InstructionID::Shl);
 
     auto ptr = base;
     for(auto [size, index] : offsets) {
@@ -969,13 +968,8 @@ static void lower(GetElementPtrInst* inst, LoweringContext& ctx) {
         if(size == 1) {
             ctx.emitCopy(off, idx);
         } else {
-            // TODO: expand mul to (x<<c1) +/- (x<<c2)
-            if(useShl && isPowerOf2(size)) {
-                ctx.emitInst(MIRInst{ InstShl }.setOperand<0>(off).setOperand<1>(idx).setOperand<2>(
-                    MIROperand::asImm(ilog2(size), ctx.getPtrType())));
-            } else
-                ctx.emitInst(MIRInst{ InstMul }.setOperand<0>(off).setOperand<1>(idx).setOperand<2>(
-                    MIROperand::asImm(size, ctx.getPtrType())));
+            ctx.emitInst(MIRInst{ InstMul }.setOperand<0>(off).setOperand<1>(idx).setOperand<2>(
+                MIROperand::asImm(size, ctx.getPtrType())));
         }
         auto newPtr = ctx.newVReg(ctx.getPtrType());  // SSA form
         ctx.emitInst(MIRInst{ InstAdd }.setOperand<0>(newPtr).setOperand<1>(ptr).setOperand<2>(off));

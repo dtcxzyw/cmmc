@@ -16,6 +16,7 @@
 #include <cmmc/CodeGen/CodeGenUtils.hpp>
 #include <cmmc/CodeGen/InstInfo.hpp>
 #include <cmmc/CodeGen/MIR.hpp>
+#include <cmmc/CodeGen/MultiplyByConstant.hpp>
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Target/ARM/ARM.hpp>
@@ -462,7 +463,7 @@ bool removeDeadBranch(MIRBasicBlock& block, const CodeGenContext& ctx) {
     return modified;
 }
 
-bool ARMScheduleModel_cortex_a72::peepholeOpt(MIRFunction& func, const CodeGenContext& ctx) const {
+bool ARMScheduleModel_cortex_a72::peepholeOpt(MIRFunction& func, CodeGenContext& ctx) const {
     // CMMC_UNUSED(func);
     bool modified = false;
     for(auto& block : func.blocks()) {
@@ -475,6 +476,7 @@ bool ARMScheduleModel_cortex_a72::peepholeOpt(MIRFunction& func, const CodeGenCo
     }
     if(ctx.flags.dontForward)
         modified |= createIndirectCopy(func, ctx);
+    modified |= expandMulWithConstant(func, ctx, 2);
     return modified;
 }
 

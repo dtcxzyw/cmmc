@@ -82,11 +82,11 @@ label74:
 	li a0, 1
 	j label2
 label10:
-	sh2add a5, a1, s0
-	sh2add t0, a2, s0
-	lw a4, 0(a5)
-	lw a5, 0(t0)
-	beq a4, a5, label53
+	sh2add t0, a1, s0
+	sh2add a5, a2, s0
+	lw a4, 0(t0)
+	lw t0, 0(a5)
+	beq a4, t0, label53
 	j label42
 .globl main
 main:
@@ -117,13 +117,13 @@ main:
 	sd zero, 0(sp)
 	sd zero, 8(sp)
 	jal graphColoring
-	beq a0, zero, label92
-label93:
+	beq a0, zero, label99
+label100:
 	mv a0, zero
 	ld ra, 80(sp)
 	addi sp, sp, 88
 	ret
-label92:
+label99:
 	li a0, 78
 	jal putch
 	li a0, 111
@@ -142,4 +142,4 @@ label92:
 	jal putch
 	li a0, 116
 	jal putch
-	j label93
+	j label100

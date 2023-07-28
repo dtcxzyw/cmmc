@@ -5,18 +5,18 @@
 main:
 .p2align 2
 	addi sp, sp, -64
-	li a0, 4
-	li a2, 3
-	li a1, 9
-	li a3, 7
-	sd s0, 56(sp)
+	li a1, 4
+	li a0, 3
+	li a3, 5
+	li a2, 7
+	sd s0, 40(sp)
 	addi s0, sp, 0
-	sd s1, 48(sp)
-	sd ra, 40(sp)
-	sw a0, 0(sp)
+	sd s1, 56(sp)
+	sd ra, 48(sp)
+	sw a1, 0(sp)
+	li a1, 9
+	sw a0, 4(sp)
 	li a0, 2
-	sw a2, 4(sp)
-	li a2, 5
 	sw a1, 8(sp)
 	li a1, 6
 	sw a0, 12(sp)
@@ -25,8 +25,8 @@ main:
 	sw a0, 20(sp)
 	sw a1, 24(sp)
 	li a1, 8
-	sw a2, 28(sp)
-	sw a3, 32(sp)
+	sw a3, 28(sp)
+	sw a2, 32(sp)
 	sw a1, 36(sp)
 	li a1, 10
 	bge a0, a1, label25
@@ -56,9 +56,9 @@ label4:
 	addiw s1, s1, 1
 	blt s1, a0, label4
 	mv a0, zero
-	ld ra, 40(sp)
-	ld s1, 48(sp)
-	ld s0, 56(sp)
+	ld ra, 48(sp)
+	ld s1, 56(sp)
+	ld s0, 40(sp)
 	addi sp, sp, 64
 	ret
 .p2align 2

@@ -7,8 +7,8 @@
 graphColoring:
 .p2align 4
 	push { r4, r5, r6, r7, lr }
-	cmp r2, #4
 	mov r4, r3
+	cmp r2, #4
 	mov r6, r2
 	mov r5, r0
 	sub sp, sp, #4
@@ -111,12 +111,12 @@ main:
 	str r2, [r3, #12]
 	bl graphColoring
 	cmp r0, #0
-	beq label85
-label86:
+	beq label92
+label93:
 	mov r0, #0
 	add sp, sp, #84
 	pop { pc }
-label85:
+label92:
 	mov r0, #78
 	bl putch
 	mov r0, #111
@@ -135,4 +135,4 @@ label85:
 	bl putch
 	mov r0, #116
 	bl putch
-	b label86
+	b label93

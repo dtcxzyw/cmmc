@@ -8,32 +8,31 @@ a:
 radixSort:
 .p2align 2
 	addi sp, sp, -248
-	addiw a4, a2, 1
-	xori t0, a0, -1
-	slt a5, a4, a3
-	sd s0, 240(sp)
-	sltiu a4, t0, 1
+	addiw a5, a2, 1
+	sd s0, 208(sp)
+	slt a4, a5, a3
 	mv s0, a1
-	sd s5, 232(sp)
-	xori a1, a5, 1
-	sd s3, 224(sp)
-	or a1, a1, a4
+	xori a5, a0, -1
+	sd s5, 240(sp)
+	xori a1, a4, 1
+	sd s3, 136(sp)
+	sltiu a4, a5, 1
 	addi s3, sp, 0
-	sd s2, 216(sp)
-	addi s2, sp, 64
-	sd s1, 208(sp)
-	addi s1, sp, 128
-	sd s4, 200(sp)
-	sd ra, 192(sp)
-	sd zero, 128(sp)
-	sd zero, 136(sp)
+	or a1, a1, a4
+	sd s2, 232(sp)
+	addi s2, sp, 72
+	sd s1, 64(sp)
+	addi s1, sp, 144
+	sd s4, 224(sp)
+	sd ra, 216(sp)
 	sd zero, 144(sp)
 	sd zero, 152(sp)
 	sd zero, 160(sp)
 	sd zero, 168(sp)
 	sd zero, 176(sp)
 	sd zero, 184(sp)
-	sd zero, 64(sp)
+	sd zero, 192(sp)
+	sd zero, 200(sp)
 	sd zero, 72(sp)
 	sd zero, 80(sp)
 	sd zero, 88(sp)
@@ -41,6 +40,7 @@ radixSort:
 	sd zero, 104(sp)
 	sd zero, 112(sp)
 	sd zero, 120(sp)
+	sd zero, 128(sp)
 	sd zero, 0(sp)
 	sd zero, 8(sp)
 	sd zero, 16(sp)
@@ -63,20 +63,20 @@ label198:
 	addiw a1, a1, 1
 	li a3, 16
 	blt a1, a3, label198
-	sw a2, 128(sp)
+	sw a2, 144(sp)
 	mv s5, zero
 	lw a0, 0(sp)
 	addw a1, a2, a0
-	sw a1, 64(sp)
+	sw a1, 72(sp)
 	li a0, 16
 	blt zero, a0, label23
 	j label44
 .p2align 2
 label29:
 	sh2add a3, a1, s1
-	lw a5, 0(a3)
-	sh2add a4, a5, s0
-	lw a3, 0(a4)
+	lw a4, 0(a3)
+	sh2add a5, a4, s0
+	lw a3, 0(a5)
 	bgt a0, zero, label246
 	mv a4, a3
 	slli t0, a3, 1
@@ -97,11 +97,11 @@ label29:
 	addiw a1, a1, 1
 	li a3, 16
 	blt a1, a3, label198
-	sw a2, 128(sp)
+	sw a2, 144(sp)
 	mv s5, zero
 	lw a0, 0(sp)
 	addw a1, a2, a0
-	sw a1, 64(sp)
+	sw a1, 72(sp)
 	li a0, 16
 	blt zero, a0, label23
 	j label44
@@ -135,21 +135,21 @@ label246:
 	addiw a1, a1, 1
 	li a3, 16
 	blt a1, a3, label198
-	sw a2, 128(sp)
+	sw a2, 144(sp)
 	mv s5, zero
 	lw a0, 0(sp)
 	addw a1, a2, a0
-	sw a1, 64(sp)
+	sw a1, 72(sp)
 	li a0, 16
 	blt zero, a0, label23
 label44:
-	ld ra, 192(sp)
-	ld s4, 200(sp)
-	ld s1, 208(sp)
-	ld s2, 216(sp)
-	ld s3, 224(sp)
-	ld s5, 232(sp)
-	ld s0, 240(sp)
+	ld ra, 216(sp)
+	ld s4, 224(sp)
+	ld s1, 64(sp)
+	ld s2, 232(sp)
+	ld s3, 136(sp)
+	ld s5, 240(sp)
+	ld s0, 208(sp)
 	addi sp, sp, 248
 	ret
 .p2align 2
@@ -182,11 +182,11 @@ label34:
 	addiw a1, a1, 1
 	li a3, 16
 	blt a1, a3, label198
-	sw a2, 128(sp)
+	sw a2, 144(sp)
 	mv s5, zero
 	lw a0, 0(sp)
 	addw a1, a2, a0
-	sw a1, 64(sp)
+	sw a1, 72(sp)
 	li a0, 16
 	blt zero, a0, label23
 	j label44
@@ -218,11 +218,11 @@ label36:
 	addiw a1, a1, 1
 	li a3, 16
 	blt a1, a3, label198
-	sw a2, 128(sp)
+	sw a2, 144(sp)
 	mv s5, zero
 	lw a0, 0(sp)
 	addw a1, a2, a0
-	sw a1, 64(sp)
+	sw a1, 72(sp)
 	li a0, 16
 	blt zero, a0, label23
 	j label44
@@ -252,11 +252,11 @@ label39:
 	addiw a1, a1, 1
 	li a3, 16
 	blt a1, a3, label198
-	sw a2, 128(sp)
+	sw a2, 144(sp)
 	mv s5, zero
 	lw a0, 0(sp)
 	addw a1, a2, a0
-	sw a1, 64(sp)
+	sw a1, 72(sp)
 	li a0, 16
 	blt zero, a0, label23
 	j label44
@@ -273,12 +273,12 @@ label3:
 	sh2add a5, a1, s0
 	lw a4, 0(a5)
 	bgt a0, zero, label117
-	andi a5, a4, 15
+	andi t0, a4, 15
 	addiw a1, a1, 1
-	sh2add a4, a5, s3
-	lw t0, 0(a4)
-	addi a5, t0, 1
-	sw a5, 0(a4)
+	sh2add a4, t0, s3
+	lw a5, 0(a4)
+	addi t0, a5, 1
+	sw t0, 0(a4)
 	bgt a3, a1, label3
 	j label110
 .p2align 2
@@ -290,16 +290,16 @@ label5:
 	bgt a0, a5, label8
 	addiw t0, t0, 1
 	slli t2, a4, 1
-	srli a5, t2, 60
-	add t1, a4, a5
-	sraiw a4, t1, 4
+	srli t1, t2, 60
+	add a5, a4, t1
+	sraiw a4, a5, 4
 	bgt a0, t0, label9
-	andi a5, a4, 15
+	andi t0, a4, 15
 	addiw a1, a1, 1
-	sh2add a4, a5, s3
-	lw t0, 0(a4)
-	addi a5, t0, 1
-	sw a5, 0(a4)
+	sh2add a4, t0, s3
+	lw a5, 0(a4)
+	addi t0, a5, 1
+	sw t0, 0(a4)
 	bgt a3, a1, label3
 	j label110
 .p2align 2
@@ -314,24 +314,24 @@ label8:
 label9:
 	addiw t0, t0, 1
 	slli t2, a4, 1
-	srli a5, t2, 60
-	add t1, a4, a5
-	sraiw a4, t1, 4
+	srli t1, t2, 60
+	add a5, a4, t1
+	sraiw a4, a5, 4
 	bgt a0, t0, label9
-	andi a5, a4, 15
+	andi t0, a4, 15
 	addiw a1, a1, 1
-	sh2add a4, a5, s3
-	lw t0, 0(a4)
-	addi a5, t0, 1
-	sw a5, 0(a4)
+	sh2add a4, t0, s3
+	lw a5, 0(a4)
+	addi t0, a5, 1
+	sw t0, 0(a4)
 	bgt a3, a1, label3
 .p2align 2
 label110:
-	sw a2, 128(sp)
+	sw a2, 144(sp)
 	lw a1, 0(sp)
 	addw a3, a2, a1
 	li a1, 1
-	sw a3, 64(sp)
+	sw a3, 72(sp)
 label15:
 	addiw a3, a1, -1
 	sh2add a4, a3, s2
@@ -381,11 +381,11 @@ label17:
 	mv a1, zero
 	li a3, 16
 	blt zero, a3, label198
-	sw a2, 128(sp)
+	sw a2, 144(sp)
 	mv s5, zero
 	lw a0, 0(sp)
 	addw a1, a2, a0
-	sw a1, 64(sp)
+	sw a1, 72(sp)
 	li a0, 16
 	bge zero, a0, label44
 .p2align 2
@@ -405,25 +405,25 @@ label24:
 	blt s5, a0, label23
 	j label44
 label25:
-	addiw a2, s5, -1
-	sh2add a3, s5, s1
-	sh2add a1, a2, s2
-	sh2add a2, s5, s3
-	lw a0, 0(a1)
-	sw a0, 0(a3)
-	lw a1, 0(a2)
-	sh2add a2, s5, s2
-	addw a0, a0, a1
+	addiw a1, s5, -1
+	sh2add a2, s5, s1
+	sh2add a3, a1, s2
+	sh2add a1, s5, s3
+	lw a0, 0(a3)
 	sw a0, 0(a2)
+	lw a2, 0(a1)
+	sh2add a1, s5, s2
+	addw a0, a0, a2
+	sw a0, 0(a1)
 	j label24
 .globl main
 main:
 .p2align 2
 	addi sp, sp, -32
-pcrel429:
+pcrel449:
 	auipc a0, %pcrel_hi(a)
 	sd s2, 24(sp)
-	addi s2, a0, %pcrel_lo(pcrel429)
+	addi s2, a0, %pcrel_lo(pcrel449)
 	sd s1, 16(sp)
 	mv s1, s2
 	sd s0, 8(sp)
@@ -438,16 +438,16 @@ pcrel429:
 	li a0, 8
 	mv a3, s0
 	jal radixSort
-	bgt s0, zero, label378
+	bgt s0, zero, label396
 	mv s0, zero
-	j label371
-label378:
+	j label389
+label396:
 	mv a2, zero
 	mv a0, zero
 .p2align 2
-label364:
+label382:
 	addiw a1, a0, 4
-	ble s0, a1, label368
+	ble s0, a1, label386
 	sh2add a3, a0, s1
 	addiw a4, a0, 3
 	addiw t3, a0, 1
@@ -456,22 +456,22 @@ label364:
 	remw t2, a5, a4
 	addiw a5, a0, 2
 	mulw t1, t2, t3
-	remw t3, t0, a5
-	mulw t0, a0, t3
+	remw t2, t0, a5
+	mulw t3, a0, t2
 	addiw a0, a0, 5
-	addw t2, a2, t0
-	lw t0, 8(a3)
-	addw a2, t1, t2
+	addw t0, a2, t3
+	addw a2, t1, t0
+	lw t1, 8(a3)
 	lw a3, 12(a3)
-	remw t1, t0, a1
-	mulw a5, a5, t1
+	remw t0, t1, a1
+	mulw a5, a5, t0
 	addw a2, a2, a5
 	remw a5, a3, a0
 	mv a0, a1
 	mulw a3, a4, a5
 	addw a2, a2, a3
-	j label364
-label368:
+	j label382
+label386:
 	sh2add a3, a0, s1
 	addiw a4, a0, 2
 	lw a1, 0(a3)
@@ -479,9 +479,9 @@ label368:
 	mulw a1, a0, a3
 	addiw a0, a0, 1
 	addw a2, a2, a1
-	bgt s0, a0, label368
+	bgt s0, a0, label386
 	mv s0, a2
-label371:
+label389:
 	li a0, 102
 	jal _sysy_stoptime
 	subw a1, zero, s0

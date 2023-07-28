@@ -41,7 +41,7 @@ merge_sort:
 	bne label8
 	cmp r6, r5
 	bgt label12
-	b label172
+	b label186
 .p2align 4
 label8:
 	ldr r8, [r0, r7, lsl #2]
@@ -61,10 +61,10 @@ label8:
 	bne label8
 	cmp r6, r7
 	bgt label12
-	b label172
+	b label186
 label2:
 	pop { r4, r5, r6, r7, r8, r9, r10, pc }
-label172:
+label186:
 	mov r6, r3
 	b label19
 .p2align 4
@@ -81,7 +81,7 @@ label9:
 	ands r8, r8, r9
 	bne label8
 	cmp r6, r7
-	ble label172
+	ble label186
 label12:
 	add r8, r7, #4
 	cmp r6, r8
@@ -106,7 +106,7 @@ label16:
 	str r8, [r1, r3, lsl #2]
 	add r3, r3, #1
 	bgt label16
-	b label172
+	b label186
 label19:
 	cmp r4, r2
 	ble label21

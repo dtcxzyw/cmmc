@@ -21,6 +21,7 @@
 #include <cstdint>
 #include <iostream>
 #include <iterator>
+#include <string_view>
 #include <unordered_map>
 #include <vector>
 
@@ -120,7 +121,9 @@ void dumpAssembly(std::ostream& out, const CodeGenContext& ctx, const MIRModule&
                 continue;
             dumpSymbol(*global);
             for(auto& block : func.blocks()) {
-                if(emitAlignment && (&block == &func.blocks().front() || block->getTripCount() >= primaryPathThreshold)) {
+                auto isPCRelLabel = [](const std::string_view& label) { return label == "pcrel"; };
+                if(emitAlignment && !isPCRelLabel(block->symbol().prefix()) &&
+                   (&block == &func.blocks().front() || block->getTripCount() >= primaryPathThreshold)) {
                     out << ".p2align " << p2Align << '\n';
                 }
                 if(&block != &func.blocks().front()) {

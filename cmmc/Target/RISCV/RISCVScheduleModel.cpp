@@ -12,6 +12,7 @@
     limitations under the License.
 */
 
+#include "cmmc/CodeGen/MultiplyByConstant.hpp"
 #include <RISCV/InstInfoDecl.hpp>
 #include <cmmc/CodeGen/InstInfo.hpp>
 #include <cmmc/CodeGen/MIR.hpp>
@@ -854,7 +855,7 @@ static bool removeSExtW(MIRFunction& func, const CodeGenContext& ctx) {
     return modified;
 }
 
-bool RISCVScheduleModel_sifive_u74::peepholeOpt(MIRFunction& func, const CodeGenContext& ctx) const {
+bool RISCVScheduleModel_sifive_u74::peepholeOpt(MIRFunction& func, CodeGenContext& ctx) const {
     bool modified = false;
     if(ctx.flags.preRA) {
         for(auto& block : func.blocks())
@@ -869,6 +870,7 @@ bool RISCVScheduleModel_sifive_u74::peepholeOpt(MIRFunction& func, const CodeGen
     modified |= simplifyOpWithZero(func, ctx);
     modified |= relaxWInst(func, ctx);
     modified |= removeSExtW(func, ctx);
+    modified |= expandMulWithConstant(func, ctx, 1);
     return modified;
 }
 

@@ -12,16 +12,16 @@ radixSort:
 .p2align 4
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
 	add r7, r0, #1
-	mov r5, r1
 	sub sp, sp, #204
+	mov r5, r1
 	clz r7, r7
-	add r1, r2, #1
 	add r4, sp, #128
 	add r6, sp, #64
 	mov r9, sp
+	add r1, r2, #1
 	lsr r7, r7, #5
-	cmp r3, r1
 	str r9, [sp, #192]
+	cmp r3, r1
 	mov r1, #0
 	movwle r1, #1
 	orrs r1, r1, r7
@@ -440,17 +440,17 @@ main:
 	mov r3, r5
 	bl radixSort
 	cmp r5, #0
-	bgt label411
+	bgt label428
 	mov r4, #0
-	b label404
-label411:
+	b label421
+label428:
 	mov r2, #0
 	mov r0, r2
 .p2align 4
-label397:
+label414:
 	add r1, r0, #4
 	cmp r5, r1
-	ble label401
+	ble label418
 	add r6, r4, r0, lsl #2
 	ldr r8, [r4, r0, lsl #2]
 	add r3, r0, #3
@@ -473,8 +473,8 @@ label397:
 	mls r0, r7, r0, r6
 	mla r2, r3, r0, r2
 	mov r0, r1
-	b label397
-label401:
+	b label414
+label418:
 	ldr r1, [r4, r0, lsl #2]
 	add r3, r0, #2
 	sdiv r6, r1, r3
@@ -482,9 +482,9 @@ label401:
 	mla r2, r0, r1, r2
 	add r0, r0, #1
 	cmp r5, r0
-	bgt label401
+	bgt label418
 	mov r4, r2
-label404:
+label421:
 	mov r0, #102
 	bl _sysy_stoptime
 	movs r0, r4

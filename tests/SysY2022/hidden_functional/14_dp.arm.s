@@ -24,8 +24,8 @@ main:
 	mla r2, r5, r0, r4
 	str r2, [sp, #0]
 	bl getint
-	cmp r5, #0
 	movw r6, #:lower16:t
+	cmp r5, #0
 	str r0, [sp, #4]
 	mov r8, r0
 	movt r6, #:upper16:t
@@ -42,7 +42,7 @@ main:
 	cmn r8, #1
 	bgt label86
 .p2align 4
-label114:
+label122:
 	mov r0, #0
 	b label16
 .p2align 4
@@ -80,7 +80,7 @@ label57:
 	bge label57
 	cmn r8, #1
 	bgt label86
-	b label114
+	b label122
 .p2align 4
 label8:
 	add r8, r2, #1
@@ -108,7 +108,7 @@ label8:
 	bge label57
 	cmn r8, #1
 	bgt label86
-	b label114
+	b label122
 .p2align 4
 label9:
 	str r9, [r7, r2, lsl #2]
@@ -126,7 +126,7 @@ label9:
 	bge label57
 	cmn r8, #1
 	bgt label86
-	b label114
+	b label122
 .p2align 4
 label2:
 	bl getint
@@ -155,4 +155,4 @@ label2:
 	ldr r8, [sp, #4]
 	cmn r8, #1
 	bgt label86
-	b label114
+	b label122

@@ -20,20 +20,20 @@ main:
 	sd s1, 8(sp)
 	sd ra, 0(sp)
 	jal getint
-pcrel226:
+pcrel235:
 	auipc a1, %pcrel_hi(w)
 	mv s0, a0
-	addi a0, a1, %pcrel_lo(pcrel226)
+	addi a0, a1, %pcrel_lo(pcrel235)
 	mv s2, a0
 	jal getarray
 	li a0, 62
 	jal _sysy_starttime
-pcrel227:
+pcrel236:
 	auipc a1, %pcrel_hi(dst)
-	addi s1, a1, %pcrel_lo(pcrel227)
-pcrel228:
+	addi s1, a1, %pcrel_lo(pcrel236)
+pcrel237:
 	auipc a1, %pcrel_hi(temp)
-	addi a0, a1, %pcrel_lo(pcrel228)
+	addi a0, a1, %pcrel_lo(pcrel237)
 	mv a1, zero
 	bgt s0, zero, label4
 	mv a2, zero
@@ -120,9 +120,9 @@ label19:
 .p2align 2
 label20:
 	addw t3, a5, t0
-	sh2add t4, t3, a0
-	lw t5, 0(t4)
-	blt t5, zero, label22
+	sh2add t5, t3, a0
+	lw t4, 0(t5)
+	blt t4, zero, label22
 	sh2add t6, t3, a0
 	addw t5, t1, t2
 	lw t4, 0(t6)

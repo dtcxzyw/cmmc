@@ -24,9 +24,9 @@ main:
 	jal getint
 	mv s1, zero
 	mv s0, a0
-pcrel284:
+pcrel296:
 	auipc a0, %pcrel_hi(A)
-	addi s2, a0, %pcrel_lo(pcrel284)
+	addi s2, a0, %pcrel_lo(pcrel296)
 	ble s0, zero, label13
 .p2align 2
 label4:
@@ -55,22 +55,22 @@ label11:
 label13:
 	li a0, 59
 	jal _sysy_starttime
-pcrel285:
+pcrel297:
 	auipc a1, %pcrel_hi(B)
-	addi a0, a1, %pcrel_lo(pcrel285)
-pcrel286:
+	addi a0, a1, %pcrel_lo(pcrel297)
+pcrel298:
 	auipc a1, %pcrel_hi(C)
-	addi s1, a1, %pcrel_lo(pcrel286)
+	addi s1, a1, %pcrel_lo(pcrel298)
 	mv a1, zero
 .p2align 2
 label14:
 	bgt s0, zero, label85
 	mv a2, zero
-	li a5, 8040
-	mv a4, zero
-	mv a3, s2
 	li a4, 8040
 	mv a5, zero
+	mv a3, s2
+	li a5, 8040
+	mv a4, zero
 	addiw a1, a1, 1
 	li a2, 50
 	blt a1, a2, label14
@@ -85,12 +85,12 @@ label85:
 	sw zero, 0(s1)
 	bgt s0, a3, label43
 	mv a2, zero
-	li a5, 8040
-	mv a4, zero
-	mv a3, s2
-	bgt s0, zero, label91
 	li a4, 8040
 	mv a5, zero
+	mv a3, s2
+	bgt s0, zero, label91
+	li a5, 8040
+	mv a4, zero
 	addiw a1, a1, 1
 	li a2, 50
 	blt a1, a2, label14
@@ -102,8 +102,8 @@ label28:
 	sw zero, 0(a2)
 	bgt s0, a3, label28
 	mv a2, zero
-	li a4, 8040
-	mv a5, zero
+	li a5, 8040
+	mv a4, zero
 	mv a3, s2
 	bgt s0, zero, label138
 	addiw a1, a1, 1
@@ -119,12 +119,12 @@ label40:
 	sw zero, 0(a2)
 	bgt s0, a3, label43
 	mv a2, zero
-	li a5, 8040
-	mv a4, zero
-	mv a3, s2
-	bgt s0, zero, label91
 	li a4, 8040
 	mv a5, zero
+	mv a3, s2
+	bgt s0, zero, label91
+	li a5, 8040
+	mv a4, zero
 	addiw a1, a1, 1
 	li a2, 50
 	blt a1, a2, label14
@@ -143,13 +143,13 @@ label91:
 	mv a4, zero
 	bgt s0, zero, label21
 	addiw a2, a2, 1
-	li a5, 8040
-	mulw a4, a2, a5
-	add a3, s2, a4
+	li a4, 8040
+	mulw a5, a2, a4
+	add a3, s2, a5
 	bgt s0, a2, label91
 	mv a2, zero
-	li a4, 8040
-	mv a5, zero
+	li a5, 8040
+	mv a4, zero
 	mv a3, s2
 	addiw a1, a1, 1
 	li a2, 50
@@ -170,14 +170,14 @@ label21:
 	addiw a4, a4, 1
 	bgt s0, a4, label21
 	addiw a2, a2, 1
-	li a5, 8040
-	mulw a4, a2, a5
-	add a3, s2, a4
+	li a4, 8040
+	mulw a5, a2, a4
+	add a3, s2, a5
 	bgt s0, a2, label91
 	bgt s0, zero, label115
 	mv a2, zero
-	li a4, 8040
-	mv a5, zero
+	li a5, 8040
+	mv a4, zero
 	mv a3, s2
 	addiw a1, a1, 1
 	li a2, 50
@@ -195,8 +195,8 @@ label25:
 	sw zero, 0(a2)
 	bgt s0, a3, label28
 	mv a2, zero
-	li a4, 8040
-	mv a5, zero
+	li a5, 8040
+	mv a4, zero
 	mv a3, s2
 	bgt s0, zero, label138
 	addiw a1, a1, 1
@@ -217,9 +217,9 @@ label138:
 	mv a4, zero
 	bgt s0, zero, label34
 	addiw a2, a2, 1
-	li a4, 8040
-	mulw a5, a2, a4
-	add a3, s2, a5
+	li a5, 8040
+	mulw a4, a2, a5
+	add a3, s2, a4
 	bgt s0, a2, label138
 	addiw a1, a1, 1
 	li a2, 50
@@ -240,9 +240,9 @@ label34:
 	addiw a4, a4, 1
 	bgt s0, a4, label34
 	addiw a2, a2, 1
-	li a4, 8040
-	mulw a5, a2, a4
-	add a3, s2, a5
+	li a5, 8040
+	mulw a4, a2, a5
+	add a3, s2, a4
 	bgt s0, a2, label138
 	addiw a1, a1, 1
 	li a2, 50
@@ -267,14 +267,14 @@ label23:
 	addiw a4, a4, 1
 	bgt s0, a4, label21
 	addiw a2, a2, 1
-	li a5, 8040
-	mulw a4, a2, a5
-	add a3, s2, a4
+	li a4, 8040
+	mulw a5, a2, a4
+	add a3, s2, a5
 	bgt s0, a2, label91
 	bgt s0, zero, label115
 	mv a2, zero
-	li a4, 8040
-	mv a5, zero
+	li a5, 8040
+	mv a4, zero
 	mv a3, s2
 	addiw a1, a1, 1
 	li a2, 50
@@ -285,9 +285,9 @@ label35:
 	addiw a4, a4, 1
 	bgt s0, a4, label34
 	addiw a2, a2, 1
-	li a4, 8040
-	mulw a5, a2, a4
-	add a3, s2, a5
+	li a5, 8040
+	mulw a4, a2, a5
+	add a3, s2, a4
 	bgt s0, a2, label138
 	addiw a1, a1, 1
 	li a2, 50
@@ -300,22 +300,22 @@ label43:
 	sw zero, 0(a2)
 	bgt s0, a3, label43
 	mv a2, zero
-	li a5, 8040
-	mv a4, zero
-	mv a3, s2
-	bgt s0, zero, label91
 	li a4, 8040
 	mv a5, zero
+	mv a3, s2
+	bgt s0, zero, label91
+	li a5, 8040
+	mv a4, zero
 	addiw a1, a1, 1
 	li a2, 50
 	blt a1, a2, label14
 	j label39
 .p2align 2
 label54:
-	li a1, 8040
+	li a0, 8040
 	mv s4, zero
-	mul a0, s1, a1
-	add s3, s2, a0
+	mul a1, s1, a0
+	add s3, s2, a1
 	j label7
 label10:
 	auipc a0, %pcrel_hi(B)

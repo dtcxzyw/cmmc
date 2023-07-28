@@ -572,7 +572,7 @@ label50:
 	blt label5
 	b label67
 .p2align 4
-label661:
+label678:
 	mov r5, r8
 	add r3, r2, #1
 	b label63
@@ -582,7 +582,7 @@ label54:
 	movw r4, #34464
 	movt r4, #1
 	cmp r3, r4
-	bge label661
+	bge label678
 	add r4, r2, #1
 	add r5, r2, #2
 	add r6, r2, #3

@@ -39,9 +39,9 @@ main:
 	mv s0, a0
 	jal getint
 	mv s4, a0
-pcrel311:
+pcrel325:
 	auipc a0, %pcrel_hi(e)
-	addi s2, a0, %pcrel_lo(pcrel311)
+	addi s2, a0, %pcrel_lo(pcrel325)
 	li a0, 1
 	bge s0, a0, label77
 	bgt s4, zero, label81
@@ -154,7 +154,7 @@ label28:
 	sh2add t1, a3, s3
 	lw t2, 0(t1)
 	sltiu t0, t2, 1
-	bne t0, zero, label204
+	bne t0, zero, label218
 	mv a5, a4
 	mv t1, a3
 	mv t1, a2
@@ -181,12 +181,12 @@ label95:
 	li s2, 1
 	j label11
 .p2align 2
-label204:
+label218:
 	mv t1, a3
-	bne t0, zero, label206
+	bne t0, zero, label220
 	mv t1, a2
 .p2align 2
-label206:
+label220:
 	addiw a3, a3, 1
 	mv a4, a5
 	mv a2, t1
@@ -206,10 +206,10 @@ label77:
 .p2align 2
 label34:
 	mv a3, zero
-	beq a0, a2, label208
+	beq a0, a2, label222
 	li a3, 65535
 .p2align 2
-label208:
+label222:
 	sh2add a4, a2, a1
 	addiw a2, a2, 1
 	sw a3, 0(a4)

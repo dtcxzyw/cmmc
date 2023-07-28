@@ -85,17 +85,17 @@ main:
 	mul a2, a0, a1
 	srli a3, a2, 32
 	add a1, a3, a0
-	li a3, 15
 	srliw a4, a1, 31
 	sraiw a2, a1, 3
 	add a1, a4, a2
-	mulw a2, a1, a3
+	slliw a3, a1, 4
+	subw a2, a3, a1
 	subw a1, a0, a2
 	addiw a3, a1, 15
 	mv a0, a3
-	blt a1, zero, label68
+	blt a1, zero, label69
 	mv a0, a1
-label68:
+label69:
 	jal putint
 	ld ra, 8(sp)
 	mv a0, zero

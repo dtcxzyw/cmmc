@@ -14,59 +14,60 @@ main:
 	push { r4, r5, r6, r7, r8, r9, lr }
 	sub sp, sp, #4
 	bl getint
-	mov r4, r0
-	bl getint
 	mov r5, r0
+	bl getint
+	mov r4, r0
 	mov r0, #56
 	bl _sysy_starttime
-	cmp r4, #0
-	bgt label2
-	b label9
+	cmp r5, #0
+	ble label9
+	movw r0, #:lower16:a
+	mov r1, r5
+	movt r0, #:upper16:a
 .p2align 4
 label3:
-	movw r3, #58069
-	movw r5, #48287
+	movw r2, #58069
+	movw r3, #48287
 	movw r6, #12185
 	sub r1, r1, #1
+	movt r2, #304
 	movt r3, #304
-	movt r5, #304
 	movt r6, #17592
-	mla r4, r2, r5, r3
-	movw r2, #51719
-	movt r2, #15258
-	smmul r7, r4, r6
-	asr r8, r7, #28
-	add r7, r8, r7, lsr #31
-	mls r4, r7, r2, r4
-	add r7, r4, r2
+	mla r4, r4, r3, r2
+	smmul r5, r4, r6
+	asr r7, r5, #28
+	add r7, r7, r5, lsr #31
+	movw r5, #51719
+	movt r5, #15258
+	mls r4, r7, r5, r4
+	add r7, r4, r5
 	cmp r4, #0
 	movlt r4, r7
-	mla r3, r4, r5, r3
-	smmul r5, r3, r6
-	asr r6, r5, #28
-	add r5, r6, r5, lsr #31
-	movw r6, #7557
-	mls r3, r5, r2, r3
-	movt r6, #28633
-	smmul r6, r4, r6
-	add r5, r3, r2
-	cmp r3, #0
-	asr r7, r6, #17
-	mov r2, r3
-	add r6, r7, r6, lsr #31
-	movlt r2, r5
-	mov r7, #30
-	movw r5, #37856
+	mla r2, r4, r3, r2
+	smmul r3, r2, r6
+	asr r6, r3, #28
+	add r3, r6, r3, lsr #31
+	mls r2, r3, r5, r2
+	add r3, r2, r5
+	cmp r2, #0
+	movw r5, #7557
+	movlt r2, r3
+	movt r5, #28633
 	and r3, r2, #1
-	movt r5, #4
-	mls r6, r6, r5, r4
+	smmul r5, r4, r5
+	asr r6, r5, #17
+	add r5, r6, r5, lsr #31
+	movw r6, #37856
+	movt r6, #4
+	mls r6, r5, r6, r4
 	movw r4, #34953
 	movt r4, #34952
 	smmla r4, r6, r4, r6
 	asr r5, r4, #4
 	add r4, r5, r4, lsr #31
-	mls r7, r4, r7, r6
+	rsb r7, r4, r4, lsl #4
 	ldr r5, [r0, r4, lsl #2]
+	sub r7, r6, r7, lsl #1
 	mov r6, #1
 	asr r8, r5, #31
 	rsb r9, r7, #32
@@ -80,7 +81,7 @@ label3:
 	bne label6
 	str r5, [r0, r4, lsl #2]
 	cmp r1, #0
-	bgt label3
+	bgt label61
 	b label9
 .p2align 4
 label6:
@@ -98,7 +99,10 @@ label6:
 	add r3, r5, r3
 	str r3, [r0, r4, lsl #2]
 	cmp r1, #0
-	bgt label3
+	ble label9
+label61:
+	mov r4, r2
+	b label3
 label9:
 	mov r0, #64
 	bl _sysy_stoptime
@@ -109,9 +113,3 @@ label9:
 	add sp, sp, #4
 	mov r0, #0
 	pop { r4, r5, r6, r7, r8, r9, pc }
-label2:
-	movw r0, #:lower16:a
-	mov r2, r5
-	mov r1, r4
-	movt r0, #:upper16:a
-	b label3

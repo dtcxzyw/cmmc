@@ -17,29 +17,29 @@ merge_sort:
 	sd ra, 0(sp)
 	ble a1, a0, label2
 	addw a0, s1, a1
-	srliw a2, a0, 31
-	add a1, a0, a2
+	srliw a1, a0, 31
+	add a2, a0, a1
 	mv a0, s1
-	sraiw s2, a1, 1
+	sraiw s2, a2, 1
 	mv a1, s2
 	jal merge_sort
 	mv a0, s2
 	mv a1, s0
 	jal merge_sort
 	mv a4, s1
-pcrel187:
+pcrel201:
 	auipc a3, %pcrel_hi(buf)
-	addi a2, a3, %pcrel_lo(pcrel187)
+	addi a2, a3, %pcrel_lo(pcrel201)
 	mv a3, s1
 	addi a1, a2, 400
 	mv a0, a2
 	mv a2, s2
 	slt a5, s1, s2
-	slt t1, s2, s0
-	and t0, a5, t1
-	bne t0, zero, label8
+	slt t0, s2, s0
+	and t1, a5, t0
+	bne t1, zero, label8
 	bgt s2, s1, label12
-	j label179
+	j label193
 .p2align 2
 label8:
 	sh2add t0, a4, a0
@@ -52,11 +52,11 @@ label8:
 	addiw a3, a3, 1
 	sw t0, 0(a5)
 	slt a5, a4, s2
-	slt t1, a2, s0
-	and t0, a5, t1
-	bne t0, zero, label8
+	slt t0, a2, s0
+	and t1, a5, t0
+	bne t1, zero, label8
 	bgt s2, a4, label12
-	j label179
+	j label193
 label2:
 	ld ra, 0(sp)
 	ld s2, 8(sp)
@@ -64,7 +64,7 @@ label2:
 	ld s1, 24(sp)
 	addi sp, sp, 32
 	ret
-label179:
+label193:
 	mv a5, a3
 	j label19
 .p2align 2
@@ -74,10 +74,10 @@ label9:
 	addiw a3, a3, 1
 	sw a5, 0(t0)
 	slt a5, a4, s2
-	slt t1, a2, s0
-	and t0, a5, t1
-	bne t0, zero, label8
-	ble s2, a4, label179
+	slt t0, a2, s0
+	and t1, a5, t0
+	bne t1, zero, label8
+	ble s2, a4, label193
 label12:
 	addiw a5, a4, 4
 	ble s2, a5, label16
@@ -139,12 +139,12 @@ label27:
 	addiw a4, a3, 4
 	bgt s0, a4, label33
 label30:
-	sh2add t0, a3, a0
-	sh2add a5, a2, a1
+	sh2add a5, a3, a0
+	sh2add t0, a2, a1
 	addiw a3, a3, 1
-	lw a4, 0(t0)
+	lw a4, 0(a5)
 	addiw a2, a2, 1
-	sw a4, 0(a5)
+	sw a4, 0(t0)
 	bgt s0, a3, label30
 	j label21
 label33:
@@ -153,10 +153,10 @@ label33:
 	lw t0, 0(a3)
 	addiw a2, a2, 4
 	sw t0, 0(a5)
-	lw t0, 4(a3)
-	sw t0, 4(a5)
-	lw t1, 8(a3)
-	sw t1, 8(a5)
+	lw t1, 4(a3)
+	sw t1, 4(a5)
+	lw t0, 8(a3)
+	sw t0, 8(a5)
 	lw a3, 12(a3)
 	sw a3, 12(a5)
 	mv a3, a4
@@ -165,10 +165,10 @@ label33:
 main:
 .p2align 2
 	addi sp, sp, -16
-pcrel195:
+pcrel209:
 	auipc a1, %pcrel_hi(buf)
 	sd s0, 8(sp)
-	addi s0, a1, %pcrel_lo(pcrel195)
+	addi s0, a1, %pcrel_lo(pcrel209)
 	sd ra, 0(sp)
 	mv a0, s0
 	jal getarray

@@ -156,7 +156,6 @@ label62:
 .p2align 2
 label357:
 	fcvt.s.w f10, s2
-.p2align 2
 pcrel390:
 	auipc a1, %pcrel_hi(__cmmc_fp_constant_pool)
 	fcvt.s.w f13, a2
@@ -176,7 +175,6 @@ pcrel390:
 	flt.s a3, f10, f11
 	or a0, a1, a3
 	bne a0, zero, label80
-.p2align 2
 pcrel391:
 	auipc a0, %pcrel_hi(__cmmc_fp_constant_pool)
 	addi a3, a0, %pcrel_lo(pcrel391)
@@ -204,7 +202,6 @@ label361:
 	flt.s a1, f1, f10
 	or a0, a0, a1
 	bne a0, zero, label79
-.p2align 2
 pcrel392:
 	auipc a1, %pcrel_hi(__cmmc_fp_constant_pool)
 	addi a0, a1, %pcrel_lo(pcrel392)
@@ -252,7 +249,6 @@ label365:
 .p2align 2
 label73:
 	fmul.s f12, f0, f11
-.p2align 2
 pcrel393:
 	auipc a3, %pcrel_hi(__cmmc_fp_constant_pool)
 	fmul.s f3, f10, f11
@@ -427,7 +423,6 @@ label79:
 	fcvt.s.w f12, a0
 	fmul.s f10, f12, f10
 	fsub.s f1, f1, f10
-.p2align 2
 pcrel394:
 	auipc a1, %pcrel_hi(__cmmc_fp_constant_pool)
 	addi a0, a1, %pcrel_lo(pcrel394)
@@ -454,7 +449,6 @@ label80:
 	fcvt.s.w f13, a0
 	fmul.s f11, f13, f11
 	fsub.s f10, f10, f11
-.p2align 2
 pcrel395:
 	auipc a0, %pcrel_hi(__cmmc_fp_constant_pool)
 	addi a3, a0, %pcrel_lo(pcrel395)

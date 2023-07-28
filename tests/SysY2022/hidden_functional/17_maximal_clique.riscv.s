@@ -22,11 +22,11 @@ maxCliques:
 	sd s1, 24(sp)
 	addiw s1, a0, 1
 	sd s6, 16(sp)
-pcrel98:
+pcrel102:
 	auipc a0, %pcrel_hi(graph)
 	mv s6, zero
 	sd s4, 8(sp)
-	addi s4, a0, %pcrel_lo(pcrel98)
+	addi s4, a0, %pcrel_lo(pcrel102)
 	sd ra, 0(sp)
 	lw a0, 0(a2)
 	bgt s5, a0, label18
@@ -55,16 +55,16 @@ label13:
 	j label18
 .p2align 2
 label16:
-	sh2add a4, a0, s0
-	li a5, 120
-	lw a3, 0(a4)
-	mul a4, a3, a5
-	sh2add a5, a2, s0
-	add a3, s4, a4
-	lw a4, 0(a5)
-	sh2add a3, a4, a3
-	lw a5, 0(a3)
-	beq a5, zero, label62
+	sh2add a5, a0, s0
+	li a4, 120
+	lw a3, 0(a5)
+	mul a5, a3, a4
+	sh2add a4, a2, s0
+	add a3, s4, a5
+	lw a5, 0(a4)
+	sh2add t0, a5, a3
+	lw a3, 0(t0)
+	beq a3, zero, label62
 	addiw a2, a2, 1
 	bgt s1, a2, label16
 	mv a0, a1
@@ -138,28 +138,28 @@ main:
 	sw a0, 0(sp)
 	jal getint
 	mv s3, a0
-pcrel274:
+pcrel291:
 	auipc a0, %pcrel_hi(graph)
-	addi s2, a0, %pcrel_lo(pcrel274)
-pcrel275:
+	addi s2, a0, %pcrel_lo(pcrel291)
+pcrel292:
 	auipc a0, %pcrel_hi(edges)
-	addi s4, a0, %pcrel_lo(pcrel275)
-	ble s3, zero, label108
+	addi s4, a0, %pcrel_lo(pcrel292)
+	ble s3, zero, label112
 	mv s5, zero
 .p2align 2
-label100:
+label104:
 	jal getint
 	sh3add s6, s5, s4
 	sw a0, 0(s6)
 	jal getint
 	addiw s5, s5, 1
 	sw a0, 4(s6)
-	bgt s3, s5, label100
+	bgt s3, s5, label104
 	li a1, 4
-	ble s3, a1, label272
+	ble s3, a1, label289
 	li a0, 4
 	mv a1, zero
-label103:
+label107:
 	sh3add a2, a1, s4
 	li a1, 120
 	lw a4, 0(a2)
@@ -186,12 +186,12 @@ label103:
 	lw a4, 16(a2)
 	lw a5, 20(a2)
 	mul t1, a4, a1
+	mul t2, a5, a1
 	add t0, s2, t1
 	sh2add t1, a5, t0
-	mul a5, a5, a1
+	add a5, s2, t2
+	sh2add t0, a4, a5
 	sw a3, 0(t1)
-	add t1, s2, a5
-	sh2add t0, a4, t1
 	sw a3, 0(t0)
 	lw a4, 24(a2)
 	lw a2, 28(a2)
@@ -204,11 +204,11 @@ label103:
 	addiw a2, a0, 4
 	sh2add a1, a4, a5
 	sw a3, 0(a1)
-	ble s3, a2, label106
+	ble s3, a2, label110
 	mv a1, a0
 	mv a0, a2
-	j label103
-label108:
+	j label107
+label112:
 	li a0, 1
 	mv a1, s1
 	mv a2, s0
@@ -225,22 +225,22 @@ label108:
 	ld s0, 184(sp)
 	addi sp, sp, 192
 	ret
-label272:
+label289:
 	mv a0, zero
-label106:
+label110:
 	sh3add a3, a0, s4
 	li a2, 120
 	addiw a0, a0, 1
 	lw a1, 0(a3)
 	lw a4, 4(a3)
 	li a3, 1
-	mul a5, a1, a2
+	mul t0, a1, a2
 	mul a2, a4, a2
-	add t0, s2, a5
-	sh2add a5, a4, t0
+	add a5, s2, t0
+	sh2add t0, a4, a5
 	add a4, s2, a2
 	sh2add a1, a1, a4
-	sw a3, 0(a5)
+	sw a3, 0(t0)
 	sw a3, 0(a1)
-	bgt s3, a0, label106
-	j label108
+	bgt s3, a0, label110
+	j label112

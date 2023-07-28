@@ -22,12 +22,12 @@ main:
 	mov r0, #22
 	bl _sysy_starttime
 	mov r2, #1065353216
-	movw r1, #:lower16:y
 	mov r5, #0
+	movw r1, #:lower16:y
 	movw r0, #:lower16:x
 	vmov s0, r2
-	movt r1, #:upper16:y
 	vmov s16, r5
+	movt r1, #:upper16:y
 	movt r0, #:upper16:x
 	mov r2, r5
 	vmov.f32 s1, s16
@@ -37,13 +37,13 @@ main:
 	bge label8
 .p2align 4
 label13:
-	mov r3, #10
-	movw r6, #26215
-	movt r6, #26214
-	smmul r6, r2, r6
-	asr r7, r6, #2
-	add r6, r7, r6, lsr #31
-	mls r3, r6, r3, r2
+	movw r3, #26215
+	movt r3, #26214
+	smmul r3, r2, r3
+	asr r6, r3, #2
+	add r3, r6, r3, lsr #31
+	add r3, r3, r3, lsl #2
+	sub r3, r2, r3, lsl #1
 	cmp r3, #0
 	movw r3, #52429
 	movt r3, #15948
@@ -75,7 +75,7 @@ label13:
 	blt label13
 	b label8
 .p2align 4
-label189:
+label196:
 	mov r3, r5
 	b label26
 .p2align 4
@@ -83,7 +83,7 @@ label25:
 	add r3, r5, #4
 	cmp r4, r3
 	bgt label28
-	b label189
+	b label196
 .p2align 4
 label77:
 	mov r7, #0

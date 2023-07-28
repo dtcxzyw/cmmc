@@ -283,7 +283,7 @@ static bool reorderBranch(MIRFunction& func, const CodeGenContext& ctx) {
     return modified;
 }
 
-void simplifyCFG(MIRFunction& func, const CodeGenContext& ctx) {
+void simplifyCFG(MIRFunction& func, CodeGenContext& ctx) {
     while(true) {
         bool modified = false;
         modified |= removeUnreachableCode(func, ctx);
@@ -299,7 +299,7 @@ void simplifyCFG(MIRFunction& func, const CodeGenContext& ctx) {
     }
 }
 
-void simplifyCFGWithUniqueTerminator(MIRFunction& func, const CodeGenContext& ctx) {
+void simplifyCFGWithUniqueTerminator(MIRFunction& func, CodeGenContext& ctx) {
     assert(ctx.flags.endsWithTerminator);
     while(true) {
         bool modified = false;

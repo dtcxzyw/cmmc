@@ -12,6 +12,7 @@
     limitations under the License.
 */
 
+#include "cmmc/CodeGen/MultiplyByConstant.hpp"
 #include <MIPS/ScheduleModelImpl.hpp>
 #include <cmmc/Target/MIPS/MIPS.hpp>
 #include <iterator>
@@ -32,7 +33,7 @@ const MicroarchitectureInfo& MIPSScheduleModel_emulator::getInfo() const {
     return info;
 }
 
-bool MIPSScheduleModel_emulator::peepholeOpt(MIRFunction& func, const CodeGenContext& ctx) const {
+bool MIPSScheduleModel_emulator::peepholeOpt(MIRFunction& func, CodeGenContext& ctx) const {
     CMMC_UNUSED(ctx);
     // bxx zero, zero -> b
     bool modified = false;
@@ -96,6 +97,8 @@ bool MIPSScheduleModel_emulator::peepholeOpt(MIRFunction& func, const CodeGenCon
 
         iter = next;
     }
+
+    modified |= expandMulWithConstant(func, ctx, 2);
     return modified;
 }
 bool MIPSScheduleModel_emulator::isExpensiveInst(const MIRInst&, const CodeGenContext&) const {

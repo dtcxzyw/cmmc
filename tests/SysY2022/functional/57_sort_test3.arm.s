@@ -101,11 +101,11 @@ main:
 .p2align 4
 	push { r4, r5, lr }
 	sub sp, sp, #44
+	mov r1, #0
 	mov r0, #4
 	mov r2, #9
-	mov r1, #0
-	str r0, [sp, #0]
 	mov r4, sp
+	str r0, [sp, #0]
 	mov r0, #3
 	str r0, [r4, #4]
 	mov r0, #2
@@ -125,18 +125,18 @@ main:
 	mov r0, r4
 	bl QuickSort
 	cmp r0, #10
-	bge label119
+	bge label127
 	mov r5, r0
 .p2align 4
-label117:
+label125:
 	ldr r0, [r4, r5, lsl #2]
 	bl putint
 	mov r0, #10
 	bl putch
 	add r5, r5, #1
 	cmp r5, #10
-	blt label117
-label119:
+	blt label125
+label127:
 	mov r0, #0
 	add sp, sp, #44
 	pop { r4, r5, pc }

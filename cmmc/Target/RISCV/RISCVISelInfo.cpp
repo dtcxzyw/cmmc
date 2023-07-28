@@ -533,13 +533,6 @@ static bool legalizeInst(MIRInst& inst, ISelContext& ctx) {
             auto& lhs = inst.getOperand(1);
             auto& rhs = inst.getOperand(2);
             imm2reg(lhs);
-            if(inst.opcode() == InstMul && isOperandImm(rhs) && isPowerOf2(static_cast<size_t>(rhs.imm()))) {
-                auto shift = ilog2(static_cast<size_t>(rhs.imm()));
-                inst.setOpcode(InstShl);
-                inst.setOperand<2>(MIROperand::asImm(shift, OperandType::Special));
-                break;
-            }
-
             if((inst.opcode() != InstSDiv && inst.opcode() != InstSRem) ||
                !(isPowerOf2Divisor(rhs) || isOperandSDiv32ByConstantDivisor(rhs))) {
                 imm2reg(rhs);

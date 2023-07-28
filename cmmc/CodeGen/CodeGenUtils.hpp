@@ -23,17 +23,17 @@
 
 CMMC_MIR_NAMESPACE_BEGIN
 
-void simplifyCFG(MIRFunction& func, const CodeGenContext& ctx);
-void registerCoalescing(MIRFunction& func, const CodeGenContext& ctx);
+void simplifyCFG(MIRFunction& func, CodeGenContext& ctx);
+void registerCoalescing(MIRFunction& func, CodeGenContext& ctx);
 void optimizeBlockLayout(MIRFunction& func, CodeGenContext& ctx);
 void preRASchedule(MIRFunction& func, const CodeGenContext& ctx);
 void postRASchedule(MIRFunction& func, const CodeGenContext& ctx);
 void allocateStackObjects(MIRFunction& func, CodeGenContext& ctx, bool isNonLeafFunc, OptimizationLevel optLevel);
 void identicalCodeFolding(MIRFunction& func, const CodeGenContext& ctx);
 void tailDuplication(MIRFunction& func, CodeGenContext& ctx);
-void simplifyCFGWithUniqueTerminator(MIRFunction& func, const CodeGenContext& ctx);
+void simplifyCFGWithUniqueTerminator(MIRFunction& func, CodeGenContext& ctx);
 bool createIndirectCopy(MIRFunction& func, const CodeGenContext& ctx);
-bool genericPeepholeOpt(MIRFunction& func, const CodeGenContext& ctx);
+bool genericPeepholeOpt(MIRFunction& func, CodeGenContext& ctx);
 void postLegalizeFunc(MIRFunction& func, CodeGenContext& ctx);
 void preRALegalizeFunc(MIRFunction& func, CodeGenContext& ctx);
 void rematerialize(MIRFunction& func, CodeGenContext& ctx);

@@ -105,7 +105,7 @@ memset_impl:
 .p2align 4
 	mov r1, #0
 .p2align 4
-label92:
+label101:
 	add r2, r0, r1, lsl #2
 	mov r3, #0
 	str r3, [r0, r1, lsl #2]
@@ -126,5 +126,5 @@ label92:
 	str r3, [r2, #52]
 	str r3, [r2, #56]
 	str r3, [r2, #60]
-	blt label92
+	blt label101
 	bx lr

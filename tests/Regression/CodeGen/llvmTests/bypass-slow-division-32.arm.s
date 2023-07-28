@@ -57,8 +57,8 @@ Test_use_divrem_reg_imm:
 	smmul r1, r0, r1
 	asr r2, r1, #3
 	add r1, r2, r1, lsr #31
-	mov r2, #33
-	mls r0, r1, r2, r0
+	add r2, r1, r1, lsl #5
+	sub r0, r0, r2
 	add r0, r1, r0
 	bx lr
 .globl Test_use_rem_imm_reg
@@ -70,11 +70,11 @@ Test_use_rem_imm_reg:
 .globl Test_use_rem_reg_imm
 Test_use_rem_reg_imm:
 .p2align 4
-	mov r1, #33
-	movw r2, #33761
-	movt r2, #15887
-	smmul r2, r0, r2
-	asr r3, r2, #3
-	add r2, r3, r2, lsr #31
-	mls r0, r2, r1, r0
+	movw r1, #33761
+	movt r1, #15887
+	smmul r1, r0, r1
+	asr r2, r1, #3
+	add r1, r2, r1, lsr #31
+	add r1, r1, r1, lsl #5
+	sub r0, r0, r1
 	bx lr

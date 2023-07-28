@@ -258,7 +258,7 @@ public:
     void transformModuleBeforeCodeGen(Module& module, AnalysisPassManager& analysis) const override {
         PassManager<Module> modulePassManager;
         auto perFunc = std::make_shared<PassManager<Function>>();
-        for(auto& pass : PassRegistry::get().collectFunctionPass({ "DuplicateGEP", "Mul2Shl", "NoSideEffectEliminate" }))
+        for(auto& pass : PassRegistry::get().collectFunctionPass({ "DuplicateGEP", "NoSideEffectEliminate" }))
             perFunc->addPass(pass);
         modulePassManager.addPass(createWrapper(std::move(perFunc)));
         modulePassManager.run(module, analysis);

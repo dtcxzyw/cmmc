@@ -476,7 +476,6 @@ label340:
 	fadd.s f12, f14, f10
 	fadd.s f14, f12, f13
 	fmv.w.x f12, a0
-.p2align 2
 pcrel476:
 	auipc a0, %pcrel_hi(__cmmc_fp_constant_pool)
 	addi a1, a0, %pcrel_lo(pcrel476)
@@ -519,7 +518,6 @@ label342:
 	fadd.s f12, f14, f10
 	fadd.s f14, f12, f13
 	fmv.w.x f12, a0
-.p2align 2
 pcrel477:
 	auipc a0, %pcrel_hi(__cmmc_fp_constant_pool)
 	addi a1, a0, %pcrel_lo(pcrel477)
@@ -544,7 +542,6 @@ label337:
 .p2align 2
 label341:
 	lui a0, 260096
-.p2align 2
 pcrel478:
 	auipc a1, %pcrel_hi(__cmmc_fp_constant_pool)
 	fmv.w.x f5, a0

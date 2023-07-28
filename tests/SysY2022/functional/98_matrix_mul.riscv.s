@@ -4,27 +4,27 @@
 .globl main
 main:
 .p2align 2
-	addi sp, sp, -88
+	addi sp, sp, -96
 	fmv.w.x f10, zero
 	lui a0, 263168
-	sd s0, 80(sp)
+	sd s0, 40(sp)
 	fmv.w.x f11, a0
 	addi s0, sp, 0
 	lui a0, 265216
-	sd s1, 72(sp)
+	sd s1, 88(sp)
 	fmv.w.x f12, a0
-	addi s1, sp, 12
-	sd s3, 64(sp)
-	addi s3, sp, 24
-	sd s2, 56(sp)
+	addi s1, sp, 24
+	sd s3, 16(sp)
+	addi s3, sp, 48
+	sd s2, 80(sp)
 	mv s2, zero
-	sd ra, 48(sp)
+	sd ra, 72(sp)
+	fsw f10, 48(sp)
+	fsw f11, 52(sp)
+	fsw f12, 56(sp)
 	fsw f10, 24(sp)
 	fsw f11, 28(sp)
 	fsw f12, 32(sp)
-	fsw f10, 12(sp)
-	fsw f11, 16(sp)
-	fsw f12, 20(sp)
 	fsw f10, 0(sp)
 	fsw f11, 4(sp)
 	fsw f12, 8(sp)
@@ -60,11 +60,11 @@ label8:
 	blt s1, a0, label8
 	li a0, 10
 	jal putch
-	ld ra, 48(sp)
+	ld ra, 72(sp)
 	mv a0, zero
-	ld s2, 56(sp)
-	ld s3, 64(sp)
-	ld s1, 72(sp)
-	ld s0, 80(sp)
-	addi sp, sp, 88
+	ld s2, 80(sp)
+	ld s3, 16(sp)
+	ld s1, 88(sp)
+	ld s0, 40(sp)
+	addi sp, sp, 96
 	ret

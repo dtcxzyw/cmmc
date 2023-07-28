@@ -26,46 +26,46 @@ label2:
 	cmp r4, r1
 	ble label6
 	add r5, r0, r2
-	movw r3, #32767
-	movw r2, #49153
-	movt r3, #16384
-	movt r2, #8191
-	smmul r6, r5, r3
-	asr r7, r6, #27
-	add r6, r7, r6, lsr #31
-	mls r5, r6, r2, r5
+	movw r2, #32767
+	movt r2, #16384
+	smmul r3, r5, r2
+	asr r6, r3, #27
+	add r6, r6, r3, lsr #31
+	movw r3, #49153
+	movt r3, #8191
+	mls r5, r6, r3, r5
 	add r6, r0, #1
 	add r5, r5, r6
-	smmul r6, r5, r3
+	smmul r6, r5, r2
 	asr r7, r6, #27
 	add r6, r7, r6, lsr #31
-	mls r5, r6, r2, r5
+	mls r5, r6, r3, r5
 	add r6, r0, #2
 	add r0, r0, #3
 	add r5, r5, r6
-	smmul r6, r5, r3
+	smmul r6, r5, r2
 	asr r7, r6, #27
 	add r6, r7, r6, lsr #31
-	mls r5, r6, r2, r5
+	mls r5, r6, r3, r5
 	add r0, r5, r0
-	smmul r3, r0, r3
-	asr r5, r3, #27
-	add r3, r5, r3, lsr #31
-	mls r2, r3, r2, r0
+	smmul r2, r0, r2
+	asr r5, r2, #27
+	add r2, r5, r2, lsr #31
+	mls r2, r2, r3, r0
 	mov r0, r1
 	b label2
 label6:
 	add r1, r0, r2
-	movw r3, #32767
 	add r0, r0, #1
-	movw r2, #49153
-	movt r3, #16384
+	movw r2, #32767
 	cmp r4, r0
-	movt r2, #8191
-	smmul r3, r1, r3
-	asr r5, r3, #27
-	add r3, r5, r3, lsr #31
-	mls r1, r3, r2, r1
+	movt r2, #16384
+	smmul r2, r1, r2
+	asr r3, r2, #27
+	add r2, r3, r2, lsr #31
+	movw r3, #49153
+	movt r3, #8191
+	mls r1, r2, r3, r1
 	bgt label37
 	mov r4, r1
 	b label9

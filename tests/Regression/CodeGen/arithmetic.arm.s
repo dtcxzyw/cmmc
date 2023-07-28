@@ -159,12 +159,12 @@ div_reg:
 .globl mod_imm
 mod_imm:
 .p2align 4
-	mov r1, #3
-	movw r2, #21846
-	movt r2, #21845
-	smmul r2, r0, r2
-	add r2, r2, r2, lsr #31
-	mls r0, r2, r1, r0
+	movw r1, #21846
+	movt r1, #21845
+	smmul r1, r0, r1
+	add r1, r1, r1, lsr #31
+	add r1, r1, r1, lsl #1
+	sub r0, r0, r1
 	bx lr
 .globl mod_reg
 mod_reg:
@@ -182,37 +182,37 @@ mod2:
 .globl mod30
 mod30:
 .p2align 4
-	mov r1, #30
-	movw r2, #34953
-	movt r2, #34952
-	smmla r2, r0, r2, r0
-	asr r3, r2, #4
-	add r2, r3, r2, lsr #31
-	mls r0, r2, r1, r0
+	movw r1, #34953
+	movt r1, #34952
+	smmla r1, r0, r1, r0
+	asr r2, r1, #4
+	add r1, r2, r1, lsr #31
+	rsb r1, r1, r1, lsl #4
+	sub r0, r0, r1, lsl #1
 	bx lr
 .globl mod_large1
 mod_large1:
 .p2align 4
-	movw r1, #51719
-	movw r2, #12185
-	movt r1, #15258
-	movt r2, #17592
-	smmul r2, r0, r2
-	asr r3, r2, #28
-	add r2, r3, r2, lsr #31
-	mls r0, r2, r1, r0
+	movw r1, #12185
+	movt r1, #17592
+	smmul r1, r0, r1
+	asr r2, r1, #28
+	add r1, r2, r1, lsr #31
+	movw r2, #51719
+	movt r2, #15258
+	mls r0, r1, r2, r0
 	bx lr
 .globl mod_large2
 mod_large2:
 .p2align 4
-	movw r1, #37856
-	movw r2, #7557
-	movt r1, #4
-	movt r2, #28633
-	smmul r2, r0, r2
-	asr r3, r2, #17
-	add r2, r3, r2, lsr #31
-	mls r0, r2, r1, r0
+	movw r1, #7557
+	movt r1, #28633
+	smmul r1, r0, r1
+	asr r2, r1, #17
+	add r1, r2, r1, lsr #31
+	movw r2, #37856
+	movt r2, #4
+	mls r0, r1, r2, r0
 	bx lr
 .globl shl_imm
 shl_imm:
@@ -418,31 +418,27 @@ mul_with_constant_neg_1:
 .globl mul_with_constant_100
 mul_with_constant_100:
 .p2align 4
-	add r0, r0, r0, lsl #2
-	add r0, r0, r0, lsl #2
-	lsl r0, r0, #2
+	mov r1, #100
+	mul r0, r0, r1
 	bx lr
 .globl mul_with_constant_1000
 mul_with_constant_1000:
 .p2align 4
-	rsb r1, r0, r0, lsl #6
-	rsb r0, r0, r1, lsl #1
-	lsl r0, r0, #3
+	mov r1, #1000
+	mul r0, r0, r1
 	bx lr
 .globl mul_with_constant_400
 mul_with_constant_400:
 .p2align 4
-	add r0, r0, r0, lsl #2
-	add r0, r0, r0, lsl #2
-	lsl r0, r0, #4
+	mov r1, #400
+	mul r0, r0, r1
 	bx lr
 .globl mul_with_constant_1000000
 mul_with_constant_1000000:
 .p2align 4
-	rsb r1, r0, r0, lsl #5
-	rsb r1, r1, r1, lsl #6
-	add r0, r0, r1, lsl #3
-	lsl r0, r0, #6
+	movw r1, #16960
+	movt r1, #15
+	mul r0, r0, r1
 	bx lr
 .globl mul_with_constant_10
 mul_with_constant_10:
@@ -453,9 +449,8 @@ mul_with_constant_10:
 .globl mul_with_constant_270
 mul_with_constant_270:
 .p2align 4
-	add r0, r0, r0, lsl #3
-	rsb r0, r0, r0, lsl #4
-	lsl r0, r0, #1
+	movw r1, #270
+	mul r0, r0, r1
 	bx lr
 .globl mul_with_constant_3
 mul_with_constant_3:
@@ -465,41 +460,38 @@ mul_with_constant_3:
 .globl mul_with_constant_85
 mul_with_constant_85:
 .p2align 4
-	add r0, r0, r0, lsl #2
-	add r0, r0, r0, lsl #4
+	mov r1, #85
+	mul r0, r0, r1
 	bx lr
 .globl mul_with_constant_23
 mul_with_constant_23:
 .p2align 4
-	add r1, r0, r0, lsl #1
-	rsb r0, r0, r1, lsl #3
+	mov r1, #23
+	mul r0, r0, r1
 	bx lr
 .globl mul_with_constant_neg_23
 mul_with_constant_neg_23:
 .p2align 4
-	add r1, r0, r0, lsl #1
-	sub r0, r0, r1, lsl #3
+	mvn r1, #22
+	mul r0, r0, r1
 	bx lr
 .globl mul_with_constant_neg_82
 mul_with_constant_neg_82:
 .p2align 4
-	add r1, r0, r0, lsl #2
-	add r0, r0, r1, lsl #3
-	lsl r0, r0, #1
-	rsb r0, r0, #0
+	mvn r1, #81
+	mul r0, r0, r1
 	bx lr
 .globl mul_with_constant_neg_103
 mul_with_constant_neg_103:
 .p2align 4
-	rsb r1, r0, r0, lsl #3
-	rsb r1, r0, r1, lsl #1
-	sub r0, r0, r1, lsl #3
+	mvn r1, #102
+	mul r0, r0, r1
 	bx lr
 .globl mul_with_constant_neg_59
 mul_with_constant_neg_59:
 .p2align 4
-	rsb r1, r0, r0, lsl #4
-	sub r0, r0, r1, lsl #2
+	mvn r1, #58
+	mul r0, r0, r1
 	bx lr
 .globl mul_with_constant_17
 mul_with_constant_17:
@@ -535,8 +527,9 @@ mul_with_constant_8193:
 .globl mul_with_constant_270369
 mul_with_constant_270369:
 .p2align 4
-	add r0, r0, r0, lsl #5
-	add r0, r0, r0, lsl #13
+	movw r1, #8225
+	movt r1, #4
+	mul r0, r0, r1
 	bx lr
 .globl mul_with_constant_33
 mul_with_constant_33:
@@ -562,17 +555,14 @@ mul_with_constant_60:
 .globl mul_with_constant_300
 mul_with_constant_300:
 .p2align 4
-	add r0, r0, r0, lsl #2
-	rsb r0, r0, r0, lsl #4
-	lsl r0, r0, #2
+	mov r1, #300
+	mul r0, r0, r1
 	bx lr
 .globl mul_with_constant_10000
 mul_with_constant_10000:
 .p2align 4
-	rsb r1, r0, r0, lsl #6
-	rsb r0, r0, r1, lsl #1
-	add r0, r0, r0, lsl #2
-	lsl r0, r0, #4
+	movw r1, #10000
+	mul r0, r0, r1
 	bx lr
 .globl mul_neg2
 mul_neg2:

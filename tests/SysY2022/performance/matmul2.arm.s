@@ -174,7 +174,7 @@ label13:
 	mov r0, #0
 	cmp r0, #1000
 	blt label26
-	b label610
+	b label626
 label208:
 	mov r0, #0
 	cmp r0, #1000
@@ -195,7 +195,7 @@ label208:
 	mov r0, #0
 	cmp r0, #1000
 	blt label26
-	b label610
+	b label626
 label261:
 	mvn r0, #-2147483648
 	mov r3, #0
@@ -249,10 +249,10 @@ label17:
 	mov r0, #0
 	cmp r0, #1000
 	blt label26
-	b label610
+	b label626
 label24:
 	cmp r0, #1000
-	bge label610
+	bge label626
 label26:
 	mov r1, #4000
 	ldr r4, [sp, #0]
@@ -382,7 +382,7 @@ label27:
 	rsb r1, r1, #0
 	str r1, [r4, #28]
 	b label24
-label610:
+label626:
 	mov r5, #0
 	mov r0, r5
 	b label30
@@ -395,7 +395,7 @@ label22:
 	mov r0, #0
 	cmp r0, #1000
 	blt label26
-	b label610
+	b label626
 .p2align 4
 label39:
 	cmp r3, #1000

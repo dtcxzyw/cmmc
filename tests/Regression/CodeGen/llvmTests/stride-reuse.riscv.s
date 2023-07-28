@@ -22,20 +22,20 @@ label5:
 	ret
 label2:
 	auipc a2, %pcrel_hi(B)
-pcrel51:
-	auipc a3, %pcrel_hi(A)
 pcrel52:
+	auipc a3, %pcrel_hi(A)
+pcrel53:
 	auipc a4, %pcrel_hi(P)
-	li a5, 64
-	li t0, 1
+	li t0, 64
+	li a5, 1
 	addi a1, a2, %pcrel_lo(label2)
 	flw f11, %pcrel_lo(label2)(a2)
-	addi a2, a3, %pcrel_lo(pcrel51)
+	addi a2, a3, %pcrel_lo(pcrel52)
 	fadd.s f10, f11, f11
-	fsw f10, %pcrel_lo(pcrel51)(a3)
-	sw a5, %pcrel_lo(pcrel52)(a4)
-	addi a3, a4, %pcrel_lo(pcrel52)
-	beq a0, t0, label5
+	fsw f10, %pcrel_lo(pcrel52)(a3)
+	sw t0, %pcrel_lo(pcrel53)(a4)
+	addi a3, a4, %pcrel_lo(pcrel53)
+	beq a0, a5, label5
 	li a4, 1
 label3:
 	li t1, 4294967295

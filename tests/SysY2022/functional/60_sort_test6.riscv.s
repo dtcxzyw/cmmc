@@ -7,30 +7,30 @@ main:
 	addi sp, sp, -144
 	li a2, 4
 	li a3, 3
-	li a4, 5
-	sd s0, 40(sp)
+	li a4, 9
+	sd s0, 136(sp)
 	addi a0, sp, 0
-	addi a1, sp, 88
-	addi s0, sp, 48
-	sd s1, 136(sp)
-	sd ra, 128(sp)
-	sw a2, 88(sp)
-	li a2, 9
-	sw a3, 92(sp)
-	li a3, 2
-	sw a2, 96(sp)
-	li a2, 6
-	sw a3, 100(sp)
-	li a3, 1
-	sw zero, 104(sp)
-	sw a3, 108(sp)
+	addi a1, sp, 80
+	addi s0, sp, 40
+	sd s1, 128(sp)
+	sd ra, 120(sp)
+	sw a2, 80(sp)
+	li a2, 2
+	sw a3, 84(sp)
+	li a3, 6
+	sw a4, 88(sp)
+	sw a2, 92(sp)
+	li a2, 1
+	sw zero, 96(sp)
+	sw a2, 100(sp)
+	li a2, 5
+	sw a3, 104(sp)
 	li a3, 7
-	sw a2, 112(sp)
+	sw a2, 108(sp)
 	li a2, 8
-	sw a4, 116(sp)
-	sw a3, 120(sp)
+	sw a3, 112(sp)
 	mv a3, zero
-	sw a2, 124(sp)
+	sw a2, 116(sp)
 	sd zero, 0(sp)
 	sd zero, 8(sp)
 	sd zero, 16(sp)
@@ -95,14 +95,14 @@ label15:
 	sw t0, 0(a4)
 	lw a5, 8(a3)
 	sh2add a4, a5, a0
-	lw t1, 0(a4)
-	addi t0, t1, 1
-	sw t0, 0(a4)
-	lw a5, 12(a3)
-	sh2add a3, a5, a0
-	lw a4, 0(a3)
-	addi a5, a4, 1
-	sw a5, 0(a3)
+	lw t0, 0(a4)
+	addi a5, t0, 1
+	sw a5, 0(a4)
+	lw a4, 12(a3)
+	sh2add a3, a4, a0
+	lw a5, 0(a3)
+	addi a4, a5, 1
+	sw a4, 0(a3)
 	mv a3, a2
 	j label2
 .p2align 2
@@ -167,8 +167,8 @@ label11:
 	addiw s1, s1, 1
 	blt s1, a0, label11
 	mv a0, zero
-	ld ra, 128(sp)
-	ld s1, 136(sp)
-	ld s0, 40(sp)
+	ld ra, 120(sp)
+	ld s1, 128(sp)
+	ld s0, 136(sp)
 	addi sp, sp, 144
 	ret

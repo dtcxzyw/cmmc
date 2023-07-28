@@ -24,8 +24,8 @@ test_mul_by_10:
 .globl test_mul_by_11
 test_mul_by_11:
 .p2align 4
-	add r1, r0, r0, lsl #1
-	rsb r0, r0, r1, lsl #2
+	mov r1, #11
+	mul r0, r0, r1
 	bx lr
 .globl test_mul_by_12
 test_mul_by_12:
@@ -36,8 +36,8 @@ test_mul_by_12:
 .globl test_mul_by_13
 test_mul_by_13:
 .p2align 4
-	rsb r1, r0, r0, lsl #3
-	rsb r0, r0, r1, lsl #1
+	mov r1, #13
+	mul r0, r0, r1
 	bx lr
 .globl test_mul_by_14
 test_mul_by_14:
@@ -69,8 +69,8 @@ test_mul_by_18:
 .globl test_mul_by_19
 test_mul_by_19:
 .p2align 4
-	add r1, r0, r0, lsl #2
-	rsb r0, r0, r1, lsl #2
+	mov r1, #19
+	mul r0, r0, r1
 	bx lr
 .globl test_mul_by_2
 test_mul_by_2:
@@ -86,21 +86,20 @@ test_mul_by_20:
 .globl test_mul_by_21
 test_mul_by_21:
 .p2align 4
-	add r0, r0, r0, lsl #1
-	rsb r0, r0, r0, lsl #3
+	mov r1, #21
+	mul r0, r0, r1
 	bx lr
 .globl test_mul_by_22
 test_mul_by_22:
 .p2align 4
-	add r1, r0, r0, lsl #1
-	rsb r0, r0, r1, lsl #2
-	lsl r0, r0, #1
+	mov r1, #22
+	mul r0, r0, r1
 	bx lr
 .globl test_mul_by_23
 test_mul_by_23:
 .p2align 4
-	add r1, r0, r0, lsl #1
-	rsb r0, r0, r1, lsl #3
+	mov r1, #23
+	mul r0, r0, r1
 	bx lr
 .globl test_mul_by_24
 test_mul_by_24:
@@ -111,21 +110,20 @@ test_mul_by_24:
 .globl test_mul_by_25
 test_mul_by_25:
 .p2align 4
-	add r0, r0, r0, lsl #2
-	add r0, r0, r0, lsl #2
+	mov r1, #25
+	mul r0, r0, r1
 	bx lr
 .globl test_mul_by_26
 test_mul_by_26:
 .p2align 4
-	rsb r1, r0, r0, lsl #3
-	rsb r0, r0, r1, lsl #1
-	lsl r0, r0, #1
+	mov r1, #26
+	mul r0, r0, r1
 	bx lr
 .globl test_mul_by_27
 test_mul_by_27:
 .p2align 4
-	add r0, r0, r0, lsl #1
-	add r0, r0, r0, lsl #3
+	mov r1, #27
+	mul r0, r0, r1
 	bx lr
 .globl test_mul_by_28
 test_mul_by_28:
@@ -136,8 +134,8 @@ test_mul_by_28:
 .globl test_mul_by_29
 test_mul_by_29:
 .p2align 4
-	rsb r1, r0, r0, lsl #4
-	rsb r0, r0, r1, lsl #1
+	mov r1, #29
+	mul r0, r0, r1
 	bx lr
 .globl test_mul_by_3
 test_mul_by_3:
@@ -163,8 +161,8 @@ test_mul_by_32:
 .globl test_mul_by_37
 test_mul_by_37:
 .p2align 4
-	add r1, r0, r0, lsl #3
-	add r0, r0, r1, lsl #2
+	mov r1, #37
+	mul r0, r0, r1
 	bx lr
 .globl test_mul_by_4
 test_mul_by_4:
@@ -174,8 +172,8 @@ test_mul_by_4:
 .globl test_mul_by_41
 test_mul_by_41:
 .p2align 4
-	add r1, r0, r0, lsl #2
-	add r0, r0, r1, lsl #3
+	mov r1, #41
+	mul r0, r0, r1
 	bx lr
 .globl test_mul_by_5
 test_mul_by_5:
@@ -214,8 +212,8 @@ test_mul_by_7:
 .globl test_mul_by_73
 test_mul_by_73:
 .p2align 4
-	add r1, r0, r0, lsl #3
-	add r0, r0, r1, lsl #3
+	mov r1, #73
+	mul r0, r0, r1
 	bx lr
 .globl test_mul_by_8
 test_mul_by_8:

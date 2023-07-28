@@ -165,21 +165,23 @@ label35:
 label39:
 	cmp r2, #2
 	bge label134
-	mov r5, r3
+	mov r4, r3
 	mov r3, #0
 	b label43
 label139:
 	add r2, r2, #1
-	mov r3, r5
+	mov r3, r4
 	b label39
 label43:
 	cmp r3, #2
 	bge label139
+	mov r5, r4
 	mov r4, #0
 label47:
 	cmp r4, #2
 	blt label145
 	add r3, r3, #1
+	mov r4, r5
 	b label43
 label145:
 	mov r6, #0

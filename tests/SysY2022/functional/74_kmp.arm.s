@@ -50,7 +50,7 @@ label5:
 	ldr r2, [r6, r0, lsl #2]
 	cmp r2, #0
 	bne label17
-	b label123
+	b label135
 .p2align 4
 label20:
 	cmn r0, #1
@@ -67,13 +67,13 @@ label20:
 	ldr r2, [r6, r0, lsl #2]
 	cmp r2, #0
 	bne label17
-label123:
+label135:
 	mvn r0, #0
 	b label15
 label12:
 	ldr r2, [r6, r1, lsl #2]
 	cmp r2, #0
-	beq label123
+	beq label135
 label17:
 	ldr r3, [r4, r0, lsl #2]
 	cmp r2, r3
@@ -100,7 +100,7 @@ label21:
 	ldr r2, [r6, r0, lsl #2]
 	cmp r2, #0
 	bne label17
-	b label123
+	b label135
 label15:
 	bl putint
 	mov r0, #10

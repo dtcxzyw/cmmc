@@ -102,7 +102,7 @@ main:
 	li a1, 4
 	li a0, 3
 	li a2, 9
-	li a3, 5
+	li a3, 7
 	sd s0, 56(sp)
 	addi s0, sp, 0
 	sd s1, 48(sp)
@@ -116,20 +116,20 @@ main:
 	li a0, 1
 	sw zero, 16(sp)
 	sw a0, 20(sp)
-	li a0, 7
+	li a0, 5
 	sw a1, 24(sp)
 	li a1, 8
-	sw a3, 28(sp)
-	sw a0, 32(sp)
+	sw a0, 28(sp)
+	sw a3, 32(sp)
 	sw a1, 36(sp)
 	mv a1, zero
 	mv a0, s0
 	jal QuickSort
 	li a1, 10
-	bge a0, a1, label127
+	bge a0, a1, label135
 	mv s1, a0
 .p2align 2
-label125:
+label133:
 	sh2add a1, s1, s0
 	lw a0, 0(a1)
 	jal putint
@@ -137,8 +137,8 @@ label125:
 	jal putch
 	li a0, 10
 	addiw s1, s1, 1
-	blt s1, a0, label125
-label127:
+	blt s1, a0, label133
+label135:
 	mv a0, zero
 	ld ra, 40(sp)
 	ld s1, 48(sp)

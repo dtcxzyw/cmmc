@@ -122,24 +122,24 @@ label51:
 label54:
 	movw r0, #23333
 	movw r2, #57186
-	movw r3, #36553
 	movt r2, #304
-	movt r3, #5497
-	mla r2, r6, r2, r0
-	movw r0, #57607
-	movt r0, #1525
-	smmul r3, r2, r3
-	asr r6, r3, #23
-	add r3, r6, r3, lsr #31
-	mls r2, r3, r0, r2
-	movs r6, r2
-	add r0, r2, r0
-	movlt r6, r0
-	movw r2, #4059
+	mla r0, r6, r2, r0
+	movw r2, #36553
+	movt r2, #5497
+	smmul r2, r0, r2
+	asr r3, r2, #23
+	add r3, r3, r2, lsr #31
+	movw r2, #57607
+	movt r2, #1525
+	mls r0, r3, r2, r0
+	movs r6, r0
+	add r2, r0, r2
+	movlt r6, r2
 	movw r0, #48161
+	movw r2, #4059
 	vmov s0, r6
-	movt r2, #49353
 	movt r0, #19646
+	movt r2, #49353
 	vmov s1, r0
 	movw r0, #4059
 	movt r0, #16585
@@ -419,8 +419,8 @@ label58:
 	vmrs APSR_nzcv, FPSCR
 	vmovmi.f32 s0, s1
 	bl my_sin_impl
-	mov r0, #0
 	vcmp.f32 s6, s7
+	mov r0, #0
 	movw r2, #4059
 	movt r2, #49353
 	vmov.f32 s5, s0

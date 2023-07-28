@@ -59,15 +59,15 @@ main:
 	mov r0, #78
 	bl _sysy_starttime
 	cmp r6, #0
-	movw r11, #:lower16:key
 	movw r9, #:lower16:head
-	movw r0, #:lower16:nextvalue
+	movw r11, #:lower16:key
 	movw r8, #:lower16:value
-	movt r11, #:upper16:key
+	movw r0, #:lower16:nextvalue
 	movt r9, #:upper16:head
-	movt r0, #:upper16:nextvalue
+	movt r11, #:upper16:key
 	movt r8, #:upper16:value
 	str r9, [sp, #12]
+	movt r0, #:upper16:nextvalue
 	str r11, [sp, #16]
 	movw r11, #:lower16:next
 	str r8, [sp, #20]

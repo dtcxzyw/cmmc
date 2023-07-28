@@ -4,30 +4,30 @@
 .globl main
 main:
 .p2align 2
-	addi sp, sp, -88
+	addi sp, sp, -96
 	lui a0, 260096
 	fmv.w.x f12, zero
-	sd s0, 80(sp)
+	sd s0, 40(sp)
 	fmv.w.x f10, a0
 	addi s0, sp, 0
-	sd s1, 72(sp)
+	sd s1, 88(sp)
 	lui a0, 262144
-	addi s1, sp, 12
+	addi s1, sp, 24
 	fmv.w.x f11, a0
-	sd s3, 64(sp)
-	addi s3, sp, 24
-	sd s2, 56(sp)
+	sd s3, 16(sp)
+	addi s3, sp, 48
+	sd s2, 80(sp)
 	mv s2, zero
-	sd ra, 48(sp)
-	fsw f10, 20(sp)
+	sd ra, 72(sp)
+	fsw f10, 32(sp)
 	fsw f11, 4(sp)
-	fsw f12, 28(sp)
-	fsw f12, 32(sp)
-	fsw f10, 12(sp)
+	fsw f12, 52(sp)
+	fsw f12, 56(sp)
+	fsw f10, 24(sp)
 	fsw f11, 0(sp)
-	fsw f10, 16(sp)
+	fsw f10, 28(sp)
 	fsw f11, 8(sp)
-	fsw f12, 24(sp)
+	fsw f12, 48(sp)
 label2:
 	sh2add a1, s2, s3
 	flw f10, 0(a1)
@@ -60,11 +60,11 @@ label8:
 	blt s1, a0, label8
 	li a0, 10
 	jal putch
-	ld ra, 48(sp)
+	ld ra, 72(sp)
 	mv a0, zero
-	ld s2, 56(sp)
-	ld s3, 64(sp)
-	ld s1, 72(sp)
-	ld s0, 80(sp)
-	addi sp, sp, 88
+	ld s2, 80(sp)
+	ld s3, 16(sp)
+	ld s1, 88(sp)
+	ld s0, 40(sp)
+	addi sp, sp, 96
 	ret

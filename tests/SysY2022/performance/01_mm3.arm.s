@@ -128,7 +128,7 @@ label12:
 	add r0, r0, #1
 	cmp r0, #5
 	blt label12
-label495:
+label520:
 	mov r7, #0
 	mov r0, r7
 	b label43
@@ -154,7 +154,7 @@ label145:
 	add r0, r0, #1
 	cmp r0, #5
 	blt label12
-	b label495
+	b label520
 .p2align 4
 label28:
 	ldr r4, [sp, #8]
@@ -184,7 +184,7 @@ label28:
 	add r0, r0, #1
 	cmp r0, #5
 	blt label12
-	b label495
+	b label520
 .p2align 4
 label30:
 	ldr r5, [sp, #12]
@@ -220,7 +220,7 @@ label30:
 	add r0, r0, #1
 	cmp r0, #5
 	blt label12
-	b label495
+	b label520
 .p2align 4
 label166:
 	mov r7, #4
@@ -276,7 +276,7 @@ label31:
 	add r0, r0, #1
 	cmp r0, #5
 	blt label12
-	b label495
+	b label520
 .p2align 4
 label197:
 	mov r9, r7
@@ -311,7 +311,7 @@ label34:
 	add r0, r0, #1
 	cmp r0, #5
 	blt label12
-	b label495
+	b label520
 .p2align 4
 label36:
 	add r3, r3, #1
@@ -334,7 +334,7 @@ label36:
 	add r0, r0, #1
 	cmp r0, #5
 	blt label12
-	b label495
+	b label520
 .p2align 4
 label43:
 	ldr r6, [sp, #0]
@@ -357,7 +357,7 @@ label70:
 	add r0, r0, #1
 	cmp r0, #5
 	blt label12
-	b label495
+	b label520
 label223:
 	mov r3, #0
 	ldr r6, [sp, #0]
@@ -371,7 +371,7 @@ label223:
 	add r0, r0, #1
 	cmp r0, #5
 	blt label12
-	b label495
+	b label520
 .p2align 4
 label62:
 	ldr r5, [sp, #4]
@@ -399,7 +399,7 @@ label62:
 	add r0, r0, #1
 	cmp r0, #5
 	blt label12
-	b label495
+	b label520
 .p2align 4
 label286:
 	mov r7, #4
@@ -447,7 +447,7 @@ label63:
 	add r0, r0, #1
 	cmp r0, #5
 	blt label12
-	b label495
+	b label520
 .p2align 4
 label317:
 	mov r9, r7
@@ -474,7 +474,7 @@ label66:
 	add r0, r0, #1
 	cmp r0, #5
 	blt label12
-	b label495
+	b label520
 .p2align 4
 label60:
 	ldr r4, [sp, #8]
@@ -496,7 +496,7 @@ label60:
 	add r0, r0, #1
 	cmp r0, #5
 	blt label12
-	b label495
+	b label520
 .p2align 4
 label68:
 	add r3, r3, #1
@@ -511,7 +511,7 @@ label68:
 	add r0, r0, #1
 	cmp r0, #5
 	blt label12
-	b label495
+	b label520
 .p2align 4
 label72:
 	ldr r5, [sp, #4]
@@ -539,7 +539,7 @@ label73:
 	add r0, r0, #1
 	cmp r0, #5
 	blt label12
-	b label495
+	b label520
 .p2align 4
 label77:
 	add r5, r2, r4, lsl #2
@@ -573,7 +573,7 @@ label16:
 	add r0, r0, #1
 	cmp r0, #5
 	blt label12
-	b label495
+	b label520
 .p2align 4
 label18:
 	ldr r5, [sp, #12]
@@ -608,7 +608,7 @@ label19:
 	add r0, r0, #1
 	cmp r0, #5
 	blt label12
-	b label495
+	b label520
 .p2align 4
 label21:
 	add r5, r2, r4, lsl #2
@@ -645,7 +645,7 @@ label22:
 	add r0, r0, #1
 	cmp r0, #5
 	blt label12
-	b label495
+	b label520
 .p2align 4
 label75:
 	mov r3, #0
@@ -665,7 +665,7 @@ label75:
 	add r0, r0, #1
 	cmp r0, #5
 	blt label12
-	b label495
+	b label520
 .p2align 4
 label46:
 	ldr r6, [sp, #0]

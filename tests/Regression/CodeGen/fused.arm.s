@@ -122,10 +122,8 @@ fused_mul_sub:
 .globl fused_mul_sub_imm
 fused_mul_sub_imm:
 .p2align 4
-	rsb r2, r1, r1, lsl #3
-	rsb r1, r1, r2, lsl #4
-	rsb r1, r1, r1, lsl #3
-	sub r0, r0, r1
+	movw r2, #777
+	mls r0, r1, r2, r0
 	bx lr
 .globl fused_mul_sub2
 fused_mul_sub2:
@@ -143,11 +141,11 @@ fused_div_rem:
 fused_div_rem_constant:
 .p2align 4
 	movw r1, #21846
-	mov r2, #3
 	movt r1, #21845
 	smmul r1, r0, r1
 	add r1, r1, r1, lsr #31
-	mls r0, r1, r2, r0
+	add r2, r1, r1, lsl #1
+	sub r0, r0, r2
 	add r0, r1, r0
 	bx lr
 .globl fused_mvn_and

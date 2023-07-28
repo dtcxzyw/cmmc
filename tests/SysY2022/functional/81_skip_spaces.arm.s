@@ -18,7 +18,7 @@ label2:
 	bne label4
 	cmp r5, #0
 	bne label24
-	b label41
+	b label45
 .p2align 4
 label4:
 	bl getint
@@ -39,15 +39,15 @@ label33:
 	mov r5, r0
 	b label6
 .p2align 4
-label41:
+label45:
 	mov r0, #0
 label9:
-	mov r1, #79
-	movw r2, #14933
+	movw r1, #14933
 	add sp, sp, #404
-	movt r2, #26546
-	smmul r2, r0, r2
-	asr r3, r2, #5
-	add r2, r3, r2, lsr #31
-	mls r0, r2, r1, r0
+	movt r1, #26546
+	smmul r1, r0, r1
+	asr r2, r1, #5
+	add r1, r2, r1, lsr #31
+	mov r2, #79
+	mls r0, r1, r2, r0
 	pop { r4, r5, pc }

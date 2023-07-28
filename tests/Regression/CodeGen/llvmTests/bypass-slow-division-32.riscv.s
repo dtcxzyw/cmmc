@@ -67,9 +67,9 @@ Test_use_divrem_reg_imm:
 	srai a2, a1, 35
 	li a1, 4294967295
 	add a3, a4, a2
-	li a4, 33
+	slliw a4, a3, 5
 	and a2, a3, a1
-	mulw a3, a3, a4
+	addw a3, a4, a3
 	subw a5, a0, a3
 	and a1, a5, a1
 	addw a0, a2, a1
@@ -90,8 +90,8 @@ Test_use_rem_reg_imm:
 	srli a3, a1, 63
 	srai a2, a1, 35
 	add a1, a3, a2
-	li a2, 33
-	mulw a3, a1, a2
+	slliw a2, a1, 5
+	addw a3, a2, a1
 	li a2, 4294967295
 	subw a1, a0, a3
 	and a0, a1, a2

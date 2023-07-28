@@ -22,33 +22,33 @@ label5:
 	ret
 label2:
 	auipc a2, %pcrel_hi(B)
-pcrel58:
-	auipc a4, %pcrel_hi(A)
 	li t0, 17
 	addi a1, a2, %pcrel_lo(label2)
-	lb a3, %pcrel_lo(label2)(a2)
-	andi a2, a3, 255
-	slliw a5, a2, 1
-	addi a2, a4, %pcrel_lo(pcrel58)
+	lb a2, %pcrel_lo(label2)(a2)
+	andi a4, a2, 255
+	slliw a5, a4, 1
+pcrel61:
+	auipc a4, %pcrel_hi(A)
 	andi a3, a5, 255
+	addi a2, a4, %pcrel_lo(pcrel61)
 	li a5, 1
-	sb a3, %pcrel_lo(pcrel58)(a4)
-pcrel59:
+	sb a3, %pcrel_lo(pcrel61)(a4)
+pcrel62:
 	auipc a4, %pcrel_hi(P)
-	sb t0, %pcrel_lo(pcrel59)(a4)
-	addi a3, a4, %pcrel_lo(pcrel59)
+	sb t0, %pcrel_lo(pcrel62)(a4)
+	addi a3, a4, %pcrel_lo(pcrel62)
 	beq a0, a5, label5
 	li a4, 1
 label3:
 	li a5, 4294967295
 	and t0, a4, a5
-	add t1, a1, t0
-	lb t2, 0(t1)
-	andi t4, t2, 255
+	add t3, a1, t0
+	lb t1, 0(t3)
+	andi t2, t1, 255
+	slliw t3, t2, 1
 	add t2, a2, t0
-	slliw t3, t4, 1
-	sh3add t0, a4, a4
 	andi t1, t3, 255
+	sh3add t0, a4, a4
 	addiw a4, a4, 1
 	sb t1, 0(t2)
 	and t1, t0, a5
