@@ -38,3 +38,12 @@ int test6(int x) {
     c[4] = 100;
     return c[x] + y;
 }
+int test7(int x) {
+    int c[10];
+    for(int i = 0; i < 10; ++i)
+        c[i] = i;
+    int sum = 0;
+    for(int i = 0; i < x; ++i)
+        sum += c[9 - i] * i;
+    return sum;
+}

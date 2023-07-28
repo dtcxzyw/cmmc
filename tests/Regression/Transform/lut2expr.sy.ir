@@ -49,3 +49,43 @@ func @test6(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless N
     i32 %12 = add i32 %x, i32 %11;
     ret i32 %12;
 }
+func @test7(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = icmp sgt i32 %x, i32 0;
+    cbr i1 %0(prob = 0.97), ^super.header, ^b;
+  ^super.header:
+    i32 %1 = phi [^entry, i32 0] [^for.body, i32 %3];
+    i32 %2 = phi [^entry, i32 0] [^for.body, i32 %20];
+    i32 %3 = add i32 %1, i32 4;
+    i1 %4 = icmp sgt i32 %x, i32 %3;
+    cbr i1 %4(prob = 0.89), ^for.body, ^for.body1;
+  ^b:
+    i32 %5 = phi [^entry, i32 0] [^for.body1, i32 %25];
+    ret i32 %5;
+  ^for.body:
+    i32 %6 = sub i32 9, i32 %1;
+    i32 %7 = mul i32 %1, i32 %6;
+    i32 %8 = add i32 %2, i32 %7;
+    i32 %9 = add i32 %1, i32 1;
+    i32 %10 = sub i32 8, i32 %1;
+    i32 %11 = mul i32 %9, i32 %10;
+    i32 %12 = add i32 %8, i32 %11;
+    i32 %13 = add i32 %1, i32 2;
+    i32 %14 = sub i32 7, i32 %1;
+    i32 %15 = mul i32 %13, i32 %14;
+    i32 %16 = add i32 %12, i32 %15;
+    i32 %17 = add i32 %1, i32 3;
+    i32 %18 = sub i32 6, i32 %1;
+    i32 %19 = mul i32 %17, i32 %18;
+    i32 %20 = add i32 %16, i32 %19;
+    ubr ^super.header;
+  ^for.body1:
+    i32 %21 = phi [^super.header, i32 %1] [^for.body1, i32 %26];
+    i32 %22 = phi [^super.header, i32 %2] [^for.body1, i32 %25];
+    i32 %23 = sub i32 9, i32 %21;
+    i32 %24 = mul i32 %21, i32 %23;
+    i32 %25 = add i32 %22, i32 %24;
+    i32 %26 = add i32 %21, i32 1;
+    i1 %27 = icmp sgt i32 %x, i32 %26;
+    cbr i1 %27(prob = 0.75), ^for.body1, ^b;
+}

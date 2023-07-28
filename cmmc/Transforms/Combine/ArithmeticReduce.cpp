@@ -1094,6 +1094,11 @@ class ArithmeticReduce final : public TransformPass<Function> {
                         break;
                 }
             }
+            // TODO: move to reassoc
+            // c1 - (x + c2) -> c1 - c2 - x
+            if(sub(int_(i1), add(any(v1), int_(i2)))(matchCtx)) {
+                return builder.makeOp<BinaryInst>(InstructionID::Sub, makeIntLike(i1 - i2, v1), v1);
+            }
 
             return nullptr;
         });

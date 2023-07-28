@@ -15,6 +15,7 @@
 #include <cmmc/Analysis/AliasAnalysis.hpp>
 #include <cmmc/Analysis/AnalysisPass.hpp>
 #include <cmmc/Analysis/CFGAnalysis.hpp>
+#include <cmmc/Analysis/DominateAnalysis.hpp>
 #include <cmmc/Analysis/PointerBaseAnalysis.hpp>
 #include <cmmc/Analysis/SimpleValueAnalysis.hpp>
 #include <cmmc/IR/Block.hpp>
@@ -26,6 +27,7 @@
 #include <cmmc/IR/Type.hpp>
 #include <cmmc/IR/Value.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
+#include <cmmc/Support/StaticReflection.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
 #include <cstdint>
@@ -38,96 +40,113 @@
 
 CMMC_NAMESPACE_BEGIN
 
-class LUT2Expr final : public TransformPass<Function> {
-    static Value* matchConstant(const std::unordered_map<uint32_t, Value*>& lut) {
+enum class LUTExprType {
+    Unknown = 0,
+    Constant,  // lut[i] = lut[0]
+    Identity,  // lut[i] = i
+    Shl,       // lut[i] = lut[0] << i
+    Add,       // lut[i] = lut[0] + i
+    Sub,       // lut[i] = lut[0] - i
+    Dirty
+};
+
+struct LUTStorage final {
+    std::unordered_map<uint32_t, Value*> idxMap;
+    LUTExprType type = LUTExprType::Dirty;
+
+    static bool matchConstant(const std::unordered_map<uint32_t, Value*>& lut) {
         auto common = lut.begin()->second;
         for(auto [k, v] : lut) {
             CMMC_UNUSED(k);
             if(common != v)
-                return nullptr;
+                return false;
         }
-        return common;
+        return true;
     }
 
-    static Value* matchIdentity(const std::unordered_map<uint32_t, intmax_t>& lut, Value* index, const Type* type) {
-        if(index->getType() != type)
-            return nullptr;
+    static bool matchIdentity(const std::unordered_map<uint32_t, intmax_t>& lut) {
         for(auto [k, v] : lut) {
             if(static_cast<intmax_t>(k) != v)
-                return nullptr;
+                return false;
         }
-        return index;
+        return true;
     }
 
-    static Value* matchShl(const std::unordered_map<uint32_t, intmax_t>& lut, Value* index, const Type* type,
-                           IRBuilder& builder) {
-        if(index->getType() != type)
-            return nullptr;
+    static bool matchShl(const std::unordered_map<uint32_t, intmax_t>& lut) {
         const auto base = lut.at(0);
         for(auto [k, v] : lut) {
             if(v != (base << k))
-                return nullptr;
+                return false;
         }
 
-        return builder.makeOp<BinaryInst>(InstructionID::Shl, ConstantInteger::get(index->getType(), base), index);
+        return true;
     }
 
-    static Value* matchAdd(const std::unordered_map<uint32_t, intmax_t>& lut, Value* index, const Type* type,
-                           IRBuilder& builder) {
-        if(index->getType() != type)
-            return nullptr;
+    static bool matchAdd(const std::unordered_map<uint32_t, intmax_t>& lut) {
         const auto base = lut.at(0);
         for(auto [k, v] : lut) {
             if(v != base + static_cast<intmax_t>(k))
-                return nullptr;
+                return false;
         }
 
-        return builder.makeOp<BinaryInst>(InstructionID::Add, ConstantInteger::get(index->getType(), base), index);
+        return true;
     }
 
-    static Value* matchSub(const std::unordered_map<uint32_t, intmax_t>& lut, Value* index, const Type* type,
-                           IRBuilder& builder) {
-        if(index->getType() != type)
-            return nullptr;
+    static bool matchSub(const std::unordered_map<uint32_t, intmax_t>& lut) {
         const auto base = lut.at(0);
         for(auto [k, v] : lut) {
             if(v != base - static_cast<intmax_t>(k))
-                return nullptr;
+                return false;
         }
 
-        return builder.makeOp<BinaryInst>(InstructionID::Sub, ConstantInteger::get(index->getType(), base), index);
+        return true;
     }
 
-    static Value* matchPattern(const std::unordered_map<uint32_t, Value*>& lut, Value* index, const Type* type,
-                               IRBuilder& builder) {
-        assert(!lut.empty());
-        if(auto val = matchConstant(lut)) {
-            return val;
-        }
+    void invalidate() {
+        type = LUTExprType::Dirty;
+    }
+
+    LUTExprType matchExpr() {
+        if(idxMap.empty())
+            return LUTExprType::Unknown;
+
+        if(matchConstant(idxMap))
+            return LUTExprType::Constant;
 
         std::unordered_map<uint32_t, intmax_t> lutVal;
-        for(auto [k, v] : lut)
+        for(auto [k, v] : idxMap)
             if(v->is<ConstantInteger>()) {
                 lutVal[k] = v->as<ConstantInteger>()->getSignExtended();
             } else
-                return nullptr;
+                return LUTExprType::Unknown;
 
-        if(auto val = matchIdentity(lutVal, index, type))
-            return val;
+        if(matchIdentity(lutVal))
+            return LUTExprType::Identity;
 
-        if(auto val = matchAdd(lutVal, index, type, builder))
-            return val;
+        if(matchAdd(lutVal))
+            return LUTExprType::Add;
 
-        if(auto val = matchSub(lutVal, index, type, builder))
-            return val;
+        if(matchSub(lutVal))
+            return LUTExprType::Sub;
 
-        if(auto val = matchShl(lutVal, index, type, builder))
-            return val;
+        if(matchShl(lutVal))
+            return LUTExprType::Shl;
 
-        return nullptr;
+        return LUTExprType::Unknown;
     }
 
-    static std::optional<uint32_t> getConstantIndex(const Value* addr) {
+    LUTExprType query(uint32_t size) {
+        if(idxMap.size() != size)
+            return LUTExprType::Unknown;
+        if(type == LUTExprType::Dirty) {
+            type = matchExpr();
+        }
+        return type;
+    }
+};
+
+class LUT2Expr final : public TransformPass<Function> {
+    static std::optional<intmax_t> getConstantIndex(const Value* addr) {
         if(addr->is<GlobalVariable>())
             return 0;
         if(addr->is<GetElementPtrInst>()) {
@@ -137,29 +156,33 @@ class LUT2Expr final : public TransformPass<Function> {
                 if(idx->is<ConstantInteger>()) {
                     const auto base = gep->getOperand(1);
                     if(auto baseIndex = getConstantIndex(base))
-                        return *baseIndex + static_cast<uint32_t>(idx->as<ConstantInteger>()->getZeroExtended());
+                        return *baseIndex + static_cast<intmax_t>(idx->as<ConstantInteger>()->getSignExtended());
                 }
             } else {
                 const auto idx = gep->arguments().back();
                 if(idx->is<ConstantInteger>())
-                    return static_cast<uint32_t>(idx->as<ConstantInteger>()->getZeroExtended());
+                    return static_cast<intmax_t>(idx->as<ConstantInteger>()->getSignExtended());
             }
         }
 
         return std::nullopt;
     }
 
-    static std::optional<Value*> getDynamicIndex(const Value* addr) {
+    static std::optional<Value*> getDynamicIndex(const Value* addr, intmax_t& offset) {
         if(addr->is<GetElementPtrInst>()) {
             const auto gep = addr->as<GetElementPtrInst>();
             if(gep->operands().size() == 2) {
                 const auto idx = gep->getOperand(0);
+                const auto base = gep->getOperand(1);
                 if(!idx->isConstant()) {
-                    const auto base = gep->getOperand(1);
                     if(auto baseIndex = getConstantIndex(base)) {
                         if(*baseIndex == 0)
                             return idx;
                     }
+                } else {
+                    offset += static_cast<intmax_t>(idx->as<ConstantInteger>()->getSignExtended());
+                    if(auto index = getDynamicIndex(base, offset); index.has_value())
+                        return index;
                 }
             } else {
                 const auto idx = gep->arguments().back();
@@ -171,10 +194,26 @@ class LUT2Expr final : public TransformPass<Function> {
         return std::nullopt;
     }
 
-    static bool runBlock(Block* block, const PointerBaseAnalysisResult& base, const std::unordered_map<Value*, uint32_t>& lutAddr,
-                         IRBuilder& builder) {
-        std::unordered_map<Value*, std::unordered_map<uint32_t, Value*>> lut;
+    static Value* buildPattern(LUTExprType pattern, Value* base, Value* index, IRBuilder& builder) {
+        switch(pattern) {
+            case LUTExprType::Constant:
+                return base;
+            case LUTExprType::Identity:
+                return index;
+            case LUTExprType::Shl:
+                return builder.makeOp<BinaryInst>(InstructionID::Shl, base, index);
+            case LUTExprType::Add:
+                return builder.makeOp<BinaryInst>(InstructionID::Add, index, base);
+            case LUTExprType::Sub:
+                return builder.makeOp<BinaryInst>(InstructionID::Sub, base, index);
+            default:
+                reportUnreachable(CMMC_LOCATION());
+        }
+    }
 
+    using LUT = std::unordered_map<Value*, LUTStorage>;
+    static bool runBlock(Block* block, const PointerBaseAnalysisResult& base, const std::unordered_map<Value*, uint32_t>& lutAddr,
+                         IRBuilder& builder, LUT& lut) {
         bool modified = false;
         for(auto& inst : block->instructions()) {
             if(inst.getInstID() == InstructionID::Load) {
@@ -182,13 +221,26 @@ class LUT2Expr final : public TransformPass<Function> {
                 const auto baseAddr = base.lookup(addr);
 
                 if(auto iter = lut.find(baseAddr); iter != lut.end()) {
-                    const auto& lutVal = iter->second;
-                    if(lutVal.size() != lutAddr.at(baseAddr))
+                    auto& lutVal = iter->second;
+                    auto pattern = lutVal.query(lutAddr.at(baseAddr));
+                    if(pattern == LUTExprType::Unknown)
                         continue;
-                    const auto index = getDynamicIndex(addr);
-                    if(index.has_value()) {
+                    // std::cerr << enumName(pattern) << '\n';
+
+                    intmax_t offset = 0;
+                    auto index = getDynamicIndex(addr, offset);
+                    if(index.has_value() && *index) {
                         builder.setInsertPoint(block, &inst);
-                        if(auto val = matchPattern(lutVal, *index, inst.getType(), builder)) {
+                        const auto baseVal = lutVal.idxMap.at(0);
+                        if(!baseVal->getType()->isSame((*index)->getType()))
+                            continue;
+
+                        if(offset != 0) {
+                            index = builder.makeOp<BinaryInst>(InstructionID::Add, *index,
+                                                               ConstantInteger::get((*index)->getType(), offset));
+                        }
+
+                        if(auto val = buildPattern(pattern, baseVal, *index, builder)) {
                             inst.replaceWith(val);
                             modified = true;
                         }
@@ -205,7 +257,9 @@ class LUT2Expr final : public TransformPass<Function> {
                 } else if(lutAddr.count(baseAddr)) {
                     const auto index = getConstantIndex(addr);
                     if(index.has_value()) {
-                        lut[baseAddr][*index] = val;
+                        auto& ref = lut[baseAddr];
+                        ref.idxMap[static_cast<uint32_t>(*index)] = val;
+                        ref.invalidate();
                     } else
                         lut.erase(baseAddr);
                 }
@@ -264,11 +318,55 @@ public:
             return false;
 
         auto& pointerBase = analysis.get<PointerBaseAnalysis>(func);
+        auto& dom = analysis.get<DominateAnalysis>(func);
+        auto& cfg = analysis.get<CFGAnalysis>(func);
 
         IRBuilder builder{ analysis.module().getTarget() };
+        std::unordered_map<Block*, LUT> lutCache;
         bool modified = false;
-        for(auto block : func.blocks()) {
-            modified |= runBlock(block, pointerBase, lutAddr, builder);
+        for(auto block : dom.blocks()) {
+            auto& lut = lutCache[block];
+
+            const auto parent = dom.parent(block);
+            if(parent && !lutCache[parent].empty()) {
+                bool otherPred = false;
+                for(auto pred : cfg.predecessors(block))
+                    if(pred != parent && pred != block) {
+                        otherPred = true;
+                        break;
+                    }
+
+                if(!otherPred) {
+                    lut = lutCache[parent];
+                    for(auto& inst : block->instructions()) {
+                        switch(inst.getInstID()) {
+                            case InstructionID::Call: {
+                                auto callee = inst.lastOperand()->as<Function>();
+                                if(!callee->attr().hasAttr(FunctionAttribute::NoMemoryWrite))
+                                    lut.clear();
+                                break;
+                            }
+                            case InstructionID::Store: {
+                                const auto base = pointerBase.lookup(inst.getOperand(0));
+                                if(base) {
+                                    lut.erase(base);
+                                } else
+                                    lut.clear();
+                                break;
+                            }
+                            default:
+                                break;
+                        }
+                        if(lut.empty())
+                            break;
+                    }
+
+                    // block->dumpAsTarget(std::cerr);
+                    // std::cerr << " initial size " << lut.size() << std::endl;
+                }
+            }
+
+            modified |= runBlock(block, pointerBase, lutAddr, builder, lut);
         }
 
         return modified;
