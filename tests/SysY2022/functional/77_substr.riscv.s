@@ -8,7 +8,7 @@ p:
 .globl main
 main:
 .p2align 2
-	addi sp, sp, -136
+	addi sp, sp, -144
 	li a0, 8
 	li a3, 7
 	li a2, 4
@@ -16,26 +16,26 @@ main:
 	li a4, 2
 	li t0, 9
 	li a5, 3
-	sd s0, 128(sp)
+	sd s0, 136(sp)
 	addi s0, sp, 0
-	sd s1, 120(sp)
-	addi s1, sp, 52
-	sd ra, 112(sp)
-	sw a0, 52(sp)
-	sw a3, 56(sp)
-	sw a2, 60(sp)
-	sw a1, 64(sp)
-	sw a4, 68(sp)
-	sw a3, 72(sp)
-	sw zero, 76(sp)
-	sw a1, 80(sp)
-	sw t0, 84(sp)
-	sw a5, 88(sp)
-	sw a2, 92(sp)
-	sw a0, 96(sp)
+	sd s1, 56(sp)
+	addi s1, sp, 64
+	sd ra, 128(sp)
+	sw a0, 64(sp)
+	sw a3, 68(sp)
+	sw a2, 72(sp)
+	sw a1, 76(sp)
+	sw a4, 80(sp)
+	sw a3, 84(sp)
+	sw zero, 88(sp)
+	sw a1, 92(sp)
+	sw t0, 96(sp)
 	sw a5, 100(sp)
-	sw a3, 104(sp)
-	sw zero, 108(sp)
+	sw a2, 104(sp)
+	sw a0, 108(sp)
+	sw a5, 112(sp)
+	sw a3, 116(sp)
+	sw zero, 120(sp)
 	sw a5, 0(sp)
 	sw t0, 4(sp)
 	sw a3, 8(sp)
@@ -56,15 +56,14 @@ main:
 	li a0, 10
 	jal putch
 	mv a2, zero
-pcrel158:
+pcrel205:
 	auipc a1, %pcrel_hi(p)
-	addi a0, a1, %pcrel_lo(pcrel158)
-.p2align 2
+	addi a0, a1, %pcrel_lo(pcrel205)
 label2:
 	sh2add a1, a2, a0
 	li a3, 256
+	addi a2, a2, 64
 	sw zero, 0(a1)
-	addi a2, a2, 16
 	sw zero, 4(a1)
 	sw zero, 8(a1)
 	sw zero, 12(a1)
@@ -80,6 +79,54 @@ label2:
 	sw zero, 52(a1)
 	sw zero, 56(a1)
 	sw zero, 60(a1)
+	sw zero, 64(a1)
+	sw zero, 68(a1)
+	sw zero, 72(a1)
+	sw zero, 76(a1)
+	sw zero, 80(a1)
+	sw zero, 84(a1)
+	sw zero, 88(a1)
+	sw zero, 92(a1)
+	sw zero, 96(a1)
+	sw zero, 100(a1)
+	sw zero, 104(a1)
+	sw zero, 108(a1)
+	sw zero, 112(a1)
+	sw zero, 116(a1)
+	sw zero, 120(a1)
+	sw zero, 124(a1)
+	sw zero, 128(a1)
+	sw zero, 132(a1)
+	sw zero, 136(a1)
+	sw zero, 140(a1)
+	sw zero, 144(a1)
+	sw zero, 148(a1)
+	sw zero, 152(a1)
+	sw zero, 156(a1)
+	sw zero, 160(a1)
+	sw zero, 164(a1)
+	sw zero, 168(a1)
+	sw zero, 172(a1)
+	sw zero, 176(a1)
+	sw zero, 180(a1)
+	sw zero, 184(a1)
+	sw zero, 188(a1)
+	sw zero, 192(a1)
+	sw zero, 196(a1)
+	sw zero, 200(a1)
+	sw zero, 204(a1)
+	sw zero, 208(a1)
+	sw zero, 212(a1)
+	sw zero, 216(a1)
+	sw zero, 220(a1)
+	sw zero, 224(a1)
+	sw zero, 228(a1)
+	sw zero, 232(a1)
+	sw zero, 236(a1)
+	sw zero, 240(a1)
+	sw zero, 244(a1)
+	sw zero, 248(a1)
+	sw zero, 252(a1)
 	blt a2, a3, label2
 	li a1, 1
 	addiw a3, a1, -1
@@ -87,19 +134,19 @@ label2:
 	add a4, a0, a2
 	li a2, 16
 	addi a5, a4, -64
-	blt a1, a2, label73
+	blt a1, a2, label121
 label12:
 	lw a0, 1012(a0)
 	jal putint
 	li a0, 10
 	jal putch
-	ld ra, 112(sp)
+	ld ra, 128(sp)
 	mv a0, zero
-	ld s1, 120(sp)
-	ld s0, 128(sp)
-	addi sp, sp, 136
+	ld s1, 56(sp)
+	ld s0, 136(sp)
+	addi sp, sp, 144
 	ret
-label73:
+label121:
 	li a2, 1
 	li t0, 14
 	blt a2, t0, label8
@@ -109,7 +156,7 @@ label73:
 	add a4, a0, a2
 	li a2, 16
 	addi a5, a4, -64
-	blt a1, a2, label73
+	blt a1, a2, label121
 	j label12
 .p2align 2
 label8:
@@ -134,7 +181,7 @@ label8:
 	add a4, a0, a2
 	li a2, 16
 	addi a5, a4, -64
-	blt a1, a2, label73
+	blt a1, a2, label121
 	j label12
 .p2align 2
 label9:
@@ -152,5 +199,5 @@ label9:
 	add a4, a0, a2
 	li a2, 16
 	addi a5, a4, -64
-	blt a1, a2, label73
+	blt a1, a2, label121
 	j label12

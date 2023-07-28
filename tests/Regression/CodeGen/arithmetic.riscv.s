@@ -204,9 +204,10 @@ mod30:
 	srliw a3, a1, 31
 	sraiw a2, a1, 4
 	add a1, a3, a2
-	li a2, 30
-	mulw a3, a1, a2
-	subw a0, a0, a3
+	slliw a2, a1, 4
+	subw a3, a2, a1
+	slli a1, a3, 1
+	subw a0, a0, a1
 	ret
 .globl mod_large1
 mod_large1:
@@ -363,9 +364,9 @@ fp_imm0:
 .globl fp_imm1
 fp_imm1:
 .p2align 2
-pcrel266:
+pcrel268:
 	auipc a0, %pcrel_hi(__cmmc_fp_constant_pool)
-	addi a1, a0, %pcrel_lo(pcrel266)
+	addi a1, a0, %pcrel_lo(pcrel268)
 	flw f10, 0(a1)
 	ret
 .globl and_trunc
@@ -451,8 +452,8 @@ mul_with_constant_1000000:
 .globl mul_with_constant_10
 mul_with_constant_10:
 .p2align 2
-	li a1, 10
-	mulw a0, a0, a1
+	sh2add a1, a0, a0
+	slliw a0, a1, 1
 	ret
 .globl mul_with_constant_270
 mul_with_constant_270:
@@ -556,8 +557,9 @@ mul_with_constant_1073741824:
 .globl mul_with_constant_60
 mul_with_constant_60:
 .p2align 2
-	li a1, 60
-	mulw a0, a0, a1
+	slliw a1, a0, 4
+	subw a2, a1, a0
+	slliw a0, a2, 2
 	ret
 .globl mul_with_constant_300
 mul_with_constant_300:

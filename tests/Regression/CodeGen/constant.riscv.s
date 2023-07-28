@@ -9,19 +9,19 @@ x:
 .globl cse_imm
 cse_imm:
 .p2align 2
-	li a3, 10
-	mulw a4, a1, a3
+	sh2add a3, a1, a1
+	slliw a4, a3, 1
 	xor a1, a2, a4
-	mulw a2, a0, a3
-	addw a0, a1, a2
+	sh2add a2, a0, a0
+	sh1add a0, a2, a1
 	ret
 .globl cse_global
 cse_global:
 .p2align 2
-pcrel20:
+pcrel24:
 	auipc a0, %pcrel_hi(x)
-	lw a2, %pcrel_lo(pcrel20)(a0)
-	addi a1, a0, %pcrel_lo(pcrel20)
+	lw a2, %pcrel_lo(pcrel24)(a0)
+	addi a1, a0, %pcrel_lo(pcrel24)
 	lw a3, 4(a1)
 	addw a0, a2, a3
 	ret

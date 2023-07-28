@@ -84,6 +84,9 @@ LoopAnalysisResult LoopAnalysis::run(Function& func, AnalysisPassManager& analys
         if(!uniqueInitial || !initial)
             continue;
 
+        if(phi->incomings().at(block)->value != next)
+            continue;
+
         if(cmp->getOp() == CompareOp::ICmpNotEqual) {
             intmax_t boundValue;
             if(!int_(boundValue)(MatchContext<Value>{ bound }))

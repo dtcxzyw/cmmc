@@ -36,22 +36,13 @@ merge:
 	sd ra, 0(sp)
 	bgt a3, a0, label2
 	j label15
-label7:
-	xor a4, s4, a1
-	xor a5, s1, a2
-	sltu a3, zero, a4
-	sltu a4, zero, a5
-	and a3, a3, a4
-	bne a3, zero, label8
-	bne s4, a1, label9
-	sh2add a4, a2, s0
-	sh2add a5, a0, s2
-	addiw a2, a2, 1
-	lw a3, 0(a4)
-	addiw a0, a0, 1
-	sw a3, 0(a5)
-	bne s1, a0, label7
-	bne s1, s3, label14
+label13:
+	sh2add a2, s3, s2
+	sh2add a1, s3, s0
+	lw a0, 0(a2)
+	addiw s3, s3, 1
+	sw a0, 0(a1)
+	bne s1, s3, label13
 label15:
 	ld ra, 0(sp)
 	ld s4, 8(sp)
@@ -61,40 +52,6 @@ label15:
 	ld s0, 40(sp)
 	addi sp, sp, 48
 	ret
-label12:
-	beq s1, s3, label15
-label14:
-	sh2add a1, s3, s2
-	sh2add a2, s3, s0
-	lw a0, 0(a1)
-	addiw s3, s3, 1
-	sw a0, 0(a2)
-	j label12
-label9:
-	sh2add a4, a1, s0
-	sh2add a5, a0, s2
-	addiw a1, a1, 1
-	lw a3, 0(a4)
-	addiw a0, a0, 1
-	sw a3, 0(a5)
-	bne s1, a0, label7
-	bne s1, s3, label14
-	j label15
-label8:
-	sh2add a4, a1, s0
-	sh2add a5, a2, s0
-	lw a3, 0(a4)
-	lw a4, 0(a5)
-	blt a3, a4, label9
-	sh2add a4, a2, s0
-	sh2add a5, a0, s2
-	addiw a2, a2, 1
-	lw a3, 0(a4)
-	addiw a0, a0, 1
-	sw a3, 0(a5)
-	bne s1, a0, label7
-	bne s1, s3, label14
-	j label15
 label2:
 	addw a0, s3, s1
 	srliw a2, a0, 31
@@ -114,6 +71,49 @@ label2:
 	mv a1, s3
 	mv a2, s4
 	bne s1, s3, label7
+	bne s3, s1, label13
+	j label15
+label7:
+	xor a5, s4, a1
+	xor a4, s1, a2
+	sltu a3, zero, a5
+	sltu a5, zero, a4
+	and a3, a3, a5
+	bne a3, zero, label8
+	bne s4, a1, label9
+	sh2add a4, a2, s0
+	sh2add a5, a0, s2
+	addiw a2, a2, 1
+	lw a3, 0(a4)
+	addiw a0, a0, 1
+	sw a3, 0(a5)
+	bne s1, a0, label7
+	bne s3, s1, label13
+	j label15
+label8:
+	sh2add a4, a1, s0
+	sh2add a5, a2, s0
+	lw a3, 0(a4)
+	lw a4, 0(a5)
+	blt a3, a4, label9
+	sh2add a4, a2, s0
+	sh2add a5, a0, s2
+	addiw a2, a2, 1
+	lw a3, 0(a4)
+	addiw a0, a0, 1
+	sw a3, 0(a5)
+	bne s1, a0, label7
+	bne s3, s1, label13
+	j label15
+label9:
+	sh2add a4, a1, s0
+	sh2add a5, a0, s2
+	addiw a1, a1, 1
+	lw a3, 0(a4)
+	addiw a0, a0, 1
+	sw a3, 0(a5)
+	bne s1, a0, label7
+	bne s3, s1, label13
 	j label15
 .globl main
 main:
@@ -123,28 +123,28 @@ main:
 	sd ra, 800(sp)
 	jal read
 	mv t0, a0
-	ble a0, zero, label111
+	ble a0, zero, label116
 	mv a2, zero
-label109:
+label114:
 	jal read
 	sh2add a3, a2, t1
 	addiw a2, a2, 1
 	sw a0, 0(a3)
-	bgt t0, a2, label109
-label111:
+	bgt t0, a2, label114
+label116:
 	mv a0, t1
 	mv a2, zero
 	mv a3, t0
 	jal merge
-	ble t0, zero, label114
+	ble t0, zero, label119
 	mv a1, zero
-label112:
+label117:
 	sh2add a2, a1, t1
 	lw a0, 0(a2)
 	jal write
 	addiw a1, a1, 1
-	bgt t0, a1, label112
-label114:
+	bgt t0, a1, label117
+label119:
 	mv a0, zero
 	ld ra, 800(sp)
 	addi sp, sp, 808

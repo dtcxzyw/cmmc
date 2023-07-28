@@ -11,53 +11,57 @@ main:
 	mv s0, a0
 	li a0, 1016
 	jal _sysy_starttime
-	bgt s0, zero, label14
+	bgt s0, zero, label2
 	mv s0, zero
 	j label9
-label14:
-	mv a0, zero
-	mv a2, zero
-.p2align 2
 label2:
-	addiw a1, a0, 4
-	ble s0, a1, label6
-	addw a4, a0, a2
-	li a2, 1073790977
-	mul a3, a4, a2
-	srli t1, a3, 63
-	srai a5, a3, 61
-	li a3, 2147385347
-	add t0, t1, a5
-	mulw t1, t0, a3
+	li a1, 4
+	bgt s0, a1, label18
+	mv a0, zero
+	mv a1, zero
+	j label6
+label18:
+	mv a1, zero
+	mv a0, zero
+label3:
+	addw a3, a1, a0
+	li a1, 1073790977
+	mul a2, a3, a1
+	srli t0, a2, 63
+	srai a5, a2, 61
+	li a2, 2147385347
+	add a4, t0, a5
 	addiw t0, a0, 1
-	subw a5, a4, t1
-	addw a4, a5, t0
-	mul a5, a4, a2
-	srli t3, a5, 63
-	srai t0, a5, 61
-	add t1, t3, t0
-	addiw t0, a0, 2
-	mulw t2, t1, a3
-	subw a5, a4, t2
-	addw a4, a5, t0
-	mul a5, a4, a2
-	srli t1, a5, 63
-	srai t0, a5, 61
-	add a5, t1, t0
-	mulw t0, a5, a3
-	addiw a5, a0, 3
-	subw a4, a4, t0
-	addw a0, a4, a5
-	mul a2, a0, a2
-	srli a5, a2, 63
-	srai a4, a2, 61
-	add t0, a5, a4
-	mulw a3, t0, a3
-	subw a2, a0, a3
-	mv a0, a1
-	j label2
+	mulw a5, a4, a2
+	subw a4, a3, a5
+	addw a3, a4, t0
+	mul a4, a3, a1
+	srli t0, a4, 63
+	srai a5, a4, 61
+	add t2, t0, a5
+	addiw a5, a0, 2
+	mulw t1, t2, a2
+	subw a4, a3, t1
+	addw a3, a4, a5
+	mul a4, a3, a1
+	srli t1, a4, 63
+	srai a5, a4, 61
+	add t0, t1, a5
+	mulw a5, t0, a2
+	addiw t0, a0, 3
+	subw a4, a3, a5
+	addw a3, a4, t0
+	mul a1, a3, a1
+	srli t0, a1, 63
+	srai a4, a1, 61
+	add a5, t0, a4
+	mulw a4, a5, a2
+	addiw a2, a0, 8
+	subw a1, a3, a4
+	addiw a0, a0, 4
+	bgt s0, a2, label3
 label6:
-	addw a1, a0, a2
+	addw a1, a0, a1
 	li a4, 1073790977
 	addiw a0, a0, 1
 	mul a2, a1, a4
@@ -66,9 +70,9 @@ label6:
 	add a2, a4, a3
 	li a3, 2147385347
 	mulw a4, a2, a3
-	subw a2, a1, a4
+	subw a1, a1, a4
 	bgt s0, a0, label6
-	mv s0, a2
+	mv s0, a1
 label9:
 	li a0, 1031
 	jal _sysy_stoptime

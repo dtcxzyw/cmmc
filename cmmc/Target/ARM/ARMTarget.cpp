@@ -165,8 +165,7 @@ public:
     [[nodiscard]] const TargetOptHeuristic& getOptHeuristic() const noexcept override {
         static TargetOptHeuristic defaultHeuristic{
             .unrollBlockSize = 4U,
-            .maxUnrollSize = 8U,
-            .maxUnrollBodySize = 32U,
+            .maxUnrollBodySize = 128U,
             .duplicationThreshold = 10U,
             .duplicationIterations = 10U,
             .branchLimit = 1000U,

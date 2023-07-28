@@ -870,7 +870,7 @@ bool RISCVScheduleModel_sifive_u74::peepholeOpt(MIRFunction& func, CodeGenContex
     modified |= simplifyOpWithZero(func, ctx);
     modified |= relaxWInst(func, ctx);
     modified |= removeSExtW(func, ctx);
-    modified |= expandMulWithConstant(func, ctx, 1);
+    modified |= expandMulWithConstant(func, ctx, 2);
     return modified;
 }
 

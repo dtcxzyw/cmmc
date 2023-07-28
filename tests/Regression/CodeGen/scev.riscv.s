@@ -4,30 +4,39 @@
 .globl foo4
 foo4:
 .p2align 2
-	mv a2, a0
 	ble a1, zero, label9
-	mv a0, zero
-	mv a4, zero
-.p2align 2
-label2:
-	addiw a3, a4, 4
-	ble a1, a3, label6
-	sh2add a4, a4, a2
-	addiw a5, a0, 4
-	addiw t0, a0, 8
-	sw a0, 0(a4)
-	sw a5, 4(a4)
-	addiw a5, a0, 12
-	sw t0, 8(a4)
-	addiw a0, a0, 16
-	sw a5, 12(a4)
-	mv a4, a3
-	j label2
+	li a3, 4
+	bgt a1, a3, label18
+	mv a2, zero
+	mv a3, zero
+	j label6
+label18:
+	mv a2, zero
+	mv a3, zero
+label3:
+	sh2add a4, a2, a0
+	addiw t0, a3, 4
+	addiw a5, a3, 8
+	sw a3, 0(a4)
+	sw t0, 4(a4)
+	addiw t0, a3, 12
+	sw a5, 8(a4)
+	addiw a3, a3, 16
+	addiw a5, a2, 8
+	sw t0, 12(a4)
+	addiw a4, a2, 4
+	bgt a1, a5, label33
+	mv a2, a3
+	mv a3, a4
+	j label6
+label33:
+	mv a2, a4
+	j label3
 label6:
-	sh2add a3, a4, a2
-	addiw a4, a4, 1
-	sw a0, 0(a3)
-	addiw a0, a0, 4
-	bgt a1, a4, label6
+	sh2add a4, a3, a0
+	addiw a3, a3, 1
+	sw a2, 0(a4)
+	addiw a2, a2, 4
+	bgt a1, a3, label6
 label9:
 	ret

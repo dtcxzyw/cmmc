@@ -233,4 +233,30 @@ void applyForSuccessors(BranchInst* branch, const std::function<void(Block*&)>& 
     if(falseTarget && trueTarget != falseTarget)
         functor(branch->getFalseTarget());
 }
+uint32_t estimateBlockSize(Block* block) {
+    uint32_t count = 0;
+    for(auto& inst : block->instructions()) {
+        if(inst.isTerminator()) {
+            if(inst.getInstID() == InstructionID::ConditionalBranch && inst.getOperand(0)->getBlock() == block &&
+               inst.getOperand(0)->is<CompareInst>())
+                --count;
+            break;
+        }
+        switch(inst.getInstID()) {
+            case InstructionID::Call:
+                count += 16;
+                break;
+            case InstructionID::GetElementPtr:
+            case InstructionID::PtrCast:
+            case InstructionID::Bitcast:
+            case InstructionID::Phi:
+            case InstructionID::Alloc:
+                break;
+            default:
+                ++count;
+                break;
+        }
+    }
+    return count;
+}
 CMMC_NAMESPACE_END

@@ -12,18 +12,18 @@ p:
 main:
 .p2align 4
 	push { r4, r5, r6, r7, r8, r9, r10, lr }
-	mov r1, #1
-	sub sp, sp, #112
 	mov r2, #4
-	mov r7, #2
 	mov r0, #8
-	mov r9, #9
-	mov r3, #7
-	mov r8, #3
-	str r0, [sp, #52]
+	sub sp, sp, #112
+	mov r1, #1
 	mov r6, #0
-	add r5, sp, #52
+	mov r3, #7
+	str r0, [sp, #52]
 	mov r4, sp
+	mov r7, #2
+	mov r9, #9
+	mov r8, #3
+	add r5, sp, #52
 	str r3, [r5, #4]
 	str r2, [r5, #8]
 	str r1, [r5, #12]
@@ -60,12 +60,11 @@ main:
 	mov r1, r6
 	movw r0, #:lower16:p
 	movt r0, #:upper16:p
-.p2align 4
 label2:
 	add r2, r0, r1, lsl #2
 	mov r3, #0
 	str r3, [r0, r1, lsl #2]
-	add r1, r1, #16
+	add r1, r1, #64
 	str r3, [r2, #4]
 	cmp r1, #256
 	str r3, [r2, #8]
@@ -82,13 +81,61 @@ label2:
 	str r3, [r2, #52]
 	str r3, [r2, #56]
 	str r3, [r2, #60]
+	str r3, [r2, #64]
+	str r3, [r2, #68]
+	str r3, [r2, #72]
+	str r3, [r2, #76]
+	str r3, [r2, #80]
+	str r3, [r2, #84]
+	str r3, [r2, #88]
+	str r3, [r2, #92]
+	str r3, [r2, #96]
+	str r3, [r2, #100]
+	str r3, [r2, #104]
+	str r3, [r2, #108]
+	str r3, [r2, #112]
+	str r3, [r2, #116]
+	str r3, [r2, #120]
+	str r3, [r2, #124]
+	str r3, [r2, #128]
+	str r3, [r2, #132]
+	str r3, [r2, #136]
+	str r3, [r2, #140]
+	str r3, [r2, #144]
+	str r3, [r2, #148]
+	str r3, [r2, #152]
+	str r3, [r2, #156]
+	str r3, [r2, #160]
+	str r3, [r2, #164]
+	str r3, [r2, #168]
+	str r3, [r2, #172]
+	str r3, [r2, #176]
+	str r3, [r2, #180]
+	str r3, [r2, #184]
+	str r3, [r2, #188]
+	str r3, [r2, #192]
+	str r3, [r2, #196]
+	str r3, [r2, #200]
+	str r3, [r2, #204]
+	str r3, [r2, #208]
+	str r3, [r2, #212]
+	str r3, [r2, #216]
+	str r3, [r2, #220]
+	str r3, [r2, #224]
+	str r3, [r2, #228]
+	str r3, [r2, #232]
+	str r3, [r2, #236]
+	str r3, [r2, #240]
+	str r3, [r2, #244]
+	str r3, [r2, #248]
+	str r3, [r2, #252]
 	blt label2
 	mov r1, #1
 	sub r6, r1, #1
 	add r3, r0, r1, lsl #6
 	cmp r1, #16
 	sub r7, r3, #64
-	blt label73
+	blt label121
 label12:
 	ldr r0, [r0, #1012]
 	bl putint
@@ -97,7 +144,7 @@ label12:
 	add sp, sp, #112
 	mov r0, #0
 	pop { r4, r5, r6, r7, r8, r9, r10, pc }
-label73:
+label121:
 	mov r2, #1
 	cmp r2, #14
 	blt label8
@@ -106,7 +153,7 @@ label73:
 	add r3, r0, r1, lsl #6
 	cmp r1, #16
 	sub r7, r3, #64
-	blt label73
+	blt label121
 	b label12
 .p2align 4
 label8:
@@ -129,7 +176,7 @@ label8:
 	add r3, r0, r1, lsl #6
 	cmp r1, #16
 	sub r7, r3, #64
-	blt label73
+	blt label121
 	b label12
 .p2align 4
 label9:
@@ -144,5 +191,5 @@ label9:
 	add r3, r0, r1, lsl #6
 	cmp r1, #16
 	sub r7, r3, #64
-	blt label73
+	blt label121
 	b label12

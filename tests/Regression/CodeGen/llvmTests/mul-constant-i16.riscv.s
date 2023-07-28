@@ -11,11 +11,11 @@ test_mul_by_1:
 .globl test_mul_by_10
 test_mul_by_10:
 .p2align 2
-	sext.h a1, a0
-	li a3, 10
-	mulw a2, a1, a3
-	li a1, 65535
-	and a0, a2, a1
+	sext.h a2, a0
+	sh2add a3, a2, a2
+	li a2, 65535
+	slliw a1, a3, 1
+	and a0, a1, a2
 	ret
 .globl test_mul_by_11
 test_mul_by_11:
@@ -29,11 +29,11 @@ test_mul_by_11:
 .globl test_mul_by_12
 test_mul_by_12:
 .p2align 2
-	sext.h a1, a0
-	li a3, 12
-	mulw a2, a1, a3
-	li a1, 65535
-	and a0, a2, a1
+	sext.h a2, a0
+	sh1add a3, a2, a2
+	li a2, 65535
+	slliw a1, a3, 2
+	and a0, a1, a2
 	ret
 .globl test_mul_by_13
 test_mul_by_13:
@@ -48,10 +48,11 @@ test_mul_by_13:
 test_mul_by_14:
 .p2align 2
 	sext.h a1, a0
-	li a3, 14
-	mulw a2, a1, a3
-	li a1, 65535
-	and a0, a2, a1
+	slliw a2, a1, 3
+	subw a0, a2, a1
+	li a2, 65535
+	slliw a1, a0, 1
+	and a0, a1, a2
 	ret
 .globl test_mul_by_15
 test_mul_by_15:
@@ -82,11 +83,11 @@ test_mul_by_17:
 .globl test_mul_by_18
 test_mul_by_18:
 .p2align 2
-	sext.h a1, a0
-	li a3, 18
-	mulw a2, a1, a3
-	li a1, 65535
-	and a0, a2, a1
+	sext.h a2, a0
+	sh3add a3, a2, a2
+	li a2, 65535
+	slliw a1, a3, 1
+	and a0, a1, a2
 	ret
 .globl test_mul_by_19
 test_mul_by_19:
@@ -108,11 +109,11 @@ test_mul_by_2:
 .globl test_mul_by_20
 test_mul_by_20:
 .p2align 2
-	sext.h a1, a0
-	li a3, 20
-	mulw a2, a1, a3
-	li a1, 65535
-	and a0, a2, a1
+	sext.h a2, a0
+	sh2add a3, a2, a2
+	li a2, 65535
+	slliw a1, a3, 2
+	and a0, a1, a2
 	ret
 .globl test_mul_by_21
 test_mul_by_21:
@@ -144,11 +145,11 @@ test_mul_by_23:
 .globl test_mul_by_24
 test_mul_by_24:
 .p2align 2
-	sext.h a1, a0
-	li a3, 24
-	mulw a2, a1, a3
-	li a1, 65535
-	and a0, a2, a1
+	sext.h a2, a0
+	sh1add a3, a2, a2
+	li a2, 65535
+	slliw a1, a3, 3
+	and a0, a1, a2
 	ret
 .globl test_mul_by_25
 test_mul_by_25:
@@ -181,10 +182,11 @@ test_mul_by_27:
 test_mul_by_28:
 .p2align 2
 	sext.h a1, a0
-	li a3, 28
-	mulw a2, a1, a3
-	li a1, 65535
-	and a0, a2, a1
+	slliw a2, a1, 3
+	subw a0, a2, a1
+	li a2, 65535
+	slliw a1, a0, 2
+	and a0, a1, a2
 	ret
 .globl test_mul_by_29
 test_mul_by_29:
@@ -207,10 +209,11 @@ test_mul_by_3:
 test_mul_by_30:
 .p2align 2
 	sext.h a1, a0
-	li a3, 30
-	mulw a2, a1, a3
-	li a1, 65535
-	and a0, a2, a1
+	slliw a2, a1, 4
+	subw a0, a2, a1
+	li a2, 65535
+	slliw a1, a0, 1
+	and a0, a1, a2
 	ret
 .globl test_mul_by_31
 test_mul_by_31:
@@ -267,37 +270,40 @@ test_mul_by_5:
 test_mul_by_520:
 .p2align 2
 	sext.h a1, a0
-	li a3, 520
-	mulw a2, a1, a3
-	li a1, 65535
-	and a0, a2, a1
+	slliw a2, a1, 6
+	addw a0, a2, a1
+	li a2, 65535
+	slliw a1, a0, 3
+	and a0, a1, a2
 	ret
 .globl test_mul_by_6
 test_mul_by_6:
 .p2align 2
-	sext.h a1, a0
-	li a3, 6
-	mulw a2, a1, a3
-	li a1, 65535
-	and a0, a2, a1
+	sext.h a2, a0
+	sh1add a3, a2, a2
+	li a2, 65535
+	slliw a1, a3, 1
+	and a0, a1, a2
 	ret
 .globl test_mul_by_62
 test_mul_by_62:
 .p2align 2
 	sext.h a1, a0
-	li a3, 62
-	mulw a2, a1, a3
-	li a1, 65535
-	and a0, a2, a1
+	slliw a2, a1, 5
+	subw a0, a2, a1
+	li a2, 65535
+	slliw a1, a0, 1
+	and a0, a1, a2
 	ret
 .globl test_mul_by_66
 test_mul_by_66:
 .p2align 2
 	sext.h a1, a0
-	li a3, 66
-	mulw a2, a1, a3
-	li a1, 65535
-	and a0, a2, a1
+	slliw a2, a1, 5
+	addw a0, a2, a1
+	li a2, 65535
+	slliw a1, a0, 1
+	and a0, a1, a2
 	ret
 .globl test_mul_by_7
 test_mul_by_7:
@@ -337,19 +343,21 @@ test_mul_by_9:
 test_mul_by_neg10:
 .p2align 2
 	sext.h a1, a0
-	li a3, -10
-	mulw a2, a1, a3
-	li a1, 65535
-	and a0, a2, a1
+	sh2add a2, a1, a1
+	slliw a0, a2, 1
+	li a2, 65535
+	subw a1, zero, a0
+	and a0, a1, a2
 	ret
 .globl test_mul_by_neg36
 test_mul_by_neg36:
 .p2align 2
 	sext.h a1, a0
-	li a3, -36
-	mulw a2, a1, a3
-	li a1, 65535
-	and a0, a2, a1
+	sh3add a2, a1, a1
+	slliw a0, a2, 2
+	li a2, 65535
+	subw a1, zero, a0
+	and a0, a1, a2
 	ret
 .globl test_mul_spec
 test_mul_spec:

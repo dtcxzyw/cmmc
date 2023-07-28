@@ -1125,7 +1125,8 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
                     }
                     case Intrinsic::memset: {
                         const auto ptr = getPtr(0);
-                        const auto size = getUInt(1) * inst.getOperand(0)->getType()->as<PointerType>()->getFixedSize();
+                        const auto size =
+                            getUInt(1) * inst.getOperand(0)->getType()->as<PointerType>()->getPointee()->getFixedSize();
                         memCtx.memReset(ptr, size, static_cast<std::byte>(0));
                         break;
                     }

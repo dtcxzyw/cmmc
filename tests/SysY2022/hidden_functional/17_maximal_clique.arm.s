@@ -111,11 +111,11 @@ label10:
 main:
 .p2align 4
 	push { r4, r5, r6, r7, r8, r9, r10, lr }
-	sub sp, sp, #128
 	mov r0, #0
+	sub sp, sp, #128
+	str r0, [sp, #4]
 	add r4, sp, #4
 	mov r5, sp
-	str r0, [sp, #4]
 	str r0, [r4, #4]
 	str r0, [r4, #8]
 	str r0, [r4, #12]
@@ -154,7 +154,7 @@ main:
 	mov r8, r0
 	movt r6, #:upper16:edges
 	movt r7, #:upper16:graph
-	ble label103
+	ble label102
 	mov r9, #0
 .p2align 4
 label95:
@@ -167,12 +167,38 @@ label95:
 	cmp r8, r9
 	bgt label95
 	cmp r8, #4
-	ble label318
-	mov r0, #4
-	mov r2, #0
+	ble label317
+	mov r0, #0
+	b label98
+label102:
+	mov r0, #1
+	mov r1, r4
+	mov r2, r5
+	bl maxCliques
+	bl putint
+	add sp, sp, #128
+	mov r0, #0
+	pop { r4, r5, r6, r7, r8, r9, r10, pc }
+label317:
+	mov r0, #0
+label100:
+	add r2, r6, r0, lsl #3
+	ldr r1, [r6, r0, lsl #3]
+	add r0, r0, #1
+	cmp r8, r0
+	rsb r3, r1, r1, lsl #4
+	add r9, r7, r3, lsl #3
+	ldr r3, [r2, #4]
+	mov r2, #1
+	str r2, [r9, r3, lsl #2]
+	rsb r3, r3, r3, lsl #4
+	add r3, r7, r3, lsl #3
+	str r2, [r3, r1, lsl #2]
+	bgt label100
+	b label102
 label98:
-	add r1, r6, r2, lsl #3
-	ldr r3, [r6, r2, lsl #3]
+	add r1, r6, r0, lsl #3
+	ldr r3, [r6, r0, lsl #3]
 	ldr r9, [r1, #4]
 	rsb r2, r3, r3, lsl #4
 	add r10, r7, r2, lsl #3
@@ -205,35 +231,8 @@ label98:
 	rsb r1, r1, r1, lsl #4
 	add r1, r7, r1, lsl #3
 	str r2, [r1, r3, lsl #2]
-	add r1, r0, #4
+	add r1, r0, #8
 	cmp r8, r1
-	ble label101
-	mov r2, r0
-	mov r0, r1
-	b label98
-label103:
-	mov r0, #1
-	mov r1, r4
-	mov r2, r5
-	bl maxCliques
-	bl putint
-	add sp, sp, #128
-	mov r0, #0
-	pop { r4, r5, r6, r7, r8, r9, r10, pc }
-label318:
-	mov r0, #0
-label101:
-	add r2, r6, r0, lsl #3
-	ldr r1, [r6, r0, lsl #3]
-	add r0, r0, #1
-	cmp r8, r0
-	rsb r3, r1, r1, lsl #4
-	add r9, r7, r3, lsl #3
-	ldr r3, [r2, #4]
-	mov r2, #1
-	str r2, [r9, r3, lsl #2]
-	rsb r3, r3, r3, lsl #4
-	add r3, r7, r3, lsl #3
-	str r2, [r3, r1, lsl #2]
-	bgt label101
-	b label103
+	add r0, r0, #4
+	bgt label98
+	b label100

@@ -100,15 +100,19 @@ public:
             if(succHeader.size() != 2)
                 continue;
             const auto exiting = succHeader.front() == loop.latch ? succHeader.back() : succHeader.front();
-            // TODO: create new block for phi nodes
-            if(cfg.predecessors(exiting).size() != 1)
-                continue;
             auto& rotateCount = loop.latch->getTransformMetadata().rotateCount;
             if(rotateCount < maxRotateCount) {
                 ++rotateCount;
                 rotateCount = std::max(loop.header->getTransformMetadata().rotateCount, rotateCount);
             } else
                 continue;
+
+            // reset target
+            Block* indirectBlock = nullptr;
+            if(cfg.predecessors(exiting).size() != 1) {
+                indirectBlock = make<Block>(&func);
+                resetTarget(loop.header->getTerminator()->as<BranchInst>(), exiting, indirectBlock);
+            }
 
             // duplicate instructions
             std::unordered_map<Value*, PhiInst*> replace;
@@ -168,6 +172,7 @@ public:
             }
 
             // outer use header
+
             for(auto& inst : loop.header->instructions()) {
                 bool usedByOuter = false;
                 auto& users = inst.users();
@@ -195,7 +200,23 @@ public:
 
                 phi->addIncoming(loop.header, &inst);
                 phi->addIncoming(loop.latch, replace.at(&inst)->incomings().at(loop.latch)->value);
-                phi->insertBefore(exiting, exiting->instructions().begin());
+                if(indirectBlock)
+                    phi->insertBefore(indirectBlock, indirectBlock->instructions().begin());
+                else
+                    phi->insertBefore(exiting, exiting->instructions().begin());
+            }
+            if(indirectBlock) {
+                const auto terminator = make<BranchInst>(exiting);
+                terminator->insertBefore(indirectBlock, indirectBlock->instructions().end());
+                func.blocks().push_back(indirectBlock);
+
+                for(auto& phi : exiting->instructions()) {
+                    if(phi.getInstID() == InstructionID::Phi) {
+                        auto phiInst = phi.as<PhiInst>();
+                        phiInst->replaceSource(loop.header, indirectBlock);
+                    } else
+                        break;
+                }
             }
 
             modified = true;

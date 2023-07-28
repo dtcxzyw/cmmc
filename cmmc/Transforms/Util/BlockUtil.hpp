@@ -40,6 +40,7 @@ void copyTarget(Block* target, Block* oldSource, Block* newSource);
 bool hasSamePhiValue(Block* target, Block* sourceLhs, Block* sourceRhs);
 bool removePhi(Block* source, Block* target);
 void applyForSuccessors(BranchInst* branch, const std::function<void(Block*&)>& functor);
+uint32_t estimateBlockSize(Block* block);
 template <typename Callable>
 bool scanInstructions(Block& block, Callable callable) {
     bool modified = false;

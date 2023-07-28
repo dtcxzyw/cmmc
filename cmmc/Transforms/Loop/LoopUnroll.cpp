@@ -12,7 +12,7 @@
     limitations under the License.
 */
 
-// Loop unrolling (only apply for simple loops)
+// Loop unrolling (only apply for static simple loops)
 
 #include <cmmc/Analysis/CFGAnalysis.hpp>
 #include <cmmc/Analysis/LoopAnalysis.hpp>
@@ -49,7 +49,8 @@ public:
                 continue;
             if(std::abs(loop.step) > maxStep)
                 continue;
-            if(loop.header->instructions().size() > heuristic.maxUnrollBodySize)  // TODO: only count non-phi instructions?
+            const auto blockSize = std::max(2U, estimateBlockSize(loop.header)) - 1U;
+            if(blockSize * 2 > heuristic.maxUnrollBodySize)
                 continue;
             if(hasCall(*loop.header))
                 continue;
@@ -66,8 +67,11 @@ public:
             const auto size = (bound - initial + loop.step + (loop.step > 0 ? -1 : 1)) / loop.step;
             assert(size >= 0);
 
-            const auto epilogueSize = size > heuristic.maxUnrollSize ? size % heuristic.unrollBlockSize : size;
-            // std::cerr << size << " " << epilogueSize << std::endl;
+            const auto maxUnrollSize = heuristic.maxUnrollBodySize / blockSize;
+            // std::cerr << maxUnrollSize << ' ' << heuristic.maxUnrollBodySize << ' ' << blockSize << '\n';
+            const auto epilogueSize = size > maxUnrollSize ? size % heuristic.unrollBlockSize : size;
+            if(std::max(epilogueSize, epilogueSize == size ? 0U : heuristic.unrollBlockSize) > maxUnrollSize)
+                continue;
             const auto epilogueStart = initial + (size - epilogueSize) * loop.step;
             assert(epilogueStart != initial || epilogueSize > 0);
 

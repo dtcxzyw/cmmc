@@ -16,37 +16,37 @@ findfa:
 	movt r5, #:upper16:array
 	ldr r6, [r5, r0, lsl #2]
 	cmp r0, r6
-	beq label12
+	beq label2
 	ldr r7, [r5, r6, lsl #2]
 	cmp r6, r7
-	bne label3
+	bne label5
 	mov r0, r6
 	str r6, [r5, r4, lsl #2]
-	b label12
-label3:
+	b label2
+label5:
 	ldr r8, [r5, r7, lsl #2]
 	cmp r7, r8
-	bne label6
+	bne label8
 	mov r0, r7
 	str r7, [r5, r6, lsl #2]
 	str r7, [r5, r4, lsl #2]
-	b label12
-label6:
+	b label2
+label8:
 	ldr r0, [r5, r8, lsl #2]
 	cmp r8, r0
-	bne label9
+	bne label11
 	mov r0, r8
 	str r8, [r5, r7, lsl #2]
 	str r8, [r5, r6, lsl #2]
 	str r8, [r5, r4, lsl #2]
-	b label12
-label9:
+	b label2
+label11:
 	bl findfa
 	str r0, [r5, r8, lsl #2]
 	str r0, [r5, r7, lsl #2]
 	str r0, [r5, r6, lsl #2]
 	str r0, [r5, r4, lsl #2]
-label12:
+label2:
 	pop { r4, r5, r6, r7, r8, pc }
 .globl main
 main:

@@ -107,27 +107,30 @@ pcrel104:
 .globl memset_impl
 memset_impl:
 .p2align 2
-	mv a1, zero
-.p2align 2
+	bgt a1, zero, label107
 label106:
-	sh2add a2, a1, a0
-	addiw a1, a1, 16
-	sw zero, 0(a2)
-	sw zero, 4(a2)
-	sw zero, 8(a2)
-	sw zero, 12(a2)
-	sw zero, 16(a2)
-	sw zero, 20(a2)
-	sw zero, 24(a2)
-	sw zero, 28(a2)
-	sw zero, 32(a2)
-	sw zero, 36(a2)
-	sw zero, 40(a2)
-	sw zero, 44(a2)
-	sw zero, 48(a2)
-	sw zero, 52(a2)
-	sw zero, 56(a2)
-	sw zero, 60(a2)
-	li a2, 128
-	blt a1, a2, label106
 	ret
+label107:
+	li a2, 4
+	bgt a1, a2, label120
+	mv a3, zero
+	j label110
+label120:
+	mv a2, zero
+label108:
+	sh2add a3, a2, a0
+	addiw a4, a2, 8
+	sw zero, 0(a3)
+	sw zero, 4(a3)
+	sw zero, 8(a3)
+	sw zero, 12(a3)
+	addiw a3, a2, 4
+	ble a1, a4, label110
+	mv a2, a3
+	j label108
+label110:
+	sh2add a4, a3, a0
+	addiw a3, a3, 1
+	sw zero, 0(a4)
+	bgt a1, a3, label110
+	j label106

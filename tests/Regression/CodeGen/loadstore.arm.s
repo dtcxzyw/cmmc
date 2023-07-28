@@ -103,28 +103,34 @@ global_addressing_array:
 .globl memset_impl
 memset_impl:
 .p2align 4
-	mov r1, #0
-.p2align 4
+	push { r4 }
+	cmp r1, #0
+	bgt label102
 label101:
-	add r2, r0, r1, lsl #2
-	mov r3, #0
-	str r3, [r0, r1, lsl #2]
-	add r1, r1, #16
-	str r3, [r2, #4]
-	cmp r1, #128
-	str r3, [r2, #8]
-	str r3, [r2, #12]
-	str r3, [r2, #16]
-	str r3, [r2, #20]
-	str r3, [r2, #24]
-	str r3, [r2, #28]
-	str r3, [r2, #32]
-	str r3, [r2, #36]
-	str r3, [r2, #40]
-	str r3, [r2, #44]
-	str r3, [r2, #48]
-	str r3, [r2, #52]
-	str r3, [r2, #56]
-	str r3, [r2, #60]
-	blt label101
+	pop { r4 }
 	bx lr
+label102:
+	cmp r1, #4
+	bgt label115
+	mov r2, #0
+	b label105
+label115:
+	mov r2, #0
+label103:
+	add r3, r0, r2, lsl #2
+	mov r4, #0
+	str r4, [r0, r2, lsl #2]
+	str r4, [r3, #4]
+	str r4, [r3, #8]
+	str r4, [r3, #12]
+	add r3, r2, #8
+	cmp r1, r3
+	add r2, r2, #4
+	bgt label103
+label105:
+	mov r3, #0
+	str r3, [r0, r2, lsl #2]
+	add r2, r2, #1
+	cmp r1, r2
+	bgt label105
+	b label101

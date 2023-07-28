@@ -17,9 +17,9 @@ test_mul_by_1:
 .globl test_mul_by_10
 test_mul_by_10:
 .p2align 2
-	li a2, 10
+	sh2add a2, a0, a0
 	li a3, 4294967295
-	mulw a1, a0, a2
+	slliw a1, a2, 1
 	and a0, a1, a3
 	ret
 .globl test_mul_by_11
@@ -33,9 +33,9 @@ test_mul_by_11:
 .globl test_mul_by_12
 test_mul_by_12:
 .p2align 2
-	li a2, 12
+	sh1add a2, a0, a0
 	li a3, 4294967295
-	mulw a1, a0, a2
+	slliw a1, a2, 2
 	and a0, a1, a3
 	ret
 .globl test_mul_by_13
@@ -49,10 +49,11 @@ test_mul_by_13:
 .globl test_mul_by_14
 test_mul_by_14:
 .p2align 2
-	li a2, 14
-	li a3, 4294967295
-	mulw a1, a0, a2
-	and a0, a1, a3
+	slliw a2, a0, 3
+	subw a3, a2, a0
+	li a2, 4294967295
+	slliw a1, a3, 1
+	and a0, a1, a2
 	ret
 .globl test_mul_by_15
 test_mul_by_15:
@@ -80,9 +81,9 @@ test_mul_by_17:
 .globl test_mul_by_18
 test_mul_by_18:
 .p2align 2
-	li a2, 18
+	sh3add a2, a0, a0
 	li a3, 4294967295
-	mulw a1, a0, a2
+	slliw a1, a2, 1
 	and a0, a1, a3
 	ret
 .globl test_mul_by_19
@@ -103,9 +104,9 @@ test_mul_by_2:
 .globl test_mul_by_20
 test_mul_by_20:
 .p2align 2
-	li a2, 20
+	sh2add a2, a0, a0
 	li a3, 4294967295
-	mulw a1, a0, a2
+	slliw a1, a2, 2
 	and a0, a1, a3
 	ret
 .globl test_mul_by_21
@@ -135,9 +136,9 @@ test_mul_by_23:
 .globl test_mul_by_24
 test_mul_by_24:
 .p2align 2
-	li a2, 24
+	sh1add a2, a0, a0
 	li a3, 4294967295
-	mulw a1, a0, a2
+	slliw a1, a2, 3
 	and a0, a1, a3
 	ret
 .globl test_mul_by_25
@@ -167,10 +168,11 @@ test_mul_by_27:
 .globl test_mul_by_28
 test_mul_by_28:
 .p2align 2
-	li a2, 28
-	li a3, 4294967295
-	mulw a1, a0, a2
-	and a0, a1, a3
+	slliw a2, a0, 3
+	subw a3, a2, a0
+	li a2, 4294967295
+	slliw a1, a3, 2
+	and a0, a1, a2
 	ret
 .globl test_mul_by_29
 test_mul_by_29:
@@ -190,10 +192,11 @@ test_mul_by_3:
 .globl test_mul_by_30
 test_mul_by_30:
 .p2align 2
-	li a2, 30
-	li a3, 4294967295
-	mulw a1, a0, a2
-	and a0, a1, a3
+	slliw a2, a0, 4
+	subw a3, a2, a0
+	li a2, 4294967295
+	slliw a1, a3, 1
+	and a0, a1, a2
 	ret
 .globl test_mul_by_31
 test_mul_by_31:
@@ -243,34 +246,37 @@ test_mul_by_5:
 .globl test_mul_by_520
 test_mul_by_520:
 .p2align 2
-	li a2, 520
-	li a3, 4294967295
-	mulw a1, a0, a2
-	and a0, a1, a3
+	slliw a2, a0, 6
+	addw a3, a2, a0
+	li a2, 4294967295
+	slliw a1, a3, 3
+	and a0, a1, a2
 	ret
 .globl test_mul_by_6
 test_mul_by_6:
 .p2align 2
-	li a2, 6
+	sh1add a2, a0, a0
 	li a3, 4294967295
-	mulw a1, a0, a2
+	slliw a1, a2, 1
 	and a0, a1, a3
 	ret
 .globl test_mul_by_62
 test_mul_by_62:
 .p2align 2
-	li a2, 62
-	li a3, 4294967295
-	mulw a1, a0, a2
-	and a0, a1, a3
+	slliw a2, a0, 5
+	subw a3, a2, a0
+	li a2, 4294967295
+	slliw a1, a3, 1
+	and a0, a1, a2
 	ret
 .globl test_mul_by_66
 test_mul_by_66:
 .p2align 2
-	li a2, 66
-	li a3, 4294967295
-	mulw a1, a0, a2
-	and a0, a1, a3
+	slliw a2, a0, 5
+	addw a3, a2, a0
+	li a2, 4294967295
+	slliw a1, a3, 1
+	and a0, a1, a2
 	ret
 .globl test_mul_by_7
 test_mul_by_7:
@@ -305,18 +311,20 @@ test_mul_by_9:
 .globl test_mul_by_neg10
 test_mul_by_neg10:
 .p2align 2
-	li a2, -10
-	li a3, 4294967295
-	mulw a1, a0, a2
-	and a0, a1, a3
+	sh2add a2, a0, a0
+	slliw a3, a2, 1
+	li a2, 4294967295
+	subw a1, zero, a3
+	and a0, a1, a2
 	ret
 .globl test_mul_by_neg36
 test_mul_by_neg36:
 .p2align 2
-	li a2, -36
-	li a3, 4294967295
-	mulw a1, a0, a2
-	and a0, a1, a3
+	sh3add a2, a0, a0
+	slliw a3, a2, 2
+	li a2, 4294967295
+	subw a1, zero, a3
+	and a0, a1, a2
 	ret
 .globl test_mul_spec
 test_mul_spec:
