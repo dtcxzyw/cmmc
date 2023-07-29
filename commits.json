@@ -545,6 +545,11 @@
       "parent": "b099c5645c68f0df070ef9fe2173fd5d01d93e00",
       "time": "2023-07-06 19:29:22 +0800"
     },
+    "8bd479176093f2ff091a09a82fae0854053f90e9": {
+      "message": "fmt: format code",
+      "parent": "442bec9754bf5747015dacc32916e1a0c96dabe5",
+      "time": "2023-07-30 00:30:42 +0800"
+    },
     "924ac36d895ccd7dc7befd4da99cde0ea6427c1c": {
       "message": "feat(codegen): remove dead branches",
       "parent": "373fa4f01d49fa3afbaa2d45c39a7a77b9c561b3",
@@ -911,5 +916,5 @@
       "time": "2023-07-06 01:05:50 +0800"
     }
   },
-  "head": "442bec9754bf5747015dacc32916e1a0c96dabe5"
+  "head": "8bd479176093f2ff091a09a82fae0854053f90e9"
 }
