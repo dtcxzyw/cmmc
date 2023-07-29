@@ -4,4 +4,4 @@ func @f() -> i32 { NoMemoryWrite NoSideEffect NoRecurse } {
     i32 %1 = load i32* %0;
     ret i32 %1;
 }
-i32* @g, align 8 = 0;
+i32* @g, align 4 = 0;

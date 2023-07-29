@@ -21,4 +21,4 @@ func @main() -> i32 { NoMemoryWrite NoSideEffect NoRecurse } {
     i32 %12 = strunc i32 %11 to i32;
     ubr ^b;
 }
-i32* @c, align 8 = 0;
+i32* @c, align 4 = 0;

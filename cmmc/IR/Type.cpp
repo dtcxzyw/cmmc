@@ -298,10 +298,10 @@ const InvalidType* InvalidType::get() {
     return &invalid;
 }
 size_t InvalidType::getSize(const DataLayout&) const noexcept {
-    reportUnreachable(CMMC_LOCATION());
+    return 0;
 }
 size_t InvalidType::getAlignment(const DataLayout&) const noexcept {
-    reportUnreachable(CMMC_LOCATION());
+    return 0;
 }
 
 CMMC_NAMESPACE_END

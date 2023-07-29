@@ -249,9 +249,9 @@ static void lowerToMachineFunction(MIRFunction& mfunc, Function* func, CodeGenCo
         for(auto& inst : func->entryBlock()->instructions()) {
             if(inst.getInstID() == InstructionID::Alloc) {
                 const auto type = inst.getType()->as<PointerType>()->getPointee();
-                const auto storage =
-                    mfunc.addStackObject(codeGenCtx, static_cast<uint32_t>(type->getSize(dataLayout)),
-                                         static_cast<uint32_t>(type->getAlignment(dataLayout)), 0, StackObjectUsage::Local);
+                const auto storage = mfunc.addStackObject(codeGenCtx, static_cast<uint32_t>(type->getSize(dataLayout)),
+                                                          static_cast<uint32_t>(inst.as<StackAllocInst>()->getAlignment()), 0,
+                                                          StackObjectUsage::Local);
                 storageMap.emplace(&inst, storage);
                 const auto addr = ctx.newVReg(ctx.getPtrType());
                 ctx.emitInst(MIRInst{ InstLoadStackObjectAddr }.setOperand<0>(addr).setOperand<1>(storage));
@@ -318,7 +318,7 @@ static void lowerToMachineModule(MIRModule& machineModule, Module& module, Analy
         } else {
             const auto var = global->as<GlobalVariable>();
             const auto type = var->getType()->as<PointerType>()->getPointee();
-            const auto alignment = type->getAlignment(dataLayout);
+            const auto alignment = var->getAlignment();
             const auto size = type->getSize(dataLayout);
             if(auto initialValue = var->initialValue()) {
                 const auto readOnly = var->attr().hasAttr(GlobalVariableAttribute::ReadOnly);

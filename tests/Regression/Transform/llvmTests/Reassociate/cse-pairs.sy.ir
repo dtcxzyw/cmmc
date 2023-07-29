@@ -72,7 +72,7 @@ func @twoPairsAllOpInPairs(i32 %var0, i32 %var1, i32 %var2, i32 %var3) -> i32 { 
     store i32* %14 with i32 %13;
     ret i32 0;
 }
-i32* @num1, align 8 = 0;
-i32* @num2, align 8 = 0;
-i32* @num3, align 8 = 0;
-i32* @num4, align 8 = 0;
+i32* @num1, align 4 = 0;
+i32* @num2, align 4 = 0;
+i32* @num3, align 4 = 0;
+i32* @num4, align 4 = 0;

@@ -1,2 +1,2 @@
-i32* @foo, align 8 = 6;
-i32* @bar, align 8 = 6;
+i32* @foo, align 4 = 6;
+i32* @bar, align 4 = 6;

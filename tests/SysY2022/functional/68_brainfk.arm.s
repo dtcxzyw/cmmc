@@ -1,10 +1,10 @@
 .arch armv7ve
 .data
 .bss
-.align 4
+.align 8
 tape:
 	.zero	262144
-.align 4
+.align 8
 program:
 	.zero	131072
 .text

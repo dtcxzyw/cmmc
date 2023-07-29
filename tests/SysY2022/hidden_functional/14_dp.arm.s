@@ -1,10 +1,10 @@
 .arch armv7ve
 .data
 .bss
-.align 4
+.align 8
 t:
 	.zero	8040
-.align 4
+.align 8
 dp:
 	.zero	140700
 .text

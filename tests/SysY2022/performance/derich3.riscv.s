@@ -9,16 +9,16 @@ __cmmc_fp_constant_pool:
 	.4byte	3191654481
 	.4byte	1038821134
 .bss
-.align 4
+.align 8
 imgIn:
 	.zero	552960
-.align 4
+.align 8
 imgOut:
 	.zero	552960
-.align 4
+.align 8
 my_y1:
 	.zero	552960
-.align 4
+.align 8
 my_y2:
 	.zero	552960
 .text

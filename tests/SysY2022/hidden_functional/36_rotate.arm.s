@@ -1,7 +1,7 @@
 .arch armv7ve
 .data
 .bss
-.align 4
+.align 8
 image:
 	.zero	4194304
 .text

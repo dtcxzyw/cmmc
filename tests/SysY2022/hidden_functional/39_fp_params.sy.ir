@@ -574,7 +574,7 @@ internal func @params_mix(f32 %x0, i32* %i1, i32 %i2, f32* %x3, f32 %x4, i32 %i5
 }
 func @main() -> i32 { NoRecurse Entry } {
   ^entry:
-    i32* %k = alloc i32, align 8;
+    i32* %k = alloc i32, align 4;
     [24 * [3 * i32]]* %arr2 = alloc [24 * [3 * i32]], align 8;
     [40 * [3 * f32]]* %arr = alloc [40 * [3 * f32]], align 8;
     i32 %0 = call () -> i32 @getint();

@@ -1,6 +1,6 @@
 .data
 .bss
-.align 4
+.align 8
 .globl g
 g:
 	.zero	40

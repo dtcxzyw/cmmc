@@ -1,13 +1,13 @@
 .arch armv7ve
 .data
 .bss
-.align 4
+.align 8
 a1:
 	.zero	40000
-.align 4
+.align 8
 a2:
 	.zero	40000
-.align 4
+.align 8
 a3:
 	.zero	40000
 .text

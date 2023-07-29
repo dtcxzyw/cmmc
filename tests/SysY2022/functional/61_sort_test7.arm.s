@@ -1,7 +1,7 @@
 .arch armv7ve
 .data
 .bss
-.align 4
+.align 8
 buf:
 	.zero	800
 .text

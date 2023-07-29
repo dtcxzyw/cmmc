@@ -2,4 +2,4 @@ func @patatino() -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoR
   ^entry:
     ret;
 }
-i32* @b, align 8;
+i32* @b, align 4;

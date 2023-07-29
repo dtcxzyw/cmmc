@@ -1,7 +1,7 @@
 .attribute arch, "rv64i2p1_m2p0_a2p1_f2p2_d2p2_c2p0_zicsr2p0_zifencei2p0_zba1p0_zbb1p0"
 .data
 .section .rodata
-.align 4
+.align 8
 __HELLO:
 	.4byte	87
 	.4byte	101
@@ -32,7 +32,7 @@ __HELLO:
 	.4byte	33
 	.4byte	10
 	.zero	288
-.align 4
+.align 8
 N4__mE___:
 	.4byte	83
 	.4byte	97
@@ -102,7 +102,7 @@ N4__mE___:
 	.4byte	109
 	.4byte	105
 	.zero	144
-.align 4
+.align 8
 saY_HeI10_To:
 	.4byte	32
 	.4byte	115

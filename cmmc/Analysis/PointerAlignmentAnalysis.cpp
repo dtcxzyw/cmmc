@@ -14,6 +14,7 @@
 
 #include <cmmc/Analysis/PointerAlignmentAnalysis.hpp>
 #include <cmmc/Analysis/SCEVAnalysis.hpp>
+#include <cmmc/Analysis/SCEVExpr.hpp>
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/GlobalVariable.hpp>
@@ -42,7 +43,7 @@ PointerAlignmentAnalysisResult PointerAlignmentAnalysis::run(Function& func, Ana
 
     auto update = [&](TrackableValue* pointer, uint32_t newVal) {
         auto& val = storage[pointer];
-        if(val != newVal) {
+        if(val < newVal) {
             val = newVal;
 
             for(auto user : pointer->users()) {
@@ -102,13 +103,24 @@ PointerAlignmentAnalysisResult PointerAlignmentAnalysis::run(Function& func, Ana
                 break;
             }
             case InstructionID::GetElementPtr: {
-                CMMC_UNUSED(scev);
+                const auto baseAlignment = result.lookup(u->lastOperand(), dataLayout);
+                auto [constantOffset, offsets] = u->as<GetElementPtrInst>()->gatherOffsets(dataLayout);
+                // alignment = lowbit(baseAlign * k + constantOffset + offsets.index * offsets.stride)
+                auto alignment = baseAlignment;
+                if(constantOffset)
+                    alignment = std::min(alignment, static_cast<uint32_t>(constantOffset & -constantOffset));
+                for(auto& [stride, idx] : offsets) {
+                    auto times = static_cast<intmax_t>(stride);
+                    const auto scevExpr = scev.query(idx);
+                    if(scevExpr && scevExpr->instID == SCEVInstID::AddRec &&
+                       scevExpr->operands[0]->instID == SCEVInstID::Constant && scevExpr->operands[0]->constant == 0 &&
+                       scevExpr->operands[1]->instID == SCEVInstID::Constant) {
+                        times *= scevExpr->operands[1]->constant;
+                    }
 
-                // TODO
-                // const auto baseAlignment = result.lookup(u->lastOperand(), dataLayout);
-
-                // auto [constantOffset, offsets] = u->as<GetElementPtrInst>()->gatherOffsets(dataLayout);
-                // const auto alignment = baseAlignment;
+                    alignment = std::min(alignment, static_cast<uint32_t>(times & -times));
+                }
+                update(u, alignment);
                 break;
             }
             case InstructionID::PtrCast: {

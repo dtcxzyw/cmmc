@@ -4,7 +4,7 @@
 .globl main
 main:
 .p2align 2
-	addi sp, sp, -384
+	addi sp, sp, -392
 	li a3, 1
 	li a2, 2
 	li a4, 3
@@ -14,12 +14,12 @@ main:
 	li t1, 7
 	li t2, 8
 	li t4, 9
-	sd s0, 376(sp)
+	sd s0, 384(sp)
 	addi a1, sp, 160
-	addi a0, sp, 260
+	addi a0, sp, 264
 	addi s0, sp, 0
-	sd s1, 368(sp)
-	sd ra, 360(sp)
+	sd s1, 376(sp)
+	sd ra, 368(sp)
 	sd zero, 0(sp)
 	sd zero, 8(sp)
 	sd zero, 16(sp)
@@ -40,26 +40,26 @@ main:
 	sd zero, 136(sp)
 	sd zero, 144(sp)
 	sd zero, 152(sp)
-	sw a3, 260(sp)
-	sw a2, 264(sp)
-	sw a4, 268(sp)
-	sw a5, 272(sp)
-	sw t3, 276(sp)
-	sw t0, 280(sp)
-	sw t1, 284(sp)
-	sw t2, 288(sp)
-	sw t4, 292(sp)
-	sw zero, 296(sp)
-	sw a3, 300(sp)
-	sw a2, 304(sp)
-	sw a4, 308(sp)
-	sw a5, 312(sp)
-	sw t3, 316(sp)
-	sw t0, 320(sp)
-	sw t1, 324(sp)
-	sw t2, 328(sp)
-	sw t4, 332(sp)
-	sw zero, 336(sp)
+	sw a3, 264(sp)
+	sw a2, 268(sp)
+	sw a4, 272(sp)
+	sw a5, 276(sp)
+	sw t3, 280(sp)
+	sw t0, 284(sp)
+	sw t1, 288(sp)
+	sw t2, 292(sp)
+	sw t4, 296(sp)
+	sw zero, 300(sp)
+	sw a3, 304(sp)
+	sw a2, 308(sp)
+	sw a4, 312(sp)
+	sw a5, 316(sp)
+	sw t3, 320(sp)
+	sw t0, 324(sp)
+	sw t1, 328(sp)
+	sw t2, 332(sp)
+	sw t4, 336(sp)
+	sw zero, 340(sp)
 	sw a2, 160(sp)
 	sw a4, 164(sp)
 	sw a5, 168(sp)
@@ -154,8 +154,8 @@ label7:
 	addiw s1, s1, 1
 	blt s1, a0, label7
 	mv a0, zero
-	ld ra, 360(sp)
-	ld s1, 368(sp)
-	ld s0, 376(sp)
-	addi sp, sp, 384
+	ld ra, 368(sp)
+	ld s1, 376(sp)
+	ld s0, 384(sp)
+	addi sp, sp, 392
 	ret

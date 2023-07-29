@@ -1,16 +1,16 @@
 .arch armv7ve
 .data
 .bss
-.align 4
+.align 8
 cnt:
 	.zero	1600080
-.align 4
+.align 8
 a:
 	.zero	400020
-.align 4
+.align 8
 b:
 	.zero	400020
-.align 4
+.align 8
 c:
 	.zero	400020
 .text

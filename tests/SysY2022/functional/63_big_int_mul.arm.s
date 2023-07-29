@@ -18,10 +18,10 @@ main:
 	mov r5, #3
 	mov r4, #1
 	mov r10, #5
-	add r0, sp, #260
+	add r0, sp, #264
 	add r1, sp, #160
 	mov r7, sp
-	str r7, [sp, #360]
+	str r7, [sp, #364]
 	str r2, [sp, #0]
 	str r2, [r7, #4]
 	str r2, [r7, #8]
@@ -63,7 +63,7 @@ main:
 	str r2, [r7, #152]
 	str r2, [r7, #156]
 	mov r7, #6
-	str r4, [sp, #260]
+	str r4, [sp, #264]
 	str r3, [r0, #4]
 	str r5, [r0, #8]
 	str r6, [r0, #12]
@@ -128,13 +128,13 @@ label103:
 	b label243
 .p2align 4
 label14:
-	ldr r7, [sp, #360]
+	ldr r7, [sp, #364]
 	ldr r6, [r7, r5, lsl #2]
 	ldr r7, [r0, r4, lsl #2]
 	mla r6, r3, r7, r6
 	cmp r6, #9
 	bgt label16
-	ldr r7, [sp, #360]
+	ldr r7, [sp, #364]
 	sub r4, r4, #1
 	str r6, [r7, r5, lsl #2]
 	sub r5, r5, #1
@@ -151,7 +151,7 @@ label14:
 .p2align 4
 label16:
 	sub r8, r5, #1
-	ldr r7, [sp, #360]
+	ldr r7, [sp, #364]
 	movw r9, #26215
 	sub r4, r4, #1
 	movt r9, #26214
@@ -177,7 +177,7 @@ label6:
 	mov r4, #1
 .p2align 4
 label7:
-	ldr r7, [sp, #360]
+	ldr r7, [sp, #364]
 	ldr r0, [r7, r4, lsl #2]
 	bl putint
 	add r4, r4, #1

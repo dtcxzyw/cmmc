@@ -58,7 +58,7 @@ internal func @maxCliques(i32 %k, [30 * i32]* %0, i32* %1) -> i32 {
 }
 func @main() -> i32 { NoRecurse Entry } {
   ^entry:
-    i32* %n = alloc i32, align 8;
+    i32* %n = alloc i32, align 4;
     [30 * i32]* %store = alloc [30 * i32], align 8;
     i32* %0 = getelementptr &([30 * i32]* %store)[i64 0][i64 0];
     store i32* %0 with i32 0;

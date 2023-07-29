@@ -1756,6 +1756,7 @@ void GlobalVarDefinition::emit(EmitContext& ctx) const {
     Stage stage{ "emit global"sv };
 
     auto module = ctx.getModule();
+    auto& dataLayout = module->getTarget().getDataLayout();
     GlobalVariable* global = nullptr;
     const auto t = ctx.getType(type.typeIdentifier, type.space, var.arraySize);
     if(auto str = dynamic_cast<ConstantStringExpr*>(var.initialValue)) {
@@ -1773,7 +1774,8 @@ void GlobalVarDefinition::emit(EmitContext& ctx) const {
 
         global = str->emitGlobal(var.name, size, ctx);
     } else {
-        global = make<GlobalVariable>(var.name, t, ctx.getModule()->getTarget().getDataLayout().getStorageAlignment());
+        global =
+            make<GlobalVariable>(var.name, t, t->isAggregate() ? dataLayout.getStorageAlignment() : t->getAlignment(dataLayout));
         if(var.initialValue) {
             if(t->isArray()) {
                 if(auto arrayInitializer = dynamic_cast<ArrayInitializer*>(var.initialValue))

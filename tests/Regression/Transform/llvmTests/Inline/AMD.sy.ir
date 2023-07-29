@@ -6,4 +6,4 @@ func @func_135() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRe
   ^entry:
     ret i32 0;
 }
-i32* @g_103, align 8 = 0;
+i32* @g_103, align 4 = 0;

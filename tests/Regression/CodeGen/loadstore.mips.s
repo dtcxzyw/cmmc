@@ -8,7 +8,7 @@ __cmmc_fp_constant_pool:
 .globl y
 y:
 	.zero	4
-.align 4
+.align 8
 .globl arr
 arr:
 	.zero	400
@@ -164,5 +164,43 @@ label110:
 	bgtz $t1, label110
 	nop
 label112:
+	jr $ra
+	nop
+.globl fused_store
+fused_store:
+.p2align 2
+	lui $t1, %hi(arr)
+	addiu $t0, $t1, %lo(arr)
+	sw $zero, %lo(arr)($t1)
+	li $t1, 1
+	sw $t1, 4($t0)
+	li $t1, 2
+	sw $t1, 8($t0)
+	li $t1, 3
+	sw $t1, 12($t0)
+	li $t1, 4
+	sw $t1, 16($t0)
+	li $t1, 5
+	sw $t1, 20($t0)
+	li $t1, 6
+	sw $t1, 24($t0)
+	li $t1, 7
+	sw $t1, 28($t0)
+	li $t1, 8
+	sw $t1, 32($t0)
+	li $t1, 9
+	sw $t1, 36($t0)
+	li $t1, 10
+	sw $t1, 40($t0)
+	li $t1, 11
+	sw $t1, 44($t0)
+	li $t1, 12
+	sw $t1, 48($t0)
+	li $t1, 13
+	sw $t1, 52($t0)
+	li $t1, 14
+	sw $t1, 56($t0)
+	li $t1, 15
+	sw $t1, 60($t0)
 	jr $ra
 	nop

@@ -1,10 +1,10 @@
 .arch armv7ve
 .data
 .bss
-.align 4
+.align 8
 matrix:
 	.zero	80000000
-.align 4
+.align 8
 a:
 	.zero	400000
 .text

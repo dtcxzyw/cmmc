@@ -8,8 +8,8 @@
 main:
 .p2align 4
 	push { r4, r5, r6, r7, r8, r9, lr }
-	sub sp, sp, #444
-	add r5, sp, #340
+	sub sp, sp, #452
+	add r5, sp, #344
 	str r5, [sp, #324]
 	bl getint
 	str r0, [sp, #316]
@@ -37,7 +37,7 @@ label7:
 	blt label6
 .p2align 4
 label10:
-	ldr r6, [sp, #340]
+	ldr r6, [sp, #344]
 	mov r0, #85
 	mov r2, #23
 	mvn r7, #102
@@ -929,5 +929,5 @@ label10:
 	bgt label17
 label11:
 	mov r0, #0
-	add sp, sp, #444
+	add sp, sp, #452
 	pop { r4, r5, r6, r7, r8, r9, pc }

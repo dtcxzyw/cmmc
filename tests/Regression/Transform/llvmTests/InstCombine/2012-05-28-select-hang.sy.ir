@@ -6,6 +6,6 @@ func @func() -> void { NoMemoryRead NoRecurse } {
     store i8* %1 with i8 0;
     ret;
 }
-i8* @c, align 8 = 0;
-i8* @a, align 8 = 0;
-i8* @b, align 8 = 0;
+i8* @c, align 1 = 0;
+i8* @a, align 1 = 0;
+i8* @b, align 1 = 0;

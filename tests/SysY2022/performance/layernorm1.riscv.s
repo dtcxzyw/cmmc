@@ -6,13 +6,13 @@ __cmmc_fp_constant_pool:
 	.4byte	1008981770
 	.4byte	981668463
 .bss
-.align 4
+.align 8
 a:
 	.zero	4000000
-.align 4
+.align 8
 var:
 	.zero	4000
-.align 4
+.align 8
 mean:
 	.zero	4000
 .text

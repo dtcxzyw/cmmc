@@ -4,4 +4,4 @@ func @func_56() -> void { NoMemoryRead NoRecurse } {
     store i32* %0 with i32 1;
     ret;
 }
-i32* @g_139, align 8 = 0;
+i32* @g_139, align 4 = 0;

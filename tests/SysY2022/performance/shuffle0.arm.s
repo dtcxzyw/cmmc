@@ -1,31 +1,31 @@
 .arch armv7ve
 .data
 .bss
-.align 4
+.align 8
 head:
 	.zero	40000000
-.align 4
+.align 8
 next:
 	.zero	40000000
-.align 4
+.align 8
 nextvalue:
 	.zero	40000000
-.align 4
+.align 8
 key:
 	.zero	40000000
-.align 4
+.align 8
 value:
 	.zero	40000000
-.align 4
+.align 8
 keys:
 	.zero	40000000
-.align 4
+.align 8
 values:
 	.zero	40000000
-.align 4
+.align 8
 requests:
 	.zero	40000000
-.align 4
+.align 8
 ans:
 	.zero	40000000
 .text

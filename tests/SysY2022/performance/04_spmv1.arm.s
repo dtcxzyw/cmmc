@@ -1,19 +1,19 @@
 .arch armv7ve
 .data
 .bss
-.align 4
+.align 8
 x:
 	.zero	400040
-.align 4
+.align 8
 y:
 	.zero	12000000
-.align 4
+.align 8
 v:
 	.zero	12000000
-.align 4
+.align 8
 a:
 	.zero	400040
-.align 4
+.align 8
 b:
 	.zero	400040
 .text

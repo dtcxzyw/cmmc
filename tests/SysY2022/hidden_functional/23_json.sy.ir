@@ -761,7 +761,7 @@ internal func @detect_item(i32 %type, i32* %buf, i32 %len, i32* %0) -> i32 {
 internal [50000000 * i32]* @buffer, align 8 { Flexible };
 func @main() -> i32 { NoRecurse Entry } {
   ^entry:
-    i32* %pos = alloc i32, align 8;
+    i32* %pos = alloc i32, align 4;
     store i32* %pos with i32 0;
     i32 %0 = call () -> i32 @getch();
     i1 %1 = icmp neq i32 %0, i32 35;

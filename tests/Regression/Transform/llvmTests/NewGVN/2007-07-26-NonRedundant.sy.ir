@@ -2,4 +2,4 @@ func @bsR() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse
   ^entry:
     ret i32 0;
 }
-i32* @bsLive, align 8;
+i32* @bsLive, align 4;

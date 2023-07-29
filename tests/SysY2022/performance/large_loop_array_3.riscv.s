@@ -9,10 +9,10 @@ __cmmc_fp_constant_pool:
 	.4byte	1045220557
 	.4byte	1036831949
 .bss
-.align 4
+.align 8
 y:
 	.zero	32768
-.align 4
+.align 8
 x:
 	.zero	32768
 .text

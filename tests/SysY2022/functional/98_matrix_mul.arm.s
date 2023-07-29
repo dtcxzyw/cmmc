@@ -8,22 +8,22 @@
 main:
 .p2align 4
 	push { r4, r5, r6, r7, lr }
-	sub sp, sp, #52
+	sub sp, sp, #60
 	mov r6, #0
 	movw r0, #0
-	add r7, sp, #24
+	add r7, sp, #32
 	vmov s0, r6
-	add r5, sp, #12
+	add r5, sp, #16
 	mov r4, sp
 	movt r0, #16448
 	vmov s1, r0
 	movw r0, #0
-	vstr s0, [sp, #24]
+	vstr s0, [sp, #32]
 	movt r0, #16576
 	vmov s2, r0
 	vstr s1, [r7, #4]
 	vstr s2, [r7, #8]
-	vstr s0, [sp, #12]
+	vstr s0, [sp, #16]
 	vstr s1, [r5, #4]
 	vstr s2, [r5, #8]
 	vstr s0, [sp, #0]
@@ -64,6 +64,6 @@ label8:
 	blt label8
 	mov r0, #10
 	bl putch
-	add sp, sp, #52
+	add sp, sp, #60
 	mov r0, #0
 	pop { r4, r5, r6, r7, pc }

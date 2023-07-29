@@ -1,13 +1,13 @@
 .arch armv7ve
 .data
 .bss
-.align 4
+.align 8
 temp:
 	.zero	8388608
-.align 4
+.align 8
 a:
 	.zero	8388608
-.align 4
+.align 8
 b:
 	.zero	8388608
 .text

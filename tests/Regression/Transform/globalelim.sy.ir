@@ -1,5 +1,5 @@
 internal func @getint() -> i32 { NoMemoryRead NoMemoryWrite };
-i32* @a, align 8;
+i32* @a, align 4;
 func @main() -> i32 { NoMemoryRead NoRecurse } {
   ^entry:
     i32 %0 = call () -> i32 @getint();

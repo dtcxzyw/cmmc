@@ -4,7 +4,7 @@
 __cmmc_fp_constant_pool:
 	.4byte	1082130432
 .bss
-.align 4
+.align 8
 .globl x
 x:
 	.zero	40

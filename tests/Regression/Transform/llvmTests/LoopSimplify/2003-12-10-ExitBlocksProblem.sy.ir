@@ -4,4 +4,4 @@ func @main() -> i32 { NoMemoryRead NoRecurse } {
     store i32* %0 with i32 0;
     ret i32 0;
 }
-i32* @G, align 8 = 0;
+i32* @G, align 4 = 0;

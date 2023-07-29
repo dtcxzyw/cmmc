@@ -1,13 +1,13 @@
 .arch armv7ve
 .data
 .bss
-.align 4
+.align 8
 Vectortm:
 	.zero	400000
-.align 4
+.align 8
 vectorB:
 	.zero	400000
-.align 4
+.align 8
 vectorA:
 	.zero	400000
 .text

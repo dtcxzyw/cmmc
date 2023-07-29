@@ -132,4 +132,4 @@ func @sub_unknown_none(i32 %var0) -> void { NoMemoryRead NoRecurse } {
   ^if.else:
     ret;
 }
-i32* @A, align 8;
+i32* @A, align 4;

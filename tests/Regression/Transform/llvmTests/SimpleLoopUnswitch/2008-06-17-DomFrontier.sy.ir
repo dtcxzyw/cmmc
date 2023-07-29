@@ -2,4 +2,4 @@ func @func_67() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRec
   ^entry:
     ret i32 0;
 }
-i16* @g_56, align 8;
+i16* @g_56, align 2;

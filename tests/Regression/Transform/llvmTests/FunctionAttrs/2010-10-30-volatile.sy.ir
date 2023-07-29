@@ -2,4 +2,4 @@ func @foo() -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurs
   ^entry:
     ret;
 }
-i32* @g, align 8 = 1;
+i32* @g, align 4 = 1;

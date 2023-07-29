@@ -5,7 +5,7 @@
 .globl y
 y:
 	.zero	4
-.align 4
+.align 8
 .globl arr
 arr:
 	.zero	400
@@ -131,4 +131,42 @@ label109:
 	sw zero, 0(a4)
 	bgt a1, a2, label109
 label111:
+	ret
+.globl fused_store
+fused_store:
+.p2align 2
+pcrel179:
+	auipc a1, %pcrel_hi(arr)
+	li a2, 2
+	li a3, 9
+	addi a0, a1, %pcrel_lo(pcrel179)
+	sw zero, %pcrel_lo(pcrel179)(a1)
+	li a1, 1
+	sw a1, 4(a0)
+	li a1, 3
+	sw a2, 8(a0)
+	li a2, 4
+	sw a1, 12(a0)
+	li a1, 5
+	sw a2, 16(a0)
+	li a2, 6
+	sw a1, 20(a0)
+	li a1, 7
+	sw a2, 24(a0)
+	li a2, 8
+	sw a1, 28(a0)
+	li a1, 10
+	sw a2, 32(a0)
+	li a2, 11
+	sw a3, 36(a0)
+	sw a1, 40(a0)
+	li a1, 12
+	sw a2, 44(a0)
+	li a2, 13
+	sw a1, 48(a0)
+	li a1, 14
+	sw a2, 52(a0)
+	li a2, 15
+	sw a1, 56(a0)
+	sw a2, 60(a0)
 	ret

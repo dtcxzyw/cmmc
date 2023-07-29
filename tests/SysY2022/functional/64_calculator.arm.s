@@ -1,16 +1,16 @@
 .arch armv7ve
 .data
 .bss
-.align 4
+.align 8
 ints:
 	.zero	40000
-.align 4
+.align 8
 chas:
 	.zero	40000
-.align 4
+.align 8
 get:
 	.zero	40000
-.align 4
+.align 8
 get2:
 	.zero	40000
 .text

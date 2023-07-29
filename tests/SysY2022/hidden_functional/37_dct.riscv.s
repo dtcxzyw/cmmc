@@ -10,13 +10,13 @@ __cmmc_fp_constant_pool:
 	.4byte	3234402267
 	.4byte	3226013659
 .bss
-.align 4
+.align 8
 test_block:
 	.zero	256
-.align 4
+.align 8
 test_dct:
 	.zero	256
-.align 4
+.align 8
 test_idct:
 	.zero	256
 .text

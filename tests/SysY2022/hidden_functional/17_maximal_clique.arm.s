@@ -1,10 +1,10 @@
 .arch armv7ve
 .data
 .bss
-.align 4
+.align 8
 graph:
 	.zero	3600
-.align 4
+.align 8
 edges:
 	.zero	4800
 .text
@@ -113,8 +113,8 @@ main:
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
 	mov r0, #0
 	sub sp, sp, #132
-	str r0, [sp, #4]
-	add r4, sp, #4
+	str r0, [sp, #8]
+	add r4, sp, #8
 	mov r5, sp
 	str r0, [r4, #4]
 	str r0, [r4, #8]

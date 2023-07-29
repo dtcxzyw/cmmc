@@ -1,31 +1,31 @@
 .attribute arch, "rv64i2p1_m2p0_a2p1_f2p2_d2p2_c2p0_zicsr2p0_zifencei2p0_zba1p0_zbb1p0"
 .data
 .bss
-.align 4
+.align 8
 head:
 	.zero	40000000
-.align 4
+.align 8
 next:
 	.zero	40000000
-.align 4
+.align 8
 nextvalue:
 	.zero	40000000
-.align 4
+.align 8
 key:
 	.zero	40000000
-.align 4
+.align 8
 value:
 	.zero	40000000
-.align 4
+.align 8
 keys:
 	.zero	40000000
-.align 4
+.align 8
 values:
 	.zero	40000000
-.align 4
+.align 8
 requests:
 	.zero	40000000
-.align 4
+.align 8
 ans:
 	.zero	40000000
 .text

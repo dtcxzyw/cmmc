@@ -13,4 +13,4 @@ func @f(i8 %var0) -> i32 { NoMemoryWrite NoSideEffect NoRecurse } {
     i32 %10 = ztrunc i32 %9 to i32;
     ret i32 %10;
 }
-i32* @d, align 8 = 0;
+i32* @d, align 4 = 0;

@@ -1,19 +1,19 @@
 .attribute arch, "rv64i2p1_m2p0_a2p1_f2p2_d2p2_c2p0_zicsr2p0_zifencei2p0_zba1p0_zbb1p0"
 .data
 .bss
-.align 4
+.align 8
 program:
 	.zero	262144
-.align 4
+.align 8
 tape:
 	.zero	262144
-.align 4
+.align 8
 input:
 	.zero	262144
-.align 4
+.align 8
 output:
 	.zero	262144
-.align 4
+.align 8
 return_a:
 	.zero	2048
 .text

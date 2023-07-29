@@ -1,10 +1,10 @@
 .arch armv7ve
 .data
 .bss
-.align 4
+.align 8
 sheet1:
 	.zero	1000000
-.align 4
+.align 8
 sheet2:
 	.zero	1000000
 .text

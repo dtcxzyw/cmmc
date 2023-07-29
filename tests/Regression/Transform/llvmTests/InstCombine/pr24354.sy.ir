@@ -29,7 +29,7 @@ func @fn3() -> void { NoRecurse } {
     store i32* %19 with i32 %18;
     ret;
 }
-i32* @c, align 8 = 0;
-i32* @b, align 8 = 0;
-i16* @a, align 8 = 0;
-i32* @d, align 8 = 0;
+i32* @c, align 4 = 0;
+i32* @b, align 4 = 0;
+i16* @a, align 2 = 0;
+i32* @d, align 4 = 0;

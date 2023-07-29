@@ -13,4 +13,4 @@ func @quadratic_setlt() -> i32 { NoMemoryRead NoRecurse } {
   ^if.else:
     ret i32 %1;
 }
-i32* @A, align 8;
+i32* @A, align 4;

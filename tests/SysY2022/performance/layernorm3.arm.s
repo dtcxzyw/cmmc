@@ -1,13 +1,13 @@
 .arch armv7ve
 .data
 .bss
-.align 4
+.align 8
 a:
 	.zero	4000000
-.align 4
+.align 8
 var:
 	.zero	4000
-.align 4
+.align 8
 mean:
 	.zero	4000
 .text
