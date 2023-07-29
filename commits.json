@@ -45,6 +45,11 @@
       "parent": "d40d138db693f396a43e7c1ff30dda6468ceb38b",
       "time": "2023-07-16 23:36:47 +0800"
     },
+    "108d169f9d44bcd6ac30e917499eeb04661a4159": {
+      "message": "fix(transform): fix mod opt",
+      "parent": "3ef1519d1e0426512f9d470691a7b4f61bb90e01",
+      "time": "2023-07-29 16:39:03 +0800"
+    },
     "113483ade1c34ea82f3db51a354e1176dad083e4": {
       "message": "feat(codegen): remove scratch register for rv/mips",
       "parent": "a398fc69ea29911ee35d3ef481e077fc10e79317",
@@ -229,6 +234,11 @@
       "message": "fix(codegen): fix riscv calling convention",
       "parent": "4ca44d60cea852b643949c0a3c123f214077684b",
       "time": "2023-07-08 23:25:52 +0800"
+    },
+    "3ef1519d1e0426512f9d470691a7b4f61bb90e01": {
+      "message": "fix(transform): only apply mod opt for loop-invariant inc",
+      "parent": "bce500a6d9c5c2d0e588d8368e4d74f5161a274c",
+      "time": "2023-07-29 15:57:40 +0800"
     },
     "43be4d9f3b3a4ab02e68f04af9d41f3b417f4758": {
       "message": "feat(transform): handle N-sat",
@@ -856,5 +866,5 @@
       "time": "2023-07-06 01:05:50 +0800"
     }
   },
-  "head": "bce500a6d9c5c2d0e588d8368e4d74f5161a274c"
+  "head": "108d169f9d44bcd6ac30e917499eeb04661a4159"
 }
