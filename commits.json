@@ -245,6 +245,11 @@
       "parent": "e87901f1931b3bbb5175bd3035309c5db03280ad",
       "time": "2023-07-19 05:53:09 +0800"
     },
+    "442bec9754bf5747015dacc32916e1a0c96dabe5": {
+      "message": "feat(transform): opt range check",
+      "parent": "f522f542d1411c95904e0a8510703ae8ad0b085a",
+      "time": "2023-07-30 00:18:19 +0800"
+    },
     "44b16c8abb617d0b7e4d6e519c88f9b46f248b7b": {
       "message": "refactor(codegen): rename for style",
       "parent": "11b5dd1333286ce15e75aad7dda613c2d560d589",
@@ -289,6 +294,11 @@
       "message": "feat(transform): tune transform pipeline",
       "parent": "c3882abda8d58101011908f2fdab66ed09ae2093",
       "time": "2023-07-14 04:05:58 +0800"
+    },
+    "4986ac64fbab59affcafed05faee84a6ad13be0c": {
+      "message": "misc: update ref",
+      "parent": "773bb5e04c347e77c127cecd99aa13731fb46785",
+      "time": "2023-07-29 19:22:52 +0800"
     },
     "49e29bb90dac47096baa55c815d5cd71d0d6fd45": {
       "message": "fix(transform): fix select folding",
@@ -360,6 +370,11 @@
       "parent": "9b2d702f4dd7429a9c9cf9cbf42e4e024133e2a5",
       "time": "2023-07-06 22:17:01 +0800"
     },
+    "5ca20f6637489df0e67b995f8d3eee0bc1f5c475": {
+      "message": "fix(codegen): fix spilling for GCB RA",
+      "parent": "4986ac64fbab59affcafed05faee84a6ad13be0c",
+      "time": "2023-07-29 21:09:50 +0800"
+    },
     "601dbbbf9624a2514fd0de00e8f3469b48e3ff0d": {
       "message": "test: add scev cases",
       "parent": "78a95e6f941947103f9f1d6b8d70881e9f9c384a",
@@ -405,6 +420,11 @@
       "parent": "330d08bc3362040b0b07f22319057a3ed8378fa2",
       "time": "2023-07-12 01:24:58 +0800"
     },
+    "71d39bd73acf5a77c3a160a302dbd8b7f68a4453": {
+      "message": "misc: update spl ref",
+      "parent": "9f743840671209521e2e006fd3a57789a010f44d",
+      "time": "2023-07-29 17:19:57 +0800"
+    },
     "722eb895c5ff9ec49b2ffa12de20846c1425c4fa": {
       "message": "fix(transform): fix lut2expr",
       "parent": "e15d2533f26a57059fbb95edf8f811865c3d1a3f",
@@ -424,6 +444,11 @@
       "message": "ci: update format of `commits.json`",
       "parent": "ba3bf9379f25db9a5b510a6b3522bbf8ea4b7cb1",
       "time": "2023-07-02 17:57:31 +0800"
+    },
+    "773bb5e04c347e77c127cecd99aa13731fb46785": {
+      "message": "feat(codegen): paired sw zero -> sd",
+      "parent": "71d39bd73acf5a77c3a160a302dbd8b7f68a4453",
+      "time": "2023-07-29 19:12:52 +0800"
     },
     "77647bb276d3cd17b652e9f52f197a2963439072": {
       "message": "misc: update ref",
@@ -564,6 +589,11 @@
       "message": "misc: update ref",
       "parent": "15c54ccbc7f3ccee2471389b56e2dd6b6b8b2996",
       "time": "2023-07-06 19:54:04 +0800"
+    },
+    "9f743840671209521e2e006fd3a57789a010f44d": {
+      "message": "fix(frontend): fix error reporting",
+      "parent": "108d169f9d44bcd6ac30e917499eeb04661a4159",
+      "time": "2023-07-29 17:14:30 +0800"
     },
     "a218c9acc357034cdf9347adfb4f0e945087af53": {
       "message": "feat(codegen): optimize sdiv/srem lowering",
@@ -710,10 +740,20 @@
       "parent": "5b63fc5dd7525b10e8fde57012f4b83cb0e82697",
       "time": "2023-07-06 22:37:50 +0800"
     },
+    "c9fef796730c6dc9473b98448fe859412437e1e2": {
+      "message": "fix(codegen): fix spilling for GCB RA",
+      "parent": "5ca20f6637489df0e67b995f8d3eee0bc1f5c475",
+      "time": "2023-07-29 21:28:20 +0800"
+    },
     "cae14d83d374b5e515f1d88de99ae22c47600b6c": {
       "message": "feat(analysis): enable scev-based range analysis",
       "parent": "aa05eb489c6e9d3f9571430738c789da72fcf3b8",
       "time": "2023-07-17 01:58:55 +0800"
+    },
+    "cae48046d8dca8ff0b2c83b7846ec3db0a12b74d": {
+      "message": "feat(codegen): reuse arguments in stack",
+      "parent": "c9fef796730c6dc9473b98448fe859412437e1e2",
+      "time": "2023-07-29 21:42:04 +0800"
     },
     "cb2bacbaa905b3a86d42ec948cba23be3058ae1f": {
       "message": "test(perf): add summary",
@@ -830,6 +870,11 @@
       "parent": "980aab119d0f34261e3300838ff5aade4d070ba0",
       "time": "2023-07-07 01:55:58 +0800"
     },
+    "f522f542d1411c95904e0a8510703ae8ad0b085a": {
+      "message": "feat(transform): optimize dyn unrolling",
+      "parent": "cae48046d8dca8ff0b2c83b7846ec3db0a12b74d",
+      "time": "2023-07-29 22:57:21 +0800"
+    },
     "f5456db3e19187aa4d028032103b60006886a52b": {
       "message": "feat(transform): optimize for clamp",
       "parent": "dd9b2f32d438b1ffef8fbfaa80e9fbf25e2cd104",
@@ -866,5 +911,5 @@
       "time": "2023-07-06 01:05:50 +0800"
     }
   },
-  "head": "108d169f9d44bcd6ac30e917499eeb04661a4159"
+  "head": "442bec9754bf5747015dacc32916e1a0c96dabe5"
 }
