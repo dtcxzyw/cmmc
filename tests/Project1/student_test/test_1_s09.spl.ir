@@ -1,8 +1,8 @@
 func @abaaba() -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoReturn NoRecurse } {
-^entry:
+  ^entry:
     unreachable;
 }
 func @sleeeeeeeep() -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoReturn NoRecurse } {
-^entry:
+  ^entry:
     unreachable;
 }

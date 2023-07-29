@@ -1,4 +1,4 @@
 func @test_1_r15() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
-^entry:
+  ^entry:
     ret i32 -1;
 }

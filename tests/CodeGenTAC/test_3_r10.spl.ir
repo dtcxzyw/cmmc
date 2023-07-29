@@ -1,22 +1,22 @@
 internal func @read() -> i32 { NoMemoryRead NoMemoryWrite };
 internal func @write() -> void { NoMemoryRead NoMemoryWrite };
 func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
-^entry:
+  ^entry:
     i32 %0 = call () -> i32 @read();
-    i1 %1 = scmp gt i32 %0, i32 0;
+    i1 %1 = icmp sgt i32 %0, i32 0;
     cbr i1 %1(prob = 0.5), ^if.then, ^if.else;
-^if.then:
+  ^if.then:
     call (i32) -> void @write(i32 1);
     ubr ^b;
-^if.else:
-    i1 %2 = scmp lt i32 %0, i32 0;
+  ^if.else:
+    i1 %2 = icmp slt i32 %0, i32 0;
     cbr i1 %2(prob = 0.5), ^if.then1, ^if.else1;
-^if.then1:
+  ^if.then1:
     call (i32) -> void @write(i32 -1);
     ubr ^b;
-^if.else1:
+  ^if.else1:
     call (i32) -> void @write(i32 0);
     ubr ^b;
-^b:
+  ^b:
     ret i32 0;
 }

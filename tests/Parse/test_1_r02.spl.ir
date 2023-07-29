@@ -1,5 +1,5 @@
-i32* @global;
+i32* @global, align 4;
 func @test_1_r02() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoReturn NoRecurse } {
-^entry:
+  ^entry:
     unreachable;
 }

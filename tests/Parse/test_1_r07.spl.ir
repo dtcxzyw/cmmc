@@ -1,4 +1,4 @@
 func @test_1_r07() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoReturn NoRecurse } {
-^entry:
+  ^entry:
     unreachable;
 }

@@ -1,46 +1,46 @@
 internal func @read() -> i32 { NoMemoryRead NoMemoryWrite };
 internal func @write() -> void { NoMemoryRead NoMemoryWrite };
 func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
-^entry:
+  ^entry:
     i32 %0 = call () -> i32 @read();
-    i32 %1 = call () -> i32 @read();
-    i32 %2 = sdiv i32 %0, i32 100;
-    i32 %3 = mul i32 %2, i32 100;
-    i1 %4 = scmp eq i32 %0, i32 %3;
-    cbr i1 %4(prob = 0.5), ^if.then, ^if.else;
-^if.then:
+    i32 %1 = sdiv i32 %0, i32 100;
+    i32 %2 = mul i32 %1, i32 100;
+    i1 %3 = icmp eq i32 %0, i32 %2;
+    i32 %4 = call () -> i32 @read();
+    cbr i1 %3(prob = 0.5), ^if.then, ^if.else;
+  ^if.then:
     i32 %5 = sdiv i32 %0, i32 400;
     i32 %6 = mul i32 %5, i32 400;
-    i1 %7 = scmp eq i32 %0, i32 %6;
+    i1 %7 = icmp eq i32 %0, i32 %6;
     cbr i1 %7(prob = 0.5), ^if.then1, ^if.else1;
-^if.else:
+  ^if.else:
     i32 %8 = sdiv i32 %0, i32 4;
     i32 %9 = mul i32 %8, i32 4;
-    i1 %10 = scmp eq i32 %0, i32 %9;
+    i1 %10 = icmp eq i32 %0, i32 %9;
     cbr i1 %10(prob = 0.5), ^if.then1, ^if.else1;
-^if.then1:
-    i1 %11 = scmp eq i32 %1, i32 2;
+  ^if.then1:
+    i1 %11 = icmp eq i32 %4, i32 2;
     cbr i1 %11(prob = 0.5), ^if.then2, ^if.else2;
-^if.else1:
-    i1 %12 = scmp eq i32 %1, i32 2;
+  ^if.else1:
+    i1 %12 = icmp eq i32 %4, i32 2;
     cbr i1 %12(prob = 0.5), ^if.then3, ^if.else2;
-^if.then2:
+  ^if.then2:
     call (i32) -> void @write(i32 29);
     ubr ^b;
-^if.then3:
+  ^if.then3:
     call (i32) -> void @write(i32 28);
     ubr ^b;
-^if.else2:
-    i32 %13 = sdiv i32 %1, i32 2;
+  ^if.else2:
+    i32 %13 = sdiv i32 %4, i32 2;
     i32 %14 = mul i32 %13, i32 2;
-    i1 %15 = scmp eq i32 %1, i32 %14;
+    i1 %15 = icmp eq i32 %4, i32 %14;
     cbr i1 %15(prob = 0.5), ^if.then4, ^if.else3;
-^if.then4:
+  ^if.then4:
     call (i32) -> void @write(i32 30);
     ubr ^b;
-^if.else3:
+  ^if.else3:
     call (i32) -> void @write(i32 31);
     ubr ^b;
-^b:
+  ^b:
     ret i32 0;
 }

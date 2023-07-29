@@ -1,4 +1,4 @@
 func @test_1_o02() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
-^entry:
+  ^entry:
     ret i32 3772;
 }

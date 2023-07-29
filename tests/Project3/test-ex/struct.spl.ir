@@ -2,7 +2,7 @@ struct bar {i32 x};
 struct foo {i32 a, [10 * i32] b, [2 * struct bar] c};
 
 func @func_struct_ret(struct foo* %0) -> void { NoMemoryRead NoRecurse } {
-^entry:
+  ^entry:
     i32* %1 = getelementptr &(struct foo* %0)[i32 0].a;
     store i32* %1 with i32 10;
     i32* %2 = getelementptr &(struct foo* %0)[i32 0].b[i32 0];
@@ -32,23 +32,24 @@ func @func_struct_ret(struct foo* %0) -> void { NoMemoryRead NoRecurse } {
     ret;
 }
 func @func_struct_array_param([10 * struct foo]* %param) -> i32 { NoMemoryRead NoRecurse } {
-^entry:
+  ^entry:
     i32* %0 = getelementptr &([10 * struct foo]* %param)[i32 0][i32 0].a;
     store i32* %0 with i32 10;
     ret i32 10;
 }
 func @func_struct_param(struct foo* %param) -> i32 { NoMemoryWrite NoSideEffect NoRecurse } {
-^entry:
+  ^entry:
     i32* %0 = getelementptr &(struct foo* %param)[i32 0].b[i32 0];
     i32 %1 = load i32* %0;
     i32 %2 = add i32 %1, i32 10;
-    ret i32 %2;
+    i32 %3 = strunc i32 %2 to i32;
+    ret i32 %3;
 }
 func @func_struct_param2() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
-^entry:
+  ^entry:
     ret i32 0;
 }
 func @main() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
-^entry:
+  ^entry:
     ret i32 10;
 }

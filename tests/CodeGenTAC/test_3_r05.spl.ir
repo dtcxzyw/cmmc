@@ -1,40 +1,36 @@
 internal func @read() -> i32 { NoMemoryRead NoMemoryWrite };
 internal func @write() -> void { NoMemoryRead NoMemoryWrite };
 func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
-^entry:
+  ^entry:
     i32 %0 = call () -> i32 @read();
-    i1 %1 = scmp lt i32 %0, i32 1;
+    i1 %1 = icmp slt i32 %0, i32 1;
     cbr i1 %1(prob = 0.5), ^if.then, ^if.else;
-^if.then:
+  ^if.then:
     call (i32) -> void @write(i32 0);
     ubr ^b1;
-^if.else:
-    i1 %2 = scmp eq i32 %0, i32 1;
+  ^if.else:
+    i1 %2 = icmp eq i32 %0, i32 1;
     cbr i1 %2(prob = 0.5), ^if.then1, ^b;
-^if.then1:
+  ^if.then1:
     call (i32) -> void @write(i32 1);
     ubr ^b1;
-^b:
-    i1 %3 = scmp eq i32 %0, i32 2;
+  ^b:
+    i1 %3 = icmp eq i32 %0, i32 2;
     cbr i1 %3(prob = 0.5), ^if.then1, ^if.else1;
-^b1:
+  ^b1:
     ret i32 0;
-^if.else1:
-    i1 %4 = scmp gt i32 %0, i32 2;
-    cbr i1 %4(prob = 0.5), ^if.then2, ^b1;
-^if.then2:
-    i1 %5 = scmp gt i32 %0, i32 2;
-    cbr i1 %5(prob = 0.97), ^while.body, ^b2;
-^b2:
-    i32 %6 = phi [^if.then2, i32 0] [^while.body, i32 %10];
-    call (i32) -> void @write(i32 %6);
+  ^if.else1:
+    i1 %4 = icmp sgt i32 %0, i32 2;
+    cbr i1 %4(prob = 0.5), ^while.body, ^b1;
+  ^while.body:
+    i32 %5 = phi [^if.else1, i32 3] [^while.body, i32 %8];
+    i32 %6 = phi [^if.else1, i32 1] [^while.body, i32 %7];
+    i32 %7 = phi [^if.else1, i32 1] [^while.body, i32 %10];
+    i32 %8 = add i32 %5, i32 1;
+    i1 %9 = icmp sge i32 %0, i32 %8;
+    i32 %10 = add i32 %6, i32 %7;
+    cbr i1 %9(prob = 0.97), ^while.body, ^b2;
+  ^b2:
+    call (i32) -> void @write(i32 %10);
     ubr ^b1;
-^while.body:
-    i32 %7 = phi [^if.then2, i32 1] [^while.body, i32 %8];
-    i32 %8 = phi [^if.then2, i32 1] [^while.body, i32 %10];
-    i32 %9 = phi [^if.then2, i32 3] [^while.body, i32 %11];
-    i32 %10 = add i32 %8, i32 %7;
-    i32 %11 = add i32 %9, i32 1;
-    i1 %12 = scmp le i32 %11, i32 %0;
-    cbr i1 %12(prob = 0.97), ^while.body, ^b2;
 }

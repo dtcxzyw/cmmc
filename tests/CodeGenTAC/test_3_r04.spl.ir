@@ -1,23 +1,23 @@
 internal func @read() -> i32 { NoMemoryRead NoMemoryWrite };
 internal func @write() -> void { NoMemoryRead NoMemoryWrite };
 func @sqr(i32 %i1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
-^entry:
+  ^entry:
     i32 %0 = mul i32 %i1, i32 %i1;
     ret i32 %0;
 }
 func @cbc(i32 %i2) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
-^entry:
+  ^entry:
     i32 %0 = mul i32 %i2, i32 %i2;
     i32 %1 = mul i32 %i2, i32 %0;
     ret i32 %1;
 }
 func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
-^entry:
+  ^entry:
     i32 %0 = call () -> i32 @read();
-    call (i32) -> void @write(i32 %0);
     i32 %1 = mul i32 %0, i32 %0;
-    call (i32) -> void @write(i32 %1);
     i32 %2 = mul i32 %0, i32 %1;
+    call (i32) -> void @write(i32 %0);
+    call (i32) -> void @write(i32 %1);
     call (i32) -> void @write(i32 %2);
     ret i32 0;
 }
