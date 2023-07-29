@@ -10,8 +10,8 @@ params_f40:
 	vpush { s16, s17, s18, s19, s20, s21, s22, s23, s24, s25, s26, s27, s28, s29, s30, s31 }
 	sub sp, sp, #188
 	mov r4, r0
-	vstr s14, [sp, #176]
 	add r5, sp, #136
+	vstr s14, [sp, #176]
 	vstr s15, [sp, #104]
 	vldr s16, [sp, #264]
 	vstr s16, [sp, #116]
@@ -170,12 +170,10 @@ params_f40_i24:
 .p2align 4
 	push { r4, r5, r6, r7, r8, r9, r10, lr }
 	vpush { s16, s17, s18, s19, s20, s21, s22, s23, s24, s25, s26, s27 }
-	mov r8, r0
 	sub sp, sp, #432
+	mov r8, r0
 	vmov.f32 s20, s10
-	str r2, [sp, #216]
 	add r5, sp, #360
-	str r0, [sp, #424]
 	vstr s10, [sp, #408]
 	vstr s5, [sp, #288]
 	vstr s7, [sp, #328]
@@ -184,6 +182,8 @@ params_f40_i24:
 	vstr s13, [sp, #192]
 	vstr s11, [sp, #196]
 	vstr s15, [sp, #200]
+	str r2, [sp, #228]
+	str r0, [sp, #420]
 	ldr r0, [sp, #512]
 	ldr r2, [sp, #516]
 	ldr r9, [sp, #520]
@@ -194,7 +194,7 @@ params_f40_i24:
 	ldr r8, [sp, #532]
 	str r8, [sp, #208]
 	ldr r9, [sp, #536]
-	str r9, [sp, #220]
+	str r9, [sp, #216]
 	ldr r9, [sp, #540]
 	str r9, [sp, #236]
 	vldr s6, [sp, #544]
@@ -214,7 +214,7 @@ params_f40_i24:
 	ldr r8, [sp, #584]
 	str r8, [sp, #324]
 	ldr r8, [sp, #588]
-	str r8, [sp, #224]
+	str r8, [sp, #220]
 	vldr s16, [sp, #592]
 	vldr s20, [sp, #596]
 	vldr s17, [sp, #600]
@@ -253,8 +253,8 @@ params_f40_i24:
 	str r6, [sp, #416]
 	add r6, sp, #248
 	str r5, [sp, #412]
-	str r6, [sp, #420]
-	ldr r8, [sp, #424]
+	str r6, [sp, #424]
+	ldr r8, [sp, #420]
 	cmp r8, #0
 	beq label787
 	vadd.f32 s9, s17, s9
@@ -321,19 +321,19 @@ params_f40_i24:
 	str r4, [sp, #360]
 	str r0, [sp, #316]
 	str r0, [r5, #4]
-	ldr r2, [sp, #216]
+	ldr r2, [sp, #228]
 	ldr r8, [sp, #208]
 	add r0, r2, r8
 	ldr r8, [sp, #212]
 	add r0, r8, r0
 	str r0, [sp, #392]
 	str r0, [r5, #8]
-	ldr r8, [sp, #224]
-	ldr r9, [sp, #220]
+	ldr r8, [sp, #220]
+	ldr r9, [sp, #216]
 	add r0, r9, r8
 	ldr r8, [sp, #232]
 	add r0, r8, r0
-	str r0, [sp, #228]
+	str r0, [sp, #224]
 	str r0, [r5, #12]
 	ldr r8, [sp, #240]
 	ldr r9, [sp, #236]
@@ -354,7 +354,7 @@ params_f40_i24:
 	ldr r8, [sp, #308]
 	add r7, r8, r0
 	str r7, [r5, #24]
-	ldr r8, [sp, #424]
+	ldr r8, [sp, #420]
 	ldr r9, [sp, #300]
 	add r0, r8, r9
 	ldr r8, [sp, #428]
@@ -386,7 +386,7 @@ params_f40_i24:
 	vcvt.s32.f32 s0, s0
 	vmov r0, s0
 	str r0, [r5, #8]
-	ldr r0, [sp, #228]
+	ldr r0, [sp, #224]
 	vmov s0, r0
 	vcvt.f32.s32 s0, s0
 	vsub.f32 s0, s0, s16
@@ -441,7 +441,7 @@ label787:
 	str r9, [sp, #16]
 	ldr r8, [sp, #208]
 	str r8, [sp, #20]
-	ldr r9, [sp, #220]
+	ldr r9, [sp, #216]
 	str r9, [sp, #24]
 	ldr r9, [sp, #236]
 	str r9, [sp, #28]
@@ -461,7 +461,7 @@ label787:
 	vstr s26, [sp, #68]
 	ldr r8, [sp, #324]
 	str r8, [sp, #72]
-	ldr r8, [sp, #224]
+	ldr r8, [sp, #220]
 	str r8, [sp, #76]
 	vstr s16, [sp, #80]
 	vstr s20, [sp, #84]
@@ -499,7 +499,7 @@ label787:
 	vstr s26, [sp, #172]
 	ldr r6, [sp, #416]
 	str r6, [sp, #176]
-	ldr r2, [sp, #216]
+	ldr r2, [sp, #228]
 	mov r0, r3
 	vldr s15, [sp, #200]
 	vldr s11, [sp, #196]
@@ -515,12 +515,12 @@ label787:
 params_fa40:
 .p2align 4
 	push { r4, r5, r6, r7, r8, r9, r10, lr }
-	mov r7, r2
-	sub sp, sp, #344
-	mov r9, r1
-	mov r5, r0
-	str r1, [sp, #328]
 	mov r6, r3
+	mov r9, r1
+	sub sp, sp, #344
+	mov r5, r0
+	mov r7, r2
+	str r1, [sp, #328]
 	str r2, [sp, #324]
 	str r3, [sp, #320]
 	ldr r8, [sp, #376]
@@ -859,15 +859,14 @@ params_mix:
 .p2align 4
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
 	vpush { s16, s17, s18, s19, s20, s21, s22, s23, s24, s25, s26, s27, s28, s29, s30 }
-	mov r2, r0
+	mov r4, r0
 	sub sp, sp, #464
 	vadd.f32 s23, s14, s15
-	mov r3, r1
-	str r0, [sp, #420]
-	mov r4, r1
-	mov r1, r0
-	str r3, [sp, #452]
+	mov r5, r1
+	str r0, [sp, #412]
 	add r4, sp, #312
+	mov r1, r2
+	str r5, [sp, #448]
 	str r3, [sp, #444]
 	ldr r2, [sp, #560]
 	str r2, [sp, #408]
@@ -956,7 +955,7 @@ params_mix:
 	ldr r0, [sp, #736]
 	str r0, [sp, #432]
 	str r4, [sp, #436]
-	str r2, [sp, #448]
+	str r2, [sp, #452]
 	ldr r0, [r0, #0]
 	add r1, r1, r0, lsl #2
 	str r0, [sp, #440]
@@ -976,7 +975,7 @@ params_mix:
 	vadd.f32 s17, s17, s18
 	add r1, r2, r0, lsl #2
 	vldr s18, [r1, #0]
-	ldr r2, [sp, #448]
+	ldr r2, [sp, #452]
 	vadd.f32 s17, s17, s18
 	vstr s17, [r2, #4]
 	ldr r3, [sp, #428]
@@ -1041,15 +1040,14 @@ params_mix:
 	vmov s30, r1
 	vadd.f32 s24, s24, s29
 	vstr s24, [r2, #32]
-	str r1, [sp, #412]
-	vstr s30, [r2, #36]
-	ldr r2, [sp, #420]
-	ldr r1, [r2, r0, lsl #2]
-	ldr r4, [sp, #444]
-	ldr r3, [sp, #452]
-	add r2, r3, r4
-	add r1, r1, r2
 	str r1, [sp, #416]
+	vstr s30, [r2, #36]
+	ldr r4, [sp, #412]
+	ldr r1, [r4, r0, lsl #2]
+	ldr r3, [sp, #444]
+	add r2, r5, r3
+	add r1, r1, r2
+	str r1, [sp, #420]
 	str r1, [sp, #312]
 	ldr r2, [sp, #360]
 	ldr r1, [r2, r0, lsl #2]
@@ -1117,7 +1115,7 @@ params_mix:
 	add r1, r2, r1
 	add r11, r0, r1
 	str r11, [r4, #32]
-	ldr r1, [sp, #412]
+	ldr r1, [sp, #416]
 	str r1, [r4, #36]
 	bne label4
 	b label5
@@ -1126,7 +1124,7 @@ label2:
 	vpop { s16, s17, s18, s19, s20, s21, s22, s23, s24, s25, s26, s27, s28, s29, s30 }
 	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
 label4:
-	ldr r2, [sp, #448]
+	ldr r2, [sp, #452]
 	mov r0, #10
 	mov r1, r2
 	bl putfarray
@@ -1134,7 +1132,7 @@ label4:
 	ldr r4, [sp, #436]
 	mov r1, r4
 	bl putarray
-	ldr r1, [sp, #416]
+	ldr r1, [sp, #420]
 	vmov s0, r1
 	vcvt.f32.s32 s0, s0
 	vsub.f32 s0, s0, s16
@@ -1291,12 +1289,11 @@ label5:
 	ldr r0, [sp, #432]
 	str r0, [sp, #176]
 	ldr r4, [sp, #436]
-	ldr r2, [sp, #448]
-	ldr r3, [sp, #452]
+	ldr r3, [sp, #444]
+	ldr r5, [sp, #448]
+	ldr r2, [sp, #452]
 	mov r0, r4
-	mov r1, r3
-	ldr r4, [sp, #444]
-	mov r3, r4
+	mov r1, r5
 	bl params_mix
 	b label2
 .globl main
@@ -1519,6 +1516,7 @@ label1271:
 	vstr s13, [sp, #88]
 	vldr s0, [sp, #520]
 	vstr s0, [sp, #92]
+	ldr r6, [sp, #536]
 	vldr s0, [sp, #392]
 	vldr s14, [sp, #484]
 	vldr s13, [sp, #388]
@@ -1531,7 +1529,6 @@ label1271:
 	vmov.f32 s6, s23
 	vmov.f32 s7, s24
 	vmov.f32 s8, s25
-	ldr r6, [sp, #536]
 	mov r0, r6
 	bl params_f40
 	vstr s0, [sp, #432]
@@ -1964,8 +1961,8 @@ label1271:
 	ldr r1, [sp, #448]
 	str r1, [sp, #172]
 	str r6, [sp, #176]
-	vldr s0, [sp, #392]
 	ldr r2, [sp, #856]
+	vldr s0, [sp, #392]
 	mov r0, r5
 	mov r1, r8
 	vldr s2, [sp, #500]

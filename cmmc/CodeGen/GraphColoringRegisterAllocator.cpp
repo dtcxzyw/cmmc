@@ -187,6 +187,9 @@ static void graphColoringAllocateImpl(MIRFunction& mfunc, CodeGenContext& ctx, I
         const auto isAllocatableType = [&](OperandType type) {
             return (type <= OperandType::Float32) && (ctx.registerInfo->getAllocationClass(type) == allocationClass);
         };
+        const auto isLockedOrUnderRenamedType = [&](OperandType type) {
+            return (type <= OperandType::Float32) && (ctx.registerInfo->getAllocationClass(type) >= allocationClass);
+        };
         std::unordered_set<RegNum> vregSet;
         for(auto& block : mfunc.blocks()) {
             for(auto& inst : block->instructions()) {
@@ -233,9 +236,10 @@ static void graphColoringAllocateImpl(MIRFunction& mfunc, CodeGenContext& ctx, I
                     bool hasReg = false;
                     for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
                         const auto& op = inst.getOperand(idx);
-                        if(isOperandISAReg(op) && !ctx.registerInfo->isZeroRegister(op.reg()) && isAllocatableType(op.type()) &&
-                           (instInfo.getOperandFlag(idx) & OperandFlagUse)) {
-                            underRenamedISAReg.insert(op.reg());
+                        if(isOperandISAReg(op) && !ctx.registerInfo->isZeroRegister(op.reg()) &&
+                           isLockedOrUnderRenamedType(op.type()) && (instInfo.getOperandFlag(idx) & OperandFlagUse)) {
+                            if(isAllocatableType(op.type()))
+                                underRenamedISAReg.insert(op.reg());
                             hasReg = true;
                         }
                     }
@@ -347,13 +351,13 @@ static void graphColoringAllocateImpl(MIRFunction& mfunc, CodeGenContext& ctx, I
                 auto& v = vregs[j];
                 auto& intervalV = liveInterval.interval.at(v);
                 if(intervalU.intersectWith(intervalV)) {
-                    if(debugRA) {
-                        std::cerr << (u ^ virtualRegBegin) << " <-> " << (v ^ virtualRegBegin) << std::endl;
-                        intervalU.dump(std::cerr);
-                        std::cerr << '\n';
-                        intervalV.dump(std::cerr);
-                        std::cerr << '\n';
-                    }
+                    // if(debugRA) {
+                    //     std::cerr << (u ^ virtualRegBegin) << " <-> " << (v ^ virtualRegBegin) << std::endl;
+                    //     intervalU.dump(std::cerr);
+                    //     std::cerr << '\n';
+                    //     intervalV.dump(std::cerr);
+                    //     std::cerr << '\n';
+                    // }
 
                     graph.addEdge(u, v);
                 }
@@ -363,9 +367,9 @@ static void graphColoringAllocateImpl(MIRFunction& mfunc, CodeGenContext& ctx, I
         if(graph.empty())
             return;
         assert(vregs.size() == graph.size());
-        if(debugRA) {
-            graph.dump(std::cerr);
-        }
+        // if(debugRA) {
+        //     graph.dump(std::cerr);
+        // }
 
         // Calculate weights for virtual registers
 
@@ -525,7 +529,7 @@ static void graphColoringAllocateImpl(MIRFunction& mfunc, CodeGenContext& ctx, I
                         for(auto reg : list) {
                             if(!exclude.count(reg)) {
                                 const auto curCost = evalCost(reg);
-                                if constexpr(debugRA) {
+                                if(debugRA) {
                                     std::cerr << reg << " cost " << curCost << std::endl;
                                 }
                                 if(curCost < cost) {
@@ -542,7 +546,7 @@ static void graphColoringAllocateImpl(MIRFunction& mfunc, CodeGenContext& ctx, I
                 }
                 if(!assigned)
                     reportUnreachable(CMMC_LOCATION());
-                if constexpr(debugRA) {
+                if(debugRA) {
                     std::cerr << (u ^ virtualRegBegin) << " -> " << regMap.at(u) << std::endl;
                 }
             }
@@ -572,6 +576,11 @@ static void graphColoringAllocateImpl(MIRFunction& mfunc, CodeGenContext& ctx, I
         blockList.insert(u);
         if(debugRA) {
             std::cerr << "spill " << (u ^ virtualRegBegin) << std::endl;
+            std::cerr << "block list " << blockList.size() << ' ' << graph.size() << '\n';
+        }
+        if(!isVirtualReg(u)) {
+            // std::cerr << mfunc.symbol() << std::endl;
+            reportUnreachable(CMMC_LOCATION());
         }
         const auto size = getOperandSize(canonicalizedType);
         const auto stackStorage = mfunc.addStackObject(ctx, size, size, 0, StackObjectUsage::RegSpill);
@@ -618,7 +627,7 @@ static void graphColoringAllocateImpl(MIRFunction& mfunc, CodeGenContext& ctx, I
                         for(uint32_t idx = 0; idx < lockedInstInfo.getOperandNum(); ++idx) {
                             const auto& op = lockedInst.getOperand(idx);
                             if(isOperandISAReg(op) && !ctx.registerInfo->isZeroRegister(op.reg()) &&
-                               isAllocatableType(op.type()) && (instInfo.getOperandFlag(idx) & OperandFlagDef)) {
+                               isLockedOrUnderRenamedType(op.type()) && (instInfo.getOperandFlag(idx) & OperandFlagDef)) {
                                 hasReg = true;
                                 break;
                             }
@@ -645,7 +654,7 @@ static void graphColoringAllocateImpl(MIRFunction& mfunc, CodeGenContext& ctx, I
                         for(uint32_t idx = 0; idx < renameInstInfo.getOperandNum(); ++idx) {
                             const auto& op = renameInst.getOperand(idx);
                             if(isOperandISAReg(op) && !ctx.registerInfo->isZeroRegister(op.reg()) &&
-                               isAllocatableType(op.type()) && (instInfo.getOperandFlag(idx) & OperandFlagUse)) {
+                               isLockedOrUnderRenamedType(op.type()) && (instInfo.getOperandFlag(idx) & OperandFlagUse)) {
                                 hasReg = true;
                                 break;
                             }

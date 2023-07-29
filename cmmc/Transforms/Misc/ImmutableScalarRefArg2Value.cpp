@@ -75,6 +75,8 @@ public:
                 const auto func = global->as<Function>();
                 if(func->blocks().empty())
                     continue;
+                if(func->getLinkage() != Linkage::Internal)
+                    continue;
                 const auto type = func->getType();
                 bool optArg = false;
                 uint32_t idx = 0;
