@@ -200,8 +200,9 @@ label1088:
 params_f40_i24:
 .p2align 2
 	addi sp, sp, -720
-	fsw f19, 576(sp)
-	sd s7, 568(sp)
+	fmv.s f1, f12
+	sd s7, 576(sp)
+	fsw f19, 568(sp)
 	sd s6, 560(sp)
 	fsw f18, 556(sp)
 	fsw f20, 548(sp)
@@ -210,7 +211,7 @@ params_f40_i24:
 	sd s11, 520(sp)
 	fsw f23, 508(sp)
 	sd s5, 496(sp)
-	fsw f21, 492(sp)
+	fsw f21, 488(sp)
 	sd s9, 480(sp)
 	fsw f8, 472(sp)
 	sd s4, 464(sp)
@@ -224,13 +225,14 @@ params_f40_i24:
 	sd s0, 400(sp)
 	addi s0, sp, 688
 	sd ra, 408(sp)
-	fsw f15, 552(sp)
+	fsw f12, 424(sp)
+	fsw f15, 544(sp)
 	fsw f17, 512(sp)
-	fsw f16, 488(sp)
+	fsw f16, 476(sp)
 	ld t0, 720(sp)
-	flw f2, 728(sp)
+	flw f1, 728(sp)
 	flw f7, 736(sp)
-	flw f3, 744(sp)
+	flw f2, 744(sp)
 	flw f23, 752(sp)
 	fsw f23, 528(sp)
 	flw f5, 760(sp)
@@ -239,24 +241,24 @@ params_f40_i24:
 	fsw f24, 440(sp)
 	ld t2, 784(sp)
 	ld t1, 792(sp)
-	flw f0, 800(sp)
+	flw f15, 800(sp)
 	flw f23, 808(sp)
 	fsw f23, 444(sp)
-	flw f1, 816(sp)
-	flw f29, 824(sp)
-	flw f15, 832(sp)
+	flw f0, 816(sp)
+	flw f28, 824(sp)
+	flw f12, 832(sp)
 	ld s3, 840(sp)
 	flw f23, 848(sp)
 	fsw f23, 504(sp)
 	ld t4, 856(sp)
-	flw f4, 864(sp)
-	flw f6, 872(sp)
+	flw f3, 864(sp)
+	flw f4, 872(sp)
 	flw f17, 880(sp)
 	flw f23, 888(sp)
 	fsw f23, 448(sp)
 	ld t5, 896(sp)
 	ld s4, 904(sp)
-	flw f30, 912(sp)
+	flw f29, 912(sp)
 	flw f16, 920(sp)
 	flw f8, 928(sp)
 	ld s5, 936(sp)
@@ -265,21 +267,20 @@ params_f40_i24:
 	ld s11, 952(sp)
 	ld s6, 960(sp)
 	flw f23, 968(sp)
-	fsw f23, 420(sp)
-	flw f28, 976(sp)
-	flw f20, 984(sp)
+	fsw f23, 416(sp)
+	flw f6, 976(sp)
+	flw f19, 984(sp)
 	flw f23, 992(sp)
 	fsw f23, 428(sp)
 	ld s2, 1000(sp)
 	ld t6, 1008(sp)
 	ld s7, 1016(sp)
 	flw f21, 1024(sp)
-	flw f19, 1032(sp)
+	flw f20, 1032(sp)
 	flw f31, 1040(sp)
-	flw f24, 1048(sp)
-	fsw f24, 416(sp)
+	flw f30, 1048(sp)
 	flw f23, 1056(sp)
-	fsw f23, 544(sp)
+	fsw f23, 552(sp)
 	flw f22, 1064(sp)
 	ld s9, 1072(sp)
 	flw f9, 1080(sp)
@@ -294,6 +295,7 @@ params_f40_i24:
 	addw a1, a1, a3
 	addw a0, a0, a6
 	fadd.s f10, f10, f17
+	fadd.s f12, f6, f12
 	addw s1, a7, a1
 	addw a1, a4, a5
 	addw s2, s2, a1
@@ -307,7 +309,7 @@ params_f40_i24:
 	addw s5, s10, a1
 	fadd.s f14, f10, f5
 	addw a1, t4, s6
-	fadd.s f10, f11, f29
+	fadd.s f10, f11, f28
 	addw s6, s9, a1
 	addw s9, t6, a0
 	addw a1, t0, t5
@@ -317,46 +319,45 @@ params_f40_i24:
 	fadd.s f9, f14, f13
 	fadd.s f11, f10, f16
 	fsw f9, 644(sp)
-	fadd.s f18, f11, f3
-	fadd.s f11, f2, f20
+	fadd.s f18, f11, f2
+	fadd.s f11, f1, f19
 	fsw f18, 648(sp)
-	fadd.s f10, f11, f30
-	fadd.s f20, f10, f12
-	fadd.s f10, f6, f22
-	fsw f20, 652(sp)
+	fadd.s f10, f11, f29
+	flw f1, 424(sp)
+	fadd.s f19, f10, f1
+	fadd.s f10, f4, f22
+	fsw f19, 652(sp)
 	fadd.s f11, f10, f21
-	fadd.s f19, f11, f19
-	fadd.s f11, f0, f4
-	fsw f19, 656(sp)
-	fadd.s f12, f11, f31
-	fadd.s f10, f12, f1
-	fadd.s f12, f28, f15
+	fadd.s f20, f11, f20
+	fadd.s f11, f15, f3
+	fsw f20, 656(sp)
+	fadd.s f13, f11, f31
+	fadd.s f11, f12, f30
+	fadd.s f10, f13, f0
 	fsw f10, 456(sp)
 	fsw f10, 660(sp)
-	flw f23, 420(sp)
-	fadd.s f11, f12, f24
+	flw f23, 416(sp)
 	fadd.s f10, f11, f23
 	fsw f10, 432(sp)
 	fsw f10, 664(sp)
-	flw f15, 552(sp)
+	flw f15, 544(sp)
 	flw f23, 428(sp)
 	flw f17, 512(sp)
 	fadd.s f10, f15, f23
 	flw f23, 436(sp)
 	fadd.s f11, f10, f17
 	fadd.s f10, f11, f23
-	fsw f10, 424(sp)
+	fsw f10, 420(sp)
 	fsw f10, 668(sp)
 	flw f23, 444(sp)
-	flw f24, 440(sp)
-	fadd.s f11, f24, f23
+	fadd.s f10, f24, f23
 	flw f23, 448(sp)
-	fadd.s f10, f11, f23
-	flw f23, 452(sp)
 	fadd.s f11, f10, f23
-	fsw f11, 672(sp)
-	flw f16, 488(sp)
-	flw f23, 544(sp)
+	flw f23, 452(sp)
+	fadd.s f10, f11, f23
+	fsw f10, 672(sp)
+	flw f16, 476(sp)
+	flw f23, 552(sp)
 	fadd.s f10, f23, f16
 	flw f23, 528(sp)
 	fadd.s f11, f10, f23
@@ -377,10 +378,10 @@ params_f40_i24:
 	ld s0, 616(sp)
 	mv a1, s0
 	jal putarray
-	fcvt.s.w f10, s1
-	fsub.s f11, f10, f8
-	fcvt.w.s a0, f11, rtz
+	fcvt.s.w f11, s1
+	fsub.s f10, f11, f8
 	fcvt.s.w f11, s2
+	fcvt.w.s a0, f10, rtz
 	fsub.s f10, f11, f9
 	sw a0, 688(sp)
 	fcvt.w.s a0, f10, rtz
@@ -389,11 +390,11 @@ params_f40_i24:
 	sw a0, 692(sp)
 	fcvt.s.w f10, s4
 	fcvt.w.s a0, f11, rtz
-	fsub.s f11, f10, f20
+	fsub.s f11, f10, f19
 	fcvt.s.w f10, s5
 	sw a0, 696(sp)
 	fcvt.w.s a0, f11, rtz
-	fsub.s f11, f10, f19
+	fsub.s f11, f10, f20
 	sw a0, 700(sp)
 	fcvt.w.s a0, f11, rtz
 	fcvt.s.w f11, s6
@@ -408,7 +409,7 @@ params_f40_i24:
 	fcvt.s.w f11, s9
 	fcvt.w.s a0, f12, rtz
 	sw a0, 712(sp)
-	flw f10, 424(sp)
+	flw f10, 420(sp)
 	fsub.s f12, f11, f10
 	fcvt.w.s a0, f12, rtz
 	sw a0, 716(sp)
@@ -430,7 +431,7 @@ label771:
 	ld s4, 464(sp)
 	flw f8, 472(sp)
 	ld s9, 480(sp)
-	flw f21, 492(sp)
+	flw f21, 488(sp)
 	ld s5, 496(sp)
 	flw f23, 508(sp)
 	ld s11, 520(sp)
@@ -438,15 +439,15 @@ label771:
 	flw f20, 548(sp)
 	flw f18, 556(sp)
 	ld s6, 560(sp)
-	ld s7, 568(sp)
-	flw f19, 576(sp)
+	flw f19, 568(sp)
+	ld s7, 576(sp)
 	addi sp, sp, 720
 	ret
 label773:
 	sd t0, 0(sp)
-	fsw f2, 8(sp)
+	fsw f1, 8(sp)
 	fsw f7, 16(sp)
-	fsw f3, 24(sp)
+	fsw f2, 24(sp)
 	flw f23, 528(sp)
 	fsw f23, 32(sp)
 	fsw f5, 40(sp)
@@ -455,24 +456,24 @@ label773:
 	fsw f24, 56(sp)
 	sd t2, 64(sp)
 	sd t1, 72(sp)
-	fsw f0, 80(sp)
+	fsw f15, 80(sp)
 	flw f23, 444(sp)
 	fsw f23, 88(sp)
-	fsw f1, 96(sp)
-	fsw f29, 104(sp)
-	fsw f15, 112(sp)
+	fsw f0, 96(sp)
+	fsw f28, 104(sp)
+	fsw f12, 112(sp)
 	sd s3, 120(sp)
 	flw f23, 504(sp)
 	fsw f23, 128(sp)
 	sd t4, 136(sp)
-	fsw f4, 144(sp)
-	fsw f6, 152(sp)
+	fsw f3, 144(sp)
+	fsw f4, 152(sp)
 	fsw f17, 160(sp)
 	flw f23, 448(sp)
 	fsw f23, 168(sp)
 	sd t5, 176(sp)
 	sd s4, 184(sp)
-	fsw f30, 192(sp)
+	fsw f29, 192(sp)
 	fsw f16, 200(sp)
 	fsw f8, 208(sp)
 	sd s5, 216(sp)
@@ -480,21 +481,20 @@ label773:
 	fsw f23, 224(sp)
 	sd s11, 232(sp)
 	sd s6, 240(sp)
-	flw f23, 420(sp)
+	flw f23, 416(sp)
 	fsw f23, 248(sp)
-	fsw f28, 256(sp)
-	fsw f20, 264(sp)
+	fsw f6, 256(sp)
+	fsw f19, 264(sp)
 	flw f23, 428(sp)
 	fsw f23, 272(sp)
 	sd s2, 280(sp)
 	sd t6, 288(sp)
 	sd s7, 296(sp)
 	fsw f21, 304(sp)
-	fsw f19, 312(sp)
+	fsw f20, 312(sp)
 	fsw f31, 320(sp)
-	flw f24, 416(sp)
-	fsw f24, 328(sp)
-	flw f23, 544(sp)
+	fsw f30, 328(sp)
+	flw f23, 552(sp)
 	fsw f23, 336(sp)
 	fsw f22, 344(sp)
 	sd s9, 352(sp)
@@ -504,10 +504,12 @@ label773:
 	fsw f23, 376(sp)
 	ld s1, 608(sp)
 	sd s1, 384(sp)
-	mv a0, a3
-	flw f15, 552(sp)
-	flw f16, 488(sp)
+	flw f16, 476(sp)
 	flw f17, 512(sp)
+	flw f15, 544(sp)
+	flw f1, 424(sp)
+	mv a0, a3
+	fmv.s f12, f1
 	jal params_f40_i24
 	j label771
 params_fa40:
@@ -1351,34 +1353,34 @@ label1278:
 	addi a2, s0, 60
 	addi a1, s0, 48
 	fsw f12, 1608(sp)
-	flw f0, 0(a0)
-	sh2add a0, s6, a1
-	fsw f0, 1576(sp)
-	sh2add a1, s6, a2
 	flw f14, 0(a0)
+	sh2add a0, s6, a1
+	fsw f14, 1576(sp)
+	sh2add a1, s6, a2
+	flw f15, 0(a0)
 	addi a2, s0, 84
 	addi a0, s0, 72
-	fsw f14, 1600(sp)
+	fsw f15, 1600(sp)
 	flw f24, 0(a1)
 	sh2add a1, s6, a0
-	flw f16, 0(a1)
 	sh2add a0, s6, a2
+	flw f16, 0(a1)
 	addi a2, s0, 96
 	fsw f16, 1692(sp)
 	sh2add a1, s6, a2
 	flw f8, 0(a0)
 	addi a2, s0, 144
-	flw f23, 0(a1)
 	addi a0, s0, 108
+	flw f23, 0(a1)
 	sh2add a1, s6, a0
+	flw f1, 0(a1)
 	addi a0, s0, 120
-	flw f14, 0(a1)
 	sh2add a1, s6, a0
-	fsw f14, 1408(sp)
+	fsw f1, 1408(sp)
 	addi a0, s0, 132
-	flw f15, 0(a1)
+	flw f0, 0(a1)
 	sh2add a1, s6, a0
-	fsw f15, 392(sp)
+	fsw f0, 392(sp)
 	sh2add a0, s6, a2
 	flw f16, 0(a1)
 	addi a2, s0, 192
@@ -1425,8 +1427,8 @@ label1278:
 	addi a0, s0, 276
 	flw f21, 0(a1)
 	sh2add a1, s6, a0
-	flw f22, 0(a1)
 	addi a0, s0, 288
+	flw f22, 0(a1)
 	sh2add a1, s6, a0
 	flw f10, 0(a1)
 	sh2add a0, s6, a2
@@ -1435,17 +1437,17 @@ label1278:
 	fsw f10, 428(sp)
 	flw f20, 0(a0)
 	sh2add a0, s6, a1
-	flw f12, 0(a0)
 	sh2add a1, s6, a2
+	flw f12, 0(a0)
 	addi a0, s0, 336
 	fsw f12, 1392(sp)
 	flw f11, 0(a1)
 	sh2add a1, s6, a0
 	fsw f11, 420(sp)
 	addi a0, s0, 348
-	flw f15, 0(a1)
+	flw f0, 0(a1)
 	sh2add a1, s6, a0
-	fsw f15, 408(sp)
+	fsw f0, 408(sp)
 	addi a0, s0, 360
 	flw f10, 0(a1)
 	sh2add a1, s6, a0
@@ -1453,10 +1455,10 @@ label1278:
 	addi a0, s0, 372
 	flw f26, 0(a1)
 	sh2add a1, s6, a0
-	flw f9, 0(a1)
+	flw f18, 0(a1)
 	addi a0, s0, 384
 	sh2add a1, s6, a0
-	flw f18, 0(a1)
+	flw f9, 0(a1)
 	addi a0, s0, 396
 	sh2add a1, s6, a0
 	flw f11, 0(a1)
@@ -1485,9 +1487,9 @@ label1278:
 	flw f11, 0(a1)
 	fsw f11, 1632(sp)
 	fsw f23, 0(sp)
-	fsw f14, 8(sp)
-	flw f15, 392(sp)
-	fsw f15, 16(sp)
+	fsw f1, 8(sp)
+	flw f0, 392(sp)
+	fsw f0, 16(sp)
 	flw f16, 396(sp)
 	fsw f16, 24(sp)
 	flw f10, 1444(sp)
@@ -1517,13 +1519,13 @@ label1278:
 	fsw f12, 144(sp)
 	flw f11, 420(sp)
 	fsw f11, 152(sp)
-	flw f15, 408(sp)
-	fsw f15, 160(sp)
+	flw f0, 408(sp)
+	fsw f0, 160(sp)
 	flw f10, 1476(sp)
 	fsw f10, 168(sp)
 	fsw f26, 176(sp)
-	fsw f9, 184(sp)
-	fsw f18, 192(sp)
+	fsw f18, 184(sp)
+	fsw f9, 192(sp)
 	flw f11, 1560(sp)
 	fsw f11, 200(sp)
 	flw f10, 1648(sp)
@@ -1540,10 +1542,10 @@ label1278:
 	ld s2, 1776(sp)
 	flw f10, 1616(sp)
 	flw f12, 1608(sp)
-	flw f14, 1600(sp)
 	flw f16, 1692(sp)
 	fmv.s f11, f25
-	fmv.s f13, f0
+	fmv.s f13, f14
+	fmv.s f14, f15
 	fmv.s f15, f24
 	fmv.s f17, f8
 	mv a0, s2
@@ -1650,7 +1652,7 @@ label1278:
 	fsw f16, 40(sp)
 	ld a4, 968(sp)
 	sd a4, 48(sp)
-	fsw f18, 56(sp)
+	fsw f9, 56(sp)
 	ld a5, 456(sp)
 	sd a5, 64(sp)
 	ld a4, 448(sp)
@@ -1660,8 +1662,8 @@ label1278:
 	flw f11, 1560(sp)
 	fsw f11, 88(sp)
 	fsw f22, 96(sp)
-	flw f14, 1408(sp)
-	fsw f14, 104(sp)
+	flw f1, 1408(sp)
+	fsw f1, 104(sp)
 	fsw f20, 112(sp)
 	ld t4, 1552(sp)
 	sd t4, 120(sp)
@@ -1682,12 +1684,12 @@ label1278:
 	sd t4, 184(sp)
 	flw f10, 412(sp)
 	fsw f10, 192(sp)
-	flw f15, 392(sp)
-	fsw f15, 200(sp)
+	flw f0, 392(sp)
+	fsw f0, 200(sp)
 	flw f10, 1616(sp)
 	fsw f10, 208(sp)
 	sd a0, 216(sp)
-	fsw f9, 224(sp)
+	fsw f18, 224(sp)
 	sd a1, 232(sp)
 	sd a3, 240(sp)
 	flw f11, 420(sp)
@@ -1723,20 +1725,20 @@ label1278:
 	ld t0, 1640(sp)
 	ld a0, 1288(sp)
 	ld a2, 1280(sp)
+	flw f0, 408(sp)
+	flw f12, 404(sp)
+	flw f15, 1600(sp)
+	flw f14, 1576(sp)
+	flw f16, 1672(sp)
 	mv a1, s4
-	flw f14, 1600(sp)
-	fmv.s f10, f14
+	fmv.s f10, f15
 	mv a3, s5
 	mv a4, s3
 	mv a5, a7
-	flw f12, 404(sp)
 	fmv.s f11, f23
 	fmv.s f13, f8
-	flw f15, 408(sp)
-	flw f0, 1576(sp)
-	fmv.s f14, f0
+	fmv.s f15, f0
 	mv a7, t0
-	flw f16, 1672(sp)
 	fmv.s f17, f26
 	jal params_f40_i24
 	addi s8, s0, 180
@@ -1770,8 +1772,8 @@ label1278:
 	addi a3, s0, 216
 	sd a5, 1680(sp)
 	addi a4, s0, 120
-	sd a6, 1296(sp)
 	addi a5, s0, 432
+	sd a6, 1296(sp)
 	addi a6, s0, 372
 	sd a7, 1304(sp)
 	sd s11, 1312(sp)
@@ -1927,8 +1929,8 @@ label1278:
 	sd a1, 272(sp)
 	flw f11, 420(sp)
 	fsw f11, 280(sp)
-	flw f15, 408(sp)
-	fsw f15, 288(sp)
+	flw f0, 408(sp)
+	fsw f0, 288(sp)
 	ld s11, 1368(sp)
 	sd s11, 296(sp)
 	ld t0, 1640(sp)
@@ -1936,9 +1938,9 @@ label1278:
 	sd a0, 312(sp)
 	ld s11, 1696(sp)
 	sd s11, 320(sp)
-	fsw f9, 328(sp)
+	fsw f18, 328(sp)
 	sd s4, 336(sp)
-	fsw f18, 344(sp)
+	fsw f9, 344(sp)
 	ld s11, 1384(sp)
 	sd s11, 352(sp)
 	ld s11, 1376(sp)
@@ -1951,23 +1953,25 @@ label1278:
 	ld a2, 1432(sp)
 	ld a5, 1680(sp)
 	ld t0, 480(sp)
+	flw f17, 400(sp)
+	flw f16, 396(sp)
+	flw f0, 392(sp)
+	flw f1, 1408(sp)
 	flw f10, 1616(sp)
+	flw f12, 1608(sp)
+	flw f15, 1600(sp)
+	flw f14, 1576(sp)
 	mv a0, s1
 	mv a1, s5
-	flw f12, 1608(sp)
 	fmv.s f11, f12
 	mv a3, s4
-	flw f14, 1600(sp)
-	flw f0, 1576(sp)
-	fmv.s f12, f0
-	fmv.s f13, f14
+	fmv.s f12, f14
+	fmv.s f13, f15
 	mv a4, a5
 	mv a5, t0
 	mv a6, s3
-	flw f17, 400(sp)
-	flw f16, 396(sp)
-	flw f15, 392(sp)
-	flw f14, 1408(sp)
+	fmv.s f14, f1
+	fmv.s f15, f0
 	jal params_mix
 	flw f10, 432(sp)
 	mv s0, a0
@@ -1986,8 +1990,8 @@ label1278:
 	jal putint
 	li a0, 10
 	jal putch
-	mv a0, zero
 	ld ra, 1712(sp)
+	mv a0, zero
 	ld s3, 1728(sp)
 	ld s5, 1744(sp)
 	ld s4, 1752(sp)

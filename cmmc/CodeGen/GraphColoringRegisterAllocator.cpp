@@ -166,8 +166,8 @@ public:
     }
 };
 
-static void graphColoringAllocateImpl(MIRFunction& mfunc, CodeGenContext& ctx, IPRAUsageCache& infoIPRA,
-                                      uint32_t allocationClass) {
+static void graphColoringAllocateImpl(MIRFunction& mfunc, CodeGenContext& ctx, IPRAUsageCache& infoIPRA, uint32_t allocationClass,
+                                      std::unordered_map<uint32_t, uint32_t>& regMap) {
     const auto canonicalizedType = ctx.registerInfo->getCanonicalizedRegisterTypeForClass(allocationClass);
     const auto& list = ctx.registerInfo->getAllocationList(allocationClass);
     const std::unordered_set<uint32_t> allocableISARegs{ list.cbegin(), list.cend() };
@@ -187,9 +187,7 @@ static void graphColoringAllocateImpl(MIRFunction& mfunc, CodeGenContext& ctx, I
         const auto isAllocatableType = [&](OperandType type) {
             return (type <= OperandType::Float32) && (ctx.registerInfo->getAllocationClass(type) == allocationClass);
         };
-        const auto isLockedOrUnderRenamedType = [&](OperandType type) {
-            return (type <= OperandType::Float32) && (ctx.registerInfo->getAllocationClass(type) >= allocationClass);
-        };
+        const auto isLockedOrUnderRenamedType = [&](OperandType type) { return (type <= OperandType::Float32); };
         std::unordered_set<RegNum> vregSet;
         for(auto& block : mfunc.blocks()) {
             for(auto& inst : block->instructions()) {
@@ -430,7 +428,6 @@ static void graphColoringAllocateImpl(MIRFunction& mfunc, CodeGenContext& ctx, I
         }
 
         if(!spillRegister) {
-            std::unordered_map<uint32_t, uint32_t> regMap;
             const auto calcCopyFreeProposal = [&](RegNum u, std::unordered_set<uint32_t>& exclude) -> std::optional<RegNum> {
                 auto iter = copyHint.find(u);
                 if(iter == copyHint.cend())
@@ -551,22 +548,6 @@ static void graphColoringAllocateImpl(MIRFunction& mfunc, CodeGenContext& ctx, I
                 }
             }
 
-            for(auto& block : mfunc.blocks()) {
-                auto& instructions = block->instructions();
-                for(auto& inst : instructions) {
-                    auto& instInfo = ctx.instInfo.getInstInfo(inst);
-                    for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
-                        auto& op = inst.getOperand(idx);
-                        if(!isAllocatableType(op.type()))
-                            continue;
-                        if(isOperandVReg(op)) {
-                            const auto isaReg = regMap.at(op.reg());
-                            op = MIROperand::asISAReg(isaReg, op.type());
-                        }
-                    }
-                }
-            }
-
             // mfunc.dump(std::cerr, ctx);
             return;
         }
@@ -683,8 +664,24 @@ static void graphColoringAllocateImpl(MIRFunction& mfunc, CodeGenContext& ctx, I
 
 static void graphColoringAllocate(MIRFunction& mfunc, CodeGenContext& ctx, IPRAUsageCache& infoIPRA) {
     const auto classCount = ctx.registerInfo->getAllocationClassCount();
+    std::unordered_map<uint32_t, uint32_t> regMap;
     for(uint32_t idx = 0; idx < classCount; ++idx)
-        graphColoringAllocateImpl(mfunc, ctx, infoIPRA, idx);
+        graphColoringAllocateImpl(mfunc, ctx, infoIPRA, idx, regMap);
+    for(auto& block : mfunc.blocks()) {
+        auto& instructions = block->instructions();
+        for(auto& inst : instructions) {
+            auto& instInfo = ctx.instInfo.getInstInfo(inst);
+            for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
+                auto& op = inst.getOperand(idx);
+                if(op.type() > OperandType::Float32)
+                    continue;
+                if(isOperandVReg(op)) {
+                    const auto isaReg = regMap.at(op.reg());
+                    op = MIROperand::asISAReg(isaReg, op.type());
+                }
+            }
+        }
+    }
 }
 
 CMMC_REGISTER_ALLOCATOR("graph-coloring", graphColoringAllocate);
