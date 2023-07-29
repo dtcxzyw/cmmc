@@ -11,47 +11,34 @@ a:
 .globl main
 main:
 .p2align 2
-	addi sp, sp, -48
-	sd s2, 40(sp)
-	sd s3, 32(sp)
-	sd s0, 24(sp)
-	sd s1, 16(sp)
-	sd s4, 8(sp)
+	addi sp, sp, -40
+	sd s2, 32(sp)
+	sd s3, 24(sp)
+	sd s0, 16(sp)
+	sd s1, 8(sp)
 	sd ra, 0(sp)
 	jal getint
-pcrel222:
+pcrel221:
 	auipc a1, %pcrel_hi(a)
 	mv s2, a0
-	addi a0, a1, %pcrel_lo(pcrel222)
+	addi a0, a1, %pcrel_lo(pcrel221)
 	mv s3, a0
 	jal getarray
 	addiw s1, a0, -4
-	addiw s4, s2, -4
 	mv s0, a0
 	li a0, 28
 	jal _sysy_starttime
 	ble s2, zero, label7
-pcrel223:
+	addiw a2, s2, -4
+pcrel222:
 	auipc a1, %pcrel_hi(matrix)
-	addi a0, a1, %pcrel_lo(pcrel223)
+	addi a0, a1, %pcrel_lo(pcrel222)
 	li a1, 4
 	bgt s2, a1, label51
 	mv a2, zero
 	j label5
 label51:
 	mv a1, zero
-label3:
-	sh2add a2, a1, a0
-	addiw a3, a1, 1
-	addiw a4, a1, 2
-	sw a1, 0(a2)
-	sw a3, 4(a2)
-	addiw a3, a1, 3
-	sw a4, 8(a2)
-	sw a3, 12(a2)
-	addiw a2, a1, 4
-	ble s4, a2, label5
-	mv a1, a2
 	j label3
 label5:
 	sh2add a3, a2, a0
@@ -60,7 +47,7 @@ label5:
 	bgt s2, a2, label5
 label7:
 	bgt s0, zero, label8
-	j label195
+	j label194
 .p2align 2
 label9:
 	sh2add a2, a1, s3
@@ -72,7 +59,7 @@ label9:
 	addiw a1, a1, 1
 	bgt s0, a1, label9
 	bgt s0, zero, label23
-label195:
+label194:
 	mv s0, zero
 	j label21
 .p2align 2
@@ -85,18 +72,18 @@ label86:
 	addiw a1, a1, 1
 	bgt s0, a1, label9
 	bgt s0, zero, label23
-	j label195
+	j label194
 .p2align 2
 label17:
 	blt a2, a5, label19
 	mulw t2, a4, a5
-	addw t4, t0, a5
-	addw t3, a2, t2
+	addw t3, t0, a5
+	addw t4, a2, t2
 	addiw a5, a5, 1
-	sh2add t2, t4, a0
-	sh2add t1, t3, a0
-	lw t3, 0(t2)
-	sw t3, 0(t1)
+	sh2add t1, t4, a0
+	sh2add t4, t3, a0
+	lw t2, 0(t4)
+	sw t2, 0(t1)
 	bgt a3, a5, label17
 	addiw a2, a2, 1
 	mulw t0, a3, a2
@@ -104,7 +91,7 @@ label17:
 	addiw a1, a1, 1
 	bgt s0, a1, label9
 	bgt s0, zero, label23
-	j label195
+	j label194
 .p2align 2
 label19:
 	addiw a5, a5, 1
@@ -115,7 +102,7 @@ label19:
 	addiw a1, a1, 1
 	bgt s0, a1, label9
 	bgt s0, zero, label23
-	j label195
+	j label194
 label21:
 	li a0, 47
 	jal _sysy_stoptime
@@ -126,12 +113,11 @@ label21:
 	jal putch
 	ld ra, 0(sp)
 	mv a0, zero
-	ld s4, 8(sp)
-	ld s1, 16(sp)
-	ld s0, 24(sp)
-	ld s3, 32(sp)
-	ld s2, 40(sp)
-	addi sp, sp, 48
+	ld s1, 8(sp)
+	ld s0, 16(sp)
+	ld s3, 24(sp)
+	ld s2, 32(sp)
+	addi sp, sp, 40
 	ret
 label23:
 	auipc a1, %pcrel_hi(matrix)
@@ -153,10 +139,10 @@ label120:
 	mv t1, zero
 	j label29
 label24:
-	sh2add t0, a2, a0
+	sh2add a5, a2, a0
 	addiw a2, a2, 1
-	lw a5, 0(t0)
-	mulw t1, a1, a5
+	lw t0, 0(a5)
+	mulw t1, a1, t0
 	addw a1, a1, a3
 	addw a4, a4, t1
 	addiw a3, a3, 2
@@ -193,6 +179,19 @@ label29:
 	mv a3, t0
 	mv a2, a5
 	j label24
+label3:
+	sh2add a3, a1, a0
+	addiw a4, a1, 1
+	addiw a5, a1, 2
+	sw a1, 0(a3)
+	sw a4, 4(a3)
+	addiw a4, a1, 3
+	sw a5, 8(a3)
+	addiw a1, a1, 4
+	sw a4, 12(a3)
+	bgt a2, a1, label3
+	mv a2, a1
+	j label5
 label8:
 	auipc a1, %pcrel_hi(matrix)
 	addi a0, a1, %pcrel_lo(label8)

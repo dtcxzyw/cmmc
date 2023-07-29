@@ -93,22 +93,22 @@ label81:
 label82:
 	sh2add a2, a0, s0
 	lw a3, 0(a2)
-	xori t3, a3, 94
+	xori t2, a3, 42
 	xori a4, a3, 45
 	xori a5, a3, 43
 	sltiu t0, a4, 1
 	sltiu t1, a5, 1
-	xori a4, a3, 42
-	or a2, t1, t0
-	sltiu a5, a4, 1
 	xori a4, a3, 47
-	or a2, a2, a5
+	sltiu a5, t2, 1
+	or a2, t1, t0
 	sltiu t2, a4, 1
-	xori a4, a3, 37
-	or a2, a2, t2
-	sltiu t2, a4, 1
-	sltiu a4, t3, 1
-	or a2, a2, t2
+	or t3, a5, t2
+	xori t2, a3, 37
+	or a2, a2, t3
+	sltiu a4, t2, 1
+	xori t3, a3, 94
+	sltiu t2, t3, 1
+	or a4, a4, t2
 	or a2, a2, a4
 	bne a2, zero, label90
 	li a2, 32
@@ -282,22 +282,22 @@ label19:
 label27:
 	sh2add a5, t0, s2
 	lw a4, 0(a5)
-	xori t3, a4, 45
+	xori t3, a4, 42
+	xori t2, a4, 45
 	xori t1, a4, 43
-	sltiu t2, t3, 1
 	sltiu a5, t1, 1
-	xori t3, a4, 37
-	xori t1, a4, 42
-	or a5, a5, t2
-	sltiu t2, t1, 1
-	xori t1, a4, 47
-	or a5, a5, t2
-	sltiu t2, t1, 1
+	sltiu t1, t2, 1
+	xori t2, a4, 47
+	or a5, a5, t1
 	sltiu t1, t3, 1
-	or a5, a5, t2
-	xori t2, a4, 94
+	sltiu t3, t2, 1
+	xori t2, a4, 37
+	or t1, t1, t3
+	xori t3, a4, 94
 	or a5, a5, t1
 	sltiu t1, t2, 1
+	sltiu t2, t3, 1
+	or t1, t1, t2
 	or a5, a5, t1
 	bne a5, zero, label30
 	addiw a4, t0, 1
@@ -430,6 +430,7 @@ label93:
 label47:
 	sh2add t0, a4, s2
 	lw a5, 0(t0)
+	xori t3, a5, 94
 	xori t2, a5, 47
 	xori t1, a5, 42
 	sltiu t0, t1, 1
@@ -437,9 +438,8 @@ label47:
 	xori t2, a5, 37
 	or t0, t0, t1
 	sltiu t1, t2, 1
-	xori t2, a5, 94
-	or t0, t0, t1
-	sltiu t1, t2, 1
+	sltiu t2, t3, 1
+	or t1, t1, t2
 	or t0, t0, t1
 	bne t0, zero, label50
 	addiw a5, a4, 1
@@ -583,17 +583,17 @@ label289:
 label70:
 	sh2add t0, a4, s2
 	lw a5, 0(t0)
+	xori t3, a5, 94
 	xori t2, a5, 47
 	xori t1, a5, 42
-	sltiu t3, t2, 1
 	sltiu t0, t1, 1
-	xori t1, a5, 37
-	or t0, t0, t3
-	sltiu t2, t1, 1
-	xori t1, a5, 94
-	or t0, t0, t2
-	sltiu t2, t1, 1
-	or t0, t0, t2
+	sltiu t1, t2, 1
+	xori t2, a5, 37
+	or t0, t0, t1
+	sltiu t1, t2, 1
+	sltiu t2, t3, 1
+	or t1, t1, t2
+	or t0, t0, t1
 	bne t0, zero, label76
 	addiw a5, a4, 1
 	li t0, 47
@@ -647,15 +647,15 @@ label63:
 	sh2add a5, a3, s2
 	lw a4, 0(a5)
 	xori t1, a4, 47
+	xori t2, a4, 94
 	xori t0, a4, 42
 	sltiu a5, t0, 1
 	sltiu t0, t1, 1
 	xori t1, a4, 37
 	or a5, a5, t0
 	sltiu t0, t1, 1
-	xori t1, a4, 94
-	or a5, a5, t0
-	sltiu t0, t1, 1
+	sltiu t1, t2, 1
+	or t0, t0, t1
 	or a5, a5, t0
 	bne a5, zero, label69
 	addiw a3, a3, 1
@@ -694,14 +694,14 @@ label37:
 	or t0, t0, t1
 	sltiu t1, t2, 1
 	sltiu t2, t3, 1
+	xori t3, a5, 94
+	or t1, t1, t2
+	xori t2, a5, 37
 	or t0, t0, t1
-	xori t1, a5, 37
-	or t0, t0, t2
-	sltiu t2, t1, 1
-	xori t1, a5, 94
-	or t0, t0, t2
-	sltiu t2, t1, 1
-	or t0, t0, t2
+	sltiu t1, t2, 1
+	sltiu t2, t3, 1
+	or t1, t1, t2
+	or t0, t0, t1
 	bne t0, zero, label40
 	addiw a4, a4, 1
 	li t0, 45

@@ -775,6 +775,11 @@ void RISCVISelInfo::preRALegalizeInst(const InstLegalizeContext& ctx) const {
             reportLegalizationFailure(ctx.inst, ctx.ctx, CMMC_LOCATION());
     }
 }
+
+static MIROperand getAlign(int64_t immVal) {
+    return MIROperand::asImm(immVal & -immVal, OperandType::Special);
+}
+
 void RISCVISelInfo::legalizeInstWithStackOperand(const InstLegalizeContext& ctx, MIROperand& op, const StackObject& obj) const {
     auto& inst = ctx.inst;
     [[maybe_unused]] auto checkOpIdx = [&](uint32_t idx) { return &inst.getOperand(idx) == &op; };
@@ -810,7 +815,10 @@ void RISCVISelInfo::legalizeInstWithStackOperand(const InstLegalizeContext& ctx,
         }
         case InstStoreRegToStack: {
             assert(checkOpIdx(1));
-            inst.setOpcode(isOperandGPR(inst.getOperand(0)) ? SD : FSW).setOperand<2>(base).setOperand<1>(imm);
+            inst.setOpcode(isOperandGPR(inst.getOperand(0)) ? SD : FSW)
+                .setOperand<2>(base)
+                .setOperand<1>(imm)
+                .setOperand<3>(getAlign(immVal));
             break;
         }
         case InstLoadRegFromStack: {

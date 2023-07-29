@@ -452,10 +452,8 @@ label237:
 	mv a2, zero
 	mv a3, s1
 	li a1, 4
-	sw zero, 0(s1)
-	sw zero, 4(s1)
-	sw zero, 8(s1)
-	sw zero, 12(s1)
+	sd zero, 0(s1)
+	sd zero, 8(s1)
 	bgt s6, a1, label254
 	sh2add a3, a1, s1
 	addiw a1, a1, 1
@@ -503,10 +501,8 @@ label67:
 	mv a2, zero
 	mv a3, s0
 	li a1, 4
-	sw zero, 0(s0)
-	sw zero, 4(s0)
-	sw zero, 8(s0)
-	sw zero, 12(s0)
+	sd zero, 0(s0)
+	sd zero, 8(s0)
 	bgt s6, a1, label84
 	sh2add a3, a1, s0
 	addiw a1, a1, 1
@@ -534,10 +530,8 @@ label5:
 label7:
 	sh2add a3, a2, s0
 	addiw a1, a2, 4
-	sw zero, 0(a3)
-	sw zero, 4(a3)
-	sw zero, 8(a3)
-	sw zero, 12(a3)
+	sd zero, 0(a3)
+	sd zero, 8(a3)
 	bgt s6, a1, label84
 	sh2add a3, a1, s0
 	addiw a1, a1, 1
@@ -557,10 +551,8 @@ label84:
 label27:
 	sh2add a3, a2, s1
 	addiw a1, a2, 4
-	sw zero, 0(a3)
-	sw zero, 4(a3)
-	sw zero, 8(a3)
-	sw zero, 12(a3)
+	sd zero, 0(a3)
+	sd zero, 8(a3)
 	bgt s6, a1, label254
 	sh2add a3, a1, s1
 	addiw a1, a1, 1

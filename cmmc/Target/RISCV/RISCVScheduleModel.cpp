@@ -493,17 +493,30 @@ static bool foldStoreZero(MIRFunction& func, MIRBasicBlock& block) {
             if(inst.getOperand(0).reg() != X0)
                 return false;
             const auto& base = inst.getOperand(2);
-            if(!isOperandStackObject(base))
-                return false;
-            const auto off = inst.getOperand(1).imm();
-            const auto baseOff = func.stackObjects().at(base).offset;
-            return (baseOff + off) % static_cast<int32_t>(sizeof(uint64_t)) == offset;
+            if(isOperandStackObject(base)) {
+                const auto off = inst.getOperand(1).imm();
+                const auto baseOff = func.stackObjects().at(base).offset;
+                return (baseOff + off) % static_cast<int32_t>(sizeof(uint64_t)) == offset;
+            }
+            const auto alignment = inst.getOperand(3).imm();
+            return offset == 0 ? alignment >= 8 : alignment == 4;
         };
         auto& inst = *iter;
         auto& prevInst = *std::prev(iter);
         if(isStoreZero(prevInst, 0) && isStoreZero(inst, 4)) {
+            const auto prevBase = prevInst.getOperand(2);
+            const auto base = inst.getOperand(2);
+            if(!isOperandStackObject(prevBase) || !isOperandStackObject(base)) {
+                if(prevBase != base)
+                    continue;
+                const auto prevOffset = prevInst.getOperand(1).imm();
+                const auto offset = inst.getOperand(1).imm();
+                if(prevOffset + 4 != offset)
+                    continue;
+            }
             inst.setOpcode(SD);
             inst.setOperand<1>(prevInst.getOperand(1));
+            inst.setOperand<3>(prevInst.getOperand(3));
             block.instructions().erase(std::prev(iter));
             modified = true;
         }

@@ -20,6 +20,7 @@
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
+#include <cmmc/Transforms/Util/PatternMatch.hpp>
 #include <cstdint>
 #include <iterator>
 #include <limits>
@@ -97,15 +98,11 @@ class Reassociate final : public TransformPass<Function> {
             args.erase(std::next(last), args.end());
 
             constexpr uint32_t parallelCount = 2;
-            std::array<Value*, parallelCount> reductionStorage{};
+            std::array<std::vector<Value*>, parallelCount> reductionStorage{};
             uint32_t pointer = 0;
             const auto reduce = [&](Value* val) {
                 auto& ref = reductionStorage[pointer];
-
-                if(ref) {
-                    ref = builder.makeOp<BinaryInst>(inst->getInstID(), ref, val);
-                } else
-                    ref = val;
+                ref.push_back(val);
 
                 // if(inst->hasExactlyOneUse() && (++pointer) == parallelCount)
                 //     pointer = 0;
@@ -158,9 +155,56 @@ class Reassociate final : public TransformPass<Function> {
                     reportUnreachable(CMMC_LOCATION());
             }
 
+            std::array<Value*, parallelCount> reducedStorage{};
+
+            auto earlyCombineCmp = [&](std::vector<Value*>& val) {
+                std::list<Value*> set{ val.begin(), val.end() };
+
+                while(true) {
+                    bool modified = false;
+                    for(auto iter = set.begin(); iter != set.end(); ++iter) {
+                        CompareOp cmp;
+                        Value *v1, *v2, *v3, *v4;
+                        if(xcmp(cmp, any(v1), any(v2))(MatchContext<Value>{ *iter })) {
+                            for(auto it = std::next(iter); it != set.end(); ++it) {
+                                if(xcmp(cmp, any(v3), any(v4))(MatchContext<Value>{ *it })) {
+                                    if(v1 == v3 || v1 == v4 || v2 == v3 || v2 == v4) {
+                                        *iter = builder.makeOp<BinaryInst>(inst->getInstID(), *iter, *it);
+                                        set.erase(it);
+                                        modified = true;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if(!modified)
+                        break;
+                }
+
+                val = { set.begin(), set.end() };
+            };
+
+            for(uint32_t idx = 0; idx < parallelCount; ++idx) {
+                auto& vals = reductionStorage[idx];
+                auto& res = reducedStorage[idx];
+
+                if(inst->getType()->isBoolean() &&
+                   (inst->getInstID() == InstructionID::And || inst->getInstID() == InstructionID::Or))
+                    earlyCombineCmp(vals);
+
+                for(auto val : vals) {
+                    if(!res)
+                        res = val;
+                    else {
+                        res = builder.makeOp<BinaryInst>(inst->getInstID(), res, val);
+                    }
+                }
+            }
+
             Value* reduction = nullptr;
 
-            for(auto val : reductionStorage) {
+            for(auto val : reducedStorage) {
                 if(!val)
                     continue;
                 if(reduction) {

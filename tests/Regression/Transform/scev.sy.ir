@@ -1,9 +1,9 @@
 func @foo(i32* %a, i32 %n, i32 %k) -> void { NoMemoryRead NoRecurse } {
   ^entry:
     i1 %0 = icmp sgt i32 %n, i32 0;
-    i32 %1 = add i32 %n, i32 -4;
     cbr i1 %0(prob = 0.97), ^super.header, ^b;
   ^super.header:
+    i32 %1 = add i32 %n, i32 -4;
     i1 %2 = icmp sgt i32 %n, i32 4;
     cbr i1 %2(prob = 0.89), ^for.body, ^for.body1;
   ^b:
@@ -40,9 +40,9 @@ func @foo(i32* %a, i32 %n, i32 %k) -> void { NoMemoryRead NoRecurse } {
 func @foo2(i32* %a, i32 %n) -> void { NoMemoryRead NoRecurse } {
   ^entry:
     i1 %0 = icmp sgt i32 %n, i32 0;
-    i32 %1 = add i32 %n, i32 -4;
     cbr i1 %0(prob = 0.97), ^super.header, ^b;
   ^super.header:
+    i32 %1 = add i32 %n, i32 -4;
     i1 %2 = icmp sgt i32 %n, i32 4;
     cbr i1 %2(prob = 0.89), ^for.body, ^for.body1;
   ^b:
@@ -109,9 +109,9 @@ func @foo3(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless No
 func @foo4(i32* %a, i32 %n) -> void { NoMemoryRead NoRecurse } {
   ^entry:
     i1 %0 = icmp sgt i32 %n, i32 0;
-    i32 %1 = add i32 %n, i32 -4;
     cbr i1 %0(prob = 0.97), ^super.header, ^b;
   ^super.header:
+    i32 %1 = add i32 %n, i32 -4;
     i1 %2 = icmp sgt i32 %n, i32 4;
     cbr i1 %2(prob = 0.89), ^for.body, ^for.body1;
   ^b:

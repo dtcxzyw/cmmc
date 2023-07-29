@@ -14,6 +14,7 @@
 
 #pragma once
 #include <cmmc/CodeGen/MIR.hpp>
+#include <cmmc/Support/Bits.hpp>
 #include <cstdint>
 #include <ostream>
 #include <string_view>
@@ -147,6 +148,10 @@ constexpr bool isOperandIRegOrImm(const MIROperand& operand) {
 
 constexpr bool isOperandImm(const MIROperand& operand) {
     return operand.isImm();
+}
+
+constexpr bool isOperandAlign(const MIROperand& operand) {
+    return operand.isImm() && operand.type() == OperandType::Special && isPowerOf2(static_cast<size_t>(operand.imm()));
 }
 
 CMMC_MIR_NAMESPACE_END

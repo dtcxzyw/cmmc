@@ -52,9 +52,9 @@ func @test6(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless N
 func @test7(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i1 %0 = icmp sgt i32 %x, i32 0;
-    i32 %1 = add i32 %x, i32 -4;
     cbr i1 %0(prob = 0.97), ^super.header, ^b;
   ^super.header:
+    i32 %1 = add i32 %x, i32 -4;
     i1 %2 = icmp sgt i32 %x, i32 4;
     cbr i1 %2(prob = 0.89), ^for.body, ^for.body1;
   ^b:

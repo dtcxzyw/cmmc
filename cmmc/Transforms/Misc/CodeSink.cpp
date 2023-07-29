@@ -71,7 +71,7 @@ public:
                         return false;
                     }
                 }
-                return blockTripCount.query(targetBlock) < freq - significantBlockTripCountDifference;
+                return true;
             };
 
             const auto moveToTrueTarget = shouldMoveToTarget(trueTarget);

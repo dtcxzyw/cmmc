@@ -19,14 +19,14 @@ graphColoring:
 label25:
 	mv a2, zero
 label4:
-	slliw a1, a2, 4
-	li a0, 4
-	add a3, s1, a1
-	blt a2, a0, label6
+	li a1, 4
+	blt a2, a1, label6
 	mv s1, zero
 	j label12
 label6:
+	slliw a1, a2, 4
 	addiw a0, a2, 1
+	add a3, s1, a1
 	mv a1, a0
 label7:
 	li a4, 4
@@ -82,11 +82,11 @@ label74:
 	li a0, 1
 	j label2
 label10:
-	sh2add t0, a1, s0
-	sh2add a5, a2, s0
-	lw a4, 0(t0)
-	lw t0, 0(a5)
-	beq a4, t0, label53
+	sh2add a5, a1, s0
+	sh2add t0, a2, s0
+	lw a4, 0(a5)
+	lw a5, 0(t0)
+	beq a4, a5, label53
 	j label42
 .globl main
 main:

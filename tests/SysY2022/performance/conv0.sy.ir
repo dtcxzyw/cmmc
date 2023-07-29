@@ -64,10 +64,10 @@ func @main() -> i32 { NoRecurse Entry } {
   ^while.body4:
     i32 %37 = phi [^while.body3, i32 %30] [^b5, i32 %69];
     i32 %38 = phi [^while.body3, i32 %33] [^b5, i32 %68];
-    i1 %39 = icmp slt i32 %37, i32 0;
-    i1 %40 = or i1 %36, i1 %39;
-    i1 %41 = icmp sle i32 %2, i32 %37;
-    i1 %42 = or i1 %40, i1 %41;
+    i1 %39 = icmp sle i32 %2, i32 %37;
+    i1 %40 = icmp slt i32 %37, i32 0;
+    i1 %41 = or i1 %39, i1 %40;
+    i1 %42 = or i1 %36, i1 %41;
     cbr i1 %42(prob = 0.5), ^b2, ^b1;
   ^b1:
     i32 %43 = mul i32 %2, i32 %32;

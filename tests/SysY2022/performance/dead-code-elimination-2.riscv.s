@@ -4,12 +4,10 @@
 .globl main
 main:
 .p2align 2
-	addi sp, sp, -24
-	sd s0, 16(sp)
-	sd s1, 8(sp)
+	addi sp, sp, -16
+	sd s0, 8(sp)
 	sd ra, 0(sp)
 	jal getint
-	addiw s1, a0, -4
 	mv s0, a0
 	li a0, 100016
 	jal _sysy_starttime
@@ -17,50 +15,52 @@ main:
 	mv s0, zero
 	j label9
 label2:
-	li a1, 4
-	bgt s0, a1, label19
+	addiw a1, s0, -4
+	li a2, 4
+	bgt s0, a2, label19
 	mv a0, zero
 	mv a1, zero
 	j label6
 label19:
-	mv a1, zero
+	mv a2, zero
 	mv a0, zero
 label3:
-	addw a3, a1, a0
-	li a1, 268451839
-	mul a2, a3, a1
-	srli t0, a2, 63
-	srai a5, a2, 55
-	li a2, 134209537
-	add a4, t0, a5
-	addiw a5, a0, 1
-	mulw t0, a4, a2
-	subw a4, a3, t0
-	addw a3, a4, a5
-	mul a4, a3, a1
-	srli t1, a4, 63
-	srai a5, a4, 55
-	add t0, t1, a5
-	mulw a5, t0, a2
-	addiw t0, a0, 2
-	subw a4, a3, a5
-	addw a3, a4, t0
-	mul a4, a3, a1
-	srli t1, a4, 63
-	srai a5, a4, 55
-	add t0, t1, a5
-	mulw a5, t0, a2
-	addiw t0, a0, 3
-	subw a4, a3, a5
+	addw a4, a2, a0
+	li a2, 268451839
+	mul a3, a4, a2
+	srli t1, a3, 63
+	srai t0, a3, 55
+	li a3, 134209537
+	add a5, t1, t0
+	addiw t0, a0, 1
+	mulw t1, a5, a3
+	subw a5, a4, t1
+	addw a4, a5, t0
+	mul a5, a4, a2
+	srli t2, a5, 63
+	srai t0, a5, 55
+	add t1, t2, t0
+	mulw t0, t1, a3
+	addiw t1, a0, 2
+	subw a5, a4, t0
+	addw a4, a5, t1
+	mul a5, a4, a2
+	srli t2, a5, 63
+	srai t0, a5, 55
+	add t1, t2, t0
+	mulw t0, t1, a3
+	addiw t1, a0, 3
+	subw a5, a4, t0
 	addiw a0, a0, 4
-	addw a3, a4, t0
-	mul a1, a3, a1
-	srli t0, a1, 63
-	srai a4, a1, 55
-	add a5, t0, a4
-	mulw a2, a5, a2
-	subw a1, a3, a2
-	bgt s1, a0, label3
+	addw a4, a5, t1
+	mul a2, a4, a2
+	srli t1, a2, 63
+	srai a5, a2, 55
+	add t0, t1, a5
+	mulw a3, t0, a3
+	subw a2, a4, a3
+	bgt a1, a0, label3
+	mv a1, a2
 label6:
 	addw a1, a0, a1
 	li a4, 268451839
@@ -83,7 +83,6 @@ label9:
 	jal putch
 	ld ra, 0(sp)
 	mv a0, zero
-	ld s1, 8(sp)
-	ld s0, 16(sp)
-	addi sp, sp, 24
+	ld s0, 8(sp)
+	addi sp, sp, 16
 	ret

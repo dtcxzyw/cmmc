@@ -4,8 +4,8 @@
 .globl foo4
 foo4:
 .p2align 2
-	addiw a4, a1, -4
 	ble a1, zero, label9
+	addiw a4, a1, -4
 	li a3, 4
 	bgt a1, a3, label19
 	mv a2, zero

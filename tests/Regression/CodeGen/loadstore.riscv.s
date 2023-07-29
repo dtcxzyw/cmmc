@@ -107,40 +107,43 @@ pcrel104:
 .globl memset_impl
 memset_impl:
 .p2align 2
-	addiw a4, a1, -4
-	ble a1, zero, label111
-	li a3, 4
-	bgt a1, a3, label121
-	mv a2, zero
-	j label109
-label121:
-	mv a3, zero
+	bgt a0, zero, label107
+label106:
+	ret
 label107:
-	sh2add a2, a3, a0
-	sw zero, 0(a2)
-	sw zero, 4(a2)
-	sw zero, 8(a2)
-	sw zero, 12(a2)
+	addiw a4, a0, -4
+pcrel146:
+	auipc a2, %pcrel_hi(arr)
+	li a3, 4
+	addi a1, a2, %pcrel_lo(pcrel146)
+	bgt a0, a3, label122
+	mv a2, zero
+	j label110
+label122:
+	mv a3, zero
+label108:
+	sh2add a2, a3, a1
+	sd zero, 0(a2)
+	sd zero, 8(a2)
 	addiw a2, a3, 4
-	ble a4, a2, label109
+	ble a4, a2, label110
 	mv a3, a2
-	j label107
-label109:
-	sh2add a4, a2, a0
+	j label108
+label110:
+	sh2add a4, a2, a1
 	addiw a2, a2, 1
 	sw zero, 0(a4)
-	bgt a1, a2, label109
-label111:
-	ret
+	bgt a0, a2, label110
+	j label106
 .globl fused_store
 fused_store:
 .p2align 2
-pcrel179:
+pcrel182:
 	auipc a1, %pcrel_hi(arr)
 	li a2, 2
 	li a3, 9
-	addi a0, a1, %pcrel_lo(pcrel179)
-	sw zero, %pcrel_lo(pcrel179)(a1)
+	addi a0, a1, %pcrel_lo(pcrel182)
+	sw zero, %pcrel_lo(pcrel182)(a1)
 	li a1, 1
 	sw a1, 4(a0)
 	li a1, 3

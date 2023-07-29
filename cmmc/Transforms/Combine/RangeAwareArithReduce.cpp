@@ -227,6 +227,7 @@ class RangeAwareArithReduce final : public TransformPass<Function> {
                     }
                 }
             }
+            // https://alive2.llvm.org/ce/z/uwy3Fg
             if(or_(icmp(cmp1, any(v1), int_(i1)), icmp(cmp2, any(v2), any(v3)))(matchCtx)) {
                 if((i1 == 0 && cmp1 == CompareOp::ICmpSignedLessThan) || (i1 == -1 && cmp1 == CompareOp::ICmpSignedLessEqual)) {
                     if(v1 == v3) {

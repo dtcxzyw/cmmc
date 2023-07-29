@@ -15,15 +15,13 @@ basic_3:
 .globl basic_5
 basic_5:
 .p2align 2
-	li a2, 1
-	slti a3, a0, 0
-	sll a1, a2, a0
-	andi a4, a1, 31
-	sltiu a2, a4, 1
-	or a1, a2, a3
-	li a2, 4
-	slt a3, a2, a0
-	or a0, a1, a3
+	li a1, 1
+	sll a3, a1, a0
+	andi a2, a3, 31
+	li a3, 4
+	sltiu a1, a2, 1
+	sltu a2, a3, a0
+	or a0, a1, a2
 	ret
 .globl cross_64_with_9
 cross_64_with_9:

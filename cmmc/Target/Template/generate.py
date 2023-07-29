@@ -73,8 +73,15 @@ def parse_inst_format(inst):
     comment_list = []
     for idx, fmt in enumerate(fmt_list):
         if isinstance(fmt, str) and comment_sep in fmt:
-            comment_list = fmt_list[idx:]
-            fmt_list = fmt_list[:idx]
+            # workaround for sw
+            if fmt.startswith(')'):
+                comment_list = [ fmt.removeprefix(')')] + fmt_list[idx+1:]
+                fmt_list = fmt_list[:idx] + [')']
+            else:
+                comment_list = fmt_list[idx:]
+                fmt_list = fmt_list[:idx]
+            break
+        
     inst['Format'] = fmt_list
     inst['Comment'] = comment_list
     # print(inst)

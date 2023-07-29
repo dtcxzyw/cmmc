@@ -42,9 +42,9 @@ int global_addressing_scalar() {
 int global_addressing_array(int x) {
     return arr[x];
 }
-void memset_impl(int x[], int n) {
+void memset_impl(int n) {
     for(int i = 0; i < n; ++i) {
-        x[i] = 0;
+        arr[i] = 0;
     }
 }
 void fused_store() {

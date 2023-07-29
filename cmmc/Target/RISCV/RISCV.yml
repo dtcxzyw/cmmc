@@ -117,7 +117,7 @@ InstInfo:
     LHU:
       Mnemonic: lhu
   Store:
-    Format: $Mnemonic:Template $Rs2:GPR[Use], $Imm:Imm12[Metadata]($Rs1:BaseLike[Use])
+    Format: "$Mnemonic:Template $Rs2:GPR[Use], $Imm:Imm12[Metadata]($Rs1:BaseLike[Use]) # $Alignment:Align[Metadata]"
     Flag: [Store]
   InstanceStore:
     Template: Store
@@ -219,7 +219,7 @@ InstInfo:
     Format: flw $Rd:FPR[Def], $Imm:Imm12[Metadata]($Rs1:BaseLike[Use])
     Flag: [Load]
   FSW:
-    Format: fsw $Rs2:FPR[Use], $Imm:Imm12[Metadata]($Rs1:BaseLike[Use])
+    Format: "fsw $Rs2:FPR[Use], $Imm:Imm12[Metadata]($Rs1:BaseLike[Use]) # $Alignment:Align[Metadata]"
     Flag: [Store]
   ## 11.6 Single-Precision Floating-Point Computational Instructions
   ## 11.7 Single-Precision Floating-Point Conversion and Move Instructions
@@ -1631,6 +1631,7 @@ InstSelection:
             Src: $Src
             $Predicate: ctx.isSafeToUse($Src, $Dst)
         Addr: $Addr
+        Alignment: $Alignment
         $Predicate: isOperandVRegOrISAReg($Src) && selectAddrOffset($Addr, ctx, [$Base], [$Offset])
     Replace:
       Store:
@@ -1639,11 +1640,13 @@ InstSelection:
         Rs2: $Src
         Rs1: $Base
         Imm: $Offset
+        Alignment: $Alignment
 
   - Pattern:
       InstStore:
         Src: $Src
         Addr: $Addr
+        Alignment: $Alignment
         $Predicate: isOperandVRegOrISAReg($Src) && selectAddrOffset($Addr, ctx, [$Base], [$Offset])
     Replace:
       Store:
@@ -1652,6 +1655,7 @@ InstSelection:
         Rs2: $Src
         Rs1: $Base
         Imm: $Offset
+        Alignment: $Alignment
 
   # Floating Point
   - Pattern:
