@@ -12,7 +12,6 @@
     limitations under the License.
 */
 
-#include "cmmc/IR/Block.hpp"
 #include <cmmc/Analysis/AnalysisPass.hpp>
 #include <cmmc/Analysis/CFGAnalysis.hpp>
 #include <cmmc/Analysis/DominateAnalysis.hpp>
@@ -238,16 +237,11 @@ class ModuloOpt final : public TransformPass<Function> {
                     }
                     if(invalid)
                         continue;
-                    const auto remRange = range.query(rem, dom, &inst, depth);
-                    const auto incRange = range.query(inc, dom, &inst, depth);
-                    if(!((remRange + remRange).isNoSignedOverflow()) && incRange.isPositive())
-                        continue;
 
                     builder.setInsertPoint(loop.header, inst.asIterator());
-                    // always positive
-                    const auto tripCount = builder.makeOp<BinaryInst>(InstructionID::Sub, end, initial);
                     if(mod.getTarget().getOptHeuristic().registerLength == 64) {
                         // O(1)
+                        const auto tripCount = builder.makeOp<BinaryInst>(InstructionID::Sub, end, initial);
                         const auto i64 = IntegerType::get(64);
                         const auto inc64 = builder.makeOp<CastInst>(InstructionID::SExt, i64, inc);
                         const auto tripCount64 = builder.makeOp<CastInst>(InstructionID::SExt, i64, tripCount);
@@ -258,7 +252,14 @@ class ModuloOpt final : public TransformPass<Function> {
                         inst.replaceWith(res32);
                         modified = true;
                     } else {
+                        const auto remRange = IntegerRange{}.srem(range.query(rem, dom, &inst, depth));
+                        const auto incRange = range.query(inc, dom, &inst, depth);
+                        if(!(remRange + remRange).isNoSignedOverflow() || !incRange.isPositive())
+                            continue;
+
                         // O(log(n))
+                        const auto tripCount = builder.makeOp<BinaryInst>(InstructionID::Sub, end, initial);
+                        // always positive
                         const auto func = getMulMod32(mod);
                         const auto a = builder.makeOp<BinaryInst>(InstructionID::SRem, tripCount, rem);
                         const auto call = builder.makeOp<FunctionCallInst>(func, std::vector<Value*>{ a, inc, rem });

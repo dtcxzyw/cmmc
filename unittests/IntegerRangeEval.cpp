@@ -230,6 +230,10 @@ void testBinary(C1 eval, C2 rangeEval, uint32_t matchReq = MatchAll) {
 TEST(IntegerRangeEval, Add) {
     testBinary([](int64_t x, int64_t y) { return x + y; },
                [](const IntegerRange& lhs, const IntegerRange& rhs) { return lhs + rhs; });
+
+    IntegerRange rem{ 1500000001 };
+    const auto r = IntegerRange{}.srem(rem);
+    ASSERT_FALSE((r + r).isNoSignedOverflow()) << "sum: " << (r + r);
 }
 
 TEST(IntegerRangeEval, Sub) {

@@ -76,8 +76,10 @@ PointerAlignmentAnalysisResult PointerAlignmentAnalysis::run(Function& func, Ana
         for(auto& inst : block->instructions()) {
             if(!inst.getType()->isPointer())
                 continue;
-            // TODO: alignment for allocas
-            update(&inst, result.lookup(&inst, dataLayout));
+            if(inst.getInstID() == InstructionID::Alloc) {
+                update(&inst, static_cast<uint32_t>(inst.as<StackAllocInst>()->getAlignment()));
+            } else
+                update(&inst, result.lookup(&inst, dataLayout));
         }
     }
 

@@ -243,7 +243,7 @@ class RangeAwareArithReduce final : public TransformPass<Function> {
             }
             if(srem(capture(add(capture(srem(any(v1), any(v2)), v3), exactly(v2)), v4), exactly(v2))(matchCtx)) {
                 const auto r = rangeAnalysis.query(v2, dom, inst, depth);
-                if(r.minSignedValue() > 1 && (r + (r - IntegerRange{ 1 })).isNoSignedOverflow()) {
+                if(r.minSignedValue() > 1 && (r + IntegerRange{}.srem(r)).isNoSignedOverflow()) {
                     return builder.makeOp<SelectInst>(builder.makeOp<CompareInst>(InstructionID::ICmp,
                                                                                   CompareOp::ICmpSignedLessThan, v3,
                                                                                   ConstantInteger::get(v3->getType(), 0)),
