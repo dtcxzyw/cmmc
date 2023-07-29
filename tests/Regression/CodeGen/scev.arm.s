@@ -7,37 +7,90 @@
 .globl foo4
 foo4:
 .p2align 4
-	push { r4, r5, r6 }
+	push { r4, r5, r6, r7 }
 	cmp r1, #0
-	ble label9
-	sub r4, r1, #4
-	cmp r1, #4
-	bgt label19
-	mov r2, #0
-	mov r3, r2
-	b label6
-label19:
-	mov r3, #0
-	mov r2, r3
+	bgt label2
+	b label13
 label3:
+	sub r2, r1, #4
+	sub r5, r1, #20
+	cmp r2, #16
+	bgt label28
+	mov r3, #0
+	mov r4, r3
+	b label7
+label28:
+	mov r3, #0
+	mov r4, r3
+label4:
+	add r6, r0, r4, lsl #2
+	str r3, [r0, r4, lsl #2]
+	add r7, r3, #4
+	add r4, r4, #16
+	str r7, [r6, #4]
+	cmp r5, r4
+	add r7, r3, #8
+	str r7, [r6, #8]
+	add r7, r3, #12
+	str r7, [r6, #12]
+	add r7, r3, #16
+	str r7, [r6, #16]
+	add r7, r3, #20
+	str r7, [r6, #20]
+	add r7, r3, #24
+	str r7, [r6, #24]
+	add r7, r3, #28
+	str r7, [r6, #28]
+	add r7, r3, #32
+	str r7, [r6, #32]
+	add r7, r3, #36
+	str r7, [r6, #36]
+	add r7, r3, #40
+	str r7, [r6, #40]
+	add r7, r3, #44
+	str r7, [r6, #44]
+	add r7, r3, #48
+	str r7, [r6, #48]
+	add r7, r3, #52
+	str r7, [r6, #52]
+	add r7, r3, #56
+	str r7, [r6, #56]
+	add r7, r3, #60
+	str r7, [r6, #60]
+	add r6, r3, #64
+	bgt label66
+	mov r3, r4
+	mov r4, r6
+	b label7
+label66:
+	mov r3, r6
+	b label4
+label7:
 	add r5, r0, r3, lsl #2
-	str r2, [r0, r3, lsl #2]
-	add r6, r2, #4
+	str r4, [r0, r3, lsl #2]
+	add r6, r4, #4
 	add r3, r3, #4
 	str r6, [r5, #4]
-	cmp r4, r3
-	add r6, r2, #8
+	cmp r2, r3
+	add r6, r4, #8
 	str r6, [r5, #8]
-	add r6, r2, #12
-	add r2, r2, #16
+	add r6, r4, #12
+	add r4, r4, #16
 	str r6, [r5, #12]
-	bgt label3
-label6:
+	bgt label7
+	mov r2, r4
+label10:
 	str r2, [r0, r3, lsl #2]
 	add r2, r2, #4
 	add r3, r3, #1
 	cmp r1, r3
-	bgt label6
-label9:
-	pop { r4, r5, r6 }
+	bgt label10
+label13:
+	pop { r4, r5, r6, r7 }
 	bx lr
+label2:
+	cmp r1, #4
+	bgt label3
+	mov r2, #0
+	mov r3, r2
+	b label10

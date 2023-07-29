@@ -233,7 +233,7 @@ void applyForSuccessors(BranchInst* branch, const std::function<void(Block*&)>& 
     if(falseTarget && trueTarget != falseTarget)
         functor(branch->getFalseTarget());
 }
-uint32_t estimateBlockSize(Block* block) {
+uint32_t estimateBlockSize(Block* block, bool dynamic) {
     uint32_t count = 0;
     for(auto& inst : block->instructions()) {
         if(inst.isTerminator()) {
@@ -245,6 +245,17 @@ uint32_t estimateBlockSize(Block* block) {
         switch(inst.getInstID()) {
             case InstructionID::Call:
                 count += 16;
+                break;
+            case InstructionID::Load:
+            case InstructionID::Store:
+                count += dynamic ? 4 : 1;
+                break;
+            case InstructionID::FDiv:
+            case InstructionID::SDiv:
+            case InstructionID::UDiv:
+            case InstructionID::SRem:
+            case InstructionID::URem:
+                count += 8;
                 break;
             case InstructionID::GetElementPtr:
             case InstructionID::PtrCast:

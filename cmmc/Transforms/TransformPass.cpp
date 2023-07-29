@@ -468,12 +468,6 @@ std::shared_ptr<PassManager<Module>> PassManager<Module>::get(OptimizationLevel 
             perFuncWithInline->addPass(pass);
         perFuncWithInline->addPass(iter);
 
-        for(const auto& pass : passesSource.collectFunctionPass({
-                "DynamicLoopUnroll",  //
-                "BlockMerge",         // clean up
-                "BlockEliminate",     // clean up
-            }))
-            perFuncWithInline->addPass(pass);
         perFuncWithInline->addPass(perFunc);  // after inlining
 
         for(const auto& pass : passesSource.collectFunctionPass({
@@ -485,6 +479,16 @@ std::shared_ptr<PassManager<Module>> PassManager<Module>::get(OptimizationLevel 
             }))
             perFuncWithInline->addPass(pass);
         perFuncWithInline->addPass(perFunc);
+
+        auto unrollBase = std::make_shared<PassManager<Function>>();
+        for(const auto& pass : passesSource.collectFunctionPass({
+                "DynamicLoopUnroll",  //
+                "BlockMerge",         // clean up
+                "BlockEliminate",     // clean up
+            }))
+            unrollBase->addPass(pass);
+        unrollBase->addPass(iter);
+        perFuncWithInline->addPass(std::make_shared<IterationPassWrapper>(std::move(unrollBase), 16, false));
     }
 
     root->addPass(globalOpt);

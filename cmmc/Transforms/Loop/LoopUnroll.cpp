@@ -49,7 +49,7 @@ public:
                 continue;
             if(std::abs(loop.step) > maxStep)
                 continue;
-            const auto blockSize = std::max(2U, estimateBlockSize(loop.header)) - 1U;
+            const auto blockSize = std::max(2U, estimateBlockSize(loop.header, false)) - 1U;
             if(blockSize * 2 > heuristic.maxUnrollBodySize)
                 continue;
             if(hasCall(*loop.header))
