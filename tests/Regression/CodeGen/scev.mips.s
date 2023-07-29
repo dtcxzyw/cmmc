@@ -3,11 +3,10 @@
 .globl foo4
 foo4:
 .p2align 2
-	addiu $t2, $a1, -4
 	blez $a1, label9
 	nop
-	addiu $t0, $a1, -4
-	bgtz $t0, label19
+	addiu $t2, $a1, -4
+	bgtz $t2, label19
 	nop
 	move $t0, $zero
 	move $t1, $zero

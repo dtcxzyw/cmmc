@@ -43,7 +43,7 @@ label10:
 	clz r1, r1
 	lsr r7, r7, #5
 	lsr r1, r1, #5
-	orr r3, r3, r7
+	orr r1, r7, r1
 	orrs r1, r3, r1
 	bne label190
 label12:
@@ -138,7 +138,7 @@ label51:
 	clz r1, r1
 	lsr r3, r3, #5
 	lsr r1, r1, #5
-	orr r2, r2, r3
+	orr r1, r3, r1
 	orrs r1, r2, r1
 	bne label54
 	b label55
@@ -163,7 +163,7 @@ label116:
 	clz r1, r1
 	lsr r3, r3, #5
 	lsr r1, r1, #5
-	orr r2, r2, r3
+	orr r1, r3, r1
 	orrs r1, r2, r1
 	bne label117
 label118:
@@ -204,17 +204,17 @@ label181:
 	mov r2, r0
 	b label4
 label182:
-	sub r1, r0, #48
-	sub r2, r0, #43
-	cmp r1, #10
-	clz r2, r2
-	mov r1, #0
-	lsr r2, r2, #5
-	movwlo r1, #1
-	orr r1, r1, r2
+	sub r1, r0, #43
 	sub r2, r0, #45
+	clz r1, r1
 	clz r2, r2
+	lsr r1, r1, #5
 	lsr r2, r2, #5
+	orr r1, r1, r2
+	sub r2, r0, #48
+	cmp r2, #10
+	mov r2, #0
+	movwlo r2, #1
 	orrs r1, r1, r2
 	beq label183
 	mov r0, #1
@@ -309,7 +309,7 @@ label96:
 	clz r1, r1
 	lsr r3, r3, #5
 	lsr r1, r1, #5
-	orr r2, r2, r3
+	orr r1, r3, r1
 	orrs r1, r2, r1
 	bne label77
 	b label80
@@ -340,7 +340,7 @@ label105:
 	clz r1, r1
 	lsr r3, r3, #5
 	lsr r1, r1, #5
-	orr r2, r2, r3
+	orr r1, r3, r1
 	orrs r1, r2, r1
 	bne label106
 	b label101
@@ -364,7 +364,7 @@ label82:
 	clz r1, r1
 	lsr r3, r3, #5
 	lsr r1, r1, #5
-	orr r2, r2, r3
+	orr r1, r3, r1
 	orrs r1, r2, r1
 	bne label95
 	b label85
@@ -406,7 +406,7 @@ label92:
 	clz r1, r1
 	lsr r3, r3, #5
 	lsr r1, r1, #5
-	orr r2, r2, r3
+	orr r1, r3, r1
 	orrs r1, r2, r1
 	bne label509
 	b label91
@@ -430,7 +430,7 @@ label73:
 	clz r1, r1
 	lsr r3, r3, #5
 	lsr r1, r1, #5
-	orr r2, r2, r3
+	orr r1, r3, r1
 	orrs r1, r2, r1
 	bne label109
 	b label75
@@ -586,7 +586,7 @@ label124:
 	clz r1, r1
 	lsr r3, r3, #5
 	lsr r1, r1, #5
-	orr r2, r2, r3
+	orr r1, r3, r1
 	orrs r1, r2, r1
 	bne label125
 label126:
@@ -618,7 +618,7 @@ label679:
 	clz r1, r1
 	lsr r3, r3, #5
 	lsr r1, r1, #5
-	orr r2, r2, r3
+	orr r1, r3, r1
 	orrs r1, r2, r1
 	bne label679
 label142:
@@ -650,7 +650,7 @@ label129:
 	clz r1, r1
 	lsr r3, r3, #5
 	lsr r1, r1, #5
-	orr r2, r2, r3
+	orr r1, r3, r1
 	orrs r1, r2, r1
 	bne label133
 	b label134
@@ -717,7 +717,7 @@ label61:
 	clz r1, r1
 	lsr r3, r3, #5
 	lsr r1, r1, #5
-	orr r2, r2, r3
+	orr r1, r3, r1
 	orrs r1, r2, r1
 	bne label62
 label63:
@@ -752,7 +752,7 @@ label445:
 	clz r1, r1
 	lsr r3, r3, #5
 	lsr r1, r1, #5
-	orr r2, r2, r3
+	orr r1, r3, r1
 	orrs r1, r2, r1
 	bne label445
 	b label71
@@ -843,7 +843,7 @@ label1153:
 	ldr r0, [sp, #0]
 label1154:
 	cmp r6, r0
-	ble label1156
+	ble label1158
 	ldr r0, [sp, #0]
 	ldr r2, [r4, r0, lsl #2]
 	sub r5, r2, #9
@@ -859,10 +859,10 @@ label1154:
 	clz r2, r2
 	lsr r5, r5, #5
 	lsr r2, r2, #5
-	orr r3, r3, r5
+	orr r2, r5, r2
 	orrs r2, r3, r2
-	bne label1162
-	b label1156
+	bne label1157
+	b label1158
 label1149:
 	cmp r6, r0
 	ble label1153
@@ -882,24 +882,19 @@ label1151:
 	clz r1, r1
 	lsr r3, r3, #5
 	lsr r1, r1, #5
-	orr r2, r2, r3
+	orr r1, r3, r1
 	orrs r1, r2, r1
 	beq label1153
 	add r0, r0, #1
 	str r0, [sp, #0]
 	b label1149
-label1162:
+label1157:
 	add r0, r0, #1
 	str r0, [sp, #0]
 	b label1154
-label1156:
+label1158:
 	cmp r1, #0
-	bne label1160
-	b label1159
-label1157:
-	add sp, sp, #8
-	pop { r4, r5, r6, pc }
-label1159:
+	bne label1162
 	mov r0, #110
 	bl putch
 	mov r0, #111
@@ -915,8 +910,10 @@ label1159:
 	mov r0, #10
 	bl putch
 	mov r0, #1
-	b label1157
 label1160:
+	add sp, sp, #8
+	pop { r4, r5, r6, pc }
+label1162:
 	mov r0, #111
 	bl putch
 	mov r0, #107
@@ -924,4 +921,4 @@ label1160:
 	mov r0, #10
 	bl putch
 	mov r0, #0
-	b label1157
+	b label1160

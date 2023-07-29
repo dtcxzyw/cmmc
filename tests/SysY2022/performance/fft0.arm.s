@@ -140,8 +140,8 @@ label289:
 fft:
 .p2align 4
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
-	mov r6, r0
 	sub sp, sp, #20
+	mov r6, r0
 	mov r7, r1
 	cmp r2, #1
 	str r3, [sp, #8]
@@ -156,15 +156,14 @@ fft:
 	beq label128
 	mov r1, #0
 	cmp r2, r1
-	bgt label114
-	sub r3, r2, #4
+	bgt label125
 	cmp r2, #0
-	bgt label118
-	b label124
+	bgt label119
+	b label115
 .p2align 4
-label114:
+label125:
 	ands r3, r1, #1
-	beq label116
+	beq label127
 	add r3, r1, r1, lsr #31
 	ldr r5, [sp, #12]
 	ldr r7, [sp, #0]
@@ -176,13 +175,12 @@ label114:
 	ldr r4, [r6, r4, lsl #2]
 	str r4, [r0, r3, lsl #2]
 	cmp r2, r1
-	bgt label114
-	sub r3, r2, #4
+	bgt label125
 	cmp r2, #0
-	bgt label118
-	b label124
+	bgt label119
+	b label115
 .p2align 4
-label116:
+label127:
 	ldr r7, [sp, #0]
 	add r4, r1, r1, lsr #31
 	ldr r6, [sp, #4]
@@ -192,47 +190,19 @@ label116:
 	ldr r3, [r6, r3, lsl #2]
 	str r3, [r0, r4, lsl #2]
 	cmp r2, r1
-	bgt label114
-	sub r3, r2, #4
+	bgt label125
 	cmp r2, #0
-	ble label124
-label118:
-	cmp r2, #4
 	bgt label119
-	mov r1, #0
-	b label122
+	b label115
 label128:
 	add sp, sp, #20
 	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
-label120:
-	ldr r7, [sp, #0]
-	ldr r10, [r0, r1, lsl #2]
-	ldr r6, [sp, #4]
-	add r9, r7, r1
-	add r7, r0, r1, lsl #2
-	str r10, [r6, r9, lsl #2]
-	add r10, r4, r1
-	ldr r9, [r7, #4]
-	str r9, [r6, r10, lsl #2]
-	add r10, r5, r1
-	ldr r9, [r7, #8]
-	str r9, [r6, r10, lsl #2]
-	add r9, r8, r1
-	ldr r7, [r7, #12]
-	add r1, r1, #4
-	cmp r3, r1
-	str r7, [r6, r9, lsl #2]
+label119:
+	cmp r2, #4
 	bgt label120
-label122:
-	ldr r7, [sp, #0]
-	ldr r4, [r0, r1, lsl #2]
-	ldr r6, [sp, #4]
-	add r3, r7, r1
-	add r1, r1, #1
-	str r4, [r6, r3, lsl #2]
-	cmp r2, r1
-	bgt label122
-label124:
+	mov r1, #0
+	b label123
+label115:
 	ldr r1, [sp, #8]
 	mov r0, r1
 	bl multiply
@@ -256,7 +226,7 @@ label124:
 	mov r3, #0
 	mov r5, #1
 .p2align 4
-label125:
+label116:
 	ldr r7, [sp, #0]
 	ldr r6, [sp, #4]
 	add r8, r7, r3
@@ -290,14 +260,44 @@ label125:
 	cmp r5, r3
 	ble label128
 	mov r5, r0
-	b label125
-label119:
+	b label116
+label121:
 	ldr r7, [sp, #0]
+	ldr r10, [r0, r1, lsl #2]
+	ldr r6, [sp, #4]
+	add r9, r7, r1
+	add r7, r0, r1, lsl #2
+	str r10, [r6, r9, lsl #2]
+	add r10, r3, r1
+	ldr r9, [r7, #4]
+	str r9, [r6, r10, lsl #2]
+	add r10, r4, r1
+	ldr r9, [r7, #8]
+	str r9, [r6, r10, lsl #2]
+	add r9, r5, r1
+	ldr r7, [r7, #12]
+	add r1, r1, #4
+	cmp r8, r1
+	str r7, [r6, r9, lsl #2]
+	bgt label121
+label123:
+	ldr r7, [sp, #0]
+	ldr r4, [r0, r1, lsl #2]
+	ldr r6, [sp, #4]
+	add r3, r7, r1
+	add r1, r1, #1
+	str r4, [r6, r3, lsl #2]
+	cmp r2, r1
+	bgt label123
+	b label115
+label120:
+	ldr r7, [sp, #0]
+	sub r8, r2, #4
 	mov r1, #0
-	add r8, r7, #3
-	add r5, r7, #2
-	add r4, r7, #1
-	b label120
+	add r5, r7, #3
+	add r4, r7, #2
+	add r3, r7, #1
+	b label121
 .globl main
 main:
 .p2align 4

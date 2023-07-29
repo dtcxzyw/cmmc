@@ -53,7 +53,6 @@ main:
 .p2align 4
 	push { r4, r5, r6, r7, r8, lr }
 	bl getint
-	sub r7, r0, #4
 	mov r5, r0
 	bl getint
 	cmp r5, #0
@@ -61,6 +60,7 @@ main:
 	mov r6, r0
 	movt r4, #:upper16:parent
 	ble label76
+	sub r1, r5, #4
 	cmp r5, #4
 	bgt label97
 	mov r0, #0
@@ -68,16 +68,16 @@ main:
 label97:
 	mov r0, #0
 label72:
-	add r1, r4, r0, lsl #2
+	add r2, r4, r0, lsl #2
 	str r0, [r4, r0, lsl #2]
-	add r2, r0, #1
-	str r2, [r1, #4]
-	add r2, r0, #2
-	str r2, [r1, #8]
-	add r2, r0, #3
+	add r3, r0, #1
+	str r3, [r2, #4]
+	add r3, r0, #2
+	str r3, [r2, #8]
+	add r3, r0, #3
 	add r0, r0, #4
-	str r2, [r1, #12]
-	cmp r7, r0
+	str r3, [r2, #12]
+	cmp r1, r0
 	bgt label72
 label74:
 	str r0, [r4, r0, lsl #2]

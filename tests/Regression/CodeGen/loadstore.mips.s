@@ -133,38 +133,42 @@ global_addressing_array:
 .globl memset_impl
 memset_impl:
 .p2align 2
-	addiu $t1, $a1, -4
-	blez $a1, label112
+	bgtz $a0, label108
 	nop
-	addiu $t0, $a1, -4
-	bgtz $t0, label122
-	nop
-	move $t0, $zero
-	b label110
-	nop
-label122:
-	move $t0, $zero
-label108:
-	sll $t2, $t0, 2
-	addu $t2, $a0, $t2
-	sw $zero, 0($t2)
-	sw $zero, 4($t2)
-	sw $zero, 8($t2)
-	sw $zero, 12($t2)
-	addiu $t0, $t0, 4
-	subu $t2, $t1, $t0
-	bgtz $t2, label108
-	nop
-label110:
-	sll $t1, $t0, 2
-	addu $t1, $a0, $t1
-	sw $zero, 0($t1)
-	addiu $t0, $t0, 1
-	subu $t1, $a1, $t0
-	bgtz $t1, label110
-	nop
-label112:
+label107:
 	jr $ra
+	nop
+label108:
+	addiu $t2, $a0, -4
+	lui $t0, %hi(arr)
+	addiu $t0, $t0, %lo(arr)
+	bgtz $t2, label123
+	nop
+	move $t1, $zero
+	b label111
+	nop
+label123:
+	move $t1, $zero
+label109:
+	sll $t3, $t1, 2
+	addu $t3, $t0, $t3
+	sw $zero, 0($t3)
+	sw $zero, 4($t3)
+	sw $zero, 8($t3)
+	sw $zero, 12($t3)
+	addiu $t1, $t1, 4
+	subu $t3, $t2, $t1
+	bgtz $t3, label109
+	nop
+label111:
+	sll $t2, $t1, 2
+	addu $t2, $t0, $t2
+	sw $zero, 0($t2)
+	addiu $t1, $t1, 1
+	subu $t2, $a0, $t1
+	bgtz $t2, label111
+	nop
+	b label107
 	nop
 .globl fused_store
 fused_store:

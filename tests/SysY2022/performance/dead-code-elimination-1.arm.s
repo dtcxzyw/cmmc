@@ -10,7 +10,6 @@ main:
 	push { r4, r5, r6, r7, lr }
 	sub sp, sp, #4
 	bl getint
-	sub r5, r0, #4
 	mov r4, r0
 	movw r0, #34480
 	movt r0, #1
@@ -20,45 +19,47 @@ main:
 	mov r4, #0
 	b label9
 label2:
+	sub r1, r4, #4
 	cmp r4, #4
 	bgt label19
 	mov r0, #0
 	mov r1, r0
 	b label6
 label19:
-	mov r1, #0
-	mov r0, r1
+	mov r2, #0
+	mov r0, r2
 label3:
-	add r3, r1, r0
-	movw r1, #16383
-	movt r1, #4096
-	smmul r2, r3, r1
-	asr r6, r2, #23
-	add r6, r6, r2, lsr #31
-	movw r2, #57345
-	movt r2, #2047
-	mls r3, r6, r2, r3
+	add r5, r2, r0
+	movw r2, #16383
+	movt r2, #4096
+	smmul r3, r5, r2
+	asr r6, r3, #23
+	add r6, r6, r3, lsr #31
+	movw r3, #57345
+	movt r3, #2047
+	mls r5, r6, r3, r5
 	add r6, r0, #1
-	add r3, r3, r6
-	smmul r6, r3, r1
+	add r5, r5, r6
+	smmul r6, r5, r2
 	asr r7, r6, #23
 	add r6, r7, r6, lsr #31
-	mls r3, r6, r2, r3
+	mls r5, r6, r3, r5
 	add r6, r0, #2
-	add r3, r3, r6
-	smmul r6, r3, r1
+	add r5, r5, r6
+	smmul r6, r5, r2
 	asr r7, r6, #23
 	add r6, r7, r6, lsr #31
-	mls r3, r6, r2, r3
+	mls r5, r6, r3, r5
 	add r6, r0, #3
 	add r0, r0, #4
-	cmp r5, r0
-	add r3, r3, r6
-	smmul r1, r3, r1
-	asr r6, r1, #23
-	add r1, r6, r1, lsr #31
-	mls r1, r1, r2, r3
+	cmp r1, r0
+	add r5, r5, r6
+	smmul r2, r5, r2
+	asr r6, r2, #23
+	add r2, r6, r2, lsr #31
+	mls r2, r2, r3, r5
 	bgt label3
+	mov r1, r2
 label6:
 	add r1, r0, r1
 	movw r2, #16383

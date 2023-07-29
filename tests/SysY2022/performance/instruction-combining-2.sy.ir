@@ -7,10 +7,10 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
   ^entry:
     i32 %0 = call () -> i32 @getint();
     i1 %1 = icmp sgt i32 %0, i32 0;
-    i32 %2 = add i32 %0, i32 -4;
     call (i32) -> void @starttime(i32 10015);
     cbr i1 %1(prob = 0.97), ^super.header, ^b;
   ^super.header:
+    i32 %2 = add i32 %0, i32 -4;
     i1 %3 = icmp sgt i32 %0, i32 4;
     cbr i1 %3(prob = 0.89), ^prebody, ^prebody1;
   ^b:

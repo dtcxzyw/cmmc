@@ -470,11 +470,11 @@ main:
 	mov r3, r5
 	bl radixSort
 	cmp r5, #0
-	sub r2, r5, #4
 	bgt label446
 	mov r4, #0
 	b label453
 label446:
+	sub r2, r5, #4
 	cmp r5, #4
 	bgt label465
 	mov r0, #0

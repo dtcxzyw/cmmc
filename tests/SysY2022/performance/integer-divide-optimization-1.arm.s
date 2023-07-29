@@ -10,7 +10,6 @@ main:
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
 	sub sp, sp, #4
 	bl getint
-	sub r5, r0, #4
 	mov r4, r0
 	mov r0, #1016
 	bl _sysy_starttime
@@ -19,6 +18,7 @@ main:
 	mov r7, #0
 	b label13
 label2:
+	sub r1, r4, #4
 	cmp r4, #4
 	bgt label23
 	mov r0, #0
@@ -26,17 +26,17 @@ label2:
 	b label10
 label23:
 	mov r0, #3
-	mov r1, #2
-	mov r3, #1
-	mov r2, #0
-	mov r6, r2
-	mov r7, r2
+	mov r2, #2
+	mov r5, #1
+	mov r3, #0
+	mov r6, r3
+	mov r7, r3
 label3:
-	add r9, r2, r7
+	add r9, r3, r7
 	add r6, r6, #4
-	add r2, r2, #4
+	add r3, r3, #4
 	movw r7, #49153
-	cmp r5, r6
+	cmp r1, r6
 	movt r7, #16384
 	smmul r8, r9, r7
 	asr r10, r8, #29
@@ -44,14 +44,14 @@ label3:
 	movw r8, #32771
 	movt r8, #32766
 	mls r9, r10, r8, r9
-	add r9, r3, r9
-	add r3, r3, #4
+	add r9, r5, r9
+	add r5, r5, #4
 	smmul r10, r9, r7
 	asr r11, r10, #29
 	add r10, r11, r10, lsr #31
 	mls r9, r10, r8, r9
-	add r9, r1, r9
-	add r1, r1, #4
+	add r9, r2, r9
+	add r2, r2, #4
 	smmul r10, r9, r7
 	asr r11, r10, #29
 	add r10, r11, r10, lsr #31

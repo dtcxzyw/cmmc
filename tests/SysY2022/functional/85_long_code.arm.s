@@ -1157,16 +1157,7 @@ label162:
 label170:
 	cmp r1, #2
 	blt label171
-	bne label173
-	ldr r2, [sp, #240]
-	movw r1, #21846
-	movt r1, #21845
-	smmul r1, r0, r1
-	add r1, r1, r1, lsr #31
-	str r1, [sp, #240]
-	mov r1, #3
-	b label162
-label173:
+	beq label173
 	ldr r4, [sp, #92]
 	add r3, r4, r1, lsl #2
 	ldr r4, [r4, r1, lsl #2]
@@ -1215,3 +1206,12 @@ label157:
 	cmp r0, #32
 	blt label156
 	b label1077
+label173:
+	ldr r2, [sp, #240]
+	movw r1, #21846
+	movt r1, #21845
+	smmul r1, r0, r1
+	add r1, r1, r1, lsr #31
+	str r1, [sp, #240]
+	mov r1, #3
+	b label162

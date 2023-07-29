@@ -9,8 +9,8 @@ foo4:
 .p2align 4
 	push { r4, r5, r6 }
 	cmp r1, #0
-	sub r4, r1, #4
 	ble label9
+	sub r4, r1, #4
 	cmp r1, #4
 	bgt label19
 	mov r2, #0

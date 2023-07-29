@@ -18,12 +18,12 @@ graphColoring:
 label25:
 	mov r2, #0
 label4:
-	add r3, r5, r2, lsl #4
 	cmp r2, #4
 	blt label6
 	mov r5, #0
 	b label12
 label6:
+	add r3, r5, r2, lsl #4
 	add r0, r2, #1
 	mov r1, r0
 label7:

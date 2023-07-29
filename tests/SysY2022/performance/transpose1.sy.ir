@@ -14,10 +14,10 @@ func @main() -> i32 { NoRecurse Entry } {
     i32 %3 = call (i32*) -> i32 @getarray(i32* %2);
     i32 %4 = add i32 %3, i32 -4;
     i1 %5 = icmp sgt i32 %0, i32 0;
-    i32 %6 = add i32 %0, i32 -4;
     call (i32) -> void @starttime(i32 28);
     cbr i1 %5(prob = 0.97), ^prebody, ^while.header;
   ^prebody:
+    i32 %6 = add i32 %0, i32 -4;
     i1 %7 = icmp sgt i32 %0, i32 4;
     [20000000 * i32]* %8 = ptrcast [20000000 * i32]* @matrix to [20000000 * i32]*;
     cbr i1 %7(prob = 0.89), ^while.body, ^while.body1;
