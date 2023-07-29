@@ -179,6 +179,18 @@ static void graphColoringAllocateImpl(MIRFunction& mfunc, CodeGenContext& ctx, I
         std::cerr << "allocate for class " << allocationClass << std::endl;
     }
 
+    std::unordered_map<uint32_t, MIROperand> inStackArguments;
+    for(auto& inst : mfunc.blocks().front()->instructions()) {
+        if(inst.opcode() == InstLoadRegFromStack) {
+            const auto dst = inst.getOperand(0).reg();
+            const auto src = inst.getOperand(1);
+            const auto& obj = mfunc.stackObjects().at(src);
+            if(obj.usage == StackObjectUsage::Argument) {
+                inStackArguments.emplace(dst, src);
+            }
+        }
+    }
+
     while(true) {
         auto liveInterval = calcLiveIntervals(mfunc, ctx);
         if(debugRA)
@@ -564,7 +576,9 @@ static void graphColoringAllocateImpl(MIRFunction& mfunc, CodeGenContext& ctx, I
             reportUnreachable(CMMC_LOCATION());
         }
         const auto size = getOperandSize(canonicalizedType);
-        const auto stackStorage = mfunc.addStackObject(ctx, size, size, 0, StackObjectUsage::RegSpill);
+        bool alreadyInStack = inStackArguments.count(u);
+        const auto stackStorage =
+            alreadyInStack ? inStackArguments.at(u) : mfunc.addStackObject(ctx, size, size, 0, StackObjectUsage::RegSpill);
 
         std::unordered_set<MIRInst*> newInsts;
         const uint32_t minimizeIntervalThreshold = 8;
@@ -626,31 +640,36 @@ static void graphColoringAllocateImpl(MIRFunction& mfunc, CodeGenContext& ctx, I
                         loaded = true;
                 }
                 if(hasDef) {
-                    // should be placed after rename inst block
-                    auto it = next;
-                    while(it != instructions.end()) {
-                        auto& renameInst = *it;
-                        auto& renameInstInfo = ctx.instInfo.getInstInfo(renameInst);
-                        bool hasReg = false;
-                        for(uint32_t idx = 0; idx < renameInstInfo.getOperandNum(); ++idx) {
-                            const auto& op = renameInst.getOperand(idx);
-                            if(isOperandISAReg(op) && !ctx.registerInfo->isZeroRegister(op.reg()) &&
-                               isLockedOrUnderRenamedType(op.type()) && (instInfo.getOperandFlag(idx) & OperandFlagUse)) {
-                                hasReg = true;
-                                break;
+                    if(alreadyInStack) {
+                        instructions.erase(iter);
+                        loaded = false;
+                    } else {
+                        // should be placed after rename inst block
+                        auto it = next;
+                        while(it != instructions.end()) {
+                            auto& renameInst = *it;
+                            auto& renameInstInfo = ctx.instInfo.getInstInfo(renameInst);
+                            bool hasReg = false;
+                            for(uint32_t idx = 0; idx < renameInstInfo.getOperandNum(); ++idx) {
+                                const auto& op = renameInst.getOperand(idx);
+                                if(isOperandISAReg(op) && !ctx.registerInfo->isZeroRegister(op.reg()) &&
+                                   isLockedOrUnderRenamedType(op.type()) && (instInfo.getOperandFlag(idx) & OperandFlagUse)) {
+                                    hasReg = true;
+                                    break;
+                                }
                             }
+                            if(!hasReg)
+                                break;
+                            ++it;
                         }
-                        if(!hasReg)
-                            break;
-                        ++it;
+                        auto newInst =
+                            instructions.insert(it,
+                                                MIRInst{ InstStoreRegToStack }
+                                                    .setOperand<0>(MIROperand::asVReg(u - virtualRegBegin, canonicalizedType))
+                                                    .setOperand<1>(stackStorage));
+                        newInsts.insert(&*newInst);
+                        loaded = false;
                     }
-                    auto newInst =
-                        instructions.insert(it,
-                                            MIRInst{ InstStoreRegToStack }
-                                                .setOperand<0>(MIROperand::asVReg(u - virtualRegBegin, canonicalizedType))
-                                                .setOperand<1>(stackStorage));
-                    newInsts.insert(&*newInst);
-                    loaded = false;
                 }
 
                 iter = next;
@@ -658,6 +677,7 @@ static void graphColoringAllocateImpl(MIRFunction& mfunc, CodeGenContext& ctx, I
 
             // TODO: update live interval instead of recomputation?
         }
+
         cleanupRegFlags(mfunc, ctx);
     }
 }
