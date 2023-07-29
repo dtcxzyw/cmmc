@@ -34,16 +34,8 @@ merge:
 	mv s1, a3
 	sd s4, 8(sp)
 	sd ra, 0(sp)
-	bgt a3, a0, label2
-	j label15
-label13:
-	sh2add a2, s3, s2
-	sh2add a1, s3, s0
-	lw a0, 0(a2)
-	addiw s3, s3, 1
-	sw a0, 0(a1)
-	bne s1, s3, label13
-label15:
+	bgt a3, a0, label3
+label2:
 	ld ra, 0(sp)
 	ld s4, 8(sp)
 	ld s1, 16(sp)
@@ -52,7 +44,7 @@ label15:
 	ld s0, 40(sp)
 	addi sp, sp, 48
 	ret
-label2:
+label3:
 	addw a0, s3, s1
 	srliw a2, a0, 31
 	add a1, a0, a2
@@ -70,51 +62,58 @@ label2:
 	mv a0, s3
 	mv a1, s3
 	mv a2, s4
-	bne s1, s3, label7
-	bne s3, s1, label13
-	j label15
-label7:
-	xor a5, s4, a1
-	xor a4, s1, a2
-	sltu a3, zero, a5
-	sltu a5, zero, a4
-	and a3, a3, a5
-	bne a3, zero, label8
-	bne s4, a1, label9
+	bne s1, s3, label8
+	bne s3, s1, label14
+	j label2
+label8:
+	xor a4, s4, a1
+	xor a5, s1, a2
+	sltu a3, zero, a4
+	sltu a4, zero, a5
+	and a3, a3, a4
+	bne a3, zero, label9
+	bne s4, a1, label12
 	sh2add a4, a2, s0
 	sh2add a5, a0, s2
 	addiw a2, a2, 1
 	lw a3, 0(a4)
 	addiw a0, a0, 1
 	sw a3, 0(a5)
-	bne s1, a0, label7
-	bne s3, s1, label13
-	j label15
-label8:
+	bne s1, a0, label8
+	beq s3, s1, label2
+label14:
+	sh2add a2, s3, s2
+	sh2add a1, s3, s0
+	lw a0, 0(a2)
+	addiw s3, s3, 1
+	sw a0, 0(a1)
+	bne s1, s3, label14
+	j label2
+label9:
 	sh2add a4, a1, s0
 	sh2add a5, a2, s0
 	lw a3, 0(a4)
 	lw a4, 0(a5)
-	blt a3, a4, label9
+	blt a3, a4, label12
 	sh2add a4, a2, s0
 	sh2add a5, a0, s2
 	addiw a2, a2, 1
 	lw a3, 0(a4)
 	addiw a0, a0, 1
 	sw a3, 0(a5)
-	bne s1, a0, label7
-	bne s3, s1, label13
-	j label15
-label9:
-	sh2add a4, a1, s0
-	sh2add a5, a0, s2
+	bne s1, a0, label8
+	bne s3, s1, label14
+	j label2
+label12:
+	sh2add a5, a1, s0
+	sh2add a4, a0, s2
 	addiw a1, a1, 1
-	lw a3, 0(a4)
+	lw a3, 0(a5)
 	addiw a0, a0, 1
-	sw a3, 0(a5)
-	bne s1, a0, label7
-	bne s3, s1, label13
-	j label15
+	sw a3, 0(a4)
+	bne s1, a0, label8
+	bne s3, s1, label14
+	j label2
 .globl main
 main:
 	addi sp, sp, -808

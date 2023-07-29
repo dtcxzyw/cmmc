@@ -103,11 +103,11 @@ label65:
 	vmrs APSR_nzcv, FPSCR
 	bmi label101
 	vmov.f32 s20, s18
-	b label71
+	b label67
 label101:
 	vmov.f32 s21, s16
 	vmov.f32 s22, s18
-	b label67
+	b label73
 label77:
 	mov r0, #1065353216
 	vmov.f32 s1, s20
@@ -137,6 +137,14 @@ label145:
 	b label77
 label67:
 	mov r0, #1065353216
+	vmov s0, r0
+	vsub.f32 s16, s16, s0
+	vcmp.f32 s18, s16
+	vmrs APSR_nzcv, FPSCR
+	bmi label69
+	b label107
+label73:
+	mov r0, #1065353216
 	vmov.f32 s1, s21
 	vmov s25, r0
 	vmov.f32 s2, s22
@@ -154,27 +162,20 @@ label67:
 	bl takFP
 	vcmp.f32 s24, s23
 	vmrs APSR_nzcv, FPSCR
-	bmi label113
+	bmi label133
 	vmov.f32 s20, s0
-	b label71
-label113:
+	b label67
+label133:
 	vmov.f32 s20, s23
 	vmov.f32 s21, s24
 	vmov.f32 s22, s0
-	b label67
-label71:
-	mov r0, #1065353216
-	vmov s0, r0
-	vsub.f32 s16, s16, s0
-	vcmp.f32 s18, s16
-	vmrs APSR_nzcv, FPSCR
-	bmi label73
-label119:
+	b label73
+label107:
 	vmov.f32 s16, s17
 	vmov.f32 s18, s19
 	vmov.f32 s17, s20
 	b label60
-label73:
+label69:
 	mov r0, #1065353216
 	vmov.f32 s1, s18
 	vmov s23, r0
@@ -194,10 +195,10 @@ label73:
 	vcmp.f32 s22, s21
 	vmov.f32 s17, s0
 	vmrs APSR_nzcv, FPSCR
-	bpl label119
+	bpl label107
 	vmov.f32 s16, s21
 	vmov.f32 s18, s22
-	b label73
+	b label69
 .globl main
 main:
 .p2align 4
@@ -229,9 +230,8 @@ main:
 	vmov s1, r0
 	vcmp.f32 s0, s1
 	vmrs APSR_nzcv, FPSCR
-	bne label153
-	mov r0, #112
-	bl putch
+	beq label153
+	b label154
 label149:
 	mov r0, #1065353216
 	vmov s0, r0
@@ -251,6 +251,10 @@ label152:
 	bl putint
 	b label151
 label153:
+	mov r0, #112
+	bl putch
+	b label149
+label154:
 	mov r0, #1
 	bl putint
 	b label149

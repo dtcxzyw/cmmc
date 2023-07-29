@@ -82,47 +82,46 @@ main:
 	sw a2, 232(sp)
 	sw a2, 236(sp)
 	li a2, 19
-	bge a2, zero, label5
+	bge a2, zero, label103
 	lw a0, 0(sp)
-	bne a0, zero, label14
+	bne a0, zero, label6
 label209:
 	li s1, 1
-	j label15
-.p2align 2
-label5:
+	j label7
+label103:
 	sh2add a4, a2, a1
 	lw a3, 0(a4)
 	li a4, 19
-	bge a4, zero, label9
+	bge a4, zero, label14
 	addiw a5, a5, 19
 	addiw a2, a2, -1
-	bge a2, zero, label5
+	bge a2, zero, label103
 	lw a0, 0(sp)
-	bne a0, zero, label14
+	bne a0, zero, label6
 	j label209
 .p2align 2
-label9:
+label14:
 	sh2add t2, a5, s0
 	sh2add t1, a4, a0
 	lw t0, 0(t2)
-	lw t2, 0(t1)
+	lw t3, 0(t1)
 	li t1, 9
-	mulw t3, a3, t2
-	addw t0, t0, t3
-	bgt t0, t1, label10
+	mulw t2, a3, t3
+	addw t0, t0, t2
+	bgt t0, t1, label16
 	sh2add t1, a5, s0
 	addiw a4, a4, -1
 	addiw a5, a5, -1
 	sw t0, 0(t1)
-	bge a4, zero, label9
+	bge a4, zero, label14
 	addiw a5, a5, 19
 	addiw a2, a2, -1
-	bge a2, zero, label5
+	bge a2, zero, label103
 	lw a0, 0(sp)
-	bne a0, zero, label14
+	bne a0, zero, label6
 	j label209
 .p2align 2
-label10:
+label16:
 	addiw t1, a5, -1
 	sh2add t3, a5, s0
 	li t4, 1717986919
@@ -137,28 +136,26 @@ label10:
 	addw a5, a5, t0
 	sw a5, 0(t2)
 	mv a5, t1
-	bge a4, zero, label9
+	bge a4, zero, label14
 	addiw a5, t1, 19
 	addiw a2, a2, -1
-	bge a2, zero, label5
+	bge a2, zero, label103
 	lw a0, 0(sp)
-	bne a0, zero, label14
-	j label209
+	beq a0, zero, label209
+label6:
+	jal putint
+	li s1, 1
 .p2align 2
-label15:
+label7:
 	sh2add a1, s1, s0
 	lw a0, 0(a1)
 	jal putint
 	li a0, 40
 	addiw s1, s1, 1
-	blt s1, a0, label15
+	blt s1, a0, label7
 	mv a0, zero
 	ld ra, 360(sp)
 	ld s1, 368(sp)
 	ld s0, 376(sp)
 	addi sp, sp, 384
 	ret
-label14:
-	jal putint
-	li s1, 1
-	j label15

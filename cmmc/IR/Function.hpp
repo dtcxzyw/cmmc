@@ -30,7 +30,8 @@ enum class FunctionAttribute {
     NoAlias = 1 << 4,
     NoReturn = 1 << 5,
     NoRecurse = 1 << 6,
-    Entry = 1 << 7
+    Entry = 1 << 7,
+    Builtin = 1 << 8,
 };
 
 enum class CallingConvention { C, Fast };

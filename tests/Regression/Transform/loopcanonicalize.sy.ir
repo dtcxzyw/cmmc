@@ -3,28 +3,29 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
   ^entry:
     i32 %0 = call () -> i32 @getint();
     i1 %1 = icmp sgt i32 %0, i32 0;
+    i32 %2 = add i32 %0, i32 -4;
     cbr i1 %1(prob = 0.97), ^super.header, ^b;
   ^super.header:
-    i1 %2 = icmp sgt i32 %0, i32 4;
-    cbr i1 %2(prob = 0.89), ^for.body, ^for.body1;
+    i1 %3 = icmp sgt i32 %0, i32 4;
+    cbr i1 %3(prob = 0.89), ^for.body, ^for.body1;
   ^b:
-    i32 %3 = phi [^entry, i32 1149590] [^for.body1, i32 %16];
-    ret i32 %3;
+    i32 %4 = phi [^entry, i32 1149590] [^for.body1, i32 %17];
+    ret i32 %4;
   ^for.body:
-    i32 %4 = phi [^super.header, i32 1149590] [^for.body, i32 %8];
-    i32 %5 = phi [^super.header, i32 0] [^for.body, i32 %11];
-    i32 %6 = mul i32 %5, i32 4;
-    i32 %7 = add i32 %6, i32 6;
-    i32 %8 = add i32 %4, i32 %7;
-    i32 %9 = add i32 %5, i32 8;
-    i1 %10 = icmp sgt i32 %0, i32 %9;
-    i32 %11 = add i32 %5, i32 4;
-    cbr i1 %10(prob = 0.89), ^for.body, ^for.body1;
-  ^for.body1:
-    i32 %12 = phi [^super.header, i32 0] [^for.body, i32 %11] [^for.body1, i32 %14];
-    i32 %13 = phi [^super.header, i32 1149590] [^for.body, i32 %8] [^for.body1, i32 %16];
-    i32 %14 = add i32 %12, i32 1;
-    i1 %15 = icmp sgt i32 %0, i32 %14;
-    i32 %16 = add i32 %12, i32 %13;
-    cbr i1 %15(prob = 0.75), ^for.body1, ^b;
+    i32 %5 = phi [^super.header, i32 0] [^for.body, i32 %12];
+    i32 %6 = phi [^super.header, i32 1149590] [^for.body, i32 %9];
+    i32 %7 = phi [^super.header, i32 0] [^for.body, i32 %10];
+    i32 %8 = add i32 %5, i32 6;
+    i32 %9 = add i32 %6, i32 %8;
+    i32 %10 = add i32 %7, i32 4;
+    i1 %11 = icmp sgt i32 %2, i32 %10;
+    i32 %12 = add i32 %5, i32 16;
+    cbr i1 %11(prob = 0.89), ^for.body, ^for.body1;
+  ^for.body1 {scalar}:
+    i32 %13 = phi [^super.header, i32 0] [^for.body, i32 %10] [^for.body1, i32 %15];
+    i32 %14 = phi [^super.header, i32 1149590] [^for.body, i32 %9] [^for.body1, i32 %17];
+    i32 %15 = add i32 %13, i32 1;
+    i1 %16 = icmp sgt i32 %0, i32 %15;
+    i32 %17 = add i32 %13, i32 %14;
+    cbr i1 %16(prob = 0.75), ^for.body1, ^b;
 }

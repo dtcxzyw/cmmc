@@ -132,10 +132,10 @@ label9:
 	moveq r2, r1
 	cmp r7, #0
 	mla r0, r2, r0, r2
-	beq label12
+	beq label11
 	sdiv r1, r0, r7
 	mls r0, r1, r7, r0
-label12:
+label11:
 	ldr r7, [sp, #60]
 	ldr r8, [sp, #72]
 	cmp r8, #0
@@ -143,11 +143,11 @@ label12:
 	moveq r1, r7
 	cmp r3, #0
 	add r1, r1, #1
-	beq label14
+	beq label13
 	rsb r2, r3, #0
 	sdiv r3, r1, r2
 	mls r1, r3, r2, r1
-label14:
+label13:
 	clz r2, r6
 	ldr r8, [sp, #68]
 	cmp r6, #0
@@ -156,11 +156,11 @@ label14:
 	movne r2, r8
 	cmp r5, #0
 	mul r1, r1, r2
-	beq label17
+	beq label15
 	rsb r2, r5, #0
 	sdiv r3, r1, r2
 	mls r1, r3, r2, r1
-label17:
+label15:
 	ldr r8, [sp, #40]
 	add r2, r8, r1
 	ldr r8, [sp, #44]

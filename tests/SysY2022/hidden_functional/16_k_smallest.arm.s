@@ -39,69 +39,66 @@ label113:
 	movt r5, #:upper16:array
 	ldr r3, [r5, r1, lsl #2]
 	cmp r1, r0
-	bgt label22
+	bgt label15
 	ldr r2, [r5, r0, lsl #2]
 	cmp r4, r0
 	ldr r3, [r5, r1, lsl #2]
 	str r3, [r5, r0, lsl #2]
 	str r2, [r5, r1, lsl #2]
-	bne label16
-label19:
+	beq label23
+	b label20
+.p2align 4
+label15:
+	ldr r7, [r5, r2, lsl #2]
+	cmp r3, r7
+	bge label16
+	add r2, r2, #1
+	cmp r1, r2
+	bgt label15
+	ldr r2, [r5, r6, lsl #2]
+	cmp r4, r6
+	ldr r3, [r5, r1, lsl #2]
+	str r3, [r5, r6, lsl #2]
+	str r2, [r5, r1, lsl #2]
+	bne label20
+label23:
 	cmp r6, #0
 	ble label26
 	mov r4, #0
 .p2align 4
-label20:
+label24:
 	ldr r0, [r5, r4, lsl #2]
 	bl putint
 	mov r0, #32
 	bl putch
 	add r4, r4, #1
 	cmp r6, r4
-	bgt label20
-	b label26
-.p2align 4
-label22:
-	ldr r7, [r5, r2, lsl #2]
-	cmp r3, r7
-	bge label23
-	add r2, r2, #1
-	cmp r1, r2
-	bgt label22
-	ldr r2, [r5, r6, lsl #2]
-	cmp r4, r6
-	ldr r3, [r5, r1, lsl #2]
-	str r3, [r5, r6, lsl #2]
-	str r2, [r5, r1, lsl #2]
-	beq label19
-	b label16
+	bgt label24
 label26:
 	mov r0, #0
 	pop { r4, r5, r6, r7, r8, pc }
-label16:
-	cmp r4, r6
-	blt label69
-	add r0, r6, #1
-	b label9
-label69:
-	sub r1, r6, #1
-	b label9
 .p2align 4
-label23:
+label16:
 	ldr r8, [r5, r6, lsl #2]
 	str r8, [r5, r2, lsl #2]
 	str r7, [r5, r6, lsl #2]
 	add r6, r6, #1
 	add r2, r2, #1
 	cmp r1, r2
-	bgt label22
+	bgt label15
 	ldr r2, [r5, r6, lsl #2]
 	cmp r4, r6
 	ldr r3, [r5, r1, lsl #2]
 	str r3, [r5, r6, lsl #2]
 	str r2, [r5, r1, lsl #2]
-	beq label19
-	b label16
+	beq label23
+label20:
+	cmp r4, r6
+	blt label83
+	add r0, r6, #1
+	b label9
+label83:
+	sub r1, r6, #1
 label9:
 	cmp r0, r1
 	beq label26

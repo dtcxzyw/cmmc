@@ -17,12 +17,43 @@
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/IRBuilder.hpp>
 #include <cmmc/IR/Instruction.hpp>
+#include <cmmc/Transforms/Hyperparameters.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <cmmc/Transforms/Util/PatternMatch.hpp>
 
 CMMC_NAMESPACE_BEGIN
 
 class LoopCanonicalize final : public TransformPass<Function> {
+    static bool simplifyIndVar(Block* block, CompareInst* cmp, BranchInst* terminatorBranch, const DominateAnalysisResult& dom) {
+        // addrec (initial, step) + offset < end -> addrec (initial step) + step < end + step - offset
+        const auto next = cmp->getOperand(0);
+        const auto rhs = cmp->getOperand(1);
+        Value* v1;
+        intmax_t i1, i2;
+        if(!(add(any(v1), int_(i1))(MatchContext<Value>{ next }) && std::abs(i1) < maxStep))
+            return false;
+
+        if(!v1->is<PhiInst>())
+            return false;
+        const auto phi = v1->as<PhiInst>();
+        const auto latch = block;
+        const auto header = terminatorBranch->getTrueTarget();
+        if(!(phi->getBlock() == header && phi->incomings().count(latch)))
+            return false;
+        const auto indvar = phi->incomings().at(latch)->value;
+        if(!(add(exactly(v1), int_(i2))(MatchContext<Value>{ indvar }) && i1 != i2 && std::abs(i2) < maxStep))
+            return false;
+        if(rhs->getBlock() != nullptr && !(rhs->getBlock() != block && dom.dominate(rhs->getBlock(), block)))
+            return false;
+        const auto newLhs = make<BinaryInst>(InstructionID::Add, v1, ConstantInteger::get(v1->getType(), i2));
+        const auto newRhs = make<BinaryInst>(InstructionID::Add, rhs, ConstantInteger::get(rhs->getType(), i2 - i1));
+        newLhs->insertBefore(block, cmp->asIterator());
+        newRhs->insertBefore(block, cmp->asIterator());
+        cmp->mutableOperands()[0]->resetValue(newLhs);
+        cmp->mutableOperands()[1]->resetValue(newRhs);
+        return true;
+    }
+
 public:
     bool run(Function& func, AnalysisPassManager& analysis) const override {
         auto& dom = analysis.get<DominateAnalysis>(func);
@@ -68,6 +99,7 @@ public:
                     }
                 }
             }
+
             const auto terminatorBranch = terminator->as<BranchInst>();
             if(terminatorBranch->getTrueTarget() != terminatorBranch->getFalseTarget() && cmp->hasExactlyOneUse() &&
                dom.dominate(terminatorBranch->getFalseTarget(), block) &&
@@ -77,6 +109,8 @@ public:
                 cmp->setOp(getInvertedOp(cmp->getOp()));
                 modified = true;
             }
+
+            modified |= simplifyIndVar(block, cmp, terminatorBranch, dom);
         }
 
         return modified;

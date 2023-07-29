@@ -739,9 +739,15 @@ params_fa40:
 	xori t6, a6, 1
 	fcvt.s.w f11, t6
 	feq.s a6, f11, f10
-	beq a6, zero, label435
-	j label436
-label433:
+	bne a6, zero, label436
+	ld s0, 360(sp)
+	li a0, 10
+	mv a1, s0
+	jal putfarray
+	ld s10, 408(sp)
+	sh2add a0, s10, s0
+	flw f10, 0(a0)
+label434:
 	ld ra, 400(sp)
 	ld s10, 424(sp)
 	ld s9, 432(sp)
@@ -756,15 +762,6 @@ label433:
 	ld s5, 264(sp)
 	addi sp, sp, 608
 	ret
-label435:
-	ld s0, 360(sp)
-	li a0, 10
-	mv a1, s0
-	jal putfarray
-	ld s10, 408(sp)
-	sh2add a0, s10, s0
-	flw f10, 0(a0)
-	j label433
 label436:
 	sd a0, 0(sp)
 	sd a1, 8(sp)
@@ -833,7 +830,7 @@ label436:
 	mv a6, a7
 	mv a7, s4
 	jal params_fa40
-	j label433
+	j label434
 params_mix:
 .p2align 2
 	addi sp, sp, -896
@@ -1331,8 +1328,8 @@ label1275:
 	blt s0, a0, label1275
 	lw s6, 1784(sp)
 	ld s0, 1416(sp)
-	addi a0, s0, 12
 	sh2add a1, s6, s0
+	addi a0, s0, 12
 	flw f10, 0(a1)
 	sh2add a1, s6, a0
 	fsw f10, 1616(sp)
@@ -1355,15 +1352,15 @@ label1275:
 	fsw f14, 1600(sp)
 	flw f24, 0(a1)
 	sh2add a1, s6, a0
-	flw f16, 0(a1)
 	sh2add a0, s6, a2
+	flw f16, 0(a1)
 	addi a2, s0, 96
 	fsw f16, 1692(sp)
 	sh2add a1, s6, a2
 	flw f8, 0(a0)
 	addi a2, s0, 144
-	flw f23, 0(a1)
 	addi a0, s0, 108
+	flw f23, 0(a1)
 	sh2add a1, s6, a0
 	flw f14, 0(a1)
 	addi a0, s0, 120
@@ -1400,8 +1397,8 @@ label1275:
 	addi a0, s0, 216
 	flw f27, 0(a1)
 	sh2add a1, s6, a0
-	addi a0, s0, 228
 	flw f11, 0(a1)
+	addi a0, s0, 228
 	sh2add a1, s6, a0
 	fsw f11, 416(sp)
 	addi a0, s0, 240
@@ -1419,8 +1416,8 @@ label1275:
 	addi a0, s0, 276
 	flw f21, 0(a1)
 	sh2add a1, s6, a0
-	addi a0, s0, 288
 	flw f22, 0(a1)
+	addi a0, s0, 288
 	sh2add a1, s6, a0
 	sh2add a0, s6, a2
 	flw f10, 0(a1)
@@ -1980,8 +1977,8 @@ label1275:
 	jal putint
 	li a0, 10
 	jal putch
-	mv a0, zero
 	ld ra, 1712(sp)
+	mv a0, zero
 	ld s4, 1728(sp)
 	ld s5, 1744(sp)
 	ld s3, 1752(sp)

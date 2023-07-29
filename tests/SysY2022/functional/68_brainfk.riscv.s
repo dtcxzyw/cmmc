@@ -19,26 +19,40 @@ main:
 	sd ra, 0(sp)
 	jal getint
 	mv s0, a0
-	bgt a0, zero, label37
+	bgt a0, zero, label2
 	mv a0, zero
-pcrel171:
+pcrel170:
 	auipc a2, %pcrel_hi(program)
 	mv s2, zero
-	addi a1, a2, %pcrel_lo(pcrel171)
-	mv a0, a1
+	addi a1, a2, %pcrel_lo(pcrel170)
+	mv a2, a1
 	mv s0, a1
+pcrel171:
+	auipc a0, %pcrel_hi(tape)
 	sw zero, 0(a1)
-pcrel172:
-	auipc a1, %pcrel_hi(tape)
+	addi s1, a0, %pcrel_lo(pcrel171)
 	mv s3, zero
-	addi s1, a1, %pcrel_lo(pcrel172)
-	j label4
-label37:
-	auipc a1, %pcrel_hi(program)
-	mv s2, zero
-	addi s1, a1, %pcrel_lo(label37)
-	j label32
-label30:
+	lw a0, 0(a1)
+	beq a0, zero, label33
+.p2align 2
+label10:
+	li a1, 62
+	beq a0, a1, label11
+	li a1, 60
+	beq a0, a1, label16
+	li a1, 43
+	beq a0, a1, label18
+	j label19
+.p2align 2
+label11:
+	addiw s2, s2, 1
+.p2align 2
+label12:
+	addiw s3, s3, 1
+	sh2add a1, s3, s0
+	lw a0, 0(a1)
+	bne a0, zero, label10
+label33:
 	mv a0, zero
 	ld ra, 0(sp)
 	ld s3, 8(sp)
@@ -48,110 +62,85 @@ label30:
 	addi sp, sp, 40
 	ret
 .p2align 2
-label32:
-	jal getch
-	sh2add a1, s2, s1
-	addiw s2, s2, 1
-	sw a0, 0(a1)
-	bgt s0, s2, label32
-	mv a0, s0
-pcrel173:
-	auipc a2, %pcrel_hi(program)
-	mv s2, zero
-	addi a1, a2, %pcrel_lo(pcrel173)
-	sh2add a0, s0, a1
-	mv s0, a1
-	sw zero, 0(a0)
-pcrel174:
-	auipc a1, %pcrel_hi(tape)
-	mv s3, zero
-	addi s1, a1, %pcrel_lo(pcrel174)
-	mv a1, s0
-	lw a0, 0(s0)
-	bne a0, zero, label7
-	j label30
-.p2align 2
-label4:
-	sh2add a1, s3, s0
-	lw a0, 0(a1)
-	beq a0, zero, label30
-.p2align 2
-label7:
-	li a1, 62
-	beq a0, a1, label8
-	li a1, 60
-	beq a0, a1, label13
-	li a1, 43
-	beq a0, a1, label15
-	j label16
-.p2align 2
-label8:
-	addiw s2, s2, 1
-.p2align 2
-label9:
-	addiw s3, s3, 1
-	sh2add a1, s3, s0
-	lw a0, 0(a1)
-	bne a0, zero, label7
-	j label30
-.p2align 2
-label13:
+label16:
 	addiw s2, s2, -1
 	addiw s3, s3, 1
 	sh2add a1, s3, s0
 	lw a0, 0(a1)
-	bne a0, zero, label7
-	j label30
-label16:
+	bne a0, zero, label10
+	j label33
+label19:
 	li a1, 45
-	beq a0, a1, label73
+	beq a0, a1, label83
 	li a1, 46
-	beq a0, a1, label28
+	beq a0, a1, label31
 	li a1, 44
-	beq a0, a1, label27
+	beq a0, a1, label30
 	li a1, 93
-	beq a0, a1, label20
-	j label9
-label27:
-	jal getch
+	bne a0, a1, label12
 	sh2add a1, s2, s1
-	sw a0, 0(a1)
-	j label9
-label20:
-	sh2add a0, s2, s1
-	lw a1, 0(a0)
-	beq a1, zero, label9
+	lw a0, 0(a1)
+	beq a0, zero, label12
 	li a0, 1
-label21:
-	ble a0, zero, label9
+label24:
+	ble a0, zero, label12
 	addiw s3, s3, -1
 	li a2, 91
 	sh2add a3, s3, s0
 	lw a1, 0(a3)
-	beq a1, a2, label25
-	j label103
-label15:
+	beq a1, a2, label114
+	xori a2, a1, 93
+	sltiu a1, a2, 1
+	addw a0, a0, a1
+	j label24
+label18:
 	sh2add a0, s2, s1
 	lw a2, 0(a0)
 	addi a1, a2, 1
 	sw a1, 0(a0)
-	j label9
-label103:
-	xori a2, a1, 93
-	sltiu a1, a2, 1
-	addw a0, a0, a1
-	j label21
-label25:
+	j label12
+label114:
 	addiw a0, a0, -1
-	j label21
-label73:
+	j label24
+label83:
 	sh2add a0, s2, s1
 	lw a1, 0(a0)
 	addi a2, a1, -1
 	sw a2, 0(a0)
-	j label9
-label28:
+	j label12
+label31:
 	sh2add a1, s2, s1
 	lw a0, 0(a1)
 	jal putch
-	j label9
+	j label12
+label2:
+	auipc a0, %pcrel_hi(program)
+	mv s2, zero
+	addi s1, a0, %pcrel_lo(label2)
+.p2align 2
+label3:
+	jal getch
+	sh2add a1, s2, s1
+	addiw s2, s2, 1
+	sw a0, 0(a1)
+	bgt s0, s2, label3
+	mv a0, s0
+pcrel172:
+	auipc a2, %pcrel_hi(program)
+	mv s2, zero
+	addi a1, a2, %pcrel_lo(pcrel172)
+	sh2add a2, s0, a1
+	mv s0, a1
+pcrel173:
+	auipc a0, %pcrel_hi(tape)
+	sw zero, 0(a2)
+	addi s1, a0, %pcrel_lo(pcrel173)
+	mv s3, zero
+	lw a0, 0(a1)
+	bne a0, zero, label10
+	j label33
+label30:
+	jal getch
+	sh2add a1, s2, s1
+	sw a0, 0(a1)
+	j label12

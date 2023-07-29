@@ -53,6 +53,9 @@ void Block::dumpLabeled(std::ostream& out, const HighlightSelector& selector) co
     }
     out << "  ";
     dumpAsTarget(out);
+    if(mTransformMetadata.scalarBlock) {
+        out << " {scalar}";
+    }
     if(selector.highlight(this)) {
         out << "\033[0m";
     }

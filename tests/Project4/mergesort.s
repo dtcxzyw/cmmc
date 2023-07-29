@@ -39,20 +39,9 @@ merge:
 	move $s1, $a3
 	addiu $t0, $a2, 1
 	subu $t0, $a3, $t0
-	bgtz $t0, label2
+	bgtz $t0, label3
 	nop
-	b label15
-	nop
-label13:
-	sll $t0, $s3, 2
-	addu $t1, $s2, $t0
-	lw $t1, 0($t1)
-	addu $t0, $s0, $t0
-	sw $t1, 0($t0)
-	addiu $s3, $s3, 1
-	bne $s1, $s3, label13
-	nop
-label15:
+label2:
 	lw $ra, 0($sp)
 	lw $s4, 4($sp)
 	lw $s1, 8($sp)
@@ -62,7 +51,7 @@ label15:
 	addiu $sp, $sp, 24
 	jr $ra
 	nop
-label2:
+label3:
 	addu $t0, $s3, $s1
 	li $t1, 2
 	div $zero, $t0, $t1
@@ -82,21 +71,21 @@ label2:
 	move $t2, $s4
 	move $t1, $s3
 	move $t0, $s3
-	bne $s1, $s3, label7
+	bne $s1, $s3, label8
 	nop
-	bne $s3, $s1, label13
+	bne $s3, $s1, label14
 	nop
-	b label15
+	b label2
 	nop
-label7:
+label8:
 	xor $t3, $s4, $t1
 	sltu $t3, $zero, $t3
 	xor $t4, $s1, $t2
 	sltu $t4, $zero, $t4
 	and $t3, $t3, $t4
-	bne $t3, $zero, label8
+	bne $t3, $zero, label9
 	nop
-	bne $s4, $t1, label9
+	bne $s4, $t1, label12
 	nop
 	sll $t3, $t2, 2
 	addu $t3, $s0, $t3
@@ -106,13 +95,22 @@ label7:
 	sw $t3, 0($t4)
 	addiu $t2, $t2, 1
 	addiu $t0, $t0, 1
-	bne $s1, $t0, label7
+	bne $s1, $t0, label8
 	nop
-	bne $s3, $s1, label13
+	beq $s3, $s1, label2
 	nop
-	b label15
+label14:
+	sll $t0, $s3, 2
+	addu $t1, $s2, $t0
+	lw $t1, 0($t1)
+	addu $t0, $s0, $t0
+	sw $t1, 0($t0)
+	addiu $s3, $s3, 1
+	bne $s1, $s3, label14
 	nop
-label8:
+	b label2
+	nop
+label9:
 	sll $t3, $t1, 2
 	addu $t3, $s0, $t3
 	lw $t3, 0($t3)
@@ -120,7 +118,7 @@ label8:
 	addu $t4, $s0, $t4
 	lw $t4, 0($t4)
 	subu $t3, $t3, $t4
-	bltz $t3, label9
+	bltz $t3, label12
 	nop
 	sll $t3, $t2, 2
 	addu $t3, $s0, $t3
@@ -130,13 +128,13 @@ label8:
 	sw $t3, 0($t4)
 	addiu $t2, $t2, 1
 	addiu $t0, $t0, 1
-	bne $s1, $t0, label7
+	bne $s1, $t0, label8
 	nop
-	bne $s3, $s1, label13
+	bne $s3, $s1, label14
 	nop
-	b label15
+	b label2
 	nop
-label9:
+label12:
 	sll $t3, $t1, 2
 	addu $t3, $s0, $t3
 	lw $t3, 0($t3)
@@ -145,11 +143,11 @@ label9:
 	sw $t3, 0($t4)
 	addiu $t1, $t1, 1
 	addiu $t0, $t0, 1
-	bne $s1, $t0, label7
+	bne $s1, $t0, label8
 	nop
-	bne $s3, $s1, label13
+	bne $s3, $s1, label14
 	nop
-	b label15
+	b label2
 	nop
 .globl main
 main:

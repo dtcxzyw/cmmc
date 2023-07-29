@@ -14,12 +14,11 @@ exgcd:
 	mv s2, a3
 	sd s4, 8(sp)
 	sd ra, 0(sp)
-	bne a1, zero, label5
-	li a0, 1
-	sw a0, 0(a2)
-	mv a0, s0
+	bne a1, zero, label4
+	li a1, 1
+	sw a1, 0(a2)
 	sw zero, 0(a3)
-label3:
+label2:
 	ld ra, 0(sp)
 	ld s4, 8(sp)
 	ld s2, 16(sp)
@@ -28,9 +27,9 @@ label3:
 	ld s0, 40(sp)
 	addi sp, sp, 48
 	ret
-label5:
+label4:
 	remw s4, s0, s1
-	bne s4, zero, label9
+	bne s4, zero, label8
 	li a0, 1
 	sw a0, 0(s3)
 	mv a0, s1
@@ -43,8 +42,8 @@ label5:
 	mulw a3, a2, a4
 	subw a1, a1, a3
 	sw a1, 0(s2)
-	j label3
-label9:
+	j label2
+label8:
 	remw a1, s1, s4
 	mv a0, s4
 	mv a2, s3
@@ -53,10 +52,10 @@ label9:
 	lw a1, 0(s3)
 	lw a3, 0(s2)
 	sw a3, 0(s3)
-	lw a4, 0(s2)
+	lw a3, 0(s2)
 	divw a2, s1, s4
-	mulw a3, a2, a4
-	subw a1, a1, a3
+	mulw a4, a2, a3
+	subw a1, a1, a4
 	sw a1, 0(s2)
 	lw a1, 0(s3)
 	divw a2, s0, s1
@@ -66,7 +65,7 @@ label9:
 	mulw a3, a2, a4
 	subw a1, a1, a3
 	sw a1, 0(s2)
-	j label3
+	j label2
 .globl main
 main:
 .p2align 2
@@ -80,8 +79,8 @@ main:
 	sw a0, 4(sp)
 	li a0, 7
 	jal exgcd
-	lw a0, 0(sp)
 	li a1, -2004318071
+	lw a0, 0(sp)
 	mul a2, a0, a1
 	srli a3, a2, 32
 	add a1, a3, a0

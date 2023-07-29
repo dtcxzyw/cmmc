@@ -1079,6 +1079,18 @@ InstSelection:
         NonNegativeHint: $NonNegativeHint
 
   - Pattern:
+      InstSDiv:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        $Predicate: isOperandI64($Dst) && isOperandIReg($Lhs) && isOperandIReg($Rhs)
+    Replace:
+      DIV:
+        Rd: $Dst
+        Rs1: $Lhs
+        Rs2: $Rhs
+
+  - Pattern:
       InstSRem:
         Dst: $Dst
         Lhs: $Lhs
@@ -1144,6 +1156,18 @@ InstSelection:
         NonNegativeHint: $NonNegativeHint
 
   - Pattern:
+      InstSRem:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        $Predicate: isOperandI64($Dst) && isOperandIReg($Lhs) && isOperandIReg($Rhs)
+    Replace:
+      REM:
+        Rd: $Dst
+        Rs1: $Lhs
+        Rs2: $Rhs
+
+  - Pattern:
       InstUDiv:
         Dst: $Dst
         Lhs: $Lhs
@@ -1163,6 +1187,30 @@ InstSelection:
         $Predicate: isOperandI32($Dst) && isOperandIReg($Lhs) && isOperandIReg($Rhs)
     Replace:
       REMUW:
+        Rd: $Dst
+        Rs1: $Lhs
+        Rs2: $Rhs
+
+  - Pattern:
+      InstUDiv:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        $Predicate: isOperandI64($Dst) && isOperandIReg($Lhs) && isOperandIReg($Rhs)
+    Replace:
+      DIVU:
+        Rd: $Dst
+        Rs1: $Lhs
+        Rs2: $Rhs
+
+  - Pattern:
+      InstURem:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        $Predicate: isOperandI64($Dst) && isOperandIReg($Lhs) && isOperandIReg($Rhs)
+    Replace:
+      REMU:
         Rd: $Dst
         Rs1: $Lhs
         Rs2: $Rhs

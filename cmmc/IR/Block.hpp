@@ -36,6 +36,7 @@ struct HighlightBlock final : public HighlightSelector {
 
 struct BlockTransformMetadata final {
     uint32_t rotateCount = 0;
+    uint32_t unrollCount = 0;
     bool scalarBlock = false;
 };
 

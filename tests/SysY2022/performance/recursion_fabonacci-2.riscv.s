@@ -84,8 +84,8 @@ takFP:
 	fmv.s f18, f10
 	fsw f20, 24(sp)
 	fsw f19, 20(sp)
-	fsw f25, 16(sp)
-	fsw f23, 12(sp)
+	fsw f23, 16(sp)
+	fsw f25, 12(sp)
 	fsw f24, 8(sp)
 	sd ra, 0(sp)
 label64:
@@ -106,8 +106,8 @@ label85:
 	fmv.s f10, f8
 	ld ra, 0(sp)
 	flw f24, 8(sp)
-	flw f23, 12(sp)
-	flw f25, 16(sp)
+	flw f25, 12(sp)
+	flw f23, 16(sp)
 	flw f19, 20(sp)
 	flw f20, 24(sp)
 	flw f18, 28(sp)
@@ -124,11 +124,11 @@ label69:
 	flt.s a0, f8, f20
 	bne a0, zero, label105
 	fmv.s f21, f18
-	j label75
+	j label71
 label105:
 	fmv.s f21, f8
 	fmv.s f22, f18
-	j label71
+	j label77
 label81:
 	lui a0, 260096
 	fmv.s f11, f19
@@ -157,6 +157,13 @@ label149:
 	j label81
 label71:
 	lui a0, 260096
+	fmv.w.x f10, a0
+	fsub.s f8, f8, f10
+	flt.s a0, f18, f8
+	bne a0, zero, label73
+	j label111
+label77:
+	lui a0, 260096
 	fmv.s f11, f21
 	fmv.w.x f25, a0
 	fmv.s f12, f22
@@ -173,26 +180,20 @@ label71:
 	fsub.s f10, f22, f25
 	jal takFP
 	flt.s a0, f24, f23
-	bne a0, zero, label117
+	bne a0, zero, label137
 	fmv.s f21, f10
-	j label75
-label117:
+	j label71
+label137:
 	fmv.s f20, f23
 	fmv.s f21, f24
 	fmv.s f22, f10
-	j label71
-label75:
-	lui a0, 260096
-	fmv.w.x f10, a0
-	fsub.s f8, f8, f10
-	flt.s a0, f18, f8
-	bne a0, zero, label77
-label123:
+	j label77
+label111:
 	fmv.s f8, f9
 	fmv.s f18, f19
 	fmv.s f9, f21
 	j label64
-label77:
+label73:
 	lui a0, 260096
 	fmv.s f11, f18
 	fmv.w.x f23, a0
@@ -211,10 +212,10 @@ label77:
 	jal takFP
 	flt.s a0, f22, f20
 	fmv.s f9, f10
-	beq a0, zero, label123
+	beq a0, zero, label111
 	fmv.s f8, f20
 	fmv.s f18, f22
-	j label77
+	j label73
 .globl main
 main:
 .p2align 2
@@ -242,14 +243,13 @@ main:
 	fcvt.s.w f10, s0
 	fadd.s f10, f10, f11
 	jal fibFP
-pcrel197:
+pcrel198:
 	auipc a0, %pcrel_hi(__cmmc_fp_constant_pool)
-	addi a1, a0, %pcrel_lo(pcrel197)
+	addi a1, a0, %pcrel_lo(pcrel198)
 	flw f11, 0(a1)
 	feq.s a0, f10, f11
-	beq a0, zero, label168
-	li a0, 112
-	jal putch
+	bne a0, zero, label168
+	j label169
 label164:
 	lui a0, 260096
 	fmv.w.x f10, a0
@@ -272,6 +272,10 @@ label167:
 	jal putint
 	j label166
 label168:
+	li a0, 112
+	jal putch
+	j label164
+label169:
 	li a0, 1
 	jal putint
 	j label164

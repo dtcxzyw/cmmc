@@ -91,6 +91,7 @@ void Function::dump(std::ostream& out, const HighlightSelector& selector) const 
         HANDLE_ATTR(NoReturn);
         HANDLE_ATTR(NoRecurse);
         HANDLE_ATTR(Entry);
+        HANDLE_ATTR(Builtin);
 
 #undef HANDLE_ATTR
         out << "}"sv;

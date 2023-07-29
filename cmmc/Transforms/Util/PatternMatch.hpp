@@ -533,4 +533,19 @@ inline auto exactly(Value*& val) noexcept {
     return ExactlyMatcher{ val };
 }
 
+class PhiMatcher final : public GenericMatcher<PhiInst, PhiMatcher> {
+    PhiInst*& mPhi;
+
+public:
+    explicit PhiMatcher(PhiInst*& phi) noexcept : mPhi{ phi } {}
+    [[nodiscard]] bool handle(const MatchContext<PhiInst>& ctx) const noexcept {
+        mPhi = ctx.value;
+        return true;
+    }
+};
+
+inline auto phi(PhiInst*& phi) noexcept {
+    return PhiMatcher{ phi };
+}
+
 CMMC_NAMESPACE_END

@@ -226,7 +226,7 @@ public:
 
         const auto funcOrder = analysis.get<CallGraphSCCAnalysis>().getOrder();
         for(auto func : funcOrder) {
-            if(func->blocks().empty())
+            if(func->blocks().empty() || func->attr().hasAttr(FunctionAttribute::Builtin))
                 continue;
             Stage stage{ mPass->name() };
             if(debugTransform.get()) {

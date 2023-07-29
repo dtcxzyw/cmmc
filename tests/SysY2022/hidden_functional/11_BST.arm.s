@@ -114,30 +114,35 @@ label97:
 	movt r0, #:upper16:left_child
 	ldr r0, [r0, r4, lsl #2]
 	cmn r0, #1
-	beq label110
-	b label99
+	beq label99
+	b label100
 label112:
 	add sp, sp, #4
 	pop { r4, r5, pc }
 label99:
-	movw r0, #:lower16:left_child
-	movt r0, #:upper16:left_child
-	ldr r0, [r0, r4, lsl #2]
-	cmn r0, #1
-	beq label100
-	movw r0, #:lower16:right_child
-	movt r0, #:upper16:right_child
-	ldr r0, [r0, r4, lsl #2]
-	cmn r0, #1
-	beq label100
-	b label182
-label110:
 	movw r0, #:lower16:right_child
 	movt r0, #:upper16:right_child
 	ldr r0, [r0, r4, lsl #2]
 	cmn r0, #1
 	beq label118
-	b label99
+label100:
+	movw r0, #:lower16:left_child
+	movt r0, #:upper16:left_child
+	ldr r0, [r0, r4, lsl #2]
+	cmn r0, #1
+	beq label108
+	movw r0, #:lower16:right_child
+	movt r0, #:upper16:right_child
+	ldr r0, [r0, r4, lsl #2]
+	cmn r0, #1
+	bne label172
+label108:
+	movw r0, #:lower16:left_child
+	movt r0, #:upper16:left_child
+	ldr r0, [r0, r4, lsl #2]
+	cmn r0, #1
+	beq label208
+	b label207
 label111:
 	movw r5, #:lower16:left_child
 	movt r5, #:upper16:left_child
@@ -146,25 +151,25 @@ label111:
 	str r0, [r5, r4, lsl #2]
 	mov r0, r4
 	b label112
-label182:
+label172:
 	movw r5, #:lower16:right_child
 	movt r5, #:upper16:right_child
 	ldr r1, [r5, r4, lsl #2]
 	mov r0, r1
-label105:
+label103:
 	cmn r0, #1
-	bne label107
+	bne label105
 	mvn r0, #0
-	b label108
-label107:
+	b label106
+label105:
 	movw r3, #:lower16:left_child
 	movt r3, #:upper16:left_child
 	ldr r3, [r3, r0, lsl #2]
 	cmn r3, #1
-	beq label108
+	beq label106
 	mov r0, r3
-	b label105
-label108:
+	b label103
+label106:
 	ldr r3, [r2, r0, lsl #2]
 	str r3, [r2, r4, lsl #2]
 	mov r0, r1
@@ -173,17 +178,12 @@ label108:
 	str r0, [r5, r4, lsl #2]
 	mov r0, r4
 	b label112
-label100:
-	movw r0, #:lower16:left_child
-	movt r0, #:upper16:left_child
-	ldr r0, [r0, r4, lsl #2]
-	cmn r0, #1
-	bne label163
+label208:
 	movw r0, #:lower16:right_child
 	movt r0, #:upper16:right_child
 	ldr r0, [r0, r4, lsl #2]
 	b label112
-label163:
+label207:
 	movw r0, #:lower16:left_child
 	movt r0, #:upper16:left_child
 	ldr r0, [r0, r4, lsl #2]

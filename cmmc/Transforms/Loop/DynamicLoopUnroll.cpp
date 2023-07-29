@@ -58,6 +58,8 @@ public:
                 continue;
             if(loop.header->getTransformMetadata().scalarBlock)
                 continue;
+            if(loop.header->getTransformMetadata().unrollCount > 0)
+                continue;
 
             const auto terminator = loop.latch->getTerminator();
             const auto cond = terminator->getOperand(0);
@@ -71,6 +73,7 @@ public:
 
             modified = true;
             loop.header->getTransformMetadata().scalarBlock = true;
+            ++loop.header->getTransformMetadata().unrollCount;
             std::vector<Block*> insertedBlocks;
             std::unordered_map<Block*, ReplaceMap> replaceMap;
 
@@ -127,6 +130,7 @@ public:
             const auto append = [&](bool nocheck) {
                 ReplaceMap replace;
                 const auto block = loop.header->clone(replace, false);
+                block->getTransformMetadata().scalarBlock = false;
                 replaceMap[block] = std::move(replace);
                 insertedBlocks.push_back(block);
                 retarget(block, nocheck);

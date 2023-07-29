@@ -110,88 +110,50 @@ pcrel115:
 main:
 .p2align 2
 	addi sp, sp, -168
+	sd s2, 40(sp)
+	addi s2, sp, 0
 	sd s1, 160(sp)
-	addi s1, sp, 0
+	addi s1, sp, 48
 	sd s6, 152(sp)
 	sd s0, 144(sp)
-	addi s0, sp, 48
-	sd s5, 88(sp)
-	sd s2, 136(sp)
-	sd s3, 40(sp)
-	sd s4, 128(sp)
-	sd s8, 120(sp)
-	sd s7, 112(sp)
-	sd s9, 104(sp)
-	sd ra, 96(sp)
-	sd zero, 48(sp)
-	sd zero, 56(sp)
-	sd zero, 64(sp)
-	sd zero, 72(sp)
-	sd zero, 80(sp)
-	sd zero, 0(sp)
-	sd zero, 8(sp)
-	sd zero, 16(sp)
-	sd zero, 24(sp)
-	sd zero, 32(sp)
+	sd s5, 136(sp)
+	sd s3, 128(sp)
+	sd s4, 120(sp)
+	sd s8, 112(sp)
+	sd s7, 104(sp)
+	sd s9, 96(sp)
+	sd ra, 88(sp)
 	jal getint
-	mv s2, a0
+	mv s0, a0
 	jal getint
+	sw zero, 48(sp)
 	mv s6, a0
-pcrel288:
+	sw zero, 52(sp)
+pcrel228:
 	auipc a0, %pcrel_hi(to)
-	addi s3, a0, %pcrel_lo(pcrel288)
-pcrel289:
+	sw zero, 56(sp)
+	addi s3, a0, %pcrel_lo(pcrel228)
+	sw zero, 60(sp)
+pcrel229:
 	auipc a0, %pcrel_hi(cap)
-	addi s4, a0, %pcrel_lo(pcrel289)
-pcrel290:
+	sw zero, 64(sp)
+	addi s4, a0, %pcrel_lo(pcrel229)
+	sw zero, 68(sp)
+pcrel230:
 	auipc a0, %pcrel_hi(rev)
-	addi s5, a0, %pcrel_lo(pcrel290)
-	mv a0, zero
+	sw zero, 72(sp)
+	addi s5, a0, %pcrel_lo(pcrel230)
+	sw zero, 76(sp)
+	sd zero, 80(sp)
+	bgt s6, zero, label117
+.p2align 2
+label145:
+	mv a5, zero
+	j label119
 .p2align 2
 label117:
-	sh2add a1, a0, s0
-	li a2, 10
-	sw zero, 0(a1)
-	sw zero, 4(a1)
-	sw zero, 8(a1)
-	sw zero, 12(a1)
-	addiw a1, a0, 8
-	addiw a0, a0, 4
-	blt a1, a2, label117
-	sh2add a1, a0, s0
-	addiw a0, a0, 1
-	sw zero, 0(a1)
-	li a1, 10
-	bge a0, a1, label121
-label119:
-	sh2add a1, a0, s0
-	addiw a0, a0, 1
-	sw zero, 0(a1)
-	li a1, 10
-	blt a0, a1, label119
-label121:
-	bgt s6, zero, label122
-	mv a5, zero
-	mv a0, zero
-	mv a1, s1
-	li a2, 10
-	sw zero, 0(s1)
-	sw zero, 4(s1)
-	sw zero, 8(s1)
-	sw zero, 12(s1)
-	li a1, 8
-	li a0, 4
-	blt a1, a2, label126
-	sh2add a1, a0, s1
-	addiw a0, a0, 1
-	sw zero, 0(a1)
-	li a1, 10
-	blt a0, a1, label128
-	j label130
-.p2align 2
-label122:
 	jal getint
-	sh2add s7, a0, s0
+	sh2add s7, a0, s1
 	mv s8, a0
 	jal getint
 	mv s9, a0
@@ -199,101 +161,67 @@ label122:
 	addiw s6, s6, -1
 	sh2add a2, s8, s8
 	mv a1, a0
-	sh3add a3, a2, s3
+	sh3add a4, a2, s3
 	lw a0, 0(s7)
-	sh2add a4, a0, a3
-	sh3add a3, a2, s4
+	sh2add a3, a0, a4
+	sh3add a4, a2, s4
 	sh3add a2, a2, s5
-	sw s9, 0(a4)
-	sh2add a4, a0, a3
+	sw s9, 0(a3)
+	sh2add a3, a0, a4
+	sw a1, 0(a3)
+	sh2add a1, s9, s1
 	sh2add a3, a0, a2
-	sw a1, 0(a4)
-	sh2add a1, s9, s0
 	lw a2, 0(a1)
 	sw a2, 0(a3)
 	sh2add a3, s9, s9
-	sh3add t0, a3, s4
-	sh3add a4, a3, s3
+	sh3add a5, a3, s3
+	sh2add a4, a2, a5
+	sh3add a5, a3, s4
+	sw s8, 0(a4)
 	sh3add a3, a3, s5
-	sh2add a5, a2, a4
-	sh2add a4, a2, t0
-	sw s8, 0(a5)
+	sh2add a4, a2, a5
 	sh2add a2, a2, a3
 	sw zero, 0(a4)
+	addi a3, a0, 1
 	sw a0, 0(a2)
-	addi a0, a0, 1
-	sw a0, 0(s7)
-	lw a2, 0(a1)
-	addi a0, a2, 1
-	sw a0, 0(a1)
-	bgt s6, zero, label122
-	mv a5, zero
-	mv a0, zero
-	mv a1, s1
-	li a2, 10
-	sw zero, 0(s1)
-	sw zero, 4(s1)
-	sw zero, 8(s1)
-	sw zero, 12(s1)
-	li a1, 8
-	li a0, 4
-	blt a1, a2, label126
-	sh2add a1, a0, s1
-	addiw a0, a0, 1
-	sw zero, 0(a1)
-	li a1, 10
-	blt a0, a1, label128
-	j label130
-.p2align 2
-label126:
-	sh2add a1, a0, s1
-	li a2, 10
-	sw zero, 0(a1)
-	sw zero, 4(a1)
-	sw zero, 8(a1)
-	sw zero, 12(a1)
-	addiw a1, a0, 8
-	addiw a0, a0, 4
-	blt a1, a2, label126
-	sh2add a1, a0, s1
-	addiw a0, a0, 1
-	sw zero, 0(a1)
-	li a1, 10
-	bge a0, a1, label130
-.p2align 2
-label128:
-	sh2add a1, a0, s1
-	addiw a0, a0, 1
-	sw zero, 0(a1)
-	li a1, 10
-	blt a0, a1, label128
-label130:
+	sw a3, 0(s7)
+	lw a0, 0(a1)
+	addi a2, a0, 1
+	sw a2, 0(a1)
+	bgt s6, zero, label117
+	j label145
+label119:
+	sw zero, 0(sp)
 	li a0, 1
-	mv a1, s2
 	lui a2, 458752
-	mv a3, s0
-	mv a4, s1
+	sw zero, 4(sp)
+	sd zero, 8(sp)
+	sd zero, 16(sp)
+	sd zero, 24(sp)
+	sd zero, 32(sp)
+	mv a1, s0
+	mv a3, s1
+	mv a4, s2
 	jal dfs
-	beq a0, zero, label131
+	beq a0, zero, label121
 	addw a5, a5, a0
-	mv a0, zero
-	j label126
-label131:
+	j label119
+label121:
 	mv a0, a5
 	jal putint
 	li a0, 10
 	jal putch
 	mv a0, zero
-	ld ra, 96(sp)
-	ld s9, 104(sp)
-	ld s7, 112(sp)
-	ld s8, 120(sp)
-	ld s4, 128(sp)
-	ld s3, 40(sp)
-	ld s2, 136(sp)
-	ld s5, 88(sp)
+	ld ra, 88(sp)
+	ld s9, 96(sp)
+	ld s7, 104(sp)
+	ld s8, 112(sp)
+	ld s4, 120(sp)
+	ld s3, 128(sp)
+	ld s5, 136(sp)
 	ld s0, 144(sp)
 	ld s6, 152(sp)
 	ld s1, 160(sp)
+	ld s2, 40(sp)
 	addi sp, sp, 168
 	ret

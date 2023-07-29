@@ -19,25 +19,7 @@ main:
 	li a0, 56
 	jal _sysy_starttime
 	bgt s0, zero, label2
-label9:
-	li a0, 64
-	jal _sysy_stoptime
-	li a0, 10000
-pcrel144:
-	auipc a2, %pcrel_hi(a)
-	addi a1, a2, %pcrel_lo(pcrel144)
-	jal putarray
-	ld ra, 0(sp)
-	mv a0, zero
-	ld s1, 8(sp)
-	ld s0, 16(sp)
-	addi sp, sp, 24
-	ret
-label2:
-	auipc a1, %pcrel_hi(a)
-	mv a3, s1
-	addi a0, a1, %pcrel_lo(label2)
-	mv a1, s0
+	j label9
 .p2align 2
 label3:
 	li a2, 19971231
@@ -107,13 +89,29 @@ label136:
 	add t4, t1, t2
 	andi t3, t4, -2
 	subw t2, t1, t3
-	bne a3, t2, label6
+	bne a3, t2, label7
 	sh2add a3, a4, a0
 	sw a5, 0(a3)
-	bgt a1, zero, label62
-	j label9
+	ble a1, zero, label9
+label47:
+	mv a3, a2
+	j label3
+label9:
+	li a0, 64
+	jal _sysy_stoptime
+	li a0, 10000
+pcrel145:
+	auipc a2, %pcrel_hi(a)
+	addi a1, a2, %pcrel_lo(pcrel145)
+	jal putarray
+	ld ra, 0(sp)
+	mv a0, zero
+	ld s1, 8(sp)
+	ld s0, 16(sp)
+	addi sp, sp, 24
+	ret
 .p2align 2
-label6:
+label7:
 	andi t2, t1, 1
 	xori t3, a3, 1
 	or t4, t2, t3
@@ -133,7 +131,11 @@ label138:
 	addw a5, a5, a3
 	sh2add a3, a4, a0
 	sw a5, 0(a3)
-	ble a1, zero, label9
-label62:
-	mv a3, a2
+	bgt a1, zero, label47
+	j label9
+label2:
+	auipc a1, %pcrel_hi(a)
+	mv a3, s1
+	addi a0, a1, %pcrel_lo(label2)
+	mv a1, s0
 	j label3

@@ -32,18 +32,14 @@ label6:
 	subu $t2, $a0, $t1
 	mult $t0, $t2
 	mflo $t0
-	addiu $t2, $t1, 1
-	divu $zero, $t0, $t2
+	addiu $t1, $t1, 1
+	divu $zero, $t0, $t1
 	mflo $t0
-	addiu $t1, $t1, 2
-	sltu $t1, $a1, $t1
-	xori $t1, $t1, 1
-	bne $t1, $zero, label30
+	addiu $t2, $a1, -1
+	sltu $t2, $t2, $t1
+	xori $t2, $t2, 1
+	bne $t2, $zero, label6
 	nop
 	move $v0, $t0
 	b label2
-	nop
-label30:
-	move $t1, $t2
-	b label6
 	nop

@@ -103,36 +103,35 @@ main:
 	vcvt.f32.s32 s17, s0
 	bne label75
 	mov r9, #0
-	b label50
+	b label52
 label75:
 	mvn r0, #0
-	b label68
-label53:
-	cmp r6, r9
-	bgt label55
-	mov r0, #0
-	b label68
+label47:
+	add sp, sp, #4
+	vpop { s16, s17, s18, s19, s20, s21 }
+	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
 label55:
+	cmp r6, r9
+	bgt label57
+	mov r0, #0
+	b label47
+label57:
 	sub r0, r9, r8
 	cmp r4, #0
 	vmov s0, r0
 	vcvt.f32.s32 s0, s0
 	vmul.f32 s21, s0, s19
 	vmul.f32 s20, s0, s18
-	ble label62
+	ble label58
 	mov r10, #0
-	b label56
-label62:
+	b label59
+label58:
 	mov r0, #10
 	bl putch
 	add r9, r9, #1
-	b label53
-label68:
-	add sp, sp, #4
-	vpop { s16, s17, s18, s19, s20, s21 }
-	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
+	b label55
 .p2align 4
-label56:
+label59:
 	sub r0, r10, r7
 	mov r1, #0
 	mov r3, #0
@@ -155,32 +154,32 @@ label56:
 	cmp r2, #0
 	movwlt r3, #1
 	orrs r1, r1, r3
-	bne label176
+	bne label177
 	cmp r6, r2
-	ble label176
+	ble label177
 	mla r0, r4, r2, r0
 	ldr r0, [r5, r0, lsl #2]
-	b label60
+	b label63
 .p2align 4
-label176:
+label177:
 	mov r0, #0
 .p2align 4
-label60:
+label63:
 	bl putint
 	mov r0, #32
 	bl putch
 	add r10, r10, #1
 	cmp r4, r10
-	bgt label56
-	b label62
-label50:
+	bgt label59
+	b label58
+label52:
 	cmp r6, r9
-	bgt label63
-	b label52
+	bgt label65
+	b label54
 label193:
 	add r9, r9, #1
-	b label50
-label52:
+	b label52
+label54:
 	movw r0, #4059
 	movw r1, #4059
 	movt r0, #16329
@@ -196,8 +195,8 @@ label52:
 	vdiv.f32 s1, s0, s3
 	vcmp.f32 s0, s3
 	vmrs APSR_nzcv, FPSCR
-	movwgt r0, #1
 	vcmp.f32 s0, s4
+	movwgt r0, #1
 	vmrs APSR_nzcv, FPSCR
 	movwmi r1, #1
 	orrs r9, r0, r1
@@ -212,8 +211,8 @@ label52:
 	vmul.f32 s1, s1, s3
 	vsub.f32 s1, s0, s1
 	vmovne.f32 s0, s1
-	vsub.f32 s1, s0, s3
 	vcmp.f32 s0, s5
+	vsub.f32 s1, s0, s3
 	vmrs APSR_nzcv, FPSCR
 	vmovgt.f32 s0, s1
 	vcmp.f32 s0, s6
@@ -268,24 +267,24 @@ label52:
 	mov r0, #10
 	bl putch
 	mov r9, #0
-	b label53
-label63:
+	b label55
+label65:
 	cmp r4, #0
 	bgt label194
 	b label193
 .p2align 4
-label66:
+label68:
 	bl getint
 	add r1, r10, r11
 	add r11, r11, #1
 	str r0, [r5, r1, lsl #2]
 	cmp r4, r11
-	bgt label66
+	bgt label68
 	add r9, r9, #1
 	cmp r6, r9
-	bgt label63
-	b label52
+	bgt label65
+	b label54
 label194:
 	mul r10, r4, r9
 	mov r11, #0
-	b label66
+	b label68

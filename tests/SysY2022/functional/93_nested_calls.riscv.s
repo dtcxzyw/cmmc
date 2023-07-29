@@ -36,9 +36,9 @@ label2:
 	beq s2, zero, label5
 	remw a2, a2, s2
 label5:
-	lw t1, 0(sp)
+	lw t0, 0(sp)
 	mv t4, zero
-	lw t0, 4(sp)
+	lw t1, 4(sp)
 	lw a3, 8(sp)
 	sltu t3, zero, a3
 	lw a1, 12(sp)
@@ -50,7 +50,7 @@ label5:
 	mv t4, a5
 label150:
 	mv t3, t2
-	bne t0, zero, label152
+	bne t1, zero, label152
 	mv t3, t4
 label152:
 	lw t2, 24(sp)
@@ -87,16 +87,16 @@ label158:
 	mv s5, a7
 label160:
 	mulw a7, a2, s5
-	mv a2, t1
+	mv a2, t0
 	bne a6, zero, label162
 	mv a2, a7
 label162:
-	sltiu a7, s2, 1
-	addw a6, s3, a7
+	sltiu a6, s2, 1
+	addw a7, s3, a6
 	bne t6, zero, label164
-	mv a7, a6
+	mv a6, a7
 label164:
-	addiw t6, a7, 1
+	addiw t6, a6, 1
 	beq t6, zero, label9
 	remw s1, s1, t6
 label9:
@@ -105,34 +105,35 @@ label9:
 	mv a2, t6
 label166:
 	addiw a2, a2, 1
-	subw t6, t1, t0
-	beq t0, zero, label168
-	mv t1, t6
+	subw t6, t0, t1
+	beq t1, zero, label168
+	mv t0, t6
 label168:
-	mulw a2, a2, t1
-	beq a3, zero, label12
+	mulw a2, a2, t0
+	beq a3, zero, label11
 	remw a2, a2, a3
-label12:
-	subw a3, a5, a4
+label11:
+	subw t0, a5, a4
+	mv a3, a5
 	beq a4, zero, label170
-	mv a5, a3
+	mv a3, t0
 label170:
-	addiw a3, a5, 1
-	beq t2, zero, label14
+	addiw a3, a3, 1
+	beq t2, zero, label13
 	subw a4, zero, t2
 	remw a3, a3, a4
-label14:
+label13:
 	sltiu t0, t5, 1
-	mv a4, t3
-	subw a5, t3, t0
+	mv a5, t3
+	subw a4, t3, t0
 	bne t5, zero, label172
-	mv a4, a5
+	mv a5, a4
 label172:
-	mulw a3, a3, a4
-	beq t4, zero, label17
+	mulw a3, a3, a5
+	beq t4, zero, label15
 	subw a4, zero, t4
 	remw a3, a3, a4
-label17:
+label15:
 	addw a4, s0, a3
 	bne a0, zero, label174
 	mv a3, a4

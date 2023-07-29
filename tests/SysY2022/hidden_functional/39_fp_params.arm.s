@@ -8,10 +8,10 @@ params_f40:
 .p2align 4
 	push { r4, r5, lr }
 	vpush { s16, s17, s18, s19, s20, s21, s22, s23, s24, s25, s26, s27, s28, s29, s30, s31 }
-	sub sp, sp, #188
 	mov r4, r0
-	vstr s14, [sp, #176]
+	sub sp, sp, #188
 	add r5, sp, #136
+	vstr s14, [sp, #176]
 	vstr s15, [sp, #104]
 	vldr s16, [sp, #264]
 	vstr s16, [sp, #116]
@@ -171,8 +171,8 @@ params_f40_i24:
 	push { r4, r5, r6, r7, r8, r9, r10, lr }
 	vpush { s16, s17, s18, s19, s20, s21, s22, s23, s24, s25, s26, s27 }
 	sub sp, sp, #424
-	vmov.f32 s20, s10
 	mov r8, r0
+	vmov.f32 s20, s10
 	add r5, sp, #352
 	str r2, [sp, #216]
 	str r0, [sp, #416]
@@ -765,20 +765,16 @@ params_fa40:
 	vcvt.f32.s32 s0, s0
 	vcmp.f32 s0, #0
 	vmrs APSR_nzcv, FPSCR
-	bne label446
-	b label447
-label444:
-	add sp, sp, #344
-	pop { r4, r5, r6, r7, r8, r9, r10, pc }
-label446:
-	ldr r6, [sp, #308]
+	beq label447
 	mov r0, #10
 	mov r1, r6
 	bl putfarray
 	ldr r10, [sp, #304]
 	add r0, r6, r10, lsl #2
 	vldr s0, [r0, #0]
-	b label444
+label445:
+	add sp, sp, #344
+	pop { r4, r5, r6, r7, r8, r9, r10, pc }
 label447:
 	str r0, [sp, #0]
 	str r1, [sp, #4]
@@ -858,7 +854,7 @@ label447:
 	mov r2, r6
 	mov r3, r8
 	bl params_fa40
-	b label444
+	b label445
 params_mix:
 .p2align 4
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
@@ -1307,8 +1303,8 @@ main:
 	vpush { s16, s17, s18, s19, s20, s21, s22, s23, s24, s25, s26, s27, s28, s29 }
 	movw r12, #1356
 	sub sp, sp, r12
-	add r4, sp, #860
 	add r5, sp, #564
+	add r4, sp, #860
 	add r6, sp, #552
 	str r6, [sp, #536]
 	str r5, [sp, #540]

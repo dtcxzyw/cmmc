@@ -16,45 +16,44 @@ find:
 	movt r5, #:upper16:parent
 	ldr r6, [r5, r0, lsl #2]
 	cmp r0, r6
-	bne label4
-label2:
-	pop { r4, r5, r6, r7, r8, pc }
-label4:
+	beq label12
 	ldr r7, [r5, r6, lsl #2]
 	cmp r6, r7
-	bne label7
+	bne label5
 	mov r0, r6
 	str r6, [r5, r4, lsl #2]
-	b label2
-label7:
+	b label12
+label5:
 	ldr r8, [r5, r7, lsl #2]
 	cmp r7, r8
-	bne label10
+	bne label8
 	mov r0, r7
 	str r7, [r5, r6, lsl #2]
 	str r7, [r5, r4, lsl #2]
-	b label2
-label10:
+	b label12
+label8:
 	ldr r0, [r5, r8, lsl #2]
 	cmp r8, r0
-	bne label13
+	bne label11
 	mov r0, r8
 	str r8, [r5, r7, lsl #2]
 	str r8, [r5, r6, lsl #2]
 	str r8, [r5, r4, lsl #2]
-	b label2
-label13:
+	b label12
+label11:
 	bl find
 	str r0, [r5, r8, lsl #2]
 	str r0, [r5, r7, lsl #2]
 	str r0, [r5, r6, lsl #2]
 	str r0, [r5, r4, lsl #2]
-	b label2
+label12:
+	pop { r4, r5, r6, r7, r8, pc }
 .globl main
 main:
 .p2align 4
 	push { r4, r5, r6, r7, r8, lr }
 	bl getint
+	sub r7, r0, #4
 	mov r5, r0
 	bl getint
 	cmp r5, #0
@@ -63,10 +62,10 @@ main:
 	movt r4, #:upper16:parent
 	ble label76
 	cmp r5, #4
-	bgt label96
+	bgt label97
 	mov r0, #0
 	b label74
-label96:
+label97:
 	mov r0, #0
 label72:
 	add r1, r4, r0, lsl #2
@@ -76,10 +75,9 @@ label72:
 	add r2, r0, #2
 	str r2, [r1, #8]
 	add r2, r0, #3
-	str r2, [r1, #12]
-	add r1, r0, #8
-	cmp r5, r1
 	add r0, r0, #4
+	str r2, [r1, #12]
+	cmp r7, r0
 	bgt label72
 label74:
 	str r0, [r4, r0, lsl #2]

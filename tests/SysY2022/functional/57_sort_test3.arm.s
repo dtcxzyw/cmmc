@@ -14,9 +14,23 @@ QuickSort:
 	mov r6, r7
 label2:
 	cmp r5, r1
-	bgt label6
-	b label23
-label10:
+	ble label6
+	ldr r0, [r4, r1, lsl #2]
+	mov r3, r5
+	mov r8, r1
+	sub r2, r0, #1
+	b label8
+label6:
+	cmp r7, #0
+	mov r0, #0
+	add sp, sp, #4
+	movne r0, r6
+	pop { r4, r5, r6, r7, r8, r9, pc }
+.p2align 4
+label8:
+	cmp r3, r8
+	bgt label12
+label11:
 	str r0, [r4, r8, lsl #2]
 	sub r2, r8, #1
 	mov r0, r4
@@ -29,83 +43,69 @@ label10:
 	mov r6, r0
 	b label2
 .p2align 4
+label12:
+	cmp r8, r3
+	blt label22
+	cmp r3, r8
+	ble label11
+.p2align 4
+label17:
+	ldr r9, [r4, r8, lsl #2]
+	cmp r0, r9
+	bgt label18
+	cmp r3, r8
+	bgt label20
+	b label11
+.p2align 4
 label22:
 	ldr r9, [r4, r3, lsl #2]
-	str r9, [r4, r8, lsl #2]
-	add r8, r8, #1
+	cmp r2, r9
+	blt label23
+	cmp r8, r3
+	blt label21
 	cmp r3, r8
-	bgt label18
-	b label10
-label23:
-	cmp r7, #0
-	mov r0, #0
-	add sp, sp, #4
-	movne r0, r6
-	pop { r4, r5, r6, r7, r8, r9, pc }
+	bgt label17
+	b label11
 .p2align 4
-label21:
+label20:
 	ldr r9, [r4, r8, lsl #2]
 	str r9, [r4, r3, lsl #2]
 	sub r3, r3, #1
 	cmp r3, r8
-	bgt label11
-	b label10
+	bgt label12
+	b label11
 .p2align 4
 label18:
-	ldr r9, [r4, r8, lsl #2]
-	cmp r0, r9
-	bgt label19
-	cmp r3, r8
-	bgt label21
-	b label10
-.p2align 4
-label19:
 	add r8, r8, #1
 	cmp r3, r8
-	bgt label18
-	b label10
-label6:
-	ldr r0, [r4, r1, lsl #2]
-	mov r3, r5
-	mov r8, r1
-	sub r2, r0, #1
-	cmp r5, r1
-	ble label10
+	bgt label17
+	b label11
 .p2align 4
-label11:
-	cmp r8, r3
-	blt label13
-	cmp r3, r8
-	bgt label18
-	b label10
-.p2align 4
-label13:
-	ldr r9, [r4, r3, lsl #2]
-	cmp r2, r9
-	blt label14
+label23:
+	sub r3, r3, #1
 	cmp r8, r3
 	blt label22
 	cmp r3, r8
-	bgt label18
-	b label10
+	bgt label17
+	b label11
 .p2align 4
-label14:
-	sub r3, r3, #1
-	cmp r8, r3
-	blt label13
+label21:
+	ldr r9, [r4, r3, lsl #2]
+	str r9, [r4, r8, lsl #2]
+	add r8, r8, #1
 	cmp r3, r8
-	bgt label18
-	b label10
+	bgt label17
+	b label11
 .globl main
 main:
 .p2align 4
 	push { r4, r5, lr }
+	mov r0, #4
 	sub sp, sp, #44
 	mov r1, #0
-	mov r0, #4
 	mov r2, #9
-	mov r4, sp
 	str r0, [sp, #0]
+	mov r4, sp
 	mov r0, #3
 	str r0, [r4, #4]
 	mov r0, #2
@@ -125,18 +125,18 @@ main:
 	mov r0, r4
 	bl QuickSort
 	cmp r0, #10
-	bge label127
+	bge label132
 	mov r5, r0
 .p2align 4
-label125:
+label130:
 	ldr r0, [r4, r5, lsl #2]
 	bl putint
 	mov r0, #10
 	bl putch
 	add r5, r5, #1
 	cmp r5, #10
-	blt label125
-label127:
+	blt label130
+label132:
 	mov r0, #0
 	add sp, sp, #44
 	pop { r4, r5, pc }

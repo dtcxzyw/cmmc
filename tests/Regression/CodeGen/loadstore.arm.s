@@ -103,34 +103,32 @@ global_addressing_array:
 .globl memset_impl
 memset_impl:
 .p2align 4
-	push { r4 }
+	push { r4, r5 }
 	cmp r1, #0
-	bgt label102
-label101:
-	pop { r4 }
-	bx lr
-label102:
+	sub r3, r1, #4
+	ble label106
 	cmp r1, #4
-	bgt label115
+	bgt label116
 	mov r2, #0
-	b label105
-label115:
+	b label104
+label116:
 	mov r2, #0
-label103:
-	add r3, r0, r2, lsl #2
-	mov r4, #0
-	str r4, [r0, r2, lsl #2]
-	str r4, [r3, #4]
-	str r4, [r3, #8]
-	str r4, [r3, #12]
-	add r3, r2, #8
-	cmp r1, r3
+label102:
+	add r4, r0, r2, lsl #2
+	mov r5, #0
+	str r5, [r0, r2, lsl #2]
 	add r2, r2, #4
-	bgt label103
-label105:
+	str r5, [r4, #4]
+	cmp r3, r2
+	str r5, [r4, #8]
+	str r5, [r4, #12]
+	bgt label102
+label104:
 	mov r3, #0
 	str r3, [r0, r2, lsl #2]
 	add r2, r2, #1
 	cmp r1, r2
-	bgt label105
-	b label101
+	bgt label104
+label106:
+	pop { r4, r5 }
+	bx lr

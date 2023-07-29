@@ -133,39 +133,36 @@ global_addressing_array:
 .globl memset_impl
 memset_impl:
 .p2align 2
-	bgtz $a1, label108
+	addiu $t1, $a1, -4
+	blez $a1, label112
 	nop
-label107:
-	jr $ra
-	nop
-label108:
 	addiu $t0, $a1, -4
-	bgtz $t0, label121
+	bgtz $t0, label122
 	nop
 	move $t0, $zero
-	b label111
+	b label110
 	nop
-label121:
+label122:
 	move $t0, $zero
-label109:
-	sll $t1, $t0, 2
-	addu $t1, $a0, $t1
-	sw $zero, 0($t1)
-	sw $zero, 4($t1)
-	sw $zero, 8($t1)
-	sw $zero, 12($t1)
-	addiu $t1, $t0, 8
+label108:
+	sll $t2, $t0, 2
+	addu $t2, $a0, $t2
+	sw $zero, 0($t2)
+	sw $zero, 4($t2)
+	sw $zero, 8($t2)
+	sw $zero, 12($t2)
 	addiu $t0, $t0, 4
-	subu $t1, $a1, $t1
-	bgtz $t1, label109
+	subu $t2, $t1, $t0
+	bgtz $t2, label108
 	nop
-label111:
+label110:
 	sll $t1, $t0, 2
 	addu $t1, $a0, $t1
 	sw $zero, 0($t1)
 	addiu $t0, $t0, 1
 	subu $t1, $a1, $t0
-	bgtz $t1, label111
+	bgtz $t1, label110
 	nop
-	b label107
+label112:
+	jr $ra
 	nop

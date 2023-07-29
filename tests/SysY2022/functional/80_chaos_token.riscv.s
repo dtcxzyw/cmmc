@@ -153,15 +153,163 @@ pcrel183:
 	mv a1, zero
 	mv s3, zero
 	li a0, 23
-	slli a2, a0, 1
-	srli a1, a2, 59
-	add a3, a0, a1
-	andi a2, a3, -32
-	subw s1, a0, a2
+	slli a1, a0, 1
+	srli a2, a1, 59
+	add a3, a0, a2
+	andi a1, a3, -32
+	subw s1, a0, a1
 	beq s1, zero, label19
 	j label4
 label31:
 	mv s2, zero
+	j label2
+label19:
+	mv a0, zero
+	ld ra, 24(sp)
+	ld s4, 32(sp)
+	ld s3, 40(sp)
+	ld s2, 48(sp)
+	ld s6, 56(sp)
+	ld s1, 64(sp)
+	ld s5, 72(sp)
+	ld s0, 80(sp)
+	addi sp, sp, 88
+	ret
+label75:
+	mv s2, zero
+	j label10
+.p2align 2
+label14:
+	sh2add s6, s5, s4
+	lw a0, 0(s6)
+	jal putch
+	addiw s5, s5, 1
+	lw a1, 4(s6)
+	bne a1, zero, label14
+	li a1, 200
+	mul a0, s3, a1
+	add s2, s2, a0
+	lw a1, 0(s2)
+	bne a1, zero, label70
+	lw a0, 0(sp)
+	bne a0, zero, label75
+	slliw a1, s1, 4
+	addw a2, a1, s1
+	addiw a0, a2, 23
+	slli a1, a0, 1
+	srli a2, a1, 59
+	add a3, a0, a2
+	andi a1, a3, -32
+	subw s1, a0, a1
+	beq s1, zero, label19
+	j label4
+label70:
+	mv s3, zero
+.p2align 2
+label12:
+	sh2add s4, s3, s2
+	lw a0, 0(s4)
+	jal putch
+	addiw s3, s3, 1
+	lw a1, 4(s4)
+	bne a1, zero, label12
+	lw a0, 0(sp)
+	bne a0, zero, label75
+	slliw a1, s1, 4
+	addw a2, a1, s1
+	addiw a0, a2, 23
+	slli a1, a0, 1
+	srli a2, a1, 59
+	add a3, a0, a2
+	andi a1, a3, -32
+	subw s1, a0, a1
+	beq s1, zero, label19
+	j label4
+label6:
+	auipc a2, %pcrel_hi(N4__mE___)
+	addi a0, a2, %pcrel_lo(label6)
+	li a2, 200
+	mv s2, a0
+	mul a1, a1, a2
+	add s4, a0, a1
+	lw a0, 0(s4)
+	bne a0, zero, label56
+pcrel184:
+	auipc a0, %pcrel_hi(saY_HeI10_To)
+	addi s4, a0, %pcrel_lo(pcrel184)
+	lw a0, %pcrel_lo(pcrel184)(a0)
+	bne a0, zero, label63
+	li a1, 200
+	mul a0, s3, a1
+	add s2, s2, a0
+	lw a1, 0(s2)
+	bne a1, zero, label70
+	lw a0, 0(sp)
+	bne a0, zero, label75
+	slliw a1, s1, 4
+	addw a2, a1, s1
+	addiw a0, a2, 23
+	slli a1, a0, 1
+	srli a2, a1, 59
+	add a3, a0, a2
+	andi a1, a3, -32
+	subw s1, a0, a1
+	beq s1, zero, label19
+	j label4
+label56:
+	mv s5, zero
+	j label16
+label63:
+	mv s5, zero
+	j label14
+.p2align 2
+label16:
+	sh2add s6, s5, s4
+	lw a0, 0(s6)
+	jal putch
+	addiw s5, s5, 1
+	lw a1, 4(s6)
+	bne a1, zero, label16
+pcrel185:
+	auipc a0, %pcrel_hi(saY_HeI10_To)
+	addi s4, a0, %pcrel_lo(pcrel185)
+	lw a0, %pcrel_lo(pcrel185)(a0)
+	bne a0, zero, label63
+	li a1, 200
+	mul a0, s3, a1
+	add s2, s2, a0
+	lw a1, 0(s2)
+	bne a1, zero, label70
+	lw a0, 0(sp)
+	bne a0, zero, label75
+	slliw a1, s1, 4
+	addw a2, a1, s1
+	addiw a0, a2, 23
+	slli a1, a0, 1
+	srli a2, a1, 59
+	add a3, a0, a2
+	andi a1, a3, -32
+	subw s1, a0, a1
+	beq s1, zero, label19
+	j label4
+.p2align 2
+label10:
+	sh2add s3, s2, s0
+	lw a0, 0(s3)
+	jal putch
+	addiw s2, s2, 1
+	lw a1, 4(s3)
+	bne a1, zero, label10
+	slliw a1, s1, 4
+	addw a2, a1, s1
+	addiw a0, a2, 23
+	slli a1, a0, 1
+	srli a2, a1, 59
+	add a3, a0, a2
+	andi a1, a3, -32
+	subw s1, a0, a1
+	beq s1, zero, label19
+	j label4
 .p2align 2
 label2:
 	sh2add s3, s2, s1
@@ -179,120 +327,11 @@ label2:
 	mv a1, zero
 	mv s3, zero
 	li a0, 23
-	slli a2, a0, 1
-	srli a1, a2, 59
-	add a3, a0, a1
-	andi a2, a3, -32
-	subw s1, a0, a2
-	beq s1, zero, label19
-	j label4
-label6:
-	auipc a2, %pcrel_hi(N4__mE___)
-	addi a0, a2, %pcrel_lo(label6)
-	li a2, 200
-	mv s2, a0
-	mul a1, a1, a2
-	add s4, a0, a1
-	lw a0, 0(s4)
-	bne a0, zero, label56
-pcrel184:
-	auipc a0, %pcrel_hi(saY_HeI10_To)
-	addi s4, a0, %pcrel_lo(pcrel184)
-	lw a0, %pcrel_lo(pcrel184)(a0)
-	bne a0, zero, label63
-	li a0, 200
-	mul a1, s3, a0
-	add s2, s2, a1
-	lw a0, 0(s2)
-	bne a0, zero, label80
-	lw a0, 0(sp)
-	bne a0, zero, label95
-	slliw a2, s1, 4
-	addw a1, a2, s1
-	addiw a0, a1, 23
-	slli a2, a0, 1
-	srli a1, a2, 59
-	add a3, a0, a1
-	andi a2, a3, -32
-	subw s1, a0, a2
-	beq s1, zero, label19
-	j label4
-label56:
-	mv s5, zero
-	j label16
-label63:
-	mv s5, zero
-.p2align 2
-label8:
-	sh2add s6, s5, s4
-	lw a0, 0(s6)
-	jal putch
-	addiw s5, s5, 1
-	lw a1, 4(s6)
-	bne a1, zero, label8
-	li a0, 200
-	mul a1, s3, a0
-	add s2, s2, a1
-	lw a0, 0(s2)
-	bne a0, zero, label80
-	lw a0, 0(sp)
-	bne a0, zero, label95
-	slliw a2, s1, 4
-	addw a1, a2, s1
-	addiw a0, a1, 23
-	slli a2, a0, 1
-	srli a1, a2, 59
-	add a3, a0, a1
-	andi a2, a3, -32
-	subw s1, a0, a2
-	beq s1, zero, label19
-	j label4
-label80:
-	mv s3, zero
-	j label11
-label95:
-	mv s2, zero
-	j label14
-label19:
-	mv a0, zero
-	ld ra, 24(sp)
-	ld s4, 32(sp)
-	ld s3, 40(sp)
-	ld s2, 48(sp)
-	ld s6, 56(sp)
-	ld s1, 64(sp)
-	ld s5, 72(sp)
-	ld s0, 80(sp)
-	addi sp, sp, 88
-	ret
-.p2align 2
-label16:
-	sh2add s6, s5, s4
-	lw a0, 0(s6)
-	jal putch
-	addiw s5, s5, 1
-	lw a1, 4(s6)
-	bne a1, zero, label16
-pcrel185:
-	auipc a0, %pcrel_hi(saY_HeI10_To)
-	addi s4, a0, %pcrel_lo(pcrel185)
-	lw a0, %pcrel_lo(pcrel185)(a0)
-	bne a0, zero, label63
-	li a0, 200
-	mul a1, s3, a0
-	add s2, s2, a1
-	lw a0, 0(s2)
-	bne a0, zero, label80
-	lw a0, 0(sp)
-	bne a0, zero, label95
-	slliw a2, s1, 4
-	addw a1, a2, s1
-	addiw a0, a1, 23
-	slli a2, a0, 1
-	srli a1, a2, 59
-	add a3, a0, a1
-	andi a2, a3, -32
-	subw s1, a0, a2
+	slli a1, a0, 1
+	srli a2, a1, 59
+	add a3, a0, a2
+	andi a1, a3, -32
+	subw s1, a0, a1
 	beq s1, zero, label19
 label4:
 	li a1, 715827883
@@ -303,53 +342,13 @@ label4:
 	add a1, a3, a2
 	remw s3, s1, a0
 	bne a1, s3, label6
-	j label18
-.p2align 2
-label11:
-	sh2add s4, s3, s2
-	lw a0, 0(s4)
-	jal putch
-	addiw s3, s3, 1
-	lw a1, 4(s4)
-	bne a1, zero, label11
-	lw a0, 0(sp)
-	bne a0, zero, label95
-	slliw a2, s1, 4
-	addw a1, a2, s1
-	addiw a0, a1, 23
-	slli a2, a0, 1
-	srli a1, a2, 59
-	add a3, a0, a1
-	andi a2, a3, -32
-	subw s1, a0, a2
-	beq s1, zero, label19
-	j label4
-label18:
-	slliw a2, s1, 4
-	addw a1, a2, s1
-	addiw a0, a1, 23
-	slli a2, a0, 1
-	srli a1, a2, 59
-	add a3, a0, a1
-	andi a2, a3, -32
-	subw s1, a0, a2
-	beq s1, zero, label19
-	j label4
-.p2align 2
-label14:
-	sh2add s3, s2, s0
-	lw a0, 0(s3)
-	jal putch
-	addiw s2, s2, 1
-	lw a1, 4(s3)
-	bne a1, zero, label14
-	slliw a2, s1, 4
-	addw a1, a2, s1
-	addiw a0, a1, 23
-	slli a2, a0, 1
-	srli a1, a2, 59
-	add a3, a0, a1
-	andi a2, a3, -32
-	subw s1, a0, a2
+	slliw a1, s1, 4
+	addw a2, a1, s1
+	addiw a0, a2, 23
+	slli a1, a0, 1
+	srli a2, a1, 59
+	add a3, a0, a2
+	andi a1, a3, -32
+	subw s1, a0, a1
 	beq s1, zero, label19
 	j label4

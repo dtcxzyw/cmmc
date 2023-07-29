@@ -4,32 +4,33 @@
 .globl t
 t:
 .p2align 2
-	bne a0, a1, label14
-label2:
-	ret
-label7:
+	beq a0, a1, label9
+	j label14
+label5:
 	mulw t0, a5, a4
 	addw a2, a0, t0
-	blt a3, a2, label9
-	j label10
+	blt a3, a2, label7
+	j label8
 label29:
 	mv a0, a2
-	j label2
-label10:
+	j label9
+label8:
 	subw a1, a1, a2
 	beq a2, a1, label29
 	mv a0, a2
 	subw a5, zero, a1
 	mv a3, a1
 	mv a4, zero
-	j label7
+	j label5
+label9:
+	ret
 label14:
 	subw a5, zero, a1
 	mv a3, a1
 	mv a4, zero
-	j label7
-label9:
+	j label5
+label7:
 	subw a2, a2, a1
 	addiw a4, a4, 1
-	bne a1, a2, label7
+	bne a1, a2, label5
 	j label29

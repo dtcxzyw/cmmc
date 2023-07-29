@@ -74,9 +74,8 @@ label22:
 	b label26
 .p2align 4
 label20:
-	add r3, r2, #24
-	cmp r3, #20
 	add r2, r2, #12
+	cmp r2, #8
 	blt label20
 	add r2, r2, #3
 	cmp r2, #20

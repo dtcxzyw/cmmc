@@ -20,19 +20,19 @@ line2:
 f:
 .p2align 4
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
-	sub sp, sp, #20
-	mov r11, r2
-	movw r4, #:lower16:row
-	mov r10, r0
-	str r0, [sp, #8]
-	movw r5, #:lower16:ans
 	mov r6, #1
+	sub sp, sp, #20
+	mov r10, r0
+	mov r11, r2
+	str r0, [sp, #8]
+	movw r4, #:lower16:row
+	movw r5, #:lower16:ans
 	str r2, [sp, #4]
 	movw r8, #:lower16:line2
 	movw r7, #:lower16:line1
 	str r1, [sp, #0]
-	movt r4, #:upper16:row
 	add r0, r0, #1
+	movt r4, #:upper16:row
 	movt r5, #:upper16:ans
 	movt r8, #:upper16:line2
 	str r0, [sp, #12]
@@ -68,14 +68,6 @@ label7:
 	ble label5
 	b label4
 .p2align 4
-label8:
-	ldr r10, [sp, #8]
-	add r1, r10, r0
-	sub r1, r1, r6
-	ldr r1, [r8, r1, lsl #2]
-	cmp r1, #0
-	beq label9
-.p2align 4
 label6:
 	add r6, r6, #1
 	ldr r11, [sp, #4]
@@ -83,8 +75,14 @@ label6:
 	cmp r6, r0
 	ble label5
 	b label4
-label9:
+.p2align 4
+label8:
 	ldr r10, [sp, #8]
+	add r1, r10, r0
+	sub r1, r1, r6
+	ldr r1, [r8, r1, lsl #2]
+	cmp r1, #0
+	bne label6
 	cmp r10, r0
 	str r6, [r5, r10, lsl #2]
 	bne label64
@@ -93,8 +91,13 @@ label9:
 	ldr r0, [r1, #0]
 	add r0, r0, #1
 	str r0, [r1, #0]
-	b label13
-label10:
+label11:
+	ldr r11, [sp, #4]
+	ldr r11, [r11, #0]
+	cmp r10, r11
+	ble label13
+	mov r0, r11
+label16:
 	ldr r10, [sp, #8]
 	mov r1, #1
 	str r1, [r4, r6, lsl #2]
@@ -116,31 +119,24 @@ label10:
 	str r0, [r8, r1, lsl #2]
 	b label6
 label13:
-	ldr r11, [sp, #4]
-	ldr r11, [r11, #0]
-	cmp r10, r11
-	ble label15
-	mov r0, r11
-	b label10
-label15:
 	ldr r0, [r5, r10, lsl #2]
 	bl putint
 	cmp r10, r11
-	beq label16
+	beq label15
 	mov r0, #32
 	bl putch
 	add r10, r10, #1
-	b label13
+	b label11
 label64:
 	ldr r11, [sp, #4]
 	ldr r0, [r11, #0]
-	b label10
-label16:
+	b label16
+label15:
 	mov r0, #10
 	bl putch
 	ldr r11, [sp, #4]
 	ldr r0, [r11, #0]
-	b label10
+	b label16
 .globl main
 main:
 .p2align 4

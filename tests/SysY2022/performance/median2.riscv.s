@@ -9,10 +9,10 @@ a:
 main:
 .p2align 2
 	addi sp, sp, -48
-pcrel119:
+pcrel113:
 	auipc a0, %pcrel_hi(a)
 	sd s3, 40(sp)
-	addi s3, a0, %pcrel_lo(pcrel119)
+	addi s3, a0, %pcrel_lo(pcrel113)
 	sd s0, 32(sp)
 	mv s0, s3
 	sd s1, 24(sp)
@@ -28,17 +28,17 @@ pcrel119:
 	li a0, 59
 	sraiw s2, a1, 1
 	jal _sysy_starttime
-	mv a1, s3
-	mv a2, zero
+	mv a2, s3
+	mv a1, zero
 	mv a0, s4
 	lw a3, 0(s3)
 	addiw a4, s4, 1
 	mv a5, zero
 .p2align 2
 label8:
-	bgt a4, a5, label22
-	beq a4, a5, label16
-label112:
+	bgt a4, a5, label11
+	beq a4, a5, label17
+label110:
 	sh2add t0, a5, s0
 	sh2add t2, a4, s0
 	lw t1, 0(t0)
@@ -47,68 +47,67 @@ label112:
 	sw t1, 0(t2)
 	j label8
 .p2align 2
-label22:
-	addiw a4, a4, -1
-	sh2add t0, a4, s0
-	lw t1, 0(t0)
-	bgt a3, t1, label11
+label12:
 	bgt a4, a5, label22
-	beq a4, a5, label16
-	j label112
+	beq a4, a5, label17
+	j label110
 .p2align 2
-label11:
-	bgt a4, a5, label21
-	beq a4, a5, label16
-	j label112
+label15:
+	beq a4, a5, label17
+	j label110
 .p2align 2
-label14:
-	beq a4, a5, label16
-	j label112
-.p2align 2
-label21:
+label22:
 	addiw a5, a5, 1
 	sh2add t0, a5, s0
 	lw t1, 0(t0)
-	ble a3, t1, label14
-	j label11
-label16:
-	sw a3, 0(a1)
+	ble a3, t1, label15
+	j label12
+.p2align 2
+label11:
+	addiw a4, a4, -1
+	sh2add t0, a4, s0
+	lw t1, 0(t0)
+	bgt a3, t1, label12
+	bgt a4, a5, label11
+	bne a4, a5, label110
+label17:
+	sw a3, 0(a2)
 	sh2add a4, a5, s0
 	lw t0, 0(a4)
-	sw t0, 0(a1)
+	sw t0, 0(a2)
 	sw a3, 0(a4)
-	bge s2, a5, label17
+	bge s2, a5, label18
 	mv a0, a5
-	lw a3, 0(a1)
+	lw a3, 0(a2)
 	addiw a4, a5, 1
-	mv a5, a2
+	mv a5, a1
 	j label8
-label17:
-	bgt s2, a5, label18
+label18:
+	bgt s2, a5, label19
 	li a0, 61
 	jal _sysy_stoptime
 	mv a0, s1
 	mv a1, s0
 	jal putarray
-	sh2add a3, s2, s0
-	lw a0, 0(a3)
+	sh2add a2, s2, s0
+	lw a0, 0(a2)
 	ld ra, 0(sp)
-	slli a2, a0, 1
+	slli a1, a0, 1
 	ld s2, 8(sp)
-	srli a1, a2, 56
+	srli a2, a1, 56
 	ld s4, 16(sp)
-	add a3, a0, a1
+	add a3, a0, a2
 	ld s1, 24(sp)
-	andi a2, a3, -256
+	andi a1, a3, -256
 	ld s0, 32(sp)
-	subw a0, a0, a2
+	subw a0, a0, a1
 	ld s3, 40(sp)
 	addi sp, sp, 48
 	ret
-label18:
-	addiw a2, a5, 1
-	sh2add a1, a2, s0
-	lw a3, 0(a1)
+label19:
+	addiw a1, a5, 1
+	sh2add a2, a1, s0
+	lw a3, 0(a2)
 	addiw a4, a0, 1
-	mv a5, a2
+	mv a5, a1
 	j label8

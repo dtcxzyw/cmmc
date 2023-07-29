@@ -37,15 +37,15 @@ main:
 	nop
 	li $t2, 1
 	subu $t3, $v0, $t2
-	bgtz $t3, label6
+	bgtz $t3, label4
 	nop
-	bgtz $v0, label61
+	bgtz $v0, label52
 	nop
-	b label15
+	b label13
 	nop
 label22:
 	move $t2, $zero
-label2:
+label14:
 	jal read
 	nop
 	sll $t3, $t2, 2
@@ -53,17 +53,83 @@ label2:
 	sw $v0, 0($t3)
 	addiu $t2, $t2, 1
 	subu $t3, $t0, $t2
-	bgtz $t3, label2
+	bgtz $t3, label14
 	nop
 	li $t2, 1
 	subu $t3, $t0, $t2
-	bgtz $t3, label6
+	bgtz $t3, label4
 	nop
-	blez $t0, label15
+	bgtz $t0, label52
 	nop
-label61:
-	move $t2, $zero
+	b label13
+	nop
+label7:
+	sll $t5, $t4, 2
+	addu $t5, $t1, $t5
+	lw $t5, 0($t5)
+	subu $t6, $t3, $t5
+	bltz $t6, label8
+	nop
+	addiu $t4, $t4, 1
+	sll $t4, $t4, 2
+	addu $t4, $t1, $t4
+	sw $t3, 0($t4)
+	addiu $t2, $t2, 1
+	subu $t3, $t0, $t2
+	bgtz $t3, label4
+	nop
+	bgtz $t0, label52
+	nop
 label13:
+	move $v0, $zero
+	lw $ra, 416($sp)
+	addiu $sp, $sp, 424
+	jr $ra
+	nop
+label8:
+	addiu $t6, $t4, 1
+	sll $t6, $t6, 2
+	addu $t6, $t1, $t6
+	sw $t5, 0($t6)
+	addiu $t4, $t4, -1
+	addiu $t5, $t4, 1
+	bgtz $t5, label7
+	nop
+	addiu $t4, $t4, 1
+	sll $t4, $t4, 2
+	addu $t4, $t1, $t4
+	sw $t3, 0($t4)
+	addiu $t2, $t2, 1
+	subu $t3, $t0, $t2
+	bgtz $t3, label4
+	nop
+	blez $t0, label13
+	nop
+label52:
+	move $t2, $zero
+	b label11
+	nop
+label4:
+	sll $t3, $t2, 2
+	addu $t3, $t1, $t3
+	lw $t3, 0($t3)
+	addiu $t4, $t2, -1
+	addiu $t5, $t4, 1
+	bgtz $t5, label7
+	nop
+	addiu $t4, $t4, 1
+	sll $t4, $t4, 2
+	addu $t4, $t1, $t4
+	sw $t3, 0($t4)
+	addiu $t2, $t2, 1
+	subu $t3, $t0, $t2
+	bgtz $t3, label4
+	nop
+	bgtz $t0, label52
+	nop
+	b label13
+	nop
+label11:
 	sll $t3, $t2, 2
 	addu $t3, $t1, $t3
 	lw $a0, 0($t3)
@@ -71,71 +137,7 @@ label13:
 	nop
 	addiu $t2, $t2, 1
 	subu $t3, $t0, $t2
-	bgtz $t3, label13
+	bgtz $t3, label11
 	nop
-label15:
-	move $v0, $zero
-	lw $ra, 416($sp)
-	addiu $sp, $sp, 424
-	jr $ra
-	nop
-label6:
-	sll $t3, $t2, 2
-	addu $t3, $t1, $t3
-	lw $t3, 0($t3)
-	addiu $t4, $t2, -1
-	addiu $t5, $t4, 1
-	bgtz $t5, label9
-	nop
-	addiu $t4, $t4, 1
-	sll $t4, $t4, 2
-	addu $t4, $t1, $t4
-	sw $t3, 0($t4)
-	addiu $t2, $t2, 1
-	subu $t3, $t0, $t2
-	bgtz $t3, label6
-	nop
-	bgtz $t0, label61
-	nop
-	b label15
-	nop
-label9:
-	sll $t5, $t4, 2
-	addu $t5, $t1, $t5
-	lw $t5, 0($t5)
-	subu $t6, $t3, $t5
-	bltz $t6, label10
-	nop
-	addiu $t4, $t4, 1
-	sll $t4, $t4, 2
-	addu $t4, $t1, $t4
-	sw $t3, 0($t4)
-	addiu $t2, $t2, 1
-	subu $t3, $t0, $t2
-	bgtz $t3, label6
-	nop
-	bgtz $t0, label61
-	nop
-	b label15
-	nop
-label10:
-	addiu $t6, $t4, 1
-	sll $t6, $t6, 2
-	addu $t6, $t1, $t6
-	sw $t5, 0($t6)
-	addiu $t4, $t4, -1
-	addiu $t5, $t4, 1
-	bgtz $t5, label9
-	nop
-	addiu $t4, $t4, 1
-	sll $t4, $t4, 2
-	addu $t4, $t1, $t4
-	sw $t3, 0($t4)
-	addiu $t2, $t2, 1
-	subu $t3, $t0, $t2
-	bgtz $t3, label6
-	nop
-	bgtz $t0, label61
-	nop
-	b label15
+	b label13
 	nop
