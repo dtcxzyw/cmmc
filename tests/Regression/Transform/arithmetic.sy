@@ -494,3 +494,12 @@ int select_add_one(int y, int x) {
 int select_sub_one(int y, int x) {
     return x ? y - 1 : y;
 }
+int range_check1(int c) {
+    return c < 48 || c > 57;
+}
+int range_check2(int c) {
+    return c < 48 || c > 48;
+}
+int range_check3(int c) {
+    return c < 48 || c > 36;
+}

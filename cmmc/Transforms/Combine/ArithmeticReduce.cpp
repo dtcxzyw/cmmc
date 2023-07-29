@@ -780,6 +780,50 @@ class ArithmeticReduce final : public TransformPass<Function> {
                 }
             }
 
+            // (v SLT c1) || (v SGT c2) -> (v - c1) UGT (c2 - c1)
+            if(or_(oneUse(icmp(cmp1, any(v1), int_(i1))), oneUse(icmp(cmp2, any(v2), int_(i2))))(matchCtx) && v1 == v2) {
+                bool valid = false;
+
+                auto legalize = [](CompareOp& op, intmax_t& val) {
+                    if(op == CompareOp::ICmpSignedLessEqual) {
+                        // TODO: check overflow?
+                        op = CompareOp::ICmpSignedLessThan;
+                        ++val;
+                    }
+                    if(op == CompareOp::ICmpSignedGreaterEqual) {
+                        // TODO: check overflow?
+                        op = CompareOp::ICmpSignedGreaterThan;
+                        --val;
+                    }
+                };
+
+                legalize(cmp1, i1);
+                legalize(cmp2, i2);
+
+                if(cmp1 == CompareOp::ICmpSignedLessThan && cmp2 == CompareOp::ICmpSignedGreaterThan) {
+                    valid = true;
+                } else if(cmp1 == CompareOp::ICmpSignedGreaterThan && cmp2 == CompareOp::ICmpSignedLessThan) {
+                    std::swap(i1, i2);
+                    valid = true;
+                }
+
+                if(valid) {
+                    // x < i1 || x > i2
+                    if(i1 > i2) {
+                        return builder.getTrue();
+                    }
+                    if(i1 == i2) {
+                        // i1 == i2 -> v != i1
+                        return builder.makeOp<CompareInst>(InstructionID::ICmp, CompareOp::ICmpNotEqual, v1, makeIntLike(i1, v1));
+                    }
+                    if(i1 < i2 && i1 + 65536 >= i2) {
+                        return builder.makeOp<CompareInst>(
+                            InstructionID::ICmp, CompareOp::ICmpUnsignedGreaterThan,
+                            builder.makeOp<BinaryInst>(InstructionID::Sub, v1, makeIntLike(i1, v1)), makeIntLike(i2 - i1, v1));
+                    }
+                }
+            }
+
             // TODO: handle select?
             // c = select x a b
             // d = add c 1
@@ -873,6 +917,10 @@ class ArithmeticReduce final : public TransformPass<Function> {
             if(srem(mul(any(v1), int_(i1)), int_(i2))(matchCtx) && i2 && i1 % i2 == 0) {
                 return makeIntLike(0, inst);
             }
+            // if(srem(oneUse(mul(any(v1), int_(i1))), capture(int_(i2), v2))(matchCtx) && i2 && i1 % i2 == i1) {
+            //     return builder.makeOp<BinaryInst>(
+            //         InstructionID::SRem, builder.makeOp<BinaryInst>(InstructionID::Mul, v1, makeIntLike(i1 % i2, v1)), v2);
+            // }
 
             // sdiv (neg x), c1 -> sdiv x, -c1
             if(sdiv(oneUse(neg(any(v1))), int_(i1))(matchCtx)) {
