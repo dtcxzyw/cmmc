@@ -21,17 +21,17 @@ pcrel73:
 	sd s4, 8(sp)
 	sd ra, 0(sp)
 	lw s2, 0(a1)
-	bne s0, s2, label2
+	bne s0, s2, label4
 	mv a0, s0
-	j label12
-label2:
+	j label2
+label4:
 	sh2add a1, s2, s1
 	lw s3, 0(a1)
 	bne s2, s3, label5
 	mv a0, s2
 	sh2add a1, s0, s1
 	sw s2, 0(a1)
-	j label12
+	j label2
 label5:
 	sh2add a1, s3, s1
 	lw s4, 0(a1)
@@ -41,7 +41,7 @@ label5:
 	sw s3, 0(a1)
 	sh2add a1, s0, s1
 	sw s3, 0(a1)
-	j label12
+	j label2
 label8:
 	sh2add a1, s4, s1
 	lw a0, 0(a1)
@@ -53,7 +53,7 @@ label8:
 	sw s4, 0(a1)
 	sh2add a1, s0, s1
 	sw s4, 0(a1)
-	j label12
+	j label2
 label11:
 	jal find
 	sh2add a1, s4, s1
@@ -64,7 +64,7 @@ label11:
 	sw a0, 0(a1)
 	sh2add a1, s0, s1
 	sw a0, 0(a1)
-label12:
+label2:
 	ld ra, 0(sp)
 	ld s4, 8(sp)
 	ld s3, 16(sp)

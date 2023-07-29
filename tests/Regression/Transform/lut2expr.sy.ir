@@ -23,7 +23,7 @@ func @test5(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless N
 }
 func @test6(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    [10 * i32]* %c = alloc [10 * i32];
+    [10 * i32]* %c = alloc [10 * i32], align 8;
     i32* %0 = getelementptr &([10 * i32]* %c)[i64 0][i64 0];
     store i32* %0 with i32 0;
     i32* %1 = getelementptr &([10 * i32]* %c)[i64 0][i64 1];

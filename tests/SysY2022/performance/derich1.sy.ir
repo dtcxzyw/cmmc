@@ -2,10 +2,10 @@ internal func @getfarray() -> i32 { NoMemoryRead };
 internal func @putfarray() -> void { NoMemoryWrite };
 internal func @starttime() -> void { NoMemoryRead NoMemoryWrite };
 internal func @stoptime() -> void { NoMemoryRead NoMemoryWrite };
-internal [512 * [270 * f32]]* @imgIn;
-internal [512 * [270 * f32]]* @imgOut;
-internal [512 * [270 * f32]]* @my_y1 { Flexible };
-internal [512 * [270 * f32]]* @my_y2 { Flexible };
+internal [512 * [270 * f32]]* @imgIn, align 8;
+internal [512 * [270 * f32]]* @imgOut, align 8;
+internal [512 * [270 * f32]]* @my_y1, align 8 { Flexible };
+internal [512 * [270 * f32]]* @my_y2, align 8 { Flexible };
 func @main() -> i32 { NoRecurse Entry } {
   ^entry:
     [512 * [270 * f32]]* %0 = ptrcast [512 * [270 * f32]]* @imgIn to [512 * [270 * f32]]*;
@@ -632,7 +632,7 @@ func @main() -> i32 { NoRecurse Entry } {
     f32 %542 = load f32* %541;
     i32 %543 = add i32 %286, i32 -28;
     ubr ^while.body9;
-  ^while.body4:
+  ^while.body4 {scalar}:
     i32 %544 = phi [^while.body1, i32 %278] [^while.body4, i32 %557];
     f32 %545 = phi [^while.body1, f32 %270] [^while.body4, f32 %549];
     f32 %546 = phi [^while.body1, f32 %276] [^while.body4, f32 %555];
@@ -1208,7 +1208,7 @@ func @main() -> i32 { NoRecurse Entry } {
     store f32* %1047 with f32 %1045;
     i32 %1048 = add i32 %661, i32 28;
     ubr ^while.body13;
-  ^while.body9:
+  ^while.body9 {scalar}:
     i32 %1049 = phi [^while.body3, i32 %543] [^while.body9, i32 %1063];
     f32 %1050 = phi [^while.body3, f32 %542] [^while.body9, f32 %1062];
     f32 %1051 = phi [^while.body3, f32 %533] [^while.body9, f32 %1050];
@@ -1440,7 +1440,7 @@ func @main() -> i32 { NoRecurse Entry } {
     [270 * f32]* %1252 = getelementptr &([270 * f32]* %7)[i32 %1248];
     [270 * f32]* %1253 = getelementptr &([270 * f32]* %9)[i32 %1248];
     ubr ^while.body14;
-  ^while.body11:
+  ^while.body11 {scalar}:
     i32 %1254 = phi [^while.body7, i32 %915] [^while.body11, i32 %1261];
     f32* %1255 = getelementptr &([270 * f32]* %280)[i64 0][i32 %1254];
     f32 %1256 = load f32* %1255;
@@ -1599,7 +1599,7 @@ func @main() -> i32 { NoRecurse Entry } {
     f32 %1394 = load f32* %1393;
     i32 %1395 = add i32 %1069, i32 -28;
     ubr ^while.body15;
-  ^while.body13:
+  ^while.body13 {scalar}:
     i32 %1396 = phi [^while.body8, i32 %1048] [^while.body13, i32 %1411];
     f32 %1397 = phi [^while.body8, f32 %1039] [^while.body13, f32 %1402];
     f32 %1398 = phi [^while.body8, f32 %1045] [^while.body13, f32 %1408];
@@ -1747,7 +1747,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i32 %1513 = add i32 %1416, i32 16;
     i1 %1514 = icmp slt i32 %1513, i32 256;
     cbr i1 %1514(prob = 0.94), ^while.body14, ^while.body16;
-  ^while.body15:
+  ^while.body15 {scalar}:
     i32 %1515 = phi [^while.body12, i32 %1395] [^while.body15, i32 %1531];
     f32 %1516 = phi [^while.body12, f32 %1394] [^while.body15, f32 %1530];
     f32 %1517 = phi [^while.body12, f32 %1383] [^while.body15, f32 %1516];
@@ -1858,7 +1858,7 @@ func @main() -> i32 { NoRecurse Entry } {
   ^b4:
     i32 %1606 = add i32 %840, i32 1;
     ubr ^while.header4;
-  ^while.body17:
+  ^while.body17 {scalar}:
     i32 %1607 = phi [^while.body16, i32 %1605] [^while.body17, i32 %1614];
     f32* %1608 = getelementptr &([270 * f32]* %1252)[i64 0][i32 %1607];
     f32 %1609 = load f32* %1608;

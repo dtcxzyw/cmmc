@@ -64,8 +64,8 @@ func @licm2(i32* %head, i32* %tail, i32 %i) -> i32 { NoRecurse } {
   ^b:
     ret i32 %2;
 }
-[123 * i32]* @a;
-[123 * i32]* @b;
+[123 * i32]* @a, align 8;
+[123 * i32]* @b, align 8;
 func @licm3(i32 %x) -> void { NoRecurse } {
   ^entry:
     i1 %0 = icmp sgt i32 %x, i32 0;

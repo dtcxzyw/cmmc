@@ -125,7 +125,7 @@ public:
         {
             for(auto var : globalVars) {
                 const auto type = var->getType()->as<PointerType>()->getPointee();
-                const auto alloc = builder.createAlloc(type);
+                const auto alloc = builder.createAlloc(type, var->getAlignment());
                 alloc->setLabel(var->getSymbol());
                 if(auto val = var->initialValue()) {
                     if(auto valArray = dynamic_cast<ConstantArray*>(val)) {

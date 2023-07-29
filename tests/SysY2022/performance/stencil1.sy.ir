@@ -2,8 +2,8 @@ internal func @getarray() -> i32 { NoMemoryRead };
 internal func @putarray() -> void { NoMemoryWrite };
 internal func @starttime() -> void { NoMemoryRead NoMemoryWrite };
 internal func @stoptime() -> void { NoMemoryRead NoMemoryWrite };
-internal [1048576 * i32]* @image_in;
-internal [1048576 * i32]* @image_out;
+internal [1048576 * i32]* @image_in, align 8;
+internal [1048576 * i32]* @image_out, align 8;
 func @main() -> i32 { NoRecurse Entry } {
   ^entry:
     [1048576 * i32]* %0 = ptrcast [1048576 * i32]* @image_in to [1048576 * i32]*;

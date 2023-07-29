@@ -1,11 +1,11 @@
 internal func @getint() -> i32 { NoMemoryRead NoMemoryWrite };
 internal func @putint() -> void { NoMemoryRead NoMemoryWrite };
 internal func @putch() -> void { NoMemoryRead NoMemoryWrite };
-internal [16 * [16 * i32]]* @e { Flexible };
+internal [16 * [16 * i32]]* @e, align 8 { Flexible };
 func @main() -> i32 { NoRecurse Entry } {
   ^entry:
-    [16 * i32]* %dis = alloc [16 * i32];
-    [16 * i32]* %book = alloc [16 * i32];
+    [16 * i32]* %dis = alloc [16 * i32], align 8;
+    [16 * i32]* %book = alloc [16 * i32], align 8;
     i32* %0 = getelementptr &([16 * i32]* %book)[i64 0][i64 0];
     store i32* %0 with i32 0;
     i32* %1 = getelementptr &([16 * i32]* %book)[i64 0][i64 1];

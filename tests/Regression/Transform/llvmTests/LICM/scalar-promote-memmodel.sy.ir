@@ -25,4 +25,4 @@ func @bar(i32 %var0, i32 %var1) -> void { NoRecurse } {
     store i32* %7 with i32 %11;
     ubr ^block4;
 }
-i32* @g = 0;
+i32* @g, align 8 = 0;

@@ -68,7 +68,7 @@ void loadTAC(Module& module, const std::string& path) {
             }
 
             const auto oldBlock = builder.getCurrentBlock();
-            auto inst = builder.createAlloc(i32);
+            auto inst = builder.createAlloc(i32, 4);
             inst->setLabel(identifier);
             builder.setCurrentBlock(oldBlock);
             identifierMap.emplace(identifier, inst);
@@ -185,7 +185,7 @@ void loadTAC(Module& module, const std::string& path) {
                                  idx = 0;
                                  for(auto arg : args) {
                                      const auto val = func->addArg(arg);
-                                     const auto storage = builder.createAlloc(val->getType());
+                                     const auto storage = builder.createAlloc(val->getType(), 4);
                                      builder.makeOp<StoreInst>(storage, val);
                                      identifierMap.emplace(argNames[idx], storage);
                                      ++idx;
@@ -233,7 +233,7 @@ void loadTAC(Module& module, const std::string& path) {
                                  const auto size = static_cast<uint32_t>(dec.size);
                                  assert(size % 4 == 0);
                                  const auto type = make<ArrayType>(i32, size / 4);
-                                 const auto ptr = builder.createAlloc(type);
+                                 const auto ptr = builder.createAlloc(type, 4);
                                  identifierMap.emplace(std::get<String>(dec.var.val), ptr);
                              },
                              [&](const TACArg& arg) { paramStack.push_back(getRValue(arg.val)); },

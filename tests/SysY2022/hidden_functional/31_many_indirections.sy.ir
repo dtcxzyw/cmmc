@@ -1,5 +1,5 @@
 internal func @putint() -> void { NoMemoryRead NoMemoryWrite };
-internal [20 * [100 * i32]]* @array { Flexible };
+internal [20 * [100 * i32]]* @array, align 8 { Flexible };
 func @main() -> i32 { NoRecurse Entry } {
   ^entry:
     [20 * [100 * i32]]* %0 = ptrcast [20 * [100 * i32]]* @array to [20 * [100 * i32]]*;

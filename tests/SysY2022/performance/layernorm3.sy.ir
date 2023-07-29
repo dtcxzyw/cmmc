@@ -2,7 +2,7 @@ internal func @getfarray() -> i32 { NoMemoryRead };
 internal func @putfloat() -> void { NoMemoryRead NoMemoryWrite };
 internal func @starttime() -> void { NoMemoryRead NoMemoryWrite };
 internal func @stoptime() -> void { NoMemoryRead NoMemoryWrite };
-internal [1000 * [1000 * f32]]* @a;
+internal [1000 * [1000 * f32]]* @a, align 8;
 func @main() -> i32 { NoRecurse Entry } {
   ^entry:
     [1000 * [1000 * f32]]* %0 = ptrcast [1000 * [1000 * f32]]* @a to [1000 * [1000 * f32]]*;
@@ -1007,8 +1007,8 @@ func @main() -> i32 { NoRecurse Entry } {
     i32 %923 = add i32 %421, i32 1;
     ubr ^while.header5;
   ^while.header6:
-    f32 %924 = phi [^while.body8, f32 0] [^if.then, f32 %924] [^if.else, f32 %926];
-    f32 %925 = phi [^while.body8, f32 %797] [^if.then, f32 %926] [^if.else, f32 %925];
+    f32 %924 = phi [^while.body8, f32 %797] [^if.then, f32 %926] [^if.else, f32 %924];
+    f32 %925 = phi [^while.body8, f32 0] [^if.then, f32 %925] [^if.else, f32 %926];
     f32 %926 = phi [^while.body8, f32 %798] [^if.then, f32 %934] [^if.else, f32 %936];
     f32 %927 = fmul f32 %926, f32 %926;
     f32 %928 = fsub f32 %927, f32 %797;
@@ -1023,13 +1023,13 @@ func @main() -> i32 { NoRecurse Entry } {
     i1 %932 = fcmp ogt f32 %927, f32 %797;
     cbr i1 %932(prob = 0.5), ^if.then, ^if.else;
   ^if.then:
-    f32 %933 = fadd f32 %926, f32 %924;
+    f32 %933 = fadd f32 %926, f32 %925;
     f32 %934 = fmul f32 %933, f32 0.5;
     ubr ^while.header6;
   ^if.else:
-    f32 %935 = fadd f32 %926, f32 %925;
+    f32 %935 = fadd f32 %926, f32 %924;
     f32 %936 = fmul f32 %935, f32 0.5;
     ubr ^while.header6;
 }
-internal [1000 * f32]* @var { Flexible };
-internal [1000 * f32]* @mean { Flexible };
+internal [1000 * f32]* @var, align 8 { Flexible };
+internal [1000 * f32]* @mean, align 8 { Flexible };

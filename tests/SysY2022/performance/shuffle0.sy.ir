@@ -3,15 +3,15 @@ internal func @getarray() -> i32 { NoMemoryRead };
 internal func @putarray() -> void { NoMemoryWrite };
 internal func @starttime() -> void { NoMemoryRead NoMemoryWrite };
 internal func @stoptime() -> void { NoMemoryRead NoMemoryWrite };
-internal [10000000 * i32]* @head { Flexible };
-internal [10000000 * i32]* @next { Flexible };
-internal [10000000 * i32]* @nextvalue { Flexible };
-internal [10000000 * i32]* @key { Flexible };
-internal [10000000 * i32]* @value { Flexible };
-internal [10000000 * i32]* @keys;
-internal [10000000 * i32]* @values;
-internal [10000000 * i32]* @requests;
-internal [10000000 * i32]* @ans;
+internal [10000000 * i32]* @head, align 8 { Flexible };
+internal [10000000 * i32]* @next, align 8 { Flexible };
+internal [10000000 * i32]* @nextvalue, align 8 { Flexible };
+internal [10000000 * i32]* @key, align 8 { Flexible };
+internal [10000000 * i32]* @value, align 8 { Flexible };
+internal [10000000 * i32]* @keys, align 8;
+internal [10000000 * i32]* @values, align 8;
+internal [10000000 * i32]* @requests, align 8;
+internal [10000000 * i32]* @ans, align 8;
 func @main() -> i32 { NoRecurse Entry } {
   ^entry:
     i32 %0 = call () -> i32 @getint();

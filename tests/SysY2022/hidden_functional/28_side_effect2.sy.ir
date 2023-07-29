@@ -1,7 +1,7 @@
 internal func @putint() -> void { NoMemoryRead NoMemoryWrite };
 func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
   ^entry:
-    [20 * i32]* %array = alloc [20 * i32];
+    [20 * i32]* %array = alloc [20 * i32], align 8;
     i32* %0 = getelementptr &([20 * i32]* %array)[i64 0][i64 0];
     store i32* %0 with i32 0;
     i32* %1 = getelementptr &([20 * i32]* %array)[i64 0][i64 1];

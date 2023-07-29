@@ -2,4 +2,4 @@ func @fn2() -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurs
   ^entry:
     ret;
 }
-i32* @d = 0;
+i32* @d, align 8 = 0;

@@ -2,5 +2,5 @@ func @inflate() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRec
   ^entry:
     ret i32 0;
 }
-i32* @bk;
-i32* @hufts;
+i32* @bk, align 8;
+i32* @hufts, align 8;

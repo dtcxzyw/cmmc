@@ -1,7 +1,7 @@
-i32* @foo = 0;
-i32* @bar_ = 0;
-i32* @_foo = 0;
-i32* @foo_ = 0;
-i32* @a = 0;
-i32* @b = 0;
-i32* @c = 0;
+i32* @foo, align 8 = 0;
+i32* @bar_, align 8 = 0;
+i32* @_foo, align 8 = 0;
+i32* @foo_, align 8 = 0;
+i32* @a, align 8 = 0;
+i32* @b, align 8 = 0;
+i32* @c, align 8 = 0;

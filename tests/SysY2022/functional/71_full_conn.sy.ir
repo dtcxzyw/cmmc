@@ -2,7 +2,7 @@ internal func @getint() -> i32 { NoMemoryRead NoMemoryWrite };
 internal func @putch() -> void { NoMemoryRead NoMemoryWrite };
 func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
   ^entry:
-    [5 * [5 * i32]]* %a = alloc [5 * [5 * i32]];
+    [5 * [5 * i32]]* %a = alloc [5 * [5 * i32]], align 8;
     i32 %0 = call () -> i32 @getint();
     i32* %1 = getelementptr &([5 * [5 * i32]]* %a)[i64 0][i64 0][i64 0];
     i32* %2 = getelementptr &([5 * [5 * i32]]* %a)[i64 0][i64 0][i64 1];

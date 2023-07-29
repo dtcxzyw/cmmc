@@ -1,10 +1,10 @@
 internal func @getint() -> i32 { NoMemoryRead NoMemoryWrite };
 internal func @putint() -> void { NoMemoryRead NoMemoryWrite };
 internal func @putch() -> void { NoMemoryRead NoMemoryWrite };
-internal [50 * i32]* @ans { Flexible };
-internal [50 * i32]* @row { Flexible };
-internal [50 * i32]* @line1 { Flexible };
-internal [100 * i32]* @line2 { Flexible };
+internal [50 * i32]* @ans, align 8 { Flexible };
+internal [50 * i32]* @row, align 8 { Flexible };
+internal [50 * i32]* @line1, align 8 { Flexible };
+internal [100 * i32]* @line2, align 8 { Flexible };
 internal func @f(i32 %step, i32* %0, i32* %1) -> void {
   ^entry:
     [50 * i32]* %2 = ptrcast [50 * i32]* @ans to [50 * i32]*;
@@ -92,8 +92,8 @@ internal func @f(i32 %step, i32* %0, i32* %1) -> void {
 }
 func @main() -> i32 { NoRecurse Entry } {
   ^entry:
-    i32* %n = alloc i32;
-    i32* %sum = alloc i32;
+    i32* %n = alloc i32, align 8;
+    i32* %sum = alloc i32, align 8;
     store i32* %sum with i32 0;
     i32 %0 = call () -> i32 @getint();
     i1 %1 = icmp sgt i32 %0, i32 0;

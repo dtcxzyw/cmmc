@@ -62,5 +62,5 @@ func @fn2() -> i32 { NoRecurse } {
     store i32* %4 with i32 %24;
     ret i32 0;
 }
-i32* @a = 0;
-i32* @d = 0;
+i32* @a, align 8 = 0;
+i32* @d, align 8 = 0;

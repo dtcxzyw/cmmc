@@ -8,10 +8,10 @@ params_f40:
 .p2align 4
 	push { r4, r5, lr }
 	vpush { s16, s17, s18, s19, s20, s21, s22, s23, s24, s25, s26, s27, s28, s29, s30, s31 }
-	mov r4, r0
 	sub sp, sp, #188
-	add r5, sp, #136
+	mov r4, r0
 	vstr s14, [sp, #176]
+	add r5, sp, #136
 	vstr s15, [sp, #104]
 	vldr s16, [sp, #264]
 	vstr s16, [sp, #116]
@@ -170,11 +170,11 @@ params_f40_i24:
 .p2align 4
 	push { r4, r5, r6, r7, r8, r9, r10, lr }
 	vpush { s16, s17, s18, s19, s20, s21, s22, s23, s24, s25, s26, s27 }
-	sub sp, sp, #424
 	mov r8, r0
+	sub sp, sp, #424
 	vmov.f32 s20, s10
-	add r5, sp, #352
 	str r2, [sp, #216]
+	add r5, sp, #352
 	str r0, [sp, #416]
 	vstr s10, [sp, #400]
 	vstr s5, [sp, #284]
@@ -515,12 +515,12 @@ label787:
 params_fa40:
 .p2align 4
 	push { r4, r5, r6, r7, r8, r9, r10, lr }
-	mov r5, r0
 	mov r7, r2
-	mov r6, r3
-	mov r9, r1
 	sub sp, sp, #344
+	mov r9, r1
+	mov r5, r0
 	str r1, [sp, #324]
+	mov r6, r3
 	str r2, [sp, #320]
 	str r3, [sp, #316]
 	ldr r8, [sp, #376]
@@ -596,8 +596,8 @@ params_fa40:
 	str r6, [sp, #308]
 	ldr r6, [sp, #280]
 	ldr r10, [r6, #0]
-	add r5, r5, r10, lsl #2
 	str r10, [sp, #304]
+	add r5, r5, r10, lsl #2
 	vldr s0, [r5, #0]
 	add r5, r9, r10, lsl #2
 	vldr s1, [r5, #0]
@@ -1119,7 +1119,13 @@ params_mix:
 	str r11, [r4, #32]
 	ldr r1, [sp, #412]
 	str r1, [r4, #36]
-	beq label5
+	bne label4
+	b label5
+label2:
+	add sp, sp, #464
+	vpop { s16, s17, s18, s19, s20, s21, s22, s23, s24, s25, s26, s27, s28, s29, s30 }
+	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
+label4:
 	ldr r2, [sp, #448]
 	mov r0, #10
 	mov r1, r2
@@ -1193,10 +1199,7 @@ params_mix:
 	vmul.f32 s0, s0, s24
 	vcvt.s32.f32 s0, s0
 	vmov r0, s0
-label3:
-	add sp, sp, #464
-	vpop { s16, s17, s18, s19, s20, s21, s22, s23, s24, s25, s26, s27, s28, s29, s30 }
-	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
+	b label2
 label5:
 	vcvt.s32.f32 s16, s29
 	ldr r2, [sp, #456]
@@ -1295,7 +1298,7 @@ label5:
 	ldr r4, [sp, #444]
 	mov r3, r4
 	bl params_mix
-	b label3
+	b label2
 .globl main
 main:
 .p2align 4
@@ -1303,8 +1306,8 @@ main:
 	vpush { s16, s17, s18, s19, s20, s21, s22, s23, s24, s25, s26, s27, s28, s29 }
 	movw r12, #1356
 	sub sp, sp, r12
-	add r5, sp, #564
 	add r4, sp, #860
+	add r5, sp, #564
 	add r6, sp, #552
 	str r6, [sp, #536]
 	str r5, [sp, #540]

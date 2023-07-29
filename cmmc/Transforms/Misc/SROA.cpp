@@ -13,6 +13,7 @@
 */
 
 #include <algorithm>
+#include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/Function.hpp>
@@ -82,7 +83,7 @@ class SROA final : public TransformPass<Function> {
     }
 
 public:
-    bool run(Function& func, AnalysisPassManager&) const override {
+    bool run(Function& func, AnalysisPassManager& analysis) const override {
         std::list<Instruction*> todo;
 
         for(auto& inst : func.entryBlock()->instructions()) {
@@ -107,6 +108,13 @@ public:
         if(todo.empty())
             return false;
 
+        auto& dataLayout = analysis.module().getTarget().getDataLayout();
+        auto getAlignment = [&](const Type* t) {
+            if(t->isAggregate())
+                return dataLayout.getStorageAlignment();
+            return t->getAlignment(dataLayout);
+        };
+
         for(auto alloc : todo) {
             const auto type = alloc->getType()->as<PointerType>()->getPointee();
             std::vector<Instruction*> map;
@@ -114,13 +122,13 @@ public:
                 const auto arrType = type->as<ArrayType>();
                 map.reserve(arrType->getElementCount());
                 for(uint32_t idx = 0; idx < arrType->getElementCount(); ++idx) {
-                    map.push_back(make<StackAllocInst>(arrType->getElementType()));
+                    map.push_back(make<StackAllocInst>(arrType->getElementType(), getAlignment(arrType->getElementType())));
                 }
             } else if(type->isStruct()) {
                 const auto structType = type->as<StructType>();
                 map.reserve(structType->fields().size());
                 for(auto& field : structType->fields()) {
-                    map.push_back(make<StackAllocInst>(field.type));
+                    map.push_back(make<StackAllocInst>(field.type, getAlignment(field.type)));
                 }
             } else
                 reportUnreachable(CMMC_LOCATION());

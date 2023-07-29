@@ -21,70 +21,9 @@ label25:
 	blt label25
 	b label22
 .p2align 4
-label14:
-	add r2, r2, #1
-	cmp r2, #5
-	blt label33
-	add r1, r1, #1
-	cmp r1, #10
-	blt label29
-	add r0, r0, #1
-	cmp r0, #20
-	blt label25
-	b label22
-.p2align 4
-label16:
-	cmp r5, #0
-	bne label14
+label33:
 	mov r5, #0
-	add r5, r5, #1
-	cmp r5, #2
-	blt label17
-	add r3, r3, #1
-	mov r5, r4
-	cmp r4, #3
-	blt label15
-	add r2, r2, #1
-	cmp r2, #5
-	blt label33
-	add r1, r1, #1
-	cmp r1, #10
-	blt label29
-	add r0, r0, #1
-	cmp r0, #20
-	blt label25
-	b label22
-.p2align 4
-label15:
-	add r4, r5, #1
-	cmp r4, #2
-	bgt label16
-	mov r5, #0
-	add r5, r5, #1
-	cmp r5, #2
-	blt label17
-	add r3, r3, #1
-	mov r5, r4
-	cmp r4, #3
-	blt label15
-	add r2, r2, #1
-	cmp r2, #5
-	blt label33
-	add r1, r1, #1
-	cmp r1, #10
-	blt label29
-	add r0, r0, #1
-	cmp r0, #20
-	blt label25
-	b label22
-.p2align 4
-label17:
-	add r5, r5, #1
-	cmp r5, #2
-	blt label17
-	add r3, r3, #1
-	mov r5, r4
-	cmp r4, #3
+	cmp r5, #3
 	blt label15
 	add r2, r2, #1
 	cmp r2, #5
@@ -109,9 +48,70 @@ label29:
 	blt label25
 	b label22
 .p2align 4
-label33:
+label15:
+	add r4, r5, #1
+	cmp r4, #2
+	bgt label19
 	mov r5, #0
-	cmp r5, #3
+	add r5, r5, #1
+	cmp r5, #2
+	blt label16
+	add r3, r3, #1
+	mov r5, r4
+	cmp r4, #3
+	blt label15
+	add r2, r2, #1
+	cmp r2, #5
+	blt label33
+	add r1, r1, #1
+	cmp r1, #10
+	blt label29
+	add r0, r0, #1
+	cmp r0, #20
+	blt label25
+	b label22
+.p2align 4
+label19:
+	cmp r5, #0
+	bne label20
+	mov r5, #0
+	add r5, r5, #1
+	cmp r5, #2
+	blt label16
+	add r3, r3, #1
+	mov r5, r4
+	cmp r4, #3
+	blt label15
+	add r2, r2, #1
+	cmp r2, #5
+	blt label33
+	add r1, r1, #1
+	cmp r1, #10
+	blt label29
+	add r0, r0, #1
+	cmp r0, #20
+	blt label25
+	b label22
+.p2align 4
+label20:
+	add r2, r2, #1
+	cmp r2, #5
+	blt label33
+	add r1, r1, #1
+	cmp r1, #10
+	blt label29
+	add r0, r0, #1
+	cmp r0, #20
+	blt label25
+	b label22
+.p2align 4
+label16:
+	add r5, r5, #1
+	cmp r5, #2
+	blt label16
+	add r3, r3, #1
+	mov r5, r4
+	cmp r4, #3
 	blt label15
 	add r2, r2, #1
 	cmp r2, #5

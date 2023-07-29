@@ -1,6 +1,6 @@
 internal func @getint() -> i32 { NoMemoryRead NoMemoryWrite };
-internal [10 * [2 * [3 * [4 * [5 * [6 * [2 * i32]]]]]]]* @arr1 { Flexible };
-internal [10 * [2 * [3 * [2 * [4 * [8 * [7 * i32]]]]]]]* @arr2 { Flexible };
+internal [10 * [2 * [3 * [4 * [5 * [6 * [2 * i32]]]]]]]* @arr1, align 8 { Flexible };
+internal [10 * [2 * [3 * [2 * [4 * [8 * [7 * i32]]]]]]]* @arr2, align 8 { Flexible };
 func @main() -> i32 { NoRecurse Entry } {
   ^entry:
     i32 %0 = call () -> i32 @getint();

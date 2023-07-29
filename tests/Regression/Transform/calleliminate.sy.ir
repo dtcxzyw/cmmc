@@ -1,4 +1,4 @@
-[100 * i32]* @x;
+[100 * i32]* @x, align 8;
 func @load(i32 %y) -> i32 { NoMemoryWrite NoSideEffect NoRecurse } {
   ^entry:
     [100 * i32]* %0 = ptrcast [100 * i32]* @x to [100 * i32]*;

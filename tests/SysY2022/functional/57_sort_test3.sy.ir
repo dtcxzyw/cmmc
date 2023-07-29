@@ -75,7 +75,7 @@ internal func @QuickSort(i32* %arr, i32 %low, i32 %high) -> i32 {
 }
 func @main() -> i32 { NoRecurse Entry } {
   ^entry:
-    [10 * i32]* %a = alloc [10 * i32];
+    [10 * i32]* %a = alloc [10 * i32], align 8;
     i32* %0 = getelementptr &([10 * i32]* %a)[i64 0][i64 0];
     store i32* %0 with i32 4;
     i32* %1 = getelementptr &([10 * i32]* %a)[i64 0][i64 1];

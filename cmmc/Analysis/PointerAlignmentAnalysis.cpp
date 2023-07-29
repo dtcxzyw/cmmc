@@ -13,6 +13,7 @@
 */
 
 #include <cmmc/Analysis/PointerAlignmentAnalysis.hpp>
+#include <cmmc/Analysis/SCEVAnalysis.hpp>
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/GlobalVariable.hpp>
@@ -28,6 +29,7 @@
 CMMC_NAMESPACE_BEGIN
 
 PointerAlignmentAnalysisResult PointerAlignmentAnalysis::run(Function& func, AnalysisPassManager& analysis) {
+    auto& scev = analysis.get<SCEVAnalysis>(func);
     PointerAlignmentAnalysisResult result;
     auto& storage = result.storage();
 
@@ -58,8 +60,8 @@ PointerAlignmentAnalysisResult PointerAlignmentAnalysis::run(Function& func, Ana
 
     for(auto global : analysis.module().globals()) {
         if(!global->isFunction()) {
-            // TODO: alignment for globals
-            update(global, result.lookup(global, dataLayout));
+            const auto var = global->as<GlobalVariable>();
+            update(global, static_cast<uint32_t>(var->getAlignment()));
         }
     }
 
@@ -98,6 +100,8 @@ PointerAlignmentAnalysisResult PointerAlignmentAnalysis::run(Function& func, Ana
                 break;
             }
             case InstructionID::GetElementPtr: {
+                CMMC_UNUSED(scev);
+
                 // TODO
                 // const auto baseAlignment = result.lookup(u->lastOperand(), dataLayout);
 

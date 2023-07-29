@@ -2,7 +2,7 @@ internal func @getint() -> i32 { NoMemoryRead NoMemoryWrite };
 internal func @putarray() -> void { NoMemoryWrite };
 internal func @starttime() -> void { NoMemoryRead NoMemoryWrite };
 internal func @stoptime() -> void { NoMemoryRead NoMemoryWrite };
-internal [600 * [600 * [600 * i32]]]* @x;
+internal [600 * [600 * [600 * i32]]]* @x, align 8;
 func @main() -> i32 { NoRecurse Entry } {
   ^entry:
     i32 %0 = call () -> i32 @getint();
@@ -87,7 +87,7 @@ func @main() -> i32 { NoRecurse Entry } {
     [600 * i32]* %46 = getelementptr &([600 * [600 * i32]]* %18)[i64 0][i32 %23];
     [600 * i32]* %47 = getelementptr &([600 * [600 * i32]]* %19)[i64 0][i32 %23];
     cbr i1 %3(prob = 0.89), ^while.body2, ^while.body3;
-  ^while.body1:
+  ^while.body1 {scalar}:
     i32 %48 = phi [^prebody, i32 0] [^while.body, i32 %41] [^while.body1, i32 %50];
     i32* %49 = getelementptr &([600 * i32]* %34)[i64 0][i32 %48];
     store i32* %49 with i32 1;
@@ -173,7 +173,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i32 %123 = add i32 %52, i32 4;
     i1 %124 = icmp sgt i32 %7, i32 %123;
     cbr i1 %124(prob = 0.89), ^while.body2, ^while.body3;
-  ^while.body3:
+  ^while.body3 {scalar}:
     i32 %125 = phi [^super.header, i32 1] [^while.body2, i32 %123] [^while.body3, i32 %145];
     i32* %126 = getelementptr &([600 * i32]* %46)[i64 0][i32 %125];
     i32 %127 = load i32* %126;

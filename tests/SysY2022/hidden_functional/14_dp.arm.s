@@ -24,8 +24,8 @@ main:
 	mla r2, r5, r0, r4
 	str r2, [sp, #0]
 	bl getint
-	movw r6, #:lower16:t
 	cmp r5, #0
+	movw r6, #:lower16:t
 	str r0, [sp, #4]
 	mov r8, r0
 	movt r6, #:upper16:t
@@ -37,23 +37,23 @@ main:
 	cmp r5, r0
 	mla r7, r0, r2, r4
 	mla r1, r1, r2, r4
-	bge label57
+	bge label39
 	ldr r8, [sp, #4]
 	cmn r8, #1
-	bgt label86
+	bgt label68
 .p2align 4
 label122:
 	mov r0, #0
-	b label16
+	b label14
 .p2align 4
 label28:
 	mov r7, #1
-	b label2
-label86:
+	b label16
+label68:
 	mov r1, #0
 	mov r0, r1
 .p2align 4
-label13:
+label11:
 	ldr r2, [sp, #0]
 	ldr r2, [r2, r1, lsl #2]
 	ldr r8, [sp, #4]
@@ -61,15 +61,15 @@ label13:
 	cmp r0, r2
 	movle r0, r2
 	cmp r8, r1
-	bge label13
-label16:
+	bge label11
+label14:
 	add sp, sp, #12
 	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
-label57:
+label39:
 	mov r2, #1
 	ldr r8, [sp, #4]
 	cmp r8, r2
-	bge label8
+	bge label6
 	add r0, r0, #1
 	sub r1, r0, #1
 	mov r2, #140
@@ -77,12 +77,12 @@ label57:
 	cmp r5, r0
 	mla r7, r0, r2, r4
 	mla r1, r1, r2, r4
-	bge label57
+	bge label39
 	cmn r8, #1
-	bgt label86
+	bgt label68
 	b label122
 .p2align 4
-label8:
+label6:
 	add r8, r2, #1
 	add r10, r1, r2, lsl #2
 	ldr r9, [r1, r2, lsl #2]
@@ -92,12 +92,12 @@ label8:
 	add r9, r9, r11
 	add r10, r11, r10
 	cmp r10, r9
-	blt label9
+	blt label7
 	str r10, [r7, r2, lsl #2]
 	mov r2, r8
 	ldr r8, [sp, #4]
 	cmp r8, r2
-	bge label8
+	bge label6
 	add r0, r0, #1
 	sub r1, r0, #1
 	mov r2, #140
@@ -105,17 +105,17 @@ label8:
 	cmp r5, r0
 	mla r7, r0, r2, r4
 	mla r1, r1, r2, r4
-	bge label57
+	bge label39
 	cmn r8, #1
-	bgt label86
+	bgt label68
 	b label122
 .p2align 4
-label9:
+label7:
 	str r9, [r7, r2, lsl #2]
 	mov r2, r8
 	ldr r8, [sp, #4]
 	cmp r8, r2
-	bge label8
+	bge label6
 	add r0, r0, #1
 	sub r1, r0, #1
 	mov r2, #140
@@ -123,12 +123,12 @@ label9:
 	cmp r5, r0
 	mla r7, r0, r2, r4
 	mla r1, r1, r2, r4
-	bge label57
+	bge label39
 	cmn r8, #1
-	bgt label86
+	bgt label68
 	b label122
 .p2align 4
-label2:
+label16:
 	bl getint
 	and r1, r0, #1
 	mov r2, #1
@@ -143,7 +143,7 @@ label2:
 	ldr r0, [r0, #4]
 	add r0, r2, r0
 	str r0, [r4, r1]
-	bge label2
+	bge label16
 	mov r0, #1
 	sub r1, r0, #1
 	mov r2, #140
@@ -151,8 +151,8 @@ label2:
 	cmp r5, r0
 	mla r7, r0, r2, r4
 	mla r1, r1, r2, r4
-	bge label57
+	bge label39
 	ldr r8, [sp, #4]
 	cmn r8, #1
-	bgt label86
+	bgt label68
 	b label122

@@ -1,6 +1,6 @@
 internal func @getint() -> i32 { NoMemoryRead NoMemoryWrite };
 internal func @putint() -> void { NoMemoryRead NoMemoryWrite };
-internal [30 * [30 * i32]]* @graph { Flexible };
+internal [30 * [30 * i32]]* @graph, align 8 { Flexible };
 internal func @maxCliques(i32 %k, [30 * i32]* %0, i32* %1) -> i32 {
   ^entry:
     i32* %2 = getelementptr &([30 * i32]* %0)[i64 0][i32 %k];
@@ -58,8 +58,8 @@ internal func @maxCliques(i32 %k, [30 * i32]* %0, i32* %1) -> i32 {
 }
 func @main() -> i32 { NoRecurse Entry } {
   ^entry:
-    i32* %n = alloc i32;
-    [30 * i32]* %store = alloc [30 * i32];
+    i32* %n = alloc i32, align 8;
+    [30 * i32]* %store = alloc [30 * i32], align 8;
     i32* %0 = getelementptr &([30 * i32]* %store)[i64 0][i64 0];
     store i32* %0 with i32 0;
     i32* %1 = getelementptr &([30 * i32]* %store)[i64 0][i64 1];
@@ -149,7 +149,7 @@ func @main() -> i32 { NoRecurse Entry } {
   ^prebody:
     i32 %45 = add i32 %31, i32 -4;
     ubr ^while.body2;
-  ^while.body1:
+  ^while.body1 {scalar}:
     i32 %46 = phi [^indirect, i32 0] [^while.body1, i32 %56] [^while.body2, i32 %92];
     [2 * i32]* %47 = getelementptr &([600 * [2 * i32]]* %34)[i64 0][i32 %46];
     i32* %48 = getelementptr &([2 * i32]* %47)[i64 0][i64 0];
@@ -212,4 +212,4 @@ func @main() -> i32 { NoRecurse Entry } {
     i1 %93 = icmp sgt i32 %45, i32 %92;
     cbr i1 %93(prob = 0.89), ^while.body2, ^while.body1;
 }
-internal [600 * [2 * i32]]* @edges { Flexible };
+internal [600 * [2 * i32]]* @edges, align 8 { Flexible };

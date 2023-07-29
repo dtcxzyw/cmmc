@@ -52,8 +52,8 @@ func @test5() -> void { NoRecurse } {
     store f32* %11 with f32 %10;
     ret;
 }
-f32* @fe;
-f32* @fa;
-f32* @fb;
-f32* @fc;
-f32* @ff;
+f32* @fe, align 8;
+f32* @fa, align 8;
+f32* @fb, align 8;
+f32* @fc, align 8;
+f32* @ff, align 8;

@@ -1,8 +1,8 @@
 internal func @getch() -> i32 { NoMemoryRead NoMemoryWrite };
-internal [400020 * i32]* @cnt { Flexible };
-internal [100005 * i32]* @a { Flexible };
-internal [100005 * i32]* @b { Flexible };
-internal [100005 * i32]* @c { Flexible };
+internal [400020 * i32]* @cnt, align 8 { Flexible };
+internal [100005 * i32]* @a, align 8 { Flexible };
+internal [100005 * i32]* @b, align 8 { Flexible };
+internal [100005 * i32]* @c, align 8 { Flexible };
 func @main() -> i32 { NoRecurse Entry } {
   ^entry:
     i32 %0 = call () -> i32 @getch();
@@ -160,7 +160,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i32 %112 = add i32 %87, i32 4;
     i1 %113 = icmp sgt i32 %75, i32 %112;
     cbr i1 %113(prob = 0.89), ^while.body7, ^while.body8;
-  ^while.body8:
+  ^while.body8 {scalar}:
     i32 %114 = phi [^super.header, i32 0] [^while.body7, i32 %112] [^while.body8, i32 %122];
     i32 %115 = phi [^super.header, i32 -100] [^while.body7, i32 %108] [^while.body8, i32 %121];
     i32* %116 = getelementptr &(i32* %73)[i32 %114];
@@ -284,7 +284,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i32 %196 = add i32 %168, i32 4;
     i1 %197 = icmp sgt i32 %75, i32 %196;
     cbr i1 %197(prob = 0.89), ^while.body13, ^while.body14;
-  ^while.body14:
+  ^while.body14 {scalar}:
     i32 %198 = phi [^super.header1, i32 %142] [^while.body13, i32 %196] [^while.body14, i32 %206];
     i32 %199 = phi [^super.header1, i32 %140] [^while.body13, i32 %195] [^while.body14, i32 %205];
     i32* %200 = getelementptr &(i32* %128)[i32 %198];

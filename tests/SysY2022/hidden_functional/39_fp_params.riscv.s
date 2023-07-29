@@ -1098,7 +1098,37 @@ params_mix:
 	addw s9, s11, s1
 	sw s9, 848(sp)
 	sw zero, 852(sp)
-	beq a7, zero, label5
+	bne a7, zero, label4
+	j label5
+label2:
+	ld ra, 864(sp)
+	flw f27, 860(sp)
+	flw f26, 856(sp)
+	flw f24, 800(sp)
+	ld s11, 792(sp)
+	flw f23, 788(sp)
+	flw f9, 784(sp)
+	ld s0, 776(sp)
+	ld s5, 808(sp)
+	ld s3, 768(sp)
+	flw f25, 760(sp)
+	ld s2, 712(sp)
+	ld s1, 608(sp)
+	flw f18, 616(sp)
+	ld s6, 624(sp)
+	ld s4, 632(sp)
+	flw f22, 640(sp)
+	ld s10, 648(sp)
+	flw f19, 656(sp)
+	ld s7, 664(sp)
+	flw f20, 672(sp)
+	ld s8, 680(sp)
+	flw f21, 688(sp)
+	ld s9, 696(sp)
+	flw f8, 704(sp)
+	addi sp, sp, 896
+	ret
+label4:
 	ld a7, 544(sp)
 	li a0, 10
 	mv a1, a7
@@ -1150,34 +1180,7 @@ params_mix:
 	fcvt.s.w f10, a1
 	fmul.s f11, f10, f24
 	fcvt.w.s a0, f11, rtz
-label3:
-	ld ra, 864(sp)
-	flw f27, 860(sp)
-	flw f26, 856(sp)
-	flw f24, 800(sp)
-	ld s11, 792(sp)
-	flw f23, 788(sp)
-	flw f9, 784(sp)
-	ld s0, 776(sp)
-	ld s5, 808(sp)
-	ld s3, 768(sp)
-	flw f25, 760(sp)
-	ld s2, 712(sp)
-	ld s1, 608(sp)
-	flw f18, 616(sp)
-	ld s6, 624(sp)
-	ld s4, 632(sp)
-	flw f22, 640(sp)
-	ld s10, 648(sp)
-	flw f19, 656(sp)
-	ld s7, 664(sp)
-	flw f20, 672(sp)
-	ld s8, 680(sp)
-	flw f21, 688(sp)
-	ld s9, 696(sp)
-	flw f8, 704(sp)
-	addi sp, sp, 896
-	ret
+	j label2
 label5:
 	fcvt.w.s s0, f25, rtz
 	ld a7, 528(sp)
@@ -1268,7 +1271,7 @@ label5:
 	mv a6, s3
 	mv a7, s1
 	jal params_mix
-	j label3
+	j label2
 .globl main
 main:
 .p2align 2
@@ -1352,15 +1355,15 @@ label1275:
 	fsw f14, 1600(sp)
 	flw f24, 0(a1)
 	sh2add a1, s6, a0
-	sh2add a0, s6, a2
 	flw f16, 0(a1)
+	sh2add a0, s6, a2
 	addi a2, s0, 96
 	fsw f16, 1692(sp)
 	sh2add a1, s6, a2
 	flw f8, 0(a0)
 	addi a2, s0, 144
-	addi a0, s0, 108
 	flw f23, 0(a1)
+	addi a0, s0, 108
 	sh2add a1, s6, a0
 	flw f14, 0(a1)
 	addi a0, s0, 120
@@ -1977,8 +1980,8 @@ label1275:
 	jal putint
 	li a0, 10
 	jal putch
-	ld ra, 1712(sp)
 	mv a0, zero
+	ld ra, 1712(sp)
 	ld s4, 1728(sp)
 	ld s5, 1744(sp)
 	ld s3, 1752(sp)

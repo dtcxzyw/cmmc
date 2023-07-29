@@ -3,9 +3,9 @@ internal func @getarray() -> i32 { NoMemoryRead };
 internal func @putarray() -> void { NoMemoryWrite };
 internal func @starttime() -> void { NoMemoryRead NoMemoryWrite };
 internal func @stoptime() -> void { NoMemoryRead NoMemoryWrite };
-internal [10000000 * i32]* @a;
-internal [10000000 * i32]* @b { Flexible };
-internal [10000 * i32]* @kernelid;
+internal [10000000 * i32]* @a, align 8;
+internal [10000000 * i32]* @b, align 8 { Flexible };
+internal [10000 * i32]* @kernelid, align 8;
 func @main() -> i32 { NoRecurse Entry } {
   ^entry:
     i32 %0 = call () -> i32 @getint();
@@ -226,7 +226,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i32 %128 = add i32 %115, i32 4;
     i1 %129 = icmp sgt i32 %13, i32 %128;
     cbr i1 %129(prob = 0.89), ^while.body12, ^while.body13;
-  ^while.body13:
+  ^while.body13 {scalar}:
     i32 %130 = phi [^super.header, i32 0] [^while.body12, i32 %128] [^while.body13, i32 %134];
     i32* %131 = getelementptr &(i32* %16)[i32 %130];
     i32 %132 = load i32* %131;

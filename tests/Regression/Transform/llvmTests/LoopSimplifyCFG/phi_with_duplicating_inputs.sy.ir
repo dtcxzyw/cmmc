@@ -2,4 +2,4 @@ func @f1() -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoReturn 
   ^entry:
     unreachable;
 }
-i16* @a;
+i16* @a, align 8;

@@ -2,9 +2,9 @@ internal func @putint() -> void { NoMemoryRead NoMemoryWrite };
 internal func @putch() -> void { NoMemoryRead NoMemoryWrite };
 func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
   ^entry:
-    [3 * f32]* %c2 = alloc [3 * f32];
-    [3 * f32]* %c1 = alloc [3 * f32];
-    [6 * f32]* %c0 = alloc [6 * f32];
+    [3 * f32]* %c2 = alloc [3 * f32], align 8;
+    [3 * f32]* %c1 = alloc [3 * f32], align 8;
+    [6 * f32]* %c0 = alloc [6 * f32], align 8;
     f32* %0 = getelementptr &([3 * f32]* %c1)[i64 0][i64 2];
     store f32* %0 with f32 1;
     f32* %1 = getelementptr &([3 * f32]* %c2)[i64 0][i64 1];

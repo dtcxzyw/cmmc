@@ -28,8 +28,8 @@ func @loadA() -> i32 { NoMemoryWrite NoSideEffect NoRecurse } {
     i32 %1 = load i32* %0;
     ret i32 %1;
 }
-i32* @A;
-i32* @B;
-i32* @C;
-i32* @D;
-i32* @E;
+i32* @A, align 8;
+i32* @B, align 8;
+i32* @C, align 8;
+i32* @D, align 8;
+i32* @E, align 8;

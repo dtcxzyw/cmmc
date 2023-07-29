@@ -25,10 +25,15 @@ enum class GlobalVariableAttribute { ReadOnly = 1 << 0, Flexible = 1 << 1 };
 
 class GlobalVariable final : public GlobalValue {
     ConstantValue* mStaticInitializedValue{ nullptr };
+    size_t mAlignment;
     Attribute<GlobalVariableAttribute> mAttr;
 
 public:
-    GlobalVariable(String symbol, const Type* type) : GlobalValue{ symbol, PointerType::get(type) } {}
+    GlobalVariable(String symbol, const Type* type, size_t alignment)
+        : GlobalValue{ symbol, PointerType::get(type) }, mAlignment{ alignment } {}
+    [[nodiscard]] size_t getAlignment() const noexcept {
+        return mAlignment;
+    }
     void setInitialValue(ConstantValue* value) noexcept {
         mStaticInitializedValue = value;
     }

@@ -676,10 +676,16 @@ public:
 };
 
 class StackAllocInst final : public Instruction {
+    size_t mAlignment;
+
 public:
     // TODO: VLA
-    explicit StackAllocInst(const Type* type) : Instruction{ InstructionID::Alloc, PointerType::get(type), {} } {}
+    explicit StackAllocInst(const Type* type, size_t alignment)
+        : Instruction{ InstructionID::Alloc, PointerType::get(type), {} }, mAlignment{ alignment } {}
 
+    [[nodiscard]] size_t getAlignment() const noexcept {
+        return mAlignment;
+    }
     void dumpInst(std::ostream& out) const override;
     [[nodiscard]] Instruction* clone() const override;
 };

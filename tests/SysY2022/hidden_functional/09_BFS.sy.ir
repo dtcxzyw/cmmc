@@ -1,11 +1,11 @@
 internal func @getch() -> i32 { NoMemoryRead NoMemoryWrite };
 internal func @putint() -> void { NoMemoryRead NoMemoryWrite };
 internal func @putch() -> void { NoMemoryRead NoMemoryWrite };
-internal [5005 * i32]* @to { Flexible };
-internal [5005 * i32]* @next { Flexible };
-internal [1005 * i32]* @head { Flexible };
-internal [1005 * i32]* @que { Flexible };
-internal [1005 * i32]* @inq { Flexible };
+internal [5005 * i32]* @to, align 8 { Flexible };
+internal [5005 * i32]* @next, align 8 { Flexible };
+internal [1005 * i32]* @head, align 8 { Flexible };
+internal [1005 * i32]* @que, align 8 { Flexible };
+internal [1005 * i32]* @inq, align 8 { Flexible };
 func @main() -> i32 { NoRecurse Entry } {
   ^entry:
     i32 %0 = call () -> i32 @getch();
@@ -299,9 +299,9 @@ func @main() -> i32 { NoRecurse Entry } {
     store i32* %161 with i32 -1;
     ubr ^while.header;
   ^while.header:
-    i32 %162 = phi [^while.body5, i32 0] [^b7, i32 %288] [^if.then, i32 %162];
-    i32 %163 = phi [^while.body5, i32 %41] [^b7, i32 %289] [^if.then, i32 %313];
-    i1 %164 = icmp neq i32 %163, i32 0;
+    i32 %162 = phi [^while.body5, i32 %41] [^b7, i32 %289] [^if.then, i32 %313];
+    i32 %163 = phi [^while.body5, i32 0] [^b7, i32 %288] [^if.then, i32 %163];
+    i1 %164 = icmp neq i32 %162, i32 0;
     cbr i1 %164(prob = 0.97), ^while.body6, ^b2;
   ^while.body6:
     i32 %165 = call () -> i32 @getch();
@@ -454,23 +454,23 @@ func @main() -> i32 { NoRecurse Entry } {
     i1 %276 = icmp neq i32 %259, i32 0;
     i32 %277 = neg i32 %275;
     i32 %278 = select i1 %276 ? i32 %277 : i32 %275;
-    i32* %279 = getelementptr &([5005 * i32]* %8)[i64 0][i32 %162];
+    i32* %279 = getelementptr &([5005 * i32]* %8)[i64 0][i32 %163];
     store i32* %279 with i32 %278;
     i32* %280 = getelementptr &([1005 * i32]* %7)[i64 0][i32 %235];
     i32 %281 = load i32* %280;
-    i32* %282 = getelementptr &([5005 * i32]* %9)[i64 0][i32 %162];
+    i32* %282 = getelementptr &([5005 * i32]* %9)[i64 0][i32 %163];
     store i32* %282 with i32 %281;
     i32* %283 = getelementptr &([1005 * i32]* %7)[i64 0][i32 %278];
-    store i32* %280 with i32 %162;
+    store i32* %280 with i32 %163;
     i32* %284 = getelementptr &(i32* %279)[i64 1];
     store i32* %284 with i32 %235;
     i32 %285 = load i32* %283;
     i32* %286 = getelementptr &(i32* %282)[i64 1];
     store i32* %286 with i32 %285;
-    i32 %287 = add i32 %162, i32 1;
+    i32 %287 = add i32 %163, i32 1;
     store i32* %283 with i32 %287;
-    i32 %288 = add i32 %162, i32 2;
-    i32 %289 = add i32 %163, i32 -1;
+    i32 %288 = add i32 %163, i32 2;
+    i32 %289 = add i32 %162, i32 -1;
     ubr ^while.header;
   ^while.body14:
     i32 %290 = phi [^257, i32 %258] [^while.body14, i32 %292];
@@ -508,7 +508,7 @@ func @main() -> i32 { NoRecurse Entry } {
   ^if.then:
     call (i32) -> void @putint(i32 %300);
     call (i32) -> void @putch(i32 10);
-    i32 %313 = add i32 %163, i32 -1;
+    i32 %313 = add i32 %162, i32 -1;
     ubr ^while.header;
   ^while.body15:
     i32 %314 = phi [^while.header2, i32 0] [^while.body15, i32 %318];

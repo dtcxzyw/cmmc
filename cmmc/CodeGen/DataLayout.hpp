@@ -27,6 +27,9 @@ public:
     virtual size_t getBuiltinAlignment(const Type* type) const noexcept = 0;
     [[nodiscard]] virtual size_t getPointerSize() const noexcept = 0;
     [[nodiscard]] virtual size_t getCodeAlignment() const noexcept = 0;
+    [[nodiscard]] virtual size_t getStorageAlignment() const noexcept {
+        return 8;
+    }
 };
 
 CMMC_NAMESPACE_END

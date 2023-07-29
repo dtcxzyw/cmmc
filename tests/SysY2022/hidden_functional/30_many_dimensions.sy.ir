@@ -505,4 +505,4 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i32 %316 = add i32 %168, i32 1;
     ubr ^while.header11;
 }
-internal [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * i32]]]]]]]]]]]]]]]]]]]* @array { Flexible };
+internal [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * i32]]]]]]]]]]]]]]]]]]]* @array, align 8 { Flexible };

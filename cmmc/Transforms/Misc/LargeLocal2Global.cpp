@@ -75,7 +75,8 @@ public:
 
         for(auto alloca : allocas) {
             // TODO: assign a unique name?
-            auto global = make<GlobalVariable>(alloca->getLabel(), alloca->getType()->as<PointerType>()->getPointee());
+            auto global = make<GlobalVariable>(alloca->getLabel(), alloca->getType()->as<PointerType>()->getPointee(),
+                                               alloca->as<StackAllocInst>()->getAlignment());
             global->setLinkage(Linkage::Internal);
             mod.globals().push_back(global);
             alloca->replaceWith(global);

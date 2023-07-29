@@ -8,6 +8,6 @@ func @_Z13func_26556482h(i8 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEff
     i32 %5 = select i1 %4 ? i32 %2 : i32 1624650671;
     ret i32 %5;
 }
-i32* @g_38098584;
-i32* @g_60187400;
-i32* @g_59182229;
+i32* @g_38098584, align 8;
+i32* @g_60187400, align 8;
+i32* @g_59182229, align 8;

@@ -4,4 +4,4 @@ func @weightadj() -> void { NoMemoryRead NoRecurse } {
     store i32* %0 with i32 0;
     ret;
 }
-i32* @resonant;
+i32* @resonant, align 8;

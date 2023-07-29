@@ -36,8 +36,8 @@ Block* IRBuilder::addBlock() {
 IRBuilder::IRBuilder(const mir::Target& target, Block* block) : IRBuilder{ target } {
     setCurrentBlock(block);
 }
-StackAllocInst* IRBuilder::createAlloc(const Type* type) {  // NOLINT
-    auto inst = make<StackAllocInst>(type);
+StackAllocInst* IRBuilder::createAlloc(const Type* type, size_t alignment) {  // NOLINT
+    auto inst = make<StackAllocInst>(type, alignment);
     const auto entry = getCurrentFunction()->entryBlock();
     inst->insertBefore(entry, entry->instructions().begin());
     return inst;

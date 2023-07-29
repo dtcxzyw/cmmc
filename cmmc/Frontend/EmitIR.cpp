@@ -190,7 +190,8 @@ void FunctionDefinition::emit(EmitContext& ctx) {
 
         if(!callInfo.passingArgsByPointer[idx]) {
             // passing by register
-            const auto memArg = ctx.createAlloc(arg->getType());
+            const auto memArg =
+                ctx.createAlloc(arg->getType(), arg->getType()->getAlignment(ctx.getModule()->getTarget().getDataLayout()));
             memArg->setLabel(name);
             ctx.makeOp<StoreInst>(memArg, arg);
             ctx.addIdentifier(name, { memArg, ValueQualifier::AsLValue, decl.args[idx].type.qualifier });
@@ -201,7 +202,7 @@ void FunctionDefinition::emit(EmitContext& ctx) {
                 ctx.addIdentifier(name, { arg, ValueQualifier::AsLValue, decl.args[idx].type.qualifier });
             } else {
                 // create a copy
-                const auto memArg = ctx.createAlloc(argType);
+                const auto memArg = ctx.createAlloc(argType, ctx.getModule()->getTarget().getDataLayout().getStorageAlignment());
                 memArg->setLabel(name);
                 ctx.copyStruct(memArg, arg);
                 ctx.addIdentifier(name, { memArg, ValueQualifier::AsLValue, decl.args[idx].type.qualifier });
@@ -780,7 +781,7 @@ GlobalVariable* ConstantStringExpr::emitGlobal(String symbol, uint32_t size, Emi
         elements.push_back(ConstantInteger::get(i8, static_cast<intmax_t>(str[idx])));
     }
     const auto type = make<ArrayType>(i8, size == std::numeric_limits<uint32_t>::max() ? static_cast<uint32_t>(count + 1) : size);
-    const auto global = make<GlobalVariable>(symbol, type);
+    const auto global = make<GlobalVariable>(symbol, type, ctx.getModule()->getTarget().getDataLayout().getStorageAlignment());
     global->setInitialValue(make<ConstantArray>(type, std::move(elements)));
     ctx.getModule()->add(global);
     return global;
@@ -858,7 +859,7 @@ QualifiedValue FunctionCallExpr::emit(EmitContext& ctx) const {
 
     if(info.passingRetValByPointer) {
         const auto retType = argTypes.back()->as<PointerType>()->getPointee();
-        const auto storage = ctx.createAlloc(retType);
+        const auto storage = ctx.createAlloc(retType, ctx.getModule()->getTarget().getDataLayout().getStorageAlignment());
         args.push_back(storage);
         ctx.makeOp<FunctionCallInst>(callee, std::move(args));
         // TODO: RVO
@@ -999,11 +1000,13 @@ QualifiedValue DoWhileExpr::emit(EmitContext& ctx) const {
 }
 
 QualifiedValue LocalVarDefExpr::emit(EmitContext& ctx) const {
+    const auto& dataLayout = ctx.getModule()->getTarget().getDataLayout();
     for(auto& [loc, name, arraySize, initExpr] : mVars) {
         EmitContext::pushLoc(loc);
 
         const auto type = ctx.getType(mType.typeIdentifier, mType.space, arraySize);
-        auto local = ctx.createAlloc(type);
+        auto local =
+            ctx.createAlloc(type, type->isAggregate() ? dataLayout.getStorageAlignment() : type->getAlignment(dataLayout));
         constexpr size_t maxLen = 8;
         if(name.prefix().size() <= maxLen)
             local->setLabel(name);
@@ -1325,7 +1328,7 @@ std::pair<Value*, Qualifier> EmitContext::getLValue(Expr* expr, AsLValueUsage us
 Value* EmitContext::getLValueForce(Expr* expr, const Type* type, Qualifier dstQualifier, ConversionUsage usage) {
     const auto createFromRValue = [&](Value* rvalue, Qualifier srcQualifier) -> Value* {
         const auto val = convertTo(rvalue, type, srcQualifier, dstQualifier, usage);
-        const auto storage = createAlloc(val->getType());
+        const auto storage = createAlloc(val->getType(), val->getType()->getAlignment(getModule()->getTarget().getDataLayout()));
         makeOp<StoreInst>(storage, val);
         return storage;
     };
@@ -1770,7 +1773,7 @@ void GlobalVarDefinition::emit(EmitContext& ctx) const {
 
         global = str->emitGlobal(var.name, size, ctx);
     } else {
-        global = make<GlobalVariable>(var.name, t);
+        global = make<GlobalVariable>(var.name, t, ctx.getModule()->getTarget().getDataLayout().getStorageAlignment());
         if(var.initialValue) {
             if(t->isArray()) {
                 if(auto arrayInitializer = dynamic_cast<ArrayInitializer*>(var.initialValue))

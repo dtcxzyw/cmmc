@@ -304,7 +304,7 @@ func @main() -> i32 { NoRecurse Entry } {
     store i32* %153 with i32 0;
     i64 %154 = add i64 %27, i64 124;
     ubr ^b3;
-  ^b3:
+  ^b3 {scalar}:
     i64 %155 = phi [^b2, i64 %154] [^b3, i64 %157];
     i32* %156 = getelementptr &(i32* %3)[i64 %155];
     store i32* %156 with i32 0;
@@ -567,7 +567,7 @@ func @main() -> i32 { NoRecurse Entry } {
     store i32* %285 with i32 0;
     i64 %286 = add i64 %159, i64 124;
     ubr ^b6;
-  ^b6:
+  ^b6 {scalar}:
     i64 %287 = phi [^b5, i64 %286] [^b6, i64 %289];
     i32* %288 = getelementptr &(i32* %5)[i64 %287];
     store i32* %288 with i32 0;
@@ -854,5 +854,5 @@ func @main() -> i32 { NoRecurse Entry } {
     i32 %442 = srem i32 %425, i32 %422;
     ubr ^b19;
 }
-internal [256 * i32]* @oprs { Flexible };
-internal [256 * i32]* @ops { Flexible };
+internal [256 * i32]* @oprs, align 8 { Flexible };
+internal [256 * i32]* @ops, align 8 { Flexible };

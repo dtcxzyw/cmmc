@@ -1,9 +1,9 @@
 internal func @putint() -> void { NoMemoryRead NoMemoryWrite };
 func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
   ^entry:
-    [40 * i32]* %result = alloc [40 * i32];
-    [25 * i32]* %c2 = alloc [25 * i32];
-    [25 * i32]* %c1 = alloc [25 * i32];
+    [40 * i32]* %result = alloc [40 * i32], align 8;
+    [25 * i32]* %c2 = alloc [25 * i32], align 8;
+    [25 * i32]* %c1 = alloc [25 * i32], align 8;
     i32* %0 = getelementptr &([40 * i32]* %result)[i64 0][i64 0];
     store i32* %0 with i32 0;
     i32* %1 = getelementptr &([40 * i32]* %result)[i64 0][i64 1];

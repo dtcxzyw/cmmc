@@ -6,7 +6,7 @@ internal func @putfloat() -> void { NoMemoryRead NoMemoryWrite };
 internal func @putfarray() -> void { NoMemoryWrite };
 func @main() -> i32 { NoRecurse Entry } {
   ^entry:
-    [10 * f32]* %arr = alloc [10 * f32];
+    [10 * f32]* %arr = alloc [10 * f32], align 8;
     call (i32) -> void @putch(i32 111);
     call (i32) -> void @putch(i32 107);
     call (i32) -> void @putch(i32 10);

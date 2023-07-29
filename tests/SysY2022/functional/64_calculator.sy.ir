@@ -1,9 +1,9 @@
 internal func @getch() -> i32 { NoMemoryRead NoMemoryWrite };
 internal func @putint() -> void { NoMemoryRead NoMemoryWrite };
-internal [10000 * i32]* @ints { Flexible };
-internal [10000 * i32]* @chas { Flexible };
-internal [10000 * i32]* @get { Flexible };
-internal [10000 * i32]* @get2 { Flexible };
+internal [10000 * i32]* @ints, align 8 { Flexible };
+internal [10000 * i32]* @chas, align 8 { Flexible };
+internal [10000 * i32]* @get, align 8 { Flexible };
+internal [10000 * i32]* @get2, align 8 { Flexible };
 func @main() -> i32 { NoRecurse Entry } {
   ^entry:
     i32 %0 = call () -> i32 @getch();
@@ -106,7 +106,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i32 %61 = phi [^if.else, i32 %18] [^entry1, i32 %38];
     i1 %62 = icmp eq i32 %23, i32 94;
     cbr i1 %62(prob = 0.5), ^entry4, ^b4;
-  ^entry3:
+  ^entry3 {scalar}:
     i32 %63 = phi [^indirect1, i32 %18] [^entry2, i32 %58] [^entry3, i32 %69];
     i32 %64 = phi [^indirect1, i32 %19] [^entry2, i32 %60] [^entry3, i32 %71];
     i32* %65 = getelementptr &([10000 * i32]* %6)[i64 0][i32 %63];

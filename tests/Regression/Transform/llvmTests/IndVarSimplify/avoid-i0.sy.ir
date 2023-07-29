@@ -15,4 +15,4 @@ func @safe_sub_func_uint64_t_u_u(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite 
     i32 %0 = add i32 %var0, i32 -1;
     ret i32 %0;
 }
-i32* @x = 0;
+i32* @x, align 8 = 0;

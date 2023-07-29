@@ -18,4 +18,4 @@ func @foo() -> void { NoMemoryRead NoRecurse } {
   ^if.else:
     ret;
 }
-[64 * i32]* @v_146;
+[64 * i32]* @v_146, align 8;

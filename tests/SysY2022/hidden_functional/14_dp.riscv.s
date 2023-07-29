@@ -20,14 +20,14 @@ main:
 	sd s4, 8(sp)
 	sd ra, 0(sp)
 	jal getint
-	li a2, 140
 pcrel142:
 	auipc a1, %pcrel_hi(dp)
 	mv s3, a0
 	addi a0, a1, %pcrel_lo(pcrel142)
-	mul a1, s3, a2
+	li a1, 140
 	mv s2, a0
-	add s1, a0, a1
+	mul a2, s3, a1
+	add s1, a0, a2
 	jal getint
 	mv s0, a0
 pcrel143:
@@ -42,27 +42,27 @@ pcrel143:
 	add a1, s2, a4
 	mul a4, a0, a3
 	add a3, s2, a4
-	bge s3, a0, label57
-	bge s0, zero, label86
+	bge s3, a0, label39
+	bge s0, zero, label68
 .p2align 2
 label130:
 	mv a1, zero
-	j label16
+	j label14
 .p2align 2
 label28:
 	li s5, 1
-	j label2
-label86:
+	j label16
+label68:
 	mv a0, zero
 	mv a1, zero
 .p2align 2
-label13:
-	sh2add a3, a0, s1
+label11:
+	sh2add a2, a0, s1
 	addiw a0, a0, 1
-	lw a2, 0(a3)
-	max a1, a1, a2
-	bge s0, a0, label13
-label16:
+	lw a3, 0(a2)
+	max a1, a1, a3
+	bge s0, a0, label11
+label14:
 	mv a0, a1
 	ld ra, 0(sp)
 	ld s4, 8(sp)
@@ -73,9 +73,9 @@ label16:
 	ld s3, 48(sp)
 	addi sp, sp, 56
 	ret
-label57:
+label39:
 	li a4, 1
-	bge s0, a4, label8
+	bge s0, a4, label6
 	addiw a0, a0, 1
 	addiw a1, a0, -1
 	li a3, 140
@@ -84,11 +84,11 @@ label57:
 	add a1, s2, a4
 	mul a4, a0, a3
 	add a3, s2, a4
-	bge s3, a0, label57
-	bge s0, zero, label86
+	bge s3, a0, label39
+	bge s0, zero, label68
 	j label130
 .p2align 2
-label8:
+label6:
 	addiw a5, a4, 1
 	sh2add t1, a4, a1
 	andi t0, a5, 1
@@ -98,11 +98,11 @@ label8:
 	addw t0, t0, t2
 	lw t3, -4(t1)
 	addw t1, t2, t3
-	blt t1, t0, label9
+	blt t1, t0, label7
 	sh2add t0, a4, a3
 	mv a4, a5
 	sw t1, 0(t0)
-	bge s0, a5, label8
+	bge s0, a5, label6
 	addiw a0, a0, 1
 	addiw a1, a0, -1
 	li a3, 140
@@ -111,15 +111,15 @@ label8:
 	add a1, s2, a4
 	mul a4, a0, a3
 	add a3, s2, a4
-	bge s3, a0, label57
-	bge s0, zero, label86
+	bge s3, a0, label39
+	bge s0, zero, label68
 	j label130
 .p2align 2
-label9:
+label7:
 	sh2add t1, a4, a3
 	mv a4, a5
 	sw t0, 0(t1)
-	bge s0, a5, label8
+	bge s0, a5, label6
 	addiw a0, a0, 1
 	addiw a1, a0, -1
 	li a3, 140
@@ -128,11 +128,11 @@ label9:
 	add a1, s2, a4
 	mul a4, a0, a3
 	add a3, s2, a4
-	bge s3, a0, label57
-	bge s0, zero, label86
+	bge s3, a0, label39
+	bge s0, zero, label68
 	j label130
 .p2align 2
-label2:
+label16:
 	jal getint
 	andi a2, a0, 1
 	li a4, 140
@@ -147,7 +147,7 @@ label2:
 	lw a3, 4(a0)
 	addw a0, a2, a3
 	sw a0, 0(a1)
-	bge s3, s5, label2
+	bge s3, s5, label16
 	li a0, 1
 	addiw a1, a0, -1
 	li a3, 140
@@ -156,6 +156,6 @@ label2:
 	add a1, s2, a4
 	mul a4, a0, a3
 	add a3, s2, a4
-	bge s3, a0, label57
-	bge s0, zero, label86
+	bge s3, a0, label39
+	bge s0, zero, label68
 	j label130

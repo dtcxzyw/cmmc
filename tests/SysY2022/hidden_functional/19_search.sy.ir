@@ -1,7 +1,7 @@
 internal func @getint() -> i32 { NoMemoryRead NoMemoryWrite };
 internal func @putint() -> void { NoMemoryRead NoMemoryWrite };
 internal func @putch() -> void { NoMemoryRead NoMemoryWrite };
-internal [30 * [30 * i32]]* @a { Flexible };
+internal [30 * [30 * i32]]* @a, align 8 { Flexible };
 internal func @search(i32 %x, i32 %y, i32 %n, [4 * [2 * i32]]* %0, i32* %1, i32* %2, i32* %3, i32* %4) -> i32 {
   ^entry:
     i1 %5 = icmp sgt i32 %n, i32 10;
@@ -90,11 +90,11 @@ internal func @search(i32 %x, i32 %y, i32 %n, [4 * [2 * i32]]* %0, i32* %1, i32*
 }
 func @main() -> i32 { NoRecurse Entry } {
   ^entry:
-    i32* %y_1 = alloc i32;
-    i32* %x_1 = alloc i32;
-    i32* %h = alloc i32;
-    i32* %w = alloc i32;
-    [4 * [2 * i32]]* %step = alloc [4 * [2 * i32]];
+    i32* %y_1 = alloc i32, align 8;
+    i32* %x_1 = alloc i32, align 8;
+    i32* %h = alloc i32, align 8;
+    i32* %w = alloc i32, align 8;
+    [4 * [2 * i32]]* %step = alloc [4 * [2 * i32]], align 8;
     i32* %0 = getelementptr &([4 * [2 * i32]]* %step)[i64 0][i64 0][i64 0];
     store i32* %0 with i32 1;
     i32* %1 = getelementptr &([4 * [2 * i32]]* %step)[i64 0][i64 0][i64 1];

@@ -70,8 +70,8 @@ internal func @QuickSort(i32* %arr, i32 %low, i32 %high) -> void {
 }
 func @main() -> i32 { NoRecurse Entry } {
   ^entry:
-    [32 * i32]* %result = alloc [32 * i32];
-    [32 * i32]* %arr = alloc [32 * i32];
+    [32 * i32]* %result = alloc [32 * i32], align 8;
+    [32 * i32]* %arr = alloc [32 * i32], align 8;
     i32* %0 = getelementptr &([32 * i32]* %arr)[i64 0][i64 0];
     store i32* %0 with i32 7;
     i32* %1 = getelementptr &([32 * i32]* %arr)[i64 0][i64 1];
@@ -1163,7 +1163,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i32 %643 = phi [^while.body16, i32 0] [^if.then4, i32 %649] [^if.then5, i32 3] [^if.else2, i32 %665];
     i1 %644 = icmp slt i32 %643, i32 32;
     cbr i1 %644(prob = 0.97), ^while.body18, ^while.body17;
-  ^while.body17:
+  ^while.body17 {scalar}:
     store i32* %62 with i32 0;
     store i32* %63 with i32 0;
     ubr ^while.body19;
@@ -1206,4 +1206,4 @@ func @main() -> i32 { NoRecurse Entry } {
   ^b4:
     ret i32 0;
 }
-internal [1000 * i32]* @count { Flexible };
+internal [1000 * i32]* @count, align 8 { Flexible };

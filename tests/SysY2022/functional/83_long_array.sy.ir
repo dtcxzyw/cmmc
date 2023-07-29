@@ -546,6 +546,6 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i32 %455 = add i32 %406, i32 2;
     ubr ^while.header1;
 }
-internal [10000 * i32]* @a1 { Flexible };
-internal [10000 * i32]* @a2 { Flexible };
-internal [10000 * i32]* @a3 { Flexible };
+internal [10000 * i32]* @a1, align 8 { Flexible };
+internal [10000 * i32]* @a2, align 8 { Flexible };
+internal [10000 * i32]* @a3, align 8 { Flexible };

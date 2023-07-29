@@ -1,6 +1,6 @@
 internal func @getint() -> i32 { NoMemoryRead NoMemoryWrite };
-internal [1005 * [2 * i32]]* @t { Flexible };
-internal [1005 * [35 * i32]]* @dp { Flexible };
+internal [1005 * [2 * i32]]* @t, align 8 { Flexible };
+internal [1005 * [35 * i32]]* @dp, align 8 { Flexible };
 func @main() -> i32 { NoRecurse Entry } {
   ^entry:
     i32 %0 = call () -> i32 @getint();

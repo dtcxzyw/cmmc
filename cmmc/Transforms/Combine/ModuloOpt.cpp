@@ -12,6 +12,7 @@
     limitations under the License.
 */
 
+#include "cmmc/IR/Block.hpp"
 #include <cmmc/Analysis/AnalysisPass.hpp>
 #include <cmmc/Analysis/CFGAnalysis.hpp>
 #include <cmmc/Analysis/DominateAnalysis.hpp>
@@ -218,6 +219,9 @@ class ModuloOpt final : public TransformPass<Function> {
                     if(rec->getBlock() != loop.header)
                         continue;
                     if(rec->incomings().at(loop.header)->value != &inst)
+                        continue;
+                    if(inc->getBlock() != nullptr &&
+                       (inc->getBlock() == loop.header || !dom.dominate(inc->getBlock(), loop.header)))
                         continue;
                     // FIXME
                     bool invalid = false;

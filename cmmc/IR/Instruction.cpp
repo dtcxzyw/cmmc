@@ -548,6 +548,7 @@ void StackAllocInst::dumpInst(std::ostream& out) const {
     dumpWithNoOperand(out);
     out << ' ';
     getType()->as<PointerType>()->getPointee()->dumpName(out);
+    out << ", align " << mAlignment;
 }
 
 void FMAInst::dumpInst(std::ostream& out) const {
@@ -708,7 +709,7 @@ Instruction* SelectInst::clone() const {
 }
 
 Instruction* StackAllocInst::clone() const {
-    return make<StackAllocInst>(getType()->as<PointerType>()->getPointee());
+    return make<StackAllocInst>(getType()->as<PointerType>()->getPointee(), mAlignment);
 }
 
 Instruction* FMAInst::clone() const {

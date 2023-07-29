@@ -41,4 +41,4 @@ func @main() -> i32 { NoRecurse } {
     store i32* %0 with i32 %19;
     ubr ^block2;
 }
-i32* @a = 0;
+i32* @a, align 8 = 0;

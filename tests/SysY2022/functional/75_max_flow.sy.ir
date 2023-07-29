@@ -1,9 +1,9 @@
 internal func @getint() -> i32 { NoMemoryRead NoMemoryWrite };
 internal func @putint() -> void { NoMemoryRead NoMemoryWrite };
 internal func @putch() -> void { NoMemoryRead NoMemoryWrite };
-internal [10 * [10 * i32]]* @to { Flexible };
-internal [10 * [10 * i32]]* @cap { Flexible };
-internal [10 * [10 * i32]]* @rev { Flexible };
+internal [10 * [10 * i32]]* @to, align 8 { Flexible };
+internal [10 * [10 * i32]]* @cap, align 8 { Flexible };
+internal [10 * [10 * i32]]* @rev, align 8 { Flexible };
 internal func @dfs(i32 %s, i32 %t, i32 %f, [10 * i32]* %0, [10 * i32]* %1) -> i32 {
   ^entry:
     i1 %2 = icmp eq i32 %s, i32 %t;
@@ -63,8 +63,8 @@ internal func @dfs(i32 %s, i32 %t, i32 %f, [10 * i32]* %0, [10 * i32]* %1) -> i3
 }
 func @main() -> i32 { NoRecurse Entry } {
   ^entry:
-    [10 * i32]* %used = alloc [10 * i32];
-    [10 * i32]* %size = alloc [10 * i32];
+    [10 * i32]* %used = alloc [10 * i32], align 8;
+    [10 * i32]* %size = alloc [10 * i32], align 8;
     i32 %0 = call () -> i32 @getint();
     i32 %1 = call () -> i32 @getint();
     i1 %2 = icmp sgt i32 %1, i32 0;

@@ -2,8 +2,8 @@ internal func @putint() -> void { NoMemoryRead NoMemoryWrite };
 internal func @putch() -> void { NoMemoryRead NoMemoryWrite };
 func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
   ^entry:
-    [13 * i32]* %B = alloc [13 * i32];
-    [15 * i32]* %A = alloc [15 * i32];
+    [13 * i32]* %B = alloc [13 * i32], align 8;
+    [15 * i32]* %A = alloc [15 * i32], align 8;
     i32* %0 = getelementptr &([15 * i32]* %A)[i64 0][i64 0];
     store i32* %0 with i32 8;
     i32* %1 = getelementptr &([15 * i32]* %A)[i64 0][i64 1];
@@ -245,4 +245,4 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i32 %124 = add i32 %103, i32 1;
     ubr ^while.header1;
 }
-internal [16 * [16 * i32]]* @p { Flexible };
+internal [16 * [16 * i32]]* @p, align 8 { Flexible };

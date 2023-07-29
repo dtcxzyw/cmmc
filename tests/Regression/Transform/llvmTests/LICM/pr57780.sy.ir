@@ -2,4 +2,4 @@ func @test() -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecur
   ^entry:
     ret;
 }
-i16* @c = 0;
+i16* @c, align 8 = 0;

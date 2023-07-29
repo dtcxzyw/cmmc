@@ -29,22 +29,22 @@ pcrel192:
 	add a0, a0, a2
 	mv s2, a5
 	sd s7, 8(sp)
-	li a2, 9072
-	mul a3, s3, a1
+	mul a2, s3, a1
 	sd ra, 0(sp)
-	add a0, a0, a3
-	mul a1, s4, a2
-	slli a3, a4, 3
-	slli a2, s6, 6
-	add a0, a0, a1
+	li a1, 9072
+	add a0, a0, a2
+	slli a2, a3, 6
+	mul a3, s4, a1
 	sub a1, a2, s6
-	sub a2, a3, a4
+	add a0, a0, a3
+	slli a2, a4, 3
 	sh3add a0, a1, a0
-	sh2add s7, a2, a0
-	li a2, -1
-	sh2add a1, a5, s7
-	lw a0, 0(a1)
-	bne a0, a2, label19
+	sub a1, a2, a4
+	sh2add s7, a1, a0
+	li a1, -1
+	sh2add a2, a5, s7
+	lw a0, 0(a2)
+	bne a0, a1, label19
 	addw a1, s1, s3
 	addw a2, s4, a1
 	addw a0, s6, a2
@@ -53,11 +53,9 @@ pcrel192:
 	li a0, 1
 	j label19
 label3:
-	bne s1, zero, label4
+	bne s1, zero, label18
 	mv s0, zero
-label5:
-	bne s3, zero, label7
-	j label8
+	j label4
 label19:
 	ld ra, 0(sp)
 	ld s7, 8(sp)
@@ -70,103 +68,10 @@ label19:
 	ld s1, 64(sp)
 	addi sp, sp, 72
 	ret
-label7:
-	addiw a0, s1, 1
-	addiw a1, s3, -1
-	mv a2, s4
-	li a5, 2
-	mv a3, s6
-	mv a4, s5
-	jal dfs
-	xori a3, s2, 3
-	li a4, 1152921497
-	sltiu a2, a3, 1
-	subw a1, s3, a2
-	mulw a3, a0, a1
-	addw a0, s0, a3
-	mul a1, a0, a4
-	srli a3, a1, 63
-	srai a2, a1, 60
-	add a1, a3, a2
-	li a2, 1000000007
-	mulw a3, a1, a2
-	subw s0, a0, a3
-label8:
-	beq s4, zero, label11
-	addiw a1, s3, 1
-	addiw a2, s4, -1
-	mv a0, s1
-	li a5, 3
-	mv a3, s6
-	mv a4, s5
-	jal dfs
-	xori a3, s2, 4
-	li a4, 1152921497
-	sltiu a1, a3, 1
-	subw a2, s4, a1
-	mulw a3, a0, a2
-	addw a0, s0, a3
-	mul a1, a0, a4
-	srli a3, a1, 63
-	srai a2, a1, 60
-	add a1, a3, a2
-	li a2, 1000000007
-	mulw a3, a1, a2
-	subw s0, a0, a3
-label11:
-	beq s6, zero, label14
-	addiw a2, s4, 1
-	addiw a3, s6, -1
-	mv a0, s1
-	li a5, 4
-	mv a1, s3
-	mv a4, s5
-	jal dfs
-	xori a1, s2, 5
-	sltiu a3, a1, 1
-	subw a2, s6, a3
-	li a3, 1152921497
-	mulw a1, a0, a2
-	addw a0, s0, a1
-	mul a1, a0, a3
-	li a3, 1000000007
-	srli a4, a1, 63
-	srai a2, a1, 60
-	add a1, a4, a2
-	mulw a2, a1, a3
-	subw s0, a0, a2
-label14:
-	beq s5, zero, label17
-	addiw a3, s6, 1
-	addiw a4, s5, -1
-	mv a0, s1
-	li a5, 5
-	mv a1, s3
-	mv a2, s4
-	jal dfs
-	li a3, 1152921497
-	mulw a2, s5, a0
-	addw a1, s0, a2
-	mul a0, a1, a3
-	srli a3, a0, 63
-	srai a2, a0, 60
-	add a0, a3, a2
-	li a2, 1000000007
-	mulw a3, a0, a2
-	subw s0, a1, a3
-label17:
-	li a2, 1152921497
-	li a3, 1000000007
-	mul a0, s0, a2
-	srli a2, a0, 63
-	srai a1, a0, 60
-	add a0, a2, a1
-	sh2add a2, s2, s7
-	mulw a1, a0, a3
-	subw a0, s0, a1
-	sw a0, 0(a2)
-	j label19
 label4:
+	bne s3, zero, label6
+	j label7
+label18:
 	addiw a0, s1, -1
 	mv a1, s3
 	li a5, 1
@@ -174,11 +79,33 @@ label4:
 	mv a3, s6
 	mv a4, s5
 	jal dfs
-	li a3, 1152921497
+	li a4, 1000000007
 	xori a2, s2, 2
-	sltiu a1, a2, 1
-	subw a4, s1, a1
-	mulw a0, a0, a4
+	sltiu a3, a2, 1
+	subw a1, s1, a3
+	li a3, 1152921497
+	mulw a0, a0, a1
+	mul a1, a0, a3
+	srli a3, a1, 63
+	srai a2, a1, 60
+	add a1, a3, a2
+	mulw a2, a1, a4
+	subw s0, a0, a2
+	j label4
+label6:
+	addiw a0, s1, 1
+	addiw a1, s3, -1
+	mv a2, s4
+	li a5, 2
+	mv a3, s6
+	mv a4, s5
+	jal dfs
+	xori a1, s2, 3
+	sltiu a2, a1, 1
+	subw a3, s3, a2
+	mulw a1, a0, a3
+	li a3, 1152921497
+	addw a0, s0, a1
 	mul a1, a0, a3
 	srli a3, a1, 63
 	srai a2, a1, 60
@@ -186,7 +113,81 @@ label4:
 	li a2, 1000000007
 	mulw a3, a1, a2
 	subw s0, a0, a3
-	j label5
+label7:
+	beq s4, zero, label10
+	addiw a1, s3, 1
+	addiw a2, s4, -1
+	mv a0, s1
+	li a5, 3
+	mv a3, s6
+	mv a4, s5
+	jal dfs
+	xori a1, s2, 4
+	sltiu a3, a1, 1
+	subw a2, s4, a3
+	li a3, 1152921497
+	mulw a1, a0, a2
+	addw a0, s0, a1
+	mul a1, a0, a3
+	srli a3, a1, 63
+	srai a2, a1, 60
+	add a1, a3, a2
+	li a2, 1000000007
+	mulw a3, a1, a2
+	subw s0, a0, a3
+label10:
+	beq s6, zero, label13
+	addiw a2, s4, 1
+	addiw a3, s6, -1
+	mv a0, s1
+	li a5, 4
+	mv a1, s3
+	mv a4, s5
+	jal dfs
+	xori a2, s2, 5
+	sltiu a3, a2, 1
+	subw a1, s6, a3
+	li a3, 1152921497
+	mulw a2, a0, a1
+	addw a0, s0, a2
+	mul a1, a0, a3
+	srli a3, a1, 63
+	srai a2, a1, 60
+	add a1, a3, a2
+	li a2, 1000000007
+	mulw a3, a1, a2
+	subw s0, a0, a3
+label13:
+	beq s5, zero, label16
+	addiw a3, s6, 1
+	addiw a4, s5, -1
+	mv a0, s1
+	li a5, 5
+	mv a1, s3
+	mv a2, s4
+	jal dfs
+	li a4, 1000000007
+	li a3, 1152921497
+	mulw a2, s5, a0
+	addw a1, s0, a2
+	mul a0, a1, a3
+	srli a3, a0, 63
+	srai a2, a0, 60
+	add a0, a3, a2
+	mulw a2, a0, a4
+	subw s0, a1, a2
+label16:
+	li a2, 1152921497
+	mul a0, s0, a2
+	li a2, 1000000007
+	srli a3, a0, 63
+	srai a1, a0, 60
+	add a0, a3, a1
+	mulw a1, a0, a2
+	sh2add a2, s2, s7
+	subw a0, s0, a1
+	sw a0, 0(a2)
+	j label19
 .globl main
 main:
 .p2align 2

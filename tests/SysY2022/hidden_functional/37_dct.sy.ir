@@ -2,9 +2,9 @@ internal func @getint() -> i32 { NoMemoryRead NoMemoryWrite };
 internal func @getfloat() -> f32 { NoMemoryRead NoMemoryWrite };
 internal func @putch() -> void { NoMemoryRead NoMemoryWrite };
 internal func @putfloat() -> void { NoMemoryRead NoMemoryWrite };
-internal [8 * [8 * f32]]* @test_block { Flexible };
-internal [8 * [8 * f32]]* @test_dct { Flexible };
-internal [8 * [8 * f32]]* @test_idct { Flexible };
+internal [8 * [8 * f32]]* @test_block, align 8 { Flexible };
+internal [8 * [8 * f32]]* @test_dct, align 8 { Flexible };
+internal [8 * [8 * f32]]* @test_idct, align 8 { Flexible };
 internal func @my_sin_impl(f32 %x) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless } {
   ^entry:
     f32 %0 = fabs f32 %x;
@@ -300,7 +300,7 @@ func @main() -> i32 { NoRecurse Entry } {
   ^indirect1:
     f32 %158 = load f32* %87;
     ubr ^while.body11;
-  ^while.body9:
+  ^while.body9 {scalar}:
     f32 %159 = phi [^indirect, f32 %121] [^while.body8, f32 %155] [^while.body9, f32 %165];
     i32 %160 = phi [^indirect, i32 1] [^while.body8, i32 %156] [^while.body9, i32 %166];
     [8 * f32]* %161 = getelementptr &([8 * f32]* %11)[i32 %160];
@@ -348,7 +348,7 @@ func @main() -> i32 { NoRecurse Entry } {
   ^b14:
     i32 %194 = add i32 %134, i32 1;
     ubr ^while.header11;
-  ^while.body11:
+  ^while.body11 {scalar}:
     f32 %195 = phi [^indirect1, f32 %158] [^while.body10, f32 %191] [^while.body11, f32 %200];
     i32 %196 = phi [^indirect1, i32 1] [^while.body10, i32 %192] [^while.body11, i32 %201];
     f32* %197 = getelementptr &([8 * f32]* %11)[i64 0][i32 %196];

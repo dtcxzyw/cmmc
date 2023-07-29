@@ -24,6 +24,7 @@ void GlobalVariable::dump(std::ostream& out, const HighlightSelector& selector) 
         out << "internal "sv;
     getType()->as<PointerType>()->dump(out);
     out << " @"sv << getSymbol();
+    out << ", align " << mAlignment;
     if(!mAttr.empty()) {
         out << " { "sv;
         // NOLINTNEXTLINE

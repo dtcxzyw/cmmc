@@ -57,7 +57,7 @@ public:
         return inst;
     }
 
-    StackAllocInst* createAlloc(const Type* type);
+    StackAllocInst* createAlloc(const Type* type, size_t alignment);
     PhiInst* createPhi(const Type* type);
 
     Block* addBlock();

@@ -69,9 +69,9 @@ internal func @power(i32 %a, i32 %b) -> i32 { NoMemoryRead NoMemoryWrite NoSideE
     i32 %7 = call (i32, i32) -> i32 @multiply(i32 %3, i32 %a);
     ubr ^b2;
 }
-internal [2097152 * i32]* @temp { Flexible };
-internal [2097152 * i32]* @a;
-internal [2097152 * i32]* @b;
+internal [2097152 * i32]* @temp, align 8 { Flexible };
+internal [2097152 * i32]* @a, align 8;
+internal [2097152 * i32]* @b, align 8;
 internal func @fft(i32* %arr, i32 %begin_pos, i32 %n, i32 %w) -> void {
   ^entry:
     i1 %0 = icmp eq i32 %n, i32 1;
@@ -127,7 +127,7 @@ internal func @fft(i32* %arr, i32 %begin_pos, i32 %n, i32 %w) -> void {
     i32 %28 = add i32 %begin_pos, i32 2;
     i32 %29 = add i32 %begin_pos, i32 3;
     ubr ^while.body3;
-  ^while.body1:
+  ^while.body1 {scalar}:
     i32 %30 = phi [^super.header, i32 0] [^while.body1, i32 %35] [^while.body3, i32 %71];
     i32 %31 = add i32 %begin_pos, i32 %30;
     i32* %32 = getelementptr &(i32* %arr)[i32 %31];

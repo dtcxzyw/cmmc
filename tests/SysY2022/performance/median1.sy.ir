@@ -2,7 +2,7 @@ internal func @getarray() -> i32 { NoMemoryRead };
 internal func @putarray() -> void { NoMemoryWrite };
 internal func @starttime() -> void { NoMemoryRead NoMemoryWrite };
 internal func @stoptime() -> void { NoMemoryRead NoMemoryWrite };
-internal [10000000 * i32]* @a;
+internal [10000000 * i32]* @a, align 8;
 func @main() -> i32 { NoRecurse Entry } {
   ^entry:
     [10000000 * i32]* %0 = ptrcast [10000000 * i32]* @a to [10000000 * i32]*;

@@ -261,7 +261,7 @@ func @main() -> i32 { NoRecurse Entry } {
     store f32* %131 with f32 %130;
     i32 %132 = add i32 %114, i32 1;
     ubr ^while.header2;
-  ^while.body3:
+  ^while.body3 {scalar}:
     i32 %133 = phi [^super.header, i32 %107] [^while.body3, i32 %145] [^while.body4, i32 %199];
     f32 %134 = phi [^super.header, f32 %106] [^while.body3, f32 %144] [^while.body4, f32 %198];
     i32 %135 = add i32 %108, i32 %133;
@@ -347,7 +347,7 @@ func @main() -> i32 { NoRecurse Entry } {
     f32* %203 = getelementptr &(f32* %104)[i32 %124];
     store f32* %203 with f32 %202;
     ubr ^while.header4;
-  ^while.body5:
+  ^while.body5 {scalar}:
     i32 %204 = phi [^super.header1, i32 %113] [^while.body5, i32 %210] [^while.body7, i32 %262];
     f32 %205 = phi [^super.header1, f32 %112] [^while.body5, f32 %216] [^while.body7, f32 %268];
     i32 %206 = add i32 %114, i32 %204;
@@ -432,7 +432,7 @@ func @main() -> i32 { NoRecurse Entry } {
     store f32* %272 with f32 %271;
     i32 %273 = add i32 %154, i32 1;
     ubr ^while.header6;
-  ^while.body8:
+  ^while.body8 {scalar}:
     i32 %274 = phi [^super.header2, i32 %123] [^while.body8, i32 %286] [^while.body9, i32 %334];
     f32 %275 = phi [^super.header2, f32 %122] [^while.body8, f32 %285] [^while.body9, f32 %333];
     i32 %276 = add i32 %124, i32 %274;
@@ -505,7 +505,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i32 %334 = add i32 %296, i32 4;
     i1 %335 = icmp slt i32 %334, i32 99996;
     cbr i1 %335(prob = 0.89), ^while.body9, ^while.body8;
-  ^while.body10:
+  ^while.body10 {scalar}:
     i32 %336 = phi [^super.header3, i32 %153] [^while.body10, i32 %342] [^while.body12, i32 %486];
     f32 %337 = phi [^super.header3, f32 %152] [^while.body10, f32 %348] [^while.body12, f32 %492];
     i32 %338 = add i32 %154, i32 %336;
@@ -744,7 +744,7 @@ func @main() -> i32 { NoRecurse Entry } {
     f32 %565 = fadd f32 %559, f32 %564;
     i32 %566 = add i32 %351, i32 28;
     ubr ^while.body14;
-  ^while.body14:
+  ^while.body14 {scalar}:
     i32 %567 = phi [^while.body13, i32 %566] [^while.body14, i32 %575];
     f32 %568 = phi [^while.body13, f32 %565] [^while.body14, f32 %574];
     f32* %569 = getelementptr &(f32* %100)[i32 %567];
@@ -877,7 +877,7 @@ func @main() -> i32 { NoRecurse Entry } {
     f32 %692 = fadd f32 %688, f32 %691;
     i32 %693 = add i32 %578, i32 28;
     ubr ^while.body17;
-  ^while.body17:
+  ^while.body17 {scalar}:
     i32 %694 = phi [^while.body16, i32 %693] [^while.body17, i32 %700];
     f32 %695 = phi [^while.body16, f32 %692] [^while.body17, f32 %699];
     f32* %696 = getelementptr &(f32* %102)[i32 %694];
@@ -916,6 +916,6 @@ func @main() -> i32 { NoRecurse Entry } {
     call (i32) -> void @putch(i32 10);
     ret i32 0;
 }
-internal [100000 * f32]* @Vectortm { Flexible };
-internal [100000 * f32]* @vectorB { Flexible };
-internal [100000 * f32]* @vectorA { Flexible };
+internal [100000 * f32]* @Vectortm, align 8 { Flexible };
+internal [100000 * f32]* @vectorB, align 8 { Flexible };
+internal [100000 * f32]* @vectorA, align 8 { Flexible };

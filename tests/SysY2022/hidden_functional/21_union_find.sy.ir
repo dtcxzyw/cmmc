@@ -1,6 +1,6 @@
 internal func @getint() -> i32 { NoMemoryRead NoMemoryWrite };
 internal func @putint() -> void { NoMemoryRead NoMemoryWrite };
-internal [1005 * i32]* @parent { Flexible };
+internal [1005 * i32]* @parent, align 8 { Flexible };
 internal func @find(i32 %root) -> i32 {
   ^entry:
     [1005 * i32]* %0 = ptrcast [1005 * i32]* @parent to [1005 * i32]*;
@@ -73,7 +73,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i32 %15 = add i32 %7, i32 4;
     i1 %16 = icmp sgt i32 %2, i32 %15;
     cbr i1 %16(prob = 0.89), ^while.body, ^while.body1;
-  ^while.body1:
+  ^while.body1 {scalar}:
     i32 %17 = phi [^super.header, i32 0] [^while.body, i32 %15] [^while.body1, i32 %19];
     i32* %18 = getelementptr &([1005 * i32]* %4)[i64 0][i32 %17];
     store i32* %18 with i32 %17;

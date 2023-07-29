@@ -40,4 +40,4 @@ func @test8() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecur
   ^entry:
     ret i32 124;
 }
-i32* @P;
+i32* @P, align 8;

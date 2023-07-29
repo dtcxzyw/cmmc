@@ -214,4 +214,4 @@ func @unanalyzeable_latch(i32 %var0) -> void { NoMemoryRead NoRecurse } {
   ^if.else:
     ret;
 }
-i32* @A;
+i32* @A, align 8;

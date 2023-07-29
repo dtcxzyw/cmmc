@@ -1,7 +1,7 @@
 internal func @getint() -> i32 { NoMemoryRead NoMemoryWrite };
 func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
   ^entry:
-    [100 * i32]* %arr = alloc [100 * i32];
+    [100 * i32]* %arr = alloc [100 * i32], align 8;
     ubr ^while.header;
   ^while.header:
     i32 %0 = phi [^entry, i32 0] [^while.body, i32 %5];

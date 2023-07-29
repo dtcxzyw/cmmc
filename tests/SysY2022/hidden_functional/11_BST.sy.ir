@@ -1,9 +1,9 @@
 internal func @getint() -> i32 { NoMemoryRead NoMemoryWrite };
 internal func @putint() -> void { NoMemoryRead NoMemoryWrite };
 internal func @putch() -> void { NoMemoryRead NoMemoryWrite };
-internal [10000 * i32]* @value { Flexible };
-internal [10000 * i32]* @left_child { Flexible };
-internal [10000 * i32]* @right_child { Flexible };
+internal [10000 * i32]* @value, align 8 { Flexible };
+internal [10000 * i32]* @left_child, align 8 { Flexible };
+internal [10000 * i32]* @right_child, align 8 { Flexible };
 internal func @insert(i32 %root, i32 %x, i32* %0) -> i32 {
   ^entry:
     i1 %1 = icmp eq i32 %root, i32 -1;
@@ -186,7 +186,7 @@ internal func @inorder(i32 %root) -> void { NoMemoryWrite } {
 }
 func @main() -> i32 { NoRecurse Entry } {
   ^entry:
-    i32* %now = alloc i32;
+    i32* %now = alloc i32, align 8;
     i32 %0 = call () -> i32 @getint();
     i1 %1 = icmp eq i32 %0, i32 0;
     cbr i1 %1(prob = 0.5), ^b1, ^b;

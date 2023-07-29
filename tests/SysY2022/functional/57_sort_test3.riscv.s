@@ -15,28 +15,14 @@ QuickSort:
 	sd ra, 0(sp)
 	mv s2, zero
 label2:
-	ble s1, a1, label6
+	ble s1, a1, label23
 	sh2add a3, a1, s0
 	mv s4, a1
 	lw a0, 0(a3)
 	mv a3, s1
 	addi a2, a0, -1
-	j label8
-label6:
-	subw a1, zero, s3
-	ld ra, 0(sp)
-	and a0, s2, a1
-	ld s4, 8(sp)
-	ld s2, 16(sp)
-	ld s3, 24(sp)
-	ld s1, 32(sp)
-	ld s0, 40(sp)
-	addi sp, sp, 48
-	ret
-.p2align 2
-label8:
-	bgt a3, s4, label12
-label11:
+	bgt s1, a1, label11
+label10:
 	sh2add a4, s4, s0
 	addiw a2, s4, -1
 	sw a0, 0(a4)
@@ -48,53 +34,64 @@ label11:
 	and s2, s2, a0
 	j label2
 .p2align 2
-label12:
-	blt s4, a3, label22
-	ble a3, s4, label11
-.p2align 2
-label17:
-	sh2add a5, s4, s0
-	lw a4, 0(a5)
-	bgt a0, a4, label18
-	bgt a3, s4, label20
-	j label11
-.p2align 2
-label22:
-	sh2add a5, a3, s0
-	lw a4, 0(a5)
-	blt a2, a4, label23
+label11:
 	blt s4, a3, label21
-	bgt a3, s4, label17
-	j label11
+	ble a3, s4, label10
 .p2align 2
-label20:
+label16:
 	sh2add a5, s4, s0
-	sh2add t0, a3, s0
 	lw a4, 0(a5)
-	addiw a3, a3, -1
-	sw a4, 0(t0)
-	bgt a3, s4, label12
-	j label11
-.p2align 2
-label18:
-	addiw s4, s4, 1
-	bgt a3, s4, label17
-	j label11
-.p2align 2
-label23:
-	addiw a3, a3, -1
-	blt s4, a3, label22
-	bgt a3, s4, label17
-	j label11
+	bgt a0, a4, label17
+	bgt a3, s4, label19
+	j label10
 .p2align 2
 label21:
 	sh2add a5, a3, s0
-	sh2add t0, s4, s0
 	lw a4, 0(a5)
+	blt a2, a4, label22
+	blt s4, a3, label20
+	bgt a3, s4, label16
+	j label10
+label23:
+	subw a1, zero, s3
+	ld ra, 0(sp)
+	and a0, s2, a1
+	ld s4, 8(sp)
+	ld s2, 16(sp)
+	ld s3, 24(sp)
+	ld s1, 32(sp)
+	ld s0, 40(sp)
+	addi sp, sp, 48
+	ret
+.p2align 2
+label19:
+	sh2add t0, s4, s0
+	sh2add a5, a3, s0
+	lw a4, 0(t0)
+	addiw a3, a3, -1
+	sw a4, 0(a5)
+	bgt a3, s4, label11
+	j label10
+.p2align 2
+label17:
 	addiw s4, s4, 1
-	sw a4, 0(t0)
-	bgt a3, s4, label17
-	j label11
+	bgt a3, s4, label16
+	j label10
+.p2align 2
+label22:
+	addiw a3, a3, -1
+	blt s4, a3, label21
+	bgt a3, s4, label16
+	j label10
+.p2align 2
+label20:
+	sh2add t0, a3, s0
+	sh2add a5, s4, s0
+	lw a4, 0(t0)
+	addiw s4, s4, 1
+	sw a4, 0(a5)
+	bgt a3, s4, label16
+	j label10
 .globl main
 main:
 .p2align 2

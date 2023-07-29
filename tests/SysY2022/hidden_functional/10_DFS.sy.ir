@@ -1,10 +1,10 @@
 internal func @getch() -> i32 { NoMemoryRead NoMemoryWrite };
 internal func @putint() -> void { NoMemoryRead NoMemoryWrite };
 internal func @putch() -> void { NoMemoryRead NoMemoryWrite };
-internal [5005 * i32]* @to { Flexible };
-internal [5005 * i32]* @next { Flexible };
-internal [1005 * i32]* @head { Flexible };
-internal [1005 * i32]* @vis { Flexible };
+internal [5005 * i32]* @to, align 8 { Flexible };
+internal [5005 * i32]* @next, align 8 { Flexible };
+internal [1005 * i32]* @head, align 8 { Flexible };
+internal [1005 * i32]* @vis, align 8 { Flexible };
 internal func @same(i32 %x, i32 %tar) -> i32 {
   ^entry:
     [1005 * i32]* %0 = ptrcast [1005 * i32]* @vis to [1005 * i32]*;

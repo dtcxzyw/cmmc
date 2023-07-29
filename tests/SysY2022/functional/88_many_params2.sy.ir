@@ -245,7 +245,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     store i32* %120 with i32 0;
     i64 %121 = add i64 %2, i64 116;
     ubr ^b2;
-  ^b2:
+  ^b2 {scalar}:
     i64 %122 = phi [^b1, i64 %121] [^b2, i64 %124];
     i32* %123 = getelementptr &(i32* %1)[i64 %122];
     store i32* %123 with i32 0;
@@ -496,7 +496,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     store i32* %246 with i32 0;
     i64 %247 = add i64 %128, i64 116;
     ubr ^b5;
-  ^b5:
+  ^b5 {scalar}:
     i64 %248 = phi [^b4, i64 %247] [^b5, i64 %250];
     i32* %249 = getelementptr &(i32* %127)[i64 %248];
     store i32* %249 with i32 0;
@@ -572,7 +572,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i1 %294 = icmp slt i32 %293, i32 6;
     i32 %295 = add i32 %276, i32 28;
     cbr i1 %294(prob = 0.89), ^while.body1, ^while.body2;
-  ^while.body2:
+  ^while.body2 {scalar}:
     i32 %296 = phi [^super.header, i32 %262] [^while.body1, i32 %293] [^while.body2, i32 %301];
     i32 %297 = phi [^super.header, i32 %260] [^while.body1, i32 %295] [^while.body2, i32 %303];
     i32* %298 = getelementptr &(i32* %257)[i32 %296];
@@ -596,5 +596,5 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     call (i32) -> void @putch(i32 10);
     ret i32 0;
 }
-internal [53 * [59 * i32]]* @b { Flexible };
-internal [61 * [67 * i32]]* @a { Flexible };
+internal [53 * [59 * i32]]* @b, align 8 { Flexible };
+internal [61 * [67 * i32]]* @a, align 8 { Flexible };

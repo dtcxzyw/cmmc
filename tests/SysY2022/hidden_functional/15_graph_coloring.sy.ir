@@ -64,8 +64,8 @@ internal func @graphColoring([4 * i32]* %graph, i32 %m, i32 %i, i32* %color) -> 
 }
 func @main() -> i32 { NoRecurse Entry } {
   ^entry:
-    [4 * i32]* %color = alloc [4 * i32];
-    [4 * [4 * i32]]* %graph = alloc [4 * [4 * i32]];
+    [4 * i32]* %color = alloc [4 * i32], align 8;
+    [4 * [4 * i32]]* %graph = alloc [4 * [4 * i32]], align 8;
     i32* %0 = getelementptr &([4 * [4 * i32]]* %graph)[i64 0][i64 0][i64 0];
     store i32* %0 with i32 0;
     i32* %1 = getelementptr &([4 * [4 * i32]]* %graph)[i64 0][i64 0][i64 1];

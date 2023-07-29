@@ -1,9 +1,9 @@
 internal func @getint() -> i32 { NoMemoryRead NoMemoryWrite };
 internal func @putint() -> void { NoMemoryRead NoMemoryWrite };
 internal func @putch() -> void { NoMemoryRead NoMemoryWrite };
-internal [100 * [100 * i32]]* @a { Flexible };
-internal [100 * [100 * i32]]* @b { Flexible };
-internal [100 * [100 * i32]]* @res { Flexible };
+internal [100 * [100 * i32]]* @a, align 8 { Flexible };
+internal [100 * [100 * i32]]* @b, align 8 { Flexible };
+internal [100 * [100 * i32]]* @res, align 8 { Flexible };
 func @main() -> i32 { NoRecurse Entry } {
   ^entry:
     i32 %0 = call () -> i32 @getint();
@@ -134,7 +134,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i32 %78 = add i32 %48, i32 4;
     i1 %79 = icmp sgt i32 %3, i32 %78;
     cbr i1 %79(prob = 0.89), ^while.body3, ^while.body4;
-  ^while.body4:
+  ^while.body4 {scalar}:
     i32 %80 = phi [^indirect, i32 %41] [^while.body3, i32 %77] [^while.body4, i32 %88];
     i32 %81 = phi [^indirect, i32 0] [^while.body3, i32 %78] [^while.body4, i32 %89];
     [100 * i32]* %82 = getelementptr &([100 * [100 * i32]]* %6)[i64 0][i32 %81];

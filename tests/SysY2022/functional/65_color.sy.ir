@@ -1,6 +1,6 @@
 internal func @getint() -> i32 { NoMemoryRead NoMemoryWrite };
 internal func @putint() -> void { NoMemoryRead NoMemoryWrite };
-internal [18 * [18 * [18 * [18 * [18 * [7 * i32]]]]]]* @dp { Flexible };
+internal [18 * [18 * [18 * [18 * [18 * [7 * i32]]]]]]* @dp, align 8 { Flexible };
 internal func @dfs(i32 %a, i32 %b, i32 %c, i32 %d, i32 %e, i32 %last) -> i32 {
   ^entry:
     [18 * [18 * [18 * [18 * [18 * [7 * i32]]]]]]* %0 = ptrcast [18 * [18 * [18 * [18 * [18 * [7 * i32]]]]]]* @dp to [18 * [18 * [18 * [18 * [18 * [7 * i32]]]]]]*;
@@ -100,7 +100,7 @@ internal func @dfs(i32 %a, i32 %b, i32 %c, i32 %d, i32 %e, i32 %last) -> i32 {
 }
 func @main() -> i32 { NoRecurse Entry } {
   ^entry:
-    [20 * i32]* %cns = alloc [20 * i32];
+    [20 * i32]* %cns = alloc [20 * i32], align 8;
     i32* %0 = getelementptr &([20 * i32]* %cns)[i64 0][i64 0];
     store i32* %0 with i32 0;
     i32* %1 = getelementptr &([20 * i32]* %cns)[i64 0][i64 1];

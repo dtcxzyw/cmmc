@@ -90,86 +90,83 @@ delete:
 	cmn r0, #1
 	mov r4, r0
 	sub sp, sp, #4
-	bne label95
+	bne label97
 label118:
 	mvn r0, #0
-	b label112
 label95:
+	add sp, sp, #4
+	pop { r4, r5, pc }
+label97:
 	movw r2, #:lower16:value
 	movt r2, #:upper16:value
 	ldr r0, [r2, r4, lsl #2]
 	cmp r1, r0
-	ble label97
+	ble label99
 	movw r5, #:lower16:right_child
 	movt r5, #:upper16:right_child
 	ldr r0, [r5, r4, lsl #2]
 	bl delete
 	str r0, [r5, r4, lsl #2]
 	mov r0, r4
-	b label112
-label97:
+	b label95
+label99:
 	cmp r1, r0
-	blt label111
+	blt label113
 	movw r0, #:lower16:left_child
 	movt r0, #:upper16:left_child
 	ldr r0, [r0, r4, lsl #2]
 	cmn r0, #1
-	beq label99
-	b label100
-label112:
-	add sp, sp, #4
-	pop { r4, r5, pc }
-label99:
+	bne label102
 	movw r0, #:lower16:right_child
 	movt r0, #:upper16:right_child
 	ldr r0, [r0, r4, lsl #2]
 	cmn r0, #1
 	beq label118
-label100:
+label102:
 	movw r0, #:lower16:left_child
 	movt r0, #:upper16:left_child
 	ldr r0, [r0, r4, lsl #2]
 	cmn r0, #1
-	beq label108
+	beq label110
 	movw r0, #:lower16:right_child
 	movt r0, #:upper16:right_child
 	ldr r0, [r0, r4, lsl #2]
 	cmn r0, #1
 	bne label172
-label108:
+label110:
 	movw r0, #:lower16:left_child
 	movt r0, #:upper16:left_child
 	ldr r0, [r0, r4, lsl #2]
 	cmn r0, #1
 	beq label208
 	b label207
-label111:
+label113:
 	movw r5, #:lower16:left_child
 	movt r5, #:upper16:left_child
 	ldr r0, [r5, r4, lsl #2]
 	bl delete
 	str r0, [r5, r4, lsl #2]
 	mov r0, r4
-	b label112
+	b label95
 label172:
 	movw r5, #:lower16:right_child
 	movt r5, #:upper16:right_child
 	ldr r1, [r5, r4, lsl #2]
 	mov r0, r1
-label103:
-	cmn r0, #1
-	bne label105
-	mvn r0, #0
-	b label106
 label105:
+	cmn r0, #1
+	bne label107
+	mvn r0, #0
+	b label108
+label107:
 	movw r3, #:lower16:left_child
 	movt r3, #:upper16:left_child
 	ldr r3, [r3, r0, lsl #2]
 	cmn r3, #1
-	beq label106
+	beq label108
 	mov r0, r3
-	b label103
-label106:
+	b label105
+label108:
 	ldr r3, [r2, r0, lsl #2]
 	str r3, [r2, r4, lsl #2]
 	mov r0, r1
@@ -177,17 +174,17 @@ label106:
 	bl delete
 	str r0, [r5, r4, lsl #2]
 	mov r0, r4
-	b label112
+	b label95
 label208:
 	movw r0, #:lower16:right_child
 	movt r0, #:upper16:right_child
 	ldr r0, [r0, r4, lsl #2]
-	b label112
+	b label95
 label207:
 	movw r0, #:lower16:left_child
 	movt r0, #:upper16:left_child
 	ldr r0, [r0, r4, lsl #2]
-	b label112
+	b label95
 inorder:
 .p2align 4
 	push { r4, lr }

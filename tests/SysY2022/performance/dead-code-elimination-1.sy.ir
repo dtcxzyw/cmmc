@@ -36,7 +36,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i32 %18 = add i32 %6, i32 4;
     i1 %19 = icmp sgt i32 %2, i32 %18;
     cbr i1 %19(prob = 0.89), ^while.body, ^while.body1;
-  ^while.body1:
+  ^while.body1 {scalar}:
     i32 %20 = phi [^super.header, i32 0] [^while.body, i32 %18] [^while.body1, i32 %24];
     i32 %21 = phi [^super.header, i32 0] [^while.body, i32 %17] [^while.body1, i32 %23];
     i32 %22 = add i32 %20, i32 %21;
