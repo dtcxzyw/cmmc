@@ -32,37 +32,29 @@ pcrel73:
 	lw s2, 0(a1)
 	bne s0, s2, label4
 	mv a0, s0
-label2:
-	ld ra, 0(sp)
-	ld s4, 8(sp)
-	ld s3, 16(sp)
-	ld s2, 24(sp)
-	ld s1, 32(sp)
-	ld s0, 40(sp)
-	addi sp, sp, 48
-	ret
+	j label2
 label4:
 	sh2add a1, s2, s1
 	lw s3, 0(a1)
-	bne s2, s3, label7
+	bne s2, s3, label5
 	mv a0, s2
 	sh2add a1, s0, s1
 	sw s2, 0(a1)
 	j label2
-label7:
+label5:
 	sh2add a1, s3, s1
 	lw s4, 0(a1)
-	bne s3, s4, label10
+	bne s3, s4, label8
 	mv a0, s3
 	sh2add a1, s2, s1
 	sw s3, 0(a1)
 	sh2add a1, s0, s1
 	sw s3, 0(a1)
 	j label2
-label10:
+label8:
 	sh2add a1, s4, s1
 	lw a0, 0(a1)
-	bne s4, a0, label13
+	bne s4, a0, label11
 	mv a0, s4
 	sh2add a1, s3, s1
 	sw s4, 0(a1)
@@ -71,7 +63,7 @@ label10:
 	sh2add a1, s0, s1
 	sw s4, 0(a1)
 	j label2
-label13:
+label11:
 	jal find
 	sh2add a1, s4, s1
 	sw a0, 0(a1)
@@ -81,7 +73,15 @@ label13:
 	sw a0, 0(a1)
 	sh2add a1, s0, s1
 	sw a0, 0(a1)
-	j label2
+label2:
+	ld ra, 0(sp)
+	ld s4, 8(sp)
+	ld s3, 16(sp)
+	ld s2, 24(sp)
+	ld s1, 32(sp)
+	ld s0, 40(sp)
+	addi sp, sp, 48
+	ret
 .globl main
 main:
 .p2align 2

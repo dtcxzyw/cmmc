@@ -456,16 +456,16 @@ main:
 	mov r8, #28
 	sub sp, sp, #268
 	mov r11, #5
-	mov r3, #26
-	mov r0, #7
-	mov r1, #23
-	mov r7, #39
-	mov r2, #89
-	str r0, [sp, #128]
-	mov r6, #27
-	movw r4, #282
-	str r1, [sp, #132]
 	mov r5, #254
+	mov r0, #7
+	mov r2, #89
+	movw r4, #282
+	mov r1, #23
+	str r0, [sp, #128]
+	mov r7, #39
+	mov r3, #26
+	str r1, [sp, #132]
+	mov r6, #27
 	str r2, [sp, #136]
 	str r3, [sp, #140]
 	str r4, [sp, #144]
@@ -587,7 +587,7 @@ label510:
 	sub r1, r1, #1
 	blt label651
 .p2align 4
-label1892:
+label1893:
 	mov r4, #0
 .p2align 4
 label519:
@@ -618,7 +618,7 @@ label518:
 	rsb r1, r0, #32
 	cmp r0, #31
 	sub r1, r1, #1
-	bge label1892
+	bge label1893
 .p2align 4
 label651:
 	mov r2, #0
@@ -629,7 +629,7 @@ label651:
 	cmp r0, #31
 	sub r1, r1, #1
 	blt label651
-	b label1892
+	b label1893
 .p2align 4
 label517:
 	mov r6, sp
@@ -647,7 +647,7 @@ label517:
 	cmp r0, #31
 	sub r1, r1, #1
 	blt label651
-	b label1892
+	b label1893
 .p2align 4
 label522:
 	ldr r0, [sp, #256]

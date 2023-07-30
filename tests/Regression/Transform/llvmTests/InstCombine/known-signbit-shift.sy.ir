@@ -33,7 +33,7 @@ func @test_shift_nonnegative(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSi
     i32 %0 = lshr i32 %var0, i32 2;
     i32 %1 = strunc i32 %0 to i32;
     i32 %2 = shl i32 %1, i32 3;
-    i1 %3 = icmp sge i32 %2, i32 0;
+    i1 %3 = icmp sgt i32 %2, i32 -1;
     i32 %4 = zext i1 %3 to i32;
     i32 %5 = ztrunc i32 %4 to i32;
     ret i32 %5;

@@ -1,11 +1,11 @@
 func @t0_select_cond_and_v0(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = strunc i32 %var0 to i32;
-    i1 %1 = icmp sle i32 %0, i32 32767;
+    i1 %1 = icmp slt i32 %0, i32 32768;
     i32 %2 = zext i1 %1 to i32;
     i32 %3 = ztrunc i32 %2 to i32;
     i1 %4 = icmp neq i32 %3, i32 0;
-    i1 %5 = icmp sge i32 %0, i32 -32768;
+    i1 %5 = icmp sgt i32 %0, i32 -32769;
     i32 %6 = zext i1 %5 to i32;
     i32 %7 = ztrunc i32 %6 to i32;
     i1 %8 = icmp neq i32 %7, i32 0;
@@ -18,11 +18,11 @@ func @t0_select_cond_and_v0(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSid
 func @t0_select_cond_and_v0_logical(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = strunc i32 %var0 to i32;
-    i1 %1 = icmp sle i32 %0, i32 32767;
+    i1 %1 = icmp slt i32 %0, i32 32768;
     i32 %2 = zext i1 %1 to i32;
     i32 %3 = ztrunc i32 %2 to i32;
     i1 %4 = icmp neq i32 %3, i32 0;
-    i1 %5 = icmp sge i32 %0, i32 -32768;
+    i1 %5 = icmp sgt i32 %0, i32 -32769;
     i32 %6 = zext i1 %5 to i32;
     i32 %7 = ztrunc i32 %6 to i32;
     i32 %8 = select i1 %4 ? i32 %7 : i32 0;
@@ -35,11 +35,11 @@ func @t0_select_cond_and_v0_logical(i32 %var0) -> i32 { NoMemoryRead NoMemoryWri
 func @t1_select_cond_and_v1(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = strunc i32 %var0 to i32;
-    i1 %1 = icmp sle i32 %0, i32 32767;
+    i1 %1 = icmp slt i32 %0, i32 32768;
     i32 %2 = zext i1 %1 to i32;
     i32 %3 = ztrunc i32 %2 to i32;
     i1 %4 = icmp neq i32 %3, i32 0;
-    i1 %5 = icmp sge i32 %0, i32 -32768;
+    i1 %5 = icmp sgt i32 %0, i32 -32769;
     i32 %6 = zext i1 %5 to i32;
     i32 %7 = ztrunc i32 %6 to i32;
     i1 %8 = icmp neq i32 %7, i32 0;
@@ -52,11 +52,11 @@ func @t1_select_cond_and_v1(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSid
 func @t1_select_cond_and_v1_logical(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = strunc i32 %var0 to i32;
-    i1 %1 = icmp sle i32 %0, i32 32767;
+    i1 %1 = icmp slt i32 %0, i32 32768;
     i32 %2 = zext i1 %1 to i32;
     i32 %3 = ztrunc i32 %2 to i32;
     i1 %4 = icmp neq i32 %3, i32 0;
-    i1 %5 = icmp sge i32 %0, i32 -32768;
+    i1 %5 = icmp sgt i32 %0, i32 -32769;
     i32 %6 = zext i1 %5 to i32;
     i32 %7 = ztrunc i32 %6 to i32;
     i32 %8 = select i1 %4 ? i32 %7 : i32 0;
@@ -172,10 +172,10 @@ func @t4_select_cond_xor_v1(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSid
 func @t5_select_cond_xor_v2(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = strunc i32 %var0 to i32;
-    i1 %1 = icmp sle i32 %0, i32 32767;
+    i1 %1 = icmp slt i32 %0, i32 32768;
     i32 %2 = zext i1 %1 to i32;
     i32 %3 = ztrunc i32 %2 to i32;
-    i1 %4 = icmp sle i32 %0, i32 -32768;
+    i1 %4 = icmp slt i32 %0, i32 -32767;
     i32 %5 = zext i1 %4 to i32;
     i32 %6 = ztrunc i32 %5 to i32;
     i32 %7 = xor i32 %3, i32 %6;
@@ -189,10 +189,10 @@ func @t5_select_cond_xor_v2(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSid
 func @t5_select_cond_xor_v3(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = strunc i32 %var0 to i32;
-    i1 %1 = icmp sle i32 %0, i32 32767;
+    i1 %1 = icmp slt i32 %0, i32 32768;
     i32 %2 = zext i1 %1 to i32;
     i32 %3 = ztrunc i32 %2 to i32;
-    i1 %4 = icmp sle i32 %0, i32 -32768;
+    i1 %4 = icmp slt i32 %0, i32 -32767;
     i32 %5 = zext i1 %4 to i32;
     i32 %6 = ztrunc i32 %5 to i32;
     i32 %7 = xor i32 %3, i32 %6;

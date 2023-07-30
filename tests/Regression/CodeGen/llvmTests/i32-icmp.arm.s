@@ -124,40 +124,37 @@ icmp_sge:
 .globl icmp_sge_constant_2047
 icmp_sge_constant_2047:
 .p2align 4
-	movw r1, #2047
+	movw r1, #2046
 	cmp r0, r1
 	mov r0, #0
-	movwge r0, #1
+	movwgt r0, #1
 	bx lr
 .globl icmp_sge_constant_2048
 icmp_sge_constant_2048:
 .p2align 4
-	cmp r0, #2048
+	movw r1, #2047
+	cmp r0, r1
 	mov r0, #0
-	movwge r0, #1
+	movwgt r0, #1
 	bx lr
 .globl icmp_sge_constant_neg_2047
 icmp_sge_constant_neg_2047:
 .p2align 4
-	movw r1, #63489
-	movt r1, #65535
-	cmp r0, r1
+	cmn r0, #2048
 	mov r0, #0
-	movwge r0, #1
+	movwgt r0, #1
 	bx lr
 .globl icmp_sge_constant_neg_2048
 icmp_sge_constant_neg_2048:
 .p2align 4
-	cmp r0, #0
-	mov r0, #0
-	movwge r0, #1
+	mvn r0, r0
+	lsr r0, r0, #31
 	bx lr
 .globl icmp_sge_constant_zero
 icmp_sge_constant_zero:
 .p2align 4
-	cmp r0, #0
-	mov r0, #0
-	movwge r0, #1
+	mvn r0, r0
+	lsr r0, r0, #31
 	bx lr
 .globl icmp_sgt
 icmp_sgt:
@@ -216,42 +213,39 @@ icmp_sle:
 .globl icmp_sle_constant_2046
 icmp_sle_constant_2046:
 .p2align 4
-	movw r1, #2046
+	movw r1, #2047
 	cmp r0, r1
 	mov r0, #0
-	movwle r0, #1
+	movwlt r0, #1
 	bx lr
 .globl icmp_sle_constant_2047
 icmp_sle_constant_2047:
 .p2align 4
-	movw r1, #2047
-	cmp r0, r1
+	cmp r0, #2048
 	mov r0, #0
-	movwle r0, #1
+	movwlt r0, #1
 	bx lr
 .globl icmp_sle_constant_neg_2049
 icmp_sle_constant_neg_2049:
 .p2align 4
-	mvn r1, #2048
-	cmp r0, r1
+	cmn r0, #2048
 	mov r0, #0
-	movwle r0, #1
+	movwlt r0, #1
 	bx lr
 .globl icmp_sle_constant_neg_2050
 icmp_sle_constant_neg_2050:
 .p2align 4
-	movw r1, #63486
-	movt r1, #65535
+	mvn r1, #2048
 	cmp r0, r1
 	mov r0, #0
-	movwle r0, #1
+	movwlt r0, #1
 	bx lr
 .globl icmp_sle_constant_zero
 icmp_sle_constant_zero:
 .p2align 4
-	cmp r0, #0
+	cmp r0, #1
 	mov r0, #0
-	movwle r0, #1
+	movwlt r0, #1
 	bx lr
 .globl icmp_slt
 icmp_slt:

@@ -104,7 +104,7 @@ sgt_all_one:
 .globl sle_all_one
 sle_all_one:
 .p2align 2
-	slti a0, a0, 0
+	srliw a0, a0, 31
 	ret
 .globl sge_all_one
 sge_all_one:
@@ -148,4 +148,10 @@ fltz:
 .p2align 2
 	fmv.w.x f11, zero
 	flt.s a0, f10, f11
+	ret
+.globl sgez
+sgez:
+.p2align 2
+	li a1, -1
+	slt a0, a1, a0
 	ret

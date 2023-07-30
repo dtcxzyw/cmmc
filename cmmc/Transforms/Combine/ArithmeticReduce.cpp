@@ -1148,6 +1148,50 @@ class ArithmeticReduce final : public TransformPass<Function> {
                 return builder.makeOp<BinaryInst>(InstructionID::Sub, makeIntLike(i1 - i2, v1), v1);
             }
 
+            if(and_(icmp(cmp1, any(v1), capture(cint_(-1), v3)), icmp(cmp2, any(v2), cint_(-1)))(matchCtx)) {
+                if(cmp1 == CompareOp::ICmpSignedGreaterThan && cmp2 == CompareOp::ICmpSignedGreaterThan) {
+                    return builder.makeOp<CompareInst>(InstructionID::ICmp, CompareOp::ICmpSignedGreaterThan,
+                                                       builder.makeOp<BinaryInst>(InstructionID::Or, v1, v2), v3);
+                }
+            }
+            if(and_(icmp(cmp1, any(v1), cint_(0)), icmp(cmp2, any(v2), cint_(0)))(matchCtx)) {
+                if(cmp1 == CompareOp::ICmpSignedLessThan && cmp2 == CompareOp::ICmpSignedLessThan) {
+                    return builder.makeOp<CastInst>(
+                        InstructionID::UnsignedTrunc, inst->getType(),
+                        builder.makeOp<BinaryInst>(
+                            InstructionID::LShr, builder.makeOp<BinaryInst>(InstructionID::And, v1, v2),
+                            makeIntLike(static_cast<intmax_t>(v1->getType()->as<IntegerType>()->getBitwidth()) - 1, v1)));
+                }
+            }
+            if(or_(icmp(cmp1, any(v1), capture(cint_(-1), v3)), icmp(cmp2, any(v2), cint_(-1)))(matchCtx)) {
+                if(cmp1 == CompareOp::ICmpSignedGreaterThan && cmp2 == CompareOp::ICmpSignedGreaterThan) {
+                    return builder.makeOp<CompareInst>(InstructionID::ICmp, CompareOp::ICmpSignedGreaterThan,
+                                                       builder.makeOp<BinaryInst>(InstructionID::And, v1, v2), v3);
+                }
+            }
+            if(or_(icmp(cmp1, any(v1), capture(cint_(0), v3)), icmp(cmp2, any(v2), cint_(0)))(matchCtx)) {
+                if(cmp1 == CompareOp::ICmpSignedLessThan && cmp2 == CompareOp::ICmpSignedLessThan) {
+                    return builder.makeOp<CastInst>(
+                        InstructionID::UnsignedTrunc, inst->getType(),
+                        builder.makeOp<BinaryInst>(
+                            InstructionID::LShr, builder.makeOp<BinaryInst>(InstructionID::Or, v1, v2),
+                            makeIntLike(static_cast<intmax_t>(v1->getType()->as<IntegerType>()->getBitwidth()) - 1, v1)));
+                }
+            }
+
+            // le x c -> lt x c+1, ge x c -> gt x c-1
+            if(icmp(cmp, any(v1), int_(i1))(matchCtx)) {
+                // TODO: check overflow
+                if(cmp == CompareOp::ICmpSignedLessEqual) {
+                    return builder.makeOp<CompareInst>(InstructionID::ICmp, CompareOp::ICmpSignedLessThan, v1,
+                                                       makeIntLike(i1 + 1, v1));
+                }
+                if(cmp == CompareOp::ICmpSignedGreaterEqual) {
+                    return builder.makeOp<CompareInst>(InstructionID::ICmp, CompareOp::ICmpSignedGreaterThan, v1,
+                                                       makeIntLike(i1 - 1, v1));
+                }
+            }
+
             return nullptr;
         });
         return ret || modified;

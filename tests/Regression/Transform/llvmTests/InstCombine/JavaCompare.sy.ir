@@ -2,7 +2,7 @@ func @le(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect 
   ^entry:
     i1 %0 = icmp ugt i32 %var0, i32 %var1;
     i32 %1 = zext i1 %0 to i32;
-    i1 %2 = icmp sle i32 %1, i32 0;
+    i1 %2 = icmp slt i32 %1, i32 1;
     i1 %3 = icmp ult i32 %var0, i32 %var1;
     i1 %4 = or i1 %2, i1 %3;
     i32 %5 = zext i1 %4 to i32;

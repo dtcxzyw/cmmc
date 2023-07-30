@@ -45,6 +45,10 @@ static MIROperand getOne(const MIROperand& operand) {
     return MIROperand::asImm(1, operand.type());
 }
 
+static bool isNegativeOne(const MIROperand& op) {
+    return op.isImm() && static_cast<uint32_t>(op.imm()) == 0xffffffff;
+}
+
 static bool selectInvertedOp2Constant(const MIROperand& imm, MIROperand& immInverted) {
     if(imm.isImm()) {
         immInverted = MIROperand::asImm(~imm.imm(), imm.type());

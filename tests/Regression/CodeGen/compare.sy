@@ -79,3 +79,6 @@ int fge(float x, float y) {
 int fltz(float x) {
     return x < 0.0;
 }
+int sgez(int x) {
+    return x >= 0;
+}

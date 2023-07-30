@@ -7,8 +7,7 @@
 .globl test
 test:
 .p2align 4
-	cmn r0, #1
-	mov r0, #0
-	movwgt r0, #1
+	mvn r0, r0
+	lsr r0, r0, #31
 	rsb r0, r0, #2
 	bx lr

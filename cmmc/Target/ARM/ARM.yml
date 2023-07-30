@@ -1167,6 +1167,22 @@ InstSelection:
             Rm: $Out
         Sh: MIROperand::asImm(5, OperandType::Int32)
 
+  - Pattern:
+      InstICmp:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        Op: $Op
+        $Predicate: isCompareOp($Op, CompareOp::ICmpSignedGreaterThan) && isOperandIReg($Lhs) && isNegativeOne($Rhs)
+    Replace:
+      LSR:
+        Rd: $Dst
+        Rm:
+          MVN:
+            Rd: getVRegAs(ctx, $Dst)
+            Op2: $Lhs
+        Sh: MIROperand::asImm(31, OperandType::Int32)
+
   # Fallbacks for cmp/branch/select
   - Pattern:
       InstICmp:

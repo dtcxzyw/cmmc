@@ -9,10 +9,10 @@ main:
 .p2align 4
 	push { r4, r5, lr }
 	mov r1, #6
-	sub sp, sp, #44
 	mov r0, #4
-	mov r4, sp
+	sub sp, sp, #44
 	str r0, [sp, #0]
+	mov r4, sp
 	mov r0, #3
 	str r0, [sp, #4]
 	mov r0, #9

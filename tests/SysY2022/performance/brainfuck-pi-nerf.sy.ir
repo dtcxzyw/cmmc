@@ -22,7 +22,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i32 %8 = shl i32 1, i32 %7;
     i32 %9 = and i32 %8, i32 83886080;
     i1 %10 = icmp eq i32 %9, i32 0;
-    i1 %11 = icmp sge i32 %7, i32 0;
+    i1 %11 = icmp sgt i32 %7, i32 -1;
     i1 %12 = select i1 %11 ? i1 %10 : i1 %6;
     i1 %13 = icmp sgt i32 %0, i32 93;
     i1 %14 = or i1 %12, i1 %13;
@@ -61,7 +61,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i32 %35 = shl i32 1, i32 %34;
     i32 %36 = and i32 %35, i32 83886080;
     i1 %37 = icmp eq i32 %36, i32 0;
-    i1 %38 = icmp sge i32 %34, i32 0;
+    i1 %38 = icmp sgt i32 %34, i32 -1;
     i1 %39 = select i1 %38 ? i1 %37 : i1 %33;
     i1 %40 = icmp sgt i32 %27, i32 93;
     i1 %41 = or i1 %39, i1 %40;

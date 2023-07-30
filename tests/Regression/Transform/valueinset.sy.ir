@@ -32,7 +32,7 @@ func @cross_64_with_9(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect S
     i32 %7 = shl i32 1, i32 %6;
     i32 %8 = and i32 %7, i32 83886080;
     i1 %9 = icmp eq i32 %8, i32 0;
-    i1 %10 = icmp sge i32 %6, i32 0;
+    i1 %10 = icmp sgt i32 %6, i32 -1;
     i1 %11 = select i1 %10 ? i1 %9 : i1 %5;
     i1 %12 = icmp sgt i32 %x, i32 93;
     i1 %13 = or i1 %11, i1 %12;
@@ -51,7 +51,7 @@ func @cross_64_with_12(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect 
     i32 %7 = shl i32 1, i32 %6;
     i32 %8 = and i32 %7, i32 83886080;
     i1 %9 = icmp eq i32 %8, i32 0;
-    i1 %10 = icmp sge i32 %6, i32 0;
+    i1 %10 = icmp sgt i32 %6, i32 -1;
     i1 %11 = select i1 %10 ? i1 %9 : i1 %5;
     i1 %12 = icmp sgt i32 %x, i32 93;
     i1 %13 = or i1 %11, i1 %12;

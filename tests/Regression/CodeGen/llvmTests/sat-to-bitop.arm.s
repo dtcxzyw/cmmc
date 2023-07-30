@@ -84,8 +84,8 @@ sat1_base_8bit:
 .globl sat1_lower_1
 sat1_lower_1:
 .p2align 4
-	cmn r0, #1
 	mvn r1, #0
+	cmn r0, #1
 	movgt r1, r0
 	mov r0, r1
 	bx lr

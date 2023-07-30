@@ -129,195 +129,195 @@ label110:
 bgei1:
 .p2align 4
 	cmp r0, #0
-	bgt label120
-label121:
+	bgt label121
+label122:
 	bx lr
-label120:
+label121:
 	mov r0, #0
 	str r0, [r1, #0]
-	b label121
+	b label122
 .globl bgei2
 bgei2:
 .p2align 4
 	cmp r0, #9
-	bgt label130
-label131:
+	bgt label131
+label132:
 	bx lr
-label130:
+label131:
 	mov r0, #0
 	str r0, [r1, #0]
-	b label131
+	b label132
 .globl bge
 bge:
 .p2align 4
 	cmp r0, r1
-	bge label140
-label141:
+	bge label141
+label142:
 	bx lr
-label140:
+label141:
 	mov r0, #0
 	str r0, [r2, #0]
-	b label141
+	b label142
 .globl bgtz
 bgtz:
 .p2align 4
 	cmp r0, #0
-	bgt label151
-label152:
+	bgt label152
+label153:
 	bx lr
-label151:
+label152:
 	mov r0, #0
 	str r0, [r1, #0]
-	b label152
+	b label153
 .globl bgti1
 bgti1:
 .p2align 4
 	cmn r0, #1
-	bgt label161
-label162:
+	bgt label162
+label163:
 	bx lr
-label161:
+label162:
 	mov r0, #0
 	str r0, [r1, #0]
-	b label162
+	b label163
 .globl bgti2
 bgti2:
 .p2align 4
 	cmp r0, #10
-	bgt label171
-label172:
+	bgt label173
+label174:
 	bx lr
-label171:
+label173:
 	mov r0, #0
 	str r0, [r1, #0]
-	b label172
+	b label174
 .globl bgt
 bgt:
 .p2align 4
 	cmp r0, r1
-	bgt label181
-label182:
+	bgt label183
+label184:
 	bx lr
-label181:
+label183:
 	mov r0, #0
 	str r0, [r2, #0]
-	b label182
+	b label184
 .globl blez
 blez:
 .p2align 4
 	cmp r0, #1
-	blt label192
-label193:
+	blt label194
+label195:
 	bx lr
-label192:
+label194:
 	mov r0, #0
 	str r0, [r1, #0]
-	b label193
+	b label195
 .globl blei1
 blei1:
 .p2align 4
 	cmp r0, #0
-	blt label202
-label203:
+	blt label204
+label205:
 	bx lr
-label202:
+label204:
 	mov r0, #0
 	str r0, [r1, #0]
-	b label203
+	b label205
 .globl blei2
 blei2:
 .p2align 4
 	cmp r0, #11
-	blt label212
-label213:
+	blt label214
+label215:
 	bx lr
-label212:
+label214:
 	mov r0, #0
 	str r0, [r1, #0]
-	b label213
+	b label215
 .globl ble
 ble:
 .p2align 4
 	cmp r0, r1
-	ble label222
-label223:
+	ble label224
+label225:
 	bx lr
-label222:
+label224:
 	mov r0, #0
 	str r0, [r2, #0]
-	b label223
+	b label225
 .globl bfeq
 bfeq:
 .p2align 4
 	vcmp.f32 s0, s1
 	vmrs APSR_nzcv, FPSCR
-	beq label233
-label234:
+	beq label235
+label236:
 	bx lr
-label233:
+label235:
 	mov r1, #0
 	str r1, [r0, #0]
-	b label234
+	b label236
 .globl bfne
 bfne:
 .p2align 4
 	vcmp.f32 s0, s1
 	vmrs APSR_nzcv, FPSCR
-	bne label244
-label245:
+	bne label246
+label247:
 	bx lr
-label244:
+label246:
 	mov r1, #0
 	str r1, [r0, #0]
-	b label245
+	b label247
 .globl bflt
 bflt:
 .p2align 4
 	vcmp.f32 s0, s1
 	vmrs APSR_nzcv, FPSCR
-	bmi label255
-label256:
+	bmi label257
+label258:
 	bx lr
-label255:
+label257:
 	mov r1, #0
 	str r1, [r0, #0]
-	b label256
+	b label258
 .globl bfle
 bfle:
 .p2align 4
 	vcmp.f32 s0, s1
 	vmrs APSR_nzcv, FPSCR
-	bls label266
-label267:
+	bls label268
+label269:
 	bx lr
-label266:
+label268:
 	mov r1, #0
 	str r1, [r0, #0]
-	b label267
+	b label269
 .globl bfge
 bfge:
 .p2align 4
 	vcmp.f32 s0, s1
 	vmrs APSR_nzcv, FPSCR
-	bge label277
-label278:
+	bge label279
+label280:
 	bx lr
-label277:
+label279:
 	mov r1, #0
 	str r1, [r0, #0]
-	b label278
+	b label280
 .globl bfgt
 bfgt:
 .p2align 4
 	vcmp.f32 s0, s1
 	vmrs APSR_nzcv, FPSCR
-	bgt label288
-label289:
+	bgt label290
+label291:
 	bx lr
-label288:
+label290:
 	mov r1, #0
 	str r1, [r0, #0]
-	b label289
+	b label291
 .globl normal_srem
 normal_srem:
 .p2align 4

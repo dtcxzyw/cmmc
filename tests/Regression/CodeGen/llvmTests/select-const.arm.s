@@ -106,9 +106,10 @@ select_sge_zero_negone:
 .globl select_sgt_negative_one_constant1_constant2
 select_sgt_negative_one_constant1_constant2:
 .p2align 4
-	cmn r0, #1
 	mov r1, #7
-	mvn r0, #2
+	mvn r2, #2
+	cmn r0, #1
+	mov r0, r2
 	movgt r0, r1
 	bx lr
 .globl select_sgt_zero_negone

@@ -250,14 +250,14 @@ label15:
 	mv s6, zero
 	add a2, s0, a3
 	mv s1, s2
-	li a3, 1
+	li a3, 2
 	sw a0, 0(a2)
-	li a2, 2
-	sw a3, 1420(a1)
-	li a3, 3
-	sw a2, 1424(a1)
+	li a2, 1
+	sw a2, 1420(a1)
+	li a2, 3
+	sw a3, 1424(a1)
+	sw a2, 1428(a1)
 	li a2, 8040
-	sw a3, 1428(a1)
 	sw a0, 1452(a1)
 	add a0, a1, a2
 	lw s3, 1416(a1)
@@ -286,32 +286,11 @@ label18:
 	blt a0, a1, label339
 	mv a0, s5
 	mv a1, s4
-	j label22
+	j label25
 label339:
 	mv a0, s4
 	mv a1, s5
-	j label25
 label22:
-	sh2add a2, a0, s2
-	li a4, 128875
-	li t1, -1932965947
-	addiw a0, a0, 1
-	mulw a3, a1, a4
-	addiw a1, a1, 7
-	mul a5, a3, t1
-	srli t0, a5, 32
-	add a4, t0, a3
-	srliw t1, a4, 31
-	li t0, 3724
-	sraiw a5, a4, 11
-	add a4, t1, a5
-	mulw a5, a4, t0
-	subw a3, a3, a5
-	sw a3, 0(a2)
-	li a2, 10
-	blt a0, a2, label22
-	j label28
-label25:
 	sh2add a2, a1, s2
 	li a3, 128875
 	li a4, -1932965947
@@ -356,25 +335,53 @@ label25:
 	add a4, t1, a3
 	srliw t1, a4, 31
 	sraiw t0, a4, 11
-	add a4, t1, t0
-	mulw a5, a4, a5
-	subw a3, a3, a5
+	add t2, t1, t0
+	mulw a4, t2, a5
+	subw a3, a3, a4
 	sw a3, 12(a2)
 	li a3, 6
 	addiw a2, a0, 28
-	blt a1, a3, label371
+	blt a1, a3, label361
 	mv a0, a1
 	mv a1, a2
-	j label22
-label371:
-	mv a0, a2
 	j label25
+label361:
+	mv a0, a2
+	j label22
+label25:
+	sh2add a2, a0, s2
+	li a4, 128875
+	li t1, -1932965947
+	addiw a0, a0, 1
+	mulw a3, a1, a4
+	addiw a1, a1, 7
+	mul a5, a3, t1
+	srli t0, a5, 32
+	add a4, t0, a3
+	srliw t0, a4, 31
+	sraiw a5, a4, 11
+	add a4, t0, a5
+	li a5, 3724
+	mulw t0, a4, a5
+	subw a3, a3, t0
+	sw a3, 0(a2)
+	li a2, 10
+	blt a0, a2, label25
 label28:
 	addiw a2, s3, 3
 	sh1add a0, a2, a2
 	mv s0, a0
-	bge a0, zero, label30
+	blt a0, zero, label31
+.p2align 2
 label29:
+	sh2add a1, s0, s1
+	lw a0, 0(a1)
+	jal putint
+	li a0, 32
+	jal putch
+	addiw s0, s0, -1
+	bge s0, zero, label29
+label31:
 	li a0, 10
 	jal putch
 	ld ra, 0(sp)
@@ -388,13 +395,3 @@ label29:
 	ld s0, 56(sp)
 	addi sp, sp, 64
 	ret
-.p2align 2
-label30:
-	sh2add a1, s0, s1
-	lw a0, 0(a1)
-	jal putint
-	li a0, 32
-	jal putch
-	addiw s0, s0, -1
-	bge s0, zero, label30
-	j label29

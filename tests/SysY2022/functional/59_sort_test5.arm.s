@@ -40,7 +40,7 @@ label5:
 	sub r0, r0, #1
 	cmn r0, #1
 	bgt label76
-label151:
+label152:
 	mov r0, #9
 	add r1, r4, r0, lsl #2
 	ldr r2, [sp, #0]
@@ -74,7 +74,7 @@ label13:
 	sub r0, r0, #1
 	cmn r0, #1
 	bgt label76
-	b label151
+	b label152
 .p2align 4
 label16:
 	cmp r0, r3
@@ -82,7 +82,7 @@ label16:
 	cmp r1, #0
 	bgt label89
 .p2align 4
-label152:
+label153:
 	mov r5, #0
 	b label20
 .p2align 4
@@ -100,7 +100,7 @@ label89:
 	bgt label23
 	cmp r1, #0
 	bgt label89
-	b label152
+	b label153
 .p2align 4
 label20:
 	ldr r0, [r4, r5, lsl #2]
@@ -133,7 +133,7 @@ label23:
 	bgt label23
 	cmp r1, #0
 	bgt label89
-	b label152
+	b label153
 .p2align 4
 label27:
 	add r5, r4, r3, lsl #2
@@ -157,12 +157,12 @@ label27:
 	bgt label23
 	cmp r1, #0
 	bgt label89
-	b label152
+	b label153
 .p2align 4
 label19:
 	cmp r1, #0
 	bgt label89
-	b label152
+	b label153
 label9:
 	add r5, r4, r3, lsl #2
 	ldr r6, [r5, #0]
@@ -182,4 +182,4 @@ label76:
 	sub r0, r0, #1
 	cmn r0, #1
 	bgt label76
-	b label151
+	b label152

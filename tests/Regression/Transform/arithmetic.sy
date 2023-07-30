@@ -503,3 +503,15 @@ int range_check2(int c) {
 int range_check3(int c) {
     return c < 48 || c > 36;
 }
+int sign_check1(int x, int y) {
+    return x >= 0 && y >= 0;
+}
+int sign_check2(int x, int y) {
+    return x >= 0 || y >= 0;
+}
+int sign_check3(int x, int y) {
+    return x < 0 && y < 0;
+}
+int sign_check4(int x, int y) {
+    return x < 0 || y < 0;
+}

@@ -108,7 +108,7 @@ main:
 	ldr r0, [sp, #0]
 	cmp r0, #0
 	bne label6
-label240:
+label242:
 	mov r4, #1
 	b label7
 label103:
@@ -123,7 +123,7 @@ label103:
 	ldr r0, [sp, #0]
 	cmp r0, #0
 	bne label6
-	b label240
+	b label242
 .p2align 4
 label14:
 	mov r8, sp
@@ -145,7 +145,7 @@ label14:
 	ldr r0, [sp, #0]
 	cmp r0, #0
 	bne label6
-	b label240
+	b label242
 .p2align 4
 label16:
 	mov r8, sp
@@ -168,7 +168,7 @@ label16:
 	bgt label103
 	ldr r0, [sp, #0]
 	cmp r0, #0
-	beq label240
+	beq label242
 label6:
 	bl putint
 	mov r4, #1

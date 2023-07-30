@@ -123,7 +123,7 @@ sgt_all_one:
 .globl sle_all_one
 sle_all_one:
 .p2align 2
-	slti $v0, $a0, 0
+	srl $v0, $a0, 31
 	jr $ra
 	nop
 .globl sge_all_one
@@ -188,5 +188,12 @@ fltz:
 	c.olt.s $f12, $f4
 	li $v0, 1
 	movf $v0, $zero, $fcc0
+	jr $ra
+	nop
+.globl sgez
+sgez:
+.p2align 2
+	li $t0, -1
+	slt $v0, $t0, $a0
 	jr $ra
 	nop

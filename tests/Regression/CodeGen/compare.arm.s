@@ -76,9 +76,9 @@ sgt:
 .globl slei
 slei:
 .p2align 4
-	cmp r0, #1
+	cmp r0, #2
 	mov r0, #0
-	movwle r0, #1
+	movwlt r0, #1
 	bx lr
 .globl sle
 sle:
@@ -90,9 +90,9 @@ sle:
 .globl sgei
 sgei:
 .p2align 4
-	cmp r0, #1
+	cmp r0, #0
 	mov r0, #0
-	movwge r0, #1
+	movwgt r0, #1
 	bx lr
 .globl sge
 sge:
@@ -125,23 +125,20 @@ slt_all_one:
 .globl sgt_all_one
 sgt_all_one:
 .p2align 4
-	cmn r0, #1
-	mov r0, #0
-	movwgt r0, #1
+	mvn r0, r0
+	lsr r0, r0, #31
 	bx lr
 .globl sle_all_one
 sle_all_one:
 .p2align 4
-	cmn r0, #1
-	mov r0, #0
-	movwle r0, #1
+	lsr r0, r0, #31
 	bx lr
 .globl sge_all_one
 sge_all_one:
 .p2align 4
-	cmn r0, #1
+	cmn r0, #2
 	mov r0, #0
-	movwge r0, #1
+	movwgt r0, #1
 	bx lr
 .globl feq
 feq:
@@ -198,4 +195,10 @@ fltz:
 	mov r0, #0
 	vmrs APSR_nzcv, FPSCR
 	movwmi r0, #1
+	bx lr
+.globl sgez
+sgez:
+.p2align 4
+	mvn r0, r0
+	lsr r0, r0, #31
 	bx lr
