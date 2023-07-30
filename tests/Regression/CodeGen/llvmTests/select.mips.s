@@ -284,15 +284,10 @@ select_xor_1:
 .p2align 2
 	andi $t0, $a1, 255
 	andi $t0, $t0, 1
-	beq $t0, $zero, label232
-	nop
-	andi $t0, $a0, 65535
-	xori $t0, $t0, 43
-	b label233
-	nop
-label232:
-	andi $t0, $a0, 65535
-label233:
+	sltiu $t1, $t0, 1
+	andi $t2, $a0, 65535
+	xori $t0, $t2, 43
+	movn $t0, $t2, $t1
 	andi $v0, $t0, 65535
 	jr $ra
 	nop
@@ -301,16 +296,11 @@ select_xor_1b:
 .p2align 2
 	andi $t0, $a1, 255
 	andi $t0, $t0, 1
-	li $t1, 1
-	bne $t0, $t1, label249
-	nop
-	andi $t0, $a0, 65535
-	xori $t0, $t0, 43
-	b label250
-	nop
-label249:
-	andi $t0, $a0, 65535
-label250:
+	xori $t0, $t0, 1
+	sltu $t1, $zero, $t0
+	andi $t2, $a0, 65535
+	xori $t0, $t2, 43
+	movn $t0, $t2, $t1
 	andi $v0, $t0, 65535
 	jr $ra
 	nop
@@ -340,15 +330,10 @@ select_xor_3:
 .p2align 2
 	andi $t0, $a1, 255
 	andi $t0, $t0, 1
-	beq $t0, $zero, label287
-	nop
+	sltiu $t1, $t0, 1
 	andi $t0, $a0, 65535
-	b label288
-	nop
-label287:
-	andi $t0, $a0, 65535
-	xori $t0, $t0, 43
-label288:
+	xori $t2, $t0, 43
+	movn $t0, $t2, $t1
 	andi $v0, $t0, 65535
 	jr $ra
 	nop
@@ -357,16 +342,11 @@ select_xor_3b:
 .p2align 2
 	andi $t0, $a1, 255
 	andi $t0, $t0, 1
-	li $t1, 1
-	bne $t0, $t1, label304
-	nop
+	xori $t0, $t0, 1
+	sltu $t1, $zero, $t0
 	andi $t0, $a0, 65535
-	b label305
-	nop
-label304:
-	andi $t0, $a0, 65535
-	xori $t0, $t0, 43
-label305:
+	xori $t2, $t0, 43
+	movn $t0, $t2, $t1
 	andi $v0, $t0, 65535
 	jr $ra
 	nop

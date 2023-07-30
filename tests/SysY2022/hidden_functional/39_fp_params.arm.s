@@ -9,102 +9,100 @@ params_f40:
 	push { r4, r5, lr }
 	vpush { s16, s17, s18, s19, s20, s21, s22, s23, s24, s25, s26, s27, s28, s29, s30, s31 }
 	mov r4, r0
-	sub sp, sp, #172
-	vstr s8, [sp, #164]
-	add r5, sp, #96
-	vstr s9, [sp, #160]
-	vstr s10, [sp, #156]
-	vstr s11, [sp, #152]
-	vstr s12, [sp, #148]
-	vstr s13, [sp, #144]
-	vstr s14, [sp, #140]
-	vstr s15, [sp, #136]
-	vldr s29, [sp, #252]
-	vldr s30, [sp, #256]
-	vldr s27, [sp, #260]
-	vldr s18, [sp, #264]
-	vldr s31, [sp, #268]
-	vldr s22, [sp, #272]
-	vldr s23, [sp, #276]
-	vldr s19, [sp, #280]
-	vldr s24, [sp, #284]
-	vldr s26, [sp, #288]
-	vldr s25, [sp, #292]
-	vldr s17, [sp, #296]
-	vldr s20, [sp, #300]
-	vldr s28, [sp, #304]
-	vldr s21, [sp, #308]
-	vldr s8, [sp, #340]
+	sub sp, sp, #180
+	vadd.f32 s0, s0, s1
+	vstr s8, [sp, #168]
+	add r5, sp, #104
+	vstr s9, [sp, #164]
+	vstr s10, [sp, #160]
+	vadd.f32 s0, s0, s2
+	vstr s11, [sp, #156]
+	vstr s12, [sp, #152]
+	vstr s13, [sp, #148]
+	vstr s14, [sp, #144]
+	vstr s15, [sp, #96]
+	vldr s29, [sp, #260]
+	vldr s30, [sp, #264]
+	vldr s27, [sp, #268]
+	vldr s18, [sp, #272]
+	vldr s31, [sp, #276]
+	vldr s22, [sp, #280]
+	vldr s23, [sp, #284]
+	vldr s19, [sp, #288]
+	vldr s24, [sp, #292]
+	vldr s26, [sp, #296]
+	vldr s25, [sp, #300]
+	vldr s17, [sp, #304]
+	vldr s20, [sp, #308]
+	vldr s28, [sp, #312]
+	vldr s21, [sp, #316]
+	vldr s8, [sp, #348]
 	vcmp.f32 s8, #0
 	vmrs APSR_nzcv, FPSCR
 	beq label1027
-	vadd.f32 s0, s0, s1
-	mov r0, #10
-	vadd.f32 s0, s0, s2
+	vadd.f32 s1, s4, s5
 	vadd.f32 s0, s0, s3
-	vstr s0, [sp, #96]
-	vadd.f32 s0, s4, s5
-	vadd.f32 s0, s0, s6
-	vadd.f32 s0, s0, s7
-	vstr s0, [sp, #100]
-	vldr s8, [sp, #164]
+	mov r0, #10
+	vadd.f32 s1, s1, s6
+	vstr s0, [sp, #104]
+	vadd.f32 s1, s1, s7
+	vstr s1, [sp, #108]
+	vldr s8, [sp, #168]
 	vadd.f32 s0, s8, s9
 	vadd.f32 s0, s0, s10
 	vadd.f32 s0, s0, s11
-	vstr s0, [sp, #104]
+	vstr s0, [sp, #112]
 	vadd.f32 s0, s12, s13
 	vadd.f32 s0, s0, s14
 	vadd.f32 s0, s0, s15
-	vstr s0, [sp, #108]
-	vldr s16, [sp, #248]
+	vstr s0, [sp, #116]
+	vldr s16, [sp, #256]
 	vadd.f32 s0, s16, s29
 	vadd.f32 s0, s0, s30
 	vadd.f32 s0, s0, s27
-	vstr s0, [sp, #112]
+	vstr s0, [sp, #120]
 	vadd.f32 s0, s18, s31
 	vadd.f32 s0, s0, s22
 	vadd.f32 s0, s0, s23
-	vstr s0, [sp, #116]
+	vstr s0, [sp, #124]
 	vadd.f32 s0, s19, s24
 	vadd.f32 s0, s0, s26
 	vadd.f32 s0, s0, s25
-	vstr s0, [sp, #120]
+	vstr s0, [sp, #128]
 	vadd.f32 s0, s17, s20
 	vadd.f32 s0, s0, s28
 	vadd.f32 s0, s0, s21
-	vstr s0, [sp, #124]
-	vldr s8, [sp, #316]
-	vldr s9, [sp, #312]
-	vadd.f32 s0, s9, s8
-	vldr s8, [sp, #320]
-	vadd.f32 s0, s0, s8
-	vldr s8, [sp, #324]
-	vadd.f32 s0, s0, s8
-	vstr s0, [sp, #128]
-	vldr s8, [sp, #332]
-	vldr s9, [sp, #328]
-	vadd.f32 s0, s9, s8
-	vldr s8, [sp, #336]
-	vadd.f32 s0, s0, s8
-	vldr s8, [sp, #340]
-	vadd.f32 s0, s0, s8
 	vstr s0, [sp, #132]
+	vldr s8, [sp, #324]
+	vldr s9, [sp, #320]
+	vadd.f32 s0, s9, s8
+	vldr s8, [sp, #328]
+	vadd.f32 s0, s0, s8
+	vldr s8, [sp, #332]
+	vadd.f32 s0, s0, s8
+	vstr s0, [sp, #136]
+	vldr s8, [sp, #340]
+	vldr s9, [sp, #336]
+	vadd.f32 s0, s9, s8
+	vldr s8, [sp, #344]
+	vadd.f32 s0, s0, s8
+	vldr s8, [sp, #348]
+	vadd.f32 s0, s0, s8
+	vstr s0, [sp, #140]
 	mov r1, r5
 	bl putfarray
 	ldr r0, [r4, #0]
 	add r0, r5, r0, lsl #2
 	vldr s0, [r0, #0]
 label1025:
-	add sp, sp, #172
+	add sp, sp, #180
 	vpop { s16, s17, s18, s19, s20, s21, s22, s23, s24, s25, s26, s27, s28, s29, s30, s31 }
 	pop { r4, r5, pc }
 label1027:
-	vadd.f32 s0, s0, s1
 	vstr s29, [sp, #0]
 	vstr s30, [sp, #4]
 	vstr s27, [sp, #8]
 	vstr s18, [sp, #12]
-	vadd.f32 s0, s0, s2
 	vstr s31, [sp, #16]
 	vstr s22, [sp, #20]
 	vstr s23, [sp, #24]
@@ -116,32 +114,32 @@ label1027:
 	vstr s20, [sp, #48]
 	vstr s28, [sp, #52]
 	vstr s21, [sp, #56]
-	vldr s9, [sp, #312]
+	vldr s9, [sp, #320]
 	vstr s9, [sp, #60]
-	vldr s8, [sp, #316]
-	vstr s8, [sp, #64]
-	vldr s8, [sp, #320]
-	vstr s8, [sp, #68]
 	vldr s8, [sp, #324]
-	vstr s8, [sp, #72]
-	vldr s9, [sp, #328]
-	vstr s9, [sp, #76]
+	vstr s8, [sp, #64]
+	vldr s8, [sp, #328]
+	vstr s8, [sp, #68]
 	vldr s8, [sp, #332]
-	vstr s8, [sp, #80]
-	vldr s8, [sp, #336]
-	vstr s8, [sp, #84]
+	vstr s8, [sp, #72]
+	vldr s9, [sp, #336]
+	vstr s9, [sp, #76]
 	vldr s8, [sp, #340]
+	vstr s8, [sp, #80]
+	vldr s8, [sp, #344]
+	vstr s8, [sp, #84]
+	vldr s8, [sp, #348]
 	vstr s8, [sp, #88]
 	vstr s0, [sp, #92]
-	vldr s16, [sp, #248]
-	vldr s15, [sp, #136]
-	vldr s14, [sp, #140]
-	vldr s13, [sp, #144]
-	vldr s12, [sp, #148]
-	vldr s11, [sp, #152]
-	vldr s10, [sp, #156]
-	vldr s9, [sp, #160]
-	vldr s8, [sp, #164]
+	vldr s16, [sp, #256]
+	vldr s15, [sp, #96]
+	vldr s14, [sp, #144]
+	vldr s13, [sp, #148]
+	vldr s12, [sp, #152]
+	vldr s11, [sp, #156]
+	vldr s10, [sp, #160]
+	vldr s9, [sp, #164]
+	vldr s8, [sp, #168]
 	vmov.f32 s0, s1
 	vmov.f32 s1, s2
 	vmov.f32 s2, s3
@@ -1123,17 +1121,17 @@ main:
 	mov r5, #0
 	str r0, [sp, #1036]
 .p2align 4
-label1181:
+label1179:
 	add r0, r5, r5, lsl #1
 	add r4, sp, #368
 	add r0, r4, r0, lsl #2
 	bl getfarray
 	add r5, r5, #1
 	cmp r5, #40
-	blt label1181
+	blt label1179
 	mov r4, #0
 .p2align 4
-label1183:
+label1181:
 	add r0, r4, r4, lsl #1
 	movw r12, #1048
 	add r5, sp, r12
@@ -1141,7 +1139,7 @@ label1183:
 	bl getarray
 	add r4, r4, #1
 	cmp r4, #24
-	blt label1183
+	blt label1181
 	ldr r10, [sp, #1036]
 	add r4, sp, #368
 	movw r12, #1036
@@ -1407,8 +1405,8 @@ label1183:
 	ldr r1, [r0, r10, lsl #2]
 	add r0, r5, #180
 	str r1, [sp, #1024]
-	add r1, r5, #168
 	ldr r0, [r0, r10, lsl #2]
+	add r1, r5, #168
 	ldr r1, [r1, r10, lsl #2]
 	str r1, [sp, #1028]
 	str r9, [sp, #0]
@@ -1521,14 +1519,14 @@ label1183:
 	vmov.f32 s13, s17
 	vmov.f32 s15, s26
 	bl params_f40_i24
-	vmov.f32 s22, s0
-	add r0, r4, #48
 	add r3, r4, #36
-	add r2, r4, #12
 	add r10, r4, #24
+	vmov.f32 s22, s0
+	add r2, r4, #12
+	add r0, r4, #48
 	str r2, [sp, #1032]
-	str r3, [sp, #320]
 	add r2, r4, #192
+	str r3, [sp, #320]
 	str r0, [sp, #248]
 	add r3, r4, #60
 	add r0, r4, #108
@@ -1680,12 +1678,12 @@ label1183:
 	add r1, r5, #132
 	add r3, r5, #156
 	vmov.f32 s23, s0
+	add r2, r5, #120
+	add r4, r5, #84
+	str r3, [sp, #352]
 	add r10, r5, #72
 	add r11, r5, #36
-	str r3, [sp, #352]
-	add r4, r5, #84
 	add r0, r5, #144
-	add r2, r5, #120
 	add r3, r5, #180
 	str r3, [sp, #192]
 	add r3, r5, #192

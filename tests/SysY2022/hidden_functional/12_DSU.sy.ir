@@ -125,7 +125,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i1 %59 = icmp sge i32 %29, i32 %58;
     cbr i1 %59(prob = 0.97), ^while.body4, ^while.header;
   ^while.header:
-    i32 %60 = phi [^b1, i32 %53] [^while.body4, i32 %53] [^b6, i32 %160] [^b7, i32 %175];
+    i32 %60 = phi [^b1, i32 %53] [^while.body4, i32 %53] [^b6, i32 %67] [^b7, i32 %67];
     i1 %61 = icmp neq i32 %60, i32 0;
     cbr i1 %61(prob = 0.97), ^while.body5, ^b2;
   ^while.body5:
@@ -138,132 +138,132 @@ func @main() -> i32 { NoRecurse Entry } {
     ret i32 0;
   ^b3:
     i1 %66 = icmp eq i32 %62, i32 81;
+    i32 %67 = add i32 %60, i32 -1;
     cbr i1 %66(prob = 0.5), ^entry1, ^entry2;
   ^entry1:
-    i32 %67 = call () -> i32 @getch();
-    i32 %68 = add i32 %67, i32 -48;
-    i1 %69 = icmp ugt i32 %68, i32 9;
-    cbr i1 %69(prob = 0.97), ^while.body6, ^80;
+    i32 %68 = call () -> i32 @getch();
+    i32 %69 = add i32 %68, i32 -48;
+    i1 %70 = icmp ugt i32 %69, i32 9;
+    cbr i1 %70(prob = 0.97), ^while.body6, ^81;
   ^entry2:
-    i32 %70 = call () -> i32 @getch();
-    i32 %71 = add i32 %70, i32 -48;
-    i1 %72 = icmp ugt i32 %71, i32 9;
-    cbr i1 %72(prob = 0.97), ^while.body7, ^92;
+    i32 %71 = call () -> i32 @getch();
+    i32 %72 = add i32 %71, i32 -48;
+    i1 %73 = icmp ugt i32 %72, i32 9;
+    cbr i1 %73(prob = 0.97), ^while.body7, ^93;
   ^while.body6:
-    i32 %73 = phi [^entry1, i32 %67] [^while.body6, i32 %75];
-    i32 %74 = phi [^entry1, i32 0] [^while.body6, i32 %79];
-    i32 %75 = call () -> i32 @getch();
-    i32 %76 = add i32 %75, i32 -48;
-    i1 %77 = icmp ugt i32 %76, i32 9;
-    i1 %78 = icmp eq i32 %73, i32 45;
-    i32 %79 = select i1 %78 ? i32 1 : i32 %74;
-    cbr i1 %77(prob = 0.97), ^while.body6, ^80;
-  ^80:
-    i32 %81 = phi [^entry1, i32 %67] [^while.body6, i32 %75];
-    i32 %82 = phi [^entry1, i32 0] [^while.body6, i32 %79];
-    i32 %83 = add i32 %81, i32 -48;
-    i1 %84 = icmp ult i32 %83, i32 10;
-    cbr i1 %84(prob = 0.97), ^while.body8, ^b4;
+    i32 %74 = phi [^entry1, i32 %68] [^while.body6, i32 %76];
+    i32 %75 = phi [^entry1, i32 0] [^while.body6, i32 %80];
+    i32 %76 = call () -> i32 @getch();
+    i32 %77 = add i32 %76, i32 -48;
+    i1 %78 = icmp ugt i32 %77, i32 9;
+    i1 %79 = icmp eq i32 %74, i32 45;
+    i32 %80 = select i1 %79 ? i32 1 : i32 %75;
+    cbr i1 %78(prob = 0.97), ^while.body6, ^81;
+  ^81:
+    i32 %82 = phi [^entry1, i32 %68] [^while.body6, i32 %76];
+    i32 %83 = phi [^entry1, i32 0] [^while.body6, i32 %80];
+    i32 %84 = add i32 %82, i32 -48;
+    i1 %85 = icmp ult i32 %84, i32 10;
+    cbr i1 %85(prob = 0.97), ^while.body8, ^b4;
   ^while.body7:
-    i32 %85 = phi [^entry2, i32 %70] [^while.body7, i32 %87];
-    i32 %86 = phi [^entry2, i32 0] [^while.body7, i32 %91];
-    i32 %87 = call () -> i32 @getch();
-    i32 %88 = add i32 %87, i32 -48;
-    i1 %89 = icmp ugt i32 %88, i32 9;
-    i1 %90 = icmp eq i32 %85, i32 45;
-    i32 %91 = select i1 %90 ? i32 1 : i32 %86;
-    cbr i1 %89(prob = 0.97), ^while.body7, ^92;
-  ^92:
-    i32 %93 = phi [^entry2, i32 %70] [^while.body7, i32 %87];
-    i32 %94 = phi [^entry2, i32 0] [^while.body7, i32 %91];
-    i32 %95 = add i32 %93, i32 -48;
-    i1 %96 = icmp ult i32 %95, i32 10;
-    cbr i1 %96(prob = 0.97), ^while.body9, ^b5;
+    i32 %86 = phi [^entry2, i32 %71] [^while.body7, i32 %88];
+    i32 %87 = phi [^entry2, i32 0] [^while.body7, i32 %92];
+    i32 %88 = call () -> i32 @getch();
+    i32 %89 = add i32 %88, i32 -48;
+    i1 %90 = icmp ugt i32 %89, i32 9;
+    i1 %91 = icmp eq i32 %86, i32 45;
+    i32 %92 = select i1 %91 ? i32 1 : i32 %87;
+    cbr i1 %90(prob = 0.97), ^while.body7, ^93;
+  ^93:
+    i32 %94 = phi [^entry2, i32 %71] [^while.body7, i32 %88];
+    i32 %95 = phi [^entry2, i32 0] [^while.body7, i32 %92];
+    i32 %96 = add i32 %94, i32 -48;
+    i1 %97 = icmp ult i32 %96, i32 10;
+    cbr i1 %97(prob = 0.97), ^while.body9, ^b5;
   ^while.body8:
-    i32 %97 = phi [^80, i32 %81] [^while.body8, i32 %99];
-    i32 %98 = phi [^80, i32 0] [^while.body8, i32 %104];
-    i32 %99 = call () -> i32 @getch();
-    i32 %100 = add i32 %99, i32 -48;
-    i1 %101 = icmp ult i32 %100, i32 10;
-    i32 %102 = mul i32 %98, i32 10;
-    i32 %103 = add i32 %102, i32 -48;
-    i32 %104 = add i32 %97, i32 %103;
-    cbr i1 %101(prob = 0.97), ^while.body8, ^b4;
+    i32 %98 = phi [^81, i32 %82] [^while.body8, i32 %100];
+    i32 %99 = phi [^81, i32 0] [^while.body8, i32 %105];
+    i32 %100 = call () -> i32 @getch();
+    i32 %101 = add i32 %100, i32 -48;
+    i1 %102 = icmp ult i32 %101, i32 10;
+    i32 %103 = mul i32 %99, i32 10;
+    i32 %104 = add i32 %103, i32 -48;
+    i32 %105 = add i32 %98, i32 %104;
+    cbr i1 %102(prob = 0.97), ^while.body8, ^b4;
   ^b4:
-    i32 %105 = phi [^80, i32 0] [^while.body8, i32 %104];
-    i32 %106 = call () -> i32 @getch();
-    i32 %107 = add i32 %106, i32 -48;
-    i1 %108 = icmp ugt i32 %107, i32 9;
-    i1 %109 = icmp neq i32 %82, i32 0;
-    i32 %110 = neg i32 %105;
-    i32 %111 = select i1 %109 ? i32 %110 : i32 %105;
-    cbr i1 %108(prob = 0.97), ^while.body10, ^135;
+    i32 %106 = phi [^81, i32 0] [^while.body8, i32 %105];
+    i32 %107 = call () -> i32 @getch();
+    i32 %108 = add i32 %107, i32 -48;
+    i1 %109 = icmp ugt i32 %108, i32 9;
+    i1 %110 = icmp neq i32 %83, i32 0;
+    i32 %111 = neg i32 %106;
+    i32 %112 = select i1 %110 ? i32 %111 : i32 %106;
+    cbr i1 %109(prob = 0.97), ^while.body10, ^136;
   ^while.body9:
-    i32 %112 = phi [^92, i32 %93] [^while.body9, i32 %114];
-    i32 %113 = phi [^92, i32 0] [^while.body9, i32 %119];
-    i32 %114 = call () -> i32 @getch();
-    i32 %115 = add i32 %114, i32 -48;
-    i1 %116 = icmp ult i32 %115, i32 10;
-    i32 %117 = mul i32 %113, i32 10;
-    i32 %118 = add i32 %117, i32 -48;
-    i32 %119 = add i32 %112, i32 %118;
-    cbr i1 %116(prob = 0.97), ^while.body9, ^b5;
+    i32 %113 = phi [^93, i32 %94] [^while.body9, i32 %115];
+    i32 %114 = phi [^93, i32 0] [^while.body9, i32 %120];
+    i32 %115 = call () -> i32 @getch();
+    i32 %116 = add i32 %115, i32 -48;
+    i1 %117 = icmp ult i32 %116, i32 10;
+    i32 %118 = mul i32 %114, i32 10;
+    i32 %119 = add i32 %118, i32 -48;
+    i32 %120 = add i32 %113, i32 %119;
+    cbr i1 %117(prob = 0.97), ^while.body9, ^b5;
   ^b5:
-    i32 %120 = phi [^92, i32 0] [^while.body9, i32 %119];
-    i1 %121 = icmp neq i32 %94, i32 0;
-    i32 %122 = neg i32 %120;
-    i32 %123 = select i1 %121 ? i32 %122 : i32 %120;
-    i32 %124 = call (i32) -> i32 @find(i32 %123);
-    i32 %125 = call () -> i32 @getch();
-    i32 %126 = add i32 %125, i32 -48;
-    i1 %127 = icmp ugt i32 %126, i32 9;
-    cbr i1 %127(prob = 0.97), ^while.body11, ^147;
+    i32 %121 = phi [^93, i32 0] [^while.body9, i32 %120];
+    i1 %122 = icmp neq i32 %95, i32 0;
+    i32 %123 = neg i32 %121;
+    i32 %124 = select i1 %122 ? i32 %123 : i32 %121;
+    i32 %125 = call (i32) -> i32 @find(i32 %124);
+    i32 %126 = call () -> i32 @getch();
+    i32 %127 = add i32 %126, i32 -48;
+    i1 %128 = icmp ugt i32 %127, i32 9;
+    cbr i1 %128(prob = 0.97), ^while.body11, ^148;
   ^while.body10:
-    i32 %128 = phi [^b4, i32 %106] [^while.body10, i32 %130];
-    i32 %129 = phi [^b4, i32 0] [^while.body10, i32 %134];
-    i32 %130 = call () -> i32 @getch();
-    i32 %131 = add i32 %130, i32 -48;
-    i1 %132 = icmp ugt i32 %131, i32 9;
-    i1 %133 = icmp eq i32 %128, i32 45;
-    i32 %134 = select i1 %133 ? i32 1 : i32 %129;
-    cbr i1 %132(prob = 0.97), ^while.body10, ^135;
-  ^135:
-    i32 %136 = phi [^b4, i32 %106] [^while.body10, i32 %130];
-    i32 %137 = phi [^b4, i32 0] [^while.body10, i32 %134];
-    i32 %138 = add i32 %136, i32 -48;
-    i1 %139 = icmp ult i32 %138, i32 10;
-    cbr i1 %139(prob = 0.97), ^while.body12, ^b6;
+    i32 %129 = phi [^b4, i32 %107] [^while.body10, i32 %131];
+    i32 %130 = phi [^b4, i32 0] [^while.body10, i32 %135];
+    i32 %131 = call () -> i32 @getch();
+    i32 %132 = add i32 %131, i32 -48;
+    i1 %133 = icmp ugt i32 %132, i32 9;
+    i1 %134 = icmp eq i32 %129, i32 45;
+    i32 %135 = select i1 %134 ? i32 1 : i32 %130;
+    cbr i1 %133(prob = 0.97), ^while.body10, ^136;
+  ^136:
+    i32 %137 = phi [^b4, i32 %107] [^while.body10, i32 %131];
+    i32 %138 = phi [^b4, i32 0] [^while.body10, i32 %135];
+    i32 %139 = add i32 %137, i32 -48;
+    i1 %140 = icmp ult i32 %139, i32 10;
+    cbr i1 %140(prob = 0.97), ^while.body12, ^b6;
   ^while.body11:
-    i32 %140 = phi [^b5, i32 %125] [^while.body11, i32 %142];
-    i32 %141 = phi [^b5, i32 0] [^while.body11, i32 %146];
-    i32 %142 = call () -> i32 @getch();
-    i32 %143 = add i32 %142, i32 -48;
-    i1 %144 = icmp ugt i32 %143, i32 9;
-    i1 %145 = icmp eq i32 %140, i32 45;
-    i32 %146 = select i1 %145 ? i32 1 : i32 %141;
-    cbr i1 %144(prob = 0.97), ^while.body11, ^147;
-  ^147:
-    i32 %148 = phi [^b5, i32 %125] [^while.body11, i32 %142];
-    i32 %149 = phi [^b5, i32 0] [^while.body11, i32 %146];
-    i32 %150 = add i32 %148, i32 -48;
-    i1 %151 = icmp ult i32 %150, i32 10;
-    cbr i1 %151(prob = 0.97), ^while.body13, ^b7;
+    i32 %141 = phi [^b5, i32 %126] [^while.body11, i32 %143];
+    i32 %142 = phi [^b5, i32 0] [^while.body11, i32 %147];
+    i32 %143 = call () -> i32 @getch();
+    i32 %144 = add i32 %143, i32 -48;
+    i1 %145 = icmp ugt i32 %144, i32 9;
+    i1 %146 = icmp eq i32 %141, i32 45;
+    i32 %147 = select i1 %146 ? i32 1 : i32 %142;
+    cbr i1 %145(prob = 0.97), ^while.body11, ^148;
+  ^148:
+    i32 %149 = phi [^b5, i32 %126] [^while.body11, i32 %143];
+    i32 %150 = phi [^b5, i32 0] [^while.body11, i32 %147];
+    i32 %151 = add i32 %149, i32 -48;
+    i1 %152 = icmp ult i32 %151, i32 10;
+    cbr i1 %152(prob = 0.97), ^while.body13, ^b7;
   ^b6:
-    i32 %152 = phi [^135, i32 0] [^while.body12, i32 %168];
-    i32 %153 = call (i32) -> i32 @find(i32 %111);
-    i1 %154 = icmp neq i32 %137, i32 0;
-    i32 %155 = neg i32 %152;
-    i32 %156 = select i1 %154 ? i32 %155 : i32 %152;
-    i32 %157 = call (i32) -> i32 @find(i32 %156);
-    i1 %158 = icmp eq i32 %153, i32 %157;
-    i32 %159 = zext i1 %158 to i32;
-    call (i32) -> void @putint(i32 %159);
+    i32 %153 = phi [^136, i32 0] [^while.body12, i32 %168];
+    i32 %154 = call (i32) -> i32 @find(i32 %112);
+    i1 %155 = icmp neq i32 %138, i32 0;
+    i32 %156 = neg i32 %153;
+    i32 %157 = select i1 %155 ? i32 %156 : i32 %153;
+    i32 %158 = call (i32) -> i32 @find(i32 %157);
+    i1 %159 = icmp eq i32 %154, i32 %158;
+    i32 %160 = zext i1 %159 to i32;
+    call (i32) -> void @putint(i32 %160);
     call (i32) -> void @putch(i32 10);
-    i32 %160 = add i32 %60, i32 -1;
     ubr ^while.header;
   ^while.body12:
-    i32 %161 = phi [^135, i32 %136] [^while.body12, i32 %163];
-    i32 %162 = phi [^135, i32 0] [^while.body12, i32 %168];
+    i32 %161 = phi [^136, i32 %137] [^while.body12, i32 %163];
+    i32 %162 = phi [^136, i32 0] [^while.body12, i32 %168];
     i32 %163 = call () -> i32 @getch();
     i32 %164 = add i32 %163, i32 -48;
     i1 %165 = icmp ult i32 %164, i32 10;
@@ -272,23 +272,22 @@ func @main() -> i32 { NoRecurse Entry } {
     i32 %168 = add i32 %161, i32 %167;
     cbr i1 %165(prob = 0.97), ^while.body12, ^b6;
   ^b7:
-    i32 %169 = phi [^147, i32 0] [^while.body13, i32 %183];
-    i1 %170 = icmp neq i32 %149, i32 0;
+    i32 %169 = phi [^148, i32 0] [^while.body13, i32 %182];
+    i1 %170 = icmp neq i32 %150, i32 0;
     i32 %171 = neg i32 %169;
     i32 %172 = select i1 %170 ? i32 %171 : i32 %169;
     i32 %173 = call (i32) -> i32 @find(i32 %172);
-    i32* %174 = getelementptr &([100005 * i32]* %55)[i64 0][i32 %124];
+    i32* %174 = getelementptr &([100005 * i32]* %55)[i64 0][i32 %125];
     store i32* %174 with i32 %173;
-    i32 %175 = add i32 %60, i32 -1;
     ubr ^while.header;
   ^while.body13:
-    i32 %176 = phi [^147, i32 %148] [^while.body13, i32 %178];
-    i32 %177 = phi [^147, i32 0] [^while.body13, i32 %183];
-    i32 %178 = call () -> i32 @getch();
-    i32 %179 = add i32 %178, i32 -48;
-    i1 %180 = icmp ult i32 %179, i32 10;
-    i32 %181 = mul i32 %177, i32 10;
-    i32 %182 = add i32 %181, i32 -48;
-    i32 %183 = add i32 %176, i32 %182;
-    cbr i1 %180(prob = 0.97), ^while.body13, ^b7;
+    i32 %175 = phi [^148, i32 %149] [^while.body13, i32 %177];
+    i32 %176 = phi [^148, i32 0] [^while.body13, i32 %182];
+    i32 %177 = call () -> i32 @getch();
+    i32 %178 = add i32 %177, i32 -48;
+    i1 %179 = icmp ult i32 %178, i32 10;
+    i32 %180 = mul i32 %176, i32 10;
+    i32 %181 = add i32 %180, i32 -48;
+    i32 %182 = add i32 %175, i32 %181;
+    cbr i1 %179(prob = 0.97), ^while.body13, ^b7;
 }

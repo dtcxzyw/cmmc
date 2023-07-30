@@ -13,33 +13,31 @@ g1:
 .globl test1
 test1:
 .p2align 2
-	mv a1, a0
-pcrel46:
-	auipc a2, %pcrel_hi(g0)
-	addi a0, a2, %pcrel_lo(pcrel46)
-	lw a2, %pcrel_lo(pcrel46)(a2)
-	beq a1, zero, label2
-	addiw a2, a2, 1
-	li a1, 4294967295
-	and a3, a2, a1
-	sw a3, 0(a0)
-pcrel47:
-	auipc a0, %pcrel_hi(g1)
-	lw a2, %pcrel_lo(pcrel47)(a0)
-	addiw a3, a2, 23
-	and a0, a3, a1
+	mv a2, a0
+pcrel36:
+	auipc a1, %pcrel_hi(g0)
+pcrel37:
+	auipc a4, %pcrel_hi(g1)
+	addi a0, a1, %pcrel_lo(pcrel36)
+	lw a3, %pcrel_lo(pcrel36)(a1)
+	addi a1, a4, %pcrel_lo(pcrel37)
+	beq a2, zero, label2
+	addiw a3, a3, 1
+	li a2, 4294967295
+	and a4, a3, a2
+	sw a4, 0(a0)
+	lw a3, 0(a1)
+	addiw a4, a3, 23
+	and a0, a4, a2
 	j label3
 label2:
-	addiw a2, a2, 11
-	li a1, 4294967295
-	and a3, a2, a1
-	sw a3, 0(a0)
-pcrel48:
-	auipc a0, %pcrel_hi(g1)
-	lw a3, %pcrel_lo(pcrel48)(a0)
-	addiw a2, a3, 23
-	and a0, a2, a1
+	addiw a3, a3, 11
+	li a2, 4294967295
+	and a4, a3, a2
+	sw a4, 0(a0)
+	lw a3, 0(a1)
+	addiw a4, a3, 23
+	and a0, a4, a2
 label3:
-	auipc a1, %pcrel_hi(g1)
-	sw a0, %pcrel_lo(label3)(a1)
+	sw a0, 0(a1)
 	ret

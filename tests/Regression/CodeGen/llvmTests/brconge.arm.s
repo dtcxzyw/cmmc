@@ -33,26 +33,24 @@ test:
 	movt r0, #:upper16:i
 	movt r1, #:upper16:j
 	ldr r0, [r0, #0]
-	ldr r1, [r1, #0]
-	cmp r0, r1
+	ldr r2, [r1, #0]
+	movw r1, #:lower16:result1
+	movt r1, #:upper16:result1
+	cmp r0, r2
 	blt label2
 label3:
-	movw r1, #:lower16:k
-	movt r1, #:upper16:k
-	ldr r1, [r1, #0]
-	cmp r0, r1
+	movw r2, #:lower16:k
+	movt r2, #:upper16:k
+	ldr r2, [r2, #0]
+	cmp r0, r2
 	blt label4
 label5:
 	bx lr
 label2:
-	movw r1, #:lower16:result1
 	mov r2, #1
-	movt r1, #:upper16:result1
 	str r2, [r1, #0]
 	b label3
 label4:
-	movw r0, #:lower16:result1
-	mov r1, #1
-	movt r0, #:upper16:result1
-	str r1, [r0, #0]
+	mov r0, #1
+	str r0, [r1, #0]
 	b label5

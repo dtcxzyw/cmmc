@@ -39,12 +39,12 @@ label8:
 	bgt a4, a5, label11
 	beq a4, a5, label17
 label110:
-	sh2add t0, a5, s0
-	sh2add t2, a4, s0
-	lw t1, 0(t0)
-	lw t3, 0(t2)
-	sw t3, 0(t0)
-	sw t1, 0(t2)
+	sh2add t0, a4, s0
+	sh2add t1, a5, s0
+	lw t2, 0(t1)
+	lw t3, 0(t0)
+	sw t3, 0(t1)
+	sw t2, 0(t0)
 	j label8
 .p2align 2
 label12:

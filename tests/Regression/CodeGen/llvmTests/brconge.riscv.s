@@ -25,29 +25,28 @@ result2:
 .globl test
 test:
 .p2align 2
-pcrel42:
+pcrel37:
 	auipc a2, %pcrel_hi(i)
-pcrel43:
-	auipc a3, %pcrel_hi(j)
-	lw a1, %pcrel_lo(pcrel42)(a2)
-	lw a2, %pcrel_lo(pcrel43)(a3)
+pcrel38:
+	auipc a4, %pcrel_hi(result1)
+	lw a1, %pcrel_lo(pcrel37)(a2)
+pcrel39:
+	auipc a2, %pcrel_hi(j)
 	mv a0, a1
-	blt a1, a2, label2
+	lw a3, %pcrel_lo(pcrel39)(a2)
+	addi a2, a4, %pcrel_lo(pcrel38)
+	blt a1, a3, label2
 label3:
-	auipc a2, %pcrel_hi(k)
-	lw a1, %pcrel_lo(label3)(a2)
+	auipc a3, %pcrel_hi(k)
+	lw a1, %pcrel_lo(label3)(a3)
 	blt a0, a1, label4
 label5:
 	ret
 label2:
 	li a1, 1
-pcrel44:
-	auipc a2, %pcrel_hi(result1)
-	sw a1, %pcrel_lo(pcrel44)(a2)
+	sw a1, 0(a2)
 	j label3
 label4:
 	li a0, 1
-pcrel45:
-	auipc a1, %pcrel_hi(result1)
-	sw a0, %pcrel_lo(pcrel45)(a1)
+	sw a0, 0(a2)
 	j label5

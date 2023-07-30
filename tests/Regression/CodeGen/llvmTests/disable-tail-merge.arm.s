@@ -17,26 +17,22 @@ g1:
 test1:
 .p2align 4
 	movs r1, r0
+	movw r2, #:lower16:g1
 	movw r0, #:lower16:g0
+	movt r2, #:upper16:g1
 	movt r0, #:upper16:g0
-	ldr r2, [r0, #0]
+	ldr r3, [r0, #0]
 	beq label2
-	add r1, r2, #1
+	add r1, r3, #1
 	str r1, [r0, #0]
-	movw r0, #:lower16:g1
-	movt r0, #:upper16:g1
-	ldr r0, [r0, #0]
+	ldr r0, [r2, #0]
 	add r0, r0, #23
 	b label3
 label2:
-	add r1, r2, #11
+	add r1, r3, #11
 	str r1, [r0, #0]
-	movw r0, #:lower16:g1
-	movt r0, #:upper16:g1
-	ldr r0, [r0, #0]
+	ldr r0, [r2, #0]
 	add r0, r0, #23
 label3:
-	movw r1, #:lower16:g1
-	movt r1, #:upper16:g1
-	str r0, [r1, #0]
+	str r0, [r2, #0]
 	bx lr

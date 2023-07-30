@@ -10,101 +10,193 @@ edges:
 .text
 maxCliques:
 .p2align 2
-	addi sp, sp, -64
-	sd s2, 56(sp)
-	mv s2, a0
-	sd s0, 48(sp)
+	addi sp, sp, -96
+	sd s6, 88(sp)
+	mv s6, a0
+	sd s1, 80(sp)
+	addiw s1, a0, 2
+	sd s0, 72(sp)
 	mv s0, a1
-	sd s5, 40(sp)
-	li s5, 1
-	sd s3, 32(sp)
+	sd s5, 64(sp)
+	addiw s5, a0, 1
+	sd s3, 56(sp)
 	mv s3, a2
-	sd s1, 24(sp)
-	addiw s1, a0, 1
-	sd s6, 16(sp)
-pcrel101:
+	sd s4, 48(sp)
+	sh2add s4, a0, a1
+	sd s2, 40(sp)
+pcrel209:
 	auipc a0, %pcrel_hi(graph)
-	mv s6, zero
-	sd s4, 8(sp)
-	addi s4, a0, %pcrel_lo(pcrel101)
+	sd s7, 32(sp)
+	addi s2, a0, %pcrel_lo(pcrel209)
+	li s7, 1
+	mv a0, zero
+	sd s8, 24(sp)
+	sd s10, 16(sp)
+	sd s9, 8(sp)
 	sd ra, 0(sp)
-	lw a0, 0(a2)
-	bgt s5, a0, label18
+	lw a1, 0(a2)
+	bgt s7, a1, label35
 .p2align 2
 label5:
-	sh2add a1, s2, s0
-	li a0, 1
-	sw s5, 0(a1)
-	bgt s1, a0, label8
-	bne a0, zero, label17
-	addiw s5, s5, 1
-	lw a0, 0(s3)
-	ble s5, a0, label5
-	j label18
+	sh2add a2, s6, s0
+	li a1, 1
+	sw s7, 0(a2)
+	bgt s5, a1, label8
+	bne a1, zero, label15
+	addiw s7, s7, 1
+	lw a1, 0(s3)
+	ble s7, a1, label5
+	j label35
 .p2align 2
-label8:
+label28:
 	addiw a1, a0, 1
 	mv a2, a1
-	bgt s1, a1, label11
+	bgt s1, a1, label31
 	mv a0, a1
 	li a0, 1
-	bne a0, zero, label17
-	addiw s5, s5, 1
+	bne a0, zero, label27
+	addiw s9, s9, 1
 	lw a0, 0(s3)
-	ble s5, a0, label5
-	j label18
+	ble s9, a0, label20
+	max a0, s8, s10
+	addiw s7, s7, 1
+	lw a1, 0(s3)
+	ble s7, a1, label5
+	j label35
 .p2align 2
-label11:
+label31:
 	sh2add a4, a0, s0
 	lw a3, 0(a4)
 	slli a5, a3, 4
 	sub a4, a5, a3
 	sh2add a5, a2, s0
-	sh3add a3, a4, s4
-	lw t0, 0(a5)
-	sh2add a4, t0, a3
-	lw a3, 0(a4)
-	beq a3, zero, label54
+	sh3add a3, a4, s2
+	lw a4, 0(a5)
+	sh2add t0, a4, a3
+	lw a3, 0(t0)
+	beq a3, zero, label119
 	addiw a2, a2, 1
-	bgt s1, a2, label11
+	bgt s1, a2, label31
 	mv a0, a1
-	bgt s1, a1, label8
+	bgt s1, a1, label28
 	li a0, 1
-	bne a0, zero, label17
-	addiw s5, s5, 1
+	bne a0, zero, label27
+	addiw s9, s9, 1
 	lw a0, 0(s3)
-	ble s5, a0, label5
-	j label18
+	ble s9, a0, label20
+	max a0, s8, s10
+	addiw s7, s7, 1
+	lw a1, 0(s3)
+	ble s7, a1, label5
+	j label35
 .p2align 2
-label54:
+label119:
 	mv a0, zero
-	addiw s5, s5, 1
+	addiw s9, s9, 1
 	lw a0, 0(s3)
-	ble s5, a0, label5
-label18:
-	mv a0, s6
-	ld ra, 0(sp)
-	ld s4, 8(sp)
-	ld s6, 16(sp)
-	ld s1, 24(sp)
-	ld s3, 32(sp)
-	ld s5, 40(sp)
-	ld s0, 48(sp)
-	ld s2, 56(sp)
-	addi sp, sp, 64
-	ret
+	ble s9, a0, label20
+	max a0, s8, s10
+	addiw s7, s7, 1
+	lw a1, 0(s3)
+	ble s7, a1, label5
+	j label35
 .p2align 2
-label17:
+label15:
+	max s8, s6, a0
+	mv s10, zero
+	li s9, 1
+	lw a0, 0(s3)
+	ble s9, a0, label20
+	max a0, s8, zero
+	addiw s7, s7, 1
+	lw a1, 0(s3)
+	ble s7, a1, label5
+	j label35
+.p2align 2
+label20:
+	sw s9, 4(s4)
+	li a0, 1
+	bgt s1, a0, label28
+	bne a0, zero, label27
+	addiw s9, s9, 1
+	lw a0, 0(s3)
+	ble s9, a0, label20
+	max a0, s8, s10
+	addiw s7, s7, 1
+	lw a1, 0(s3)
+	ble s7, a1, label5
+	j label35
+.p2align 2
+label27:
 	mv a0, s1
 	mv a1, s0
 	mv a2, s3
 	jal maxCliques
-	max a1, s2, s6
-	max s6, a0, a1
-	addiw s5, s5, 1
+	max a1, s5, s10
+	max s10, a0, a1
+	addiw s9, s9, 1
 	lw a0, 0(s3)
-	ble s5, a0, label5
-	j label18
+	ble s9, a0, label20
+	max a0, s8, s10
+	addiw s7, s7, 1
+	lw a1, 0(s3)
+	ble s7, a1, label5
+	j label35
+.p2align 2
+label8:
+	addiw a2, a1, 1
+	mv a3, a2
+	bgt s5, a2, label11
+	mv a1, a2
+	li a1, 1
+	bne a1, zero, label15
+	addiw s7, s7, 1
+	lw a1, 0(s3)
+	ble s7, a1, label5
+	j label35
+.p2align 2
+label11:
+	sh2add t0, a1, s0
+	lw a4, 0(t0)
+	slli a5, a4, 4
+	sub t0, a5, a4
+	sh2add a5, a3, s0
+	sh3add a4, t0, s2
+	lw t0, 0(a5)
+	sh2add t1, t0, a4
+	lw a4, 0(t1)
+	beq a4, zero, label74
+	addiw a3, a3, 1
+	bgt s5, a3, label11
+	mv a1, a2
+	bgt s5, a2, label8
+	li a1, 1
+	bne a1, zero, label15
+	addiw s7, s7, 1
+	lw a1, 0(s3)
+	ble s7, a1, label5
+	j label35
+.p2align 2
+label74:
+	mv a1, zero
+	addiw s7, s7, 1
+	lw a1, 0(s3)
+	ble s7, a1, label5
+label35:
+	ld ra, 0(sp)
+	ld s9, 8(sp)
+	ld s10, 16(sp)
+	ld s8, 24(sp)
+	ld s7, 32(sp)
+	ld s2, 40(sp)
+	ld s4, 48(sp)
+	ld s3, 56(sp)
+	ld s5, 64(sp)
+	ld s0, 72(sp)
+	ld s1, 80(sp)
+	ld s6, 88(sp)
+	addi sp, sp, 96
+	ret
 .globl main
 main:
 .p2align 2
@@ -138,32 +230,32 @@ main:
 	sw a0, 0(sp)
 	jal getint
 	mv s3, a0
-pcrel309:
+pcrel417:
 	auipc a0, %pcrel_hi(graph)
-	addi s2, a0, %pcrel_lo(pcrel309)
-pcrel310:
+	addi s2, a0, %pcrel_lo(pcrel417)
+pcrel418:
 	auipc a0, %pcrel_hi(edges)
-	addi s4, a0, %pcrel_lo(pcrel310)
-	ble s3, zero, label111
+	addi s4, a0, %pcrel_lo(pcrel418)
+	ble s3, zero, label219
 	mv s5, zero
 .p2align 2
-label103:
+label211:
 	jal getint
 	sh3add s6, s5, s4
 	sw a0, 0(s6)
 	jal getint
 	addiw s5, s5, 1
 	sw a0, 4(s6)
-	bgt s3, s5, label103
+	bgt s3, s5, label211
 	li a0, 4
-	bgt s3, a0, label106
+	bgt s3, a0, label214
 	mv a1, zero
-	j label109
-label106:
+	j label217
+label214:
 	addiw a1, s3, -4
 	mv a0, zero
-	j label107
-label111:
+	j label215
+label219:
 	li a0, 1
 	mv a1, s1
 	mv a2, s0
@@ -180,7 +272,7 @@ label111:
 	ld s0, 8(sp)
 	addi sp, sp, 192
 	ret
-label107:
+label215:
 	sh3add a2, a0, s4
 	addiw a0, a0, 4
 	lw a4, 0(a2)
@@ -232,9 +324,9 @@ label107:
 	sh3add t0, a2, s2
 	sh2add a4, a4, t0
 	sw a3, 0(a4)
-	bgt a1, a0, label107
+	bgt a1, a0, label215
 	mv a1, a0
-label109:
+label217:
 	sh3add a2, a1, s4
 	addiw a1, a1, 1
 	lw a0, 0(a2)
@@ -250,5 +342,5 @@ label109:
 	sh3add a3, a5, s2
 	sh2add a0, a0, a3
 	sw a2, 0(a0)
-	bgt s3, a1, label109
-	j label111
+	bgt s3, a1, label217
+	j label219

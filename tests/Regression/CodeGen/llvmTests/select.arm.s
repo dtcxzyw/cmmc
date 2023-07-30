@@ -250,30 +250,22 @@ label219:
 select_xor_1:
 .p2align 4
 	uxtb r1, r1
+	uxth r0, r0
 	ands r1, r1, #1
-	beq label231
-	uxth r0, r0
-	eor r0, r0, #43
-	b label232
-label231:
-	uxth r0, r0
-label232:
-	uxth r0, r0
+	eor r1, r0, #43
+	moveq r1, r0
+	uxth r0, r1
 	bx lr
 .globl select_xor_1b
 select_xor_1b:
 .p2align 4
 	uxtb r1, r1
+	uxth r0, r0
 	and r1, r1, #1
 	cmp r1, #1
-	bne label249
-	uxth r0, r0
-	eor r0, r0, #43
-	b label250
-label249:
-	uxth r0, r0
-label250:
-	uxth r0, r0
+	eor r1, r0, #43
+	movne r1, r0
+	uxth r0, r1
 	bx lr
 .globl select_xor_2
 select_xor_2:
@@ -298,29 +290,21 @@ select_xor_2b:
 select_xor_3:
 .p2align 4
 	uxtb r1, r1
+	uxth r0, r0
 	ands r1, r1, #1
-	beq label285
-	uxth r0, r0
-	b label286
-label285:
-	uxth r0, r0
-	eor r0, r0, #43
-label286:
+	eor r1, r0, #43
+	moveq r0, r1
 	uxth r0, r0
 	bx lr
 .globl select_xor_3b
 select_xor_3b:
 .p2align 4
 	uxtb r1, r1
+	uxth r0, r0
 	and r1, r1, #1
 	cmp r1, #1
-	bne label303
-	uxth r0, r0
-	b label304
-label303:
-	uxth r0, r0
-	eor r0, r0, #43
-label304:
+	eor r1, r0, #43
+	movne r0, r1
 	uxth r0, r0
 	bx lr
 .globl select_xor_4

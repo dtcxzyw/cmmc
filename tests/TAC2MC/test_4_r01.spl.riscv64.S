@@ -22,50 +22,54 @@ write:
     mv a0, x0
     ret
 hanoi:
-	addi sp, sp, -40
+	addi sp, sp, -48
+	sd s3, 40(sp)
+	mv s3, a3
 	sd s2, 32(sp)
-	mv s2, a3
-	sd s3, 24(sp)
-	li a3, 1
+	li a3, 10000
+	sd s0, 24(sp)
 	sd s1, 16(sp)
-	sd s0, 8(sp)
+	mulw a4, a1, a3
+	sd s4, 8(sp)
+	li a3, 1
+	addw s2, s3, a4
 	sd ra, 0(sp)
-	beq a0, a3, label2
-	mv s3, a0
-	mv s1, a1
-	mv s0, a2
-label4:
-	addiw s3, s3, -1
-	mv a0, s3
-	mv a1, s1
-	mv a2, s2
-	mv a3, s0
-	jal hanoi
-	li a2, 10000
-	mulw a1, s1, a2
-	addw a0, s2, a1
-	jal write
-	li a2, 1
-	bne s3, a2, label23
-	mv a1, s0
-	j label2
-label23:
-	mv a0, s1
-	mv s1, s0
-	mv s0, a0
+	beq a0, a3, label17
+	mv s0, a1
+	mv s1, a2
 	j label4
+label17:
+	mv a0, s2
 label2:
-	li a2, 10000
-	mulw a1, a1, a2
-	addw a0, s2, a1
 	jal write
 	ld ra, 0(sp)
-	ld s0, 8(sp)
+	ld s4, 8(sp)
 	ld s1, 16(sp)
-	ld s3, 24(sp)
+	ld s0, 24(sp)
 	ld s2, 32(sp)
-	addi sp, sp, 40
+	ld s3, 40(sp)
+	addi sp, sp, 48
 	ret
+label4:
+	addiw s4, a0, -1
+	mv a0, s4
+	mv a1, s0
+	mv a2, s3
+	mv a3, s1
+	jal hanoi
+	mv a0, s2
+	jal write
+	li a1, 10000
+	mulw a2, s1, a1
+	li a1, 1
+	addw a0, s3, a2
+	beq s4, a1, label2
+	mv s2, a0
+	mv a1, s0
+	mv a0, s4
+	mv s0, s1
+	mv s1, a1
+	j label4
 .globl main
 main:
 	addi sp, sp, -8

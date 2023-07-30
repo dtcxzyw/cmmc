@@ -207,7 +207,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i1 %102 = icmp slt i32 %97, i32 16;
     cbr i1 %102(prob = 0.97), ^while.header1, ^b1;
   ^while.header1:
-    i32 %103 = phi [^while.header, i32 1] [^if.then, i32 %117] [^if.else, i32 %124];
+    i32 %103 = phi [^while.header, i32 1] [^if.then, i32 %114] [^if.else, i32 %114];
     i1 %104 = icmp slt i32 %103, i32 14;
     cbr i1 %104(prob = 0.97), ^while.body, ^b2;
   ^b1:
@@ -225,24 +225,22 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i32 %110 = load i32* %99;
     i32 %111 = load i32* %109;
     i1 %112 = icmp eq i32 %110, i32 %111;
+    i32* %113 = getelementptr &([16 * i32]* %100)[i64 0][i32 %103];
+    i32 %114 = add i32 %103, i32 1;
     cbr i1 %112(prob = 0.5), ^if.then, ^if.else;
   ^if.then:
-    i32* %113 = getelementptr &([16 * i32]* %101)[i64 0][i32 %108];
-    i32 %114 = load i32* %113;
-    i32 %115 = add i32 %114, i32 1;
-    i32* %116 = getelementptr &([16 * i32]* %100)[i64 0][i32 %103];
-    store i32* %116 with i32 %115;
-    i32 %117 = add i32 %103, i32 1;
+    i32* %115 = getelementptr &([16 * i32]* %101)[i64 0][i32 %108];
+    i32 %116 = load i32* %115;
+    i32 %117 = add i32 %116, i32 1;
+    store i32* %113 with i32 %117;
     ubr ^while.header1;
   ^if.else:
     i32* %118 = getelementptr &([16 * i32]* %101)[i64 0][i32 %103];
     i32 %119 = load i32* %118;
-    i32* %120 = getelementptr &([16 * i32]* %100)[i64 0][i32 %103];
-    i32* %121 = getelementptr &(i32* %120)[i64 -1];
-    i32 %122 = load i32* %121;
-    i32 %123 = smax i32 %119, i32 %122;
-    store i32* %120 with i32 %123;
-    i32 %124 = add i32 %103, i32 1;
+    i32* %120 = getelementptr &([16 * i32]* %100)[i64 0][i32 %108];
+    i32 %121 = load i32* %120;
+    i32 %122 = smax i32 %119, i32 %121;
+    store i32* %113 with i32 %122;
     ubr ^while.header1;
 }
 internal [16 * [16 * i32]]* @p, align 8 { Flexible };

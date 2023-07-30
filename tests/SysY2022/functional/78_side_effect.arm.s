@@ -18,13 +18,13 @@ label6:
 	adds r0, r6, #1
 	bne label7
 	add r6, r0, #1
+	sub r5, r5, #1
 	cmp r6, #14
 	blt label12
 	adds r1, r0, #2
 	bne label15
 	mov r0, r1
 	add r6, r1, #1
-	sub r5, r5, #1
 	cmn r5, #1
 	bgt label6
 label18:
@@ -43,13 +43,13 @@ label7:
 	adds r0, r6, #2
 	bne label8
 	add r6, r0, #1
+	sub r5, r5, #1
 	cmp r6, #14
 	blt label12
 	adds r1, r0, #2
 	bne label15
 	mov r0, r1
 	add r6, r1, #1
-	sub r5, r5, #1
 	cmn r5, #1
 	bgt label6
 	b label18
@@ -72,13 +72,13 @@ label9:
 .p2align 4
 label10:
 	add r6, r0, #1
+	sub r5, r5, #1
 	cmp r6, #14
 	blt label12
 	adds r1, r0, #2
 	bne label15
 	mov r0, r1
 	add r6, r1, #1
-	sub r5, r5, #1
 	cmn r5, #1
 	bgt label6
 	b label18
@@ -88,7 +88,6 @@ label12:
 	bl putint
 	mov r0, #10
 	bl putch
-	sub r5, r5, #1
 	lsl r4, r4, #1
 	cmn r5, #1
 	bgt label6
@@ -101,7 +100,6 @@ label15:
 	adds r1, r1, #1
 	bne label56
 	add r6, r0, #1
-	sub r5, r5, #1
 	cmn r5, #1
 	bgt label6
 	b label18

@@ -15,6 +15,7 @@
 // Global Value Numbering
 
 #include <cmmc/Analysis/AnalysisPass.hpp>
+#include <cmmc/Analysis/BlockTripCountEstimation.hpp>
 #include <cmmc/Analysis/DominateAnalysis.hpp>
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/IR/Block.hpp>
@@ -67,6 +68,7 @@ class GVN final : public TransformPass<Function> {
 public:
     bool run(Function& func, AnalysisPassManager& analysis) const override {
         const auto& dom = analysis.get<DominateAnalysis>(func);
+        const auto& blockFreq = analysis.get<BlockTripCountEstimation>(func);
         auto& target = analysis.module().getTarget();
         bool modified = false;
 
@@ -178,15 +180,29 @@ public:
 
             // hoisting
             if(replaceInst == nullptr) {
-                // const auto inst = sameInstructions.front()->clone();
-                // for(auto& operand : inst->operands())
-                //     operand = operandMap[getNumber(operand)];
-                // auto& instructions = block->instructions();
-                // inst->setBlock(block);
-                // instructions.insert(std::prev(instructions.cend()), inst);
-                // replaceInst = inst;
-                // TODO: better strategy
-                continue;  // disable hoisting
+                if(!blockFreq.isAvailable())
+                    continue;
+                const auto hoistFreq = blockFreq.query(block);
+                double prevFreq = 0.0;
+                for(auto inst : sameInstructions)
+                    prevFreq += blockFreq.query(inst->getBlock());
+                if(prevFreq < hoistFreq - 1e-6)
+                    continue;
+                // Don't do hoisting for comparison instructions if targeting TAC
+                const auto base = sameInstructions.front();
+                if(!target.isNativeSupported(base->getInstID()))
+                    continue;
+                // FIXME
+                if(base->getInstID() == InstructionID::Call)
+                    continue;
+                if(!isMovableExpr(*base, true))
+                    continue;
+
+                const auto inst = base->clone();
+                for(auto& operand : inst->mutableOperands())
+                    operand->resetValue(operandMap[getNumber(operand->value)]);
+                inst->insertBefore(block, std::prev(block->instructions().end()));
+                replaceInst = inst;
             }
 
             operandMap[id] = replaceInst;

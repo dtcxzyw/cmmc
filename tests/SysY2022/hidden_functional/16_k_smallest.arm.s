@@ -14,105 +14,112 @@ main:
 	push { r4, r5, r6, r7, r8, r9, lr }
 	sub sp, sp, #4
 	bl getint
+	mov r6, r0
+	bl getint
+	cmp r6, #0
+	movw r4, #:lower16:array
 	mov r5, r0
-	bl getint
-	cmp r5, #0
-	mov r4, r0
-	ble label30
-	movw r6, #:lower16:array
-	mov r7, #0
-	movt r6, #:upper16:array
-.p2align 4
-label3:
-	bl getint
-	str r0, [r6, r7, lsl #2]
-	add r7, r7, #1
-	cmp r5, r7
-	bgt label3
-	sub r1, r5, #1
+	movt r4, #:upper16:array
+	bgt label32
+	sub r1, r6, #1
 	mov r0, #0
 	cmp r0, r1
-	beq label26
-label113:
-	movw r5, #:lower16:array
+	beq label23
+label110:
+	ldr r3, [r4, r1, lsl #2]
 	mov r6, r0
 	mov r2, r0
-	movt r5, #:upper16:array
-	ldr r3, [r5, r1, lsl #2]
-	cmp r1, r0
-	bgt label15
-	add r2, r5, r0, lsl #2
-	cmp r4, r0
-	add r7, r5, r1, lsl #2
+	b label9
+label32:
+	mov r7, #0
+	b label24
+.p2align 4
+label9:
+	cmp r1, r2
+	bgt label12
+	add r2, r4, r6, lsl #2
+	cmp r5, r6
+	add r7, r4, r1, lsl #2
 	ldr r3, [r2, #0]
 	ldr r8, [r7, #0]
 	str r8, [r2, #0]
 	str r3, [r7, #0]
-	beq label23
-	b label20
+	beq label20
+	b label17
 .p2align 4
-label15:
-	ldr r7, [r5, r2, lsl #2]
+label12:
+	ldr r7, [r4, r2, lsl #2]
 	cmp r3, r7
-	bge label16
+	bge label13
 	add r2, r2, #1
 	cmp r1, r2
-	bgt label15
-	add r2, r5, r6, lsl #2
-	cmp r4, r6
-	add r7, r5, r1, lsl #2
+	bgt label12
+	add r2, r4, r6, lsl #2
+	cmp r5, r6
+	add r7, r4, r1, lsl #2
 	ldr r3, [r2, #0]
 	ldr r8, [r7, #0]
 	str r8, [r2, #0]
 	str r3, [r7, #0]
-	bne label20
-label23:
+	beq label20
+label17:
+	cmp r5, r6
+	blt label72
+	add r0, r6, #1
+	b label6
+label20:
 	cmp r6, #0
-	ble label26
-	mov r4, #0
+	ble label23
+	mov r5, #0
 .p2align 4
-label24:
-	ldr r0, [r5, r4, lsl #2]
+label21:
+	ldr r0, [r4, r5, lsl #2]
 	bl putint
 	mov r0, #32
 	bl putch
-	add r4, r4, #1
-	cmp r6, r4
-	bgt label24
-label26:
+	add r5, r5, #1
+	cmp r6, r5
+	bgt label21
+	b label23
+.p2align 4
+label13:
+	add r8, r4, r6, lsl #2
+	add r6, r6, #1
+	ldr r9, [r8, #0]
+	str r9, [r4, r2, lsl #2]
+	str r7, [r8, #0]
+	add r2, r2, #1
+	cmp r1, r2
+	bgt label12
+	add r2, r4, r6, lsl #2
+	cmp r5, r6
+	add r7, r4, r1, lsl #2
+	ldr r3, [r2, #0]
+	ldr r8, [r7, #0]
+	str r8, [r2, #0]
+	str r3, [r7, #0]
+	beq label20
+	b label17
+label23:
 	mov r0, #0
 	add sp, sp, #4
 	pop { r4, r5, r6, r7, r8, r9, pc }
 .p2align 4
-label16:
-	add r8, r5, r6, lsl #2
-	add r6, r6, #1
-	ldr r9, [r8, #0]
-	str r9, [r5, r2, lsl #2]
-	str r7, [r8, #0]
-	add r2, r2, #1
-	cmp r1, r2
-	bgt label15
-	add r2, r5, r6, lsl #2
-	cmp r4, r6
-	add r7, r5, r1, lsl #2
-	ldr r3, [r2, #0]
-	ldr r8, [r7, #0]
-	str r8, [r2, #0]
-	str r3, [r7, #0]
-	beq label23
-label20:
-	cmp r4, r6
-	blt label83
-	add r0, r6, #1
-	b label9
-label83:
+label24:
+	bl getint
+	str r0, [r4, r7, lsl #2]
+	add r7, r7, #1
+	cmp r6, r7
+	bgt label24
 	sub r1, r6, #1
-label9:
-	cmp r0, r1
-	beq label26
-	b label113
-label30:
-	sub r1, r5, #1
 	mov r0, #0
-	b label9
+	cmp r0, r1
+	beq label23
+	b label110
+label6:
+	cmp r0, r1
+	beq label23
+	b label110
+label72:
+	sub r1, r6, #1
+	b label6

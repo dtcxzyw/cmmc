@@ -9,21 +9,21 @@ main:
 .p2align 4
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
 	mov r11, #9
-	mov r2, #0
-	mov r5, #3
-	mov r8, #7
-	mov r6, #4
-	sub sp, sp, #372
+	mov r9, #8
 	mov r10, #5
 	mov r3, #2
-	str r2, [sp, #0]
-	add r0, sp, #264
-	add r1, sp, #160
-	str r2, [sp, #4]
-	mov r4, #1
-	mov r9, #8
-	str r2, [sp, #8]
+	sub sp, sp, #372
+	mov r2, #0
+	mov r5, #3
 	mov r7, #6
+	str r2, [sp, #0]
+	mov r4, #1
+	mov r6, #4
+	str r2, [sp, #4]
+	mov r8, #7
+	add r1, sp, #160
+	str r2, [sp, #8]
+	add r0, sp, #264
 	str r2, [sp, #12]
 	str r2, [sp, #16]
 	str r2, [sp, #20]
@@ -98,9 +98,9 @@ main:
 	str r7, [sp, #212]
 	str r6, [sp, #216]
 	str r5, [sp, #220]
-	mov r5, #39
 	str r3, [sp, #224]
 	str r4, [sp, #228]
+	mov r4, #39
 	str r3, [sp, #232]
 	str r3, [sp, #236]
 	cmn r2, #1
@@ -108,75 +108,74 @@ main:
 	ldr r0, [sp, #0]
 	cmp r0, #0
 	bne label6
-label242:
+label240:
 	mov r4, #1
 	b label7
 label103:
 	ldr r3, [r1, r2, lsl #2]
-	mov r4, #19
-	cmn r4, #1
+	mov r6, #19
+	cmn r6, #1
 	bgt label14
-	add r5, r5, #19
+	add r4, r4, #19
 	sub r2, r2, #1
 	cmn r2, #1
 	bgt label103
 	ldr r0, [sp, #0]
 	cmp r0, #0
 	bne label6
-	b label242
+	b label240
 .p2align 4
 label14:
-	mov r9, sp
-	ldr r6, [r9, r5, lsl #2]
-	ldr r7, [r0, r4, lsl #2]
-	mla r6, r3, r7, r6
-	cmp r6, #9
+	mov r8, sp
+	ldr r5, [r8, r4, lsl #2]
+	ldr r7, [r0, r6, lsl #2]
+	sub r6, r6, #1
+	mla r7, r3, r7, r5
+	sub r5, r4, #1
+	cmp r7, #9
 	bgt label16
-	sub r4, r4, #1
-	str r6, [r9, r5, lsl #2]
-	sub r5, r5, #1
-	cmn r4, #1
+	str r7, [r8, r4, lsl #2]
+	mov r4, r5
+	cmn r6, #1
 	bgt label14
-	add r5, r5, #19
+	add r4, r5, #19
 	sub r2, r2, #1
 	cmn r2, #1
 	bgt label103
 	ldr r0, [sp, #0]
 	cmp r0, #0
 	bne label6
-	b label242
+	b label240
 .p2align 4
 label16:
-	sub r7, r5, #1
-	mov r9, sp
-	sub r4, r4, #1
-	str r6, [r9, r5, lsl #2]
-	add r8, r9, r7, lsl #2
+	mov r8, sp
 	movw r9, #26215
-	ldr r5, [r8, #0]
+	str r7, [r8, r4, lsl #2]
 	movt r9, #26214
-	smmul r6, r6, r9
-	asr r9, r6, #2
-	add r6, r9, r6, lsr #31
-	add r5, r5, r6
-	str r5, [r8, #0]
-	mov r5, r7
-	cmn r4, #1
+	add r4, r8, r5, lsl #2
+	smmul r7, r7, r9
+	ldr r8, [r4, #0]
+	asr r9, r7, #2
+	add r7, r9, r7, lsr #31
+	add r7, r8, r7
+	str r7, [r4, #0]
+	mov r4, r5
+	cmn r6, #1
 	bgt label14
-	add r5, r7, #19
+	add r4, r5, #19
 	sub r2, r2, #1
 	cmn r2, #1
 	bgt label103
 	ldr r0, [sp, #0]
 	cmp r0, #0
-	beq label242
+	beq label240
 label6:
 	bl putint
 	mov r4, #1
 .p2align 4
 label7:
-	mov r9, sp
-	ldr r0, [r9, r4, lsl #2]
+	mov r8, sp
+	ldr r0, [r8, r4, lsl #2]
 	bl putint
 	add r4, r4, #1
 	cmp r4, #40

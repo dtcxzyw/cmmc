@@ -27,58 +27,62 @@ write:
     nop
 hanoi:
 	addiu $sp, $sp, -40
+	sw $s3, 36($sp)
 	sw $s2, 32($sp)
-	sw $s3, 28($sp)
+	sw $s0, 28($sp)
 	sw $s1, 24($sp)
-	sw $s0, 20($sp)
+	sw $s4, 20($sp)
 	sw $ra, 16($sp)
-	move $s2, $a3
+	move $s3, $a3
+	li $t0, 10000
+	mult $a1, $t0
+	mflo $t0
+	addu $s2, $a3, $t0
 	li $t0, 1
-	beq $a0, $t0, label2
+	beq $a0, $t0, label17
 	nop
-	move $s3, $a0
-	move $s1, $a1
-	move $s0, $a2
+	move $s0, $a1
+	move $s1, $a2
+	b label4
+	nop
+label17:
+	move $a0, $s2
+label2:
+	jal write
+	nop
+	lw $ra, 16($sp)
+	lw $s4, 20($sp)
+	lw $s1, 24($sp)
+	lw $s0, 28($sp)
+	lw $s2, 32($sp)
+	lw $s3, 36($sp)
+	addiu $sp, $sp, 40
+	jr $ra
+	nop
 label4:
-	addiu $s3, $s3, -1
-	move $a0, $s3
-	move $a1, $s1
-	move $a2, $s2
-	move $a3, $s0
+	addiu $s4, $a0, -1
+	move $a0, $s4
+	move $a1, $s0
+	move $a2, $s3
+	move $a3, $s1
 	jal hanoi
+	nop
+	move $a0, $s2
+	jal write
 	nop
 	li $t0, 10000
 	mult $s1, $t0
 	mflo $t0
-	addu $a0, $s2, $t0
-	jal write
-	nop
+	addu $a0, $s3, $t0
 	li $t0, 1
-	bne $s3, $t0, label25
+	beq $s4, $t0, label2
 	nop
-	move $a1, $s0
-	b label2
-	nop
-label25:
-	move $t0, $s1
-	move $s1, $s0
-	move $s0, $t0
+	move $s2, $a0
+	move $a0, $s4
+	move $t0, $s0
+	move $s0, $s1
+	move $s1, $t0
 	b label4
-	nop
-label2:
-	li $t0, 10000
-	mult $a1, $t0
-	mflo $t0
-	addu $a0, $s2, $t0
-	jal write
-	nop
-	lw $ra, 16($sp)
-	lw $s0, 20($sp)
-	lw $s1, 24($sp)
-	lw $s3, 28($sp)
-	lw $s2, 32($sp)
-	addiu $sp, $sp, 40
-	jr $ra
 	nop
 .globl main
 main:

@@ -51,13 +51,15 @@ public:
                         if(addrInst->getInstID() != InstructionID::GetElementPtr)
                             continue;
 
-                        const auto dup = addrInst->clone();
+                        bool usedByPhi = false;
                         uint64_t minId = std::numeric_limits<uint64_t>::max();
                         Instruction* firstUse = nullptr;
                         for(auto user : addrInst->users()) {
                             if(user->getBlock() == block) {
-                                if(user->getInstID() == InstructionID::Phi)
-                                    continue;
+                                if(user->getInstID() == InstructionID::Phi) {
+                                    usedByPhi = true;
+                                    break;
+                                }
                                 auto id = instId.at(user);
                                 if(id < minId) {
                                     minId = id;
@@ -66,6 +68,10 @@ public:
                             }
                         }
 
+                        if(usedByPhi)
+                            continue;
+
+                        const auto dup = addrInst->clone();
                         dup->insertBefore(block, firstUse->asIterator());
                         const auto l =
                             dup->asIterator() == block->instructions().begin() ? 0 : instId.at(&*std::prev(dup->asIterator()));

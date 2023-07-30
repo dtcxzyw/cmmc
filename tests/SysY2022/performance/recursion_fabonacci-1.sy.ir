@@ -11,33 +11,153 @@ internal func @fibFP(f32 %n) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect St
   ^b:
     f32 %1 = fsub f32 %n, f32 2;
     i1 %2 = fcmp olt f32 %1, f32 2;
-    cbr i1 %2(prob = 0.5), ^b3, ^b2;
+    cbr i1 %2(prob = 0.5), ^b2, ^b3;
   ^b1:
-    f32 %3 = phi [^entry, f32 1] [^b4, f32 %13];
+    f32 %3 = phi [^entry, f32 1] [^b4, f32 %10];
     ret f32 %3;
   ^b2:
-    f32 %4 = fsub f32 %1, f32 2;
-    f32 %5 = call (f32) -> f32 @fibFP(f32 %4);
-    f32 %6 = fsub f32 %1, f32 1;
-    f32 %7 = call (f32) -> f32 @fibFP(f32 %6);
-    f32 %8 = fadd f32 %5, f32 %7;
-    ubr ^b3;
+    f32 %4 = phi [^b, f32 1] [^b8, f32 %19];
+    f32 %5 = fsub f32 %n, f32 1;
+    i1 %6 = fcmp olt f32 %5, f32 2;
+    cbr i1 %6(prob = 0.5), ^b4, ^b5;
   ^b3:
-    f32 %9 = phi [^b, f32 1] [^b2, f32 %8];
-    f32 %10 = fsub f32 %n, f32 1;
-    i1 %11 = fcmp olt f32 %10, f32 2;
-    cbr i1 %11(prob = 0.5), ^b4, ^b5;
+    f32 %7 = fsub f32 %1, f32 2;
+    i1 %8 = fcmp olt f32 %7, f32 2;
+    cbr i1 %8(prob = 0.5), ^b6, ^b7;
   ^b4:
-    f32 %12 = phi [^b3, f32 1] [^b5, f32 %18];
-    f32 %13 = fadd f32 %9, f32 %12;
+    f32 %9 = phi [^b2, f32 1] [^b14, f32 %36];
+    f32 %10 = fadd f32 %4, f32 %9;
     ubr ^b1;
   ^b5:
-    f32 %14 = fsub f32 %10, f32 2;
-    f32 %15 = call (f32) -> f32 @fibFP(f32 %14);
-    f32 %16 = fsub f32 %10, f32 1;
-    f32 %17 = call (f32) -> f32 @fibFP(f32 %16);
-    f32 %18 = fadd f32 %15, f32 %17;
+    f32 %11 = fsub f32 %5, f32 2;
+    i1 %12 = fcmp olt f32 %11, f32 2;
+    cbr i1 %12(prob = 0.5), ^b9, ^b12;
+  ^b6:
+    f32 %13 = phi [^b3, f32 1] [^b15, f32 %38];
+    f32 %14 = fsub f32 %1, f32 1;
+    i1 %15 = fcmp olt f32 %14, f32 2;
+    cbr i1 %15(prob = 0.5), ^b8, ^b13;
+  ^b7:
+    f32 %16 = fsub f32 %7, f32 2;
+    i1 %17 = fcmp olt f32 %16, f32 2;
+    cbr i1 %17(prob = 0.5), ^b11, ^b10;
+  ^b8:
+    f32 %18 = phi [^b6, f32 1] [^b23, f32 %65];
+    f32 %19 = fadd f32 %13, f32 %18;
+    ubr ^b2;
+  ^b9:
+    f32 %20 = phi [^b5, f32 1] [^b22, f32 %63];
+    f32 %21 = fsub f32 %5, f32 1;
+    i1 %22 = fcmp olt f32 %21, f32 2;
+    cbr i1 %22(prob = 0.5), ^b14, ^b21;
+  ^b10:
+    f32 %23 = fsub f32 %16, f32 2;
+    f32 %24 = call (f32) -> f32 @fibFP(f32 %23);
+    f32 %25 = fsub f32 %16, f32 1;
+    f32 %26 = call (f32) -> f32 @fibFP(f32 %25);
+    f32 %27 = fadd f32 %24, f32 %26;
+    ubr ^b11;
+  ^b11:
+    f32 %28 = phi [^b7, f32 1] [^b10, f32 %27];
+    f32 %29 = fsub f32 %7, f32 1;
+    i1 %30 = fcmp olt f32 %29, f32 2;
+    cbr i1 %30(prob = 0.5), ^b15, ^b16;
+  ^b12:
+    f32 %31 = fsub f32 %11, f32 2;
+    i1 %32 = fcmp olt f32 %31, f32 2;
+    cbr i1 %32(prob = 0.5), ^b19, ^b17;
+  ^b13:
+    f32 %33 = fsub f32 %14, f32 2;
+    i1 %34 = fcmp olt f32 %33, f32 2;
+    cbr i1 %34(prob = 0.5), ^b20, ^b18;
+  ^b14:
+    f32 %35 = phi [^b9, f32 1] [^b28, f32 %85];
+    f32 %36 = fadd f32 %20, f32 %35;
     ubr ^b4;
+  ^b15:
+    f32 %37 = phi [^b11, f32 1] [^b16, f32 %43];
+    f32 %38 = fadd f32 %28, f32 %37;
+    ubr ^b6;
+  ^b16:
+    f32 %39 = fsub f32 %29, f32 2;
+    f32 %40 = call (f32) -> f32 @fibFP(f32 %39);
+    f32 %41 = fsub f32 %29, f32 1;
+    f32 %42 = call (f32) -> f32 @fibFP(f32 %41);
+    f32 %43 = fadd f32 %40, f32 %42;
+    ubr ^b15;
+  ^b17:
+    f32 %44 = fsub f32 %31, f32 2;
+    f32 %45 = call (f32) -> f32 @fibFP(f32 %44);
+    f32 %46 = fsub f32 %31, f32 1;
+    f32 %47 = call (f32) -> f32 @fibFP(f32 %46);
+    f32 %48 = fadd f32 %45, f32 %47;
+    ubr ^b19;
+  ^b18:
+    f32 %49 = fsub f32 %33, f32 2;
+    f32 %50 = call (f32) -> f32 @fibFP(f32 %49);
+    f32 %51 = fsub f32 %33, f32 1;
+    f32 %52 = call (f32) -> f32 @fibFP(f32 %51);
+    f32 %53 = fadd f32 %50, f32 %52;
+    ubr ^b20;
+  ^b19:
+    f32 %54 = phi [^b12, f32 1] [^b17, f32 %48];
+    f32 %55 = fsub f32 %11, f32 1;
+    i1 %56 = fcmp olt f32 %55, f32 2;
+    cbr i1 %56(prob = 0.5), ^b22, ^b24;
+  ^b20:
+    f32 %57 = phi [^b13, f32 1] [^b18, f32 %53];
+    f32 %58 = fsub f32 %14, f32 1;
+    i1 %59 = fcmp olt f32 %58, f32 2;
+    cbr i1 %59(prob = 0.5), ^b23, ^b25;
+  ^b21:
+    f32 %60 = fsub f32 %21, f32 2;
+    i1 %61 = fcmp olt f32 %60, f32 2;
+    cbr i1 %61(prob = 0.5), ^b27, ^b26;
+  ^b22:
+    f32 %62 = phi [^b19, f32 1] [^b24, f32 %70];
+    f32 %63 = fadd f32 %54, f32 %62;
+    ubr ^b9;
+  ^b23:
+    f32 %64 = phi [^b20, f32 1] [^b25, f32 %75];
+    f32 %65 = fadd f32 %57, f32 %64;
+    ubr ^b8;
+  ^b24:
+    f32 %66 = fsub f32 %55, f32 2;
+    f32 %67 = call (f32) -> f32 @fibFP(f32 %66);
+    f32 %68 = fsub f32 %55, f32 1;
+    f32 %69 = call (f32) -> f32 @fibFP(f32 %68);
+    f32 %70 = fadd f32 %67, f32 %69;
+    ubr ^b22;
+  ^b25:
+    f32 %71 = fsub f32 %58, f32 2;
+    f32 %72 = call (f32) -> f32 @fibFP(f32 %71);
+    f32 %73 = fsub f32 %58, f32 1;
+    f32 %74 = call (f32) -> f32 @fibFP(f32 %73);
+    f32 %75 = fadd f32 %72, f32 %74;
+    ubr ^b23;
+  ^b26:
+    f32 %76 = fsub f32 %60, f32 2;
+    f32 %77 = call (f32) -> f32 @fibFP(f32 %76);
+    f32 %78 = fsub f32 %60, f32 1;
+    f32 %79 = call (f32) -> f32 @fibFP(f32 %78);
+    f32 %80 = fadd f32 %77, f32 %79;
+    ubr ^b27;
+  ^b27:
+    f32 %81 = phi [^b21, f32 1] [^b26, f32 %80];
+    f32 %82 = fsub f32 %21, f32 1;
+    i1 %83 = fcmp olt f32 %82, f32 2;
+    cbr i1 %83(prob = 0.5), ^b28, ^b29;
+  ^b28:
+    f32 %84 = phi [^b27, f32 1] [^b29, f32 %90];
+    f32 %85 = fadd f32 %81, f32 %84;
+    ubr ^b14;
+  ^b29:
+    f32 %86 = fsub f32 %82, f32 2;
+    f32 %87 = call (f32) -> f32 @fibFP(f32 %86);
+    f32 %88 = fsub f32 %82, f32 1;
+    f32 %89 = call (f32) -> f32 @fibFP(f32 %88);
+    f32 %90 = fadd f32 %87, f32 %89;
+    ubr ^b28;
 }
 internal func @takFP(f32 %x, f32 %y, f32 %z) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless } {
   ^0:

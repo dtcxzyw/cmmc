@@ -291,37 +291,30 @@ label274:
 .globl select_xor_1
 select_xor_1:
 .p2align 2
-	andi a2, a1, 255
-	andi a3, a2, 1
-	beq a3, zero, label286
+	andi a3, a1, 255
 	li a1, 65535
-	and a2, a0, a1
-	xori a0, a2, 43
-	j label287
-label286:
-	li a1, 65535
+	andi a2, a3, 1
 	and a0, a0, a1
-label287:
-	li a1, 65535
-	and a0, a0, a1
+	mv a4, a0
+	xori a3, a0, 43
+	beq a2, zero, label298
+	mv a4, a3
+label298:
+	and a0, a4, a1
 	ret
 .globl select_xor_1b
 select_xor_1b:
 .p2align 2
 	andi a3, a1, 255
-	li a1, 1
+	li a4, 1
+	li a1, 65535
 	andi a2, a3, 1
-	bne a2, a1, label306
-	li a1, 65535
-	and a2, a0, a1
-	xori a0, a2, 43
-	j label307
-label306:
-	li a1, 65535
-	and a0, a0, a1
-label307:
-	li a1, 65535
-	and a0, a0, a1
+	and a3, a0, a1
+	xori a0, a3, 43
+	bne a2, a4, label314
+	mv a3, a0
+label314:
+	and a0, a3, a1
 	ret
 .globl select_xor_2
 select_xor_2:
@@ -329,9 +322,9 @@ select_xor_2:
 	andi a4, a2, 255
 	xor a1, a0, a1
 	andi a3, a4, 1
-	beq a3, zero, label337
+	beq a3, zero, label325
 	mv a0, a1
-label337:
+label325:
 	ret
 .globl select_xor_2b
 select_xor_2b:
@@ -340,44 +333,38 @@ select_xor_2b:
 	xor a1, a0, a1
 	li a2, 1
 	andi a3, a4, 1
-	bne a3, a2, label350
+	bne a3, a2, label338
 	mv a0, a1
-label350:
+label338:
 	ret
 .globl select_xor_3
 select_xor_3:
 .p2align 2
-	andi a2, a1, 255
-	andi a3, a2, 1
-	beq a3, zero, label352
+	andi a3, a1, 255
 	li a1, 65535
+	andi a2, a3, 1
 	and a0, a0, a1
-	j label353
+	xori a4, a0, 43
+	mv a3, a4
+	beq a2, zero, label352
+	mv a3, a0
 label352:
-	li a1, 65535
-	and a2, a0, a1
-	xori a0, a2, 43
-label353:
-	li a1, 65535
-	and a0, a0, a1
+	and a0, a3, a1
 	ret
 .globl select_xor_3b
 select_xor_3b:
 .p2align 2
 	andi a3, a1, 255
-	li a1, 1
+	li a5, 1
+	li a1, 65535
 	andi a2, a3, 1
-	bne a2, a1, label372
-	li a1, 65535
 	and a0, a0, a1
-	j label373
-label372:
-	li a1, 65535
-	and a2, a0, a1
-	xori a0, a2, 43
-label373:
-	li a1, 65535
-	and a0, a0, a1
+	xori a4, a0, 43
+	mv a3, a4
+	bne a2, a5, label368
+	mv a3, a0
+label368:
+	and a0, a3, a1
 	ret
 .globl select_xor_4
 select_xor_4:
@@ -386,9 +373,9 @@ select_xor_4:
 	xor a2, a0, a1
 	andi a3, a4, 1
 	mv a1, a2
-	beq a3, zero, label403
+	beq a3, zero, label379
 	mv a1, a0
-label403:
+label379:
 	mv a0, a1
 	ret
 .globl select_xor_4b
@@ -399,8 +386,8 @@ select_xor_4b:
 	li a2, 1
 	andi a3, a5, 1
 	mv a1, a4
-	bne a3, a2, label416
+	bne a3, a2, label392
 	mv a1, a0
-label416:
+label392:
 	mv a0, a1
 	ret

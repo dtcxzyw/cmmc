@@ -41,59 +41,55 @@ z4:
 calc_seleq:
 .p2align 2
 	lui $t0, %hi(a)
-	lw $t1, %lo(a)($t0)
+	lw $t3, %lo(a)($t0)
 	lui $t0, %hi(b)
-	lw $t2, %lo(b)($t0)
-	beq $t1, $t2, label26
-	nop
+	lw $t4, %lo(b)($t0)
+	lui $t0, %hi(f)
+	addiu $t1, $t0, %lo(f)
 	lui $t0, %hi(t)
-	lw $t0, %lo(t)($t0)
+	addiu $t2, $t0, %lo(t)
+	beq $t3, $t4, label30
+	nop
+	lw $t0, 0($t2)
 	b label2
 	nop
-label26:
-	lui $t0, %hi(f)
-	lw $t0, %lo(f)($t0)
+label30:
+	lw $t0, 0($t1)
 label2:
-	lui $t3, %hi(z1)
-	sw $t0, %lo(z1)($t3)
-	beq $t1, $t2, label4
+	lui $t5, %hi(z1)
+	sw $t0, %lo(z1)($t5)
+	beq $t3, $t4, label4
 	nop
-	lui $t0, %hi(t)
-	lw $t0, %lo(t)($t0)
+	lw $t0, 0($t2)
 	b label5
 	nop
 label4:
-	lui $t0, %hi(f)
-	lw $t0, %lo(f)($t0)
+	lw $t0, 0($t1)
 label5:
-	lui $t2, %hi(z2)
-	sw $t0, %lo(z2)($t2)
+	lui $t4, %hi(z2)
+	sw $t0, %lo(z2)($t4)
 	lui $t0, %hi(c)
-	lw $t2, %lo(c)($t0)
-	bne $t1, $t2, label43
+	lw $t4, %lo(c)($t0)
+	bne $t3, $t4, label45
 	nop
-	lui $t0, %hi(t)
-	lw $t0, %lo(t)($t0)
+	lw $t0, 0($t2)
 label8:
-	lui $t3, %hi(z3)
-	sw $t0, %lo(z3)($t3)
-	beq $t1, $t2, label10
+	lui $t5, %hi(z3)
+	sw $t0, %lo(z3)($t5)
+	beq $t3, $t4, label10
 	nop
 	b label52
 	nop
-label43:
-	lui $t0, %hi(f)
-	lw $t0, %lo(f)($t0)
+label45:
+	lw $t0, 0($t1)
 	b label8
 	nop
 label52:
-	lui $t0, %hi(f)
-	lw $t0, %lo(f)($t0)
+	lw $t0, 0($t1)
 	b label11
 	nop
 label10:
-	lui $t0, %hi(t)
-	lw $t0, %lo(t)($t0)
+	lw $t0, 0($t2)
 label11:
 	lui $t1, %hi(z4)
 	sw $t0, %lo(z4)($t1)

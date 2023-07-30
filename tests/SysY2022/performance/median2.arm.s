@@ -36,12 +36,12 @@ label8:
 	bgt label11
 	beq label17
 label101:
-	add r8, r4, r7, lsl #2
-	add r10, r4, r6, lsl #2
-	ldr r9, [r8, #0]
-	ldr r11, [r10, #0]
-	str r11, [r8, #0]
-	str r9, [r10, #0]
+	add r8, r4, r6, lsl #2
+	add r9, r4, r7, lsl #2
+	ldr r10, [r9, #0]
+	ldr r11, [r8, #0]
+	str r11, [r9, #0]
+	str r10, [r8, #0]
 	b label8
 .p2align 4
 label12:

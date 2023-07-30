@@ -6,53 +6,205 @@
 .fpu vfpv4
 func:
 .p2align 4
-	push { r4, r5, r6, lr }
-	vpush { s16, s17 }
+	push { r4, r5, r6, r7, lr }
+	vpush { s16, s17, s18, s19 }
 	cmp r0, #0
-	mov r4, r0
 	vmov.f32 s16, s0
+	sub sp, sp, #4
 	bge label4
 	mov r0, #0
 	vmov s0, r0
-label2:
-	vpop { s16, s17 }
-	pop { r4, r5, r6, pc }
+	b label2
 label4:
-	subs r6, r4, #1
+	subs r7, r0, #1
+	sub r6, r0, #2
+	sub r5, r0, #3
+	sub r4, r0, #4
+	bge label5
+	mov r0, #0
+	vmov s0, r0
+	b label24
+label5:
+	cmp r6, #0
+	bge label17
+	mov r0, #0
+	vmov s0, r0
+label6:
+	vadd.f32 s17, s16, s0
+	cmp r6, #0
 	bge label10
 	mov r0, #0
 	vmov s0, r0
-label5:
+	vsub.f32 s0, s17, s0
+	b label24
+label10:
+	cmp r5, #0
+	bge label16
+	mov r0, #0
+	vmov s0, r0
+label11:
+	vadd.f32 s18, s17, s0
+	cmp r5, #0
+	bge label15
+	mov r0, #0
+	vmov s0, r0
+	vsub.f32 s0, s18, s0
+	vsub.f32 s0, s17, s0
+	b label24
+label15:
+	vmov.f32 s0, s18
+	mov r0, r4
+	bl func
+	vadd.f32 s19, s18, s0
+	vmov.f32 s0, s19
+	mov r0, r4
+	bl func
+	vsub.f32 s0, s19, s0
+	vsub.f32 s0, s18, s0
+	vsub.f32 s0, s17, s0
+	b label24
+label16:
+	vmov.f32 s0, s17
+	mov r0, r4
+	bl func
+	vadd.f32 s18, s17, s0
+	vmov.f32 s0, s18
+	mov r0, r4
+	bl func
+	vsub.f32 s0, s18, s0
+	b label11
+label17:
+	cmp r5, #0
+	bge label23
+	mov r0, #0
+	vmov s0, r0
+label18:
+	vadd.f32 s17, s16, s0
+	cmp r5, #0
+	bge label20
+	mov r0, #0
+	vmov s0, r0
+	vsub.f32 s0, s17, s0
+	b label6
+label20:
+	vmov.f32 s0, s17
+	mov r0, r4
+	bl func
+	vadd.f32 s18, s17, s0
+	vmov.f32 s0, s18
+	mov r0, r4
+	bl func
+	vsub.f32 s0, s18, s0
+	vsub.f32 s0, s17, s0
+	b label6
+label23:
+	vmov.f32 s0, s16
+	mov r0, r4
+	bl func
+	vadd.f32 s17, s16, s0
+	vmov.f32 s0, s17
+	mov r0, r4
+	bl func
+	vsub.f32 s0, s17, s0
+	b label18
+label24:
 	vadd.f32 s16, s16, s0
-	cmp r6, #0
-	bge label9
+	cmp r7, #0
+	bge label26
 	mov r0, #0
 	vmov s0, r0
 	vsub.f32 s0, s16, s0
 	b label2
-label9:
-	sub r4, r4, #2
-	vmov.f32 s0, s16
-	mov r0, r4
-	bl func
+label26:
+	cmp r6, #0
+	bge label38
+	mov r0, #0
+	vmov s0, r0
+label27:
 	vadd.f32 s17, s16, s0
-	vmov.f32 s0, s17
-	mov r0, r4
-	bl func
+	cmp r6, #0
+	bge label31
+	mov r0, #0
+	vmov s0, r0
 	vsub.f32 s0, s17, s0
 	vsub.f32 s0, s16, s0
 	b label2
-label10:
-	sub r5, r4, #2
+label31:
+	cmp r5, #0
+	bge label32
+	mov r0, #0
+	vmov s0, r0
+	b label33
+label32:
+	vmov.f32 s0, s17
+	mov r0, r4
+	bl func
+	vadd.f32 s18, s17, s0
+	vmov.f32 s0, s18
+	mov r0, r4
+	bl func
+	vsub.f32 s0, s18, s0
+label33:
+	vadd.f32 s18, s17, s0
+	cmp r5, #0
+	bge label37
+	mov r0, #0
+	vmov s0, r0
+	vsub.f32 s0, s18, s0
+	vsub.f32 s0, s17, s0
+	vsub.f32 s0, s16, s0
+	b label2
+label37:
+	vmov.f32 s0, s18
+	mov r0, r4
+	bl func
+	vadd.f32 s19, s18, s0
+	vmov.f32 s0, s19
+	mov r0, r4
+	bl func
+	vsub.f32 s0, s19, s0
+	vsub.f32 s0, s18, s0
+	vsub.f32 s0, s17, s0
+	vsub.f32 s0, s16, s0
+	b label2
+label38:
+	cmp r5, #0
+	bge label39
+	mov r0, #0
+	vmov s0, r0
+	b label40
+label39:
 	vmov.f32 s0, s16
-	mov r0, r5
+	mov r0, r4
 	bl func
 	vadd.f32 s17, s16, s0
 	vmov.f32 s0, s17
-	mov r0, r5
+	mov r0, r4
 	bl func
 	vsub.f32 s0, s17, s0
-	b label5
+label40:
+	vadd.f32 s17, s16, s0
+	cmp r5, #0
+	bge label44
+	mov r0, #0
+	vmov s0, r0
+	vsub.f32 s0, s17, s0
+	b label27
+label44:
+	vmov.f32 s0, s17
+	mov r0, r4
+	bl func
+	vadd.f32 s18, s17, s0
+	vmov.f32 s0, s18
+	mov r0, r4
+	bl func
+	vsub.f32 s0, s18, s0
+	vsub.f32 s0, s17, s0
+	b label27
+label2:
+	add sp, sp, #4
+	vpop { s16, s17, s18, s19 }
+	pop { r4, r5, r6, r7, pc }
 .globl main
 main:
 .p2align 4
@@ -67,14 +219,14 @@ main:
 	bl func
 	vcmp.f32 s0, #0
 	vmrs APSR_nzcv, FPSCR
-	beq label44
-label45:
+	beq label179
+label180:
 	mov r0, #32
 	bl _sysy_stoptime
 	add sp, sp, #4
 	mov r0, #0
 	pop { pc }
-label44:
+label179:
 	mov r0, #112
 	bl putch
-	b label45
+	b label180

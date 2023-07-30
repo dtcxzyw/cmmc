@@ -105,7 +105,7 @@ public:
                 return false;
         }
 
-        constexpr uint32_t codeSizeThreshold = 64;
+        constexpr uint32_t codeSizeThreshold = 256;
         uint32_t bodySize = 0;
         for(auto block : func.blocks()) {
             bodySize += static_cast<uint32_t>(block->instructions().size());
