@@ -45,6 +45,11 @@
       "parent": "d40d138db693f396a43e7c1ff30dda6468ceb38b",
       "time": "2023-07-16 23:36:47 +0800"
     },
+    "0e074d4a00394405947f6ffe832756d20f133681": {
+      "message": "feat(codegen): add sfb opt",
+      "parent": "d693a6ee3f22e9a5cb0d60023b3acd67ee2f189f",
+      "time": "2023-07-30 18:57:28 +0800"
+    },
     "108d169f9d44bcd6ac30e917499eeb04661a4159": {
       "message": "fix(transform): fix mod opt",
       "parent": "3ef1519d1e0426512f9d470691a7b4f61bb90e01",
@@ -275,6 +280,11 @@
       "parent": "aeac1e66c11f6efbdcde8214496b70e6d6b171ca",
       "time": "2023-07-08 00:00:37 +0800"
     },
+    "46bf42ba35a44ec35a4112397613ac7f9dbec6fc": {
+      "message": "feat(transform): improve modulo opt",
+      "parent": "8bd479176093f2ff091a09a82fae0854053f90e9",
+      "time": "2023-07-30 11:35:15 +0800"
+    },
     "477105dd55329c239391b78522aea5e8ff4e855c": {
       "message": "test(transform): decrease loop count of `loop_evaluate_3.sy`",
       "parent": "569de15b0c73b5c4753a65e91196ec62cefc3958",
@@ -430,10 +440,20 @@
       "parent": "e15d2533f26a57059fbb95edf8f811865c3d1a3f",
       "time": "2023-07-11 19:45:20 +0800"
     },
+    "72dd6f694d06ea99ad98ba6b78a9a5cc3c897bce": {
+      "message": "feat(codegen): rematerialize constants",
+      "parent": "73bc1f3a969291c1b5079930367b0ac5802186a6",
+      "time": "2023-07-30 13:15:04 +0800"
+    },
     "738794d0b3a8c5c37e6ab70bf25aa1eb8a98af42": {
       "message": "feat(codegen): don't duplicate blocks with calls",
       "parent": "682c6b62948d7cc72a528aa33d7a04cdf1f53502",
       "time": "2023-07-08 04:13:46 +0800"
+    },
+    "73bc1f3a969291c1b5079930367b0ac5802186a6": {
+      "message": "feat(transform): common base opt",
+      "parent": "46bf42ba35a44ec35a4112397613ac7f9dbec6fc",
+      "time": "2023-07-30 11:54:20 +0800"
     },
     "7501d07d092337845cfebf755d1c0414e9cc3318": {
       "message": "fix(analysis): fix scev-based range analysis",
@@ -775,6 +795,11 @@
       "parent": "0d03d7e241b13c4f24d6f18a5934e5b906da2fdd",
       "time": "2023-07-16 23:49:54 +0800"
     },
+    "d14b52d28598b2b77cc92531c8da1bcdc6847663": {
+      "message": "feat(transform): tune gvn",
+      "parent": "72dd6f694d06ea99ad98ba6b78a9a5cc3c897bce",
+      "time": "2023-07-30 16:23:49 +0800"
+    },
     "d3a7f546540e264c70b455207ad10d54f4d4f580": {
       "message": "feat(support): add deterministic mem alloc",
       "parent": "adb1a382266085011a02ab6a647049c4904380c6",
@@ -789,6 +814,11 @@
       "message": "test: remove flaky tests",
       "parent": "c48895059df4199823303f514c98f3560d46218b",
       "time": "2023-07-11 16:08:13 +0800"
+    },
+    "d693a6ee3f22e9a5cb0d60023b3acd67ee2f189f": {
+      "message": "feat(codegen): optimize x>=0",
+      "parent": "d14b52d28598b2b77cc92531c8da1bcdc6847663",
+      "time": "2023-07-30 17:10:57 +0800"
     },
     "d704adc43cc2208d15df5443ba72a7be262aeb0c": {
       "message": "feat(transform): add range-aware arith reduce",
@@ -916,5 +946,5 @@
       "time": "2023-07-06 01:05:50 +0800"
     }
   },
-  "head": "8bd479176093f2ff091a09a82fae0854053f90e9"
+  "head": "0e074d4a00394405947f6ffe832756d20f133681"
 }
