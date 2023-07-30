@@ -86,29 +86,29 @@ main:
 	mov r2, #0
 	sub sp, sp, #84
 	mov r1, #1
-	str r2, [sp, #16]
 	add r0, sp, #16
+	str r2, [sp, #16]
 	mov r3, sp
-	str r1, [r0, #4]
-	str r1, [r0, #8]
-	str r1, [r0, #12]
-	str r1, [r0, #16]
-	str r2, [r0, #20]
-	str r1, [r0, #24]
-	str r2, [r0, #28]
-	str r1, [r0, #32]
-	str r1, [r0, #36]
-	str r2, [r0, #40]
-	str r1, [r0, #44]
-	str r1, [r0, #48]
-	str r2, [r0, #52]
-	str r1, [r0, #56]
+	str r1, [sp, #20]
+	str r1, [sp, #24]
+	str r1, [sp, #28]
+	str r1, [sp, #32]
+	str r2, [sp, #36]
+	str r1, [sp, #40]
+	str r2, [sp, #44]
+	str r1, [sp, #48]
+	str r1, [sp, #52]
+	str r2, [sp, #56]
+	str r1, [sp, #60]
+	str r1, [sp, #64]
+	str r2, [sp, #68]
+	str r1, [sp, #72]
 	mov r1, #3
-	str r2, [r0, #60]
+	str r2, [sp, #76]
 	str r2, [sp, #0]
-	str r2, [r3, #4]
-	str r2, [r3, #8]
-	str r2, [r3, #12]
+	str r2, [sp, #4]
+	str r2, [sp, #8]
+	str r2, [sp, #12]
 	bl graphColoring
 	cmp r0, #0
 	beq label92

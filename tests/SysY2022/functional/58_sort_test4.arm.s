@@ -14,22 +14,22 @@ main:
 	mov r4, sp
 	str r0, [sp, #0]
 	mov r0, #3
-	str r0, [r4, #4]
+	str r0, [sp, #4]
 	mov r0, #9
-	str r0, [r4, #8]
+	str r0, [sp, #8]
 	mov r0, #2
-	str r0, [r4, #12]
+	str r0, [sp, #12]
 	mov r0, #0
-	str r0, [r4, #16]
-	str r1, [r4, #20]
+	str r0, [sp, #16]
+	str r1, [sp, #20]
 	mov r1, #6
-	str r1, [r4, #24]
+	str r1, [sp, #24]
 	mov r1, #5
-	str r1, [r4, #28]
+	str r1, [sp, #28]
 	mov r1, #7
-	str r1, [r4, #32]
+	str r1, [sp, #32]
 	mov r1, #8
-	str r1, [r4, #36]
+	str r1, [sp, #36]
 	cmp r0, #9
 	bge label28
 .p2align 4

@@ -180,6 +180,7 @@ static void graphColoringAllocateImpl(MIRFunction& mfunc, CodeGenContext& ctx, I
     }
 
     std::unordered_map<uint32_t, MIROperand> inStackArguments;
+    std::unordered_map<uint32_t, MIRInst*> constants;
     for(auto& inst : mfunc.blocks().front()->instructions()) {
         if(inst.opcode() == InstLoadRegFromStack) {
             const auto dst = inst.getOperand(0).reg();
@@ -189,6 +190,39 @@ static void graphColoringAllocateImpl(MIRFunction& mfunc, CodeGenContext& ctx, I
                 inStackArguments.emplace(dst, src);
             }
         }
+    }
+    for(auto& block : mfunc.blocks()) {
+        for(auto& inst : block->instructions()) {
+            const auto& instInfo = ctx.instInfo.getInstInfo(inst);
+
+            if(requireFlag(instInfo.getInstFlag(), InstFlagLoadConstant)) {
+                const auto reg = inst.getOperand(0).reg();
+                if(isVirtualReg(reg)) {
+                    if(!constants.count(reg))
+                        constants[reg] = &inst;
+                    else
+                        constants[reg] = nullptr;
+                }
+            } else {
+                for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
+                    const auto flag = instInfo.getOperandFlag(idx);
+                    if(!(flag & OperandFlagDef))
+                        continue;
+                    auto& op = inst.getOperand(idx);
+                    if(isOperandVReg(op)) {
+                        constants[op.reg()] = nullptr;
+                    }
+                }
+            }
+        }
+    }
+    {
+        std::vector<uint32_t> eraseKey;
+        for(auto [k, v] : constants)
+            if(!v)
+                eraseKey.push_back(k);
+        for(auto k : eraseKey)
+            constants.erase(k);
     }
 
     while(true) {
@@ -577,8 +611,16 @@ static void graphColoringAllocateImpl(MIRFunction& mfunc, CodeGenContext& ctx, I
         }
         const auto size = getOperandSize(canonicalizedType);
         bool alreadyInStack = inStackArguments.count(u);
-        const auto stackStorage =
-            alreadyInStack ? inStackArguments.at(u) : mfunc.addStackObject(ctx, size, size, 0, StackObjectUsage::RegSpill);
+        bool rematerializeConstant = constants.count(u);
+        MIROperand stackStorage;
+        MIRInst* copyInst = nullptr;
+        if(alreadyInStack) {
+            stackStorage = inStackArguments.at(u);
+        } else if(rematerializeConstant) {
+            copyInst = constants.at(u);
+        } else {
+            stackStorage = mfunc.addStackObject(ctx, size, size, 0, StackObjectUsage::RegSpill);
+        }
 
         std::unordered_set<MIRInst*> newInsts;
         const uint32_t minimizeIntervalThreshold = 8;
@@ -632,15 +674,22 @@ static void graphColoringAllocateImpl(MIRFunction& mfunc, CodeGenContext& ctx, I
                         --it;
                     }
 
-                    instructions.insert(it,
-                                        MIRInst{ InstLoadRegFromStack }
-                                            .setOperand<0>(MIROperand::asVReg(u - virtualRegBegin, canonicalizedType))
-                                            .setOperand<1>(stackStorage));
+                    if(rematerializeConstant) {
+                        // auto& copyInstInfo = ctx.instInfo.getInstInfo(*copyInst);
+                        // copyInstInfo.print(std::cerr, *copyInst, true);
+                        // std::cerr << '\n';
+
+                        instructions.insert(it, *copyInst);
+                    } else
+                        instructions.insert(it,
+                                            MIRInst{ InstLoadRegFromStack }
+                                                .setOperand<0>(MIROperand::asVReg(u - virtualRegBegin, canonicalizedType))
+                                                .setOperand<1>(stackStorage));
                     if(!fallback)
                         loaded = true;
                 }
                 if(hasDef) {
-                    if(alreadyInStack) {
+                    if(alreadyInStack || rematerializeConstant) {
                         instructions.erase(iter);
                         loaded = false;
                     } else {

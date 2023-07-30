@@ -144,28 +144,22 @@ main:
 .p2align 4
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
 	movw r4, #:lower16:a
-	sub sp, sp, #84
+	mov r0, #1
 	mov r7, #0
 	mvn r1, #0
+	sub sp, sp, #68
 	movt r4, #:upper16:a
-	add r5, sp, #32
-	add r0, sp, #20
-	add r6, sp, #16
 	mov r11, r7
-	str r0, [sp, #72]
-	add r0, sp, #24
-	str r0, [sp, #64]
-	add r0, sp, #28
-	str r0, [sp, #68]
-	mov r0, #1
 	str r0, [sp, #32]
-	str r7, [r5, #4]
-	str r1, [r5, #8]
-	str r7, [r5, #12]
-	str r7, [r5, #16]
-	str r0, [r5, #20]
-	str r7, [r5, #24]
-	str r1, [r5, #28]
+	add r5, sp, #32
+	add r6, sp, #16
+	str r7, [sp, #36]
+	str r1, [sp, #40]
+	str r7, [sp, #44]
+	str r7, [sp, #48]
+	str r0, [sp, #52]
+	str r7, [sp, #56]
+	str r1, [sp, #60]
 	str r7, [sp, #20]
 	str r7, [sp, #16]
 .p2align 4
@@ -181,12 +175,12 @@ label148:
 	b label151
 .p2align 4
 label169:
-	ldr r0, [sp, #68]
+	add r0, sp, #28
 	mov r2, #1
 	str r0, [sp, #0]
-	ldr r0, [sp, #64]
+	add r0, sp, #24
 	str r0, [sp, #4]
-	ldr r0, [sp, #72]
+	add r0, sp, #20
 	str r0, [sp, #8]
 	str r6, [sp, #12]
 	mov r0, r11
@@ -204,7 +198,7 @@ label169:
 	b label148
 label170:
 	mov r0, #0
-	add sp, sp, #84
+	add sp, sp, #68
 	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
 .p2align 4
 label388:

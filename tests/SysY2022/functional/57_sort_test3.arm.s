@@ -103,21 +103,21 @@ main:
 	str r0, [sp, #0]
 	mov r4, sp
 	mov r0, #3
-	str r0, [r4, #4]
+	str r0, [sp, #4]
 	mov r0, #2
-	str r2, [r4, #8]
-	str r0, [r4, #12]
+	str r2, [sp, #8]
+	str r0, [sp, #12]
 	mov r0, #1
-	str r1, [r4, #16]
-	str r0, [r4, #20]
+	str r1, [sp, #16]
+	str r0, [sp, #20]
 	mov r0, #6
-	str r0, [r4, #24]
+	str r0, [sp, #24]
 	mov r0, #5
-	str r0, [r4, #28]
+	str r0, [sp, #28]
 	mov r0, #7
-	str r0, [r4, #32]
+	str r0, [sp, #32]
 	mov r0, #8
-	str r0, [r4, #36]
+	str r0, [sp, #36]
 	mov r0, r4
 	bl QuickSort
 	cmp r0, #10

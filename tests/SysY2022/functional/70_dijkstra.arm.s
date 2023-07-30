@@ -14,40 +14,40 @@ main:
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
 	sub sp, sp, #132
 	mov r0, #0
-	add r7, sp, #64
 	mov r5, sp
+	add r7, sp, #64
 	str r0, [sp, #64]
-	str r0, [r7, #4]
-	str r0, [r7, #8]
-	str r0, [r7, #12]
-	str r0, [r7, #16]
-	str r0, [r7, #20]
-	str r0, [r7, #24]
-	str r0, [r7, #28]
-	str r0, [r7, #32]
-	str r0, [r7, #36]
-	str r0, [r7, #40]
-	str r0, [r7, #44]
-	str r0, [r7, #48]
-	str r0, [r7, #52]
-	str r0, [r7, #56]
-	str r0, [r7, #60]
+	str r0, [sp, #68]
+	str r0, [sp, #72]
+	str r0, [sp, #76]
+	str r0, [sp, #80]
+	str r0, [sp, #84]
+	str r0, [sp, #88]
+	str r0, [sp, #92]
+	str r0, [sp, #96]
+	str r0, [sp, #100]
+	str r0, [sp, #104]
+	str r0, [sp, #108]
+	str r0, [sp, #112]
+	str r0, [sp, #116]
+	str r0, [sp, #120]
+	str r0, [sp, #124]
 	str r0, [sp, #0]
-	str r0, [r5, #4]
-	str r0, [r5, #8]
-	str r0, [r5, #12]
-	str r0, [r5, #16]
-	str r0, [r5, #20]
-	str r0, [r5, #24]
-	str r0, [r5, #28]
-	str r0, [r5, #32]
-	str r0, [r5, #36]
-	str r0, [r5, #40]
-	str r0, [r5, #44]
-	str r0, [r5, #48]
-	str r0, [r5, #52]
-	str r0, [r5, #56]
-	str r0, [r5, #60]
+	str r0, [sp, #4]
+	str r0, [sp, #8]
+	str r0, [sp, #12]
+	str r0, [sp, #16]
+	str r0, [sp, #20]
+	str r0, [sp, #24]
+	str r0, [sp, #28]
+	str r0, [sp, #32]
+	str r0, [sp, #36]
+	str r0, [sp, #40]
+	str r0, [sp, #44]
+	str r0, [sp, #48]
+	str r0, [sp, #52]
+	str r0, [sp, #56]
+	str r0, [sp, #60]
 	bl getint
 	mov r4, r0
 	bl getint
@@ -64,7 +64,7 @@ main:
 	cmp r4, #0
 	bgt label99
 	mov r1, #1
-	str r1, [r7, #4]
+	str r1, [sp, #68]
 	cmp r0, r1
 	bge label116
 	cmp r4, #0
@@ -208,7 +208,7 @@ label5:
 	cmp r4, #0
 	bgt label99
 	mov r1, #1
-	str r1, [r7, #4]
+	str r1, [sp, #68]
 	cmp r0, r1
 	bge label116
 	cmp r4, #0
@@ -234,7 +234,7 @@ label34:
 	cmp r4, #0
 	bgt label99
 	mov r1, #1
-	str r1, [r7, #4]
+	str r1, [sp, #68]
 	cmp r0, r1
 	bge label116
 	cmp r4, #0
@@ -252,7 +252,7 @@ label8:
 	cmp r4, r2
 	bge label8
 	mov r1, #1
-	str r1, [r7, #4]
+	str r1, [sp, #68]
 	cmp r0, r1
 	bge label116
 	cmp r4, #0

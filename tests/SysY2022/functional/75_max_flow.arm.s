@@ -92,13 +92,9 @@ label9:
 main:
 .p2align 4
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
-	sub sp, sp, #108
-	add r10, sp, #48
-	add r1, sp, #8
-	str r1, [sp, #88]
-	str r10, [sp, #92]
+	sub sp, sp, #100
 	bl getint
-	str r0, [sp, #96]
+	str r0, [sp, #88]
 	mov r1, r0
 	bl getint
 	movw r5, #:lower16:cap
@@ -110,39 +106,38 @@ main:
 	mov r0, #0
 	movt r4, #:upper16:to
 	str r0, [sp, #48]
-	ldr r10, [sp, #92]
-	str r0, [r10, #4]
-	str r0, [r10, #8]
-	str r0, [r10, #12]
-	str r0, [r10, #16]
-	str r0, [r10, #20]
-	str r0, [r10, #24]
-	str r0, [r10, #28]
-	str r0, [r10, #32]
-	str r0, [r10, #36]
+	str r0, [sp, #52]
+	str r0, [sp, #56]
+	str r0, [sp, #60]
+	str r0, [sp, #64]
+	str r0, [sp, #68]
+	str r0, [sp, #72]
+	str r0, [sp, #76]
+	str r0, [sp, #80]
+	str r0, [sp, #84]
 	bgt label109
 .p2align 4
 label133:
 	mov r4, #0
 label105:
 	mov r0, #0
+	add r11, sp, #48
 	mov r2, #1879048192
 	str r0, [sp, #8]
-	ldr r1, [sp, #88]
-	str r0, [r1, #4]
-	str r0, [r1, #8]
-	str r0, [r1, #12]
-	str r0, [r1, #16]
-	str r0, [r1, #20]
-	str r0, [r1, #24]
-	str r0, [r1, #28]
-	str r0, [r1, #32]
-	str r0, [r1, #36]
+	str r0, [sp, #12]
+	str r0, [sp, #16]
+	str r0, [sp, #20]
+	str r0, [sp, #24]
+	str r0, [sp, #28]
+	str r0, [sp, #32]
+	str r0, [sp, #36]
+	str r0, [sp, #40]
+	str r0, [sp, #44]
+	add r0, sp, #8
+	str r0, [sp, #0]
 	mov r0, #1
-	str r1, [sp, #0]
-	ldr r10, [sp, #92]
-	ldr r1, [sp, #96]
-	mov r3, r10
+	ldr r1, [sp, #88]
+	mov r3, r11
 	bl dfs
 	cmp r0, #0
 	beq label107
@@ -153,31 +148,31 @@ label107:
 	bl putint
 	mov r0, #10
 	bl putch
-	add sp, sp, #108
+	add sp, sp, #100
 	mov r0, #0
 	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
 .p2align 4
 label109:
 	bl getint
-	ldr r10, [sp, #92]
+	add r11, sp, #48
 	mov r9, r0
-	add r8, r10, r0, lsl #2
+	add r8, r11, r0, lsl #2
 	bl getint
-	mov r11, r0
+	mov r10, r0
 	bl getint
 	subs r7, r7, #1
 	mov r1, r0
 	add r2, r9, r9, lsl #2
 	ldr r0, [r8, #0]
 	add r3, r4, r2, lsl #3
-	str r11, [r3, r0, lsl #2]
+	str r10, [r3, r0, lsl #2]
 	add r3, r5, r2, lsl #3
 	str r1, [r3, r0, lsl #2]
-	add r1, r10, r11, lsl #2
+	add r1, r11, r10, lsl #2
 	add r3, r6, r2, lsl #3
 	ldr r2, [r1, #0]
 	str r2, [r3, r0, lsl #2]
-	add r3, r11, r11, lsl #2
+	add r3, r10, r10, lsl #2
 	add r10, r4, r3, lsl #3
 	str r9, [r10, r2, lsl #2]
 	mov r10, #0

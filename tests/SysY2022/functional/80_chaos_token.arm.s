@@ -135,10 +135,10 @@ main:
 	movt r5, #:upper16:__HELLO
 	str r0, [sp, #0]
 	mov r0, #0
-	str r0, [r4, #4]
-	str r0, [r4, #8]
-	str r0, [r4, #12]
-	str r0, [r4, #16]
+	str r0, [sp, #4]
+	str r0, [sp, #8]
+	str r0, [sp, #12]
+	str r0, [sp, #16]
 	ldr r0, [r5, #0]
 	cmp r0, #0
 	bne label31

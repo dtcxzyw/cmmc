@@ -230,6 +230,13 @@ static bool selectAddrOffset(const MIROperand& addr, ISelContext& ctx, MIROperan
                 offset = off;
                 if(auto baseReg = ctx.getRegRef(base, *addrInst)) {
                     base = *baseReg;
+
+                    if(auto baseInst = ctx.lookupDef(base)) {
+                        if(baseInst->opcode() == InstLoadStackObjectAddr) {
+                            base = baseInst->getOperand(1);
+                        }
+                    }
+
                     return true;
                 }
             }
@@ -997,6 +1004,23 @@ void ARMISelInfo::legalizeInstWithStackOperand(const InstLegalizeContext& ctx, M
     auto& inst = ctx.inst;
     [[maybe_unused]] auto checkOpIdx = [&](uint32_t idx) { return &inst.getOperand(idx) == &op; };
     int64_t immVal = obj.offset;
+    switch(inst.opcode()) {
+        case LDR:
+        case LDRB:
+        case LDRSB:
+        case LDRH:
+        case LDRSH:
+        case VLDR:
+        case STR:
+        case STRB:
+        case STRH:
+        case VSTR: {
+            immVal += inst.getOperand(2).imm();
+            break;
+        }
+        default:
+            break;
+    }
     MIROperand base = sp;
 
     if(inst.opcode() != InstLoadStackObjectAddr) {

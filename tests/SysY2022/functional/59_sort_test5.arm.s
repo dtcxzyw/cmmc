@@ -14,22 +14,22 @@ main:
 	mov r1, #3
 	mov r4, sp
 	str r0, [sp, #0]
-	str r1, [r4, #4]
+	str r1, [sp, #4]
 	mov r1, #9
-	str r1, [r4, #8]
+	str r1, [sp, #8]
 	mov r1, #2
-	str r1, [r4, #12]
+	str r1, [sp, #12]
 	mov r1, #0
-	str r1, [r4, #16]
+	str r1, [sp, #16]
 	mov r1, #1
-	str r1, [r4, #20]
+	str r1, [sp, #20]
 	mov r1, #6
-	str r1, [r4, #24]
+	str r1, [sp, #24]
 	mov r1, #5
-	str r1, [r4, #28]
+	str r1, [sp, #28]
 	mov r1, #7
-	str r1, [r4, #32]
-	str r2, [r4, #36]
+	str r1, [sp, #32]
+	str r2, [sp, #36]
 	sub r1, r2, #2
 	add r3, r2, #1
 	mov r2, r0

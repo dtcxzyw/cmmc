@@ -21,14 +21,14 @@ main:
 	vstr s0, [sp, #32]
 	movt r0, #16576
 	vmov s2, r0
-	vstr s1, [r7, #4]
-	vstr s2, [r7, #8]
+	vstr s1, [sp, #36]
+	vstr s2, [sp, #40]
 	vstr s0, [sp, #16]
-	vstr s1, [r5, #4]
-	vstr s2, [r5, #8]
+	vstr s1, [sp, #20]
+	vstr s2, [sp, #24]
 	vstr s0, [sp, #0]
-	vstr s1, [r4, #4]
-	vstr s2, [r4, #8]
+	vstr s1, [sp, #4]
+	vstr s2, [sp, #8]
 label2:
 	add r0, r7, r6, lsl #2
 	vldr s0, [r0, #0]

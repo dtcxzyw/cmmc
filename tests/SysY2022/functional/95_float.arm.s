@@ -64,16 +64,16 @@ main:
 	mov r0, #1073741824
 	vstr s0, [sp, #0]
 	vmov s0, r0
-	vstr s0, [r4, #4]
+	vstr s0, [sp, #4]
 	vmov s0, r6
-	vstr s0, [r4, #8]
-	vstr s0, [r4, #12]
-	vstr s0, [r4, #16]
-	vstr s0, [r4, #20]
-	vstr s0, [r4, #24]
-	vstr s0, [r4, #28]
-	vstr s0, [r4, #32]
-	vstr s0, [r4, #36]
+	vstr s0, [sp, #8]
+	vstr s0, [sp, #12]
+	vstr s0, [sp, #16]
+	vstr s0, [sp, #20]
+	vstr s0, [sp, #24]
+	vstr s0, [sp, #28]
+	vstr s0, [sp, #32]
+	vstr s0, [sp, #36]
 	mov r0, r4
 	bl getfarray
 	mov r7, #1

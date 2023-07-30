@@ -114,37 +114,37 @@ main:
 	mov r0, #0
 	sub sp, sp, #132
 	str r0, [sp, #8]
-	add r4, sp, #8
-	mov r5, sp
-	str r0, [r4, #4]
-	str r0, [r4, #8]
-	str r0, [r4, #12]
-	str r0, [r4, #16]
-	str r0, [r4, #20]
-	str r0, [r4, #24]
-	str r0, [r4, #28]
-	str r0, [r4, #32]
-	str r0, [r4, #36]
-	str r0, [r4, #40]
-	str r0, [r4, #44]
-	str r0, [r4, #48]
-	str r0, [r4, #52]
-	str r0, [r4, #56]
-	str r0, [r4, #60]
-	str r0, [r4, #64]
-	str r0, [r4, #68]
-	str r0, [r4, #72]
-	str r0, [r4, #76]
-	str r0, [r4, #80]
-	str r0, [r4, #84]
-	str r0, [r4, #88]
-	str r0, [r4, #92]
-	str r0, [r4, #96]
-	str r0, [r4, #100]
-	str r0, [r4, #104]
-	str r0, [r4, #108]
-	str r0, [r4, #112]
-	str r0, [r4, #116]
+	mov r4, sp
+	add r5, sp, #8
+	str r0, [sp, #12]
+	str r0, [sp, #16]
+	str r0, [sp, #20]
+	str r0, [sp, #24]
+	str r0, [sp, #28]
+	str r0, [sp, #32]
+	str r0, [sp, #36]
+	str r0, [sp, #40]
+	str r0, [sp, #44]
+	str r0, [sp, #48]
+	str r0, [sp, #52]
+	str r0, [sp, #56]
+	str r0, [sp, #60]
+	str r0, [sp, #64]
+	str r0, [sp, #68]
+	str r0, [sp, #72]
+	str r0, [sp, #76]
+	str r0, [sp, #80]
+	str r0, [sp, #84]
+	str r0, [sp, #88]
+	str r0, [sp, #92]
+	str r0, [sp, #96]
+	str r0, [sp, #100]
+	str r0, [sp, #104]
+	str r0, [sp, #108]
+	str r0, [sp, #112]
+	str r0, [sp, #116]
+	str r0, [sp, #120]
+	str r0, [sp, #124]
 	bl getint
 	str r0, [sp, #0]
 	bl getint
@@ -176,8 +176,8 @@ label95:
 	b label96
 label100:
 	mov r0, #1
-	mov r1, r4
-	mov r2, r5
+	mov r1, r5
+	mov r2, r4
 	bl maxCliques
 	bl putint
 	add sp, sp, #132
