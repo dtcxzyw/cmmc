@@ -69,7 +69,7 @@ class ArithmeticReduce final : public TransformPass<Function> {
             };
             auto makeNeg = [&](Value* val) {
                 assert(val->getType()->isInteger() && !val->getType()->isBoolean());
-                return builder.makeOp<BinaryInst>(InstructionID::Sub, makeIntLike(0, val), val);
+                return builder.makeOp<UnaryInst>(InstructionID::Neg, val);
             };
 
             Value *v1, *v2, *v3, *v4;
@@ -1191,6 +1191,13 @@ class ArithmeticReduce final : public TransformPass<Function> {
                                                        makeIntLike(i1 - 1, v1));
                 }
             }
+
+            // select x, y + z, y -> y + (z & -x)
+            // if(select(any(v1), add(any(v2), any(v3)), exactly(v2))(matchCtx)) {
+            //     const auto mask = makeNeg(builder.makeOp<CastInst>(InstructionID::ZExt, v2->getType(), v1));
+            //     return builder.makeOp<BinaryInst>(InstructionID::Add, v2,
+            //                                       builder.makeOp<BinaryInst>(InstructionID::And, v3, mask));
+            // }
 
             return nullptr;
         });

@@ -4,10 +4,11 @@
 .globl pass_bool
 pass_bool:
 .p2align 2
-	sltu a2, zero, a0
-	subw a3, zero, a2
+	li a1, 66
+	bne a0, zero, label8
+	mv a1, zero
+label8:
 	li a2, 4294967295
-	andi a1, a3, 66
 	and a0, a1, a2
 	ret
 .globl ret_true

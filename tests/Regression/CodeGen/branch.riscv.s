@@ -268,17 +268,16 @@ label274:
 .globl normal_srem
 normal_srem:
 .p2align 2
-	li a3, 1152921497
-	mul a1, a0, a3
-	srli a3, a1, 63
-	srai a2, a1, 60
-	add a1, a3, a2
-	li a2, 1000000007
-	mulw a3, a1, a2
-	subw a1, a0, a3
-	addw a2, a1, a2
+	li a2, 1152921497
+	mul a1, a0, a2
+	srli a4, a1, 63
+	srai a3, a1, 60
+	li a1, 1000000007
+	add a2, a4, a3
+	mulw a3, a2, a1
+	subw a2, a0, a3
 	mv a0, a2
-	blt a1, zero, label299
-	mv a0, a1
+	bge a2, zero, label299
+	addw a0, a2, a1
 label299:
 	ret

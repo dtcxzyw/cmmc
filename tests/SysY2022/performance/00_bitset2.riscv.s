@@ -19,9 +19,9 @@ main:
 	mv s2, a0
 	li a0, 56
 	jal _sysy_starttime
-pcrel142:
+pcrel146:
 	auipc a1, %pcrel_hi(a)
-	addi s0, a1, %pcrel_lo(pcrel142)
+	addi s0, a1, %pcrel_lo(pcrel146)
 	ble s1, zero, label2
 	mv a0, s2
 	mv a1, s1
@@ -41,48 +41,46 @@ label2:
 	ret
 .p2align 2
 label3:
-	li a2, 19971231
-	li a4, 19981013
+	li a4, 19971231
 	li a5, 1152921497
-	mulw a0, a0, a2
-	addw a3, a0, a4
-	mul a0, a3, a5
-	srli t2, a0, 63
-	srai t1, a0, 60
-	li a0, 1000000007
+	mulw a2, a0, a4
+	li a0, 19981013
+	addw a3, a2, a0
+	mul a2, a3, a5
+	srli t2, a2, 63
+	srai t1, a2, 60
+	li a2, 1000000007
 	add t0, t2, t1
-	mulw t2, t0, a0
-	subw t0, a3, t2
-	addw t1, t0, a0
-	mv a3, t1
-	blt t0, zero, label130
+	mulw t1, t0, a2
+	subw t0, a3, t1
 	mv a3, t0
+	bge t0, zero, label129
+	addw a3, t0, a2
 .p2align 2
-label130:
-	mulw t0, a3, a2
-	addw a2, t0, a4
-	mul a4, a2, a5
-	srli t0, a4, 63
+label129:
+	mulw t0, a3, a4
+	addw a0, t0, a0
+	mul a4, a0, a5
+	srli t1, a4, 63
 	srai a5, a4, 60
-	add t1, t0, a5
-	mulw a4, t1, a0
-	subw a2, a2, a4
-	addw a5, a2, a0
-	mv a0, a5
-	blt a2, zero, label132
-	mv a0, a2
+	add t0, t1, a5
+	mulw a5, t0, a2
+	subw a4, a0, a5
+	mv a0, a4
+	bge a4, zero, label131
+	addw a0, a4, a2
 .p2align 2
-label132:
+label131:
 	andi a2, a0, 1
 	li t0, 1876499845
+	li t1, 300000
 	addiw a1, a1, -1
 	mul a4, a3, t0
-	li t0, 300000
-	srli t1, a4, 63
+	srli t0, a4, 63
 	srai a5, a4, 49
-	add a4, t1, a5
-	mulw t1, a4, t0
-	subw a5, a3, t1
+	add a4, t0, a5
+	mulw t0, a4, t1
+	subw a5, a3, t0
 	li a3, -2004318071
 	mul a4, a5, a3
 	srli t0, a4, 32
@@ -90,14 +88,14 @@ label132:
 	srliw t1, a3, 31
 	sraiw a4, a3, 4
 	add a3, t1, a4
-	slliw t1, a3, 4
+	slliw t3, a3, 4
 	sh2add t0, a3, s0
-	subw t2, t1, a3
-	slli t3, t2, 1
+	subw t2, t3, a3
+	slli t1, t2, 1
 	lw a4, 0(t0)
 	li t2, 1
+	subw t0, a5, t1
 	slli t1, a4, 1
-	subw t0, a5, t3
 	sllw a5, t2, t0
 	li t2, 64
 	subw t3, t2, t0
@@ -116,21 +114,22 @@ label132:
 .p2align 2
 label7:
 	andi t1, t0, 1
-	xori t2, a2, 1
-	or t3, t1, t2
-	sltiu t4, t3, 1
-	subw t2, zero, t4
-	and t1, a5, t2
+	xori t3, a2, 1
+	or t2, t1, t3
+	mv t1, a5
+	beq t2, zero, label133
+	mv t1, zero
+.p2align 2
+label133:
 	li t2, -2147483647
-	subw a5, t1, a5
 	and t3, t0, t2
 	xori t4, t3, 1
 	or t0, a2, t4
-	mv a2, a5
-	beq t0, zero, label134
 	mv a2, t1
+	bne t0, zero, label135
+	subw a2, t1, a5
 .p2align 2
-label134:
+label135:
 	addw a4, a4, a2
 	sh2add a2, a3, s0
 	sw a4, 0(a2)

@@ -378,6 +378,11 @@ InstInfo:
     Format: "select_gpr_gpr $Rd:GPR[Def], $Rs1:IRegOrImm[Use], $Rs2:IRegOrImm[Use], $Lhs:GPR[Use], $Rhs:GPR[Use], $CC:CC[Metadata]"
     Flag: [LegalizePreRA]
 
+  # Rd = cond ? Rs1 op Rs2 : Rs1
+  Select_GPR_Arith:
+    Format: "select_gpr_arith $Rd:GPR[Def], $Rs1:GPR[Use], $Rs2:GPR[Use], $Lhs:GPR[Use], $Rhs:GPR[Use], $CC:CC[Metadata], $Op:Imm[Metadata]"
+    Flag: [LegalizePreRA]
+
   Select_FPR_GPR:
     Format: "select_fpr_gpr $Rd:FPR[Def], $Rs1:FPR[Use], $Rs2:FPR[Use], $Lhs:GPR[Use], $Rhs:GPR[Use], $CC:CC[Metadata]"
     Flag: [LegalizePreRA]
@@ -1812,6 +1817,25 @@ InstSelection:
         $Template: SEXT_W
         Rd: $Dst
         Rs1: $Src
+
+  - Pattern:
+      Select_GPR_GPR:
+        Rd: $Dst
+        Rs1: $TrueV
+        Rs2: $FalseV
+        Lhs: $Lhs
+        Rhs: $Rhs
+        CC: $CmpOpcode
+        $Predicate: isOperandIReg($Dst) && isOperandIReg($TrueV) && isOperandIReg($FalseV) && selectSFBArith(ctx, $TrueV, $FalseV, [$Rs1], [$Rs2], [$Op])
+    Replace:
+      Select_GPR_Arith:
+        Rd: $Dst
+        Rs1: $Rs1
+        Rs2: $Rs2
+        Lhs: $Lhs
+        Rhs: $Rhs
+        CC: $CmpOpcode
+        Op: $Op
 
   - Pattern:
       InstSelect:

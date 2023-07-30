@@ -41,10 +41,11 @@ select_const_int_one_away:
 .globl select_const_int_pow2_zero
 select_const_int_pow2_zero:
 .p2align 2
-	sltu a2, zero, a0
-	subw a3, zero, a2
+	li a1, 4
+	bne a0, zero, label40
+	mv a1, zero
+label40:
 	li a2, 4294967295
-	andi a1, a3, 4
 	and a0, a1, a2
 	ret
 .globl select_eq_10000_10001
@@ -119,9 +120,9 @@ select_sgt_negative_one_constant1_constant2:
 .p2align 2
 	li a2, -1
 	li a1, 7
-	bgt a0, a2, label119
+	bgt a0, a2, label120
 	li a1, -3
-label119:
+label120:
 	li a2, 4294967295
 	and a0, a1, a2
 	ret
@@ -146,9 +147,9 @@ select_sle_zero_negone:
 select_slt_zero_constant1_constant2:
 .p2align 2
 	li a1, 7
-	blt a0, zero, label149
+	blt a0, zero, label150
 	li a1, -3
-label149:
+label150:
 	li a2, 4294967295
 	and a0, a1, a2
 	ret

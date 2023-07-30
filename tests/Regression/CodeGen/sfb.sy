@@ -1,0 +1,15 @@
+int test1(int x, int y) {
+    return y ? x + 10 : x;
+}
+int test2(int x, int y) {
+    return y ? x : x + 10;
+}
+int test3(int x, int y) {
+    return y ? x + 10 : 0;
+}
+int test4(int x, int y) {
+    return y ? 0 : x + 10;
+}
+int test5(int x) {
+    return x < 0 ? x + 1000000007 : x;
+}

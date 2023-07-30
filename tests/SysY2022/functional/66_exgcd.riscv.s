@@ -80,21 +80,20 @@ main:
 	sw a0, 4(sp)
 	li a0, 7
 	jal exgcd
-	lw a0, 0(sp)
 	li a1, -2004318071
+	lw a0, 0(sp)
 	mul a2, a0, a1
 	srli a3, a2, 32
 	add a1, a3, a0
-	srliw a4, a1, 31
+	srliw a3, a1, 31
 	sraiw a2, a1, 3
-	add a1, a4, a2
-	slliw a3, a1, 4
-	subw a2, a3, a1
-	subw a1, a0, a2
-	addiw a3, a1, 15
-	mv a0, a3
-	blt a1, zero, label69
+	add a1, a3, a2
+	slliw a2, a1, 4
+	subw a3, a2, a1
+	subw a1, a0, a3
 	mv a0, a1
+	bge a1, zero, label69
+	addiw a0, a1, 15
 label69:
 	jal putint
 	ld ra, 8(sp)

@@ -278,10 +278,11 @@ label307:
 select_bitset:
 .p2align 2
 	xori a3, a1, 1
-	or a0, a0, a3
-	sltiu a1, a0, 1
-	subw a3, zero, a1
-	and a0, a2, a3
+	or a1, a0, a3
+	mv a0, a2
+	beq a1, zero, label318
+	mv a0, zero
+label318:
 	ret
 .globl select_imax
 select_imax:
@@ -296,16 +297,18 @@ select_imin:
 .globl select_zero
 select_zero:
 .p2align 2
-	sltiu a2, a0, 1
-	subw a3, zero, a2
-	and a0, a1, a3
+	beq a0, zero, label333
+	mv a1, zero
+label333:
+	mv a0, a1
 	ret
 .globl select_sgt_zero
 select_sgt_zero:
 .p2align 2
-	slt a2, zero, a0
-	subw a3, zero, a2
-	and a0, a1, a3
+	bgt a0, zero, label340
+	mv a1, zero
+label340:
+	mv a0, a1
 	ret
 .globl select_slt_zero
 select_slt_zero:
@@ -323,9 +326,9 @@ select_imm:
 select_one:
 .p2align 2
 	li a3, 1
-	beq a0, a3, label358
+	beq a0, a3, label361
 	mv a1, a2
-label358:
+label361:
 	mv a0, a1
 	ret
 .globl select_constant
@@ -333,7 +336,7 @@ select_constant:
 .p2align 2
 	mv a1, a0
 	li a0, -1894007588
-	bne a1, zero, label364
+	bne a1, zero, label367
 	li a0, -899497722
-label364:
+label367:
 	ret

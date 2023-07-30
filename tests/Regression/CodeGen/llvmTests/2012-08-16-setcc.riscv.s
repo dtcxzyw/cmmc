@@ -5,11 +5,12 @@
 and_1:
 .p2align 2
 	andi a0, a0, 255
-	andi a1, a1, 255
-	and a3, a0, a1
-	sltu a4, zero, a3
-	subw a1, zero, a4
-	and a0, a2, a1
+	andi a3, a1, 255
+	and a1, a0, a3
+	mv a0, a2
+	bne a1, zero, label11
+	mv a0, zero
+label11:
 	ret
 .globl and_2
 and_2:
@@ -25,11 +26,12 @@ and_2:
 xor_1:
 .p2align 2
 	andi a0, a0, 255
-	andi a1, a1, 255
-	xor a3, a0, a1
-	sltu a4, zero, a3
-	subw a1, zero, a4
-	and a0, a2, a1
+	andi a3, a1, 255
+	xor a1, a0, a3
+	mv a0, a2
+	bne a1, zero, label32
+	mv a0, zero
+label32:
 	ret
 .globl xor_2
 xor_2:

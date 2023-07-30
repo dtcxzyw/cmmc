@@ -414,6 +414,57 @@ static bool selectCompare(ISelContext& ctx, const MIROperand& cond, MIROperand& 
     return true;
 }
 
+static bool selectSFBArith(ISelContext& ctx, const MIROperand& trueV, const MIROperand& falseV, MIROperand& rs1, MIROperand& rs2,
+                           MIROperand& op) {
+    if(!ctx.hasOneUse(trueV))
+        return false;
+    const auto inst = ctx.lookupDef(trueV);
+    if(!inst)
+        return false;
+    // TODO: support all legal instructions
+    bool valid = false;
+    switch(inst->opcode()) {
+        case ADD:
+        case ADDW:
+        case ADDI:
+        case ADDIW:
+        case SUB:
+        case SUBW:
+        case MUL:
+        case MULW:
+        case AND:
+        case ANDI:
+        case OR:
+        case ORI:
+        case XOR:
+        case XORI:
+        case SLL:
+        case SLLW:
+        case SLLI:
+        case SLLIW:
+        case SRL:
+        case SRLW:
+        case SRLI:
+        case SRLIW:
+        case SRA:
+        case SRAW:
+        case SRAI:
+        case SRAIW:
+            valid = true;
+        default:
+            break;
+    }
+    if(!valid)
+        return false;
+
+    rs1 = inst->getOperand(1);
+    rs2 = inst->getOperand(2);
+    if(rs1 != falseV)
+        return false;
+    op = MIROperand::asImm(inst->opcode(), OperandType::Special);
+    return true;
+}
+
 CMMC_TARGET_NAMESPACE_END
 
 #include <RISCV/ISelInfoImpl.hpp>
@@ -767,6 +818,50 @@ void RISCVISelInfo::preRALegalizeInst(const InstLegalizeContext& ctx) const {
                 falseBlock->instructions().push_back(MIRInst{ moveCode }.setOperand<0>(dst).setOperand<1>(falseV));
             }
             falseBlock->instructions().push_back(MIRInst{ J }.setOperand<0>(MIROperand::asReloc(nextBlock)));
+
+            *ctx.iter = MIRInst{ moveCode }.setOperand<0>(dst).setOperand<1>(dst);  // noop
+            break;
+        }
+        case Select_GPR_Arith: {
+            auto& dst = ctx.inst.getOperand(0);
+            auto& rs1 = ctx.inst.getOperand(1);
+            auto& rs2 = ctx.inst.getOperand(2);
+            auto& lhs = ctx.inst.getOperand(3);
+            auto& rhs = ctx.inst.getOperand(4);
+            auto& cc = ctx.inst.getOperand(5);
+            auto& op = ctx.inst.getOperand(6);
+            constexpr auto moveCode = MoveGPR;
+
+            auto& curInstructions = ctx.instructions;
+            constexpr auto prob = defaultSelectProb;
+
+            auto prevBlock = (*ctx.blockIter)->get();
+            const auto insertPoint = std::next(*ctx.blockIter);
+            auto trueBlock =
+                ctx.func.blocks()
+                    .insert(insertPoint,
+                            makeUnique<MIRBasicBlock>(prevBlock->symbol().withID(static_cast<int32_t>(ctx.ctx.nextId())),
+                                                      &ctx.func, prevBlock->getTripCount() * prob))
+                    ->get();
+            auto nextBlock =
+                ctx.func.blocks()
+                    .insert(insertPoint,
+                            makeUnique<MIRBasicBlock>(prevBlock->symbol().withID(static_cast<int32_t>(ctx.ctx.nextId())),
+                                                      &ctx.func, prevBlock->getTripCount()))
+                    ->get();
+
+            nextBlock->instructions().splice(nextBlock->instructions().end(), curInstructions, std::next(ctx.iter),
+                                             curInstructions.end());
+            prevBlock->instructions().push_back(MIRInst{ moveCode }.setOperand<0>(dst).setOperand<1>(rs1));
+            prevBlock->instructions().push_back(MIRInst{
+                getICmpBranchOpcode(MIROperand::asImm(getInvertedOp(static_cast<CompareOp>(cc.imm())), OperandType::Special)) }
+                                                    .setOperand<0>(lhs == rs1 && !isZero(lhs) ? dst : lhs)
+                                                    .setOperand<1>(rhs == rs1 && !isZero(rhs) ? dst : rhs)
+                                                    .setOperand<2>(MIROperand::asReloc(nextBlock))
+                                                    .setOperand<3>(MIROperand::asProb(1.0 - prob)));
+            trueBlock->instructions().push_back(
+                MIRInst{ static_cast<uint32_t>(op.imm()) }.setOperand<0>(dst).setOperand<1>(dst).setOperand<2>(rs2));
+            trueBlock->instructions().push_back(MIRInst{ J }.setOperand<0>(MIROperand::asReloc(nextBlock)));
 
             *ctx.iter = MIRInst{ moveCode }.setOperand<0>(dst).setOperand<1>(dst);  // noop
             break;

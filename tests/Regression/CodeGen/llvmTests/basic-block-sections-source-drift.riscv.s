@@ -4,14 +4,15 @@
 .globl foo
 foo:
 .p2align 2
-	sltu a3, zero, a1
-	subw a2, zero, a3
+	li a2, 2
+	bne a1, zero, label11
+	mv a2, zero
+label11:
 	li a3, 4294967295
-	andi a1, a2, 2
-	and a2, a1, a3
 	li a1, 1
-	bne a0, zero, label12
+	and a2, a2, a3
+	bne a0, zero, label13
 	mv a1, a2
-label12:
+label13:
 	mv a0, a1
 	ret

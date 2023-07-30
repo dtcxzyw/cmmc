@@ -4,19 +4,21 @@
 .globl pass_fast_bool
 pass_fast_bool:
 .p2align 2
-	sltu a2, zero, a0
-	subw a3, zero, a2
+	li a1, 66
+	bne a0, zero, label8
+	mv a1, zero
+label8:
 	li a2, 4294967295
-	andi a1, a3, 66
 	and a0, a1, a2
 	ret
 .globl pass_vector_bool
 pass_vector_bool:
 .p2align 2
-	sltu a2, zero, a0
-	subw a3, zero, a2
+	li a1, 66
+	bne a0, zero, label16
+	mv a1, zero
+label16:
 	li a2, 4294967295
-	andi a1, a3, 66
 	and a0, a1, a2
 	ret
 .globl ret_true

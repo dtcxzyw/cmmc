@@ -5,15 +5,13 @@
 test_local_strategy:
 .p2align 2
 	divw a1, a0, a1
+	addw a3, a3, a4
 	li a0, 4294967295
 	and t0, a1, a0
 	subw a1, t0, a2
-	and a2, a1, a0
-	addw a0, a3, a4
-	addw a3, a5, a0
-	addw a4, a2, a3
-	mv a0, a4
-	beq a1, zero, label23
-	mv a0, a2
+	addw a2, a5, a3
+	and a0, a1, a0
+	bne a1, zero, label23
+	addw a0, a0, a2
 label23:
 	ret

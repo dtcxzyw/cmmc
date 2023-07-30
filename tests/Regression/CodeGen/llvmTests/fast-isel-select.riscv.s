@@ -5,10 +5,10 @@
 fastisel_select:
 .p2align 2
 	subw a2, a0, a1
-	sltu a3, zero, a2
-	li a2, 1204476887
-	subw a0, zero, a3
-	li a3, 4294967295
-	and a1, a0, a2
-	and a0, a1, a3
+	li a0, 1204476887
+	bne a2, zero, label10
+	mv a0, zero
+label10:
+	li a1, 4294967295
+	and a0, a0, a1
 	ret

@@ -17,27 +17,29 @@ c:
 .globl fn1
 fn1:
 .p2align 2
-	sltu a2, zero, a1
-	subw a3, zero, a2
-	and a0, a0, a3
+	bne a1, zero, label7
+	mv a0, zero
+label7:
 	ret
 .globl fn2
 fn2:
 .p2align 2
-pcrel30:
-	auipc a2, %pcrel_hi(b)
-pcrel31:
-	auipc a0, %pcrel_hi(a)
-	lw a1, %pcrel_lo(pcrel30)(a2)
-	lw a3, %pcrel_lo(pcrel31)(a0)
-	addiw a2, a3, -1
-	sltu a4, zero, a2
-	subw a3, zero, a4
-	li a4, 4294967295
-	and a1, a1, a3
-	and a2, a2, a4
-	sw a2, %pcrel_lo(pcrel31)(a0)
 pcrel32:
+	auipc a2, %pcrel_hi(b)
+pcrel33:
+	auipc a0, %pcrel_hi(a)
+	lw a1, %pcrel_lo(pcrel32)(a2)
+	lw a3, %pcrel_lo(pcrel33)(a0)
+	addiw a2, a3, -1
+	bne a2, zero, label31
+	mv a1, zero
+label31:
+	li a3, 4294967295
+	and a2, a2, a3
+pcrel34:
+	auipc a0, %pcrel_hi(a)
+	sw a2, %pcrel_lo(pcrel34)(a0)
+pcrel35:
 	auipc a0, %pcrel_hi(c)
-	sw a1, %pcrel_lo(pcrel32)(a0)
+	sw a1, %pcrel_lo(pcrel35)(a0)
 	ret

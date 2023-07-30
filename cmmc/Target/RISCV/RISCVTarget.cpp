@@ -212,7 +212,7 @@ public:
             .duplicationThreshold = 10U,
             .duplicationIterations = 10U,
             .branchLimit = 400U,
-            .disableSelectionOpt = false,
+            .disableSelectionOpt = true,
             .branchPredictionWarmupThreshold = 8U,
         };
 

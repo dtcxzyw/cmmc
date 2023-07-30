@@ -54,9 +54,11 @@ label44:
 .globl sat0_lower_1
 sat0_lower_1:
 .p2align 2
-	slt a1, zero, a0
-	subw a2, zero, a1
-	and a0, a0, a2
+	mv a1, a0
+	bgt a0, zero, label51
+	mv a1, zero
+label51:
+	mv a0, a1
 	ret
 .globl sat1_base_16bit
 sat1_base_16bit:
@@ -66,9 +68,9 @@ sat1_base_16bit:
 	li a4, -1
 	li a3, -1
 	and a0, a0, a1
-	blt a2, a4, label63
+	blt a2, a4, label64
 	mv a3, a0
-label63:
+label64:
 	and a0, a3, a1
 	ret
 .globl sat1_base_32bit
@@ -76,9 +78,9 @@ sat1_base_32bit:
 .p2align 2
 	li a2, -1
 	li a1, -1
-	blt a0, a2, label71
+	blt a0, a2, label72
 	mv a1, a0
-label71:
+label72:
 	mv a0, a1
 	ret
 .globl sat1_base_8bit
@@ -88,9 +90,9 @@ sat1_base_8bit:
 	andi a2, a0, 255
 	li a3, -1
 	li a0, -1
-	blt a1, a3, label82
+	blt a1, a3, label83
 	mv a0, a2
-label82:
+label83:
 	andi a0, a0, 255
 	ret
 .globl sat1_lower_1
@@ -98,8 +100,8 @@ sat1_lower_1:
 .p2align 2
 	li a2, -1
 	mv a1, a0
-	bgt a0, a2, label91
+	bgt a0, a2, label92
 	li a1, -1
-label91:
+label92:
 	mv a0, a1
 	ret

@@ -149,10 +149,9 @@ label62:
 	add a4, a5, a3
 	mulw a3, a4, a1
 	subw a0, a0, a3
-	addw a1, a0, a1
-	mv s2, a1
-	blt a0, zero, label357
 	mv s2, a0
+	bge a0, zero, label357
+	addw s2, a0, a1
 .p2align 2
 label357:
 	fcvt.s.w f10, s2
