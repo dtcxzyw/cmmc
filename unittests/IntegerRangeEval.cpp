@@ -274,6 +274,14 @@ TEST(IntegerRangeEval, SRem) {
             return x % y;
         },
         [](const IntegerRange& lhs, const IntegerRange& rhs) { return lhs.srem(rhs); }, MatchNone);
+
+    IntegerRange pos;
+    pos.setSignedRange(1, std::numeric_limits<int32_t>::max());
+    pos.sync();
+    const auto rem = pos.srem(IntegerRange{ 65535 });
+    ASSERT_TRUE(rem.isNonNegative() && rem.maxSignedValue() == 65534) << rem;
+    const auto doubleRem = rem.shl(IntegerRange{ 1 });
+    ASSERT_TRUE(doubleRem.isNonNegative() && doubleRem.maxSignedValue() == 65534 * 2) << doubleRem;
 }
 
 TEST(IntegerRangeEval, URem) {

@@ -4,46 +4,81 @@
 test:
 .p2align 2
 	addiu $t0, $a0, -1
-	bltz $t0, label15
+	bgez $t0, label4
 	nop
-	li $t0, 65535
-	div $zero, $a0, $t0
-	mfhi $t2
-	li $t1, 4950
-	move $t0, $zero
-	b label5
-	nop
-label15:
-	move $t0, $zero
+	move $v0, $zero
 label2:
-	move $v0, $t0
 	jr $ra
 	nop
-.p2align 2
-label5:
-	andi $t3, $t1, 1
-	bne $t3, $zero, label9
-	nop
-	sll $t2, $t2, 1
-	li $t3, 65535
-	div $zero, $t2, $t3
-	mfhi $t2
-	srl $t1, $t1, 1
-	bne $t1, $zero, label5
-	nop
-	b label2
-	nop
-.p2align 2
-label9:
-	addu $t0, $t2, $t0
-	li $t3, 65535
-	div $zero, $t0, $t3
+label4:
+	li $t8, 65535
+	div $zero, $a0, $t8
 	mfhi $t0
+	sll $t0, $t0, 1
+	li $t6, 65534
+	slt $t2, $t6, $t0
+	li $t7, -65535
+	addu $t3, $t0, $t7
+	move $t1, $t0
+	movn $t1, $t3, $t2
+	sll $t1, $t1, 1
+	slt $t3, $t6, $t1
+	addu $t4, $t1, $t7
+	move $t2, $t1
+	movn $t2, $t4, $t3
 	sll $t2, $t2, 1
-	div $zero, $t2, $t3
-	mfhi $t2
-	srl $t1, $t1, 1
-	bne $t1, $zero, label5
-	nop
+	slt $t3, $t6, $t2
+	addu $t4, $t2, $t7
+	movn $t2, $t4, $t3
+	sll $t2, $t2, 1
+	slt $t3, $t6, $t2
+	addu $t4, $t2, $t7
+	movn $t2, $t4, $t3
+	sll $t3, $t2, 1
+	slt $t4, $t6, $t3
+	addu $t5, $t3, $t7
+	movn $t3, $t5, $t4
+	sll $t3, $t3, 1
+	slt $t5, $t6, $t3
+	addu $t9, $t3, $t7
+	move $t4, $t3
+	movn $t4, $t9, $t5
+	sll $t4, $t4, 1
+	slt $t5, $t6, $t4
+	addu $t9, $t4, $t7
+	movn $t4, $t9, $t5
+	sll $t4, $t4, 1
+	slt $t5, $t6, $t4
+	addu $t9, $t4, $t7
+	movn $t4, $t9, $t5
+	sll $t5, $t4, 1
+	slt $v0, $t6, $t5
+	addu $v1, $t5, $t7
+	move $t9, $t5
+	movn $t9, $v1, $v0
+	sll $t9, $t9, 1
+	slt $v0, $t6, $t9
+	addu $v1, $t9, $t7
+	movn $t9, $v1, $v0
+	sll $t9, $t9, 1
+	slt $v0, $t6, $t9
+	addu $v1, $t9, $t7
+	movn $t9, $v1, $v0
+	sll $t9, $t9, 1
+	slt $v0, $t6, $t9
+	addu $v1, $t9, $t7
+	movn $t9, $v1, $v0
+	addu $t0, $t0, $t1
+	addu $t0, $t2, $t0
+	addu $t0, $t3, $t0
+	addu $t0, $t4, $t0
+	addu $t0, $t5, $t0
+	div $zero, $t0, $t8
+	mfhi $t1
+	addu $v0, $t9, $t1
+	slt $t0, $t6, $v0
+	addu $t1, $t1, $t7
+	addu $t1, $t9, $t1
+	movn $v0, $t1, $t0
 	b label2
 	nop

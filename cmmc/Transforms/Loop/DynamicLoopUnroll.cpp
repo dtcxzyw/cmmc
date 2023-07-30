@@ -49,15 +49,15 @@ public:
                 continue;
             if(std::abs(loop.step) > maxStep)
                 continue;
-            if((std::max(2U, estimateBlockSize(loop.header, true)) - 1U) * heuristic.unrollBlockSize >
-               heuristic.maxUnrollBodySize)
-                continue;
-            if(hasCall(*loop.header))
-                continue;
             // handled by static loop unroll
             if(loop.bound->isConstant() && loop.initial->isConstant())
                 continue;
             if(loop.header->getTransformMetadata().scalarBlock)
+                continue;
+            if(hasCall(*loop.header))
+                continue;
+            if((std::max(2U, estimateBlockSize(loop.header, true)) - 1U) * heuristic.unrollBlockSize >
+               heuristic.maxUnrollBodySize)
                 continue;
 
             const auto terminator = loop.latch->getTerminator();

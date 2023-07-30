@@ -397,9 +397,13 @@ IntegerRange IntegerRange::shl(const IntegerRange& rhs) const {
         }
     }
 
-    IntegerRange ret;
+    IntegerRange mul;
+    mul.setUnsignedRange(1ULL << beg, 1ULL << end);
+    mul.sync();
+
+    IntegerRange ret = *this * mul;
     if(retRange.has_value()) {
-        ret = *retRange;
+        ret = ret.intersectSet(*retRange);
     }
     ret.sync();
     return ret;

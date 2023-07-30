@@ -82,9 +82,11 @@ func @not_srem_dividend_known_smaller_than_pos_divisor_clear_bits(i32 %var0) -> 
   ^entry:
     i32 %0 = and i32 %var0, i32 253;
     i32 %1 = strunc i32 %0 to i32;
-    i32 %2 = srem i32 %1, i32 253;
-    i32 %3 = ztrunc i32 %2 to i32;
-    ret i32 %3;
+    i1 %2 = icmp sge i32 %1, i32 253;
+    i32 %3 = add i32 %1, i32 -253;
+    i32 %4 = select i1 %2 ? i32 %3 : i32 %1;
+    i32 %5 = ztrunc i32 %4 to i32;
+    ret i32 %5;
 }
 func @not_srem_dividend_known_smaller_than_pos_divisor_set_bits(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
@@ -114,9 +116,11 @@ func @not_srem_zext_big_divisor(i8 %var0) -> i32 { NoMemoryRead NoMemoryWrite No
   ^entry:
     i32 %0 = zext i8 %var0 to i32;
     i32 %1 = strunc i32 %0 to i32;
-    i32 %2 = srem i32 %1, i32 255;
-    i32 %3 = ztrunc i32 %2 to i32;
-    ret i32 %3;
+    i1 %2 = icmp sge i32 %1, i32 255;
+    i32 %3 = add i32 %1, i32 -255;
+    i32 %4 = select i1 %2 ? i32 %3 : i32 %1;
+    i32 %5 = ztrunc i32 %4 to i32;
+    ret i32 %5;
 }
 func @not_srem_zext_small_divisor(i8 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
@@ -204,9 +208,11 @@ func @srem_dividend_known_smaller_than_pos_divisor_clear_bits(i32 %var0) -> i32 
   ^entry:
     i32 %0 = and i32 %var0, i32 253;
     i32 %1 = strunc i32 %0 to i32;
-    i32 %2 = srem i32 %1, i32 254;
-    i32 %3 = ztrunc i32 %2 to i32;
-    ret i32 %3;
+    i1 %2 = icmp sge i32 %1, i32 254;
+    i32 %3 = add i32 %1, i32 -254;
+    i32 %4 = select i1 %2 ? i32 %3 : i32 %1;
+    i32 %5 = ztrunc i32 %4 to i32;
+    ret i32 %5;
 }
 func @srem_dividend_known_smaller_than_pos_divisor_set_bits(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:

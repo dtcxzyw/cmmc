@@ -46,6 +46,7 @@ bool reduceBlock(IRBuilder& builder, Block& block, const BlockReducer& reducer) 
         // block.dump(std::cerr, HighlightInst{ &inst });
         builder.setInsertPoint(&block, iter);
         if(auto value = reducer(&inst)) {
+            assert(value != &inst);
             // inst.dumpInst(std::cerr);
             // std::cerr << " => ";
             // value->dump(std::cerr, Noop{});
@@ -255,7 +256,7 @@ uint32_t estimateBlockSize(Block* block, bool dynamic) {
             case InstructionID::UDiv:
             case InstructionID::SRem:
             case InstructionID::URem:
-                count += 8;
+                count += 4;
                 break;
             case InstructionID::GetElementPtr:
             case InstructionID::PtrCast:

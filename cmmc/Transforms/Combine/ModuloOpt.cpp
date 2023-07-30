@@ -95,10 +95,10 @@ class ModuloOpt final : public TransformPass<Function> {
                 if(!checkOverflow || oldRange.isNoSignedOverflow()) {
                     IntegerRange r(static_cast<intmax_t>(0));
                     std::vector<Value*> components;
-                    bool hasCross;
+                    bool hasCross = false;
                     collectSum(val, inst, components, r, range, dom, ival, checkOverflow, true, hasCross);
                     assert(!checkOverflow || r.isNoSignedOverflow());
-                    if(hasCross) {
+                    if(hasCross && components.size() > 1) {
                         Value* sum = components.front();
                         for(uint32_t i = 1; i < components.size(); ++i)
                             sum = builder.makeOp<BinaryInst>(InstructionID::Add, sum, components[i]);
@@ -260,15 +260,76 @@ class ModuloOpt final : public TransformPass<Function> {
                         // O(log(n))
                         const auto tripCount = builder.makeOp<BinaryInst>(InstructionID::Sub, end, initial);
                         // always positive
-                        const auto func = getMulMod32(mod);
                         const auto a = builder.makeOp<BinaryInst>(InstructionID::SRem, tripCount, rem);
-                        const auto call = builder.makeOp<FunctionCallInst>(func, std::vector<Value*>{ a, inc, rem });
-                        inst.replaceWith(call);
+                        intmax_t i1;
+                        if(int_(i1)(MatchContext<Value>{ inc })) {
+                            assert(i1 > 0);
+                            Value* res = ConstantInteger::get(inst.getType(), 0);
+                            Value* add = a;
+                            const auto one = ConstantInteger::get(inst.getType(), 1);
+                            while(true) {
+                                if(i1 & 1) {
+                                    res = builder.makeOp<BinaryInst>(InstructionID::Add, add, res);
+                                    res = builder.makeOp<BinaryInst>(InstructionID::SRem, res, rem);
+                                }
+                                i1 >>= 1;
+                                if(i1) {
+                                    add = builder.makeOp<BinaryInst>(InstructionID::Shl, add, one);
+                                    add = builder.makeOp<BinaryInst>(InstructionID::SRem, add, rem);
+                                } else
+                                    break;
+                            }
+                            inst.replaceWith(res);
+                        } else {
+                            const auto func = getMulMod32(mod);
+                            const auto call = builder.makeOp<FunctionCallInst>(func, std::vector<Value*>{ a, inc, rem });
+                            inst.replaceWith(call);
+                        }
                         modified = true;
                     }
                 }
             }
         }
+        return modified;
+    }
+
+    static bool srem2select(Block* block, const IntegerRangeAnalysisResult& range, const DominateAnalysisResult& dom,
+                            IRBuilder& builder) {
+        auto modified = reduceBlock(builder, *block, [&](Instruction* inst) -> Value* {
+            if(inst->getInstID() != InstructionID::SRem)
+                return nullptr;
+
+            const auto lhs = inst->getOperand(0);
+            const auto rhs = inst->getOperand(1);
+
+            const auto lhsRange = range.query(lhs, dom, inst, depth);
+            const auto rhsRange = range.query(rhs, dom, inst, depth);
+
+            // inst->dumpInst(std::cerr);
+            // std::cerr << " -> ";
+            // lhsRange.print(std::cerr);
+            // rhsRange.print(std::cerr);
+
+            if(!lhsRange.isNonNegative())
+                return nullptr;
+            if(!rhsRange.isPositive())
+                return nullptr;
+
+            if(lhsRange.maxSignedValue() < rhsRange.minSignedValue())
+                return lhs;
+
+            if(lhsRange.isNoSignedOverflow() && rhs->is<ConstantInteger>()) {
+                const auto r = IntegerRange::getNonNegative().srem(rhsRange);
+                const auto doubleR = r + r;
+                if(doubleR.isNoSignedOverflow() && lhsRange.maxSignedValue() <= doubleR.maxSignedValue()) {
+                    const auto cond =
+                        builder.makeOp<CompareInst>(InstructionID::ICmp, CompareOp::ICmpSignedGreaterEqual, lhs, rhs);
+                    return builder.makeOp<SelectInst>(cond, builder.makeOp<BinaryInst>(InstructionID::Sub, lhs, rhs), lhs);
+                }
+            }
+
+            return nullptr;
+        });
         return modified;
     }
 
@@ -283,6 +344,7 @@ public:
         IRBuilder builder{ analysis.module().getTarget() };
         for(auto block : func.blocks()) {
             modified |= mergeSum(block, range, dom, builder);
+            modified |= srem2select(block, range, dom, builder);
         }
         modified |= foldAddRecSRem(range, dom, cfg, loop, builder, analysis.module());
 
