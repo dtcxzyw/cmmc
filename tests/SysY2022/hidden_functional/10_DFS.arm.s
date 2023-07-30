@@ -80,21 +80,22 @@ main:
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
 	sub sp, sp, #20
 	bl getch
-	sub r1, r0, #48
-	movw r2, #:lower16:to
+	sub r2, r0, #48
+	movw r1, #:lower16:to
 	movw r3, #:lower16:vis
 	movw r4, #:lower16:head
-	cmp r1, #9
-	movt r2, #:upper16:to
+	cmp r2, #9
+	movt r1, #:upper16:to
 	movt r3, #:upper16:vis
 	movt r4, #:upper16:head
 	str r3, [sp, #0]
 	movw r3, #:lower16:next
-	str r2, [sp, #4]
+	str r1, [sp, #4]
 	movt r3, #:upper16:next
 	str r3, [sp, #8]
 	bhi label194
 	mov r5, #0
+	sub r1, r0, #48
 	cmp r1, #10
 	blo label207
 .p2align 4
@@ -192,10 +193,10 @@ label119:
 label124:
 	add r0, r4, r2, lsl #2
 	mvn r1, #0
-	str r1, [r4, r2, lsl #2]
 	add r2, r2, #64
-	str r1, [r0, #4]
+	str r1, [r0, #0]
 	cmp r2, #960
+	str r1, [r0, #4]
 	str r1, [r0, #8]
 	str r1, [r0, #12]
 	str r1, [r0, #16]
@@ -261,7 +262,7 @@ label124:
 	blt label124
 	add r0, r4, r2, lsl #2
 	mov r7, #0
-	str r1, [r4, r2, lsl #2]
+	str r1, [r0, #0]
 	str r1, [r0, #4]
 	str r1, [r0, #8]
 	str r1, [r0, #12]
@@ -392,23 +393,25 @@ label416:
 label145:
 	cmp r9, #0
 	rsb r1, r11, #0
-	ldr r2, [sp, #4]
+	add r2, r4, r8, lsl #2
 	sub r6, r6, #1
 	mov r0, r11
 	movne r0, r1
-	str r0, [r2, r7, lsl #2]
-	add r1, r2, r7, lsl #2
-	ldr r9, [r4, r8, lsl #2]
+	ldr r1, [sp, #4]
+	add r1, r1, r7, lsl #2
+	str r0, [r1, #0]
+	add r0, r4, r0, lsl #2
+	ldr r9, [r2, #0]
 	ldr r3, [sp, #8]
-	str r9, [r3, r7, lsl #2]
-	add r2, r3, r7, lsl #2
-	str r7, [r4, r8, lsl #2]
+	add r3, r3, r7, lsl #2
+	str r9, [r3, #0]
+	str r7, [r2, #0]
 	str r8, [r1, #4]
-	ldr r1, [r4, r0, lsl #2]
-	str r1, [r2, #4]
+	ldr r1, [r0, #0]
+	str r1, [r3, #4]
 	add r1, r7, #1
 	add r7, r7, #2
-	str r1, [r4, r0, lsl #2]
+	str r1, [r0, #0]
 	cmp r6, #0
 	bne label131
 	b label130

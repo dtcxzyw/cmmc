@@ -73,14 +73,14 @@ label7:
 	movt r0, #:upper16:value
 	movt r3, #:upper16:left_child
 	ldr r0, [r0, r6, lsl #2]
-	mov r7, r3
 	cmp r1, r0
 	movw r0, #:lower16:right_child
 	movt r0, #:upper16:right_child
-	movgt r7, r0
-	ldr r0, [r7, r6, lsl #2]
+	movgt r3, r0
+	add r7, r3, r6, lsl #2
+	ldr r0, [r7, #0]
 	bl insert
-	str r0, [r7, r6, lsl #2]
+	str r0, [r7, #0]
 	mov r0, r4
 	str r6, [r5, r4, lsl #2]
 	b label3
@@ -102,11 +102,12 @@ label97:
 	ldr r0, [r2, r4, lsl #2]
 	cmp r1, r0
 	ble label99
-	movw r5, #:lower16:right_child
-	movt r5, #:upper16:right_child
-	ldr r0, [r5, r4, lsl #2]
+	movw r0, #:lower16:right_child
+	movt r0, #:upper16:right_child
+	add r5, r0, r4, lsl #2
+	ldr r0, [r5, #0]
 	bl delete
-	str r0, [r5, r4, lsl #2]
+	str r0, [r5, #0]
 	mov r0, r4
 	b label95
 label99:
@@ -141,11 +142,12 @@ label110:
 	beq label208
 	b label207
 label113:
-	movw r5, #:lower16:left_child
-	movt r5, #:upper16:left_child
-	ldr r0, [r5, r4, lsl #2]
+	movw r0, #:lower16:left_child
+	movt r0, #:upper16:left_child
+	add r5, r0, r4, lsl #2
+	ldr r0, [r5, #0]
 	bl delete
-	str r0, [r5, r4, lsl #2]
+	str r0, [r5, #0]
 	mov r0, r4
 	b label95
 label172:

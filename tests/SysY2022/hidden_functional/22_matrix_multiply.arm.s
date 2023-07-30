@@ -174,9 +174,9 @@ label112:
 label26:
 	mov r6, #400
 	ldr r7, [sp, #20]
-	ldr r8, [r1, r4, lsl #2]
 	mla r6, r4, r6, r7
 	add r7, r1, r4, lsl #2
+	ldr r8, [r7, #0]
 	add r11, r6, #400
 	ldr r9, [r6, r0, lsl #2]
 	ldr r10, [r7, #4]

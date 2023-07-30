@@ -67,14 +67,14 @@ gep2:
 .globl gepseq
 gepseq:
 .p2align 4
-	add r2, r0, r1, lsl #2
-	ldr r0, [r0, r1, lsl #2]
-	ldr r1, [r2, #4]
-	add r0, r0, r1
-	ldr r1, [r2, #8]
-	add r0, r0, r1
-	ldr r1, [r2, #12]
-	add r0, r0, r1
+	add r0, r0, r1, lsl #2
+	ldr r1, [r0, #0]
+	ldr r2, [r0, #4]
+	add r1, r1, r2
+	ldr r2, [r0, #8]
+	ldr r0, [r0, #12]
+	add r1, r1, r2
+	add r0, r1, r0
 	bx lr
 .globl lb
 lb:
@@ -112,10 +112,10 @@ label101:
 label104:
 	add r5, r1, r3, lsl #2
 	mov r6, #0
-	str r6, [r1, r3, lsl #2]
 	add r3, r3, #16
-	str r6, [r5, #4]
+	str r6, [r5, #0]
 	cmp r4, r3
+	str r6, [r5, #4]
 	str r6, [r5, #8]
 	str r6, [r5, #12]
 	str r6, [r5, #16]
@@ -134,10 +134,10 @@ label104:
 label106:
 	add r4, r1, r3, lsl #2
 	mov r5, #0
-	str r5, [r1, r3, lsl #2]
 	add r3, r3, #4
-	str r5, [r4, #4]
+	str r5, [r4, #0]
 	cmp r2, r3
+	str r5, [r4, #4]
 	str r5, [r4, #8]
 	str r5, [r4, #12]
 	bgt label106

@@ -83,8 +83,8 @@ label135:
 	mov r1, #0
 label83:
 	add r3, r4, r1, lsl #2
-	str r1, [r4, r1, lsl #2]
 	add r7, r1, #1
+	str r1, [r3, #0]
 	str r7, [r3, #4]
 	add r7, r1, #2
 	str r7, [r3, #8]
@@ -119,8 +119,8 @@ label83:
 	bgt label83
 label85:
 	add r2, r4, r1, lsl #2
-	str r1, [r4, r1, lsl #2]
 	add r3, r1, #1
+	str r1, [r2, #0]
 	str r3, [r2, #4]
 	add r3, r1, #2
 	str r3, [r2, #8]

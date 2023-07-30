@@ -11,19 +11,19 @@ array:
 .globl main
 main:
 .p2align 4
-	push { r4, lr }
+	push { lr }
 	mov r2, #0
 	movw r1, #:lower16:array
+	sub sp, sp, #4
 	movt r1, #:upper16:array
 .p2align 4
 label2:
 	mov r0, #400
-	mov r4, #0
-	mul r3, r2, r0
+	mov r3, #0
 	mla r0, r2, r0, r1
 	add r2, r2, #1
-	str r4, [r1, r3]
 	cmp r2, #20
+	str r3, [r0, #0]
 	mov r3, #1
 	str r3, [r0, #4]
 	mov r3, #2
@@ -313,5 +313,6 @@ label2:
 	ldr r1, [r1, #224]
 	add r0, r0, r1
 	bl putint
+	add sp, sp, #4
 	mov r0, #0
-	pop { r4, pc }
+	pop { pc }

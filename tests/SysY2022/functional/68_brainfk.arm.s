@@ -87,17 +87,19 @@ label24:
 	add r0, r0, r1
 	b label24
 label18:
-	ldr r0, [r5, r6, lsl #2]
-	add r0, r0, #1
-	str r0, [r5, r6, lsl #2]
+	add r0, r5, r6, lsl #2
+	ldr r1, [r0, #0]
+	add r1, r1, #1
+	str r1, [r0, #0]
 	b label12
 label114:
 	sub r0, r0, #1
 	b label24
 label83:
-	ldr r0, [r5, r6, lsl #2]
-	sub r0, r0, #1
-	str r0, [r5, r6, lsl #2]
+	add r0, r5, r6, lsl #2
+	ldr r1, [r0, #0]
+	sub r1, r1, #1
+	str r1, [r0, #0]
 	b label12
 label31:
 	ldr r0, [r5, r6, lsl #2]

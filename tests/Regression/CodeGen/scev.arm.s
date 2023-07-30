@@ -24,11 +24,11 @@ label28:
 	mov r4, r3
 label4:
 	add r6, r0, r4, lsl #2
-	str r3, [r0, r4, lsl #2]
 	add r7, r3, #4
 	add r4, r4, #16
-	str r7, [r6, #4]
+	str r3, [r6, #0]
 	cmp r5, r4
+	str r7, [r6, #4]
 	add r7, r3, #8
 	str r7, [r6, #8]
 	add r7, r3, #12
@@ -67,11 +67,11 @@ label66:
 	b label4
 label7:
 	add r5, r0, r3, lsl #2
-	str r4, [r0, r3, lsl #2]
 	add r6, r4, #4
 	add r3, r3, #4
-	str r6, [r5, #4]
+	str r4, [r5, #0]
 	cmp r2, r3
+	str r6, [r5, #4]
 	add r6, r4, #8
 	str r6, [r5, #8]
 	add r6, r4, #12

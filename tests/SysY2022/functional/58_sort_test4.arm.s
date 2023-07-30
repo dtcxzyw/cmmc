@@ -128,10 +128,12 @@ label13:
 	pop { r4, r5, r6, r7, pc }
 .p2align 4
 label12:
-	ldr r2, [r4, r3, lsl #2]
-	ldr r5, [r4, r0, lsl #2]
-	str r5, [r4, r3, lsl #2]
-	str r2, [r4, r0, lsl #2]
+	add r2, r4, r3, lsl #2
+	add r0, r4, r0, lsl #2
+	ldr r3, [r2, #0]
+	ldr r5, [r0, #0]
+	str r5, [r2, #0]
+	str r3, [r0, #0]
 	mov r0, r1
 	cmp r1, #9
 	blt label4

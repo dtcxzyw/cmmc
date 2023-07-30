@@ -30,10 +30,10 @@ main:
 	bl _sysy_starttime
 	mov r1, #0
 	movw r0, #:lower16:temp
-	movw r7, #:lower16:dst
+	movw r6, #:lower16:dst
 	movt r0, #:upper16:temp
-	movt r7, #:upper16:dst
-	str r7, [sp, #4]
+	movt r6, #:upper16:dst
+	str r6, [sp, #4]
 	ldr r7, [sp, #0]
 	cmp r7, r1
 	bgt label4
@@ -247,17 +247,17 @@ label26:
 	mov r0, #64
 	bl _sysy_stoptime
 	ldr r7, [sp, #0]
+	ldr r6, [sp, #4]
 	mul r0, r7, r7
-	ldr r7, [sp, #4]
-	mov r1, r7
+	mov r1, r6
 	bl putarray
 	add sp, sp, #12
 	mov r0, #0
 	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
 label28:
 	ldr r3, [r0, r2, lsl #2]
-	ldr r7, [sp, #4]
-	str r3, [r7, r2, lsl #2]
+	ldr r6, [sp, #4]
+	str r3, [r6, r2, lsl #2]
 	add r2, r2, #1
 	cmp r1, r2
 	bgt label28
@@ -274,13 +274,13 @@ label144:
 	b label33
 label31:
 	add r4, r0, r3, lsl #2
-	ldr r6, [r0, r3, lsl #2]
-	ldr r7, [sp, #4]
-	str r6, [r7, r3, lsl #2]
-	add r5, r7, r3, lsl #2
-	ldr r6, [r4, #4]
+	ldr r7, [r4, #0]
+	ldr r6, [sp, #4]
+	add r5, r6, r3, lsl #2
 	add r3, r3, #4
+	str r7, [r5, #0]
 	cmp r2, r3
+	ldr r6, [r4, #4]
 	str r6, [r5, #4]
 	ldr r6, [r4, #8]
 	str r6, [r5, #8]
@@ -291,13 +291,13 @@ label31:
 	b label28
 label33:
 	add r5, r0, r3, lsl #2
-	ldr r8, [r0, r3, lsl #2]
-	ldr r7, [sp, #4]
-	str r8, [r7, r3, lsl #2]
-	add r6, r7, r3, lsl #2
-	ldr r7, [r5, #4]
+	ldr r7, [r5, #0]
+	ldr r6, [sp, #4]
+	add r6, r6, r3, lsl #2
 	add r3, r3, #16
+	str r7, [r6, #0]
 	cmp r4, r3
+	ldr r7, [r5, #4]
 	str r7, [r6, #4]
 	ldr r7, [r5, #8]
 	str r7, [r6, #8]

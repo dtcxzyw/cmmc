@@ -255,10 +255,11 @@ label28:
 	cmp r6, #4
 	bgt label166
 	mov r6, #0
-	ldr r7, [r8, r6, lsl #2]
-	ldr r9, [r2, r6, lsl #2]
-	mla r7, r5, r9, r7
-	str r7, [r8, r6, lsl #2]
+	add r7, r8, r6, lsl #2
+	ldr r9, [r7, #0]
+	ldr r10, [r2, r6, lsl #2]
+	mla r9, r5, r10, r9
+	str r9, [r7, #0]
 	add r7, r6, #1
 	ldr r6, [sp, #8]
 	cmp r6, r7
@@ -289,12 +290,12 @@ label166:
 .p2align 4
 label29:
 	add r7, r8, r6, lsl #2
-	ldr r10, [r8, r6, lsl #2]
 	add r9, r2, r6, lsl #2
-	ldr r11, [r2, r6, lsl #2]
-	mla r10, r5, r11, r10
-	str r10, [r8, r6, lsl #2]
+	ldr r10, [r7, #0]
 	add r6, r6, #4
+	ldr r11, [r9, #0]
+	mla r10, r5, r11, r10
+	str r10, [r7, #0]
 	ldr r10, [r7, #4]
 	ldr r11, [r9, #4]
 	mla r10, r5, r11, r10
@@ -310,10 +311,11 @@ label29:
 	ldr r7, [sp, #4]
 	cmp r7, r6
 	bgt label29
-	ldr r7, [r8, r6, lsl #2]
-	ldr r9, [r2, r6, lsl #2]
-	mla r7, r5, r9, r7
-	str r7, [r8, r6, lsl #2]
+	add r7, r8, r6, lsl #2
+	ldr r9, [r7, #0]
+	ldr r10, [r2, r6, lsl #2]
+	mla r9, r5, r10, r9
+	str r9, [r7, #0]
 	add r7, r6, #1
 	ldr r6, [sp, #8]
 	cmp r6, r7
@@ -340,10 +342,11 @@ label29:
 	b label703
 .p2align 4
 label31:
-	ldr r7, [r8, r6, lsl #2]
-	ldr r9, [r2, r6, lsl #2]
-	mla r7, r5, r9, r7
-	str r7, [r8, r6, lsl #2]
+	add r7, r8, r6, lsl #2
+	ldr r9, [r7, #0]
+	ldr r10, [r2, r6, lsl #2]
+	mla r9, r5, r10, r9
+	str r9, [r7, #0]
 	add r7, r6, #1
 	ldr r6, [sp, #8]
 	cmp r6, r7
@@ -430,10 +433,11 @@ label61:
 	cmp r6, #4
 	bgt label344
 	mov r6, #0
-	ldr r7, [r8, r6, lsl #2]
-	ldr r9, [r2, r6, lsl #2]
-	mla r7, r5, r9, r7
-	str r7, [r8, r6, lsl #2]
+	add r7, r8, r6, lsl #2
+	ldr r9, [r7, #0]
+	ldr r10, [r2, r6, lsl #2]
+	mla r9, r5, r10, r9
+	str r9, [r7, #0]
 	add r7, r6, #1
 	ldr r6, [sp, #8]
 	cmp r6, r7
@@ -455,10 +459,11 @@ label344:
 	b label64
 .p2align 4
 label62:
-	ldr r7, [r8, r6, lsl #2]
-	ldr r9, [r2, r6, lsl #2]
-	mla r7, r5, r9, r7
-	str r7, [r8, r6, lsl #2]
+	add r7, r8, r6, lsl #2
+	ldr r9, [r7, #0]
+	ldr r10, [r2, r6, lsl #2]
+	mla r9, r5, r10, r9
+	str r9, [r7, #0]
 	add r7, r6, #1
 	ldr r6, [sp, #8]
 	cmp r6, r7
@@ -481,12 +486,12 @@ label357:
 .p2align 4
 label64:
 	add r7, r8, r6, lsl #2
-	ldr r10, [r8, r6, lsl #2]
 	add r9, r2, r6, lsl #2
-	ldr r11, [r2, r6, lsl #2]
-	mla r10, r5, r11, r10
-	str r10, [r8, r6, lsl #2]
+	ldr r10, [r7, #0]
 	add r6, r6, #4
+	ldr r11, [r9, #0]
+	mla r10, r5, r11, r10
+	str r10, [r7, #0]
 	ldr r10, [r7, #4]
 	ldr r11, [r9, #4]
 	mla r10, r5, r11, r10
@@ -502,10 +507,11 @@ label64:
 	ldr r7, [sp, #4]
 	cmp r7, r6
 	bgt label64
-	ldr r7, [r8, r6, lsl #2]
-	ldr r9, [r2, r6, lsl #2]
-	mla r7, r5, r9, r7
-	str r7, [r8, r6, lsl #2]
+	add r7, r8, r6, lsl #2
+	ldr r9, [r7, #0]
+	ldr r10, [r2, r6, lsl #2]
+	mla r9, r5, r10, r9
+	str r9, [r7, #0]
 	add r7, r6, #1
 	ldr r6, [sp, #8]
 	cmp r6, r7
@@ -540,8 +546,8 @@ label458:
 	mov r4, #0
 	add r5, r3, r4, lsl #2
 	mov r6, #0
-	str r6, [r3, r4, lsl #2]
 	add r4, r4, #4
+	str r6, [r5, #0]
 	str r6, [r5, #4]
 	str r6, [r5, #8]
 	str r6, [r5, #12]
@@ -580,7 +586,7 @@ label459:
 label83:
 	add r4, r3, r5, lsl #2
 	mov r6, #0
-	str r6, [r3, r5, lsl #2]
+	str r6, [r4, #0]
 	str r6, [r4, #4]
 	str r6, [r4, #8]
 	str r6, [r4, #12]
@@ -601,8 +607,8 @@ label83:
 	cmp r5, r4
 	bgt label481
 	add r5, r3, r4, lsl #2
-	str r6, [r3, r4, lsl #2]
 	add r4, r4, #4
+	str r6, [r5, #0]
 	str r6, [r5, #4]
 	str r6, [r5, #8]
 	str r6, [r5, #12]
@@ -642,8 +648,8 @@ label481:
 label85:
 	add r5, r3, r4, lsl #2
 	mov r6, #0
-	str r6, [r3, r4, lsl #2]
 	add r4, r4, #4
+	str r6, [r5, #0]
 	str r6, [r5, #4]
 	str r6, [r5, #8]
 	str r6, [r5, #12]
@@ -747,8 +753,8 @@ label408:
 	mov r4, #0
 	add r5, r3, r4, lsl #2
 	mov r6, #0
-	str r6, [r3, r4, lsl #2]
 	add r4, r4, #4
+	str r6, [r5, #0]
 	str r6, [r5, #4]
 	str r6, [r5, #8]
 	str r6, [r5, #12]
@@ -779,7 +785,7 @@ label409:
 label74:
 	add r4, r3, r5, lsl #2
 	mov r6, #0
-	str r6, [r3, r5, lsl #2]
+	str r6, [r4, #0]
 	str r6, [r4, #4]
 	str r6, [r4, #8]
 	str r6, [r4, #12]
@@ -800,8 +806,8 @@ label74:
 	cmp r5, r4
 	bgt label431
 	add r5, r3, r4, lsl #2
-	str r6, [r3, r4, lsl #2]
 	add r4, r4, #4
+	str r6, [r5, #0]
 	str r6, [r5, #4]
 	str r6, [r5, #8]
 	str r6, [r5, #12]
@@ -833,8 +839,8 @@ label431:
 label76:
 	add r5, r3, r4, lsl #2
 	mov r6, #0
-	str r6, [r3, r4, lsl #2]
 	add r4, r4, #4
+	str r6, [r5, #0]
 	str r6, [r5, #4]
 	str r6, [r5, #8]
 	str r6, [r5, #12]
@@ -935,8 +941,8 @@ label241:
 .p2align 4
 label46:
 	add r4, r1, r2, lsl #2
-	ldr r5, [r1, r2, lsl #2]
 	add r2, r2, #4
+	ldr r5, [r4, #0]
 	add r3, r3, r5
 	ldr r5, [r4, #4]
 	add r3, r3, r5
@@ -961,8 +967,8 @@ label46:
 .p2align 4
 label49:
 	add r3, r1, r2, lsl #2
-	ldr r5, [r1, r2, lsl #2]
 	add r2, r2, #16
+	ldr r5, [r3, #0]
 	add r4, r4, r5
 	ldr r5, [r3, #4]
 	add r4, r4, r5

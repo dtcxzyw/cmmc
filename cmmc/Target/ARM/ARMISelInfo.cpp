@@ -292,7 +292,7 @@ static bool selectFusedAddrOffset(const MIROperand& addr, ISelContext& ctx, cons
         return false;
 
     const auto addrInst = ctx.lookupDef(addr);
-    if(!addrInst || addrInst->opcode() != InstAdd)
+    if(!addrInst || addrInst->opcode() != InstAdd || !ctx.hasOneUse(addr))
         return false;
     base = addrInst->getOperand(1);
     const auto off = addrInst->getOperand(2);

@@ -155,7 +155,7 @@ label31:
 .p2align 4
 label2:
 	add r7, r5, r6, lsl #2
-	ldr r0, [r5, r6, lsl #2]
+	ldr r0, [r7, #0]
 	bl putch
 	add r6, r6, #1
 	ldr r0, [r7, #4]
@@ -172,9 +172,8 @@ label6:
 	movw r6, #:lower16:N4__mE___
 	mov r1, #200
 	movt r6, #:upper16:N4__mE___
-	mul r2, r0, r1
 	mla r8, r0, r1, r6
-	ldr r0, [r6, r2]
+	ldr r0, [r8, #0]
 	cmp r0, #0
 	bne label56
 	movw r8, #:lower16:saY_HeI10_To
@@ -183,9 +182,8 @@ label6:
 	cmp r0, #0
 	bne label63
 	mov r0, #200
-	mul r1, r7, r0
-	mla r7, r7, r0, r6
-	ldr r0, [r6, r1]
+	mla r6, r7, r0, r6
+	ldr r0, [r6, #0]
 	cmp r0, #0
 	bne label70
 	ldr r0, [sp, #0]
@@ -212,16 +210,15 @@ label75:
 .p2align 4
 label14:
 	add r10, r8, r9, lsl #2
-	ldr r0, [r8, r9, lsl #2]
+	ldr r0, [r10, #0]
 	bl putch
 	add r9, r9, #1
 	ldr r0, [r10, #4]
 	cmp r0, #0
 	bne label14
 	mov r0, #200
-	mul r1, r7, r0
-	mla r7, r7, r0, r6
-	ldr r0, [r6, r1]
+	mla r6, r7, r0, r6
+	ldr r0, [r6, #0]
 	cmp r0, #0
 	bne label70
 	ldr r0, [sp, #0]
@@ -239,7 +236,7 @@ label14:
 .p2align 4
 label16:
 	add r10, r8, r9, lsl #2
-	ldr r0, [r8, r9, lsl #2]
+	ldr r0, [r10, #0]
 	bl putch
 	add r9, r9, #1
 	ldr r0, [r10, #4]
@@ -251,9 +248,8 @@ label16:
 	cmp r0, #0
 	bne label63
 	mov r0, #200
-	mul r1, r7, r0
-	mla r7, r7, r0, r6
-	ldr r0, [r6, r1]
+	mla r6, r7, r0, r6
+	ldr r0, [r6, #0]
 	cmp r0, #0
 	bne label70
 	ldr r0, [sp, #0]
@@ -282,13 +278,13 @@ label19:
 	add sp, sp, #24
 	pop { r4, r5, r6, r7, r8, r9, r10, pc }
 label70:
-	mov r6, #0
+	mov r7, #0
 .p2align 4
 label12:
-	add r8, r7, r6, lsl #2
-	ldr r0, [r7, r6, lsl #2]
+	add r8, r6, r7, lsl #2
+	ldr r0, [r8, #0]
 	bl putch
-	add r6, r6, #1
+	add r7, r7, #1
 	ldr r0, [r8, #4]
 	cmp r0, #0
 	bne label12
@@ -314,7 +310,7 @@ label4:
 .p2align 4
 label10:
 	add r7, r4, r6, lsl #2
-	ldr r0, [r4, r6, lsl #2]
+	ldr r0, [r7, #0]
 	bl putch
 	add r6, r6, #1
 	ldr r0, [r7, #4]

@@ -114,10 +114,10 @@ label18:
 	ldr r9, [sp, #8]
 	mvn r1, #0
 	add r0, r9, r2, lsl #2
-	str r1, [r9, r2, lsl #2]
 	add r2, r2, #64
-	str r1, [r0, #4]
+	str r1, [r0, #0]
 	cmp r2, #960
+	str r1, [r0, #4]
 	str r1, [r0, #8]
 	str r1, [r0, #12]
 	str r1, [r0, #16]
@@ -183,7 +183,7 @@ label18:
 	blt label18
 	mov r7, #0
 	add r0, r9, r2, lsl #2
-	str r1, [r9, r2, lsl #2]
+	str r1, [r0, #0]
 	str r1, [r0, #4]
 	str r1, [r0, #8]
 	str r1, [r0, #12]
@@ -301,17 +301,19 @@ label38:
 	mov r0, r11
 	movne r0, r1
 	add r1, r4, r7, lsl #2
-	str r0, [r4, r7, lsl #2]
+	str r0, [r1, #0]
 	ldr r9, [sp, #8]
-	ldr r3, [r9, r8, lsl #2]
-	str r3, [r5, r7, lsl #2]
-	str r7, [r9, r8, lsl #2]
+	add r0, r9, r0, lsl #2
+	add r3, r9, r8, lsl #2
+	ldr r10, [r3, #0]
+	str r10, [r2, #0]
+	str r7, [r3, #0]
 	str r8, [r1, #4]
-	ldr r1, [r9, r0, lsl #2]
+	ldr r1, [r0, #0]
 	str r1, [r2, #4]
 	add r1, r7, #1
 	add r7, r7, #2
-	str r1, [r9, r0, lsl #2]
+	str r1, [r0, #0]
 	cmp r6, #0
 	bne label24
 	b label88

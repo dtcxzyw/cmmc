@@ -21,10 +21,10 @@ label2:
 	ldr r8, [sp, #0]
 	mov r2, #0
 	add r1, r8, r0, lsl #2
-	str r2, [r8, r0, lsl #2]
 	add r0, r0, #64
-	str r2, [r1, #4]
+	str r2, [r1, #0]
 	cmp r0, #524288
+	str r2, [r1, #4]
 	str r2, [r1, #8]
 	str r2, [r1, #12]
 	str r2, [r1, #16]
@@ -257,11 +257,10 @@ label40:
 	add r10, r8, r7, lsl #9
 	mov r8, #0
 label41:
-	lsl r11, r8, #8
 	add r9, r10, r8, lsl #8
-	str r5, [r10, r11]
-	add r8, r8, #1
 	add r11, r5, #1
+	add r8, r8, #1
+	str r5, [r9, #0]
 	cmp r8, #2
 	str r11, [r9, #4]
 	add r11, r5, #2

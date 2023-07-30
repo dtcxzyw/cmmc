@@ -115,23 +115,23 @@ label17:
 	sub r8, r2, #1
 	add r9, r3, r2, lsl #2
 	ldr r10, [r3, r8, lsl #2]
-	ldr r11, [r3, r2, lsl #2]
+	ldr r11, [r9, #0]
 	ldr r9, [r9, #4]
 	add r10, r10, r11
-	ldr r11, [r4, r8, lsl #2]
-	add r9, r10, r9
-	add r10, r4, r8, lsl #2
-	ldr r10, [r10, #8]
-	add r9, r9, r11
+	add r10, r10, r9
+	add r9, r4, r8, lsl #2
+	ldr r11, [r9, #0]
+	ldr r9, [r9, #8]
 	ldr r8, [r5, r8, lsl #2]
+	add r10, r10, r11
+	add r9, r10, r9
+	add r9, r9, r8
+	add r8, r5, r2, lsl #2
+	ldr r10, [r8, #0]
+	ldr r8, [r8, #4]
 	add r9, r9, r10
-	ldr r10, [r5, r2, lsl #2]
-	add r8, r9, r8
-	add r9, r5, r2, lsl #2
-	ldr r9, [r9, #4]
-	add r8, r8, r10
 	ldr r10, [r4, r2, lsl #2]
-	add r8, r8, r9
+	add r8, r9, r8
 	eor r9, r8, #2
 	eor r10, r10, #1
 	orrs r9, r9, r10

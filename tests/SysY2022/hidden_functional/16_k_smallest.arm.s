@@ -11,7 +11,8 @@ array:
 .globl main
 main:
 .p2align 4
-	push { r4, r5, r6, r7, r8, lr }
+	push { r4, r5, r6, r7, r8, r9, lr }
+	sub sp, sp, #4
 	bl getint
 	mov r5, r0
 	bl getint
@@ -40,11 +41,13 @@ label113:
 	ldr r3, [r5, r1, lsl #2]
 	cmp r1, r0
 	bgt label15
-	ldr r2, [r5, r0, lsl #2]
+	add r2, r5, r0, lsl #2
 	cmp r4, r0
-	ldr r3, [r5, r1, lsl #2]
-	str r3, [r5, r0, lsl #2]
-	str r2, [r5, r1, lsl #2]
+	add r7, r5, r1, lsl #2
+	ldr r3, [r2, #0]
+	ldr r8, [r7, #0]
+	str r8, [r2, #0]
+	str r3, [r7, #0]
 	beq label23
 	b label20
 .p2align 4
@@ -55,11 +58,13 @@ label15:
 	add r2, r2, #1
 	cmp r1, r2
 	bgt label15
-	ldr r2, [r5, r6, lsl #2]
+	add r2, r5, r6, lsl #2
 	cmp r4, r6
-	ldr r3, [r5, r1, lsl #2]
-	str r3, [r5, r6, lsl #2]
-	str r2, [r5, r1, lsl #2]
+	add r7, r5, r1, lsl #2
+	ldr r3, [r2, #0]
+	ldr r8, [r7, #0]
+	str r8, [r2, #0]
+	str r3, [r7, #0]
 	bne label20
 label23:
 	cmp r6, #0
@@ -76,21 +81,25 @@ label24:
 	bgt label24
 label26:
 	mov r0, #0
-	pop { r4, r5, r6, r7, r8, pc }
+	add sp, sp, #4
+	pop { r4, r5, r6, r7, r8, r9, pc }
 .p2align 4
 label16:
-	ldr r8, [r5, r6, lsl #2]
-	str r8, [r5, r2, lsl #2]
-	str r7, [r5, r6, lsl #2]
+	add r8, r5, r6, lsl #2
 	add r6, r6, #1
+	ldr r9, [r8, #0]
+	str r9, [r5, r2, lsl #2]
+	str r7, [r8, #0]
 	add r2, r2, #1
 	cmp r1, r2
 	bgt label15
-	ldr r2, [r5, r6, lsl #2]
+	add r2, r5, r6, lsl #2
 	cmp r4, r6
-	ldr r3, [r5, r1, lsl #2]
-	str r3, [r5, r6, lsl #2]
-	str r2, [r5, r1, lsl #2]
+	add r7, r5, r1, lsl #2
+	ldr r3, [r2, #0]
+	ldr r8, [r7, #0]
+	str r8, [r2, #0]
+	str r3, [r7, #0]
 	beq label23
 label20:
 	cmp r4, r6

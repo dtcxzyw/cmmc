@@ -49,7 +49,7 @@ label8:
 	b label10
 label9:
 	add r5, r4, r3, lsl #2
-	ldr r6, [r4, r3, lsl #2]
+	ldr r6, [r5, #0]
 	ldr r5, [r5, #4]
 	cmp r6, r5
 	mov r5, #0
@@ -74,12 +74,13 @@ label13:
 	bgt label76
 label151:
 	mov r0, #9
-	ldr r1, [sp, #0]
+	add r1, r4, r0, lsl #2
+	ldr r2, [sp, #0]
+	ldr r3, [r1, #0]
+	str r3, [sp, #0]
 	mov r3, #1
-	ldr r2, [r4, r0, lsl #2]
-	str r2, [sp, #0]
+	str r2, [r1, #0]
 	mov r2, #0
-	str r1, [r4, r0, lsl #2]
 	sub r1, r0, #1
 	b label16
 .p2align 4
@@ -140,7 +141,7 @@ label25:
 .p2align 4
 label20:
 	add r5, r4, r3, lsl #2
-	ldr r6, [r4, r3, lsl #2]
+	ldr r6, [r5, #0]
 	ldr r5, [r5, #4]
 	cmp r6, r5
 	mov r5, #0
@@ -168,12 +169,13 @@ label24:
 .p2align 4
 label117:
 	mov r0, r1
-	ldr r1, [sp, #0]
+	add r1, r4, r1, lsl #2
+	ldr r2, [sp, #0]
+	ldr r3, [r1, #0]
+	str r3, [sp, #0]
 	mov r3, #1
-	ldr r2, [r4, r0, lsl #2]
-	str r2, [sp, #0]
+	str r2, [r1, #0]
 	mov r2, #0
-	str r1, [r4, r0, lsl #2]
 	sub r1, r0, #1
 	cmp r0, r3
 	bgt label19

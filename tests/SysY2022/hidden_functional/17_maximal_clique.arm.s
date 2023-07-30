@@ -149,29 +149,29 @@ main:
 	str r0, [sp, #0]
 	bl getint
 	cmp r0, #0
-	movw r6, #:lower16:edges
-	movw r7, #:lower16:graph
-	mov r8, r0
-	movt r6, #:upper16:edges
-	movt r7, #:upper16:graph
+	movw r8, #:lower16:edges
+	movw r6, #:lower16:graph
+	mov r7, r0
+	movt r8, #:upper16:edges
+	movt r6, #:upper16:graph
 	ble label100
 	mov r9, #0
 .p2align 4
 label92:
 	bl getint
-	str r0, [r6, r9, lsl #3]
-	add r10, r6, r9, lsl #3
+	add r10, r8, r9, lsl #3
+	str r0, [r10, #0]
 	bl getint
 	add r9, r9, #1
 	str r0, [r10, #4]
-	cmp r8, r9
+	cmp r7, r9
 	bgt label92
-	cmp r8, #4
+	cmp r7, #4
 	bgt label95
 	mov r0, #0
 	b label98
 label95:
-	sub r1, r8, #4
+	sub r1, r7, #4
 	mov r0, #0
 	b label96
 label100:
@@ -184,55 +184,55 @@ label100:
 	mov r0, #0
 	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
 label96:
-	add r2, r6, r0, lsl #3
-	ldr r9, [r6, r0, lsl #3]
+	add r2, r8, r0, lsl #3
 	add r0, r0, #4
-	ldr r10, [r2, #4]
+	ldr r9, [r2, #0]
 	cmp r1, r0
+	ldr r10, [r2, #4]
 	rsb r3, r9, r9, lsl #4
-	add r11, r7, r3, lsl #3
+	add r11, r6, r3, lsl #3
 	mov r3, #1
 	str r3, [r11, r10, lsl #2]
 	rsb r10, r10, r10, lsl #4
-	add r10, r7, r10, lsl #3
+	add r10, r6, r10, lsl #3
 	str r3, [r10, r9, lsl #2]
 	ldr r9, [r2, #8]
 	rsb r10, r9, r9, lsl #4
-	add r11, r7, r10, lsl #3
+	add r11, r6, r10, lsl #3
 	ldr r10, [r2, #12]
 	str r3, [r11, r10, lsl #2]
 	rsb r10, r10, r10, lsl #4
-	add r10, r7, r10, lsl #3
+	add r10, r6, r10, lsl #3
 	str r3, [r10, r9, lsl #2]
 	ldr r9, [r2, #16]
 	rsb r10, r9, r9, lsl #4
-	add r11, r7, r10, lsl #3
+	add r11, r6, r10, lsl #3
 	ldr r10, [r2, #20]
 	str r3, [r11, r10, lsl #2]
 	rsb r10, r10, r10, lsl #4
-	add r10, r7, r10, lsl #3
+	add r10, r6, r10, lsl #3
 	str r3, [r10, r9, lsl #2]
 	ldr r9, [r2, #24]
 	ldr r2, [r2, #28]
 	rsb r10, r9, r9, lsl #4
-	add r10, r7, r10, lsl #3
+	add r10, r6, r10, lsl #3
 	str r3, [r10, r2, lsl #2]
 	rsb r2, r2, r2, lsl #4
-	add r2, r7, r2, lsl #3
+	add r2, r6, r2, lsl #3
 	str r3, [r2, r9, lsl #2]
 	bgt label96
 label98:
-	add r2, r6, r0, lsl #3
-	ldr r1, [r6, r0, lsl #3]
+	add r2, r8, r0, lsl #3
 	add r0, r0, #1
-	cmp r8, r0
+	ldr r1, [r2, #0]
+	cmp r7, r0
 	rsb r3, r1, r1, lsl #4
-	add r9, r7, r3, lsl #3
+	add r9, r6, r3, lsl #3
 	ldr r3, [r2, #4]
 	mov r2, #1
 	str r2, [r9, r3, lsl #2]
 	rsb r3, r3, r3, lsl #4
-	add r3, r7, r3, lsl #3
+	add r3, r6, r3, lsl #3
 	str r2, [r3, r1, lsl #2]
 	bgt label98
 	b label100

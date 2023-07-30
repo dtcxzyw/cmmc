@@ -63,10 +63,10 @@ main:
 label2:
 	add r2, r0, r1, lsl #2
 	mov r3, #0
-	str r3, [r0, r1, lsl #2]
 	add r1, r1, #64
-	str r3, [r2, #4]
+	str r3, [r2, #0]
 	cmp r1, #256
+	str r3, [r2, #4]
 	str r3, [r2, #8]
 	str r3, [r2, #12]
 	str r3, [r2, #16]
@@ -131,10 +131,10 @@ label2:
 	str r3, [r2, #252]
 	blt label2
 	mov r1, #1
-	sub r6, r1, #1
-	add r3, r0, r1, lsl #6
+	sub r3, r1, #1
+	add r6, r0, r1, lsl #6
 	cmp r1, #16
-	sub r7, r3, #64
+	sub r7, r6, #64
 	blt label121
 label12:
 	ldr r0, [r0, #1012]
@@ -149,47 +149,47 @@ label121:
 	cmp r2, #14
 	blt label8
 	add r1, r1, #1
-	sub r6, r1, #1
-	add r3, r0, r1, lsl #6
+	sub r3, r1, #1
+	add r6, r0, r1, lsl #6
 	cmp r1, #16
-	sub r7, r3, #64
+	sub r7, r6, #64
 	blt label121
 	b label12
 .p2align 4
 label8:
 	sub r8, r2, #1
-	ldr r9, [r5, r6, lsl #2]
+	ldr r9, [r5, r3, lsl #2]
 	ldr r10, [r4, r8, lsl #2]
 	cmp r9, r10
 	beq label9
-	ldr r8, [r7, r2, lsl #2]
-	add r9, r3, r2, lsl #2
-	ldr r9, [r9, #-4]
-	cmp r8, r9
-	movle r8, r9
-	str r8, [r3, r2, lsl #2]
+	ldr r9, [r7, r2, lsl #2]
+	add r8, r6, r2, lsl #2
 	add r2, r2, #1
+	ldr r10, [r8, #-4]
+	cmp r9, r10
+	movle r9, r10
+	str r9, [r8, #0]
 	cmp r2, #14
 	blt label8
 	add r1, r1, #1
-	sub r6, r1, #1
-	add r3, r0, r1, lsl #6
+	sub r3, r1, #1
+	add r6, r0, r1, lsl #6
 	cmp r1, #16
-	sub r7, r3, #64
+	sub r7, r6, #64
 	blt label121
 	b label12
 .p2align 4
 label9:
 	ldr r8, [r7, r8, lsl #2]
 	add r8, r8, #1
-	str r8, [r3, r2, lsl #2]
+	str r8, [r6, r2, lsl #2]
 	add r2, r2, #1
 	cmp r2, #14
 	blt label8
 	add r1, r1, #1
-	sub r6, r1, #1
-	add r3, r0, r1, lsl #6
+	sub r3, r1, #1
+	add r6, r0, r1, lsl #6
 	cmp r1, #16
-	sub r7, r3, #64
+	sub r7, r6, #64
 	blt label121
 	b label12

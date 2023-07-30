@@ -36,12 +36,13 @@ main:
 .p2align 4
 label2:
 	add r0, r4, r5, lsl #2
-	ldr r8, [r4, r5, lsl #2]
+	ldr r8, [r0, #0]
 	ldr r7, [r0, #-4]
 	ldr r9, [r0, #-8]
 	add r1, r8, r7
-	add r0, r1, r9
-	str r0, [r4, r5, lsl #2]
+	add r1, r1, r9
+	str r1, [r0, #0]
+	mov r0, r1
 	bl putint
 	mov r0, #10
 	bl putch
