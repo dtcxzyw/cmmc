@@ -343,20 +343,22 @@ using MIRInstList = std::list<MIRInst>;
 
 class MIRBasicBlock final : public MIRRelocable {
     MIRFunction* mFunction;
-    double mTripCount;
     MIRInstList mInsts;
+    double mTripCount = 0.0;
 
 public:
-    MIRBasicBlock(String label, MIRFunction* func, double tripCount)
-        : MIRRelocable{ label }, mFunction{ func }, mTripCount{ tripCount } {}
+    MIRBasicBlock(String label, MIRFunction* func) : MIRRelocable{ label }, mFunction{ func } {}
     [[nodiscard]] MIRFunction* getFunction() const {
         return mFunction;
+    }
+    [[nodiscard]] MIRInstList& instructions() {
+        return mInsts;
     }
     [[nodiscard]] double getTripCount() const {
         return mTripCount;
     }
-    [[nodiscard]] MIRInstList& instructions() {
-        return mInsts;
+    void setTripCount(double tripCount) {
+        mTripCount = tripCount;
     }
     [[nodiscard]] const MIRInstList& instructions() const {
         return mInsts;
@@ -399,6 +401,7 @@ public:
     }
     bool verify(std::ostream& out, const CodeGenContext& ctx) const override;
     void dump(std::ostream& out, const CodeGenContext& ctx) const override;
+    void dumpCFG(std::ostream& out, const CodeGenContext& ctx) const;
 };
 
 // TODO: ascii/asciiz encoding

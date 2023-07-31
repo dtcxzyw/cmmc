@@ -267,6 +267,8 @@ static void graphColoringAllocateImpl(MIRFunction& mfunc, CodeGenContext& ctx, I
         };
         // Construct interference graph
         InterferenceGraph graph;
+        const auto cfg = calcCFG(mfunc, ctx);
+        const auto blockFreq = calcFreq(mfunc, cfg);
         // ISA specific reg
         for(auto& block : mfunc.blocks()) {
             auto& instructions = block->instructions();
@@ -301,7 +303,7 @@ static void graphColoringAllocateImpl(MIRFunction& mfunc, CodeGenContext& ctx, I
                 if(vregSet.count(vreg))
                     liveVRegs.insert(vreg);
             }
-            const auto tripCount = block->getTripCount();
+            const auto tripCount = blockFreq.query(block.get());
             for(auto iter = instructions.begin(); iter != instructions.end();) {
                 const auto next = std::next(iter);
                 auto& inst = *iter;
@@ -421,7 +423,7 @@ static void graphColoringAllocateImpl(MIRFunction& mfunc, CodeGenContext& ctx, I
         std::vector<std::pair<InstNum, double>> freq;
         for(auto& block : mfunc.blocks()) {
             auto endInst = liveInterval.instNum.at(&block->instructions().back());
-            freq.emplace_back(endInst + 2, block->getTripCount());
+            freq.emplace_back(endInst + 2, blockFreq.query(block.get()));
         }
         std::unordered_map<RegNum, double> weights;
         auto getBlockFreq = [&](InstNum inst) {
@@ -441,7 +443,7 @@ static void graphColoringAllocateImpl(MIRFunction& mfunc, CodeGenContext& ctx, I
             weights.emplace(vreg, weight);
         }
         for(auto& block : mfunc.blocks()) {
-            const auto w = block->getTripCount();
+            const auto w = blockFreq.query(block.get());
             for(auto& inst : block->instructions()) {
                 auto& instInfo = ctx.instInfo.getInstInfo(inst);
                 for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {

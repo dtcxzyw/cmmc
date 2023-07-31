@@ -14,6 +14,7 @@
 
 #include <cmmc/CodeGen/InstInfo.hpp>
 #include <cmmc/CodeGen/MIR.hpp>
+#include <cmmc/CodeGen/MIRCFGAnalysis.hpp>
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/Support/Dispatch.hpp>
 #include <cmmc/Support/StaticReflection.hpp>
@@ -82,6 +83,26 @@ bool MIRFunction::verify(std::ostream& out, const CodeGenContext& ctx) const {
         }
     // TODO: check vreg use-def chain
     return true;
+}
+void MIRFunction::dumpCFG(std::ostream& out, const CodeGenContext& ctx) const {
+    const auto cfg = calcCFG(*this, ctx);
+    const auto freq = calcFreq(*this, cfg);
+    out << "digraph G{\n";
+    for(auto& block : mBlocks) {
+        block->dumpAsTarget(out);
+        out << " [label = \"";
+        block->dumpAsTarget(out);
+        out << " @ " << freq.query(block.get()) << "\"]\n";
+    }
+    for(auto& block : mBlocks) {
+        for(auto& [pred, prob] : cfg.predecessors(block.get())) {
+            pred->dumpAsTarget(out);
+            out << "->";
+            block->dumpAsTarget(out);
+            out << "[label=" << prob << "]\n";
+        }
+    }
+    out << "}\n";
 }
 bool MIRZeroStorage::verify(std::ostream&, const CodeGenContext&) const {
     return true;

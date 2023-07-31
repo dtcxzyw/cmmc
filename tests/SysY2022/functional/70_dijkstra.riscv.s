@@ -39,23 +39,19 @@ main:
 	mv s0, a0
 	jal getint
 	mv s4, a0
-pcrel269:
+pcrel252:
 	auipc a0, %pcrel_hi(e)
-	addi s2, a0, %pcrel_lo(pcrel269)
+	addi s2, a0, %pcrel_lo(pcrel252)
 	li a0, 1
-	blt s0, a0, label4
+	bge s0, a0, label33
+label4:
+	bgt s4, zero, label81
+	j label7
 .p2align 2
 label33:
 	slli a3, a0, 6
 	li a2, 1
 	add a1, s2, a3
-	j label34
-label81:
-	li s5, 1
-	j label5
-label99:
-	li a1, 1
-	j label8
 .p2align 2
 label34:
 	mv a3, zero
@@ -69,25 +65,72 @@ label222:
 	bge s0, a2, label34
 	addiw a0, a0, 1
 	bge s0, a0, label33
-	bgt s4, zero, label81
+	j label4
+label81:
+	li s5, 1
+.p2align 2
+label5:
+	jal getint
+	slli a1, a0, 6
+	add s6, s2, a1
+	jal getint
+	sh2add s6, a0, s6
+	jal getint
+	addiw s5, s5, 1
+	sw a0, 0(s6)
+	bge s4, s5, label5
+label7:
 	addi a2, s2, 64
 	addiw a0, s0, -1
 	bgt s0, zero, label99
+label98:
 	li a1, 1
 	sw a1, 68(sp)
-	bge a0, a1, label116
-	j label30
-label4:
-	bgt s4, zero, label81
-	addi a2, s2, 64
-	addiw a0, s0, -1
-	bgt s0, zero, label99
+	j label11
+label99:
 	li a1, 1
-	sw a1, 68(sp)
+.p2align 2
+label8:
+	sh2add a4, a1, a2
+	sh2add a5, a1, s1
+	lw a3, 0(a4)
+	sw a3, 0(a5)
+	sh2add a3, a1, s3
+	addiw a1, a1, 1
+	sw zero, 0(a3)
+	bge s0, a1, label8
+	j label98
+label11:
+	blt a0, a1, label29
+.p2align 2
+label116:
+	li a4, 65535
+	mv a2, zero
+	li a3, 1
+	bge s0, a3, label25
+	j label17
+.p2align 2
+label232:
+	addiw a1, a1, 1
 	bge a0, a1, label116
+label29:
 	ble s0, zero, label30
-label167:
 	li s2, 1
+	j label31
+label30:
+	li a0, 10
+	jal putch
+	ld ra, 0(sp)
+	mv a0, zero
+	ld s1, 8(sp)
+	ld s6, 16(sp)
+	ld s3, 24(sp)
+	ld s0, 32(sp)
+	ld s5, 40(sp)
+	ld s4, 48(sp)
+	ld s2, 56(sp)
+	addi sp, sp, 192
+	ret
 .p2align 2
 label31:
 	sh2add a1, s2, s1
@@ -98,9 +141,10 @@ label31:
 	addiw s2, s2, 1
 	bge s0, s2, label31
 	j label30
-.p2align 2
-label13:
-	blt s0, a3, label17
+label20:
+	addiw a1, a1, 1
+	bge a0, a1, label116
+	j label29
 .p2align 2
 label25:
 	sh2add t0, a3, s1
@@ -122,29 +166,6 @@ label220:
 	sh2add a4, t1, s3
 	li a3, 1
 	sw a3, 0(a4)
-	bge s0, a3, label21
-	addiw a1, a1, 1
-	bge a0, a1, label116
-	bgt s0, zero, label167
-label30:
-	li a0, 10
-	jal putch
-	ld ra, 0(sp)
-	mv a0, zero
-	ld s1, 8(sp)
-	ld s6, 16(sp)
-	ld s3, 24(sp)
-	ld s0, 32(sp)
-	ld s5, 40(sp)
-	ld s4, 48(sp)
-	ld s2, 56(sp)
-	addi sp, sp, 192
-	ret
-.p2align 2
-label17:
-	sh2add a4, a2, s3
-	li a3, 1
-	sw a3, 0(a4)
 	blt s0, a3, label20
 .p2align 2
 label21:
@@ -156,21 +177,7 @@ label21:
 	blt a4, t0, label23
 	addiw a3, a3, 1
 	bge s0, a3, label21
-	addiw a1, a1, 1
-	bge a0, a1, label116
-	bgt s0, zero, label167
-	j label30
-.p2align 2
-label20:
-	addiw a1, a1, 1
-	bge a0, a1, label116
-	bgt s0, zero, label167
-	j label30
-label116:
-	li a4, 65535
-	mv a2, zero
-	li a3, 1
-	j label13
+	j label232
 .p2align 2
 label23:
 	sh2add t0, a3, s1
@@ -178,15 +185,12 @@ label23:
 	lw a5, 0(t0)
 	lw t0, 0(t1)
 	addw a4, a4, t0
-	ble a5, a4, label147
-	sh2add a5, a3, s1
-	sw a4, 0(a5)
+	bgt a5, a4, label24
 	addiw a3, a3, 1
 	bge s0, a3, label21
 	addiw a1, a1, 1
 	bge a0, a1, label116
-	bgt s0, zero, label167
-	j label30
+	j label29
 .p2align 2
 label28:
 	sh2add t2, a3, s3
@@ -202,48 +206,19 @@ label28:
 	li a3, 1
 	sw a3, 0(a4)
 	bge s0, a3, label21
-	addiw a1, a1, 1
-	bge a0, a1, label116
-	bgt s0, zero, label167
-	j label30
+	j label20
 .p2align 2
-label5:
-	jal getint
-	slli a1, a0, 6
-	add s6, s2, a1
-	jal getint
-	sh2add s6, a0, s6
-	jal getint
-	addiw s5, s5, 1
-	sw a0, 0(s6)
-	bge s4, s5, label5
-	addi a2, s2, 64
-	addiw a0, s0, -1
-	bgt s0, zero, label99
-	li a1, 1
-	sw a1, 68(sp)
-	bge a0, a1, label116
-	j label30
-.p2align 2
-label147:
+label24:
+	sh2add a5, a3, s1
+	sw a4, 0(a5)
 	addiw a3, a3, 1
 	bge s0, a3, label21
 	addiw a1, a1, 1
 	bge a0, a1, label116
-	bgt s0, zero, label167
-	j label30
-.p2align 2
-label8:
-	sh2add a4, a1, a2
-	sh2add a5, a1, s1
-	lw a3, 0(a4)
-	sw a3, 0(a5)
-	sh2add a3, a1, s3
-	addiw a1, a1, 1
-	sw zero, 0(a3)
-	bge s0, a1, label8
-	li a1, 1
-	sw a1, 68(sp)
-	bge a0, a1, label116
-	bgt s0, zero, label167
-	j label30
+	j label29
+label17:
+	sh2add a4, a2, s3
+	li a3, 1
+	sw a3, 0(a4)
+	bge s0, a3, label21
+	j label20

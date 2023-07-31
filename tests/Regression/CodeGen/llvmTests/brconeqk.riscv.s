@@ -13,14 +13,16 @@ result:
 .globl test
 test:
 .p2align 2
-pcrel20:
+pcrel21:
 	auipc a1, %pcrel_hi(i)
 	li a2, 10
-	lw a0, %pcrel_lo(pcrel20)(a1)
-	beq a0, a2, label2
-	li a0, 1
-pcrel21:
-	auipc a1, %pcrel_hi(result)
-	sw a0, %pcrel_lo(pcrel21)(a1)
+	lw a0, %pcrel_lo(pcrel21)(a1)
+	bne a0, a2, label8
 label2:
 	ret
+label8:
+	li a0, 1
+pcrel22:
+	auipc a1, %pcrel_hi(result)
+	sw a0, %pcrel_lo(pcrel22)(a1)
+	j label2

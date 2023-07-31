@@ -785,18 +785,16 @@ void RISCVISelInfo::preRALegalizeInst(const InstLegalizeContext& ctx) const {
 
             auto prevBlock = (*ctx.blockIter)->get();
             const auto insertPoint = std::next(*ctx.blockIter);
-            auto falseBlock =
-                ctx.func.blocks()
-                    .insert(insertPoint,
-                            makeUnique<MIRBasicBlock>(prevBlock->symbol().withID(static_cast<int32_t>(ctx.ctx.nextId())),
-                                                      &ctx.func, prevBlock->getTripCount() * (1.0 - prob)))
-                    ->get();
-            auto nextBlock =
-                ctx.func.blocks()
-                    .insert(insertPoint,
-                            makeUnique<MIRBasicBlock>(prevBlock->symbol().withID(static_cast<int32_t>(ctx.ctx.nextId())),
-                                                      &ctx.func, prevBlock->getTripCount()))
-                    ->get();
+            auto falseBlock = ctx.func.blocks()
+                                  .insert(insertPoint,
+                                          makeUnique<MIRBasicBlock>(
+                                              prevBlock->symbol().withID(static_cast<int32_t>(ctx.ctx.nextId())), &ctx.func))
+                                  ->get();
+            auto nextBlock = ctx.func.blocks()
+                                 .insert(insertPoint,
+                                         makeUnique<MIRBasicBlock>(
+                                             prevBlock->symbol().withID(static_cast<int32_t>(ctx.ctx.nextId())), &ctx.func))
+                                 ->get();
 
             nextBlock->instructions().splice(nextBlock->instructions().end(), curInstructions, std::next(ctx.iter),
                                              curInstructions.end());
@@ -835,18 +833,16 @@ void RISCVISelInfo::preRALegalizeInst(const InstLegalizeContext& ctx) const {
 
             auto prevBlock = (*ctx.blockIter)->get();
             const auto insertPoint = std::next(*ctx.blockIter);
-            auto trueBlock =
-                ctx.func.blocks()
-                    .insert(insertPoint,
-                            makeUnique<MIRBasicBlock>(prevBlock->symbol().withID(static_cast<int32_t>(ctx.ctx.nextId())),
-                                                      &ctx.func, prevBlock->getTripCount() * prob))
-                    ->get();
-            auto nextBlock =
-                ctx.func.blocks()
-                    .insert(insertPoint,
-                            makeUnique<MIRBasicBlock>(prevBlock->symbol().withID(static_cast<int32_t>(ctx.ctx.nextId())),
-                                                      &ctx.func, prevBlock->getTripCount()))
-                    ->get();
+            auto trueBlock = ctx.func.blocks()
+                                 .insert(insertPoint,
+                                         makeUnique<MIRBasicBlock>(
+                                             prevBlock->symbol().withID(static_cast<int32_t>(ctx.ctx.nextId())), &ctx.func))
+                                 ->get();
+            auto nextBlock = ctx.func.blocks()
+                                 .insert(insertPoint,
+                                         makeUnique<MIRBasicBlock>(
+                                             prevBlock->symbol().withID(static_cast<int32_t>(ctx.ctx.nextId())), &ctx.func))
+                                 ->get();
 
             nextBlock->instructions().splice(nextBlock->instructions().end(), curInstructions, std::next(ctx.iter),
                                              curInstructions.end());
@@ -870,7 +866,7 @@ void RISCVISelInfo::preRALegalizeInst(const InstLegalizeContext& ctx) const {
 }
 
 static MIROperand getAlign(int64_t immVal) {
-    return MIROperand::asImm(immVal & -immVal, OperandType::Special);
+    return MIROperand::asImm(immVal, OperandType::Special);
 }
 
 void RISCVISelInfo::legalizeInstWithStackOperand(const InstLegalizeContext& ctx, MIROperand& op, const StackObject& obj) const {
@@ -911,7 +907,7 @@ void RISCVISelInfo::legalizeInstWithStackOperand(const InstLegalizeContext& ctx,
             inst.setOpcode(isOperandGPR(inst.getOperand(0)) ? SD : FSW)
                 .setOperand<2>(base)
                 .setOperand<1>(imm)
-                .setOperand<3>(getAlign(immVal));
+                .setOperand<3>(getAlign(8));
             break;
         }
         case InstLoadRegFromStack: {

@@ -24,20 +24,19 @@ label5:
 	b label2
 	nop
 label20:
-	move $t0, $a0
-	li $t1, 1
+	move $v0, $a0
+	li $t0, 1
 label6:
-	subu $t2, $a0, $t1
-	mult $t0, $t2
-	mflo $t0
-	addiu $t1, $t1, 1
-	divu $zero, $t0, $t1
-	mflo $t0
-	addiu $t2, $a1, -1
-	sltu $t2, $t2, $t1
-	xori $t2, $t2, 1
-	bne $t2, $zero, label6
+	subu $t1, $a0, $t0
+	mult $v0, $t1
+	mflo $t1
+	addiu $t0, $t0, 1
+	divu $zero, $t1, $t0
+	mflo $v0
+	addiu $t1, $a1, -1
+	sltu $t1, $t1, $t0
+	xori $t1, $t1, 1
+	bne $t1, $zero, label6
 	nop
-	move $v0, $t0
 	b label2
 	nop

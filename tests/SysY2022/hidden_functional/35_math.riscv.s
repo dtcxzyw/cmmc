@@ -313,13 +313,19 @@ label129:
 eee:
 .p2align 2
 	addi sp, sp, -8
-pcrel495:
+pcrel492:
 	auipc a1, %pcrel_hi(__cmmc_fp_constant_pool)
 	sd ra, 0(sp)
-	addi a0, a1, %pcrel_lo(pcrel495)
+	addi a0, a1, %pcrel_lo(pcrel492)
 	flw f11, 0(a0)
 	flt.s a1, f11, f10
 	bne a1, zero, label289
+	j label307
+label287:
+	ld ra, 0(sp)
+	addi sp, sp, 8
+	ret
+label307:
 	fmul.s f11, f10, f10
 	lui a0, 258048
 	fmv.w.x f12, a0
@@ -330,9 +336,7 @@ pcrel495:
 	fmul.s f11, f11, f12
 	fadd.s f12, f13, f11
 	fmv.s f11, f10
-.p2align 2
-label308:
-	fmul.s f15, f14, f11
+	fmul.s f15, f14, f10
 	andi a1, a0, 1
 	fmv.s f13, f15
 	bne a1, zero, label471
@@ -343,10 +347,7 @@ label471:
 	fmul.s f11, f11, f11
 	add a2, a0, a1
 	sraiw a0, a2, 1
-	beq a0, zero, label413
-	fmv.s f14, f13
-	j label308
-.p2align 2
+	bne a0, zero, label414
 label413:
 	lui a0, 265216
 	lui a1, 260096
@@ -356,60 +357,21 @@ label413:
 	fdiv.s f13, f13, f11
 	fmv.s f11, f10
 	fadd.s f12, f12, f13
-	fmul.s f15, f14, f10
+	j label313
+.p2align 2
+label414:
+	fmv.s f14, f13
+	fmul.s f15, f13, f11
 	andi a1, a0, 1
 	fmv.s f13, f15
-	bne a1, zero, label473
+	bne a1, zero, label471
 	fmv.s f13, f14
-	srliw a2, a0, 31
-	fmul.s f11, f10, f10
-	add a1, a0, a2
-	sraiw a0, a1, 1
-	bne a0, zero, label429
-.p2align 2
-label428:
-	lui a0, 269312
-	lui a1, 260096
-	fmv.w.x f14, a0
-	li a0, 5
-	fdiv.s f13, f13, f14
-	fadd.s f11, f12, f13
-	fmv.w.x f13, a1
-	fmul.s f14, f13, f10
-	andi a1, a0, 1
-	fmv.s f12, f14
-	bne a1, zero, label475
-	fmv.s f12, f13
-	srliw a2, a0, 31
-	fmul.s f10, f10, f10
-	add a1, a0, a2
-	sraiw a0, a1, 1
-	bne a0, zero, label444
-.p2align 2
-label482:
-	lui a0, 274176
-	fmv.w.x f13, a0
-	fdiv.s f12, f12, f13
-	fadd.s f10, f11, f12
-	j label287
-.p2align 2
-label318:
-	fmul.s f14, f13, f10
-	andi a1, a0, 1
-	fmv.s f12, f14
-	bne a1, zero, label475
-	fmv.s f12, f13
-.p2align 2
-label475:
-	srliw a2, a0, 31
-	fmul.s f10, f10, f10
-	add a1, a0, a2
-	sraiw a0, a1, 1
-	beq a0, zero, label482
-label444:
-	fmv.s f13, f12
-	j label318
-.p2align 2
+	srliw a1, a0, 31
+	fmul.s f11, f11, f11
+	add a2, a0, a1
+	sraiw a0, a2, 1
+	bne a0, zero, label414
+	j label413
 label313:
 	fmul.s f15, f14, f11
 	andi a1, a0, 1
@@ -422,29 +384,70 @@ label473:
 	fmul.s f11, f11, f11
 	add a1, a0, a2
 	sraiw a0, a1, 1
-	beq a0, zero, label428
+	bne a0, zero, label429
+label428:
+	lui a0, 269312
+	lui a1, 260096
+	fmv.w.x f14, a0
+	li a0, 5
+	fdiv.s f13, f13, f14
+	fadd.s f11, f12, f13
+	fmv.w.x f13, a1
+	j label318
+.p2align 2
 label429:
 	fmv.s f14, f13
-	j label313
-label287:
-	ld ra, 0(sp)
-	addi sp, sp, 8
-	ret
+	fmul.s f15, f13, f11
+	andi a1, a0, 1
+	fmv.s f13, f15
+	bne a1, zero, label473
+	fmv.s f13, f14
+	srliw a2, a0, 31
+	fmul.s f11, f11, f11
+	add a1, a0, a2
+	sraiw a0, a1, 1
+	bne a0, zero, label429
+	j label428
+label318:
+	fmul.s f14, f13, f10
+	andi a1, a0, 1
+	fmv.s f12, f14
+	bne a1, zero, label475
+	fmv.s f12, f13
 .p2align 2
-label385:
+label475:
+	srliw a2, a0, 31
+	fmul.s f10, f10, f10
+	add a1, a0, a2
+	sraiw a0, a1, 1
+	bne a0, zero, label444
+label443:
 	lui a0, 274176
-	fmv.w.x f10, a0
-	fdiv.s f12, f11, f10
-	fadd.s f11, f13, f12
-	fmul.s f10, f11, f11
+	fmv.w.x f13, a0
+	fdiv.s f12, f12, f13
+	fadd.s f10, f11, f12
 	j label287
+.p2align 2
+label444:
+	fmv.s f13, f12
+	fmul.s f14, f12, f10
+	andi a1, a0, 1
+	fmv.s f12, f14
+	bne a1, zero, label475
+	fmv.s f12, f13
+	srliw a2, a0, 31
+	fmul.s f10, f10, f10
+	add a1, a0, a2
+	sraiw a0, a1, 1
+	bne a0, zero, label444
+	j label443
 label289:
 	lui a0, 258048
 	fmv.w.x f11, a0
-pcrel496:
+pcrel493:
 	auipc a0, %pcrel_hi(__cmmc_fp_constant_pool)
 	fmul.s f10, f10, f11
-	addi a1, a0, %pcrel_lo(pcrel496)
+	addi a1, a0, %pcrel_lo(pcrel493)
 	flw f11, 0(a1)
 	flt.s a0, f11, f10
 	beq a0, zero, label290
@@ -460,178 +463,212 @@ label290:
 	lui a0, 258048
 	fmv.w.x f12, a0
 	lui a0, 260096
-	fmv.w.x f13, a0
-	li a0, 3
 	fmul.s f11, f11, f12
-	fadd.s f12, f10, f13
-	fadd.s f14, f12, f11
+	fmv.w.x f12, a0
+	li a0, 3
+	fadd.s f14, f10, f12
+	fadd.s f13, f14, f11
 	fmv.s f11, f10
-.p2align 2
-label291:
-	fmul.s f15, f13, f11
+	fmul.s f15, f12, f10
 	andi a1, a0, 1
-	fmv.s f12, f15
+	fmv.s f14, f15
 	bne a1, zero, label465
-	fmv.s f12, f13
-.p2align 2
+	fmv.s f14, f12
 label465:
 	srliw a2, a0, 31
 	fmul.s f11, f11, f11
 	add a1, a0, a2
 	sraiw a0, a1, 1
-	beq a0, zero, label355
-	fmv.s f13, f12
-	j label291
-.p2align 2
+	bne a0, zero, label356
 label355:
 	lui a0, 265216
 	lui a1, 260096
 	fmv.w.x f11, a0
-	fmv.w.x f13, a1
 	li a0, 4
-	fdiv.s f12, f12, f11
+	fdiv.s f12, f14, f11
 	fmv.s f11, f10
-	fadd.s f14, f14, f12
-	fmul.s f15, f13, f10
+	fadd.s f13, f13, f12
+	fmv.w.x f12, a1
+	j label296
+label356:
+	fmv.s f12, f14
+	fmul.s f15, f14, f11
 	andi a1, a0, 1
-	fmv.s f12, f15
-	bne a1, zero, label467
-	fmv.s f12, f13
-	j label467
-.p2align 2
+	fmv.s f14, f15
+	bne a1, zero, label465
+	fmv.s f14, f12
+	srliw a2, a0, 31
+	fmul.s f11, f11, f11
+	add a1, a0, a2
+	sraiw a0, a1, 1
+	bne a0, zero, label356
+	j label355
 label296:
-	fmul.s f15, f13, f11
+	fmul.s f15, f12, f11
 	andi a1, a0, 1
-	fmv.s f12, f15
+	fmv.s f14, f15
 	bne a1, zero, label467
-	fmv.s f12, f13
-.p2align 2
+	fmv.s f14, f12
 label467:
 	srliw a2, a0, 31
 	fmul.s f11, f11, f11
 	add a1, a0, a2
 	sraiw a0, a1, 1
-	beq a0, zero, label370
-	fmv.s f13, f12
-	j label296
-.p2align 2
+	bne a0, zero, label371
 label370:
 	lui a0, 269312
 	lui a1, 260096
 	fmv.w.x f15, a0
 	li a0, 5
-	fdiv.s f11, f12, f15
-	fmv.w.x f12, a1
-	fadd.s f13, f14, f11
-	fmul.s f14, f12, f10
+	fdiv.s f11, f14, f15
+	fadd.s f12, f13, f11
+	fmv.w.x f11, a1
+	j label301
+label371:
+	fmv.s f12, f14
+	fmul.s f15, f14, f11
 	andi a1, a0, 1
-	fmv.s f11, f14
-	bne a1, zero, label469
-	fmv.s f11, f12
-	j label469
-.p2align 2
+	fmv.s f14, f15
+	bne a1, zero, label467
+	fmv.s f14, f12
+	srliw a2, a0, 31
+	fmul.s f11, f11, f11
+	add a1, a0, a2
+	sraiw a0, a1, 1
+	bne a0, zero, label371
+	j label370
 label301:
-	fmul.s f14, f12, f10
+	fmul.s f14, f11, f10
 	andi a1, a0, 1
-	fmv.s f11, f14
+	fmv.s f13, f14
 	bne a1, zero, label469
-	fmv.s f11, f12
-.p2align 2
+	fmv.s f13, f11
 label469:
 	srliw a1, a0, 31
 	fmul.s f10, f10, f10
 	add a2, a0, a1
 	sraiw a0, a2, 1
-	beq a0, zero, label385
-	fmv.s f12, f11
-	j label301
+	bne a0, zero, label386
+label385:
+	lui a0, 274176
+	fmv.w.x f10, a0
+	fdiv.s f13, f13, f10
+	fadd.s f11, f12, f13
+	fmul.s f10, f11, f11
+	j label287
+label386:
+	fmv.s f11, f13
+	fmul.s f14, f13, f10
+	andi a1, a0, 1
+	fmv.s f13, f14
+	bne a1, zero, label469
+	fmv.s f13, f11
+	srliw a1, a0, 31
+	fmul.s f10, f10, f10
+	add a2, a0, a1
+	sraiw a0, a2, 1
+	bne a0, zero, label386
+	j label385
 my_exp:
 .p2align 2
 	addi sp, sp, -8
 	fmv.w.x f11, zero
 	sd ra, 0(sp)
 	flt.s a0, f10, f11
-	bne a0, zero, label498
+	bne a0, zero, label495
 	fcvt.w.s a0, f10, rtz
 	fcvt.s.w f11, a0
 	fsub.s f10, f10, f11
-	blt a0, zero, label504
-	beq a0, zero, label554
-	lui a2, 260096
+	blt a0, zero, label501
+	beq a0, zero, label551
+	lui a1, 260096
 pcrel588:
-	auipc a1, %pcrel_hi(__cmmc_fp_constant_pool)
-	fmv.w.x f13, a2
-	addi a2, a1, %pcrel_lo(pcrel588)
-	flw f11, 4(a2)
-.p2align 2
-label511:
+	auipc a2, %pcrel_hi(__cmmc_fp_constant_pool)
+	fmv.w.x f13, a1
+	addi a1, a2, %pcrel_lo(pcrel588)
+	flw f11, 4(a1)
 	fmul.s f14, f13, f11
 	andi a1, a0, 1
 	fmv.s f12, f14
-	bne a1, zero, label582
+	bne a1, zero, label579
 	fmv.s f12, f13
-.p2align 2
-label582:
+label579:
 	srliw a2, a0, 31
 	fmul.s f11, f11, f11
 	add a1, a0, a2
 	sraiw a0, a1, 1
-	beq a0, zero, label570
+	bne a0, zero, label568
+label567:
+	fmv.s f0, f12
+	j label499
+label568:
 	fmv.s f13, f12
-	j label511
-label504:
-	subw a0, zero, a0
-	lui a2, 260096
-pcrel589:
-	auipc a1, %pcrel_hi(__cmmc_fp_constant_pool)
-	fmv.w.x f13, a2
-	addi a2, a1, %pcrel_lo(pcrel589)
-	flw f11, 4(a2)
-.p2align 2
-label505:
-	fmul.s f14, f13, f11
+	fmul.s f14, f12, f11
 	andi a1, a0, 1
 	fmv.s f12, f14
-	bne a1, zero, label580
+	bne a1, zero, label579
 	fmv.s f12, f13
-.p2align 2
-label580:
 	srliw a2, a0, 31
 	fmul.s f11, f11, f11
 	add a1, a0, a2
 	sraiw a0, a1, 1
-	beq a0, zero, label547
-	fmv.s f13, f12
-	j label505
-label502:
+	bne a0, zero, label568
+	j label567
+label499:
 	jal eee
 	fmul.s f10, f0, f10
-	j label499
-.p2align 2
-label547:
+	j label496
+label501:
+	subw a0, zero, a0
+	lui a1, 260096
+pcrel589:
+	auipc a2, %pcrel_hi(__cmmc_fp_constant_pool)
+	fmv.w.x f12, a1
+	addi a1, a2, %pcrel_lo(pcrel589)
+	flw f11, 4(a1)
+	fmul.s f14, f12, f11
+	andi a1, a0, 1
+	fmv.s f13, f14
+	bne a1, zero, label577
+	fmv.s f13, f12
+label577:
+	srliw a2, a0, 31
+	fmul.s f11, f11, f11
+	add a1, a0, a2
+	sraiw a0, a1, 1
+	bne a0, zero, label545
+label544:
 	lui a0, 260096
 	fmv.w.x f11, a0
-	fdiv.s f0, f11, f12
-	j label502
-label498:
+	fdiv.s f0, f11, f13
+	j label499
+label545:
+	fmv.s f12, f13
+	fmul.s f14, f13, f11
+	andi a1, a0, 1
+	fmv.s f13, f14
+	bne a1, zero, label577
+	fmv.s f13, f12
+	srliw a2, a0, 31
+	fmul.s f11, f11, f11
+	add a1, a0, a2
+	sraiw a0, a1, 1
+	bne a0, zero, label545
+	j label544
+label495:
 	fneg.s f10, f10
 	jal my_exp
 	lui a0, 260096
 	fmv.w.x f11, a0
 	fdiv.s f10, f11, f10
-label499:
+label496:
 	ld ra, 0(sp)
 	addi sp, sp, 8
 	ret
-.p2align 2
-label554:
+label551:
 	lui a0, 260096
 	fmv.w.x f0, a0
-	j label502
-.p2align 2
-label570:
-	fmv.s f0, f12
-	j label502
+	j label499
 .globl main
 main:
 .p2align 2
@@ -664,6 +701,75 @@ label594:
 	andi a1, a0, 1
 	fmv.s f10, f13
 	bne a1, zero, label708
+	j label707
+.p2align 2
+label602:
+	li a0, 32
+	jal putch
+	fmv.w.x f10, zero
+	flt.s a0, f10, f8
+	beq a0, zero, label604
+	lui a0, 260096
+pcrel723:
+	auipc a1, %pcrel_hi(__cmmc_fp_constant_pool)
+	fmv.w.x f10, a0
+	addi a0, a1, %pcrel_lo(pcrel723)
+	flw f12, 8(a0)
+	li a0, 1
+	fmv.s f11, f8
+	fmv.s f13, f18
+	jal asr5
+	fmul.s f10, f9, f10
+	jal my_exp
+	jal putfloat
+.p2align 2
+label605:
+	li a0, 10
+	jal putch
+	addiw s0, s0, -1
+	bne s0, zero, label594
+	j label593
+.p2align 2
+label606:
+	lui a0, 260096
+	fmv.w.x f7, a0
+	lui a0, 258048
+	fsub.s f10, f9, f7
+	fmv.w.x f11, a0
+	lui a0, 264192
+	fmul.s f13, f10, f11
+	fadd.s f12, f13, f7
+	fdiv.s f11, f7, f12
+	fmv.w.x f12, a0
+	lui a0, 265216
+	fmul.s f13, f11, f12
+	fdiv.s f12, f7, f9
+	fadd.s f11, f13, f7
+	fadd.s f13, f11, f12
+	fmv.w.x f11, a0
+pcrel724:
+	auipc a0, %pcrel_hi(__cmmc_fp_constant_pool)
+	addi a1, a0, %pcrel_lo(pcrel724)
+	li a0, 1
+	flw f28, 8(a1)
+	fmul.s f10, f13, f10
+	fdiv.s f13, f10, f11
+	fmv.s f10, f7
+	fmv.s f11, f9
+	fmv.s f12, f28
+	jal asr5
+	li a0, 1
+	fmv.s f29, f10
+	fmv.s f10, f7
+	fmv.s f11, f8
+	fmv.s f12, f28
+	fmv.s f13, f18
+	jal asr5
+	fdiv.s f10, f29, f10
+	jal putfloat
+	j label602
+.p2align 2
+label707:
 	fmv.s f10, f12
 .p2align 2
 label708:
@@ -740,6 +846,16 @@ label608:
 	li a0, 45
 	jal putch
 	j label600
+.p2align 2
+label604:
+	li a0, 45
+	jal putch
+	j label605
+.p2align 2
+label601:
+	li a0, 45
+	jal putch
+	j label602
 label593:
 	mv a0, zero
 	ld ra, 0(sp)
@@ -750,81 +866,6 @@ label593:
 	ld s1, 32(sp)
 	addi sp, sp, 40
 	ret
-.p2align 2
-label601:
-	li a0, 45
-	jal putch
-.p2align 2
-label602:
-	li a0, 32
-	jal putch
-	fmv.w.x f10, zero
-	flt.s a0, f10, f8
-	beq a0, zero, label604
-	lui a0, 260096
-pcrel723:
-	auipc a1, %pcrel_hi(__cmmc_fp_constant_pool)
-	fmv.w.x f10, a0
-	addi a0, a1, %pcrel_lo(pcrel723)
-	flw f12, 8(a0)
-	li a0, 1
-	fmv.s f11, f8
-	fmv.s f13, f18
-	jal asr5
-	fmul.s f10, f9, f10
-	jal my_exp
-	jal putfloat
-.p2align 2
-label605:
-	li a0, 10
-	jal putch
-	addiw s0, s0, -1
-	bne s0, zero, label594
-	j label593
-.p2align 2
-label604:
-	li a0, 45
-	jal putch
-	j label605
-.p2align 2
-label606:
-	lui a0, 260096
-	fmv.w.x f7, a0
-	lui a0, 258048
-	fsub.s f10, f9, f7
-	fmv.w.x f11, a0
-	lui a0, 264192
-	fmul.s f13, f10, f11
-	fadd.s f12, f13, f7
-	fdiv.s f11, f7, f12
-	fmv.w.x f12, a0
-	lui a0, 265216
-	fmul.s f13, f11, f12
-	fdiv.s f12, f7, f9
-	fadd.s f11, f13, f7
-	fadd.s f13, f11, f12
-	fmv.w.x f11, a0
-pcrel724:
-	auipc a0, %pcrel_hi(__cmmc_fp_constant_pool)
-	addi a1, a0, %pcrel_lo(pcrel724)
-	li a0, 1
-	flw f28, 8(a1)
-	fmul.s f10, f13, f10
-	fdiv.s f13, f10, f11
-	fmv.s f10, f7
-	fmv.s f11, f9
-	fmv.s f12, f28
-	jal asr5
-	li a0, 1
-	fmv.s f29, f10
-	fmv.s f10, f7
-	fmv.s f11, f8
-	fmv.s f12, f28
-	fmv.s f13, f18
-	jal asr5
-	fdiv.s f10, f29, f10
-	jal putfloat
-	j label602
 .p2align 2
 label607:
 	lui a1, 260096

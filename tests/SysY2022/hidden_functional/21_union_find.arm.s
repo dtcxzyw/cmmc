@@ -39,17 +39,17 @@ label5:
 	str r8, [r5, r6, lsl #2]
 	str r8, [r5, r4, lsl #2]
 	b label12
+label38:
+	mov r0, r7
+	str r7, [r5, r6, lsl #2]
+	str r7, [r5, r4, lsl #2]
+	b label12
 label11:
 	bl find
 	str r0, [r5, r8, lsl #2]
 	str r0, [r5, r7, lsl #2]
 	str r0, [r5, r6, lsl #2]
 	str r0, [r5, r4, lsl #2]
-	b label12
-label38:
-	mov r0, r7
-	str r7, [r5, r6, lsl #2]
-	str r7, [r5, r4, lsl #2]
 	b label12
 .globl main
 main:
@@ -62,7 +62,12 @@ main:
 	movw r4, #:lower16:parent
 	mov r6, r0
 	movt r4, #:upper16:parent
-	ble label73
+	bgt label83
+label73:
+	cmp r6, #0
+	bgt label101
+	b label100
+label83:
 	cmp r5, #4
 	ble label130
 	sub r0, r5, #4
@@ -106,13 +111,6 @@ label85:
 	str r7, [r3, #60]
 	cmp r2, r1
 	bgt label85
-	b label87
-label73:
-	cmp r6, #0
-	bgt label101
-	b label100
-label136:
-	mov r1, #0
 label87:
 	add r2, r4, r1, lsl #2
 	add r3, r1, #1
@@ -132,7 +130,24 @@ label89:
 	cmp r5, r0
 	bgt label89
 	b label73
+label100:
+	mov r0, #0
+	mov r1, r0
 .p2align 4
+label78:
+	cmp r5, r1
+	ble label82
+	ldr r2, [r4, r1, lsl #2]
+	sub r2, r1, r2
+	add r1, r1, #1
+	clz r2, r2
+	lsr r2, r2, #5
+	add r0, r0, r2
+	b label78
+label82:
+	bl putint
+	mov r0, #0
+	pop { r4, r5, r6, r7, r8, pc }
 label101:
 	mov r7, #0
 .p2align 4
@@ -147,47 +162,21 @@ label74:
 	mov r0, r2
 	bl find
 	cmp r1, r0
-	beq label108
+	bne label76
+	add r7, r7, #1
+	cmp r6, r7
+	bgt label74
+	b label100
+.p2align 4
+label76:
 	str r1, [r4, r0, lsl #2]
 	add r7, r7, #1
 	cmp r6, r7
 	bgt label74
-	mov r0, #0
-	mov r1, r0
-	b label78
-.p2align 4
-label108:
-	add r7, r7, #1
-	cmp r6, r7
-	bgt label74
-	mov r0, #0
-	mov r1, r0
-	cmp r5, r0
-	bgt label81
-label82:
-	bl putint
-	mov r0, #0
-	pop { r4, r5, r6, r7, r8, pc }
-.p2align 4
-label100:
-	mov r0, #0
-	mov r1, r0
-	cmp r5, r0
-	bgt label81
-	b label82
-.p2align 4
-label78:
-	cmp r5, r1
-	ble label82
-.p2align 4
-label81:
-	ldr r2, [r4, r1, lsl #2]
-	sub r2, r1, r2
-	add r1, r1, #1
-	clz r2, r2
-	lsr r2, r2, #5
-	add r0, r0, r2
-	b label78
+	b label100
 label130:
 	mov r0, #0
 	b label89
+label136:
+	mov r1, #0
+	b label87

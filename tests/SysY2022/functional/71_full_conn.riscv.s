@@ -12,6 +12,7 @@ main:
 	jal getint
 	sd a0, 168(sp)
 	ble a0, zero, label11
+.p2align 2
 label17:
 	mv s0, zero
 	li a0, 5
@@ -1041,7 +1042,23 @@ label6:
 	jal putch
 	li a0, 97
 	bne s0, zero, label1001
-	j label1000
+	li a0, 111
+.p2align 2
+label1001:
+	jal putch
+	li a0, 116
+	bne s0, zero, label1003
+	li a0, 103
+.p2align 2
+label1003:
+	jal putch
+	li a0, 10
+	jal putch
+	ld a0, 168(sp)
+	addiw a0, a0, -1
+	sd a0, 168(sp)
+	bgt a0, zero, label17
+	j label11
 .p2align 2
 label7:
 	sh2add a0, s0, s0
@@ -1067,22 +1084,3 @@ label11:
 	ld s2, 24(sp)
 	addi sp, sp, 424
 	ret
-.p2align 2
-label1000:
-	li a0, 111
-.p2align 2
-label1001:
-	jal putch
-	li a0, 116
-	bne s0, zero, label1003
-	li a0, 103
-.p2align 2
-label1003:
-	jal putch
-	li a0, 10
-	jal putch
-	ld a0, 168(sp)
-	addiw a0, a0, -1
-	sd a0, 168(sp)
-	bgt a0, zero, label17
-	j label11

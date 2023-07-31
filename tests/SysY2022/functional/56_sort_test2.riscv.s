@@ -30,7 +30,6 @@ main:
 	sw a2, 60(sp)
 	li a1, 10
 	blt a0, a1, label4
-.p2align 2
 label25:
 	mv s1, zero
 	j label10
@@ -40,23 +39,7 @@ label4:
 	addiw a2, a0, -1
 	lw a1, 0(a3)
 	addiw a3, a2, 1
-	blt a2, zero, label7
-.p2align 2
-label8:
-	sh2add a5, a2, s0
-	lw a4, 0(a5)
-	bge a1, a4, label44
-	sh2add a3, a3, s0
-	addiw a2, a2, -1
-	sw a4, 0(a3)
-	addiw a3, a2, 1
 	bge a2, zero, label8
-	sh2add a2, a3, s0
-	addiw a0, a0, 1
-	sw a1, 0(a2)
-	li a1, 10
-	blt a0, a1, label4
-	j label25
 .p2align 2
 label7:
 	sh2add a2, a3, s0
@@ -82,7 +65,15 @@ label10:
 	addi sp, sp, 64
 	ret
 .p2align 2
-label44:
+label8:
+	sh2add a5, a2, s0
+	lw a4, 0(a5)
+	bge a1, a4, label7
+	sh2add a3, a3, s0
+	addiw a2, a2, -1
+	sw a4, 0(a3)
+	addiw a3, a2, 1
+	bge a2, zero, label8
 	sh2add a2, a3, s0
 	addiw a0, a0, 1
 	sw a1, 0(a2)

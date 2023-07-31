@@ -10,10 +10,11 @@ label2:
 	jr $ra
 	nop
 label8:
-	move $v0, $zero
+	move $t0, $zero
 label4:
-	addiu $v0, $v0, 1
-	bne $a0, $v0, label4
+	addiu $t0, $t0, 1
+	bne $a0, $t0, label4
 	nop
+	move $v0, $t0
 	b label2
 	nop

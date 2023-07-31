@@ -32,7 +32,6 @@ main:
 	str r1, [sp, #36]
 	cmp r0, #10
 	blt label4
-.p2align 4
 label25:
 	mov r5, #0
 	b label10
@@ -42,22 +41,7 @@ label4:
 	sub r2, r0, #1
 	add r3, r2, #1
 	cmn r2, #1
-	ble label7
-.p2align 4
-label8:
-	ldr r5, [r4, r2, lsl #2]
-	cmp r1, r5
-	bge label44
-	str r5, [r4, r3, lsl #2]
-	sub r2, r2, #1
-	add r3, r2, #1
-	cmn r2, #1
 	bgt label8
-	str r1, [r4, r3, lsl #2]
-	add r0, r0, #1
-	cmp r0, #10
-	blt label4
-	b label25
 .p2align 4
 label7:
 	str r1, [r4, r3, lsl #2]
@@ -78,7 +62,15 @@ label10:
 	add sp, sp, #44
 	pop { r4, r5, pc }
 .p2align 4
-label44:
+label8:
+	ldr r5, [r4, r2, lsl #2]
+	cmp r1, r5
+	bge label7
+	str r5, [r4, r3, lsl #2]
+	sub r2, r2, #1
+	add r3, r2, #1
+	cmn r2, #1
+	bgt label8
 	str r1, [r4, r3, lsl #2]
 	add r0, r0, #1
 	cmp r0, #10

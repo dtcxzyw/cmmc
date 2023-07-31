@@ -107,37 +107,39 @@ static BlockSeq solvePettisHansen(const std::vector<uint32_t>& weights, const st
     constexpr auto dumpCFG = false;
     if(dumpCFG) {
         std::cerr << "digraph G {\n";
+        for(uint32_t idx = 0; idx < blockCount; ++idx)
+            std::cerr << idx << " [label=\"" << idx << " @ " << freq[idx] << "\"]\n";
     }
 
     for(auto& [e, f] : edgeInfo) {
         CMMC_UNUSED(f);
         auto& [u, v, prob] = e;
         if(dumpCFG) {
-            std::cerr << u << " -> " << v << "[color=";
+            std::cerr << u << " -> " << v << "[label = " << f << ",color=";
         }
         if(u == v) {
             if(dumpCFG)
-                std::cerr << "blue]";
+                std::cerr << "blue]\n";
             continue;
         }
         graph[u].push_back(v);
         auto& [pv, cv] = chains[v];
         if(findFa(v) != v) {
             if(dumpCFG)
-                std::cerr << "blue]";
+                std::cerr << "blue]\n";
             continue;  // merged
         }
         auto& [pu, cu] = chains[findFa(u)];
         if(cu.back() != u) {
             if(dumpCFG)
-                std::cerr << "blue]";
+                std::cerr << "blue]\n";
             continue;  // merged
         }
         pu = std::min(std::min(pu, pv), ++p);
         cu.merge(cv);
         fa[v] = findFa(u);
         if(dumpCFG)
-            std::cerr << "red]";
+            std::cerr << "red]\n";
     }
 
     if(dumpCFG) {
@@ -332,6 +334,7 @@ void optimizeBlockLayout(MIRFunction& func, CodeGenContext& ctx) {
     std::vector<BranchEdge> edges;
     std::unordered_map<const MIRBasicBlock*, uint32_t> idxMap;
     std::vector<double> freq;
+    const auto blockFreq = calcFreq(func, cfg);
     {
         uint32_t idx = 0;
         for(auto& block : func.blocks()) {
@@ -342,7 +345,7 @@ void optimizeBlockLayout(MIRFunction& func, CodeGenContext& ctx) {
         freq.reserve(weights.size());
         for(auto& block : func.blocks()) {
             const auto blockIdx = idx++;
-            freq.emplace_back(block->getTripCount());
+            freq.emplace_back(blockFreq.query(block.get()));
             for(auto [successor, prob] : cfg.successors(block.get())) {
                 assert(idxMap.count(successor));
                 edges.push_back({ blockIdx, idxMap.at(successor), prob });
@@ -391,8 +394,7 @@ void optimizeBlockLayout(MIRFunction& func, CodeGenContext& ctx) {
         const auto& terminator = block->instructions().back();
         const auto ensureNext = [&](MIRBasicBlock* next) {
             if(nextIter == func.blocks().cend() || nextIter->get() != next) {
-                auto newBlock = makeUnique<MIRBasicBlock>(block->symbol().withID(static_cast<int32_t>(ctx.nextId())), &func,
-                                                          next->getTripCount());
+                auto newBlock = makeUnique<MIRBasicBlock>(block->symbol().withID(static_cast<int32_t>(ctx.nextId())), &func);
                 newBlock->instructions().emplace_back(ctx.instInfo.emitGoto(next));
                 func.blocks().insert(nextIter, std::move(newBlock));
             }

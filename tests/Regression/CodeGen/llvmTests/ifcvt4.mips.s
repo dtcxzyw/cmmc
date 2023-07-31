@@ -6,7 +6,8 @@ t:
 	bne $a0, $a1, label14
 	nop
 	move $v0, $a0
-	b label9
+label9:
+	jr $ra
 	nop
 label14:
 	move $t0, $a1
@@ -24,8 +25,7 @@ label5:
 	addiu $t2, $t2, 1
 	bne $t0, $v0, label5
 	nop
-label9:
-	jr $ra
+	b label9
 	nop
 label8:
 	subu $t0, $t0, $v0

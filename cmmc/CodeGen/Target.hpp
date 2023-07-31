@@ -51,7 +51,7 @@ struct TargetOptHeuristic final {
     uint32_t branchLimit = 1000U;
     // don't fold select x, y, 0 into -x & y
     bool disableSelectionOpt = false;
-    uint32_t branchPredictionWarmupThreshold = 8U;
+    uint32_t branchPredictionWarmupThreshold = 2U;
 };
 
 class Target {

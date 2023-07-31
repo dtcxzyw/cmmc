@@ -19,19 +19,19 @@ main:
 	mv s2, a0
 	li a0, 56
 	jal _sysy_starttime
-pcrel144:
+pcrel149:
 	auipc a1, %pcrel_hi(a)
-	addi s0, a1, %pcrel_lo(pcrel144)
+	addi s0, a1, %pcrel_lo(pcrel149)
 	ble s1, zero, label2
-	mv a0, s2
-	mv a1, s1
+	mv a2, s2
+	mv a0, s1
 .p2align 2
 label3:
-	li a4, 19971231
+	li a1, 19971231
+	li a4, 19981013
 	li a5, 1152921497
-	mulw a2, a0, a4
-	li a0, 19981013
-	addw a3, a2, a0
+	mulw a2, a2, a1
+	addw a3, a2, a4
 	mul a2, a3, a5
 	srli t2, a2, 63
 	srai t0, a2, 60
@@ -41,26 +41,38 @@ label3:
 	subw t1, a3, t0
 	mv a3, t1
 	bge t1, zero, label129
-	addw a3, t1, a2
+	j label128
+.p2align 2
+label41:
+	sh2add a2, a3, s0
+	sw a4, 0(a2)
+	ble a0, zero, label2
+.p2align 2
+label46:
+	mv a2, a1
+	j label3
+.p2align 2
+label128:
+	addw a3, a3, a2
 .p2align 2
 label129:
-	mulw t0, a3, a4
-	addw a0, t0, a0
-	mul a4, a0, a5
+	mulw t0, a3, a1
+	addw a1, t0, a4
+	mul a4, a1, a5
 	srli t1, a4, 63
 	srai a5, a4, 60
 	add t0, t1, a5
 	mulw a5, t0, a2
-	subw a4, a0, a5
-	mv a0, a4
+	subw a4, a1, a5
+	mv a1, a4
 	bge a4, zero, label131
-	addw a0, a4, a2
+	addw a1, a4, a2
 .p2align 2
 label131:
-	andi a2, a0, 1
+	andi a2, a1, 1
 	li t0, 1876499845
 	li t1, 300000
-	addiw a1, a1, -1
+	addiw a0, a0, -1
 	mul a4, a3, t0
 	srli t0, a4, 63
 	srai a5, a4, 49
@@ -92,25 +104,7 @@ label131:
 	add t2, t0, t1
 	andi t3, t2, -2
 	subw t1, t0, t3
-	bne a2, t1, label7
-	sh2add a2, a3, s0
-	sw a4, 0(a2)
-	bgt a1, zero, label3
-label2:
-	li a0, 64
-	jal _sysy_stoptime
-	mv a1, s0
-	li a0, 10000
-	jal putarray
-	ld ra, 0(sp)
-	mv a0, zero
-	ld s1, 8(sp)
-	ld s2, 16(sp)
-	ld s0, 24(sp)
-	addi sp, sp, 32
-	ret
-.p2align 2
-label7:
+	beq a2, t1, label41
 	andi t1, t0, 1
 	xori t3, a2, 1
 	or t2, t1, t3
@@ -131,5 +125,17 @@ label135:
 	addw a4, a4, a2
 	sh2add a2, a3, s0
 	sw a4, 0(a2)
-	bgt a1, zero, label3
-	j label2
+	bgt a0, zero, label46
+label2:
+	li a0, 64
+	jal _sysy_stoptime
+	mv a1, s0
+	li a0, 10000
+	jal putarray
+	ld ra, 0(sp)
+	mv a0, zero
+	ld s1, 8(sp)
+	ld s2, 16(sp)
+	ld s0, 24(sp)
+	addi sp, sp, 32
+	ret

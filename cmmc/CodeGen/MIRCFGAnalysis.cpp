@@ -73,5 +73,10 @@ CFGAnalysisResult calcCFG(const MIRFunction& func, const CodeGenContext& ctx) {
 
     return result;
 }
+double BlockTripCountResult::query(MIRBasicBlock* block) const {
+    if(auto it = mFreq.find(block); it != mFreq.end())
+        return it->second;
+    return 1.0;
+}
 
 CMMC_MIR_NAMESPACE_END

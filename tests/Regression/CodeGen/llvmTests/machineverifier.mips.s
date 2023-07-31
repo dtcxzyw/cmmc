@@ -11,10 +11,13 @@ foo:
 	lui $t1, %hi(g)
 	addiu $t0, $t1, %lo(g)
 	lw $t1, %lo(g)($t1)
-	beq $t1, $zero, label2
+	bne $t1, $zero, label8
 	nop
-	addiu $t1, $t1, 10
-	sw $t1, 0($t0)
 label2:
 	jr $ra
+	nop
+label8:
+	addiu $t1, $t1, 10
+	sw $t1, 0($t0)
+	b label2
 	nop

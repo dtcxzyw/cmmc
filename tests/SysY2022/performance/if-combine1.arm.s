@@ -95,9 +95,6 @@ main:
 	add r1, r1, r0
 	mov r0, r3
 	movgt r0, r1
-	b label3
-label7:
-	mov r0, #0
 label3:
 	bl putint
 	mov r0, #10
@@ -106,3 +103,6 @@ label3:
 	bl _sysy_stoptime
 	mov r0, #0
 	pop { r4, r5, r6, r7, r8, r9, r10, pc }
+label7:
+	mov r0, #0
+	b label3

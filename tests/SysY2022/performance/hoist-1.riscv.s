@@ -17,9 +17,6 @@ main:
 	sub a0, a1, s0
 	rem a1, a0, a2
 	sext.w s0, a1
-	j label3
-label7:
-	mv s0, zero
 label3:
 	li a0, 123
 	jal _sysy_stoptime
@@ -32,3 +29,6 @@ label3:
 	ld s0, 8(sp)
 	addi sp, sp, 16
 	ret
+label7:
+	mv s0, zero
+	j label3

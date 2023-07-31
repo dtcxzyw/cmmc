@@ -17,6 +17,8 @@
 
 #include <cmath>
 #include <cmmc/Analysis/BlockTripCountEstimation.hpp>
+#include <cmmc/CodeGen/MIR.hpp>
+#include <cmmc/CodeGen/MIRCFGAnalysis.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cstdint>
@@ -31,39 +33,8 @@ double BlockTripCountEstimationResult::query(Block* block) const {
     return mExpectedCount.at(block);
 }
 
-BlockTripCountEstimationResult BlockTripCountEstimation::run(Function& func, AnalysisPassManager&) {
-    constexpr size_t maxSupportedBlockSize = 1000;
-    if(func.blocks().size() > maxSupportedBlockSize)
-        return { {} };
-
-    const auto n = func.blocks().size();
-    uint32_t allocateID = 0;
-    std::unordered_map<Block*, uint32_t> nodeMap;
-    for(auto block : func.blocks())
-        nodeMap.emplace(block, allocateID++);
-    std::vector<double> a(n * n);
-
+static std::vector<double> solve(size_t n, std::vector<double>& a) {
     const auto mat = [&](uint32_t i, uint32_t j) -> double& { return a[i * n + j]; };
-    // Construct problem
-    for(uint32_t i = 0; i < n; ++i)
-        mat(i, i) = 1.0;
-
-    const auto addEdge = [&](uint32_t u, Block* v, double prob) { mat(nodeMap.at(v), u) -= prob; };
-
-    for(auto block : func.blocks()) {
-        const auto terminator = block->getTerminator();
-        if(!terminator->isBranch())
-            continue;
-        const auto u = nodeMap.at(block);
-        const auto branch = terminator->as<BranchInst>();
-        if(branch->getInstID() == InstructionID::ConditionalBranch) {
-            const auto prob = branch->getBranchProb();
-            addEdge(u, branch->getTrueTarget(), prob);
-            addEdge(u, branch->getFalseTarget(), 1.0 - prob);
-        } else {
-            addEdge(u, branch->getTrueTarget(), 1.0);
-        }
-    }
 
     // LUP
     constexpr double eps = 1e-8;
@@ -116,6 +87,46 @@ BlockTripCountEstimationResult BlockTripCountEstimation::run(Function& func, Ana
         d[ui] = sum / mat(ui, ui);
     }
 
+    return d;
+}
+
+constexpr size_t maxSupportedBlockSize = 1000;
+
+BlockTripCountEstimationResult BlockTripCountEstimation::run(Function& func, AnalysisPassManager&) {
+    if(func.blocks().size() > maxSupportedBlockSize)
+        return { {} };
+
+    const auto n = func.blocks().size();
+    uint32_t allocateID = 0;
+    std::unordered_map<Block*, uint32_t> nodeMap;
+    for(auto block : func.blocks())
+        nodeMap.emplace(block, allocateID++);
+    std::vector<double> a(n * n);
+
+    const auto mat = [&](uint32_t i, uint32_t j) -> double& { return a[i * n + j]; };
+    // Construct problem
+    for(uint32_t i = 0; i < n; ++i)
+        mat(i, i) = 1.0;
+
+    const auto addEdge = [&](uint32_t u, Block* v, double prob) { mat(nodeMap.at(v), u) -= prob; };
+
+    for(auto block : func.blocks()) {
+        const auto terminator = block->getTerminator();
+        if(!terminator->isBranch())
+            continue;
+        const auto u = nodeMap.at(block);
+        const auto branch = terminator->as<BranchInst>();
+        if(branch->getInstID() == InstructionID::ConditionalBranch) {
+            const auto prob = branch->getBranchProb();
+            addEdge(u, branch->getTrueTarget(), prob);
+            addEdge(u, branch->getFalseTarget(), 1.0 - prob);
+        } else {
+            addEdge(u, branch->getTrueTarget(), 1.0);
+        }
+    }
+
+    auto d = solve(n, a);
+
     /*
     func.dump(std::cerr);
     for(auto block : func.blocks()) {
@@ -136,5 +147,43 @@ BlockTripCountEstimationResult BlockTripCountEstimation::run(Function& func, Ana
 
     return { std::move(res) };
 }
+
+namespace mir {
+    BlockTripCountResult calcFreq(const MIRFunction& func, const CFGAnalysisResult& cfg) {
+        BlockTripCountResult res;
+        auto& storage = res.storage();
+
+        constexpr size_t maxSupportedBlockSize = 1000;
+        if(func.blocks().size() > maxSupportedBlockSize)
+            return res;
+
+        const auto n = func.blocks().size();
+        uint32_t allocateID = 0;
+        std::unordered_map<MIRBasicBlock*, uint32_t> nodeMap;
+        for(auto& block : func.blocks())
+            nodeMap.emplace(block.get(), allocateID++);
+        std::vector<double> a(n * n);
+
+        const auto mat = [&](uint32_t i, uint32_t j) -> double& { return a[i * n + j]; };
+        // Construct problem
+        for(uint32_t i = 0; i < n; ++i)
+            mat(i, i) = 1.0;
+
+        const auto addEdge = [&](uint32_t u, MIRBasicBlock* v, double prob) { mat(nodeMap.at(v), u) -= prob; };
+
+        for(auto& block : func.blocks()) {
+            const auto u = nodeMap.at(block.get());
+            for(auto [succ, prob] : cfg.successors(block.get()))
+                addEdge(u, succ, prob);
+        }
+
+        auto d = solve(n, a);
+
+        for(auto& block : func.blocks())
+            storage.emplace(block.get(), d[nodeMap.at(block.get())]);
+
+        return res;
+    }
+}  // namespace mir
 
 CMMC_NAMESPACE_END

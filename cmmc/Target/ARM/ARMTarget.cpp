@@ -170,7 +170,7 @@ public:
             .duplicationIterations = 10U,
             .branchLimit = 1000U,
             .disableSelectionOpt = true,
-            .branchPredictionWarmupThreshold = 8U,
+            .branchPredictionWarmupThreshold = 2U,
         };
 
         return defaultHeuristic;

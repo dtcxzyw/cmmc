@@ -17,29 +17,7 @@ label4:
 	jal getint
 	li a2, 99
 	addiw a1, a0, -1
-	bgeu a1, a2, label113
-	li a1, 99
-	bge a0, a1, label117
-	li a1, 98
-	bge a0, a1, label121
-	li a1, 97
-	bge a0, a1, label125
-	li a1, 96
-	bge a0, a1, label129
-	li a1, 95
-	bge a0, a1, label133
-	li a1, 94
-	bge a0, a1, label137
-	li a1, 93
-	bge a0, a1, label141
-	li a1, 92
-	bge a0, a1, label145
-	li a1, 91
-	blt a0, a1, label14
-	li a0, 91
-	j label102
-.p2align 2
-label113:
+	bltu a1, a2, label5
 	li a0, 100
 .p2align 2
 label102:
@@ -55,11 +33,36 @@ label104:
 	ld s1, 16(sp)
 	addi sp, sp, 24
 	ret
-label14:
+.p2align 2
+label5:
+	li a1, 99
+	bge a0, a1, label117
+	li a1, 98
+	bge a0, a1, label121
+	li a1, 97
+	bge a0, a1, label125
+	li a1, 96
+	bge a0, a1, label129
+	li a1, 95
+	bge a0, a1, label133
+	li a1, 94
+	blt a0, a1, label11
+	li a0, 94
+	j label102
+label11:
+	li a1, 93
+	bge a0, a1, label141
+	li a1, 92
+	bge a0, a1, label145
+	li a1, 91
+	bge a0, a1, label149
 	li a1, 90
 	bge a0, a1, label153
 	li a1, 89
-	bge a0, a1, label157
+	blt a0, a1, label16
+	li a0, 89
+	j label102
+label16:
 	li a1, 88
 	bge a0, a1, label161
 	li a1, 87
@@ -81,47 +84,38 @@ label14:
 	li a1, 79
 	bge a0, a1, label197
 	li a1, 78
-	blt a0, a1, label27
-	li a0, 78
-	j label102
-label27:
+	bge a0, a1, label201
 	li a1, 77
 	bge a0, a1, label205
 	li a1, 76
-	blt a0, a1, label29
-	li a0, 76
-	j label102
-label29:
+	bge a0, a1, label209
 	li a1, 75
 	bge a0, a1, label213
 	li a1, 74
-	blt a0, a1, label31
-	li a0, 74
-	j label102
-label31:
+	bge a0, a1, label217
 	li a1, 73
-	blt a0, a1, label32
-	li a0, 73
-	j label102
-label32:
+	bge a0, a1, label221
 	li a1, 72
-	blt a0, a1, label33
-	li a0, 72
-	j label102
-label33:
+	bge a0, a1, label225
 	li a1, 71
 	bge a0, a1, label229
 	li a1, 70
-	blt a0, a1, label35
-	li a0, 70
-	j label102
-label35:
+	bge a0, a1, label233
 	li a1, 69
-	bge a0, a1, label237
+	blt a0, a1, label36
+	li a0, 69
+	j label102
+label36:
 	li a1, 68
-	bge a0, a1, label241
+	blt a0, a1, label37
+	li a0, 68
+	j label102
+label37:
 	li a1, 67
-	bge a0, a1, label245
+	blt a0, a1, label38
+	li a0, 67
+	j label102
+label38:
 	li a1, 66
 	bge a0, a1, label249
 	li a1, 65
@@ -133,15 +127,27 @@ label35:
 	li a1, 62
 	bge a0, a1, label265
 	li a1, 61
-	bge a0, a1, label269
+	blt a0, a1, label44
+	li a0, 61
+	j label102
+label44:
 	li a1, 60
 	bge a0, a1, label273
 	li a1, 59
-	bge a0, a1, label277
+	blt a0, a1, label46
+	li a0, 59
+	j label102
+label46:
 	li a1, 58
-	bge a0, a1, label281
+	blt a0, a1, label47
+	li a0, 58
+	j label102
+label47:
 	li a1, 57
-	bge a0, a1, label285
+	blt a0, a1, label48
+	li a0, 57
+	j label102
+label48:
 	li a1, 56
 	bge a0, a1, label289
 	li a1, 55
@@ -149,7 +155,10 @@ label35:
 	li a1, 54
 	bge a0, a1, label297
 	li a1, 53
-	bge a0, a1, label301
+	blt a0, a1, label52
+	li a0, 53
+	j label102
+label52:
 	li a1, 52
 	bge a0, a1, label305
 	li a1, 51
@@ -258,23 +267,24 @@ label35:
 label606:
 	mv a0, a1
 	j label102
-label125:
-	li a0, 97
+label189:
+	li a0, 81
+	j label102
+label149:
+	li a0, 91
 	j label102
 label129:
 	li a0, 96
 	j label102
-label173:
-	li a0, 85
+.p2align 2
+label117:
+	li a0, 99
 	j label102
-label157:
-	li a0, 89
+label197:
+	li a0, 79
 	j label102
-label261:
-	li a0, 63
-	j label102
-label389:
-	li a0, 31
+label405:
+	li a0, 27
 	j label102
 label497:
 	li a0, 4
@@ -342,23 +352,23 @@ label417:
 label413:
 	li a0, 25
 	j label102
-label409:
-	li a0, 26
-	j label102
-label405:
-	li a0, 27
-	j label102
 label401:
 	li a0, 28
+	j label102
+label409:
+	li a0, 26
 	j label102
 label397:
 	li a0, 29
 	j label102
-label385:
-	li a0, 32
-	j label102
 label393:
 	li a0, 30
+	j label102
+label389:
+	li a0, 31
+	j label102
+label385:
+	li a0, 32
 	j label102
 label381:
 	li a0, 33
@@ -420,9 +430,6 @@ label309:
 label305:
 	li a0, 52
 	j label102
-label301:
-	li a0, 53
-	j label102
 label297:
 	li a0, 54
 	j label102
@@ -432,23 +439,8 @@ label293:
 label289:
 	li a0, 56
 	j label102
-label285:
-	li a0, 57
-	j label102
-label281:
-	li a0, 58
-	j label102
-label277:
-	li a0, 59
-	j label102
 label273:
 	li a0, 60
-	j label102
-label269:
-	li a0, 61
-	j label102
-label257:
-	li a0, 64
 	j label102
 label265:
 	li a0, 62
@@ -456,73 +448,81 @@ label265:
 label253:
 	li a0, 65
 	j label102
+label261:
+	li a0, 63
+	j label102
 label249:
 	li a0, 66
 	j label102
-label245:
-	li a0, 67
-	j label102
-label241:
-	li a0, 68
-	j label102
-label237:
-	li a0, 69
+label233:
+	li a0, 70
 	j label102
 label229:
 	li a0, 71
 	j label102
+label225:
+	li a0, 72
+	j label102
+label221:
+	li a0, 73
+	j label102
+label217:
+	li a0, 74
+	j label102
 label213:
 	li a0, 75
+	j label102
+label209:
+	li a0, 76
 	j label102
 label205:
 	li a0, 77
 	j label102
-label197:
-	li a0, 79
-	j label102
-label193:
-	li a0, 80
-	j label102
-label189:
-	li a0, 81
-	j label102
-label185:
-	li a0, 82
-	j label102
-label181:
-	li a0, 83
-	j label102
-label169:
-	li a0, 86
-	j label102
-label177:
-	li a0, 84
-	j label102
-label165:
-	li a0, 87
-	j label102
-label145:
-	li a0, 92
+label201:
+	li a0, 78
 	j label102
 label153:
 	li a0, 90
 	j label102
-label141:
-	li a0, 93
+label193:
+	li a0, 80
+	j label102
+label125:
+	li a0, 97
+	j label102
+label177:
+	li a0, 84
+	j label102
+label185:
+	li a0, 82
+	j label102
+label173:
+	li a0, 85
+	j label102
+label169:
+	li a0, 86
+	j label102
+label165:
+	li a0, 87
 	j label102
 label161:
 	li a0, 88
 	j label102
-label137:
-	li a0, 94
-	j label102
-.p2align 2
-label117:
-	li a0, 99
-	j label102
 label133:
 	li a0, 95
 	j label102
+label141:
+	li a0, 93
+	j label102
+label145:
+	li a0, 92
+	j label102
 label121:
 	li a0, 98
+	j label102
+label257:
+	li a0, 64
+	j label102
+label181:
+	li a0, 83
 	j label102

@@ -15,9 +15,6 @@ main:
 	mul a0, a0, a1
 	rem a1, a0, a2
 	sext.w a0, a1
-	j label3
-label7:
-	mv a0, zero
 label3:
 	jal putint
 	li a0, 10
@@ -28,3 +25,6 @@ label3:
 	mv a0, zero
 	addi sp, sp, 8
 	ret
+label7:
+	mv a0, zero
+	j label3

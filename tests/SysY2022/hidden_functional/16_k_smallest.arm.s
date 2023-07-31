@@ -21,14 +21,17 @@ main:
 	mov r5, r0
 	movt r4, #:upper16:array
 	bgt label32
-	b label31
-label110:
-	ldr r3, [r4, r1, lsl #2]
-	mov r6, r0
-	mov r2, r0
-	b label9
+label31:
+	sub r1, r6, #1
+	mov r0, #0
+	b label6
 label32:
 	mov r7, #0
+	b label24
+label6:
+	cmp r0, r1
+	beq label23
+	b label8
 .p2align 4
 label24:
 	bl getint
@@ -36,15 +39,7 @@ label24:
 	add r7, r7, #1
 	cmp r6, r7
 	bgt label24
-	sub r1, r6, #1
-	mov r0, #0
-	cmp r0, r1
-	beq label23
-	b label110
-.p2align 4
-label9:
-	cmp r1, r2
-	ble label43
+	b label31
 .p2align 4
 label12:
 	ldr r7, [r4, r2, lsl #2]
@@ -53,25 +48,7 @@ label12:
 	add r2, r2, #1
 	cmp r1, r2
 	bgt label12
-	add r2, r4, r6, lsl #2
-	cmp r5, r6
-	add r7, r4, r1, lsl #2
-	ldr r3, [r2, #0]
-	ldr r8, [r7, #0]
-	str r8, [r2, #0]
-	str r3, [r7, #0]
-	beq label20
-	b label17
-.p2align 4
-label31:
-	sub r1, r6, #1
-	mov r0, #0
-	cmp r0, r1
-	bne label110
-label23:
-	mov r0, #0
-	add sp, sp, #4
-	pop { r4, r5, r6, r7, r8, r9, pc }
+	b label16
 .p2align 4
 label13:
 	add r8, r4, r6, lsl #2
@@ -82,6 +59,7 @@ label13:
 	add r2, r2, #1
 	cmp r1, r2
 	bgt label12
+label16:
 	add r2, r4, r6, lsl #2
 	cmp r5, r6
 	add r7, r4, r1, lsl #2
@@ -90,7 +68,6 @@ label13:
 	str r8, [r2, #0]
 	str r3, [r7, #0]
 	bne label17
-label20:
 	cmp r6, #0
 	ble label23
 	mov r5, #0
@@ -103,25 +80,22 @@ label21:
 	add r5, r5, #1
 	cmp r6, r5
 	bgt label21
-	b label23
-.p2align 4
-label43:
-	add r2, r4, r6, lsl #2
-	cmp r5, r6
-	add r7, r4, r1, lsl #2
-	ldr r3, [r2, #0]
-	ldr r8, [r7, #0]
-	str r8, [r2, #0]
-	str r3, [r7, #0]
-	beq label20
+label23:
+	mov r0, #0
+	add sp, sp, #4
+	pop { r4, r5, r6, r7, r8, r9, pc }
+label8:
+	ldr r3, [r4, r1, lsl #2]
+	mov r6, r0
+	mov r2, r0
+	cmp r1, r0
+	bgt label12
+	b label16
 label17:
 	cmp r5, r6
 	blt label19
 	add r0, r6, #1
-label6:
-	cmp r0, r1
-	beq label23
-	b label110
+	b label6
 label19:
 	sub r1, r6, #1
 	b label6

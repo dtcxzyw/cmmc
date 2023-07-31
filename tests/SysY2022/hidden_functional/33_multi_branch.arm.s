@@ -19,29 +19,7 @@ label4:
 	bl getint
 	sub r1, r0, #1
 	cmp r1, #99
-	bhs label113
-	cmp r0, #99
-	bge label117
-	cmp r0, #98
-	bge label121
-	cmp r0, #97
-	bge label125
-	cmp r0, #96
-	bge label129
-	cmp r0, #95
-	bge label133
-	cmp r0, #94
-	bge label137
-	cmp r0, #93
-	bge label141
-	cmp r0, #92
-	bge label145
-	cmp r0, #91
-	blt label14
-	mov r0, #91
-	b label102
-.p2align 4
-label113:
+	blo label5
 	mov r0, #100
 .p2align 4
 label102:
@@ -55,11 +33,36 @@ label104:
 	mov r0, #0
 	add sp, sp, #4
 	pop { r4, r5, pc }
-label14:
+.p2align 4
+label5:
+	cmp r0, #99
+	bge label117
+	cmp r0, #98
+	bge label121
+	cmp r0, #97
+	bge label125
+	cmp r0, #96
+	bge label129
+	cmp r0, #95
+	bge label133
+	cmp r0, #94
+	blt label11
+	mov r0, #94
+	b label102
+label11:
+	cmp r0, #93
+	bge label141
+	cmp r0, #92
+	bge label145
+	cmp r0, #91
+	bge label149
 	cmp r0, #90
 	bge label153
 	cmp r0, #89
-	bge label157
+	blt label16
+	mov r0, #89
+	b label102
+label16:
 	cmp r0, #88
 	bge label161
 	cmp r0, #87
@@ -81,17 +84,11 @@ label14:
 	cmp r0, #79
 	bge label197
 	cmp r0, #78
-	blt label27
-	mov r0, #78
-	b label102
-label27:
+	bge label201
 	cmp r0, #77
 	bge label205
 	cmp r0, #76
-	blt label29
-	mov r0, #76
-	b label102
-label29:
+	bge label209
 	cmp r0, #75
 	bge label213
 	cmp r0, #74
@@ -103,10 +100,7 @@ label29:
 	cmp r0, #71
 	bge label229
 	cmp r0, #70
-	blt label35
-	mov r0, #70
-	b label102
-label35:
+	bge label233
 	cmp r0, #69
 	bge label237
 	cmp r0, #68
@@ -250,20 +244,20 @@ label35:
 label125:
 	mov r0, #97
 	b label102
-label173:
-	mov r0, #85
-	b label102
 label145:
 	mov r0, #92
 	b label102
-label169:
-	mov r0, #86
+label133:
+	mov r0, #95
 	b label102
-label249:
-	mov r0, #66
+label181:
+	mov r0, #83
 	b label102
-label377:
-	mov r0, #34
+label245:
+	mov r0, #67
+	b label102
+label373:
+	mov r0, #35
 	b label102
 label497:
 	mov r0, #4
@@ -352,14 +346,14 @@ label389:
 label385:
 	mov r0, #32
 	b label102
-label373:
-	mov r0, #35
-	b label102
 label381:
 	mov r0, #33
 	b label102
 label369:
 	mov r0, #36
+	b label102
+label377:
+	mov r0, #34
 	b label102
 label365:
 	mov r0, #37
@@ -445,17 +439,20 @@ label261:
 label257:
 	mov r0, #64
 	b label102
-label245:
-	mov r0, #67
-	b label102
 label253:
 	mov r0, #65
 	b label102
 label241:
 	mov r0, #68
 	b label102
+label249:
+	mov r0, #66
+	b label102
 label237:
 	mov r0, #69
+	b label102
+label233:
+	mov r0, #70
 	b label102
 label229:
 	mov r0, #71
@@ -472,8 +469,14 @@ label217:
 label213:
 	mov r0, #75
 	b label102
+label209:
+	mov r0, #76
+	b label102
 label205:
 	mov r0, #77
+	b label102
+label201:
+	mov r0, #78
 	b label102
 label197:
 	mov r0, #79
@@ -484,17 +487,17 @@ label193:
 label189:
 	mov r0, #81
 	b label102
+label177:
+	mov r0, #84
+	b label102
 label185:
 	mov r0, #82
 	b label102
-label181:
-	mov r0, #83
+label173:
+	mov r0, #85
 	b label102
-label157:
-	mov r0, #89
-	b label102
-label177:
-	mov r0, #84
+label169:
+	mov r0, #86
 	b label102
 label165:
 	mov r0, #87
@@ -508,19 +511,15 @@ label153:
 label141:
 	mov r0, #93
 	b label102
-label129:
-	mov r0, #96
-	b label102
-label137:
-	mov r0, #94
-	b label102
-.p2align 4
-label117:
-	mov r0, #99
-	b label102
-label133:
-	mov r0, #95
+label149:
+	mov r0, #91
 	b label102
 label121:
 	mov r0, #98
+	b label102
+label117:
+	mov r0, #99
+	b label102
+label129:
+	mov r0, #96
 	b label102

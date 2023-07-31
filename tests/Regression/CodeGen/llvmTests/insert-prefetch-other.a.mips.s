@@ -20,6 +20,11 @@ foo:
 	li $v0, 1
 	b label5
 	nop
+label10:
+	move $v0, $zero
+label5:
+	jr $ra
+	nop
 label16:
 	li $v0, 1
 label3:
@@ -29,9 +34,4 @@ label3:
 	bne $a0, $v0, label3
 	nop
 	b label5
-	nop
-label10:
-	move $v0, $zero
-label5:
-	jr $ra
 	nop

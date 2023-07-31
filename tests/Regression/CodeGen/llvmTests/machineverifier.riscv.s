@@ -9,14 +9,16 @@ g:
 .globl foo
 foo:
 .p2align 2
-pcrel17:
+pcrel18:
 	auipc a1, %pcrel_hi(g)
-	addi a0, a1, %pcrel_lo(pcrel17)
-	lw a1, %pcrel_lo(pcrel17)(a1)
-	beq a1, zero, label2
+	addi a0, a1, %pcrel_lo(pcrel18)
+	lw a1, %pcrel_lo(pcrel18)(a1)
+	bne a1, zero, label8
+label2:
+	ret
+label8:
 	addiw a1, a1, 10
 	li a2, 4294967295
 	and a3, a1, a2
 	sw a3, 0(a0)
-label2:
-	ret
+	j label2

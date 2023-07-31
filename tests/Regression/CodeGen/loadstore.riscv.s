@@ -117,8 +117,8 @@ label107:
 	ble a0, a3, label123
 	addiw a2, a0, -4
 	addiw a4, a0, -20
-	li a3, 16
-	ble a2, a3, label129
+	li a5, 16
+	ble a2, a5, label129
 	mv a3, zero
 label109:
 	sh2add a5, a3, a1
@@ -132,27 +132,26 @@ label109:
 	sd zero, 48(a5)
 	sd zero, 56(a5)
 	bgt a4, a3, label109
-	mv a4, a3
 label111:
-	sh2add a5, a4, a1
-	addiw a4, a4, 4
-	sw zero, 0(a5)
-	sw zero, 4(a5)
-	sw zero, 8(a5)
-	sw zero, 12(a5)
-	bgt a2, a4, label111
-	mv a2, a4
+	sh2add a4, a3, a1
+	addiw a3, a3, 4
+	sw zero, 0(a4)
+	sw zero, 4(a4)
+	sw zero, 8(a4)
+	sw zero, 12(a4)
+	bgt a2, a3, label111
+	mv a2, a3
 label113:
-	sh2add a3, a2, a1
+	sh2add a4, a2, a1
 	addiw a2, a2, 1
-	sw zero, 0(a3)
+	sw zero, 0(a4)
 	bgt a0, a2, label113
 	j label106
 label123:
 	mv a2, zero
 	j label113
 label129:
-	mv a4, zero
+	mv a3, zero
 	j label111
 .globl fused_store
 fused_store:

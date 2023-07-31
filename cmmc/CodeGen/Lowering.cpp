@@ -14,7 +14,6 @@
 
 #include <algorithm>
 #include <cassert>
-#include <cmmc/Analysis/BlockTripCountEstimation.hpp>
 #include <cmmc/Analysis/CallGraphSCC.hpp>
 #include <cmmc/Analysis/DominateAnalysis.hpp>
 #include <cmmc/Analysis/IntegerRangeAnalysis.hpp>
@@ -24,6 +23,7 @@
 #include <cmmc/CodeGen/InstInfo.hpp>
 #include <cmmc/CodeGen/Lowering.hpp>
 #include <cmmc/CodeGen/MIR.hpp>
+#include <cmmc/CodeGen/MIRCFGAnalysis.hpp>
 #include <cmmc/CodeGen/RegisterAllocator.hpp>
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/Config.hpp>
@@ -187,13 +187,12 @@ MIRGlobal* LoweringContext::mapGlobal(GlobalValue* global) const {
 static String getBlockLabel(CodeGenContext& ctx) {
     return String::get("label").withID(static_cast<int32_t>(ctx.nextId()));
 }
-MIRBasicBlock* LoweringContext::addBlockAfter(double blockTripCount) {
+MIRBasicBlock* LoweringContext::addBlockAfter() {
     auto& blocks = mCurrentBasicBlock->getFunction()->blocks();
     auto iter = std::find_if(blocks.cbegin(), blocks.cend(), [&](auto& block) { return block.get() == mCurrentBasicBlock; });
     assert(iter != blocks.cend());
     const auto ret =
-        blocks.insert(std::next(iter),
-                      makeUnique<MIRBasicBlock>(getBlockLabel(mCodeGenCtx), mCurrentBasicBlock->getFunction(), blockTripCount));
+        blocks.insert(std::next(iter), makeUnique<MIRBasicBlock>(getBlockLabel(mCodeGenCtx), mCurrentBasicBlock->getFunction()));
     return ret->get();
 }
 void LoweringContext::addOperand(Value* value, MIROperand reg) {
@@ -207,7 +206,6 @@ static void lowerInst(Instruction* inst, LoweringContext& ctx, const PointerAlig
 static void lowerToMachineFunction(MIRFunction& mfunc, Function* func, CodeGenContext& codeGenCtx, MIRModule& machineModule,
                                    std::unordered_map<GlobalValue*, MIRGlobal*>& globalMap,
                                    FloatingPointConstantPool& fpConstantPool, AnalysisPassManager& analysis) {
-    auto& blockTripCount = analysis.get<BlockTripCountEstimation>(*func);
     auto& alignment = analysis.get<PointerAlignmentAnalysis>(*func);
     auto& range = analysis.get<IntegerRangeAnalysis>(*func);
     auto& dom = analysis.get<DominateAnalysis>(*func);
@@ -221,8 +219,7 @@ static void lowerToMachineFunction(MIRFunction& mfunc, Function* func, CodeGenCo
     auto& dataLayout = target.getDataLayout();
 
     for(auto block : dom.blocks()) {
-        const auto tripCount = blockTripCount.isAvailable() ? blockTripCount.query(block) : 1.0;
-        mfunc.blocks().push_back(makeUnique<MIRBasicBlock>(getBlockLabel(codeGenCtx), &mfunc, tripCount));
+        mfunc.blocks().push_back(makeUnique<MIRBasicBlock>(getBlockLabel(codeGenCtx), &mfunc));
         auto& mblock = mfunc.blocks().back();
         blockMap.emplace(block, mblock.get());
         for(auto& inst : block->instructions()) {
@@ -526,9 +523,17 @@ static void lowerToMachineModule(MIRModule& machineModule, Module& module, Analy
             optimizeBlockLayout(mfunc, ctx);
             // dumpFunc(mfunc);
             assert(mfunc.verify(std::cerr, ctx));
+            // block freq is unused
         }
         // TODO: basic block alignment
         // Stage 12: remove unreachable block/continuous goto/unused label/peephole
+        {
+            const auto cfg = calcCFG(mfunc, ctx);
+            const auto freq = calcFreq(mfunc, cfg);
+
+            for(auto& block : mfunc.blocks())
+                block->setTripCount(freq.query(block.get()));
+        }
         ctx.flags.endsWithTerminator = false;
         if(optLevel >= OptimizationLevel::O1 && !debugISel.get()) {
             Stage stage{ "CFG Simplification"sv };
@@ -860,9 +865,9 @@ static void lower(BranchInst* inst, LoweringContext& ctx) {
 
         const auto curBlock = ctx.getCurrentBasicBlock();
 
-        const auto thenPrepareBlock = ctx.addBlockAfter(ctx.mapBlock(inst->getTrueTarget())->getTripCount());
+        const auto thenPrepareBlock = ctx.addBlockAfter();
         ctx.setCurrentBasicBlock(thenPrepareBlock);
-        const auto elsePrepareBlock = ctx.addBlockAfter(ctx.mapBlock(inst->getFalseTarget())->getTripCount());
+        const auto elsePrepareBlock = ctx.addBlockAfter();
         ctx.setCurrentBasicBlock(curBlock);
 
         const auto cond = ctx.newVReg(inst->getOperand(0)->getType());

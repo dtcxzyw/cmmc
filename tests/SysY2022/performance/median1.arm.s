@@ -24,24 +24,24 @@ main:
 	asr r5, r0, #1
 	mov r0, #59
 	bl _sysy_starttime
-	mov r2, r6
-	mov r1, #0
+	mov r1, r6
+	mov r2, #0
 	mov r0, r7
 	ldr r3, [r6, #0]
 	add r6, r7, #1
-	mov r7, r1
-.p2align 4
+	mov r7, r2
 label8:
 	cmp r6, r7
 	bgt label11
-	beq label17
-label99:
-	add r8, r4, r6, lsl #2
-	add r9, r4, r7, lsl #2
-	ldr r10, [r9, #0]
-	ldr r11, [r8, #0]
-	str r11, [r9, #0]
-	str r10, [r8, #0]
+	b label12
+label54:
+	cmp r5, r7
+	ble label20
+	add r2, r7, #1
+	add r1, r4, r2, lsl #2
+	ldr r3, [r1, #0]
+	add r6, r0, #1
+	mov r7, r2
 	b label8
 .p2align 4
 label11:
@@ -51,42 +51,45 @@ label11:
 	bgt label12
 	cmp r6, r7
 	bgt label11
-	bne label99
-label17:
-	str r3, [r2, #0]
-	add r6, r4, r7, lsl #2
-	cmp r5, r7
-	ldr r8, [r6, #0]
-	str r8, [r2, #0]
-	str r3, [r6, #0]
-	bge label18
-	mov r0, r7
-	ldr r3, [r2, #0]
-	add r6, r7, #1
-	mov r7, r1
-	b label8
 .p2align 4
 label12:
 	cmp r6, r7
 	ble label15
+.p2align 4
+label22:
 	add r7, r7, #1
 	ldr r8, [r4, r7, lsl #2]
 	cmp r3, r8
-	bgt label12
+	ble label15
+	cmp r6, r7
+	bgt label22
 .p2align 4
 label15:
 	cmp r6, r7
 	beq label17
-	b label99
-label18:
+	add r8, r4, r6, lsl #2
+	add r9, r4, r7, lsl #2
+	ldr r10, [r9, #0]
+	ldr r11, [r8, #0]
+	str r11, [r9, #0]
+	str r10, [r8, #0]
+	bgt label11
+	b label12
+label17:
+	str r3, [r1, #0]
+	add r6, r4, r7, lsl #2
 	cmp r5, r7
-	ble label20
-	add r1, r7, #1
-	add r2, r4, r1, lsl #2
-	ldr r3, [r2, #0]
-	add r6, r0, #1
-	mov r7, r1
-	b label8
+	ldr r8, [r6, #0]
+	str r8, [r1, #0]
+	str r3, [r6, #0]
+	bge label54
+	mov r0, r7
+	ldr r3, [r1, #0]
+	add r6, r7, #1
+	mov r7, r2
+	cmp r6, r2
+	bgt label11
+	b label12
 label20:
 	mov r0, #61
 	bl _sysy_stoptime

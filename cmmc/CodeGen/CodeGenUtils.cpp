@@ -15,6 +15,7 @@
 #include <cmmc/CodeGen/CodeGenUtils.hpp>
 #include <cmmc/CodeGen/InstInfo.hpp>
 #include <cmmc/CodeGen/MIR.hpp>
+#include <cmmc/CodeGen/MIRCFGAnalysis.hpp>
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/Support/Bits.hpp>
 #include <cmmc/Transforms/Hyperparameters.hpp>
@@ -114,11 +115,13 @@ void dumpAssembly(std::ostream& out, const CodeGenContext& ctx, const MIRModule&
     out << ".text\n"sv;
     emitText();
     const auto p2Align = ilog2(ctx.dataLayout.getCodeAlignment());
+
     for(auto& global : module.globals()) {
         if(global->reloc->isFunc()) {
             auto& func = dynamic_cast<MIRFunction&>(*global->reloc);
             if(func.blocks().empty())
                 continue;
+
             dumpSymbol(*global);
             for(auto& block : func.blocks()) {
                 auto isPCRelLabel = [](const std::string_view& label) { return label == "pcrel"; };

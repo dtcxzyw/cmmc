@@ -13,6 +13,7 @@ main:
 	str r0, [sp, #100]
 	cmp r0, #0
 	ble label11
+.p2align 4
 label17:
 	mov r4, #0
 	cmp r4, #5

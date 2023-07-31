@@ -34,6 +34,7 @@ void tailDuplication(MIRFunction& func, CodeGenContext& ctx) {
 
     for(uint32_t k = 0; k < heuristic.duplicationIterations; ++k) {
         const auto cfg = calcCFG(func, ctx);
+        const auto freq = calcFreq(func, cfg);
         std::unordered_map<MIRBasicBlock*, std::vector<MIRBasicBlock*>> successors;
         for(auto& block : func.blocks()) {
             auto& blockSucc = successors[block.get()];
@@ -104,19 +105,20 @@ void tailDuplication(MIRFunction& func, CodeGenContext& ctx) {
                    !isReturn(targetBlock->instructions().back()) &&                         // unify return
                    targetBlock->instructions().size() <= heuristic.duplicationThreshold &&
                    ((!dontCopyBranchJumps &&
-                     block->getTripCount() > static_cast<double>(heuristic.branchPredictionWarmupThreshold)) ||
+                     freq.query(block) >= static_cast<double>(heuristic.branchPredictionWarmupThreshold)) ||
                     isUnconditionalBranch(
                         targetBlock->instructions().back())) &&  // don't duplicate branch jumps that needs BTB/RAS entries
                    !hasCall(*targetBlock)) {
                     instructions.pop_back();
                     instructions.insert(instructions.cend(), targetBlock->instructions().cbegin(),
                                         targetBlock->instructions().cend());
+
                     // fix CFG
 
                     const auto ensureNext = [&](MIRBasicBlock* next) {
                         if(nextIter == func.blocks().cend() || nextIter->get() != next) {
-                            auto newBlock = makeUnique<MIRBasicBlock>(block->symbol().withID(static_cast<int32_t>(ctx.nextId())),
-                                                                      &func, next->getTripCount());
+                            auto newBlock =
+                                makeUnique<MIRBasicBlock>(block->symbol().withID(static_cast<int32_t>(ctx.nextId())), &func);
                             newBlock->instructions().emplace_back(ctx.instInfo.emitGoto(next));
                             func.blocks().insert(nextIter, std::move(newBlock));
                         }
@@ -157,8 +159,6 @@ void tailDuplication(MIRFunction& func, CodeGenContext& ctx) {
             return;
 
         simplifyCFGWithUniqueTerminator(func, ctx);
-        while(genericPeepholeOpt(func, ctx))
-            ;
         // func.dump(std::cerr, ctx);
     }
 }

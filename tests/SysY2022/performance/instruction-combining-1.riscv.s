@@ -16,8 +16,8 @@ main:
 	ble s0, a1, label21
 	addiw a0, s0, -4
 	addiw a2, s0, -20
-	li a3, 16
-	ble a0, a3, label27
+	li a1, 16
+	ble a0, a1, label27
 	mv a1, zero
 	mv a3, zero
 label4:
@@ -141,6 +141,7 @@ label4:
 	srai t1, t0, 59
 	add t4, t3, t1
 	addiw t1, a1, 15
+	addiw a1, a1, 16
 	mulw t2, t4, a4
 	subw t0, a5, t2
 	addw a5, t0, t1
@@ -148,66 +149,61 @@ label4:
 	srli t2, a3, 63
 	srai t0, a3, 59
 	add t1, t2, t0
-	mulw t0, t1, a4
-	addiw a4, a1, 16
-	subw a3, a5, t0
-	ble a2, a4, label79
-	mv a1, a4
-	j label4
-label79:
-	mv a1, a3
-	mv a2, a4
+	mulw a4, t1, a4
+	subw a3, a5, a4
+	bgt a2, a1, label4
+	mv a2, a3
 label7:
-	addw a4, a1, a2
-	li a1, 1073774591
-	mul a3, a4, a1
+	addw a4, a2, a1
+	li a2, 1073774591
+	mul a3, a4, a2
 	srli t1, a3, 63
 	srai t0, a3, 59
 	li a3, 536854529
 	add a5, t1, t0
-	addiw t1, a2, 1
+	addiw t1, a1, 1
 	mulw t0, a5, a3
 	subw a5, a4, t0
 	addw a4, a5, t1
-	mul a5, a4, a1
+	mul a5, a4, a2
 	srli t2, a5, 63
 	srai t0, a5, 59
 	add t3, t2, t0
-	addiw t0, a2, 2
+	addiw t0, a1, 2
 	mulw t1, t3, a3
 	subw a5, a4, t1
 	addw a4, a5, t0
-	mul a5, a4, a1
+	mul a5, a4, a2
 	srli t1, a5, 63
 	srai t0, a5, 59
 	add t2, t1, t0
-	addiw t1, a2, 3
-	addiw a2, a2, 4
+	addiw t1, a1, 3
+	addiw a1, a1, 4
 	mulw t0, t2, a3
 	subw a5, a4, t0
 	addw a4, a5, t1
-	mul a1, a4, a1
-	srli t1, a1, 63
-	srai a5, a1, 59
+	mul a2, a4, a2
+	srli t1, a2, 63
+	srai a5, a2, 59
 	add t0, t1, a5
 	mulw a3, t0, a3
-	subw a1, a4, a3
-	bgt a0, a2, label7
-	mv a0, a2
-	mv a2, a1
+	subw a2, a4, a3
+	bgt a0, a1, label7
+	mv a0, a1
+	mv a1, a2
 label10:
-	addw a1, a0, a2
+	addw a2, a0, a1
 	li a4, 1073774591
 	addiw a0, a0, 1
-	mul a2, a1, a4
-	srli a4, a2, 63
-	srai a3, a2, 59
-	add a2, a4, a3
+	mul a1, a2, a4
+	srli a4, a1, 63
+	srai a3, a1, 59
+	add a1, a4, a3
 	li a3, 536854529
-	mulw a4, a2, a3
-	subw a2, a1, a4
+	mulw a4, a1, a3
+	subw a1, a2, a4
 	bgt s0, a0, label10
-	mv s0, a2
+	mv s0, a1
 label13:
 	li a0, 10030
 	jal _sysy_stoptime
@@ -220,14 +216,14 @@ label13:
 	ld s0, 8(sp)
 	addi sp, sp, 16
 	ret
-label27:
-	mv a1, zero
-	mv a2, zero
-	j label7
 label17:
 	mv s0, zero
 	j label13
 label21:
 	mv a0, zero
-	mv a2, zero
+	mv a1, zero
 	j label10
+label27:
+	mv a2, zero
+	mv a1, zero
+	j label7

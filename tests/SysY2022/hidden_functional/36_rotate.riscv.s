@@ -100,7 +100,24 @@ main:
 	beq a0, a1, label59
 label85:
 	li a0, -1
-	j label57
+label57:
+	ld ra, 0(sp)
+	flw f20, 8(sp)
+	flw f18, 12(sp)
+	ld s6, 16(sp)
+	flw f9, 24(sp)
+	flw f21, 28(sp)
+	flw f8, 32(sp)
+	ld s4, 40(sp)
+	ld s2, 48(sp)
+	ld s3, 56(sp)
+	ld s1, 64(sp)
+	ld s5, 72(sp)
+	ld s0, 80(sp)
+	flw f19, 88(sp)
+	ld s7, 96(sp)
+	addi sp, sp, 104
+	ret
 label59:
 	jal getch
 	li a1, 50
@@ -122,43 +139,21 @@ label59:
 	fcvt.s.w f8, s4
 	add a1, s0, a2
 	sraiw s3, a1, 1
-pcrel280:
+pcrel278:
 	auipc a1, %pcrel_hi(image)
 	fcvt.s.w f9, s3
-	addi s1, a1, %pcrel_lo(pcrel280)
+	addi s1, a1, %pcrel_lo(pcrel278)
 	li a1, 255
 	bne a0, a1, label85
 	mv s5, zero
-	j label62
-label57:
-	ld ra, 0(sp)
-	flw f20, 8(sp)
-	flw f18, 12(sp)
-	ld s6, 16(sp)
-	flw f9, 24(sp)
-	flw f21, 28(sp)
-	flw f8, 32(sp)
-	ld s4, 40(sp)
-	ld s2, 48(sp)
-	ld s3, 56(sp)
-	ld s1, 64(sp)
-	ld s5, 72(sp)
-	ld s0, 80(sp)
-	flw f19, 88(sp)
-	ld s7, 96(sp)
-	addi sp, sp, 104
-	ret
-label165:
-	mv a0, zero
-	j label57
-label62:
-	bgt s2, s5, label75
-	j label64
+	ble s2, zero, label64
+label75:
+	bgt s0, zero, label77
 label76:
 	addiw s5, s5, 1
-	j label62
-label75:
-	ble s0, zero, label76
+	bgt s2, s5, label75
+	j label64
+label77:
 	mulw s6, s0, s5
 	mv s7, zero
 .p2align 2
@@ -169,8 +164,7 @@ label78:
 	sh2add a1, a2, s1
 	sw a0, 0(a1)
 	bgt s0, s7, label78
-	addiw s5, s5, 1
-	bgt s2, s5, label75
+	j label76
 label64:
 	auipc a1, %pcrel_hi(__cmmc_fp_constant_pool)
 	addi a0, a1, %pcrel_lo(label64)
@@ -251,20 +245,17 @@ label251:
 	jal putch
 	mv s5, zero
 label65:
-	bgt s2, s5, label67
-	j label165
+	ble s2, s5, label165
+	subw a0, s5, s4
+	fcvt.s.w f10, a0
+	fmul.s f21, f10, f19
+	fmul.s f20, f10, f18
+	bgt s0, zero, label173
 label68:
 	li a0, 10
 	jal putch
 	addiw s5, s5, 1
 	j label65
-label67:
-	subw a0, s5, s4
-	fcvt.s.w f10, a0
-	fmul.s f21, f10, f19
-	fmul.s f20, f10, f18
-	ble s0, zero, label68
-	mv s6, zero
 .p2align 2
 label69:
 	subw a0, s6, s3
@@ -284,13 +275,10 @@ label69:
 	slti a3, a2, 0
 	or a1, a1, a3
 	bne a1, zero, label192
-	j label191
+	bgt s2, a2, label267
 .p2align 2
-label267:
-	mulw a2, s0, a2
-	addw a1, a0, a2
-	sh2add a3, a1, s1
-	lw a0, 0(a3)
+label192:
+	mv a0, zero
 .p2align 2
 label73:
 	jal putint
@@ -299,10 +287,16 @@ label73:
 	addiw s6, s6, 1
 	bgt s0, s6, label69
 	j label68
+label173:
+	mv s6, zero
+	j label69
 .p2align 2
-label191:
-	bgt s2, a2, label267
-.p2align 2
-label192:
-	mv a0, zero
+label267:
+	mulw a2, s0, a2
+	addw a1, a0, a2
+	sh2add a3, a1, s1
+	lw a0, 0(a3)
 	j label73
+label165:
+	mv a0, zero
+	j label57

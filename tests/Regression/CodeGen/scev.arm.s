@@ -12,68 +12,63 @@ foo4:
 	ble label13
 	cmp r1, #4
 	ble label21
-	sub r2, r1, #4
+	sub r3, r1, #4
 	sub r5, r1, #20
-	cmp r2, #16
+	cmp r3, #16
 	ble label27
-	mov r3, #0
-	mov r4, r3
+	mov r2, #0
+	mov r4, r2
 label4:
 	add r6, r0, r4, lsl #2
-	add r7, r3, #4
+	add r7, r2, #4
 	add r4, r4, #16
-	str r3, [r6, #0]
+	str r2, [r6, #0]
 	cmp r5, r4
 	str r7, [r6, #4]
-	add r7, r3, #8
+	add r7, r2, #8
 	str r7, [r6, #8]
-	add r7, r3, #12
+	add r7, r2, #12
 	str r7, [r6, #12]
-	add r7, r3, #16
+	add r7, r2, #16
 	str r7, [r6, #16]
-	add r7, r3, #20
+	add r7, r2, #20
 	str r7, [r6, #20]
-	add r7, r3, #24
+	add r7, r2, #24
 	str r7, [r6, #24]
-	add r7, r3, #28
+	add r7, r2, #28
 	str r7, [r6, #28]
-	add r7, r3, #32
+	add r7, r2, #32
 	str r7, [r6, #32]
-	add r7, r3, #36
+	add r7, r2, #36
 	str r7, [r6, #36]
-	add r7, r3, #40
+	add r7, r2, #40
 	str r7, [r6, #40]
-	add r7, r3, #44
+	add r7, r2, #44
 	str r7, [r6, #44]
-	add r7, r3, #48
+	add r7, r2, #48
 	str r7, [r6, #48]
-	add r7, r3, #52
+	add r7, r2, #52
 	str r7, [r6, #52]
-	add r7, r3, #56
+	add r7, r2, #56
 	str r7, [r6, #56]
-	add r7, r3, #60
+	add r7, r2, #60
+	add r2, r2, #64
 	str r7, [r6, #60]
-	add r6, r3, #64
-	ble label65
-	mov r3, r6
-	b label4
-label65:
-	mov r3, r4
-	mov r4, r6
+	bgt label4
 label7:
-	add r5, r0, r3, lsl #2
-	add r6, r4, #4
-	add r3, r3, #4
-	str r4, [r5, #0]
-	cmp r2, r3
+	add r5, r0, r4, lsl #2
+	add r6, r2, #4
+	add r4, r4, #4
+	str r2, [r5, #0]
+	cmp r3, r4
 	str r6, [r5, #4]
-	add r6, r4, #8
+	add r6, r2, #8
 	str r6, [r5, #8]
-	add r6, r4, #12
-	add r4, r4, #16
+	add r6, r2, #12
+	add r2, r2, #16
 	str r6, [r5, #12]
 	bgt label7
-	mov r2, r4
+	mov r3, r4
 label10:
 	str r2, [r0, r3, lsl #2]
 	add r2, r2, #4
@@ -83,11 +78,11 @@ label10:
 label13:
 	pop { r4, r5, r6, r7 }
 	bx lr
-label27:
-	mov r3, #0
-	mov r4, r3
-	b label7
 label21:
 	mov r2, #0
 	mov r3, r2
 	b label10
+label27:
+	mov r4, #0
+	mov r2, r4
+	b label7

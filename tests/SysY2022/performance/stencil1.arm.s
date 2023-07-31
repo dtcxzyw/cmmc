@@ -31,7 +31,12 @@ main:
 	str r10, [sp, #28]
 	movw r0, #1023
 	cmp r10, r0
-	bge label24
+	blt label4
+label24:
+	mov r0, #1024
+	mov r1, #0
+	mov r2, r1
+	b label11
 .p2align 4
 label4:
 	ldr r10, [sp, #28]
@@ -203,12 +208,6 @@ label5:
 	str r3, [sp, #16]
 	str r9, [sp, #12]
 	b label5
-.p2align 4
-label24:
-	mov r0, #1024
-	mov r1, #0
-	mov r2, r1
-	b label11
 .p2align 4
 label10:
 	ldr r10, [sp, #28]

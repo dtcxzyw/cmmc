@@ -213,7 +213,7 @@ public:
             .duplicationIterations = 10U,
             .branchLimit = 400U,
             .disableSelectionOpt = true,
-            .branchPredictionWarmupThreshold = 8U,
+            .branchPredictionWarmupThreshold = 2U,
         };
 
         return defaultHeuristic;
@@ -540,8 +540,8 @@ void RISCVTarget::postLegalizeFunc(MIRFunction& func, CodeGenContext& ctx) const
                         assert(inst.getOperand(1).type() == OperandType::HighBits);
                         auipcMap[inst.getOperand(1)][inst.getOperand(0)] = getLowBits(MIROperand::asReloc(iter->get()));
                     } else {
-                        auto block = makeUnique<MIRBasicBlock>(String::get("pcrel").withID(static_cast<int32_t>(ctx.nextId())),
-                                                               &func, iter->get()->getTripCount());
+                        auto block =
+                            makeUnique<MIRBasicBlock>(String::get("pcrel").withID(static_cast<int32_t>(ctx.nextId())), &func);
                         auto& newInsts = block->instructions();
                         newInsts.splice(newInsts.begin(), instructions, it, instructions.end());
                         iter = func.blocks().insert(next, std::move(block));

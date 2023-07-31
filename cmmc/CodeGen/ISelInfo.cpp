@@ -385,10 +385,8 @@ bool TargetISelInfo::expandSelect(MIRInst& inst, ISelContext& ctx) {
     constexpr auto prob = defaultSelectProb;
     auto block = ctx.getCurrentBlock();
     auto func = block->getFunction();
-    auto falseBlock = makeUnique<MIRBasicBlock>(block->symbol().withID(static_cast<int32_t>(codeGenCtx.nextId())), func,
-                                                block->getTripCount() * (1.0 - prob));
-    auto postBlock =
-        makeUnique<MIRBasicBlock>(block->symbol().withID(static_cast<int32_t>(codeGenCtx.nextId())), func, block->getTripCount());
+    auto falseBlock = makeUnique<MIRBasicBlock>(block->symbol().withID(static_cast<int32_t>(codeGenCtx.nextId())), func);
+    auto postBlock = makeUnique<MIRBasicBlock>(block->symbol().withID(static_cast<int32_t>(codeGenCtx.nextId())), func);
     branch->setOperand<0>(cond).setOperand<1>(MIROperand::asReloc(postBlock.get())).setOperand<2>(MIROperand::asProb(prob));
     auto& onFalseInstructions = falseBlock->instructions();
     onFalseInstructions.push_back(MIRInst{ selectCopyOpcode(dst, falseV) }.setOperand<0>(dst).setOperand<1>(falseV));
@@ -418,10 +416,8 @@ bool TargetISelInfo::expandCmp(MIRInst& inst, ISelContext& ctx) {
     constexpr auto prob = defaultSelectProb;
     auto block = ctx.getCurrentBlock();
     auto func = block->getFunction();
-    auto falseBlock = makeUnique<MIRBasicBlock>(block->symbol().withID(static_cast<int32_t>(codeGenCtx.nextId())), func,
-                                                block->getTripCount() * (1.0 - prob));
-    auto postBlock =
-        makeUnique<MIRBasicBlock>(block->symbol().withID(static_cast<int32_t>(codeGenCtx.nextId())), func, block->getTripCount());
+    auto falseBlock = makeUnique<MIRBasicBlock>(block->symbol().withID(static_cast<int32_t>(codeGenCtx.nextId())), func);
+    auto postBlock = makeUnique<MIRBasicBlock>(block->symbol().withID(static_cast<int32_t>(codeGenCtx.nextId())), func);
     branch->setOperand<0>(inst.getOperand(0))
         .setOperand<1>(MIROperand::asReloc(postBlock.get()))
         .setOperand<2>(MIROperand::asProb(prob));

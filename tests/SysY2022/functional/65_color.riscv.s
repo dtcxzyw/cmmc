@@ -209,26 +209,47 @@ main:
 	sd zero, 96(sp)
 	sd zero, 104(sp)
 	jal getint
-	mv a3, zero
+	mv a5, zero
 	mv s0, a0
-pcrel568:
+pcrel563:
 	auipc a0, %pcrel_hi(dp)
-	addi a2, a0, %pcrel_lo(pcrel568)
+	addi a4, a0, %pcrel_lo(pcrel563)
 	li a1, 2939328
 	mv a0, zero
 	li a1, 18
-	mv a4, a2
-	blt zero, a1, label238
-	bgt s0, zero, label389
-	j label209
+	mv a3, a4
+	bge zero, a1, label206
+.p2align 2
+label238:
+	mv t0, zero
+	li a0, 163296
+	mv a1, zero
+	li a0, 18
+	mv a2, a3
+	blt zero, a0, label244
+label243:
+	addiw a5, a5, 1
+	li a1, 2939328
+	mul a0, a5, a1
+	li a1, 18
+	add a3, a4, a0
+	blt a5, a1, label238
+	j label206
 .p2align 2
 label244:
 	mv t1, zero
 	li a1, 9072
 	mv a0, zero
 	li a1, 18
-	mv t2, t0
-	bge zero, a1, label249
+	mv t2, a2
+	blt zero, a1, label250
+	addiw t0, t0, 1
+	li a0, 163296
+	mul a1, t0, a0
+	li a0, 18
+	add a2, a3, a1
+	blt t0, a0, label244
+	j label243
 .p2align 2
 label250:
 	mv t3, zero
@@ -371,22 +392,22 @@ label201:
 	li a1, 9072
 	mul a0, t1, a1
 	li a1, 18
-	add t2, t0, a0
+	add t2, a2, a0
 	blt t1, a1, label250
-	addiw a5, a5, 1
+	addiw t0, t0, 1
 	li a0, 163296
-	mul a1, a5, a0
+	mul a1, t0, a0
 	li a0, 18
-	add t0, a4, a1
-	blt a5, a0, label244
-	addiw a3, a3, 1
+	add a2, a3, a1
+	blt t0, a0, label244
+	addiw a5, a5, 1
 	li a1, 2939328
-	mul a0, a3, a1
+	mul a0, a5, a1
 	li a1, 18
-	add a4, a2, a0
-	blt a3, a1, label238
+	add a3, a4, a0
+	blt a5, a1, label238
+label206:
 	ble s0, zero, label209
-label389:
 	mv s2, zero
 .p2align 2
 label207:
@@ -414,37 +435,3 @@ label209:
 	ld s2, 24(sp)
 	addi sp, sp, 112
 	ret
-label238:
-	mv a5, zero
-	j label197
-.p2align 2
-label249:
-	addiw a5, a5, 1
-	li a0, 163296
-	mul a1, a5, a0
-	li a0, 18
-	add t0, a4, a1
-	blt a5, a0, label244
-	addiw a3, a3, 1
-	li a1, 2939328
-	mul a0, a3, a1
-	li a1, 18
-	add a4, a2, a0
-	blt a3, a1, label238
-	bgt s0, zero, label389
-	j label209
-.p2align 2
-label197:
-	li a0, 163296
-	mul a1, a5, a0
-	li a0, 18
-	add t0, a4, a1
-	blt a5, a0, label244
-	addiw a3, a3, 1
-	li a1, 2939328
-	mul a0, a3, a1
-	li a1, 18
-	add a4, a2, a0
-	blt a3, a1, label238
-	bgt s0, zero, label389
-	j label209

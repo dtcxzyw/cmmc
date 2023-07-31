@@ -319,9 +319,9 @@ static bool branch2jump(MIRFunction& func, const CodeGenContext& ctx) {
             }
             if(status) {
                 const auto b1 = inst.getOperand(2);
-                if(status == 1)
+                if(status == 1) {
                     inst = MIRInst{ RISCV::J }.setOperand<0>(b1);
-                else {
+                } else {
                     // fallthrough
                     if(ctx.flags.endsWithTerminator) {
                         assert(next != func.blocks().end());

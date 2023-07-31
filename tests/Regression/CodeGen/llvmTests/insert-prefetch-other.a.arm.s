@@ -23,6 +23,10 @@ foo:
 	bne label16
 	mov r0, #1
 	b label5
+label10:
+	mov r0, #0
+label5:
+	bx lr
 label16:
 	mov r0, #1
 label3:
@@ -32,7 +36,3 @@ label3:
 	cmp r1, r0
 	bne label3
 	b label5
-label10:
-	mov r0, #0
-label5:
-	bx lr

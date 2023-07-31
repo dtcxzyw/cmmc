@@ -84,7 +84,7 @@ public:
     [[nodiscard]] MIRBasicBlock* getCurrentBasicBlock() const noexcept {
         return mCurrentBasicBlock;
     }
-    MIRBasicBlock* addBlockAfter(double blockTripCount);
+    MIRBasicBlock* addBlockAfter();
 
     void emitInst(const MIRInst& inst);
     void addOperand(Value* value, MIROperand reg);

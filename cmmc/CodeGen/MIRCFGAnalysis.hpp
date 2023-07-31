@@ -17,6 +17,7 @@
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cstdint>
+#include <unordered_map>
 #include <vector>
 
 CMMC_MIR_NAMESPACE_BEGIN
@@ -38,10 +39,25 @@ public:
     std::unordered_map<const MIRBasicBlock*, MIRBlockCFGInfo>& storage() {
         return mInfo;
     }
+    const std::unordered_map<const MIRBasicBlock*, MIRBlockCFGInfo>& storage() const {
+        return mInfo;
+    }
     const std::vector<MIRBlockEdge>& predecessors(const MIRBasicBlock* block) const;
     const std::vector<MIRBlockEdge>& successors(const MIRBasicBlock* block) const;
 };
 
 CFGAnalysisResult calcCFG(const MIRFunction& func, const CodeGenContext& ctx);
+
+class BlockTripCountResult final {
+    std::unordered_map<MIRBasicBlock*, double> mFreq;
+
+public:
+    auto& storage() {
+        return mFreq;
+    }
+    double query(MIRBasicBlock* block) const;
+};
+
+BlockTripCountResult calcFreq(const MIRFunction& func, const CFGAnalysisResult& cfg);
 
 CMMC_MIR_NAMESPACE_END

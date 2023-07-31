@@ -20,6 +20,10 @@ pcrel33:
 	bne a1, a3, label16
 	li a0, 1
 	j label5
+label10:
+	mv a0, zero
+label5:
+	ret
 label16:
 	li a0, 1
 label3:
@@ -29,7 +33,3 @@ label3:
 	sh a3, 0(a2)
 	bne a1, a0, label3
 	j label5
-label10:
-	mv a0, zero
-label5:
-	ret
