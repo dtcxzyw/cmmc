@@ -19,6 +19,7 @@ pcrel466:
 	sd s2, 24(sp)
 	sd s3, 32(sp)
 	sd s4, 40(sp)
+.p2align 2
 label2:
 	sh2add a1, a3, a0
 	addi a3, a3, 64
@@ -58,10 +59,12 @@ label2:
 	blt a3, a1, label2
 	mv a6, zero
 	mv a2, zero
+.p2align 2
 label4:
 	li a1, 2
 	blt a2, a1, label131
 	j label56
+.p2align 2
 label134:
 	addiw a2, a2, 1
 	j label4
@@ -125,66 +128,77 @@ label56:
 	ld s4, 40(sp)
 	addi sp, sp, 48
 	ret
+.p2align 2
 label131:
 	mv a1, zero
+.p2align 2
 label7:
 	li a3, 2
 	bge a1, a3, label134
 	mv a3, zero
+.p2align 2
 label10:
 	li a4, 2
 	blt a3, a4, label139
 	addiw a1, a1, 1
 	j label7
+.p2align 2
 label139:
 	mv a4, zero
+.p2align 2
 label13:
 	li a5, 2
 	blt a4, a5, label143
 	j label142
+.p2align 2
 label146:
 	addiw a4, a4, 1
 	j label13
+.p2align 2
 label143:
 	mv a5, zero
+.p2align 2
 label16:
 	li t0, 2
 	bge a5, t0, label146
 	mv t0, zero
+.p2align 2
 label19:
 	li t1, 2
 	bge t0, t1, label150
 	mv t1, zero
+.p2align 2
 label22:
 	li t2, 2
 	bge t1, t2, label154
 	mv t2, zero
+.p2align 2
 label25:
 	li t3, 2
 	bge t2, t3, label158
 	mv t3, zero
+.p2align 2
 label28:
 	li t4, 2
 	bge t3, t4, label162
 	mv t4, zero
+.p2align 2
 label31:
 	li t5, 2
-	blt t4, t5, label167
-	j label166
-label170:
-	addiw t4, t4, 1
-	j label31
-label167:
+	bge t4, t5, label166
 	mv t5, zero
+.p2align 2
 label34:
 	li t6, 2
 	bge t5, t6, label170
 	mv t6, zero
 	li a7, 2
 	blt zero, a7, label40
+.p2align 2
 label174:
 	addiw t5, t5, 1
 	j label34
+.p2align 2
 label40:
 	slli s1, a2, 20
 	slli s0, a1, 19
@@ -211,6 +225,7 @@ label40:
 	add a7, a7, s1
 	mv s1, zero
 	add s0, a7, s2
+.p2align 2
 label41:
 	slli s2, s1, 8
 	addiw s3, a6, 1
@@ -348,21 +363,31 @@ label41:
 	addiw t6, t6, 1
 	blt t6, a7, label40
 	j label174
-label142:
-	addiw a3, a3, 1
-	j label10
-label166:
-	addiw t3, t3, 1
-	j label28
+.p2align 2
 label154:
 	addiw t0, t0, 1
 	j label19
-label162:
-	addiw t2, t2, 1
-	j label25
-label150:
-	addiw a5, a5, 1
-	j label16
+.p2align 2
+label170:
+	addiw t4, t4, 1
+	j label31
+.p2align 2
+label166:
+	addiw t3, t3, 1
+	j label28
+.p2align 2
 label158:
 	addiw t1, t1, 1
 	j label22
+.p2align 2
+label162:
+	addiw t2, t2, 1
+	j label25
+.p2align 2
+label142:
+	addiw a3, a3, 1
+	j label10
+.p2align 2
+label150:
+	addiw a5, a5, 1
+	j label16

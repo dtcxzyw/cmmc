@@ -198,9 +198,18 @@ public:
                 if(!isMovableExpr(*base, true))
                     continue;
 
+                bool operandValid = true;
+                for(auto operand : base->operands())
+                    if(operand->getBlock() && !dom.dominate(operand->getBlock(), block)) {
+                        operandValid = false;
+                        break;
+                    }
+                if(!operandValid)
+                    continue;
+
                 const auto inst = base->clone();
                 for(auto& operand : inst->mutableOperands())
-                    operand->resetValue(operandMap[getNumber(operand->value)]);
+                    operand->resetValue(operandMap.at(getNumber(operand->value)));
                 inst->insertBefore(block, std::prev(block->instructions().end()));
                 replaceInst = inst;
             }

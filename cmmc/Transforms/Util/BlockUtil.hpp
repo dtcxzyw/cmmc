@@ -29,7 +29,6 @@ void removeInst(Instruction* inst);
 // NOTICE: no terminator/operand fix
 Block* splitBlock(List<Block*>& blocks, List<Block*>::iterator block, IntrusiveListIterator<Instruction> after);
 bool applyReplace(Instruction* inst, const ReplaceMap& replace);
-bool replaceOperands(const std::vector<Instruction*>& insts, const ReplaceMap& replace);
 Block* createIndirectBlock(const Module& module, Function& func, Block* sourceBlock, Block* targetBlock);
 bool isNoSideEffectExpr(const Instruction& inst);
 bool isMovableExpr(const Instruction& inst, bool relaxedCtx);
@@ -41,21 +40,5 @@ bool hasSamePhiValue(Block* target, Block* sourceLhs, Block* sourceRhs);
 bool removePhi(Block* source, Block* target);
 void applyForSuccessors(BranchInst* branch, const std::function<void(Block*&)>& functor);
 uint32_t estimateBlockSize(Block* block, bool dynamic);
-template <typename Callable>
-bool scanInstructions(Block& block, Callable callable) {
-    bool modified = false;
-    while(true) {
-        bool rescan = false;
-        for(auto& inst : block.instructions()) {
-            if(callable(inst)) {
-                modified = rescan = true;
-                break;
-            }
-        }
-        if(!rescan)
-            break;
-    }
-    return modified;
-}
 
 CMMC_NAMESPACE_END

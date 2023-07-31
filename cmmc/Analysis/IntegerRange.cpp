@@ -130,6 +130,8 @@ void IntegerRange::setUnsignedRange(uint64_t min, uint64_t max) {
 }
 void IntegerRange::setSignedRange(int64_t min, int64_t max) {
     assert(min <= max);
+    assert(min >= std::numeric_limits<int32_t>::min());
+    assert(max <= std::numeric_limits<int32_t>::max());
     mMinSignedValue = min;
     mMaxSignedValue = max;
 }
@@ -160,7 +162,8 @@ IntegerRange::IntegerRange() {
 IntegerRange::IntegerRange(int64_t sval) {
     const auto zval = static_cast<uint32_t>(sval);
     setUnsignedRange(zval, zval);
-    setSignedRange(sval, sval);
+    const auto truncedSignedVal = static_cast<int32_t>(sval);
+    setSignedRange(truncedSignedVal, truncedSignedVal);
     setKnownBits(~zval, zval);
 }
 

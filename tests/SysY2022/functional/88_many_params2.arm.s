@@ -346,13 +346,47 @@ label18:
 	mov r0, #10
 	bl putch
 	cmp r9, #10
-	bge label28
+	blt label25
+label21:
+	add r0, r7, #3
+	add r4, r0, r0, lsl #1
+	cmn r4, #1
+	ble label22
+.p2align 4
+label23:
+	ldr r0, [r5, r4, lsl #2]
+	bl putint
+	mov r0, #32
+	bl putch
+	sub r4, r4, #1
+	cmn r4, #1
+	bgt label23
+	b label22
+label25:
 	add r0, r9, #4
 	cmp r0, #10
-	bge label25
+	bge label26
 	mov r0, r8
 	mov r1, r9
-label22:
+	b label29
+label26:
+	movw r0, #63339
+	movw r1, #18373
+	movt r0, #1
+	movt r1, #36041
+	mul r0, r8, r0
+	add r8, r8, #7
+	smmla r1, r0, r1, r0
+	asr r2, r1, #11
+	add r1, r2, r1, lsr #31
+	movw r2, #3724
+	mls r0, r1, r2, r0
+	str r0, [r6, r9, lsl #2]
+	add r9, r9, #1
+	cmp r9, #10
+	blt label26
+	b label21
+label29:
 	add r2, r6, r1, lsl #2
 	movw r3, #63339
 	movw r4, #18373
@@ -389,40 +423,11 @@ label22:
 	add r4, r9, r4, lsr #31
 	mls r3, r4, r8, r3
 	str r3, [r2, #12]
-	blt label22
+	blt label29
 	mov r9, r1
 	mov r8, r0
-label25:
-	movw r0, #63339
-	movw r1, #18373
-	movt r0, #1
-	movt r1, #36041
-	mul r0, r8, r0
-	add r8, r8, #7
-	smmla r1, r0, r1, r0
-	asr r2, r1, #11
-	add r1, r2, r1, lsr #31
-	movw r2, #3724
-	mls r0, r1, r2, r0
-	str r0, [r6, r9, lsl #2]
-	add r9, r9, #1
-	cmp r9, #10
-	blt label25
-label28:
-	add r0, r7, #3
-	add r4, r0, r0, lsl #1
-	cmn r4, #1
-	ble label31
-.p2align 4
-label29:
-	ldr r0, [r5, r4, lsl #2]
-	bl putint
-	mov r0, #32
-	bl putch
-	sub r4, r4, #1
-	cmn r4, #1
-	bgt label29
-label31:
+	b label26
+label22:
 	mov r0, #10
 	bl putch
 	add sp, sp, #4

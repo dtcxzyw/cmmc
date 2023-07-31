@@ -515,3 +515,15 @@ int sign_check3(int x, int y) {
 int sign_check4(int x, int y) {
     return x < 0 || y < 0;
 }
+int getNumPos(int num, int pos){
+    if(pos <= 8) {
+        int tmp = 1;
+        int i = 0;
+        while (i < pos){
+            num = num / 16;
+            i = i + 1;
+        }
+        return num % 16;
+    }
+    return 0;
+}

@@ -59,15 +59,6 @@ bool reduceBlock(IRBuilder& builder, Block& block, const BlockReducer& reducer) 
     modified |= newSize != oldSize;
     return modified;
 }
-bool replaceOperands(const std::vector<Instruction*>& insts, const ReplaceMap& replace) {
-    if(replace.empty())
-        return false;
-    bool modified = false;
-    for(auto inst : insts)
-        modified |= applyReplace(inst, replace);
-    return modified;
-}
-
 void removeInst(Instruction* inst) {
     const auto block = inst->getBlock();
     block->instructions().erase(inst->asNode());

@@ -19,6 +19,7 @@
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/IR/Function.hpp>
 #include <cmmc/IR/Instruction.hpp>
+#include <cmmc/IR/Type.hpp>
 #include <cmmc/IR/Value.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
@@ -93,5 +94,37 @@ public:
 };
 
 CMMC_TRANSFORM_PASS(DuplicateGEP);
+
+class SDivWithPowerOf2 final : public TransformPass<Function> {
+public:
+    bool run(Function& func, AnalysisPassManager& analysis) const override {
+        bool modified = false;
+        const auto i32 = IntegerType::get(32);
+        for(auto block : func.blocks()) {
+            for(auto& inst : block->instructions()) {
+                Value *v1, *v2, *one;
+                if(inst.getType()->isSame(i32) &&
+                   sdiv(any(v1), shl(capture(cint_(1), one), any(v2)))(MatchContext<Value>{ &inst })) {
+                    if(inst.getOperand(1)->getBlock() == block)
+                        continue;
+
+                    IRBuilder builder{ analysis.module().getTarget() };
+                    builder.setInsertPoint(block, inst.asIterator());
+
+                    inst.mutableOperands()[1]->resetValue(builder.makeOp<BinaryInst>(InstructionID::Shl, one, v2));
+                    modified = true;
+                }
+            }
+        }
+
+        return modified;
+    }
+
+    [[nodiscard]] std::string_view name() const noexcept override {
+        return "SDivWithPowerOf2"sv;
+    }
+};
+
+CMMC_TRANSFORM_PASS(SDivWithPowerOf2);
 
 CMMC_NAMESPACE_END

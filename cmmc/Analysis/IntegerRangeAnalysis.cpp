@@ -82,6 +82,62 @@ IntegerRange IntegerRangeAnalysisResult::query(Value* val, const DominateAnalysi
     return range;
 }
 
+static IntegerRange analysisArgSCEV(Function& func, FuncArgument* arg, uint32_t idx) {
+    if(func.getLinkage() == Linkage::Global)
+        return IntegerRange{};
+    std::optional<IntegerRange> initialValues;
+    std::optional<IntegerRange> offset;
+    for(auto call : func.users()) {
+        const auto caller = call->lastOperand();
+        const auto input = call->getOperand(idx);
+        if(caller == &func) {
+            if(input == arg)
+                continue;
+            intmax_t i1;
+            Value* argVal = arg;
+            if(add(exactly(argVal), int_(i1))(MatchContext<Value>{ input })) {
+                IntegerRange r{ i1 };
+                if(offset.has_value())
+                    offset = offset->unionSet(r);
+                else
+                    offset = r;
+                continue;
+            }
+        }
+        if(input->is<ConstantInteger>()) {
+            const auto newRange = IntegerRange{ input->as<ConstantInteger>()->getSignExtended() };
+            if(initialValues.has_value())
+                initialValues = initialValues->unionSet(newRange);
+            else
+                initialValues = newRange;
+        } else
+            return IntegerRange{};
+    }
+
+    if(!initialValues.has_value())
+        return IntegerRange{};
+
+    if(offset.has_value()) {
+        // decrease
+        if(offset->maxSignedValue() < 0 && offset->minSignedValue() > -maxStep) {
+            IntegerRange r;
+            r.setSignedRange(std::numeric_limits<int32_t>::min(), initialValues->maxSignedValue());
+            r.sync();
+            return r;
+        }
+        // increase
+        if(offset->minSignedValue() > 0 && offset->maxSignedValue() < maxStep) {
+            IntegerRange r;
+            r.setSignedRange(initialValues->minSignedValue(), std::numeric_limits<int32_t>::max());
+            r.sync();
+            return r;
+        }
+    } else {
+        return *initialValues;
+    }
+    return IntegerRange{};
+}
+
 IntegerRangeAnalysisResult IntegerRangeAnalysis::run(Function& func, AnalysisPassManager& analysis) {
     auto& dom = analysis.get<DominateAnalysis>(func);
     auto& cfg = analysis.get<CFGAnalysis>(func);
@@ -96,6 +152,20 @@ IntegerRangeAnalysisResult IntegerRangeAnalysis::run(Function& func, AnalysisPas
     std::unordered_set<Instruction*> inQueue;
     std::queue<Instruction*> q;
     const auto i32 = IntegerType::get(32);
+    {
+        uint32_t idx = 0;
+        for(auto arg : func.args()) {
+            if(arg->getType()->isSame(i32)) {
+                ranges[arg] = analysisArgSCEV(func, arg, idx);
+
+                // arg->dumpAsOperand(std::cerr);
+                // std::cerr << " -> ";
+                // ranges[arg].print(std::cerr);
+                // std::cerr << '\n';
+            }
+            ++idx;
+        }
+    }
     for(auto block : func.blocks()) {
         for(auto& inst : block->instructions()) {
             if(inst.getType()->isSame(i32)) {
