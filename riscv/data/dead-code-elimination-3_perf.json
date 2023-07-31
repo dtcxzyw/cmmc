@@ -460,6 +460,24 @@
         "sysy_time": 0.012104
       }
     ],
+    "af8b91b4620da08b94c69b91b94816f8381329b3": [
+      {
+        "sysy_time": 0.011632
+      },
+      {
+        "sysy_time": 0.011123,
+        "task-clock:u": 4.22
+      },
+      {
+        "sysy_time": 0.011639
+      },
+      {
+        "sysy_time": 0.011654
+      },
+      {
+        "sysy_time": 0.011887
+      }
+    ],
     "c58d6e3fcf2833166cd5a77a4339ea219c222756": [
       {
         "branch-instructions": 47134,
