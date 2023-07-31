@@ -12,33 +12,27 @@ image_out:
 main:
 .p2align 2
 	addi sp, sp, -56
-pcrel765:
+pcrel767:
 	auipc a1, %pcrel_hi(image_in)
-	sd s0, 48(sp)
-	addi a0, a1, %pcrel_lo(pcrel765)
-	sd s5, 40(sp)
-	mv s0, a0
-	sd s2, 32(sp)
-	sd s1, 24(sp)
-	sd s4, 16(sp)
-	sd s3, 8(sp)
 	sd ra, 0(sp)
+	addi a0, a1, %pcrel_lo(pcrel767)
+	sd s0, 8(sp)
+	mv s0, a0
+	sd s5, 16(sp)
+	sd s2, 24(sp)
+	sd s1, 32(sp)
+	sd s4, 40(sp)
+	sd s3, 48(sp)
 	jal getarray
 	mv s2, a0
 	li a0, 23
 	jal _sysy_starttime
 	li a3, 1
-pcrel766:
+pcrel768:
 	auipc a1, %pcrel_hi(image_out)
-	addi s1, a1, %pcrel_lo(pcrel766)
+	addi s1, a1, %pcrel_lo(pcrel768)
 	li a1, 511
-	blt a3, a1, label4
-.p2align 2
-label24:
-	li a0, 512
-	mv a1, zero
-	mv a2, zero
-	j label11
+	bge a3, a1, label24
 .p2align 2
 label4:
 	addiw a4, a3, -1
@@ -202,6 +196,12 @@ label5:
 	mv a1, a6
 	mv a2, t6
 	j label5
+.p2align 2
+label24:
+	li a0, 512
+	mv a1, zero
+	mv a2, zero
+	j label11
 .p2align 2
 label10:
 	addw t0, a3, a6
@@ -599,11 +599,11 @@ label15:
 	jal putarray
 	mv a0, s2
 	ld ra, 0(sp)
-	ld s3, 8(sp)
-	ld s4, 16(sp)
-	ld s1, 24(sp)
-	ld s2, 32(sp)
-	ld s5, 40(sp)
-	ld s0, 48(sp)
+	ld s0, 8(sp)
+	ld s5, 16(sp)
+	ld s2, 24(sp)
+	ld s1, 32(sp)
+	ld s4, 40(sp)
+	ld s3, 48(sp)
 	addi sp, sp, 56
 	ret

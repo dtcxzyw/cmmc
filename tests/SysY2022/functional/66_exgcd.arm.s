@@ -66,14 +66,14 @@ main:
 	mov r1, #15
 	mov r0, #1
 	sub sp, sp, #12
-	str r0, [sp, #0]
-	add r3, sp, #4
-	mov r2, sp
 	str r0, [sp, #4]
+	mov r3, sp
+	add r2, sp, #4
+	str r0, [sp, #0]
 	mov r0, #7
 	bl exgcd
 	movw r1, #34953
-	ldr r0, [sp, #0]
+	ldr r0, [sp, #4]
 	movt r1, #34952
 	smmla r1, r0, r1, r0
 	asr r2, r1, #3

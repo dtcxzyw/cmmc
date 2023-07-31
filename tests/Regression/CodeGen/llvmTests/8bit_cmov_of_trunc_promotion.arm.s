@@ -16,11 +16,11 @@ neg_only_one_truncation:
 	sxtb r2, r2
 	sxtb r3, r3
 	cmp r3, r2
-	blt label2
-	and r0, r1, #255
-	b label3
-label2:
+	bge label20
 	and r0, r0, #255
+	b label3
+label20:
+	and r0, r1, #255
 label3:
 	uxtb r0, r0
 	bx lr
@@ -37,12 +37,12 @@ neg_type_mismatch:
 	uxtb r3, r1
 	sxtb r3, r3
 	cmp r3, r2
-	blt label27
-	and r0, r1, #255
-	b label28
-label27:
+	bge label46
 	and r0, r0, #255
-label28:
+	b label29
+label46:
+	and r0, r1, #255
+label29:
 	uxtb r0, r0
 	bx lr
 .globl negative_CopyFromReg
@@ -54,12 +54,12 @@ negative_CopyFromReg:
 	sxtb r3, r3
 	sxtb r2, r2
 	cmp r2, r3
-	blt label53
-	and r0, r1, #255
-	b label54
-label53:
+	bge label70
 	and r0, r0, #255
-label54:
+	b label56
+label70:
+	and r0, r1, #255
+label56:
 	uxtb r0, r0
 	bx lr
 .globl negative_CopyFromRegs
@@ -70,12 +70,12 @@ negative_CopyFromRegs:
 	sxtb r2, r2
 	sxtb r3, r3
 	cmp r2, r3
-	bgt label75
-	and r0, r1, #255
-	b label76
-label75:
+	ble label91
 	and r0, r0, #255
-label76:
+	b label79
+label91:
+	and r0, r1, #255
+label79:
 	uxtb r0, r0
 	bx lr
 .globl t0
@@ -88,11 +88,11 @@ t0:
 	sxtb r3, r3
 	sxtb r2, r2
 	cmp r3, r2
-	bgt label95
-	and r0, r1, #255
-	b label96
-label95:
+	ble label115
 	and r0, r0, #255
-label96:
+	b label100
+label115:
+	and r0, r1, #255
+label100:
 	uxtb r0, r0
 	bx lr

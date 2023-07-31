@@ -23,6 +23,7 @@
 #include <cmmc/Support/Graph.hpp>
 #include <cmmc/Support/Options.hpp>
 #include <cstdint>
+#include <iostream>
 #include <limits>
 #include <memory>
 #include <numeric>
@@ -105,13 +106,18 @@ static BlockSeq solvePettisHansen(const std::vector<uint32_t>& weights, const st
     for(auto& [e, f] : edgeInfo) {
         CMMC_UNUSED(f);
         auto& [u, v, prob] = e;
+        // std::cerr << u << " -> " << v << std::endl;
         if(u == v)
             continue;
         graph[u].push_back(v);
         auto& [pv, cv] = chains[v];
-        if(findFa(v) != v)
+        if(findFa(v) != v) {
             continue;  // merged
+        }
         auto& [pu, cu] = chains[findFa(u)];
+        if(cu.back() != u) {
+            continue;  // merged
+        }
         pu = std::min(std::min(pu, pv), ++p);
         cu.merge(cv);
         fa[v] = findFa(u);
@@ -131,22 +137,37 @@ static BlockSeq solvePettisHansen(const std::vector<uint32_t>& weights, const st
     while(!workList.empty()) {
         auto k = workList.top();
         workList.pop();
+        // chains[k].second.sort([&](uint32_t a, uint32_t b) {
+        //     if(a == 0)
+        //         return true;
+        //     if(b == 0)
+        //         return false;
+        //     return weights[a] > weights[b];
+        // });
         for(auto u : chains[k].second) {
-            seq.push_back(u);
-            inserted.insert(u);
+            if(inserted.insert(u).second)
+                seq.push_back(u);
         }
         for(auto u : chains[k].second) {
             for(auto v : graph[u]) {
                 if(inserted.count(v))
                     continue;
                 auto head = findFa(v);
-                if(insertedWorkList.count(head))
-                    continue;
-                insertedWorkList.insert(head);
-                workList.push(head);
+                if(insertedWorkList.insert(head).second)
+                    workList.push(head);
             }
         }
     }
+    // for(auto& edge : edges) {
+    //     std::cerr << edge.source << ' ' << edge.target << ' ' << edge.prob << '\n';
+    // }
+    // for(uint32_t idx = 0; idx < blockCount; ++idx)
+    //     std::cerr << idx << ' ' << findFa(idx) << '\n';
+    // for(auto u : seq)
+    //     std::cerr << u << ' ';
+    // std::cerr << '\n';
+    // if(seq.size() != blockCount)
+    //     reportUnreachable(CMMC_LOCATION());
     return seq;
 }
 
@@ -281,6 +302,7 @@ void optimizeBlockLayout(MIRFunction& func, CodeGenContext& ctx) {
         return;
 
     const auto cfg = calcCFG(func, ctx);
+    // func.dump(std::cerr, ctx);
     // TODO: sche model
 
     // build graph

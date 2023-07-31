@@ -14,15 +14,15 @@ g1:
 test1:
 .p2align 2
 	mv a2, a0
-pcrel36:
-	auipc a1, %pcrel_hi(g0)
 pcrel37:
+	auipc a1, %pcrel_hi(g0)
+pcrel38:
 	auipc a4, %pcrel_hi(g1)
-	addi a0, a1, %pcrel_lo(pcrel36)
-	lw a3, %pcrel_lo(pcrel36)(a1)
-	addi a1, a4, %pcrel_lo(pcrel37)
-	beq a2, zero, label2
-	addiw a3, a3, 1
+	addi a0, a1, %pcrel_lo(pcrel37)
+	lw a3, %pcrel_lo(pcrel37)(a1)
+	addi a1, a4, %pcrel_lo(pcrel38)
+	bne a2, zero, label14
+	addiw a3, a3, 11
 	li a2, 4294967295
 	and a4, a3, a2
 	sw a4, 0(a0)
@@ -30,8 +30,8 @@ pcrel37:
 	addiw a4, a3, 23
 	and a0, a4, a2
 	j label3
-label2:
-	addiw a3, a3, 11
+label14:
+	addiw a3, a3, 1
 	li a2, 4294967295
 	and a4, a3, a2
 	sw a4, 0(a0)

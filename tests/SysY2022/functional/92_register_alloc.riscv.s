@@ -5,11 +5,11 @@
 main:
 .p2align 2
 	addi sp, sp, -40
-	sd s0, 32(sp)
-	sd s2, 24(sp)
-	sd s1, 16(sp)
-	sd s3, 8(sp)
 	sd ra, 0(sp)
+	sd s0, 8(sp)
+	sd s2, 16(sp)
+	sd s1, 24(sp)
+	sd s3, 32(sp)
 	jal getint
 	jal getint
 	addiw s2, a0, -8
@@ -78,9 +78,9 @@ main:
 	jal putint
 	mv a0, s0
 	ld ra, 0(sp)
-	ld s3, 8(sp)
-	ld s1, 16(sp)
-	ld s2, 24(sp)
-	ld s0, 32(sp)
+	ld s0, 8(sp)
+	ld s2, 16(sp)
+	ld s1, 24(sp)
+	ld s3, 32(sp)
 	addi sp, sp, 40
 	ret

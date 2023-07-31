@@ -8,13 +8,13 @@ buffer:
 detect_item:
 .p2align 2
 	addi sp, sp, -32
-	sd s1, 24(sp)
+	sd ra, 0(sp)
+	sd s1, 8(sp)
 	mv s1, a1
 	sd s2, 16(sp)
 	mv s2, a2
-	sd s0, 8(sp)
+	sd s0, 24(sp)
 	mv s0, a3
-	sd ra, 0(sp)
 	lw a1, 0(a3)
 	mv a2, a0
 label4:
@@ -23,12 +23,38 @@ label198:
 	mv a0, zero
 label7:
 	ld ra, 0(sp)
-	ld s0, 8(sp)
+	ld s1, 8(sp)
 	ld s2, 16(sp)
-	ld s1, 24(sp)
+	ld s0, 24(sp)
 	addi sp, sp, 32
 	ret
-label642:
+label112:
+	lw a1, 0(s0)
+	addiw a0, a1, 4
+	ble s2, a0, label198
+	sh2add a4, a1, s1
+	li a3, 102
+	lw a2, 0(a4)
+	bne a2, a3, label198
+	addiw a3, a1, 1
+	sh2add a4, a3, s1
+	li a3, 97
+	lw a2, 0(a4)
+	bne a2, a3, label198
+	addiw a4, a1, 2
+	sh2add a3, a4, s1
+	li a4, 108
+	lw a2, 0(a3)
+	bne a2, a4, label198
+	addiw a3, a1, 3
+	sh2add a4, a3, s1
+	li a3, 115
+	lw a2, 0(a4)
+	bne a2, a3, label198
+	sh2add a2, a0, s1
+	li a3, 101
+	lw a0, 0(a2)
+	bne a0, a3, label198
 	addiw a1, a1, 5
 	li a0, 1
 	sw a1, 0(s0)
@@ -36,22 +62,7 @@ label642:
 label197:
 	lw a0, 0(s0)
 label10:
-	ble s2, a0, label14
-	lw a0, 0(s0)
-	sh2add a3, a0, s1
-	lw a1, 0(a3)
-	xori a4, a1, 9
-	xori a5, a1, 32
-	sltiu t0, a4, 1
-	sltiu a3, a5, 1
-	xori a5, a1, 10
-	or a3, a3, t0
-	xori a1, a1, 13
-	sltiu a4, a5, 1
-	sltiu a5, a1, 1
-	or a4, a4, a5
-	or a1, a3, a4
-	bne a1, zero, label13
+	bgt s2, a0, label12
 label14:
 	bne a2, zero, label25
 	lw a1, 0(s0)
@@ -63,19 +74,9 @@ label14:
 	j label4
 label16:
 	li a1, 91
-	bne a0, a1, label17
-	li a0, 3
-	lw a1, 0(s0)
-	mv a2, a0
-	j label4
-label17:
+	beq a0, a1, label234
 	li a1, 34
-	bne a0, a1, label18
-	li a0, 2
-	lw a1, 0(s0)
-	mv a2, a0
-	j label4
-label18:
+	beq a0, a1, label238
 	xori a3, a0, 43
 	xori a2, a0, 45
 	sltiu a1, a3, 1
@@ -93,41 +94,42 @@ label19:
 	li a1, 116
 	beq a0, a1, label20
 	li a1, 102
-	beq a0, a1, label22
-	li a1, 110
-	beq a0, a1, label24
-	j label198
+	bne a0, a1, label23
+	li a0, 6
+	mv a1, s1
+	mv a2, s2
+	mv a3, s0
+	jal detect_item
+	j label7
+label12:
+	lw a0, 0(s0)
+	sh2add a3, a0, s1
+	lw a1, 0(a3)
+	xori a4, a1, 9
+	xori a5, a1, 32
+	sltiu t0, a4, 1
+	sltiu a3, a5, 1
+	xori a5, a1, 10
+	or a3, a3, t0
+	xori a1, a1, 13
+	sltiu a4, a5, 1
+	sltiu a5, a1, 1
+	or a4, a4, a5
+	or a1, a3, a4
+	beq a1, zero, label14
+	addiw a0, a0, 1
+	sw a0, 0(s0)
+	j label10
 label25:
 	li a1, 1
-	bne a2, a1, label59
-	lw a0, 0(s0)
-	sh2add a2, a0, s1
-	lw a1, 0(a2)
-	xori a4, a1, 45
-	xori a3, a1, 43
-	sltiu a1, a4, 1
-	sltiu a2, a3, 1
-	or a2, a2, a1
-	bne a2, zero, label27
-	j label28
-label59:
+	beq a2, a1, label26
 	li a1, 2
 	bne a2, a1, label69
 	lw a1, 0(s0)
 	addiw a0, a1, 1
 	sw a0, 0(s0)
 label61:
-	bgt s2, a0, label67
-	lw a0, 0(s0)
-label63:
-	ble s2, a0, label198
-	lw a0, 0(s0)
-	li a3, 34
-	sh2add a2, a0, s1
-	lw a1, 0(a2)
-	bne a1, a3, label198
-	j label406
-label67:
+	ble s2, a0, label394
 	lw a0, 0(s0)
 	li a2, 34
 	sh2add a3, a0, s1
@@ -143,14 +145,33 @@ label69:
 	li a1, 3
 	beq a2, a1, label70
 	li a1, 4
-	beq a2, a1, label551
+	beq a2, a1, label126
 	li a0, 5
 	beq a2, a0, label121
 	li a0, 6
 	beq a2, a0, label112
 	li a1, 7
-	beq a2, a1, label107
-	j label198
+	bne a2, a1, label198
+	lw a1, 0(s0)
+	addiw a0, a1, 3
+	ble s2, a0, label198
+	sh2add a4, a1, s1
+	li a3, 110
+	lw a2, 0(a4)
+	bne a2, a3, label198
+	addiw a3, a1, 1
+	sh2add a4, a3, s1
+	li a3, 117
+	lw a2, 0(a4)
+	bne a2, a3, label198
+	addiw a3, a1, 2
+	sh2add a4, a3, s1
+	li a3, 108
+	lw a2, 0(a4)
+	bne a2, a3, label198
+	sh2add a2, a0, s1
+	lw a0, 0(a2)
+	bne a0, a3, label198
 label598:
 	addiw a1, a1, 4
 	li a0, 1
@@ -179,14 +200,36 @@ label121:
 	lw a0, 0(a2)
 	bne a0, a3, label198
 	j label598
-label24:
-	li a0, 7
-	mv a1, s1
-	mv a2, s2
-	mv a3, s0
-	jal detect_item
+label394:
+	lw a0, 0(s0)
+label63:
+	ble s2, a0, label198
+	lw a0, 0(s0)
+	li a3, 34
+	sh2add a2, a0, s1
+	lw a1, 0(a2)
+	bne a1, a3, label198
+label406:
+	addiw a1, a0, 1
+	li a0, 1
+	sw a1, 0(s0)
 	j label7
-label27:
+label97:
+	sh2add a2, a0, s1
+	li a3, 93
+	lw a1, 0(a2)
+	bne a1, a3, label198
+	j label406
+label26:
+	lw a0, 0(s0)
+	sh2add a2, a0, s1
+	lw a1, 0(a2)
+	xori a4, a1, 45
+	xori a3, a1, 43
+	sltiu a1, a4, 1
+	sltiu a2, a3, 1
+	or a2, a2, a1
+	beq a2, zero, label28
 	addiw a0, a0, 1
 	sw a0, 0(s0)
 label28:
@@ -198,116 +241,61 @@ label28:
 	addiw a0, a2, -48
 	bgeu a0, a3, label198
 label31:
-	bgt s2, a1, label33
-	lw a0, 0(s0)
-	j label35
-label33:
+	ble s2, a1, label293
 	lw a0, 0(s0)
 	sh2add a2, a0, s1
 	lw a3, 0(a2)
 	li a2, 10
 	addiw a1, a3, -48
-	bltu a1, a2, label302
+	bgeu a1, a2, label35
+	addiw a1, a0, 1
+	sw a1, 0(s0)
+	j label31
+label293:
+	lw a0, 0(s0)
 label35:
 	bgt s2, a0, label37
-	j label307
-label112:
-	lw a1, 0(s0)
-	addiw a0, a1, 4
-	ble s2, a0, label198
-	sh2add a4, a1, s1
-	li a3, 102
-	lw a2, 0(a4)
-	bne a2, a3, label198
-	addiw a3, a1, 1
-	sh2add a4, a3, s1
-	li a3, 97
-	lw a2, 0(a4)
-	bne a2, a3, label198
-	addiw a4, a1, 2
-	sh2add a3, a4, s1
-	li a4, 108
-	lw a2, 0(a3)
-	bne a2, a4, label198
-	addiw a3, a1, 3
-	sh2add a4, a3, s1
-	li a3, 115
-	lw a2, 0(a4)
-	bne a2, a3, label198
-	sh2add a2, a0, s1
+	lw a0, 0(s0)
+label41:
+	ble s2, a0, label332
+	lw a0, 0(s0)
 	li a3, 101
-	lw a0, 0(a2)
-	bne a0, a3, label198
-	j label642
-label406:
-	addiw a1, a0, 1
-	li a0, 1
-	sw a1, 0(s0)
-	j label7
-label466:
-	lw a0, 0(s0)
-label91:
-	bgt s2, a0, label93
-	lw a0, 0(s0)
-	j label95
-label93:
-	lw a0, 0(s0)
 	sh2add a2, a0, s1
 	lw a1, 0(a2)
-	xori a5, a1, 10
-	xori a3, a1, 9
-	xori a4, a1, 32
-	xori a1, a1, 13
-	sltiu a2, a4, 1
-	sltiu a4, a3, 1
-	sltiu a3, a5, 1
-	or a2, a2, a4
-	sltiu a4, a1, 1
-	or a3, a3, a4
-	or a1, a2, a3
-	bne a1, zero, label94
-label95:
-	ble s2, a0, label198
-	sh2add a2, a0, s1
-	li a3, 93
-	lw a1, 0(a2)
-	bne a1, a3, label198
-	j label406
-label107:
-	lw a1, 0(s0)
-	addiw a0, a1, 3
-	ble s2, a0, label198
-	sh2add a4, a1, s1
-	li a3, 110
-	lw a2, 0(a4)
-	bne a2, a3, label198
-	addiw a3, a1, 1
-	sh2add a4, a3, s1
-	li a3, 117
-	lw a2, 0(a4)
-	bne a2, a3, label198
-	addiw a3, a1, 2
-	sh2add a4, a3, s1
-	li a3, 108
-	lw a2, 0(a4)
-	bne a2, a3, label198
-	sh2add a2, a0, s1
-	lw a0, 0(a2)
-	bne a0, a3, label198
-	j label598
-label13:
+	bne a1, a3, label332
 	addiw a0, a0, 1
 	sw a0, 0(s0)
-	j label10
+	bgt s2, a0, label54
+label45:
+	bgt s2, a0, label53
+	j label47
+label50:
+	ble s2, a0, label332
+	lw a1, 0(s0)
+	sh2add a2, a1, s1
+	lw a3, 0(a2)
+	li a2, 10
+	addiw a0, a3, -48
+	bgeu a0, a2, label332
+	j label48
+label53:
+	lw a1, 0(s0)
+	li a2, 45
+	sh2add a3, a1, s1
+	lw a0, 0(a3)
+	beq a0, a2, label48
+	mv a0, a1
+	j label50
+label48:
+	addiw a0, a1, 1
+	sw a0, 0(s0)
+	j label50
 label70:
 	lw a1, 0(s0)
 	addiw a0, a1, 1
 	sw a0, 0(s0)
 label71:
-	bgt s2, a0, label73
-	lw a0, 0(s0)
-	j label76
-label73:
+	ble s2, a0, label75
 	lw a0, 0(s0)
 	sh2add a2, a0, s1
 	lw a1, 0(a2)
@@ -322,18 +310,14 @@ label73:
 	sltiu a3, a5, 1
 	or a3, a3, a1
 	or a2, a2, a3
-	bne a2, zero, label74
-label76:
-	bgt s2, a0, label102
-	j label78
-label74:
+	beq a2, zero, label76
 	addiw a0, a0, 1
 	sw a0, 0(s0)
 	j label71
-label302:
-	addiw a1, a0, 1
-	sw a1, 0(s0)
-	j label31
+label75:
+	lw a0, 0(s0)
+label76:
+	bgt s2, a0, label102
 label78:
 	mv a0, zero
 	mv a1, s1
@@ -351,36 +335,9 @@ label102:
 label454:
 	lw a0, 0(s0)
 label80:
-	ble s2, a0, label460
-	lw a0, 0(s0)
-	sh2add a2, a0, s1
-	lw a1, 0(a2)
-	xori a5, a1, 13
-	xori a4, a1, 9
-	xori a3, a1, 32
-	sltiu a2, a3, 1
-	sltiu a3, a4, 1
-	xori a4, a1, 10
-	or a2, a2, a3
-	sltiu a1, a5, 1
-	sltiu a3, a4, 1
-	or a3, a3, a1
-	or a2, a2, a3
-	beq a2, zero, label82
-	addiw a0, a0, 1
-	sw a0, 0(s0)
-	j label80
-label460:
-	lw a0, 0(s0)
-label82:
-	sh2add a3, a0, s1
-	li a2, 44
-	lw a1, 0(a3)
-	bne a1, a2, label466
-label84:
-	addiw a0, a0, 1
-	sw a0, 0(s0)
-	ble s2, a0, label89
+	ble s2, a0, label101
+	j label99
+label87:
 	lw a0, 0(s0)
 	sh2add a2, a0, s1
 	lw a1, 0(a2)
@@ -404,14 +361,121 @@ label89:
 	jal detect_item
 	bne a0, zero, label454
 	j label198
-label551:
+label99:
+	lw a0, 0(s0)
+	sh2add a2, a0, s1
+	lw a1, 0(a2)
+	xori a5, a1, 13
+	xori a4, a1, 9
+	xori a3, a1, 32
+	sltiu a2, a3, 1
+	sltiu a3, a4, 1
+	xori a4, a1, 10
+	or a2, a2, a3
+	sltiu a1, a5, 1
+	sltiu a3, a4, 1
+	or a3, a3, a1
+	or a2, a2, a3
+	beq a2, zero, label82
+	addiw a0, a0, 1
+	sw a0, 0(s0)
+	j label80
+label82:
+	sh2add a3, a0, s1
+	li a2, 44
+	lw a1, 0(a3)
+	bne a1, a2, label466
+label84:
+	addiw a0, a0, 1
+	sw a0, 0(s0)
+	ble s2, a0, label89
+	j label87
+label101:
+	lw a0, 0(s0)
+	j label82
+label466:
+	lw a0, 0(s0)
+label91:
+	ble s2, a0, label98
+	j label93
+label95:
+	ble s2, a0, label198
+	j label97
+label98:
+	lw a0, 0(s0)
+	j label95
+label126:
 	lw a1, 0(s0)
 	addiw a0, a1, 1
 	sw a0, 0(s0)
 label127:
-	bgt s2, a0, label129
+	ble s2, a0, label188
+	j label129
+label131:
+	bgt s2, a0, label187
+	j label133
+label188:
 	lw a0, 0(s0)
 	j label131
+label133:
+	li a0, 2
+	mv a1, s1
+	mv a2, s2
+	mv a3, s0
+	jal detect_item
+	beq a0, zero, label198
+	j label710
+label187:
+	sh2add a2, a0, s1
+	li a3, 125
+	lw a1, 0(a2)
+	beq a1, a3, label406
+	j label133
+label710:
+	lw a0, 0(s0)
+label135:
+	ble s2, a0, label184
+	j label185
+label137:
+	ble s2, a0, label198
+	j label139
+label184:
+	lw a0, 0(s0)
+	j label137
+label139:
+	sh2add a2, a0, s1
+	li a3, 58
+	lw a1, 0(a2)
+	bne a1, a3, label198
+label726:
+	addiw a0, a0, 1
+	sw a0, 0(s0)
+	bgt s2, a0, label143
+label145:
+	mv a0, zero
+	mv a1, s1
+	mv a2, s2
+	mv a3, s0
+	jal detect_item
+	beq a0, zero, label198
+label751:
+	lw a0, 0(s0)
+label147:
+	ble s2, a0, label181
+	j label182
+label149:
+	sh2add a2, a0, s1
+	li a3, 44
+	lw a1, 0(a2)
+	bne a1, a3, label151
+label160:
+	addiw a0, a0, 1
+	sw a0, 0(s0)
+	ble s2, a0, label163
+	j label179
+label181:
+	lw a0, 0(s0)
+	j label149
 label129:
 	lw a0, 0(s0)
 	sh2add a2, a0, s1
@@ -427,194 +491,7 @@ label129:
 	sltiu a4, a1, 1
 	or a3, a3, a4
 	or a1, a2, a3
-	bne a1, zero, label130
-label131:
-	bgt s2, a0, label187
-label133:
-	li a0, 2
-	mv a1, s1
-	mv a2, s2
-	mv a3, s0
-	jal detect_item
-	beq a0, zero, label198
-	lw a0, 0(s0)
-label135:
-	ble s2, a0, label716
-	lw a0, 0(s0)
-	sh2add a2, a0, s1
-	lw a1, 0(a2)
-	xori a4, a1, 9
-	xori a5, a1, 13
-	xori a3, a1, 32
-	sltiu a2, a3, 1
-	sltiu a3, a4, 1
-	xori a4, a1, 10
-	or a2, a2, a3
-	sltiu a1, a5, 1
-	sltiu a3, a4, 1
-	or a3, a3, a1
-	or a2, a2, a3
-	bne a2, zero, label186
-	j label137
-label187:
-	sh2add a2, a0, s1
-	li a3, 125
-	lw a1, 0(a2)
-	beq a1, a3, label406
-	j label133
-label716:
-	lw a0, 0(s0)
-label137:
-	ble s2, a0, label198
-	sh2add a2, a0, s1
-	li a3, 58
-	lw a1, 0(a2)
-	bne a1, a3, label198
-label726:
-	addiw a0, a0, 1
-	sw a0, 0(s0)
-	ble s2, a0, label145
-	lw a0, 0(s0)
-	sh2add a2, a0, s1
-	lw a1, 0(a2)
-	xori a3, a1, 9
-	xori a4, a1, 32
-	sltiu a5, a3, 1
-	sltiu a2, a4, 1
-	xori a4, a1, 10
-	or a2, a2, a5
-	xori a1, a1, 13
-	sltiu a3, a4, 1
-	sltiu a4, a1, 1
-	or a3, a3, a4
-	or a1, a2, a3
-	bne a1, zero, label726
-label145:
-	mv a0, zero
-	mv a1, s1
-	mv a2, s2
-	mv a3, s0
-	jal detect_item
-	beq a0, zero, label198
-label751:
-	lw a0, 0(s0)
-label147:
-	bgt s2, a0, label182
-	lw a0, 0(s0)
-label149:
-	sh2add a2, a0, s1
-	li a3, 44
-	lw a1, 0(a2)
-	beq a1, a3, label764
-	lw a0, 0(s0)
-	j label152
-label764:
-	addiw a0, a0, 1
-	sw a0, 0(s0)
-	j label161
-label152:
-	ble s2, a0, label154
-	lw a0, 0(s0)
-	sh2add a2, a0, s1
-	lw a1, 0(a2)
-	xori a4, a1, 9
-	xori a3, a1, 32
-	sltiu a2, a3, 1
-	sltiu a3, a4, 1
-	xori a4, a1, 10
-	or a2, a2, a3
-	xori a1, a1, 13
-	sltiu a3, a4, 1
-	sltiu a4, a1, 1
-	or a3, a3, a4
-	or a1, a2, a3
-	bne a1, zero, label159
-	j label155
-label161:
-	ble s2, a0, label163
-	lw a0, 0(s0)
-	sh2add a2, a0, s1
-	lw a1, 0(a2)
-	xori a4, a1, 9
-	xori a3, a1, 32
-	sltiu a2, a3, 1
-	sltiu a3, a4, 1
-	xori a4, a1, 10
-	or a2, a2, a3
-	xori a1, a1, 13
-	sltiu a3, a4, 1
-	sltiu a4, a1, 1
-	or a3, a3, a4
-	or a1, a2, a3
-	bne a1, zero, label764
-	j label163
-label182:
-	lw a0, 0(s0)
-	sh2add a2, a0, s1
-	lw a1, 0(a2)
-	xori a5, a1, 13
-	xori a4, a1, 9
-	xori a3, a1, 32
-	sltiu a2, a3, 1
-	sltiu a3, a4, 1
-	xori a4, a1, 10
-	or a2, a2, a3
-	sltiu a1, a5, 1
-	sltiu a3, a4, 1
-	or a3, a3, a1
-	or a2, a2, a3
-	bne a2, zero, label183
-	j label149
-label154:
-	lw a0, 0(s0)
-label155:
-	ble s2, a0, label198
-	sh2add a2, a0, s1
-	li a3, 125
-	lw a1, 0(a2)
-	bne a1, a3, label198
-	j label406
-label307:
-	lw a0, 0(s0)
-label41:
-	bgt s2, a0, label43
-label332:
-	li a0, 1
-	j label7
-label43:
-	lw a0, 0(s0)
-	li a3, 101
-	sh2add a2, a0, s1
-	lw a1, 0(a2)
-	bne a1, a3, label332
-	addiw a0, a0, 1
-	sw a0, 0(s0)
-	bgt s2, a0, label54
-label45:
-	bgt s2, a0, label53
-	lw a0, 0(s0)
-	j label50
-label53:
-	lw a1, 0(s0)
-	li a2, 45
-	sh2add a3, a1, s1
-	lw a0, 0(a3)
-	beq a0, a2, label48
-	mv a0, a1
-	j label50
-label48:
-	addiw a0, a1, 1
-	sw a0, 0(s0)
-label50:
-	ble s2, a0, label332
-	lw a1, 0(s0)
-	sh2add a2, a1, s1
-	lw a3, 0(a2)
-	li a2, 10
-	addiw a0, a3, -48
-	bgeu a0, a2, label332
-	j label48
-label130:
+	beq a1, zero, label131
 	addiw a0, a0, 1
 	sw a0, 0(s0)
 	j label127
@@ -634,55 +511,44 @@ label38:
 	addiw a1, a3, -48
 	bltu a1, a2, label38
 	j label41
+label332:
+	li a0, 1
+	j label7
+label185:
+	lw a0, 0(s0)
+	sh2add a2, a0, s1
+	lw a1, 0(a2)
+	xori a4, a1, 9
+	xori a5, a1, 13
+	xori a3, a1, 32
+	sltiu a2, a3, 1
+	sltiu a3, a4, 1
+	xori a4, a1, 10
+	or a2, a2, a3
+	sltiu a1, a5, 1
+	sltiu a3, a4, 1
+	or a3, a3, a1
+	or a2, a2, a3
+	beq a2, zero, label137
+	addiw a0, a0, 1
+	sw a0, 0(s0)
+	j label135
+label47:
+	lw a0, 0(s0)
+	j label50
 label54:
 	sh2add a2, a0, s1
 	li a1, 43
 	lw a0, 0(a2)
-	beq a0, a1, label380
-	j label379
-label186:
-	addiw a0, a0, 1
-	sw a0, 0(s0)
-	j label135
-label20:
-	li a0, 5
-	mv a1, s1
-	mv a2, s2
-	mv a3, s0
-	jal detect_item
-	j label7
-label380:
+	bne a0, a1, label55
 	lw a1, 0(s0)
 	addiw a0, a1, 1
 	sw a0, 0(s0)
 	j label45
-label379:
+label55:
 	lw a0, 0(s0)
 	j label45
-label22:
-	li a0, 6
-	mv a1, s1
-	mv a2, s2
-	mv a3, s0
-	jal detect_item
-	j label7
-label183:
-	addiw a0, a0, 1
-	sw a0, 0(s0)
-	j label147
-label163:
-	li a0, 2
-	mv a1, s1
-	mv a2, s2
-	mv a3, s0
-	jal detect_item
-	beq a0, zero, label198
-	lw a0, 0(s0)
-label165:
-	bgt s2, a0, label168
-	lw a0, 0(s0)
-	j label170
-label168:
+label143:
 	lw a0, 0(s0)
 	sh2add a2, a0, s1
 	lw a1, 0(a2)
@@ -697,7 +563,92 @@ label168:
 	sltiu a4, a1, 1
 	or a3, a3, a4
 	or a1, a2, a3
-	bne a1, zero, label169
+	bne a1, zero, label726
+	j label145
+label23:
+	li a1, 110
+	beq a0, a1, label24
+	j label198
+label151:
+	lw a0, 0(s0)
+label152:
+	ble s2, a0, label154
+	lw a0, 0(s0)
+	sh2add a2, a0, s1
+	lw a1, 0(a2)
+	xori a4, a1, 9
+	xori a3, a1, 32
+	sltiu a2, a3, 1
+	sltiu a3, a4, 1
+	xori a4, a1, 10
+	or a2, a2, a3
+	xori a1, a1, 13
+	sltiu a3, a4, 1
+	sltiu a4, a1, 1
+	or a3, a3, a4
+	or a1, a2, a3
+	beq a1, zero, label155
+	addiw a0, a0, 1
+	sw a0, 0(s0)
+	j label152
+label154:
+	lw a0, 0(s0)
+label155:
+	ble s2, a0, label198
+	sh2add a2, a0, s1
+	li a3, 125
+	lw a1, 0(a2)
+	bne a1, a3, label198
+	j label406
+label163:
+	li a0, 2
+	mv a1, s1
+	mv a2, s2
+	mv a3, s0
+	jal detect_item
+	beq a0, zero, label198
+	j label805
+label179:
+	lw a0, 0(s0)
+	sh2add a2, a0, s1
+	lw a1, 0(a2)
+	xori a4, a1, 9
+	xori a3, a1, 32
+	sltiu a2, a3, 1
+	sltiu a3, a4, 1
+	xori a4, a1, 10
+	or a2, a2, a3
+	xori a1, a1, 13
+	sltiu a3, a4, 1
+	sltiu a4, a1, 1
+	or a3, a3, a4
+	or a1, a2, a3
+	bne a1, zero, label160
+	j label163
+label805:
+	lw a0, 0(s0)
+label165:
+	ble s2, a0, label167
+	lw a0, 0(s0)
+	sh2add a2, a0, s1
+	lw a1, 0(a2)
+	xori a3, a1, 9
+	xori a4, a1, 32
+	sltiu a5, a3, 1
+	sltiu a2, a4, 1
+	xori a4, a1, 10
+	or a2, a2, a5
+	xori a1, a1, 13
+	sltiu a3, a4, 1
+	sltiu a4, a1, 1
+	or a3, a3, a4
+	or a1, a2, a3
+	beq a1, zero, label170
+	addiw a0, a0, 1
+	sw a0, 0(s0)
+	j label165
+label167:
+	lw a0, 0(s0)
 label170:
 	ble s2, a0, label198
 	sh2add a3, a0, s1
@@ -707,7 +658,54 @@ label170:
 label837:
 	addiw a0, a0, 1
 	sw a0, 0(s0)
-	ble s2, a0, label178
+	bgt s2, a0, label176
+label178:
+	mv a0, zero
+	mv a1, s1
+	mv a2, s2
+	mv a3, s0
+	jal detect_item
+	bne a0, zero, label751
+	j label198
+label182:
+	lw a0, 0(s0)
+	sh2add a2, a0, s1
+	lw a1, 0(a2)
+	xori a5, a1, 13
+	xori a4, a1, 9
+	xori a3, a1, 32
+	sltiu a2, a3, 1
+	sltiu a3, a4, 1
+	xori a4, a1, 10
+	or a2, a2, a3
+	sltiu a1, a5, 1
+	sltiu a3, a4, 1
+	or a3, a3, a1
+	or a2, a2, a3
+	beq a2, zero, label149
+	addiw a0, a0, 1
+	sw a0, 0(s0)
+	j label147
+label93:
+	lw a0, 0(s0)
+	sh2add a2, a0, s1
+	lw a1, 0(a2)
+	xori a5, a1, 10
+	xori a3, a1, 9
+	xori a4, a1, 32
+	xori a1, a1, 13
+	sltiu a2, a4, 1
+	sltiu a4, a3, 1
+	sltiu a3, a5, 1
+	or a2, a2, a4
+	sltiu a4, a1, 1
+	or a3, a3, a4
+	or a1, a2, a3
+	beq a1, zero, label95
+	addiw a0, a0, 1
+	sw a0, 0(s0)
+	j label91
+label176:
 	lw a0, 0(s0)
 	sh2add a2, a0, s1
 	lw a1, 0(a2)
@@ -723,113 +721,79 @@ label837:
 	or a3, a3, a4
 	or a1, a2, a3
 	bne a1, zero, label837
-label178:
-	mv a0, zero
+	j label178
+label20:
+	li a0, 5
 	mv a1, s1
 	mv a2, s2
 	mv a3, s0
 	jal detect_item
-	bne a0, zero, label751
-	j label198
-label94:
-	addiw a0, a0, 1
-	sw a0, 0(s0)
-	j label91
-label169:
-	addiw a0, a0, 1
-	sw a0, 0(s0)
-	j label165
-label159:
-	addiw a0, a0, 1
-	sw a0, 0(s0)
-	j label152
+	j label7
+label238:
+	li a0, 2
+	lw a1, 0(s0)
+	mv a2, a0
+	j label4
+label24:
+	li a0, 7
+	mv a1, s1
+	mv a2, s2
+	mv a3, s0
+	jal detect_item
+	j label7
+label234:
+	li a0, 3
+	lw a1, 0(s0)
+	mv a2, a0
+	j label4
 .globl main
 main:
 .p2align 2
 	addi sp, sp, -40
-	sd s1, 32(sp)
-	addi s1, sp, 0
-	sd s0, 24(sp)
-	sd s2, 16(sp)
-	sd ra, 8(sp)
-	sw zero, 0(sp)
+	sd ra, 0(sp)
+	sd s1, 8(sp)
+	addi s1, sp, 32
+	sd s0, 16(sp)
+	sd s2, 24(sp)
+	sw zero, 32(sp)
 	jal getch
-pcrel1256:
+pcrel1295:
 	auipc a1, %pcrel_hi(buffer)
-	addi s0, a1, %pcrel_lo(pcrel1256)
+	addi s0, a1, %pcrel_lo(pcrel1295)
 	li a1, 35
-	bne a0, a1, label1177
+	beq a0, a1, label1211
+	mv s2, zero
+	j label1201
+label1187:
+	ble t1, a0, label1191
+	j label1189
+.p2align 2
+label1201:
+	sh2add a1, s2, s0
+	sw a0, 0(a1)
+	jal getch
+	li a1, 35
+	addiw s2, s2, 1
+	bne a0, a1, label1201
+	lw a0, 32(sp)
+	mv t1, s2
+	j label1187
+.p2align 2
+label1211:
 	mv a0, zero
 	mv t1, zero
-	j label1156
-label1177:
-	mv s2, zero
-	j label1166
-label1156:
+label1191:
 	mv a0, zero
 	mv a1, s0
 	mv a2, t1
 	mv a3, s1
 	jal detect_item
 	mv a1, a0
-	lw a0, 0(sp)
-label1157:
-	ble t1, a0, label1159
-	lw a2, 0(sp)
-	sh2add a3, a2, s0
-	lw a0, 0(a3)
-	xori t0, a0, 13
-	xori t2, a0, 10
-	xori a4, a0, 9
-	xori a5, a0, 32
-	sltiu a3, a5, 1
-	sltiu a5, a4, 1
-	sltiu a4, t2, 1
-	or a3, a3, a5
-	sltiu a5, t0, 1
-	or a0, a4, a5
-	or a3, a3, a0
-	bne a3, zero, label1165
-	j label1159
-.p2align 2
-label1166:
-	sh2add a1, s2, s0
-	sw a0, 0(a1)
-	jal getch
-	li a1, 35
-	addiw s2, s2, 1
-	bne a0, a1, label1166
-	lw a0, 0(sp)
-	mv t1, s2
-	ble s2, a0, label1156
-	j label1154
-label1165:
-	addiw a0, a2, 1
-	sw a0, 0(sp)
-	j label1157
-label1152:
-	ble t1, a0, label1156
-label1154:
-	lw a0, 0(sp)
-	sh2add a2, a0, s0
-	lw a1, 0(a2)
-	xori a5, a1, 10
-	xori a4, a1, 9
-	xori a3, a1, 32
-	sltiu a2, a3, 1
-	sltiu a3, a4, 1
-	xori a4, a1, 13
-	or a2, a2, a3
-	sltiu a1, a4, 1
-	sltiu a3, a5, 1
-	or a3, a3, a1
-	or a2, a2, a3
-	beq a2, zero, label1156
-	addiw a0, a0, 1
-	sw a0, 0(sp)
-	j label1152
-label1159:
-	bne a1, zero, label1163
+	lw a0, 32(sp)
+label1192:
+	bgt t1, a0, label1199
+label1194:
+	bne a1, zero, label1198
 	li a0, 110
 	jal putch
 	li a0, 111
@@ -845,14 +809,53 @@ label1159:
 	li a0, 10
 	jal putch
 	li a0, 1
-label1161:
-	ld ra, 8(sp)
-	ld s2, 16(sp)
-	ld s0, 24(sp)
-	ld s1, 32(sp)
+	j label1196
+label1189:
+	lw a0, 32(sp)
+	sh2add a2, a0, s0
+	lw a1, 0(a2)
+	xori a5, a1, 10
+	xori a4, a1, 9
+	xori a3, a1, 32
+	sltiu a2, a3, 1
+	sltiu a3, a4, 1
+	xori a4, a1, 13
+	or a2, a2, a3
+	sltiu a1, a4, 1
+	sltiu a3, a5, 1
+	or a3, a3, a1
+	or a2, a2, a3
+	beq a2, zero, label1191
+	addiw a0, a0, 1
+	sw a0, 32(sp)
+	j label1187
+label1199:
+	lw a2, 32(sp)
+	sh2add a3, a2, s0
+	lw a0, 0(a3)
+	xori t0, a0, 13
+	xori a4, a0, 9
+	xori t2, a0, 10
+	xori a5, a0, 32
+	sltiu a3, a5, 1
+	sltiu a5, a4, 1
+	sltiu a4, t2, 1
+	or a3, a3, a5
+	sltiu a5, t0, 1
+	or a0, a4, a5
+	or a3, a3, a0
+	beq a3, zero, label1194
+	addiw a0, a2, 1
+	sw a0, 32(sp)
+	j label1192
+label1196:
+	ld ra, 0(sp)
+	ld s1, 8(sp)
+	ld s0, 16(sp)
+	ld s2, 24(sp)
 	addi sp, sp, 40
 	ret
-label1163:
+label1198:
 	li a0, 111
 	jal putch
 	li a0, 107
@@ -860,4 +863,4 @@ label1163:
 	li a0, 10
 	jal putch
 	mv a0, zero
-	j label1161
+	j label1196

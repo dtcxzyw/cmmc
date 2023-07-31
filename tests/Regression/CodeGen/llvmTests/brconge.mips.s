@@ -32,24 +32,18 @@ test:
 	lui $t1, %hi(result1)
 	addiu $t1, $t1, %lo(result1)
 	subu $t2, $t2, $t3
-	bltz $t2, label2
+	bgez $t2, label3
 	nop
+	li $t2, 1
+	sw $t2, 0($t1)
 label3:
 	lui $t2, %hi(k)
 	lw $t2, %lo(k)($t2)
 	subu $t0, $t0, $t2
-	bltz $t0, label4
+	bgez $t0, label5
 	nop
-label5:
-	jr $ra
-	nop
-label2:
-	li $t2, 1
-	sw $t2, 0($t1)
-	b label3
-	nop
-label4:
 	li $t0, 1
 	sw $t0, 0($t1)
-	b label5
+label5:
+	jr $ra
 	nop

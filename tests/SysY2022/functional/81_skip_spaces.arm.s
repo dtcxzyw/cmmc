@@ -15,27 +15,22 @@ main:
 label2:
 	bl getint
 	cmp r0, #0
-	bne label4
-	cmp r5, #0
-	bne label24
-	b label45
-.p2align 4
-label4:
+	beq label15
 	bl getint
 	str r0, [r4, r5, lsl #2]
 	add r5, r5, #1
 	b label2
-label24:
+.p2align 4
+label15:
+	cmp r5, #0
+	beq label45
 	mov r1, #0
 .p2align 4
 label6:
 	subs r0, r5, #1
 	ldr r2, [r4, r0, lsl #2]
 	add r1, r1, r2
-	bne label33
-	mov r0, r1
-	b label9
-label33:
+	beq label32
 	mov r5, r0
 	b label6
 .p2align 4
@@ -51,3 +46,7 @@ label9:
 	mov r2, #79
 	mls r0, r1, r2, r0
 	pop { r4, r5, pc }
+.p2align 4
+label32:
+	mov r0, r1
+	b label9

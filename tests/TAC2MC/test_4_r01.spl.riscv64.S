@@ -23,33 +23,32 @@ write:
     ret
 hanoi:
 	addi sp, sp, -48
-	sd s3, 40(sp)
+	sd ra, 0(sp)
+	sd s3, 8(sp)
 	mv s3, a3
-	sd s2, 32(sp)
+	sd s2, 16(sp)
 	li a3, 10000
 	sd s0, 24(sp)
-	sd s1, 16(sp)
+	sd s1, 32(sp)
 	mulw a4, a1, a3
-	sd s4, 8(sp)
+	sd s4, 40(sp)
 	li a3, 1
 	addw s2, s3, a4
-	sd ra, 0(sp)
-	beq a0, a3, label17
-	mv s0, a1
-	mv s1, a2
-	j label4
-label17:
+	bne a0, a3, label16
 	mv a0, s2
 label2:
 	jal write
 	ld ra, 0(sp)
-	ld s4, 8(sp)
-	ld s1, 16(sp)
+	ld s3, 8(sp)
+	ld s2, 16(sp)
 	ld s0, 24(sp)
-	ld s2, 32(sp)
-	ld s3, 40(sp)
+	ld s1, 32(sp)
+	ld s4, 40(sp)
 	addi sp, sp, 48
 	ret
+label16:
+	mv s0, a1
+	mv s1, a2
 label4:
 	addiw s4, a0, -1
 	mv a0, s4

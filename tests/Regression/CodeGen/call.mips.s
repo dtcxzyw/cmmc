@@ -180,8 +180,8 @@ callee16_cmmc_noinline:
 calling_convention:
 .p2align 2
 	addiu $sp, $sp, -64
-	sw $ra, 56($sp)
-	addiu $t2, $sp, 16
+	sw $ra, 16($sp)
+	addiu $t2, $sp, 24
 	jal callee1_cmmc_noinline
 	nop
 	li $a0, 1
@@ -242,7 +242,7 @@ calling_convention:
 	mov.s $f12, $f0
 	jal putfloat
 	nop
-	lw $ra, 56($sp)
+	lw $ra, 16($sp)
 	addiu $sp, $sp, 64
 	jr $ra
 	nop

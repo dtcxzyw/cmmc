@@ -5,8 +5,8 @@
 main:
 .p2align 2
 	addi sp, sp, -16
-	sd s0, 8(sp)
 	sd ra, 0(sp)
+	sd s0, 8(sp)
 	jal getint
 	mv s0, a0
 	jal getint

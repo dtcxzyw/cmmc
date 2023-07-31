@@ -12,18 +12,18 @@ a:
 main:
 .p2align 2
 	addi sp, sp, -64
-pcrel489:
+pcrel497:
 	auipc a0, %pcrel_hi(a)
 	mv a1, zero
-	sd s0, 56(sp)
-	addi s0, a0, %pcrel_lo(pcrel489)
-	sd s5, 48(sp)
-	sd s2, 40(sp)
-	sd s3, 32(sp)
-	sd s4, 24(sp)
-	sd s1, 16(sp)
-	sd s6, 8(sp)
 	sd ra, 0(sp)
+	sd s0, 8(sp)
+	addi s0, a0, %pcrel_lo(pcrel497)
+	sd s5, 16(sp)
+	sd s2, 24(sp)
+	sd s3, 32(sp)
+	sd s4, 40(sp)
+	sd s1, 48(sp)
+	sd s6, 56(sp)
 .p2align 2
 label2:
 	sh2add a0, a1, s0
@@ -132,10 +132,10 @@ label7:
 	addi a1, a1, 1
 	sw zero, 0(a2)
 	blt a1, a0, label7
-pcrel490:
+pcrel498:
 	auipc a0, %pcrel_hi(b)
 	mv a2, zero
-	addi a1, a0, %pcrel_lo(pcrel490)
+	addi a1, a0, %pcrel_lo(pcrel498)
 .p2align 2
 label10:
 	sh2add a0, a2, a1
@@ -283,11 +283,7 @@ label18:
 	li a1, 10
 	bge s5, a1, label28
 	addiw a0, s5, 4
-	blt a0, a1, label339
-	mv a0, s5
-	mv a1, s4
-	j label25
-label339:
+	bge a0, a1, label338
 	mv a0, s4
 	mv a1, s5
 label22:
@@ -341,13 +337,12 @@ label22:
 	sw a3, 12(a2)
 	li a3, 6
 	addiw a2, a0, 28
-	blt a1, a3, label361
-	mv a0, a1
-	mv a1, a2
-	j label25
-label361:
+	bge a1, a3, label360
 	mv a0, a2
 	j label22
+label360:
+	mv a0, a1
+	mv a1, a2
 label25:
 	sh2add a2, a0, s2
 	li a5, 128875
@@ -386,12 +381,16 @@ label31:
 	jal putch
 	ld ra, 0(sp)
 	mv a0, zero
-	ld s6, 8(sp)
-	ld s1, 16(sp)
-	ld s4, 24(sp)
+	ld s0, 8(sp)
+	ld s5, 16(sp)
+	ld s2, 24(sp)
 	ld s3, 32(sp)
-	ld s2, 40(sp)
-	ld s5, 48(sp)
-	ld s0, 56(sp)
+	ld s4, 40(sp)
+	ld s1, 48(sp)
+	ld s6, 56(sp)
 	addi sp, sp, 64
 	ret
+label338:
+	mv a0, s5
+	mv a1, s4
+	j label25

@@ -14,14 +14,11 @@ test:
 .p2align 2
 	lui $t0, %hi(j)
 	lw $t0, %lo(j)($t0)
-	beq $t0, $zero, label2
+	bne $t0, $zero, label3
 	nop
-label3:
-	jr $ra
-	nop
-label2:
 	li $t0, 1
 	lui $t1, %hi(result)
 	sw $t0, %lo(result)($t1)
-	b label3
+label3:
+	jr $ra
 	nop

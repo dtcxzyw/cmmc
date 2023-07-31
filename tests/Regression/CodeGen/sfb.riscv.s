@@ -12,33 +12,33 @@ label8:
 test2:
 .p2align 2
 	addiw a2, a0, 10
-	bne a1, zero, label16
+	bne a1, zero, label17
 	mv a0, a2
-label16:
+label17:
 	ret
 .globl test3
 test3:
 .p2align 2
 	addiw a2, a0, 10
 	mv a0, a2
-	bne a1, zero, label24
+	bne a1, zero, label26
 	mv a0, zero
-label24:
+label26:
 	ret
 .globl test4
 test4:
 .p2align 2
 	addiw a2, a0, 10
 	mv a0, zero
-	bne a1, zero, label32
+	bne a1, zero, label35
 	mv a0, a2
-label32:
+label35:
 	ret
 .globl test5
 test5:
 .p2align 2
 	li a1, 1000000007
-	bge a0, zero, label40
+	bge a0, zero, label44
 	addw a0, a0, a1
-label40:
+label44:
 	ret

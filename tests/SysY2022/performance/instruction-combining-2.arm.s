@@ -13,9 +13,15 @@ main:
 	movw r0, #10015
 	bl _sysy_starttime
 	cmp r4, #0
-	bgt label2
-	mov r4, #0
-	b label13
+	ble label17
+	cmp r4, #4
+	ble label21
+	sub r0, r4, #4
+	sub r2, r4, #20
+	cmp r0, #16
+	ble label27
+	mov r1, #0
+	mov r3, r1
 label4:
 	add r6, r1, r3
 	movw r3, #32767
@@ -176,21 +182,14 @@ label13:
 	bl putch
 	mov r0, #0
 	pop { r4, r5, r6, r7, r8, pc }
-label2:
-	cmp r4, #4
-	bgt label3
+label17:
+	mov r4, #0
+	b label13
+label21:
 	mov r0, #0
 	mov r1, r0
 	b label10
-label3:
-	sub r0, r4, #4
-	sub r2, r4, #20
-	cmp r0, #16
-	bgt label28
+label27:
 	mov r2, #0
 	mov r1, r2
 	b label7
-label28:
-	mov r1, #0
-	mov r3, r1
-	b label4

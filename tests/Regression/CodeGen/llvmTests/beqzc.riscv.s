@@ -13,17 +13,17 @@ j:
 .globl main
 main:
 .p2align 2
-pcrel17:
+pcrel18:
 	auipc a2, %pcrel_hi(i)
 	li a0, 10
-	lw a1, %pcrel_lo(pcrel17)(a2)
+	lw a1, %pcrel_lo(pcrel18)(a2)
 	beq a1, zero, label16
 	li a0, 55
 label16:
 	li a1, 4294967295
-pcrel18:
+pcrel19:
 	auipc a2, %pcrel_hi(j)
 	and a0, a0, a1
-	sw a0, %pcrel_lo(pcrel18)(a2)
+	sw a0, %pcrel_lo(pcrel19)(a2)
 	mv a0, zero
 	ret

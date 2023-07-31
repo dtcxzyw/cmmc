@@ -17,26 +17,24 @@ P:
 .globl foo
 foo:
 .p2align 2
-	bgt a0, zero, label2
-label5:
-	ret
-label2:
+	ble a0, zero, label5
+pcrel62:
 	auipc a2, %pcrel_hi(B)
 	li t0, 17
-	addi a1, a2, %pcrel_lo(label2)
-	lb a2, %pcrel_lo(label2)(a2)
+	addi a1, a2, %pcrel_lo(pcrel62)
+	lb a2, %pcrel_lo(pcrel62)(a2)
 	andi a4, a2, 255
 	slliw a5, a4, 1
-pcrel61:
+pcrel63:
 	auipc a4, %pcrel_hi(A)
 	andi a3, a5, 255
-	addi a2, a4, %pcrel_lo(pcrel61)
+	addi a2, a4, %pcrel_lo(pcrel63)
 	li a5, 1
-	sb a3, %pcrel_lo(pcrel61)(a4)
-pcrel62:
+	sb a3, %pcrel_lo(pcrel63)(a4)
+pcrel64:
 	auipc a4, %pcrel_hi(P)
-	sb t0, %pcrel_lo(pcrel62)(a4)
-	addi a3, a4, %pcrel_lo(pcrel62)
+	sb t0, %pcrel_lo(pcrel64)(a4)
+	addi a3, a4, %pcrel_lo(pcrel64)
 	beq a0, a5, label5
 	li a4, 1
 label3:
@@ -56,4 +54,5 @@ label3:
 	add a5, a3, t1
 	sb t0, 0(a5)
 	bne a0, a4, label3
-	j label5
+label5:
+	ret

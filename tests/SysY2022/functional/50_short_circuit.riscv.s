@@ -5,16 +5,13 @@
 main:
 .p2align 2
 	addi sp, sp, -24
-	sd s0, 16(sp)
-	sd s1, 8(sp)
 	sd ra, 0(sp)
+	sd s0, 8(sp)
+	sd s1, 16(sp)
 	jal getint
 	mv s0, a0
 	li a0, 10
-	bgt s0, a0, label2
-	mv s0, zero
-	j label3
-label2:
+	ble s0, a0, label18
 	mv a0, s0
 	jal putint
 label3:
@@ -31,7 +28,13 @@ label6:
 label8:
 	jal getint
 	li a1, 101
-	bge a0, a1, label14
+	blt a0, a1, label10
+	j label14
+label15:
+	addw s0, s0, a0
+	mv a0, s0
+	jal putint
+	j label8
 label10:
 	addiw s1, s0, 99
 	mv a0, s1
@@ -43,18 +46,16 @@ label14:
 	mv a0, s0
 	jal putint
 	j label10
-label15:
-	addw s0, s0, a0
-	mv a0, s0
-	jal putint
-	j label8
 label12:
 	addiw a0, s0, 199
 	jal putint
 label13:
 	mv a0, zero
 	ld ra, 0(sp)
-	ld s1, 8(sp)
-	ld s0, 16(sp)
+	ld s0, 8(sp)
+	ld s1, 16(sp)
 	addi sp, sp, 24
 	ret
+label18:
+	mv s0, zero
+	j label3

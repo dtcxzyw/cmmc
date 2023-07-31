@@ -9,17 +9,13 @@ foo4:
 .p2align 4
 	push { r4, r5, r6, r7 }
 	cmp r1, #0
-	bgt label2
-	b label13
-label3:
+	ble label13
+	cmp r1, #4
+	ble label21
 	sub r2, r1, #4
 	sub r5, r1, #20
 	cmp r2, #16
-	bgt label28
-	mov r3, #0
-	mov r4, r3
-	b label7
-label28:
+	ble label27
 	mov r3, #0
 	mov r4, r3
 label4:
@@ -58,13 +54,12 @@ label4:
 	add r7, r3, #60
 	str r7, [r6, #60]
 	add r6, r3, #64
-	bgt label66
-	mov r3, r4
-	mov r4, r6
-	b label7
-label66:
+	ble label65
 	mov r3, r6
 	b label4
+label65:
+	mov r3, r4
+	mov r4, r6
 label7:
 	add r5, r0, r3, lsl #2
 	add r6, r4, #4
@@ -88,9 +83,11 @@ label10:
 label13:
 	pop { r4, r5, r6, r7 }
 	bx lr
-label2:
-	cmp r1, #4
-	bgt label3
+label27:
+	mov r3, #0
+	mov r4, r3
+	b label7
+label21:
 	mov r2, #0
 	mov r3, r2
 	b label10

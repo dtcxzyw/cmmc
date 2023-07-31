@@ -5,9 +5,9 @@
 main:
 .p2align 2
 	addi sp, sp, -24
-	sd s1, 16(sp)
-	sd s0, 8(sp)
 	sd ra, 0(sp)
+	sd s1, 8(sp)
+	sd s0, 16(sp)
 	jal getint
 	li s0, 6
 	li s1, 5
@@ -82,7 +82,7 @@ label8:
 	jal putch
 	ld ra, 0(sp)
 	li a0, 25
-	ld s0, 8(sp)
-	ld s1, 16(sp)
+	ld s1, 8(sp)
+	ld s0, 16(sp)
 	addi sp, sp, 24
 	ret

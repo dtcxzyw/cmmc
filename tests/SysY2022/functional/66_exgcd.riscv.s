@@ -4,16 +4,16 @@
 exgcd:
 .p2align 2
 	addi sp, sp, -48
-	sd s0, 40(sp)
+	sd ra, 0(sp)
+	sd s0, 8(sp)
 	mv s0, a0
-	sd s1, 32(sp)
+	sd s1, 16(sp)
 	mv s1, a1
 	sd s3, 24(sp)
 	mv s3, a2
-	sd s2, 16(sp)
+	sd s2, 32(sp)
 	mv s2, a3
-	sd s4, 8(sp)
-	sd ra, 0(sp)
+	sd s4, 40(sp)
 	bne a1, zero, label5
 	li a0, 1
 	sw a0, 0(a2)
@@ -21,11 +21,11 @@ exgcd:
 	sw zero, 0(a3)
 label3:
 	ld ra, 0(sp)
-	ld s4, 8(sp)
-	ld s2, 16(sp)
+	ld s0, 8(sp)
+	ld s1, 16(sp)
 	ld s3, 24(sp)
-	ld s1, 32(sp)
-	ld s0, 40(sp)
+	ld s2, 32(sp)
+	ld s4, 40(sp)
 	addi sp, sp, 48
 	ret
 label5:
@@ -73,15 +73,15 @@ main:
 	addi sp, sp, -16
 	li a0, 1
 	li a1, 15
-	addi a2, sp, 0
-	addi a3, sp, 4
-	sd ra, 8(sp)
-	sw a0, 0(sp)
-	sw a0, 4(sp)
+	addi a3, sp, 8
+	addi a2, sp, 12
+	sd ra, 0(sp)
+	sw a0, 12(sp)
+	sw a0, 8(sp)
 	li a0, 7
 	jal exgcd
 	li a1, -2004318071
-	lw a0, 0(sp)
+	lw a0, 12(sp)
 	mul a2, a0, a1
 	srli a3, a2, 32
 	add a1, a3, a0
@@ -92,11 +92,11 @@ main:
 	slliw a2, a1, 4
 	subw a1, a3, a2
 	mv a0, a1
-	bge a1, zero, label70
+	bge a1, zero, label72
 	addiw a0, a1, 15
-label70:
+label72:
 	jal putint
-	ld ra, 8(sp)
+	ld ra, 0(sp)
 	mv a0, zero
 	addi sp, sp, 16
 	ret

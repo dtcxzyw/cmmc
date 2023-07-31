@@ -9,36 +9,22 @@ a:
 main:
 .p2align 2
 	addi sp, sp, -32
-	sd s1, 24(sp)
-	sd s2, 16(sp)
-	sd s0, 8(sp)
 	sd ra, 0(sp)
+	sd s1, 8(sp)
+	sd s2, 16(sp)
+	sd s0, 24(sp)
 	jal getint
 	mv s1, a0
 	jal getint
 	mv s2, a0
 	li a0, 56
 	jal _sysy_starttime
-pcrel146:
+pcrel144:
 	auipc a1, %pcrel_hi(a)
-	addi s0, a1, %pcrel_lo(pcrel146)
+	addi s0, a1, %pcrel_lo(pcrel144)
 	ble s1, zero, label2
 	mv a0, s2
 	mv a1, s1
-	j label3
-label2:
-	li a0, 64
-	jal _sysy_stoptime
-	mv a1, s0
-	li a0, 10000
-	jal putarray
-	ld ra, 0(sp)
-	mv a0, zero
-	ld s0, 8(sp)
-	ld s2, 16(sp)
-	ld s1, 24(sp)
-	addi sp, sp, 32
-	ret
 .p2align 2
 label3:
 	li a4, 19971231
@@ -110,7 +96,19 @@ label131:
 	sh2add a2, a3, s0
 	sw a4, 0(a2)
 	bgt a1, zero, label3
-	j label2
+label2:
+	li a0, 64
+	jal _sysy_stoptime
+	mv a1, s0
+	li a0, 10000
+	jal putarray
+	ld ra, 0(sp)
+	mv a0, zero
+	ld s1, 8(sp)
+	ld s2, 16(sp)
+	ld s0, 24(sp)
+	addi sp, sp, 32
+	ret
 .p2align 2
 label7:
 	andi t1, t0, 1

@@ -9,7 +9,14 @@ main:
 	sd ra, 0(sp)
 	jal _sysy_starttime
 	jal getint
-	bgt a0, zero, label2
+	ble a0, zero, label7
+	li a1, 4950
+	li a2, 65535
+	mul a0, a0, a1
+	rem a1, a0, a2
+	sext.w a0, a1
+	j label3
+label7:
 	mv a0, zero
 label3:
 	jal putint
@@ -21,10 +28,3 @@ label3:
 	mv a0, zero
 	addi sp, sp, 8
 	ret
-label2:
-	li a1, 4950
-	li a2, 65535
-	mul a0, a0, a1
-	rem a1, a0, a2
-	sext.w a0, a1
-	j label3

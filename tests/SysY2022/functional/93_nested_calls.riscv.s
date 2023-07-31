@@ -5,14 +5,14 @@
 main:
 .p2align 2
 	addi sp, sp, -96
-	sd s4, 88(sp)
-	addi s4, sp, 0
-	sd s0, 80(sp)
-	sd s5, 72(sp)
-	sd s1, 64(sp)
+	sd ra, 0(sp)
+	sd s4, 8(sp)
+	addi s4, sp, 56
+	sd s0, 16(sp)
+	sd s5, 24(sp)
+	sd s1, 32(sp)
 	sd s2, 40(sp)
-	sd s3, 56(sp)
-	sd ra, 48(sp)
+	sd s3, 48(sp)
 	jal getint
 	mv s0, a0
 	jal getint
@@ -36,16 +36,16 @@ label2:
 	beq s2, zero, label5
 	remw a2, a2, s2
 label5:
-	lw t1, 0(sp)
+	lw t1, 56(sp)
 	mv t4, zero
-	lw t0, 4(sp)
-	lw a3, 8(sp)
+	lw t0, 60(sp)
+	lw a3, 64(sp)
 	sltu t3, zero, a3
-	lw a1, 12(sp)
-	lw a5, 16(sp)
+	lw a1, 68(sp)
+	lw a5, 72(sp)
 	sltiu a4, a1, 1
 	and t2, a4, t3
-	lw a4, 20(sp)
+	lw a4, 76(sp)
 	beq a4, zero, label150
 	mv t4, a5
 label150:
@@ -53,7 +53,7 @@ label150:
 	bne t0, zero, label152
 	mv t3, t4
 label152:
-	lw t2, 24(sp)
+	lw t2, 80(sp)
 	addw t4, t3, t2
 	beq t2, zero, label154
 	mv t3, t4
@@ -65,19 +65,21 @@ label154:
 	mv a2, t3
 label156:
 	addiw a6, a2, 1
-	lw t3, 28(sp)
-	bne t3, zero, label78
-	mv a2, t4
-	j label7
-label78:
-	remw a2, t4, t3
+	lw t3, 84(sp)
+	bne t3, zero, label21
+	j label77
 label7:
-	lw t5, 32(sp)
+	lw t5, 88(sp)
 	mv s4, t5
-	lw t4, 36(sp)
+	lw t4, 92(sp)
 	sltiu s5, t4, 1
 	addw a7, t5, s5
 	bne t4, zero, label158
+	j label157
+label21:
+	remw a2, t4, t3
+	j label7
+label157:
 	mv s4, a7
 label158:
 	addiw s5, s4, 1
@@ -119,7 +121,9 @@ label11:
 	mv a3, t0
 label170:
 	addiw a3, a3, 1
-	bne t2, zero, label13
+	beq t2, zero, label14
+	subw a4, zero, t2
+	remw a3, a3, a4
 label14:
 	sltiu t0, t5, 1
 	mv a5, t3
@@ -128,13 +132,7 @@ label14:
 	mv a5, a4
 label172:
 	mulw a3, a3, a5
-	bne t4, zero, label132
-	j label16
-label13:
-	subw a4, zero, t2
-	remw a3, a3, a4
-	j label14
-label132:
+	beq t4, zero, label16
 	subw a4, zero, t4
 	remw a3, a3, a4
 label16:
@@ -148,12 +146,15 @@ label174:
 	mv a1, a3
 label176:
 	mulw a0, a2, a1
-	ld ra, 48(sp)
-	ld s3, 56(sp)
+	ld ra, 0(sp)
+	ld s4, 8(sp)
+	ld s0, 16(sp)
+	ld s5, 24(sp)
+	ld s1, 32(sp)
 	ld s2, 40(sp)
-	ld s1, 64(sp)
-	ld s5, 72(sp)
-	ld s0, 80(sp)
-	ld s4, 88(sp)
+	ld s3, 48(sp)
 	addi sp, sp, 96
 	ret
+label77:
+	mv a2, t4
+	j label7

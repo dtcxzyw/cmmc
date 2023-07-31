@@ -6,27 +6,27 @@ main:
 .p2align 2
 	addi sp, sp, -136
 	li a0, 1
-	sd s0, 128(sp)
-	addi s0, sp, 0
-	sd s5, 120(sp)
-	sd s1, 112(sp)
+	sd ra, 0(sp)
+	sd s0, 8(sp)
+	addi s0, sp, 56
+	sd s5, 16(sp)
+	sd s1, 24(sp)
 	li s1, 2
-	sd s2, 104(sp)
+	sd s2, 32(sp)
 	mv s2, zero
-	sd s3, 96(sp)
-	sd s4, 88(sp)
-	sd ra, 80(sp)
-	sw a0, 0(sp)
-	sw s1, 4(sp)
-	sd zero, 8(sp)
-	sd zero, 16(sp)
-	sd zero, 24(sp)
-	sd zero, 32(sp)
-	sd zero, 40(sp)
-	sd zero, 48(sp)
-	sd zero, 56(sp)
+	sd s3, 40(sp)
+	sd s4, 48(sp)
+	sw a0, 56(sp)
+	sw s1, 60(sp)
 	sd zero, 64(sp)
 	sd zero, 72(sp)
+	sd zero, 80(sp)
+	sd zero, 88(sp)
+	sd zero, 96(sp)
+	sd zero, 104(sp)
+	sd zero, 112(sp)
+	sd zero, 120(sp)
+	sd zero, 128(sp)
 .p2align 2
 label2:
 	sh2add a0, s1, s0
@@ -47,12 +47,12 @@ label2:
 	li a0, 20
 	blt s1, a0, label2
 	mv a0, s2
-	ld ra, 80(sp)
-	ld s4, 88(sp)
-	ld s3, 96(sp)
-	ld s2, 104(sp)
-	ld s1, 112(sp)
-	ld s5, 120(sp)
-	ld s0, 128(sp)
+	ld ra, 0(sp)
+	ld s0, 8(sp)
+	ld s5, 16(sp)
+	ld s1, 24(sp)
+	ld s2, 32(sp)
+	ld s3, 40(sp)
+	ld s4, 48(sp)
 	addi sp, sp, 136
 	ret

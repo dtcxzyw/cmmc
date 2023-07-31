@@ -12,17 +12,7 @@ main:
 	bl _sysy_starttime
 	bl getint
 	cmp r0, #0
-	bgt label2
-	mov r0, #0
-label3:
-	bl putint
-	mov r0, #10
-	bl putch
-	mov r0, #328
-	bl _sysy_stoptime
-	mov r0, #0
-	pop { r4, r5, r6, r7, r8, r9, r10, pc }
-label2:
+	ble label7
 	movw r1, #32769
 	movt r1, #32768
 	smmla r2, r0, r1, r0
@@ -106,3 +96,13 @@ label2:
 	mov r0, r3
 	movgt r0, r1
 	b label3
+label7:
+	mov r0, #0
+label3:
+	bl putint
+	mov r0, #10
+	bl putch
+	mov r0, #328
+	bl _sysy_stoptime
+	mov r0, #0
+	pop { r4, r5, r6, r7, r8, r9, r10, pc }

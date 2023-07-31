@@ -4,17 +4,17 @@
 .globl foo
 foo:
 .p2align 2
-	beq a0, zero, label2
-	addiw a1, a0, 2
-	li a2, 4294967295
-	and a0, a1, a2
-	j label3
-label2:
+	bne a0, zero, label9
 	mv a0, zero
 	beq a1, zero, label21
 	li a0, 5
 label21:
 	li a1, 4294967295
 	and a0, a0, a1
+	j label3
+label9:
+	addiw a1, a0, 2
+	li a2, 4294967295
+	and a0, a1, a2
 label3:
 	ret

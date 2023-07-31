@@ -20,14 +20,11 @@ test:
 	lw $t0, %lo(j)($t0)
 	lui $t1, %hi(i)
 	lw $t1, %lo(i)($t1)
-	beq $t0, $t1, label2
+	bne $t0, $t1, label3
 	nop
-label3:
-	jr $ra
-	nop
-label2:
 	li $t0, 1
 	lui $t1, %hi(result)
 	sw $t0, %lo(result)($t1)
-	b label3
+label3:
+	jr $ra
 	nop

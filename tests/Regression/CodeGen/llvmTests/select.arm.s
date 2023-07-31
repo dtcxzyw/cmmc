@@ -216,35 +216,35 @@ select_sub_3:
 select_udiv_1:
 .p2align 4
 	cmp r0, #0
-	bne label195
+	beq label202
+	udiv r0, r1, r2
+	b label196
+label202:
 	mov r0, r2
 label196:
 	bx lr
-label195:
-	udiv r0, r1, r2
-	b label196
 .globl select_udiv_2
 select_udiv_2:
 .p2align 4
 	cmp r0, #0
-	bne label215
-	udiv r0, r1, r2
-	b label207
-label215:
+	beq label215
 	mov r0, r1
-label207:
+	b label208
+label215:
+	udiv r0, r1, r2
+label208:
 	bx lr
 .globl select_udiv_3
 select_udiv_3:
 .p2align 4
 	cmp r0, #0
-	bne label226
+	beq label227
+	mov r0, r1
+	b label221
+label227:
 	mov r0, #42
 	udiv r0, r1, r0
-	b label219
-label226:
-	mov r0, r1
-label219:
+label221:
 	bx lr
 .globl select_xor_1
 select_xor_1:

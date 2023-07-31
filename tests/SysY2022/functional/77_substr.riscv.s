@@ -16,42 +16,42 @@ main:
 	li a4, 2
 	li t0, 9
 	li a5, 3
-	sd s0, 128(sp)
-	addi s0, sp, 0
-	sd s1, 136(sp)
-	addi s1, sp, 64
-	sd ra, 56(sp)
-	sw a0, 64(sp)
-	sw a3, 68(sp)
-	sw a2, 72(sp)
-	sw a1, 76(sp)
-	sw a4, 80(sp)
-	sw a3, 84(sp)
-	sw zero, 88(sp)
-	sw a1, 92(sp)
-	sw t0, 96(sp)
-	sw a5, 100(sp)
-	sw a2, 104(sp)
-	sw a0, 108(sp)
-	sw a5, 112(sp)
-	sw a3, 116(sp)
-	sw zero, 120(sp)
-	sw a5, 0(sp)
-	sw t0, 4(sp)
-	sw a3, 8(sp)
-	sw a1, 12(sp)
-	sw a2, 16(sp)
-	sw a4, 20(sp)
-	sw a2, 24(sp)
-	li a2, 6
-	sw a5, 28(sp)
+	sd ra, 0(sp)
+	sd s0, 8(sp)
+	addi s0, sp, 88
+	sd s1, 16(sp)
+	sw a0, 24(sp)
+	addi s1, sp, 24
+	sw a3, 28(sp)
 	sw a2, 32(sp)
-	sw a0, 36(sp)
+	sw a1, 36(sp)
+	sw a4, 40(sp)
+	sw a3, 44(sp)
+	sw zero, 48(sp)
+	sw a1, 52(sp)
+	sw t0, 56(sp)
+	sw a5, 60(sp)
+	sw a2, 64(sp)
+	sw a0, 68(sp)
+	sw a5, 72(sp)
+	sw a3, 76(sp)
+	sw zero, 80(sp)
+	sw a5, 88(sp)
+	sw t0, 92(sp)
+	sw a3, 96(sp)
+	sw a1, 100(sp)
+	sw a2, 104(sp)
+	sw a4, 108(sp)
+	sw a2, 112(sp)
+	li a2, 6
+	sw a5, 116(sp)
+	sw a2, 120(sp)
+	sw a0, 124(sp)
 	li a0, 43
-	sw zero, 40(sp)
-	sw a1, 44(sp)
+	sw zero, 128(sp)
+	sw a1, 132(sp)
 	li a1, 5
-	sw a1, 48(sp)
+	sw a1, 136(sp)
 	jal putint
 	li a0, 10
 	jal putch
@@ -103,21 +103,9 @@ label2:
 	li a5, 16
 	addi a4, a2, -64
 	blt a1, a5, label121
-label12:
-	lw a0, 1012(a0)
-	jal putint
-	li a0, 10
-	jal putch
-	ld ra, 56(sp)
-	mv a0, zero
-	ld s1, 136(sp)
-	ld s0, 128(sp)
-	addi sp, sp, 144
-	ret
-label121:
-	li a5, 1
-	li t0, 14
-	blt a5, t0, label8
+	j label12
+.p2align 2
+label124:
 	addiw a1, a1, 1
 	addiw a3, a1, -1
 	slli a5, a1, 6
@@ -125,7 +113,21 @@ label121:
 	li a5, 16
 	addi a4, a2, -64
 	blt a1, a5, label121
-	j label12
+label12:
+	lw a0, 1012(a0)
+	jal putint
+	li a0, 10
+	jal putch
+	ld ra, 0(sp)
+	mv a0, zero
+	ld s0, 8(sp)
+	ld s1, 16(sp)
+	addi sp, sp, 144
+	ret
+label121:
+	li a5, 1
+	li t0, 14
+	bge a5, t0, label124
 .p2align 2
 label8:
 	addiw t0, a5, -1

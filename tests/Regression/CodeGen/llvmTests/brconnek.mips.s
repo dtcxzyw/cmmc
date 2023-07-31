@@ -15,14 +15,11 @@ test:
 	lui $t0, %hi(j)
 	lw $t0, %lo(j)($t0)
 	li $t1, 5
-	beq $t0, $t1, label2
+	bne $t0, $t1, label3
 	nop
-label3:
-	jr $ra
-	nop
-label2:
 	li $t0, 1
 	lui $t1, %hi(result)
 	sw $t0, %lo(result)($t1)
-	b label3
+label3:
+	jr $ra
 	nop

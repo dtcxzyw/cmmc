@@ -26,99 +26,83 @@ setne0:
 slti_beq0:
 .p2align 4
 	cmn r0, #32768
-	blt label13
-label14:
-	bx lr
-label13:
+	bge label14
 	movw r1, #:lower16:g1
 	movt r1, #:upper16:g1
 	str r0, [r1, #0]
-	b label14
+label14:
+	bx lr
 .globl slti_beq1
 slti_beq1:
 .p2align 4
 	mvn r1, #32768
 	cmp r0, r1
-	blt label24
-label25:
-	bx lr
-label24:
+	bge label26
 	movw r1, #:lower16:g1
 	movt r1, #:upper16:g1
 	str r0, [r1, #0]
-	b label25
+label26:
+	bx lr
 .globl slti_beq2
 slti_beq2:
 .p2align 4
 	movw r1, #32767
 	cmp r0, r1
-	blt label36
-label37:
-	bx lr
-label36:
+	bge label39
 	movw r1, #:lower16:g1
 	movt r1, #:upper16:g1
 	str r0, [r1, #0]
-	b label37
+label39:
+	bx lr
 .globl slti_beq3
 slti_beq3:
 .p2align 4
 	cmp r0, #32768
-	blt label48
-label49:
-	bx lr
-label48:
+	bge label52
 	movw r1, #:lower16:g1
 	movt r1, #:upper16:g1
 	str r0, [r1, #0]
-	b label49
+label52:
+	bx lr
 .globl sltiu_beq0
 sltiu_beq0:
 .p2align 4
 	movw r1, #32767
 	cmp r0, r1
-	blo label59
-label60:
-	bx lr
-label59:
+	bhs label64
 	movw r1, #:lower16:g1
 	movt r1, #:upper16:g1
 	str r0, [r1, #0]
-	b label60
+label64:
+	bx lr
 .globl sltiu_beq1
 sltiu_beq1:
 .p2align 4
 	cmp r0, #32768
-	blo label70
-label71:
-	bx lr
-label70:
+	bhs label76
 	movw r1, #:lower16:g1
 	movt r1, #:upper16:g1
 	str r0, [r1, #0]
-	b label71
+label76:
+	bx lr
 .globl sltiu_beq2
 sltiu_beq2:
 .p2align 4
 	cmn r0, #32768
-	blo label80
-label81:
-	bx lr
-label80:
+	bhs label87
 	movw r1, #:lower16:g1
 	movt r1, #:upper16:g1
 	str r0, [r1, #0]
-	b label81
+label87:
+	bx lr
 .globl sltiu_beq3
 sltiu_beq3:
 .p2align 4
 	mvn r1, #32768
 	cmp r0, r1
-	blo label90
-label91:
-	bx lr
-label90:
+	bhs label98
 	movw r1, #:lower16:g1
 	movt r1, #:upper16:g1
 	str r0, [r1, #0]
-	b label91
+label98:
+	bx lr

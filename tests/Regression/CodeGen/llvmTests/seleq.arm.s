@@ -56,21 +56,21 @@ calc_seleq:
 	movw r0, #:lower16:f
 	movt r0, #:upper16:f
 	cmp r3, r4
-	beq label30
-	ldr r1, [r2, #0]
-	b label2
-label30:
+	bne label29
 	ldr r1, [r0, #0]
+	b label2
+label29:
+	ldr r1, [r2, #0]
 label2:
 	movw r5, #:lower16:z1
 	cmp r3, r4
 	movt r5, #:upper16:z1
 	str r1, [r5, #0]
-	beq label4
-	ldr r1, [r2, #0]
-	b label5
-label4:
+	bne label35
 	ldr r1, [r0, #0]
+	b label5
+label35:
+	ldr r1, [r2, #0]
 label5:
 	movw r4, #:lower16:z2
 	movt r4, #:upper16:z2
@@ -81,21 +81,19 @@ label5:
 	cmp r3, r4
 	bne label45
 	ldr r1, [r2, #0]
+	b label8
+label45:
+	ldr r1, [r0, #0]
 label8:
 	movw r5, #:lower16:z3
 	cmp r3, r4
 	movt r5, #:upper16:z3
 	str r1, [r5, #0]
-	beq label10
-	b label52
-label45:
-	ldr r1, [r0, #0]
-	b label8
+	bne label52
+	ldr r0, [r2, #0]
+	b label11
 label52:
 	ldr r0, [r0, #0]
-	b label11
-label10:
-	ldr r0, [r2, #0]
 label11:
 	movw r1, #:lower16:z4
 	movt r1, #:upper16:z4

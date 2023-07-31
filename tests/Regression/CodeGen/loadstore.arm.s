@@ -109,6 +109,16 @@ memset_impl:
 label101:
 	pop { r4, r5, r6 }
 	bx lr
+label102:
+	movw r1, #:lower16:arr
+	cmp r0, #4
+	movt r1, #:upper16:arr
+	ble label118
+	sub r2, r0, #4
+	sub r4, r0, #20
+	cmp r2, #16
+	ble label124
+	mov r3, #0
 label104:
 	add r5, r1, r3, lsl #2
 	mov r6, #0
@@ -149,23 +159,12 @@ label108:
 	cmp r0, r2
 	bgt label108
 	b label101
-label102:
-	movw r1, #:lower16:arr
-	cmp r0, #4
-	movt r1, #:upper16:arr
-	bgt label103
+label118:
 	mov r2, #0
 	b label108
-label103:
-	sub r2, r0, #4
-	sub r4, r0, #20
-	cmp r2, #16
-	bgt label125
+label124:
 	mov r3, #0
 	b label106
-label125:
-	mov r3, #0
-	b label104
 .globl fused_store
 fused_store:
 .p2align 4

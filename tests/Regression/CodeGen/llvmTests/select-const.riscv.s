@@ -23,9 +23,9 @@ select_const_int_easy:
 select_const_int_harder:
 .p2align 2
 	li a1, 6
-	bne a0, zero, label24
+	bne a0, zero, label25
 	li a1, 38
-label24:
+label25:
 	li a2, 4294967295
 	and a0, a1, a2
 	ret
@@ -42,9 +42,9 @@ select_const_int_one_away:
 select_const_int_pow2_zero:
 .p2align 2
 	li a1, 4
-	bne a0, zero, label40
+	bne a0, zero, label42
 	mv a1, zero
-label40:
+label42:
 	li a2, 4294967295
 	and a0, a1, a2
 	ret
@@ -120,9 +120,9 @@ select_sgt_negative_one_constant1_constant2:
 .p2align 2
 	li a2, -1
 	li a1, 7
-	bgt a0, a2, label120
+	bgt a0, a2, label123
 	li a1, -3
-label120:
+label123:
 	li a2, 4294967295
 	and a0, a1, a2
 	ret
@@ -147,9 +147,9 @@ select_sle_zero_negone:
 select_slt_zero_constant1_constant2:
 .p2align 2
 	li a1, 7
-	blt a0, zero, label150
+	blt a0, zero, label154
 	li a1, -3
-label150:
+label154:
 	li a2, 4294967295
 	and a0, a1, a2
 	ret

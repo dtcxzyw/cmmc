@@ -153,9 +153,9 @@ callee16_cmmc_noinline:
 calling_convention:
 .p2align 2
 	addi sp, sp, -56
-	fsw f8, 48(sp)
-	addi a2, sp, 0
-	sd ra, 40(sp)
+	sd ra, 0(sp)
+	addi a2, sp, 16
+	fsw f8, 8(sp)
 	jal callee1_cmmc_noinline
 	li a0, 1
 	jal callee2_cmmc_noinline
@@ -197,7 +197,7 @@ calling_convention:
 	jal putint
 	fmv.s f10, f8
 	jal putfloat
-	ld ra, 40(sp)
-	flw f8, 48(sp)
+	ld ra, 0(sp)
+	flw f8, 8(sp)
 	addi sp, sp, 56
 	ret

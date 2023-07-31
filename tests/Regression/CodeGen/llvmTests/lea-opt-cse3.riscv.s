@@ -27,29 +27,29 @@ foo1_mult_basic_blocks:
 	addiw a2, a0, 4
 	li a3, 10
 	sh2add a0, a1, a2
-	bne a0, a3, label28
-	mv a0, zero
-label29:
-	ret
-label28:
+	beq a0, a3, label37
 	sh3add a3, a1, a2
 	li a2, 4294967295
 	mulw a1, a3, a0
 	and a0, a1, a2
 	j label29
+label37:
+	mv a0, zero
+label29:
+	ret
 .globl foo1_mult_basic_blocks_illegal_scale
 foo1_mult_basic_blocks_illegal_scale:
 .p2align 2
 	addiw a2, a0, 4
 	li a3, 10
 	sh1add a0, a1, a2
-	bne a0, a3, label50
-	mv a0, zero
-label51:
-	ret
-label50:
+	beq a0, a3, label60
 	sh3add a3, a1, a2
 	li a2, 4294967295
 	mulw a1, a3, a0
 	and a0, a1, a2
-	j label51
+	j label52
+label60:
+	mv a0, zero
+label52:
+	ret

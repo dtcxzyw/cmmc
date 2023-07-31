@@ -27,21 +27,7 @@ label7:
 	slliw t0, t1, 1
 	addiw a4, a0, 13
 	addiw t2, a0, 6
-	beq a2, t3, label8
-	addw a5, a3, a5
-	addiw a0, a0, 9
-	addiw a2, a2, 1
-	addw a3, t0, a5
-	sh1add a1, t2, a3
-	sh1add a3, a0, a0
-	mv a0, a4
-	addw a5, a1, a3
-	mv a1, a4
-	li a3, 3
-	blt a2, a3, label7
-	j label10
-.p2align 2
-label8:
+	bne a2, t3, label30
 	addiw a2, a5, 10
 	addiw a5, a0, 8
 	addw t1, t1, a2
@@ -61,3 +47,17 @@ label10:
 	mv a0, zero
 	addi sp, sp, 8
 	ret
+.p2align 2
+label30:
+	addw a5, a3, a5
+	addiw a0, a0, 9
+	addiw a2, a2, 1
+	addw a3, t0, a5
+	sh1add a1, t2, a3
+	sh1add a3, a0, a0
+	mv a0, a4
+	addw a5, a1, a3
+	mv a1, a4
+	li a3, 3
+	blt a2, a3, label7
+	j label10

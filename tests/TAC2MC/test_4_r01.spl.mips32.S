@@ -27,38 +27,36 @@ write:
     nop
 hanoi:
 	addiu $sp, $sp, -40
-	sw $s3, 36($sp)
-	sw $s2, 32($sp)
-	sw $s0, 28($sp)
-	sw $s1, 24($sp)
-	sw $s4, 20($sp)
 	sw $ra, 16($sp)
+	sw $s3, 20($sp)
+	sw $s2, 24($sp)
+	sw $s0, 28($sp)
+	sw $s1, 32($sp)
+	sw $s4, 36($sp)
 	move $s3, $a3
 	li $t0, 10000
 	mult $a1, $t0
 	mflo $t0
 	addu $s2, $a3, $t0
 	li $t0, 1
-	beq $a0, $t0, label17
+	bne $a0, $t0, label16
 	nop
-	move $s0, $a1
-	move $s1, $a2
-	b label4
-	nop
-label17:
 	move $a0, $s2
 label2:
 	jal write
 	nop
 	lw $ra, 16($sp)
-	lw $s4, 20($sp)
-	lw $s1, 24($sp)
+	lw $s3, 20($sp)
+	lw $s2, 24($sp)
 	lw $s0, 28($sp)
-	lw $s2, 32($sp)
-	lw $s3, 36($sp)
+	lw $s1, 32($sp)
+	lw $s4, 36($sp)
 	addiu $sp, $sp, 40
 	jr $ra
 	nop
+label16:
+	move $s0, $a1
+	move $s1, $a2
 label4:
 	addiu $s4, $a0, -1
 	move $a0, $s4

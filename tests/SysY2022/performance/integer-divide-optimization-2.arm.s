@@ -16,23 +16,13 @@ main:
 	bl _sysy_starttime
 	ldr r1, [sp, #0]
 	cmp r1, #0
-	bgt label2
-	mov r7, #0
-	b label21
-label3:
-	ldr r1, [sp, #0]
+	ble label25
+	cmp r1, #4
+	ble label29
 	sub r3, r1, #20
 	sub r0, r1, #4
 	cmp r0, #16
-	bgt label36
-	mov r1, #3
-	mov r2, #2
-	mov r4, #1
-	mov r3, #0
-	mov r5, r3
-	mov r7, r3
-	b label11
-label36:
+	ble label35
 	mov r1, #0
 	mov r6, #1
 	mov r5, #2
@@ -142,17 +132,16 @@ label4:
 	add r9, r2, #16
 	add r8, r1, #16
 	cmp r3, r8
-	bgt label89
+	ble label88
+	mov r1, r8
+	mov r2, r9
+	b label4
+label88:
 	mov r1, r4
 	mov r2, r5
 	mov r3, r9
 	mov r4, r6
 	mov r5, r8
-	b label11
-label89:
-	mov r1, r8
-	mov r2, r9
-	b label4
 label11:
 	add r8, r3, r7
 	movw r6, #49153
@@ -210,10 +199,18 @@ label21:
 	add sp, sp, #12
 	mov r0, #0
 	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
-label2:
-	ldr r1, [sp, #0]
-	cmp r1, #4
-	bgt label3
+label35:
+	mov r1, #3
+	mov r2, #2
+	mov r4, #1
+	mov r3, #0
+	mov r5, r3
+	mov r7, r3
+	b label11
+label25:
+	mov r7, #0
+	b label21
+label29:
 	mov r0, #0
 	mov r7, r0
 	b label18

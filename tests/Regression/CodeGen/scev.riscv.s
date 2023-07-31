@@ -4,17 +4,13 @@
 .globl foo4
 foo4:
 .p2align 2
-	bgt a1, zero, label2
-	j label13
-label3:
+	ble a1, zero, label13
+	li a3, 4
+	ble a1, a3, label21
 	addiw a2, a1, -4
 	addiw a5, a1, -20
 	li a4, 16
-	bgt a2, a4, label28
-	mv a3, zero
-	mv a4, zero
-	j label7
-label28:
+	ble a2, a4, label27
 	mv a3, zero
 	mv a4, zero
 label4:
@@ -52,13 +48,12 @@ label4:
 	sw t2, 56(t0)
 	sw t1, 60(t0)
 	addiw t0, a3, 64
-	bgt a5, a4, label66
-	mv a3, a4
-	mv a4, t0
-	j label7
-label66:
+	ble a5, a4, label65
 	mv a3, t0
 	j label4
+label65:
+	mv a3, a4
+	mv a4, t0
 label7:
 	sh2add a5, a3, a0
 	addiw t0, a4, 4
@@ -81,9 +76,11 @@ label10:
 	bgt a1, a4, label10
 label13:
 	ret
-label2:
-	li a3, 4
-	bgt a1, a3, label3
+label27:
+	mv a3, zero
+	mv a4, zero
+	j label7
+label21:
 	mv a2, zero
 	mv a4, zero
 	j label10

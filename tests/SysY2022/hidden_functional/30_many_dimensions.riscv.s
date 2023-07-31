@@ -9,16 +9,16 @@ array:
 main:
 .p2align 2
 	addi sp, sp, -48
-pcrel454:
+pcrel456:
 	auipc a1, %pcrel_hi(array)
 	mv a2, zero
-	addi a0, a1, %pcrel_lo(pcrel454)
-	sd s1, 40(sp)
-	sd s0, 32(sp)
-	sd s2, 24(sp)
-	sd s3, 16(sp)
-	sd s4, 8(sp)
+	addi a0, a1, %pcrel_lo(pcrel456)
 	sd ra, 0(sp)
+	sd s1, 8(sp)
+	sd s0, 16(sp)
+	sd s2, 24(sp)
+	sd s3, 32(sp)
+	sd s4, 40(sp)
 label2:
 	sh2add a1, a2, a0
 	addi a2, a2, 64
@@ -60,9 +60,8 @@ label2:
 	mv a1, zero
 label4:
 	li a3, 2
-	bge a1, a3, label56
-	mv a2, zero
-	j label7
+	blt a1, a3, label131
+	j label56
 label134:
 	addiw a1, a1, 1
 	j label4
@@ -119,57 +118,71 @@ label56:
 	jal putint
 	ld ra, 0(sp)
 	mv a0, zero
-	ld s4, 8(sp)
-	ld s3, 16(sp)
+	ld s1, 8(sp)
+	ld s0, 16(sp)
 	ld s2, 24(sp)
-	ld s0, 32(sp)
-	ld s1, 40(sp)
+	ld s3, 32(sp)
+	ld s4, 40(sp)
 	addi sp, sp, 48
 	ret
+label131:
+	mv a2, zero
 label7:
 	li a3, 2
-	bge a2, a3, label134
-	mv a3, zero
-	j label10
+	blt a2, a3, label135
+	j label134
 label138:
 	addiw a2, a2, 1
 	j label7
+label135:
+	mv a3, zero
 label10:
 	li a4, 2
-	bge a3, a4, label138
+	blt a3, a4, label139
+	j label138
+label142:
+	addiw a3, a3, 1
+	j label10
+label139:
 	mv a4, zero
 label13:
 	li t0, 2
 	blt a4, t0, label143
-	addiw a3, a3, 1
-	j label10
+	j label142
+label146:
+	addiw a4, a4, 1
+	mv a5, t1
+	j label13
 label143:
 	mv t1, a5
 	mv a5, zero
 label16:
 	li t0, 2
-	bge a5, t0, label146
+	blt a5, t0, label147
+	j label146
+label150:
+	addiw a5, a5, 1
+	j label16
+label147:
 	mv t0, zero
 label19:
 	li t2, 2
-	bge t0, t2, label150
-	mv t4, t1
-	mv t1, zero
-	j label22
+	blt t0, t2, label151
+	j label150
 label154:
 	addiw t0, t0, 1
 	mv t1, t4
 	j label19
+label151:
+	mv t4, t1
+	mv t1, zero
 label22:
 	li t2, 2
 	bge t1, t2, label154
 	mv t2, zero
 label25:
 	li t3, 2
-	blt t2, t3, label159
-	addiw t1, t1, 1
-	j label22
-label159:
+	bge t2, t3, label158
 	mv t3, zero
 label28:
 	li t5, 2
@@ -187,12 +200,7 @@ label34:
 	mv a6, zero
 label37:
 	li a7, 2
-	blt a6, a7, label40
-	j label174
-label332:
-	addiw a6, a6, 1
-	j label37
-label40:
+	bge a6, a7, label174
 	slli s1, a1, 20
 	slli s0, a2, 19
 	slli s2, a3, 18
@@ -352,25 +360,22 @@ label41:
 	sw s2, 252(s0)
 	li s0, 2
 	blt a7, s0, label41
-	j label332
-label174:
-	addiw t5, t5, 1
-	j label34
-label170:
-	addiw t4, t4, 1
-	mv t5, t6
-	j label31
+	addiw a6, a6, 1
+	j label37
+label158:
+	addiw t1, t1, 1
+	j label22
 label166:
 	addiw t3, t3, 1
 	mv t4, t5
 	j label28
+label174:
+	addiw t5, t5, 1
+	j label34
 label162:
 	addiw t2, t2, 1
 	j label25
-label150:
-	addiw a5, a5, 1
-	j label16
-label146:
-	addiw a4, a4, 1
-	mv a5, t1
-	j label13
+label170:
+	addiw t4, t4, 1
+	mv t5, t6
+	j label31

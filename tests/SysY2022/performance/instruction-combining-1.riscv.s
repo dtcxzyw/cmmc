@@ -5,24 +5,19 @@
 main:
 .p2align 2
 	addi sp, sp, -16
-	sd s0, 8(sp)
 	sd ra, 0(sp)
+	sd s0, 8(sp)
 	jal getint
 	mv s0, a0
 	li a0, 10015
 	jal _sysy_starttime
-	bgt s0, zero, label2
-	mv s0, zero
-	j label13
-label3:
+	ble s0, zero, label17
+	li a1, 4
+	ble s0, a1, label21
 	addiw a0, s0, -4
 	addiw a2, s0, -20
 	li a3, 16
-	bgt a0, a3, label28
-	mv a1, zero
-	mv a2, zero
-	j label7
-label28:
+	ble a0, a3, label27
 	mv a1, zero
 	mv a3, zero
 label4:
@@ -156,13 +151,12 @@ label4:
 	mulw t0, t1, a4
 	addiw a4, a1, 16
 	subw a3, a5, t0
-	bgt a2, a4, label80
-	mv a1, a3
-	mv a2, a4
-	j label7
-label80:
+	ble a2, a4, label79
 	mv a1, a4
 	j label4
+label79:
+	mv a1, a3
+	mv a2, a4
 label7:
 	addw a4, a1, a2
 	li a1, 1073774591
@@ -226,9 +220,14 @@ label13:
 	ld s0, 8(sp)
 	addi sp, sp, 16
 	ret
-label2:
-	li a1, 4
-	bgt s0, a1, label3
+label27:
+	mv a1, zero
+	mv a2, zero
+	j label7
+label17:
+	mv s0, zero
+	j label13
+label21:
 	mv a0, zero
 	mv a2, zero
 	j label10

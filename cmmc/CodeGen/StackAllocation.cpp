@@ -366,19 +366,44 @@ void allocateStackObjects(MIRFunction& func, CodeGenContext& ctx, bool isNonLeaf
     // locals
     // TODO: put frequently used locals in the bottom?
     {
-        const auto mapping = renameStackObjects(func, optLevel, ctx);
-        std::unordered_map<uint32_t, int32_t> slots;
+        CMMC_UNUSED(renameStackObjects);
+        CMMC_UNUSED(optLevel);
+        // const auto mapping = renameStackObjects(func, optLevel, ctx);
+        // std::unordered_map<uint32_t, int32_t> slots;
 
-        for(auto& [stackObject, color] : mapping) {
-            auto& obj = func.stackObjects().at(stackObject);
-            if(auto iter = slots.find(color); iter != slots.cend()) {
-                obj.offset = iter->second;
-            } else {
-                alignTo(static_cast<int32_t>(obj.alignment));
-                slots.emplace(color, allocationBase);
-                obj.offset = allocationBase;
-                allocationBase += static_cast<int32_t>(obj.size);
+        // for(auto& [stackObject, color] : mapping) {
+        //     auto& obj = func.stackObjects().at(stackObject);
+        //     if(auto iter = slots.find(color); iter != slots.cend()) {
+        //         obj.offset = iter->second;
+        //     } else {
+        //         alignTo(static_cast<int32_t>(obj.alignment));
+        //         slots.emplace(color, allocationBase);
+        //         obj.offset = allocationBase;
+        //         allocationBase += static_cast<int32_t>(obj.size);
+        //     }
+        // }
+
+        // callee-saved
+        std::vector<MIROperand> calleeSaved;
+        for(auto& [p, s] : func.stackObjects()) {
+            if(s.usage == StackObjectUsage::CalleeSaved) {
+                calleeSaved.push_back(p);
             }
+        }
+        std::sort(calleeSaved.begin(), calleeSaved.end(),
+                  [&](const MIROperand& lhs, const MIROperand& rhs) { return lhs.reg() > rhs.reg(); });
+
+        auto allocateFor = [&](StackObject& obj) {
+            alignTo(static_cast<int32_t>(obj.alignment));
+            obj.offset = allocationBase;
+            allocationBase += static_cast<int32_t>(obj.size);
+        };
+        for(auto& obj : calleeSaved) {
+            allocateFor(func.stackObjects().at(obj));
+        }
+        for(auto& [p, s] : func.stackObjects()) {
+            if(s.usage == StackObjectUsage::Local || s.usage == StackObjectUsage::RegSpill)
+                allocateFor(s);
         }
     }
 

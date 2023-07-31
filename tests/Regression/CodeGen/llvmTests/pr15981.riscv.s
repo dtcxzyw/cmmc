@@ -24,22 +24,22 @@ label7:
 .globl fn2
 fn2:
 .p2align 2
-pcrel32:
+pcrel34:
 	auipc a2, %pcrel_hi(b)
-pcrel33:
+pcrel35:
 	auipc a0, %pcrel_hi(a)
-	lw a1, %pcrel_lo(pcrel32)(a2)
-	lw a3, %pcrel_lo(pcrel33)(a0)
+	lw a1, %pcrel_lo(pcrel34)(a2)
+	lw a3, %pcrel_lo(pcrel35)(a0)
 	addiw a2, a3, -1
-	bne a2, zero, label31
+	bne a2, zero, label32
 	mv a1, zero
-label31:
+label32:
 	li a3, 4294967295
 	and a2, a2, a3
-pcrel34:
+pcrel36:
 	auipc a0, %pcrel_hi(a)
-	sw a2, %pcrel_lo(pcrel34)(a0)
-pcrel35:
+	sw a2, %pcrel_lo(pcrel36)(a0)
+pcrel37:
 	auipc a0, %pcrel_hi(c)
-	sw a1, %pcrel_lo(pcrel35)(a0)
+	sw a1, %pcrel_lo(pcrel37)(a0)
 	ret

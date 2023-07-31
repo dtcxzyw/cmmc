@@ -22,11 +22,7 @@ foo:
 .p2align 4
 	push { r4, r5 }
 	cmp r0, #0
-	bgt label2
-label5:
-	pop { r4, r5 }
-	bx lr
-label2:
+	ble label5
 	movw r1, #:lower16:B
 	movw r2, #:lower16:A
 	movw r3, #:lower16:P
@@ -53,4 +49,6 @@ label3:
 	add r4, r4, #1
 	cmp r0, r4
 	bne label3
-	b label5
+label5:
+	pop { r4, r5 }
+	bx lr

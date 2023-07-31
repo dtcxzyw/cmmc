@@ -37,20 +37,16 @@ test:
 	movw r1, #:lower16:result1
 	movt r1, #:upper16:result1
 	cmp r0, r2
-	blt label2
+	bge label3
+	mov r2, #1
+	str r2, [r1, #0]
 label3:
 	movw r2, #:lower16:k
 	movt r2, #:upper16:k
 	ldr r2, [r2, #0]
 	cmp r0, r2
-	blt label4
-label5:
-	bx lr
-label2:
-	mov r2, #1
-	str r2, [r1, #0]
-	b label3
-label4:
+	bge label5
 	mov r0, #1
 	str r0, [r1, #0]
-	b label5
+label5:
+	bx lr

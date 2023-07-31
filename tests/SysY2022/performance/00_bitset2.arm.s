@@ -25,16 +25,6 @@ main:
 	ble label8
 	mov r3, r6
 	mov r0, r5
-	b label2
-label8:
-	mov r0, #64
-	bl _sysy_stoptime
-	mov r1, r4
-	movw r0, #10000
-	bl putarray
-	add sp, sp, #4
-	mov r0, #0
-	pop { r4, r5, r6, r7, r8, r9, pc }
 .p2align 4
 label2:
 	movw r1, #58069
@@ -89,15 +79,7 @@ label2:
 	asr r8, r8, #1
 	sub r8, r7, r8, lsl #1
 	cmp r2, r8
-	bne label6
-	str r5, [r4, r3, lsl #2]
-	cmp r0, #0
-	ble label8
-label46:
-	mov r3, r1
-	b label2
-.p2align 4
-label6:
+	beq label41
 	and r8, r7, #1
 	eor r9, r2, #1
 	and r7, r7, #-2147483647
@@ -113,4 +95,20 @@ label6:
 	str r2, [r4, r3, lsl #2]
 	cmp r0, #0
 	bgt label46
-	b label8
+label8:
+	mov r0, #64
+	bl _sysy_stoptime
+	mov r1, r4
+	movw r0, #10000
+	bl putarray
+	add sp, sp, #4
+	mov r0, #0
+	pop { r4, r5, r6, r7, r8, r9, pc }
+.p2align 4
+label41:
+	str r5, [r4, r3, lsl #2]
+	cmp r0, #0
+	ble label8
+label46:
+	mov r3, r1
+	b label2

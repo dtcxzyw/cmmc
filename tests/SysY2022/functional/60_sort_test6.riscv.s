@@ -5,9 +5,9 @@
 main:
 .p2align 2
 	addi sp, sp, -16
+	sd ra, 0(sp)
 	sd s0, 8(sp)
 	mv s0, zero
-	sd ra, 0(sp)
 .p2align 2
 label2:
 	mv a0, s0

@@ -19,8 +19,8 @@ compare_r_eq:
 	li a2, 4294967295
 	li a1, 42
 	and a4, a3, a2
-	beq a0, a4, label25
+	beq a0, a4, label26
 	li a1, 24
-label25:
+label26:
 	and a0, a1, a2
 	ret

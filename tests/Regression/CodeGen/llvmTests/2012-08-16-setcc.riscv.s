@@ -29,9 +29,9 @@ xor_1:
 	andi a3, a1, 255
 	xor a1, a0, a3
 	mv a0, a2
-	bne a1, zero, label32
+	bne a1, zero, label33
 	mv a0, zero
-label32:
+label33:
 	ret
 .globl xor_2
 xor_2:

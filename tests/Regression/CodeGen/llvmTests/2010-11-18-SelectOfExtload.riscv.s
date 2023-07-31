@@ -13,17 +13,17 @@ s:
 .globl foo
 foo:
 .p2align 2
-	bne a0, zero, label2
-pcrel26:
+	beq a0, zero, label8
+pcrel27:
+	auipc a1, %pcrel_hi(u)
+	lb a2, %pcrel_lo(pcrel27)(a1)
+	andi a0, a2, 255
+	j label3
+label8:
 	auipc a2, %pcrel_hi(s)
-	lb a0, %pcrel_lo(pcrel26)(a2)
+	lb a0, %pcrel_lo(label8)(a2)
 	li a2, 4294967295
 	sext.b a1, a0
 	and a0, a1, a2
-	j label3
-label2:
-	auipc a1, %pcrel_hi(u)
-	lb a2, %pcrel_lo(label2)(a1)
-	andi a0, a2, 255
 label3:
 	ret

@@ -9,11 +9,7 @@ mulw:
 .p2align 4
 	mov r2, r1
 	cmp r0, r1
-	blt label2
-	mov r0, #1
-label8:
-	bx lr
-label2:
+	bge label15
 	add r1, r0, #1
 	cmp r2, r1
 	ble label8
@@ -23,3 +19,7 @@ label3:
 	cmp r2, r1
 	bgt label3
 	b label8
+label15:
+	mov r0, #1
+label8:
+	bx lr

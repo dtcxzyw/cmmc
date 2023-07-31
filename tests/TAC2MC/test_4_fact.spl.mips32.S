@@ -32,12 +32,8 @@ main:
 	jal read
 	nop
 	addiu $t0, $v0, -1
-	bgtz $t0, label12
+	blez $t0, label11
 	nop
-	li $a0, 1
-	b label6
-	nop
-label12:
 	move $t0, $v0
 	li $t1, 1
 label2:
@@ -49,6 +45,10 @@ label2:
 	nop
 	mult $t1, $t0
 	mflo $a0
+	b label6
+	nop
+label11:
+	li $a0, 1
 label6:
 	jal write
 	nop

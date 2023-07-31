@@ -32,10 +32,7 @@ label4:
 	mov r0, #32
 	bl putch
 	cmp r7, #1
-	bne label19
-	mov r1, r5
-	b label2
-label19:
+	beq label18
 	mov r0, r4
 	mov r4, r5
 	mov r5, r0
@@ -53,16 +50,19 @@ label2:
 	bl putch
 	add sp, sp, #4
 	pop { r4, r5, r6, r7, pc }
+label18:
+	mov r1, r5
+	b label2
 .globl main
 main:
 .p2align 4
 	push { r4, lr }
 	bl getint
 	cmp r0, #0
-	ble label28
+	ble label29
 	mov r4, r0
 .p2align 4
-label26:
+label27:
 	bl getint
 	mov r3, #3
 	mov r2, #2
@@ -71,7 +71,7 @@ label26:
 	mov r0, #10
 	bl putch
 	subs r4, r4, #1
-	bgt label26
-label28:
+	bgt label27
+label29:
 	mov r0, #0
 	pop { r4, pc }

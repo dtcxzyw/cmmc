@@ -23,45 +23,43 @@ write:
     ret
 gcd:
 	addi sp, sp, -16
-	addi a1, sp, 0
-	sd ra, 8(sp)
+	addi a1, sp, 8
+	sd ra, 0(sp)
 	lw a4, 0(a0)
 	lw a2, 4(a0)
 	mv a0, a4
 	mv a3, a2
-	bne a2, zero, label2
-label3:
-	ld ra, 8(sp)
-	addi sp, sp, 16
-	ret
-label2:
-	divw a5, a0, a3
-	mulw t0, a3, a5
+	beq a2, zero, label3
+	divw a5, a4, a2
+	mulw t0, a2, a5
 	li a3, 4294967295
-	subw a4, a0, t0
+	subw a4, a4, t0
 	and a2, a2, a3
 	and a0, a4, a3
-	sw a2, 0(sp)
-	sw a0, 4(sp)
+	sw a2, 8(sp)
+	sw a0, 12(sp)
 	mv a0, a1
 	jal gcd
-	j label3
+label3:
+	ld ra, 0(sp)
+	addi sp, sp, 16
+	ret
 .globl main
 main:
 	addi sp, sp, -16
-	addi a1, sp, 0
-	sd ra, 8(sp)
+	addi a1, sp, 8
+	sd ra, 0(sp)
 	jal read
 	li a2, 4294967295
 	and a3, a0, a2
-	sw a3, 0(sp)
+	sw a3, 8(sp)
 	jal read
 	and a2, a0, a2
-	sw a2, 4(sp)
+	sw a2, 12(sp)
 	mv a0, a1
 	jal gcd
 	jal write
-	ld ra, 8(sp)
+	ld ra, 0(sp)
 	mv a0, zero
 	addi sp, sp, 16
 	ret

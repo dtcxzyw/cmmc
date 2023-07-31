@@ -3,13 +3,13 @@
 .globl test
 test:
 .p2align 2
-	bne $a0, $zero, label11
+	beq $a0, $zero, label10
 	nop
-	slt $v0, $a2, $a3
+	move $v0, $a1
 	b label2
 	nop
-label11:
-	move $v0, $a1
+label10:
+	slt $v0, $a2, $a3
 label2:
 	jr $ra
 	nop

@@ -138,6 +138,17 @@ memset_impl:
 label107:
 	jr $ra
 	nop
+label108:
+	lui $t0, %hi(arr)
+	addiu $t0, $t0, %lo(arr)
+	addiu $t1, $a0, -4
+	blez $t1, label124
+	nop
+	addiu $t3, $a0, -20
+	addiu $t2, $t1, -16
+	blez $t2, label130
+	nop
+	move $t2, $zero
 label110:
 	sll $t4, $t2, 2
 	addu $t4, $t0, $t4
@@ -183,27 +194,13 @@ label114:
 	nop
 	b label107
 	nop
-label108:
-	lui $t0, %hi(arr)
-	addiu $t0, $t0, %lo(arr)
-	addiu $t1, $a0, -4
-	bgtz $t1, label109
-	nop
+label124:
 	move $t1, $zero
 	b label114
 	nop
-label109:
-	addiu $t1, $a0, -4
-	addiu $t3, $a0, -20
-	addiu $t2, $t1, -16
-	bgtz $t2, label131
-	nop
+label130:
 	move $t2, $zero
 	b label112
-	nop
-label131:
-	move $t2, $zero
-	b label110
 	nop
 .globl fused_store
 fused_store:

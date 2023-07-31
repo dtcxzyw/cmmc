@@ -22,14 +22,14 @@ test1:
 	movt r2, #:upper16:g1
 	movt r0, #:upper16:g0
 	ldr r3, [r0, #0]
-	beq label2
-	add r1, r3, #1
+	bne label14
+	add r1, r3, #11
 	str r1, [r0, #0]
 	ldr r0, [r2, #0]
 	add r0, r0, #23
 	b label3
-label2:
-	add r1, r3, #11
+label14:
+	add r1, r3, #1
 	str r1, [r0, #0]
 	ldr r0, [r2, #0]
 	add r0, r0, #23

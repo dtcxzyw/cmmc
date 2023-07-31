@@ -4,18 +4,18 @@
 reverse:
 .p2align 2
 	addi sp, sp, -24
-	sd s0, 16(sp)
-	mv s0, a0
-	sd s1, 8(sp)
-	li a0, 2
 	sd ra, 0(sp)
+	sd s0, 8(sp)
+	mv s0, a0
+	sd s1, 16(sp)
+	li a0, 2
 	bge s0, a0, label4
 	jal getint
 	jal putint
 label3:
 	ld ra, 0(sp)
-	ld s1, 8(sp)
-	ld s0, 16(sp)
+	ld s0, 8(sp)
+	ld s1, 16(sp)
 	addi sp, sp, 24
 	ret
 label4:

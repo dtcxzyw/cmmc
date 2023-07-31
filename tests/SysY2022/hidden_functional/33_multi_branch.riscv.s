@@ -5,9 +5,9 @@
 main:
 .p2align 2
 	addi sp, sp, -24
-	sd s0, 16(sp)
-	sd s1, 8(sp)
 	sd ra, 0(sp)
+	sd s0, 8(sp)
+	sd s1, 16(sp)
 	jal getint
 	mv s1, zero
 	mv s0, a0
@@ -17,7 +17,29 @@ label4:
 	jal getint
 	li a2, 99
 	addiw a1, a0, -1
-	bltu a1, a2, label5
+	bgeu a1, a2, label113
+	li a1, 99
+	bge a0, a1, label117
+	li a1, 98
+	bge a0, a1, label121
+	li a1, 97
+	bge a0, a1, label125
+	li a1, 96
+	bge a0, a1, label129
+	li a1, 95
+	bge a0, a1, label133
+	li a1, 94
+	bge a0, a1, label137
+	li a1, 93
+	bge a0, a1, label141
+	li a1, 92
+	bge a0, a1, label145
+	li a1, 91
+	blt a0, a1, label14
+	li a0, 91
+	j label102
+.p2align 2
+label113:
 	li a0, 100
 .p2align 2
 label102:
@@ -29,138 +51,49 @@ label102:
 label104:
 	mv a0, zero
 	ld ra, 0(sp)
-	ld s1, 8(sp)
-	ld s0, 16(sp)
+	ld s0, 8(sp)
+	ld s1, 16(sp)
 	addi sp, sp, 24
 	ret
-.p2align 2
-label5:
-	li a1, 99
-	blt a0, a1, label6
-	li a0, 99
-	j label102
-.p2align 2
-label6:
-	li a1, 98
-	blt a0, a1, label7
-	li a0, 98
-	j label102
-label7:
-	li a1, 97
-	blt a0, a1, label8
-	li a0, 97
-	j label102
-label8:
-	li a1, 96
-	blt a0, a1, label9
-	li a0, 96
-	j label102
-label9:
-	li a1, 95
-	blt a0, a1, label10
-	li a0, 95
-	j label102
-label10:
-	li a1, 94
-	blt a0, a1, label11
-	li a0, 94
-	j label102
-label11:
-	li a1, 93
-	blt a0, a1, label12
-	li a0, 93
-	j label102
-label12:
-	li a1, 92
-	blt a0, a1, label13
-	li a0, 92
-	j label102
-label13:
-	li a1, 91
-	blt a0, a1, label14
-	li a0, 91
-	j label102
 label14:
 	li a1, 90
-	blt a0, a1, label15
-	li a0, 90
-	j label102
-label15:
+	bge a0, a1, label153
 	li a1, 89
-	blt a0, a1, label16
-	li a0, 89
-	j label102
-label16:
+	bge a0, a1, label157
 	li a1, 88
-	blt a0, a1, label17
-	li a0, 88
-	j label102
-label17:
+	bge a0, a1, label161
 	li a1, 87
-	blt a0, a1, label18
-	li a0, 87
-	j label102
-label18:
+	bge a0, a1, label165
 	li a1, 86
-	blt a0, a1, label19
-	li a0, 86
-	j label102
-label19:
+	bge a0, a1, label169
 	li a1, 85
-	blt a0, a1, label20
-	li a0, 85
-	j label102
-label20:
+	bge a0, a1, label173
 	li a1, 84
-	blt a0, a1, label21
-	li a0, 84
-	j label102
-label21:
+	bge a0, a1, label177
 	li a1, 83
-	blt a0, a1, label22
-	li a0, 83
-	j label102
-label22:
+	bge a0, a1, label181
 	li a1, 82
-	blt a0, a1, label23
-	li a0, 82
-	j label102
-label23:
+	bge a0, a1, label185
 	li a1, 81
-	blt a0, a1, label24
-	li a0, 81
-	j label102
-label24:
+	bge a0, a1, label189
 	li a1, 80
-	blt a0, a1, label25
-	li a0, 80
-	j label102
-label25:
+	bge a0, a1, label193
 	li a1, 79
-	blt a0, a1, label26
-	li a0, 79
-	j label102
-label26:
+	bge a0, a1, label197
 	li a1, 78
 	blt a0, a1, label27
 	li a0, 78
 	j label102
 label27:
 	li a1, 77
-	blt a0, a1, label28
-	li a0, 77
-	j label102
-label28:
+	bge a0, a1, label205
 	li a1, 76
 	blt a0, a1, label29
 	li a0, 76
 	j label102
 label29:
 	li a1, 75
-	blt a0, a1, label30
-	li a0, 75
-	j label102
-label30:
+	bge a0, a1, label213
 	li a1, 74
 	blt a0, a1, label31
 	li a0, 74
@@ -177,345 +110,144 @@ label32:
 	j label102
 label33:
 	li a1, 71
-	blt a0, a1, label34
-	li a0, 71
-	j label102
-label34:
+	bge a0, a1, label229
 	li a1, 70
 	blt a0, a1, label35
 	li a0, 70
 	j label102
 label35:
 	li a1, 69
-	blt a0, a1, label36
-	li a0, 69
-	j label102
-label36:
+	bge a0, a1, label237
 	li a1, 68
-	blt a0, a1, label37
-	li a0, 68
-	j label102
-label37:
+	bge a0, a1, label241
 	li a1, 67
-	blt a0, a1, label38
-	li a0, 67
-	j label102
-label38:
+	bge a0, a1, label245
 	li a1, 66
-	blt a0, a1, label39
-	li a0, 66
-	j label102
-label39:
+	bge a0, a1, label249
 	li a1, 65
-	blt a0, a1, label40
-	li a0, 65
-	j label102
-label40:
+	bge a0, a1, label253
 	li a1, 64
-	blt a0, a1, label41
-	li a0, 64
-	j label102
-label41:
+	bge a0, a1, label257
 	li a1, 63
-	blt a0, a1, label42
-	li a0, 63
-	j label102
-label42:
+	bge a0, a1, label261
 	li a1, 62
-	blt a0, a1, label43
-	li a0, 62
-	j label102
-label43:
+	bge a0, a1, label265
 	li a1, 61
-	blt a0, a1, label44
-	li a0, 61
-	j label102
-label44:
+	bge a0, a1, label269
 	li a1, 60
-	blt a0, a1, label45
-	li a0, 60
-	j label102
-label45:
+	bge a0, a1, label273
 	li a1, 59
-	blt a0, a1, label46
-	li a0, 59
-	j label102
-label46:
+	bge a0, a1, label277
 	li a1, 58
-	blt a0, a1, label47
-	li a0, 58
-	j label102
-label47:
+	bge a0, a1, label281
 	li a1, 57
-	blt a0, a1, label48
-	li a0, 57
-	j label102
-label48:
+	bge a0, a1, label285
 	li a1, 56
-	blt a0, a1, label49
-	li a0, 56
-	j label102
-label49:
+	bge a0, a1, label289
 	li a1, 55
-	blt a0, a1, label50
-	li a0, 55
-	j label102
-label50:
+	bge a0, a1, label293
 	li a1, 54
-	blt a0, a1, label51
-	li a0, 54
-	j label102
-label51:
+	bge a0, a1, label297
 	li a1, 53
-	blt a0, a1, label52
-	li a0, 53
-	j label102
-label52:
+	bge a0, a1, label301
 	li a1, 52
-	blt a0, a1, label53
-	li a0, 52
-	j label102
-label53:
+	bge a0, a1, label305
 	li a1, 51
-	blt a0, a1, label54
-	li a0, 51
-	j label102
-label54:
+	bge a0, a1, label309
 	li a1, 50
-	blt a0, a1, label55
-	li a0, 50
-	j label102
-label55:
+	bge a0, a1, label313
 	li a1, 49
-	blt a0, a1, label56
-	li a0, 49
-	j label102
-label56:
+	bge a0, a1, label317
 	li a1, 48
-	blt a0, a1, label57
-	li a0, 48
-	j label102
-label57:
+	bge a0, a1, label321
 	li a1, 47
-	blt a0, a1, label58
-	li a0, 47
-	j label102
-label58:
+	bge a0, a1, label325
 	li a1, 46
-	blt a0, a1, label59
-	li a0, 46
-	j label102
-label59:
+	bge a0, a1, label329
 	li a1, 45
-	blt a0, a1, label60
-	li a0, 45
-	j label102
-label60:
+	bge a0, a1, label333
 	li a1, 44
-	blt a0, a1, label61
-	li a0, 44
-	j label102
-label61:
+	bge a0, a1, label337
 	li a1, 43
-	blt a0, a1, label62
-	li a0, 43
-	j label102
-label62:
+	bge a0, a1, label341
 	li a1, 42
-	blt a0, a1, label63
-	li a0, 42
-	j label102
-label63:
+	bge a0, a1, label345
 	li a1, 41
-	blt a0, a1, label64
-	li a0, 41
-	j label102
-label64:
+	bge a0, a1, label349
 	li a1, 40
-	blt a0, a1, label65
-	li a0, 40
-	j label102
-label65:
+	bge a0, a1, label353
 	li a1, 39
-	blt a0, a1, label66
-	li a0, 39
-	j label102
-label66:
+	bge a0, a1, label357
 	li a1, 38
-	blt a0, a1, label67
-	li a0, 38
-	j label102
-label67:
+	bge a0, a1, label361
 	li a1, 37
-	blt a0, a1, label68
-	li a0, 37
-	j label102
-label68:
+	bge a0, a1, label365
 	li a1, 36
-	blt a0, a1, label69
-	li a0, 36
-	j label102
-label69:
+	bge a0, a1, label369
 	li a1, 35
-	blt a0, a1, label70
-	li a0, 35
-	j label102
-label70:
+	bge a0, a1, label373
 	li a1, 34
-	blt a0, a1, label71
-	li a0, 34
-	j label102
-label71:
+	bge a0, a1, label377
 	li a1, 33
-	blt a0, a1, label72
-	li a0, 33
-	j label102
-label72:
+	bge a0, a1, label381
 	li a1, 32
-	blt a0, a1, label73
-	li a0, 32
-	j label102
-label73:
+	bge a0, a1, label385
 	li a1, 31
-	blt a0, a1, label74
-	li a0, 31
-	j label102
-label74:
+	bge a0, a1, label389
 	li a1, 30
-	blt a0, a1, label75
-	li a0, 30
-	j label102
-label75:
+	bge a0, a1, label393
 	li a1, 29
-	blt a0, a1, label76
-	li a0, 29
-	j label102
-label76:
+	bge a0, a1, label397
 	li a1, 28
-	blt a0, a1, label77
-	li a0, 28
-	j label102
-label77:
+	bge a0, a1, label401
 	li a1, 27
-	blt a0, a1, label78
-	li a0, 27
-	j label102
-label78:
+	bge a0, a1, label405
 	li a1, 26
-	blt a0, a1, label79
-	li a0, 26
-	j label102
-label79:
+	bge a0, a1, label409
 	li a1, 25
-	blt a0, a1, label80
-	li a0, 25
-	j label102
-label80:
+	bge a0, a1, label413
 	li a1, 24
-	blt a0, a1, label81
-	li a0, 24
-	j label102
-label81:
+	bge a0, a1, label417
 	li a1, 23
-	blt a0, a1, label82
-	li a0, 23
-	j label102
-label82:
+	bge a0, a1, label421
 	li a1, 22
-	blt a0, a1, label83
-	li a0, 22
-	j label102
-label83:
+	bge a0, a1, label425
 	li a1, 21
-	blt a0, a1, label84
-	li a0, 21
-	j label102
-label84:
+	bge a0, a1, label429
 	li a1, 20
-	blt a0, a1, label85
-	li a0, 20
-	j label102
-label85:
+	bge a0, a1, label433
 	li a1, 19
-	blt a0, a1, label86
-	li a0, 19
-	j label102
-label86:
+	bge a0, a1, label437
 	li a1, 18
-	blt a0, a1, label87
-	li a0, 18
-	j label102
-label87:
+	bge a0, a1, label441
 	li a1, 17
-	blt a0, a1, label88
-	li a0, 17
-	j label102
-label88:
+	bge a0, a1, label445
 	li a1, 16
-	blt a0, a1, label89
-	li a0, 16
-	j label102
-label89:
+	bge a0, a1, label449
 	li a1, 15
-	blt a0, a1, label90
-	li a0, 15
-	j label102
-label90:
+	bge a0, a1, label453
 	li a1, 14
-	blt a0, a1, label91
-	li a0, 14
-	j label102
-label91:
+	bge a0, a1, label457
 	li a1, 13
-	blt a0, a1, label92
-	li a0, 13
-	j label102
-label92:
+	bge a0, a1, label461
 	li a1, 12
-	blt a0, a1, label93
-	li a0, 12
-	j label102
-label93:
+	bge a0, a1, label465
 	li a1, 11
-	blt a0, a1, label94
-	li a0, 11
-	j label102
-label94:
+	bge a0, a1, label469
 	li a1, 10
-	blt a0, a1, label95
-	li a0, 10
-	j label102
-label95:
+	bge a0, a1, label473
 	li a1, 9
-	blt a0, a1, label96
-	li a0, 9
-	j label102
-label96:
+	bge a0, a1, label477
 	li a1, 8
-	blt a0, a1, label97
-	li a0, 8
-	j label102
-label97:
+	bge a0, a1, label481
 	li a1, 7
-	blt a0, a1, label98
-	li a0, 7
-	j label102
-label98:
+	bge a0, a1, label485
 	li a1, 6
-	blt a0, a1, label99
-	li a0, 6
-	j label102
-label99:
+	bge a0, a1, label489
 	li a1, 5
-	blt a0, a1, label100
-	li a0, 5
-	j label102
-label100:
+	bge a0, a1, label493
 	li a1, 4
-	blt a0, a1, label101
-	li a0, 4
-	j label102
-label101:
+	bge a0, a1, label497
 	slti a1, a0, 2
 	li a4, 2
 	li a3, 3
@@ -525,4 +257,272 @@ label101:
 	li a1, 3
 label606:
 	mv a0, a1
+	j label102
+label125:
+	li a0, 97
+	j label102
+label129:
+	li a0, 96
+	j label102
+label173:
+	li a0, 85
+	j label102
+label157:
+	li a0, 89
+	j label102
+label261:
+	li a0, 63
+	j label102
+label389:
+	li a0, 31
+	j label102
+label497:
+	li a0, 4
+	j label102
+label493:
+	li a0, 5
+	j label102
+label489:
+	li a0, 6
+	j label102
+label485:
+	li a0, 7
+	j label102
+label481:
+	li a0, 8
+	j label102
+label477:
+	li a0, 9
+	j label102
+label473:
+	li a0, 10
+	j label102
+label469:
+	li a0, 11
+	j label102
+label465:
+	li a0, 12
+	j label102
+label461:
+	li a0, 13
+	j label102
+label457:
+	li a0, 14
+	j label102
+label453:
+	li a0, 15
+	j label102
+label449:
+	li a0, 16
+	j label102
+label445:
+	li a0, 17
+	j label102
+label441:
+	li a0, 18
+	j label102
+label437:
+	li a0, 19
+	j label102
+label433:
+	li a0, 20
+	j label102
+label429:
+	li a0, 21
+	j label102
+label425:
+	li a0, 22
+	j label102
+label421:
+	li a0, 23
+	j label102
+label417:
+	li a0, 24
+	j label102
+label413:
+	li a0, 25
+	j label102
+label409:
+	li a0, 26
+	j label102
+label405:
+	li a0, 27
+	j label102
+label401:
+	li a0, 28
+	j label102
+label397:
+	li a0, 29
+	j label102
+label385:
+	li a0, 32
+	j label102
+label393:
+	li a0, 30
+	j label102
+label381:
+	li a0, 33
+	j label102
+label377:
+	li a0, 34
+	j label102
+label373:
+	li a0, 35
+	j label102
+label369:
+	li a0, 36
+	j label102
+label365:
+	li a0, 37
+	j label102
+label361:
+	li a0, 38
+	j label102
+label357:
+	li a0, 39
+	j label102
+label353:
+	li a0, 40
+	j label102
+label349:
+	li a0, 41
+	j label102
+label345:
+	li a0, 42
+	j label102
+label341:
+	li a0, 43
+	j label102
+label337:
+	li a0, 44
+	j label102
+label333:
+	li a0, 45
+	j label102
+label329:
+	li a0, 46
+	j label102
+label325:
+	li a0, 47
+	j label102
+label321:
+	li a0, 48
+	j label102
+label317:
+	li a0, 49
+	j label102
+label313:
+	li a0, 50
+	j label102
+label309:
+	li a0, 51
+	j label102
+label305:
+	li a0, 52
+	j label102
+label301:
+	li a0, 53
+	j label102
+label297:
+	li a0, 54
+	j label102
+label293:
+	li a0, 55
+	j label102
+label289:
+	li a0, 56
+	j label102
+label285:
+	li a0, 57
+	j label102
+label281:
+	li a0, 58
+	j label102
+label277:
+	li a0, 59
+	j label102
+label273:
+	li a0, 60
+	j label102
+label269:
+	li a0, 61
+	j label102
+label257:
+	li a0, 64
+	j label102
+label265:
+	li a0, 62
+	j label102
+label253:
+	li a0, 65
+	j label102
+label249:
+	li a0, 66
+	j label102
+label245:
+	li a0, 67
+	j label102
+label241:
+	li a0, 68
+	j label102
+label237:
+	li a0, 69
+	j label102
+label229:
+	li a0, 71
+	j label102
+label213:
+	li a0, 75
+	j label102
+label205:
+	li a0, 77
+	j label102
+label197:
+	li a0, 79
+	j label102
+label193:
+	li a0, 80
+	j label102
+label189:
+	li a0, 81
+	j label102
+label185:
+	li a0, 82
+	j label102
+label181:
+	li a0, 83
+	j label102
+label169:
+	li a0, 86
+	j label102
+label177:
+	li a0, 84
+	j label102
+label165:
+	li a0, 87
+	j label102
+label145:
+	li a0, 92
+	j label102
+label153:
+	li a0, 90
+	j label102
+label141:
+	li a0, 93
+	j label102
+label161:
+	li a0, 88
+	j label102
+label137:
+	li a0, 94
+	j label102
+.p2align 2
+label117:
+	li a0, 99
+	j label102
+label133:
+	li a0, 95
+	j label102
+label121:
+	li a0, 98
 	j label102

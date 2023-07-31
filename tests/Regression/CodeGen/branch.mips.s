@@ -3,280 +3,214 @@
 .globl beqz
 beqz:
 .p2align 2
-	beq $a0, $zero, label2
+	bne $a0, $zero, label3
 	nop
+	sw $zero, 0($a1)
 label3:
 	jr $ra
-	nop
-label2:
-	sw $zero, 0($a1)
-	b label3
 	nop
 .globl beqi
 beqi:
 .p2align 2
 	li $t0, 1
-	beq $a0, $t0, label11
+	bne $a0, $t0, label13
 	nop
-label12:
-	jr $ra
-	nop
-label11:
 	sw $zero, 0($a1)
-	b label12
+label13:
+	jr $ra
 	nop
 .globl beq
 beq:
 .p2align 2
-	beq $a0, $a1, label22
+	bne $a0, $a1, label25
 	nop
-label23:
-	jr $ra
-	nop
-label22:
 	sw $zero, 0($a2)
-	b label23
+label25:
+	jr $ra
 	nop
 .globl bnez
 bnez:
 .p2align 2
-	bne $a0, $zero, label33
+	beq $a0, $zero, label37
 	nop
-label34:
-	jr $ra
-	nop
-label33:
 	sw $zero, 0($a1)
-	b label34
+label37:
+	jr $ra
 	nop
 .globl bnei
 bnei:
 .p2align 2
 	li $t0, 1
-	bne $a0, $t0, label42
+	beq $a0, $t0, label47
 	nop
-label43:
-	jr $ra
-	nop
-label42:
 	sw $zero, 0($a1)
-	b label43
+label47:
+	jr $ra
 	nop
 .globl bne
 bne:
 .p2align 2
-	bne $a0, $a1, label53
+	beq $a0, $a1, label59
 	nop
-label54:
-	jr $ra
-	nop
-label53:
 	sw $zero, 0($a2)
-	b label54
+label59:
+	jr $ra
 	nop
 .globl bltz
 bltz:
 .p2align 2
-	bltz $a0, label64
+	bgez $a0, label71
 	nop
-label65:
-	jr $ra
-	nop
-label64:
 	sw $zero, 0($a1)
-	b label65
+label71:
+	jr $ra
 	nop
 .globl blti1
 blti1:
 .p2align 2
 	addiu $t0, $a0, -1
-	bltz $t0, label73
+	bgez $t0, label81
 	nop
-label74:
-	jr $ra
-	nop
-label73:
 	sw $zero, 0($a1)
-	b label74
+label81:
+	jr $ra
 	nop
 .globl blti2
 blti2:
 .p2align 2
 	addiu $t0, $a0, -10
-	bltz $t0, label83
+	bgez $t0, label92
 	nop
-label84:
-	jr $ra
-	nop
-label83:
 	sw $zero, 0($a1)
-	b label84
+label92:
+	jr $ra
 	nop
 .globl blt
 blt:
 .p2align 2
 	subu $t0, $a0, $a1
-	bltz $t0, label93
+	bgez $t0, label103
 	nop
-label94:
-	jr $ra
-	nop
-label93:
 	sw $zero, 0($a2)
-	b label94
+label103:
+	jr $ra
 	nop
 .globl bgez
 bgez:
 .p2align 2
 	addiu $t0, $a0, 1
-	bgtz $t0, label104
+	blez $t0, label115
 	nop
-label105:
-	jr $ra
-	nop
-label104:
 	sw $zero, 0($a1)
-	b label105
+label115:
+	jr $ra
 	nop
 .globl bgei1
 bgei1:
 .p2align 2
-	bgtz $a0, label115
+	blez $a0, label127
 	nop
-label116:
-	jr $ra
-	nop
-label115:
 	sw $zero, 0($a1)
-	b label116
+label127:
+	jr $ra
 	nop
 .globl bgei2
 bgei2:
 .p2align 2
 	addiu $t0, $a0, -9
-	bgtz $t0, label124
+	blez $t0, label137
 	nop
-label125:
-	jr $ra
-	nop
-label124:
 	sw $zero, 0($a1)
-	b label125
+label137:
+	jr $ra
 	nop
 .globl bge
 bge:
 .p2align 2
 	subu $t0, $a0, $a1
-	bgez $t0, label135
+	bltz $t0, label149
 	nop
-label136:
-	jr $ra
-	nop
-label135:
 	sw $zero, 0($a2)
-	b label136
+label149:
+	jr $ra
 	nop
 .globl bgtz
 bgtz:
 .p2align 2
-	bgtz $a0, label147
+	blez $a0, label162
 	nop
-label148:
-	jr $ra
-	nop
-label147:
 	sw $zero, 0($a1)
-	b label148
+label162:
+	jr $ra
 	nop
 .globl bgti1
 bgti1:
 .p2align 2
 	addiu $t0, $a0, 1
-	bgtz $t0, label156
+	blez $t0, label172
 	nop
-label157:
-	jr $ra
-	nop
-label156:
 	sw $zero, 0($a1)
-	b label157
+label172:
+	jr $ra
 	nop
 .globl bgti2
 bgti2:
 .p2align 2
 	addiu $t0, $a0, -10
-	bgtz $t0, label167
+	blez $t0, label184
 	nop
-label168:
-	jr $ra
-	nop
-label167:
 	sw $zero, 0($a1)
-	b label168
+label184:
+	jr $ra
 	nop
 .globl bgt
 bgt:
 .p2align 2
 	subu $t0, $a0, $a1
-	bgtz $t0, label178
+	blez $t0, label196
 	nop
-label179:
-	jr $ra
-	nop
-label178:
 	sw $zero, 0($a2)
-	b label179
+label196:
+	jr $ra
 	nop
 .globl blez
 blez:
 .p2align 2
 	addiu $t0, $a0, -1
-	bltz $t0, label189
+	bgez $t0, label208
 	nop
-label190:
-	jr $ra
-	nop
-label189:
 	sw $zero, 0($a1)
-	b label190
+label208:
+	jr $ra
 	nop
 .globl blei1
 blei1:
 .p2align 2
-	bltz $a0, label199
+	bgez $a0, label219
 	nop
-label200:
-	jr $ra
-	nop
-label199:
 	sw $zero, 0($a1)
-	b label200
+label219:
+	jr $ra
 	nop
 .globl blei2
 blei2:
 .p2align 2
 	addiu $t0, $a0, -11
-	bltz $t0, label208
+	bgez $t0, label229
 	nop
-label209:
-	jr $ra
-	nop
-label208:
 	sw $zero, 0($a1)
-	b label209
+label229:
+	jr $ra
 	nop
 .globl ble
 ble:
 .p2align 2
 	subu $t0, $a0, $a1
-	blez $t0, label218
+	bgtz $t0, label240
 	nop
-label219:
-	jr $ra
-	nop
-label218:
 	sw $zero, 0($a2)
-	b label219
+label240:
+	jr $ra
 	nop
 .globl bfeq
 bfeq:
@@ -284,14 +218,11 @@ bfeq:
 	c.eq.s $f12, $f14
 	li $t0, 1
 	movf $t0, $zero, $fcc0
-	bne $t0, $zero, label230
+	beq $t0, $zero, label253
 	nop
-label231:
-	jr $ra
-	nop
-label230:
 	sw $zero, 0($a2)
-	b label231
+label253:
+	jr $ra
 	nop
 .globl bfne
 bfne:
@@ -299,14 +230,11 @@ bfne:
 	c.eq.s $f12, $f14
 	li $t0, 1
 	movt $t0, $zero, $fcc0
-	bne $t0, $zero, label240
+	beq $t0, $zero, label264
 	nop
-label241:
-	jr $ra
-	nop
-label240:
 	sw $zero, 0($a2)
-	b label241
+label264:
+	jr $ra
 	nop
 .globl bflt
 bflt:
@@ -314,14 +242,11 @@ bflt:
 	c.olt.s $f12, $f14
 	li $t0, 1
 	movf $t0, $zero, $fcc0
-	bne $t0, $zero, label250
+	beq $t0, $zero, label275
 	nop
-label251:
-	jr $ra
-	nop
-label250:
 	sw $zero, 0($a2)
-	b label251
+label275:
+	jr $ra
 	nop
 .globl bfle
 bfle:
@@ -329,14 +254,11 @@ bfle:
 	c.ole.s $f12, $f14
 	li $t0, 1
 	movf $t0, $zero, $fcc0
-	bne $t0, $zero, label260
+	beq $t0, $zero, label286
 	nop
-label261:
-	jr $ra
-	nop
-label260:
 	sw $zero, 0($a2)
-	b label261
+label286:
+	jr $ra
 	nop
 .globl bfge
 bfge:
@@ -344,14 +266,11 @@ bfge:
 	c.ult.s $f12, $f14
 	li $t0, 1
 	movt $t0, $zero, $fcc0
-	bne $t0, $zero, label270
+	beq $t0, $zero, label297
 	nop
-label271:
-	jr $ra
-	nop
-label270:
 	sw $zero, 0($a2)
-	b label271
+label297:
+	jr $ra
 	nop
 .globl bfgt
 bfgt:
@@ -359,14 +278,11 @@ bfgt:
 	c.ule.s $f12, $f14
 	li $t0, 1
 	movt $t0, $zero, $fcc0
-	bne $t0, $zero, label280
+	beq $t0, $zero, label308
 	nop
-label281:
-	jr $ra
-	nop
-label280:
 	sw $zero, 0($a2)
-	b label281
+label308:
+	jr $ra
 	nop
 .globl normal_srem
 normal_srem:

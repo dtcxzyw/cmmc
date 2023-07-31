@@ -10,13 +10,13 @@ main:
 .p2align 2
 	addi sp, sp, -88
 	li a0, 111
-	sd s0, 80(sp)
-	addi s0, sp, 0
-	sd s1, 72(sp)
-	sd s3, 64(sp)
-	sd s2, 56(sp)
-	sd s4, 48(sp)
-	sd ra, 40(sp)
+	sd ra, 0(sp)
+	sd s0, 8(sp)
+	sd s1, 16(sp)
+	addi s0, sp, 48
+	sd s3, 24(sp)
+	sd s2, 32(sp)
+	sd s4, 40(sp)
 	jal putch
 	li a0, 107
 	jal putch
@@ -68,17 +68,17 @@ main:
 	lui a0, 262144
 	fmv.w.x f10, a1
 	fmv.w.x f11, a0
-	fsw f10, 0(sp)
+	fsw f10, 48(sp)
 	fmv.w.x f10, zero
-	fsw f11, 4(sp)
-	fsw f10, 8(sp)
-	fsw f10, 12(sp)
-	fsw f10, 16(sp)
-	fsw f10, 20(sp)
-	fsw f10, 24(sp)
-	fsw f10, 28(sp)
-	fsw f10, 32(sp)
-	fsw f10, 36(sp)
+	fsw f11, 52(sp)
+	fsw f10, 56(sp)
+	fsw f10, 60(sp)
+	fsw f10, 64(sp)
+	fsw f10, 68(sp)
+	fsw f10, 72(sp)
+	fsw f10, 76(sp)
+	fsw f10, 80(sp)
+	fsw f10, 84(sp)
 	mv a0, s0
 	jal getfarray
 	mv s2, zero
@@ -128,12 +128,12 @@ pcrel65:
 	mv a0, s1
 	mv a1, s0
 	jal putfarray
-	ld ra, 40(sp)
+	ld ra, 0(sp)
 	mv a0, zero
-	ld s4, 48(sp)
-	ld s2, 56(sp)
-	ld s3, 64(sp)
-	ld s1, 72(sp)
-	ld s0, 80(sp)
+	ld s0, 8(sp)
+	ld s1, 16(sp)
+	ld s3, 24(sp)
+	ld s2, 32(sp)
+	ld s4, 40(sp)
 	addi sp, sp, 88
 	ret

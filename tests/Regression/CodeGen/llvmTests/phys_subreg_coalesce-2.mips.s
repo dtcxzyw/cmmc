@@ -18,16 +18,14 @@ label4:
 	nop
 label5:
 	sltiu $t0, $a1, 2
-	bne $t0, $zero, label21
+	beq $t0, $zero, label20
 	nop
-	move $t0, $a0
-	li $t1, 1
-	b label6
-	nop
-label21:
 	move $v0, $a0
 	b label2
 	nop
+label20:
+	move $t0, $a0
+	li $t1, 1
 label6:
 	subu $t2, $a0, $t1
 	mult $t0, $t2

@@ -3,21 +3,15 @@
 .globl foo4
 foo4:
 .p2align 2
-	bgtz $a1, label2
+	blez $a1, label13
 	nop
-	b label13
-	nop
-label3:
 	addiu $t0, $a1, -4
+	blez $t0, label21
+	nop
 	addiu $t3, $a1, -20
 	addiu $t1, $t0, -16
-	bgtz $t1, label28
+	blez $t1, label27
 	nop
-	move $t1, $zero
-	move $t2, $zero
-	b label7
-	nop
-label28:
 	move $t1, $zero
 	move $t2, $zero
 label4:
@@ -57,16 +51,14 @@ label4:
 	addiu $t2, $t2, 16
 	addiu $t4, $t1, 64
 	subu $t1, $t3, $t2
-	bgtz $t1, label66
+	blez $t1, label65
 	nop
-	move $t1, $t2
-	move $t2, $t4
-	b label7
-	nop
-label66:
 	move $t1, $t4
 	b label4
 	nop
+label65:
+	move $t1, $t2
+	move $t2, $t4
 label7:
 	sll $t3, $t1, 2
 	addu $t3, $a0, $t3
@@ -95,10 +87,12 @@ label10:
 label13:
 	jr $ra
 	nop
-label2:
-	addiu $t0, $a1, -4
-	bgtz $t0, label3
+label27:
+	move $t1, $zero
+	move $t2, $zero
+	b label7
 	nop
+label21:
 	move $t0, $zero
 	move $t1, $zero
 	b label10

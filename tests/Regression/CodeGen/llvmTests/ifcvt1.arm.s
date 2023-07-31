@@ -8,10 +8,10 @@
 t1:
 .p2align 4
 	cmp r0, #0
-	beq label2
-	add r0, r1, #1
-	b label3
-label2:
+	bne label9
 	sub r0, r1, #1
+	b label3
+label9:
+	add r0, r1, #1
 label3:
 	bx lr

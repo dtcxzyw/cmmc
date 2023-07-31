@@ -48,23 +48,23 @@ calc_seleq:
 	addiu $t1, $t0, %lo(f)
 	lui $t0, %hi(t)
 	addiu $t2, $t0, %lo(t)
-	beq $t3, $t4, label30
+	bne $t3, $t4, label29
 	nop
-	lw $t0, 0($t2)
+	lw $t0, 0($t1)
 	b label2
 	nop
-label30:
-	lw $t0, 0($t1)
+label29:
+	lw $t0, 0($t2)
 label2:
 	lui $t5, %hi(z1)
 	sw $t0, %lo(z1)($t5)
-	beq $t3, $t4, label4
+	bne $t3, $t4, label35
 	nop
-	lw $t0, 0($t2)
+	lw $t0, 0($t1)
 	b label5
 	nop
-label4:
-	lw $t0, 0($t1)
+label35:
+	lw $t0, 0($t2)
 label5:
 	lui $t4, %hi(z2)
 	sw $t0, %lo(z2)($t4)
@@ -73,23 +73,20 @@ label5:
 	bne $t3, $t4, label45
 	nop
 	lw $t0, 0($t2)
-label8:
-	lui $t5, %hi(z3)
-	sw $t0, %lo(z3)($t5)
-	beq $t3, $t4, label10
-	nop
-	b label52
+	b label8
 	nop
 label45:
 	lw $t0, 0($t1)
-	b label8
+label8:
+	lui $t5, %hi(z3)
+	sw $t0, %lo(z3)($t5)
+	bne $t3, $t4, label52
+	nop
+	lw $t0, 0($t2)
+	b label11
 	nop
 label52:
 	lw $t0, 0($t1)
-	b label11
-	nop
-label10:
-	lw $t0, 0($t2)
 label11:
 	lui $t1, %hi(z4)
 	sw $t0, %lo(z4)($t1)

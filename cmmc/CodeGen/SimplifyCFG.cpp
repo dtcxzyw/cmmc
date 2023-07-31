@@ -283,6 +283,36 @@ static bool reorderBranch(MIRFunction& func, const CodeGenContext& ctx) {
     return modified;
 }
 
+bool sfbOpt(MIRFunction& func, CodeGenContext& ctx) {
+    if(ctx.flags.endsWithTerminator)
+        return false;
+    bool modified = false;
+    for(auto it = func.blocks().begin(); it != func.blocks().end(); ++it) {
+        auto next = std::next(it);
+        if(next == func.blocks().end())
+            continue;
+        auto block = it->get();
+        auto& terminator = block->instructions().back();
+        MIRBasicBlock* targetBlock;
+        double prob;
+        if(ctx.instInfo.matchConditionalBranch(terminator, targetBlock, prob)) {
+            if(targetBlock->instructions().size() != 2)
+                continue;
+            const auto& back = targetBlock->instructions().back();
+            MIRBasicBlock* nextBlock;
+            if(!ctx.instInfo.matchUnconditionalBranch(back, nextBlock))
+                continue;
+            if(nextBlock != next->get())
+                continue;
+
+            ctx.instInfo.inverseBranch(terminator, nextBlock);
+            block->instructions().push_back(targetBlock->instructions().front());
+            modified = true;
+        }
+    }
+    return modified;
+}
+
 void simplifyCFG(MIRFunction& func, CodeGenContext& ctx) {
     while(true) {
         bool modified = false;
@@ -292,6 +322,7 @@ void simplifyCFG(MIRFunction& func, CodeGenContext& ctx) {
         modified |= removeEmptyBlocks(func, ctx);
         modified |= removeUnusedLabels(func, ctx);
         modified |= reorderBranch(func, ctx);
+        modified |= sfbOpt(func, ctx);
         modified |= genericPeepholeOpt(func, ctx);
 
         if(!modified)
@@ -305,6 +336,7 @@ void simplifyCFGWithUniqueTerminator(MIRFunction& func, CodeGenContext& ctx) {
         bool modified = false;
         modified |= conditional2Unconditional(func, ctx);
         modified |= redirectGoto(func, ctx);
+        modified |= removeUnreachableCode(func, ctx);
         modified |= genericPeepholeOpt(func, ctx);
 
         if(!modified)

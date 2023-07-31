@@ -11,13 +11,8 @@ test1:
 test2:
 .p2align 2
 	addiu $t0, $a0, -4
-	bgtz $t0, label6
+	blez $t0, label12
 	nop
-	move $v0, $a0
-label7:
-	jr $ra
-	nop
-label6:
 	addiu $t0, $a0, -5
 	srl $t0, $t0, 2
 	sll $t0, $t0, 2
@@ -25,4 +20,9 @@ label6:
 	addiu $t1, $a0, -4
 	addu $v0, $t0, $t1
 	b label7
+	nop
+label12:
+	move $v0, $a0
+label7:
+	jr $ra
 	nop

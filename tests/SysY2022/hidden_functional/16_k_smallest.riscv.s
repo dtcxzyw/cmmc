@@ -9,22 +9,20 @@ array:
 main:
 .p2align 2
 	addi sp, sp, -40
-	sd s2, 32(sp)
-	sd s1, 24(sp)
-	sd s0, 16(sp)
-	sd s3, 8(sp)
 	sd ra, 0(sp)
+	sd s2, 8(sp)
+	sd s1, 16(sp)
+	sd s0, 24(sp)
+	sd s3, 32(sp)
 	jal getint
 	mv s2, a0
 	jal getint
 	mv s1, a0
-pcrel120:
+pcrel125:
 	auipc a0, %pcrel_hi(array)
-	addi s0, a0, %pcrel_lo(pcrel120)
+	addi s0, a0, %pcrel_lo(pcrel125)
 	bgt s2, zero, label32
-	addiw a1, s2, -1
-	mv a0, zero
-	beq zero, a1, label23
+	j label31
 label115:
 	sh2add a2, a1, s0
 	mv s2, a0
@@ -33,18 +31,20 @@ label115:
 	j label9
 label32:
 	mv s3, zero
-	j label24
+.p2align 2
+label24:
+	jal getint
+	sh2add a1, s3, s0
+	addiw s3, s3, 1
+	sw a0, 0(a1)
+	bgt s2, s3, label24
+	addiw a1, s2, -1
+	mv a0, zero
+	beq zero, a1, label23
+	j label115
 .p2align 2
 label9:
-	bgt a1, a2, label12
-	sh2add a3, s2, s0
-	sh2add a4, a1, s0
-	lw a2, 0(a3)
-	lw a5, 0(a4)
-	sw a5, 0(a3)
-	sw a2, 0(a4)
-	beq s1, s2, label20
-	j label17
+	ble a1, a2, label43
 .p2align 2
 label12:
 	sh2add a5, a2, s0
@@ -59,23 +59,21 @@ label12:
 	sw a5, 0(a3)
 	sw a2, 0(a4)
 	beq s1, s2, label20
-label17:
-	blt s1, s2, label72
-	addiw a0, s2, 1
-	j label6
-label20:
-	ble s2, zero, label23
-	mv s1, zero
+	j label17
 .p2align 2
-label21:
-	sh2add a1, s1, s0
-	lw a0, 0(a1)
-	jal putint
-	li a0, 32
-	jal putch
-	addiw s1, s1, 1
-	bgt s2, s1, label21
-	j label23
+label31:
+	addiw a1, s2, -1
+	mv a0, zero
+	bne zero, a1, label115
+label23:
+	mv a0, zero
+	ld ra, 0(sp)
+	ld s2, 8(sp)
+	ld s1, 16(sp)
+	ld s0, 24(sp)
+	ld s3, 32(sp)
+	addi sp, sp, 40
+	ret
 .p2align 2
 label13:
 	sh2add a5, s2, s0
@@ -92,31 +90,35 @@ label13:
 	lw a5, 0(a4)
 	sw a5, 0(a3)
 	sw a2, 0(a4)
-	beq s1, s2, label20
-	j label17
-label23:
-	mv a0, zero
-	ld ra, 0(sp)
-	ld s3, 8(sp)
-	ld s0, 16(sp)
-	ld s1, 24(sp)
-	ld s2, 32(sp)
-	addi sp, sp, 40
-	ret
+	bne s1, s2, label17
+label20:
+	ble s2, zero, label23
+	mv s1, zero
 .p2align 2
-label24:
-	jal getint
-	sh2add a1, s3, s0
-	addiw s3, s3, 1
-	sw a0, 0(a1)
-	bgt s2, s3, label24
-	addiw a1, s2, -1
-	mv a0, zero
-	beq zero, a1, label23
-	j label115
+label21:
+	sh2add a1, s1, s0
+	lw a0, 0(a1)
+	jal putint
+	li a0, 32
+	jal putch
+	addiw s1, s1, 1
+	bgt s2, s1, label21
+	j label23
+.p2align 2
+label43:
+	sh2add a3, s2, s0
+	sh2add a4, a1, s0
+	lw a2, 0(a3)
+	lw a5, 0(a4)
+	sw a5, 0(a3)
+	sw a2, 0(a4)
+	beq s1, s2, label20
+label17:
+	blt s1, s2, label19
+	addiw a0, s2, 1
 label6:
 	beq a0, a1, label23
 	j label115
-label72:
+label19:
 	addiw a1, s2, -1
 	j label6

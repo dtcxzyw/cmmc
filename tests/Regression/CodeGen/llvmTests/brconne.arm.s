@@ -27,12 +27,10 @@ test:
 	ldr r0, [r0, #0]
 	ldr r1, [r1, #0]
 	cmp r0, r1
-	beq label2
-label3:
-	bx lr
-label2:
+	bne label3
 	movw r0, #:lower16:result
 	mov r1, #1
 	movt r0, #:upper16:result
 	str r1, [r0, #0]
-	b label3
+label3:
+	bx lr

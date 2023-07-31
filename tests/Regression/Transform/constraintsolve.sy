@@ -39,3 +39,12 @@ int test7(int x, int y, int z, int w) {
         return y != w;
     return 1;
 }
+int test8(int n) {
+    for(int i = 0; i < n; ++i) {
+        if(n > 0)
+            return 0;
+        else
+            return i;
+    }
+    return 0;
+}

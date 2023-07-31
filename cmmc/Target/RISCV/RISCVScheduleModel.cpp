@@ -12,6 +12,7 @@
     limitations under the License.
 */
 
+#include "cmmc/CodeGen/Target.hpp"
 #include <RISCV/InstInfoDecl.hpp>
 #include <cmmc/CodeGen/InstInfo.hpp>
 #include <cmmc/CodeGen/MIR.hpp>
@@ -482,14 +483,12 @@ static bool largeImmMaterialize(MIRBasicBlock& block) {
     return modified;
 }
 
-static bool foldStoreZero(MIRFunction& func, MIRBasicBlock& block) {
+static bool foldStoreZero(MIRFunction& func, MIRBasicBlock& block, const CodeGenContext& ctx) {
     bool modified = false;
+    auto prevStore = block.instructions().end();
     for(auto iter = block.instructions().begin(); iter != block.instructions().end(); ++iter) {
-        if(iter == block.instructions().begin())
-            continue;
         auto isStoreZero = [&](const MIRInst& inst, int32_t offset) {
-            if(inst.opcode() != SW)
-                return false;
+            assert(inst.opcode() == SW);
             if(inst.getOperand(0).reg() != X0)
                 return false;
             const auto& base = inst.getOperand(2);
@@ -501,8 +500,24 @@ static bool foldStoreZero(MIRFunction& func, MIRBasicBlock& block) {
             const auto alignment = inst.getOperand(3).imm();
             return offset == 0 ? alignment >= 8 : alignment == 4;
         };
+
         auto& inst = *iter;
-        auto& prevInst = *std::prev(iter);
+        if(inst.opcode() != SW) {
+            auto& info = ctx.instInfo.getInstInfo(inst);
+            if(requireOneFlag(info.getInstFlag(), InstFlagSideEffect))
+                prevStore = block.instructions().end();
+            continue;
+        }
+
+        if(prevStore == block.instructions().end()) {
+            prevStore = iter;
+            continue;
+        }
+
+        auto prevIter = prevStore;
+        auto& prevInst = *prevStore;
+        prevStore = iter;
+
         if(isStoreZero(prevInst, 0) && isStoreZero(inst, 4)) {
             const auto prevBase = prevInst.getOperand(2);
             const auto base = inst.getOperand(2);
@@ -517,7 +532,8 @@ static bool foldStoreZero(MIRFunction& func, MIRBasicBlock& block) {
             inst.setOpcode(SD);
             inst.setOperand<1>(prevInst.getOperand(1));
             inst.setOperand<3>(prevInst.getOperand(3));
-            block.instructions().erase(std::prev(iter));
+            block.instructions().erase(prevIter);
+            prevStore = block.instructions().end();
             modified = true;
         }
     }
@@ -876,7 +892,7 @@ bool RISCVScheduleModel_sifive_u74::peepholeOpt(MIRFunction& func, CodeGenContex
     }
     if(ctx.flags.postSA) {
         for(auto& block : func.blocks())
-            modified |= foldStoreZero(func, *block);
+            modified |= foldStoreZero(func, *block, ctx);
     }
     modified |= branch2jump(func, ctx);
     modified |= removeDeadBranch(func, ctx);

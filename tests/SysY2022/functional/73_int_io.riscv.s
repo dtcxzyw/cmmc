@@ -5,11 +5,11 @@
 main:
 .p2align 2
 	addi sp, sp, -96
-	sd s0, 88(sp)
-	addi s0, sp, 0
-	sd s1, 80(sp)
-	sd s2, 72(sp)
-	sd ra, 64(sp)
+	sd ra, 0(sp)
+	sd s0, 8(sp)
+	addi s0, sp, 32
+	sd s1, 16(sp)
+	sd s2, 24(sp)
 label2:
 	jal getch
 	li a1, 9
@@ -19,20 +19,8 @@ label3:
 	jal getch
 	li a2, 10
 	addiw a1, a0, -48
-	bgeu a1, a2, label6
-	sh2add a0, s1, s1
-	sh1add s1, a0, a1
-	j label3
-label6:
-	bgt s1, zero, label10
-label7:
-	mv a0, zero
-	ld ra, 64(sp)
-	ld s2, 72(sp)
-	ld s1, 80(sp)
-	ld s0, 88(sp)
-	addi sp, sp, 96
-	ret
+	bltu a1, a2, label5
+	ble s1, zero, label7
 .p2align 2
 label10:
 	jal getch
@@ -62,9 +50,8 @@ label18:
 	sh2add a1, s2, s0
 	lw a0, 0(a1)
 	jal putch
-	ble s2, zero, label17
-	mv a0, s2
-	j label18
+	bgt s2, zero, label76
+	j label17
 .p2align 2
 label20:
 	sh2add a1, a0, s0
@@ -83,12 +70,28 @@ label20:
 	bgt a2, zero, label20
 	bgt a0, zero, label18
 	j label17
-.p2align 2
-label121:
+label7:
 	mv a0, zero
-	j label17
+	ld ra, 0(sp)
+	ld s0, 8(sp)
+	ld s1, 16(sp)
+	ld s2, 24(sp)
+	addi sp, sp, 96
+	ret
 .p2align 2
 label13:
 	sh2add a1, s2, s2
 	sh1add s2, a1, a0
 	j label11
+.p2align 2
+label76:
+	mv a0, s2
+	j label18
+label5:
+	sh2add a0, s1, s1
+	sh1add s1, a0, a1
+	j label3
+.p2align 2
+label121:
+	mv a0, zero
+	j label17

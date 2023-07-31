@@ -349,11 +349,7 @@ label18:
 	bge label28
 	add r0, r9, #4
 	cmp r0, #10
-	blt label339
-	mov r0, r9
-	mov r1, r8
-	b label25
-label339:
+	bge label338
 	mov r0, r8
 	mov r1, r9
 label22:
@@ -393,13 +389,12 @@ label22:
 	mls r3, r4, r8, r3
 	str r3, [r2, #12]
 	add r2, r0, #28
-	blt label361
-	mov r0, r1
-	mov r1, r2
-	b label25
-label361:
+	bge label360
 	mov r0, r2
 	b label22
+label360:
+	mov r0, r1
+	mov r1, r2
 label25:
 	movw r2, #63339
 	movw r3, #18373
@@ -436,3 +431,7 @@ label31:
 	add sp, sp, #4
 	mov r0, #0
 	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
+label338:
+	mov r0, r9
+	mov r1, r8
+	b label25

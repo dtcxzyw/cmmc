@@ -16,12 +16,8 @@ P:
 .globl foo
 foo:
 .p2align 2
-	bgtz $a0, label2
+	blez $a0, label5
 	nop
-label5:
-	jr $ra
-	nop
-label2:
 	lui $t1, %hi(B)
 	addiu $t0, $t1, %lo(B)
 	lwc1 $f4, %lo(B)($t1)
@@ -50,5 +46,6 @@ label3:
 	addiu $t3, $t3, 1
 	bne $a0, $t3, label3
 	nop
-	b label5
+label5:
+	jr $ra
 	nop

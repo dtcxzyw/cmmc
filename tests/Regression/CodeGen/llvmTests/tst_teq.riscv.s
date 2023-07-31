@@ -17,9 +17,9 @@ g:
 .p2align 2
 	xori a2, a0, 255
 	li a1, 20
-	beq a2, zero, label18
+	beq a2, zero, label19
 	li a1, 10
-label18:
+label19:
 	li a2, 4294967295
 	and a0, a1, a2
 	ret

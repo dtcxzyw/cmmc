@@ -19,9 +19,9 @@ test_optsize:
 	li a2, 5
 	remuw a1, a0, a2
 	li a0, 42
-	beq a1, zero, label20
+	beq a1, zero, label21
 	li a0, -10
-label20:
+label21:
 	li a1, 4294967295
 	and a0, a0, a1
 	ret

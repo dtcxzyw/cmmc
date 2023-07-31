@@ -15,9 +15,9 @@ label8:
 pass_vector_bool:
 .p2align 2
 	li a1, 66
-	bne a0, zero, label16
+	bne a0, zero, label17
 	mv a1, zero
-label16:
+label17:
 	li a2, 4294967295
 	and a0, a1, a2
 	ret

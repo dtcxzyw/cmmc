@@ -7,27 +7,27 @@ main:
 	addi sp, sp, -96
 	lui a0, 260096
 	fmv.w.x f12, zero
-	sd s0, 40(sp)
+	sd ra, 0(sp)
 	fmv.w.x f10, a0
-	addi s0, sp, 0
-	sd s1, 88(sp)
+	sd s0, 8(sp)
 	lui a0, 262144
-	addi s1, sp, 24
+	addi s0, sp, 80
+	sd s1, 16(sp)
 	fmv.w.x f11, a0
-	sd s3, 16(sp)
-	addi s3, sp, 48
-	sd s2, 80(sp)
+	addi s1, sp, 64
+	sd s3, 24(sp)
+	addi s3, sp, 40
+	sd s2, 32(sp)
 	mv s2, zero
-	sd ra, 72(sp)
-	fsw f10, 32(sp)
-	fsw f11, 4(sp)
-	fsw f12, 52(sp)
-	fsw f12, 56(sp)
-	fsw f10, 24(sp)
-	fsw f11, 0(sp)
-	fsw f10, 28(sp)
-	fsw f11, 8(sp)
+	fsw f10, 72(sp)
+	fsw f11, 84(sp)
+	fsw f12, 44(sp)
 	fsw f12, 48(sp)
+	fsw f10, 64(sp)
+	fsw f11, 80(sp)
+	fsw f10, 68(sp)
+	fsw f11, 88(sp)
+	fsw f12, 40(sp)
 label2:
 	sh2add a1, s2, s3
 	flw f10, 0(a1)
@@ -60,11 +60,11 @@ label8:
 	blt s1, a0, label8
 	li a0, 10
 	jal putch
-	ld ra, 72(sp)
+	ld ra, 0(sp)
 	mv a0, zero
-	ld s2, 80(sp)
-	ld s3, 16(sp)
-	ld s1, 88(sp)
-	ld s0, 40(sp)
+	ld s0, 8(sp)
+	ld s1, 16(sp)
+	ld s3, 24(sp)
+	ld s2, 32(sp)
 	addi sp, sp, 96
 	ret

@@ -27,39 +27,36 @@ write:
     nop
 gcd:
 	addiu $sp, $sp, -32
-	sw $ra, 24($sp)
+	sw $ra, 16($sp)
 	move $t0, $a0
-	addiu $a0, $sp, 16
+	addiu $a0, $sp, 24
 	lw $v0, 0($t0)
 	lw $t0, 4($t0)
 	move $t1, $t0
-	bne $t0, $zero, label2
+	beq $t0, $zero, label3
 	nop
-label3:
-	lw $ra, 24($sp)
-	addiu $sp, $sp, 32
-	jr $ra
-	nop
-label2:
-	div $zero, $v0, $t1
+	div $zero, $v0, $t0
 	mflo $t2
-	mult $t1, $t2
+	mult $t0, $t2
 	mflo $t1
 	subu $t1, $v0, $t1
-	sw $t0, 16($sp)
+	sw $t0, 24($sp)
 	sw $t1, 4($a0)
 	jal gcd
 	nop
-	b label3
+label3:
+	lw $ra, 16($sp)
+	addiu $sp, $sp, 32
+	jr $ra
 	nop
 .globl main
 main:
 	addiu $sp, $sp, -32
-	sw $ra, 24($sp)
-	addiu $t0, $sp, 16
+	sw $ra, 16($sp)
+	addiu $t0, $sp, 24
 	jal read
 	nop
-	sw $v0, 16($sp)
+	sw $v0, 24($sp)
 	jal read
 	nop
 	sw $v0, 4($t0)
@@ -70,7 +67,7 @@ main:
 	jal write
 	nop
 	move $v0, $zero
-	lw $ra, 24($sp)
+	lw $ra, 16($sp)
 	addiu $sp, $sp, 32
 	jr $ra
 	nop

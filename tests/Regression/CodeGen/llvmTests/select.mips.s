@@ -239,44 +239,44 @@ select_sub_3:
 .globl select_udiv_1
 select_udiv_1:
 .p2align 2
-	bne $a0, $zero, label196
+	beq $a0, $zero, label203
 	nop
-	move $v0, $a2
-label197:
-	jr $ra
-	nop
-label196:
 	divu $zero, $a1, $a2
 	mflo $v0
 	b label197
 	nop
+label203:
+	move $v0, $a2
+label197:
+	jr $ra
+	nop
 .globl select_udiv_2
 select_udiv_2:
 .p2align 2
-	bne $a0, $zero, label216
+	beq $a0, $zero, label216
 	nop
-	divu $zero, $a1, $a2
-	mflo $v0
-	b label208
+	move $v0, $a1
+	b label209
 	nop
 label216:
-	move $v0, $a1
-label208:
+	divu $zero, $a1, $a2
+	mflo $v0
+label209:
 	jr $ra
 	nop
 .globl select_udiv_3
 select_udiv_3:
 .p2align 2
-	bne $a0, $zero, label227
+	beq $a0, $zero, label228
 	nop
+	move $v0, $a1
+	b label222
+	nop
+label228:
 	li $t0, 42
 	divu $zero, $a1, $t0
 	mflo $v0
-	b label220
-	nop
-label227:
-	move $v0, $a1
-label220:
+label222:
 	jr $ra
 	nop
 .globl select_xor_1

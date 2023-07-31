@@ -110,11 +110,20 @@ memset_impl:
 	bgt a0, zero, label107
 label106:
 	ret
+label107:
+	auipc a2, %pcrel_hi(arr)
+	li a3, 4
+	addi a1, a2, %pcrel_lo(label107)
+	ble a0, a3, label123
+	addiw a2, a0, -4
+	addiw a4, a0, -20
+	li a3, 16
+	ble a2, a3, label129
+	mv a3, zero
 label109:
 	sh2add a5, a3, a1
-	sw zero, 0(a5)
 	addiw a3, a3, 16
-	sw zero, 4(a5)
+	sd zero, 0(a5)
 	sd zero, 8(a5)
 	sd zero, 16(a5)
 	sd zero, 24(a5)
@@ -139,32 +148,21 @@ label113:
 	sw zero, 0(a3)
 	bgt a0, a2, label113
 	j label106
-label107:
-	auipc a2, %pcrel_hi(arr)
-	li a3, 4
-	addi a1, a2, %pcrel_lo(label107)
-	bgt a0, a3, label108
+label123:
 	mv a2, zero
 	j label113
-label108:
-	addiw a2, a0, -4
-	addiw a4, a0, -20
-	li a3, 16
-	bgt a2, a3, label130
+label129:
 	mv a4, zero
 	j label111
-label130:
-	mv a3, zero
-	j label109
 .globl fused_store
 fused_store:
 .p2align 2
-pcrel214:
+pcrel217:
 	auipc a1, %pcrel_hi(arr)
 	li a2, 2
 	li a3, 9
-	addi a0, a1, %pcrel_lo(pcrel214)
-	sw zero, %pcrel_lo(pcrel214)(a1)
+	addi a0, a1, %pcrel_lo(pcrel217)
+	sw zero, %pcrel_lo(pcrel217)(a1)
 	li a1, 1
 	sw a1, 4(a0)
 	li a1, 3

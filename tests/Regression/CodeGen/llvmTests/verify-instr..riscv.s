@@ -6,11 +6,7 @@ mulw:
 .p2align 2
 	mv a2, a0
 	mv a3, a1
-	blt a0, a1, label2
-	li a0, 1
-label8:
-	ret
-label2:
+	bge a0, a1, label15
 	addiw a1, a0, 1
 	bgt a3, a1, label3
 label20:
@@ -22,3 +18,7 @@ label3:
 	addiw a1, a1, 1
 	bgt a3, a1, label3
 	j label20
+label15:
+	li a0, 1
+label8:
+	ret

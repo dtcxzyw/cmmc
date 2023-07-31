@@ -22,17 +22,17 @@ int32_t TargetFrameInfo::insertPrologueEpilogue(MIRFunction& mfunc,
                                                 const std::unordered_set<MIROperand, MIROperandHasher>& calleeSavedRegister,
                                                 CodeGenContext& ctx, bool isNonLeafFunc, const MIROperand& ra) const {
     std::vector<std::pair<MIROperand, MIROperand>> overwrited;
-    if(isNonLeafFunc) {
-        const auto size = getOperandSize(ra.type());
-        const auto alignment = size;
-        const auto storage = mfunc.addStackObject(ctx, size, alignment, 0, StackObjectUsage::CalleeSaved);
-        overwrited.emplace_back(ra, storage);
-    }
     for(auto op : calleeSavedRegister) {
         const auto size = getOperandSize(ctx.registerInfo->getCanonicalizedRegisterType(op.type()));
         const auto alignment = size;
         const auto storage = mfunc.addStackObject(ctx, size, alignment, 0, StackObjectUsage::CalleeSaved);
         overwrited.emplace_back(op, storage);
+    }
+    if(isNonLeafFunc) {
+        const auto size = getOperandSize(ra.type());
+        const auto alignment = size;
+        const auto storage = mfunc.addStackObject(ctx, size, alignment, 0, StackObjectUsage::CalleeSaved);
+        overwrited.emplace_back(ra, storage);
     }
 
     for(auto& block : mfunc.blocks()) {
@@ -47,7 +47,8 @@ int32_t TargetFrameInfo::insertPrologueEpilogue(MIRFunction& mfunc,
         auto& instInfo = ctx.instInfo.getInstInfo(terminator);
         if(requireFlag(instInfo.getInstFlag(), InstFlagReturn)) {
             const auto pos = std::prev(instructions.end());
-            for(auto [p, s] : overwrited) {
+            for(auto it = overwrited.rbegin(); it != overwrited.rend(); ++it) {
+                auto [p, s] = *it;
                 instructions.insert(pos, MIRInst{ InstLoadRegFromStack }.setOperand<0>(p).setOperand<1>(s));
             }
         }

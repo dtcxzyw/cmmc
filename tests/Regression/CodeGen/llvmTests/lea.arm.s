@@ -14,14 +14,12 @@ test1:
 test2:
 .p2align 4
 	cmp r0, #4
-	bgt label6
-label7:
-	bx lr
-label6:
+	ble label7
 	sub r1, r0, #5
 	sub r0, r0, #4
 	lsr r1, r1, #2
 	lsl r1, r1, #2
 	rsb r1, r1, #0
 	add r0, r1, r0
-	b label7
+label7:
+	bx lr

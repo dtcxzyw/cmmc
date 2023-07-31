@@ -14,9 +14,9 @@ label7:
 no_sat0_incorrect_variable:
 .p2align 2
 	mv a2, zero
-	blt a0, zero, label15
+	blt a0, zero, label16
 	mv a2, a1
-label15:
+label16:
 	mv a0, a2
 	ret
 .globl sat0_base_16bit
@@ -26,18 +26,18 @@ sat0_base_16bit:
 	li a1, 65535
 	mv a3, zero
 	and a0, a0, a1
-	blt a2, zero, label27
+	blt a2, zero, label29
 	mv a3, a0
-label27:
+label29:
 	and a0, a3, a1
 	ret
 .globl sat0_base_32bit
 sat0_base_32bit:
 .p2align 2
 	mv a1, zero
-	blt a0, zero, label34
+	blt a0, zero, label37
 	mv a1, a0
-label34:
+label37:
 	mv a0, a1
 	ret
 .globl sat0_base_8bit
@@ -46,18 +46,18 @@ sat0_base_8bit:
 	sext.b a1, a0
 	andi a2, a0, 255
 	mv a0, zero
-	blt a1, zero, label44
+	blt a1, zero, label48
 	mv a0, a2
-label44:
+label48:
 	andi a0, a0, 255
 	ret
 .globl sat0_lower_1
 sat0_lower_1:
 .p2align 2
 	mv a1, a0
-	bgt a0, zero, label51
+	bgt a0, zero, label56
 	mv a1, zero
-label51:
+label56:
 	mv a0, a1
 	ret
 .globl sat1_base_16bit
@@ -68,9 +68,9 @@ sat1_base_16bit:
 	li a4, -1
 	li a3, -1
 	and a0, a0, a1
-	blt a2, a4, label64
+	blt a2, a4, label70
 	mv a3, a0
-label64:
+label70:
 	and a0, a3, a1
 	ret
 .globl sat1_base_32bit
@@ -78,9 +78,9 @@ sat1_base_32bit:
 .p2align 2
 	li a2, -1
 	li a1, -1
-	blt a0, a2, label72
+	blt a0, a2, label79
 	mv a1, a0
-label72:
+label79:
 	mv a0, a1
 	ret
 .globl sat1_base_8bit
@@ -90,9 +90,9 @@ sat1_base_8bit:
 	andi a2, a0, 255
 	li a3, -1
 	li a0, -1
-	blt a1, a3, label83
+	blt a1, a3, label91
 	mv a0, a2
-label83:
+label91:
 	andi a0, a0, 255
 	ret
 .globl sat1_lower_1
@@ -100,8 +100,8 @@ sat1_lower_1:
 .p2align 2
 	li a2, -1
 	mv a1, a0
-	bgt a0, a2, label92
+	bgt a0, a2, label101
 	li a1, -1
-label92:
+label101:
 	mv a0, a1
 	ret
