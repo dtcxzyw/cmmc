@@ -18,10 +18,8 @@ v27 := #0
 LABEL label29 :
 READ v19
 WRITE v27
-IF v15 < v16 GOTO label6
-LABEL label20 :
-RETURN #0
-LABEL label6 :
+IF v15 >= v16 GOTO label20
 IF v16 >= v19 GOTO label20
 WRITE #1
-GOTO label20
+LABEL label20 :
+RETURN #0

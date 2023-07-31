@@ -1,43 +1,44 @@
 FUNCTION main :
 v3 := #1
-IF v3 < #31 GOTO label17
-LABEL label16 :
-RETURN #0
+IF v3 >= #31 GOTO label16
 LABEL label17 :
 v5 := #0
 v6 := #1
-IF v3 >= v6 GOTO label10
-IF v5 == #2 GOTO label8
-v27 := v3 + #1
-v3 := v27
-IF v27 < #31 GOTO label17
-GOTO label16
-LABEL label10 :
-v28 := v3 / v6
-v29 := v6 * v28
-IF v3 == v29 GOTO label11
-v35 := v6 + #1
-v6 := v35
-IF v3 >= v35 GOTO label10
-IF v5 == #2 GOTO label8
-v27 := v3 + #1
-v3 := v27
-IF v27 < #31 GOTO label17
-GOTO label16
-LABEL label11 :
-v34 := v5 + #1
-v35 := v6 + #1
-v5 := v34
-v6 := v35
-IF v3 >= v35 GOTO label10
-IF v34 == #2 GOTO label8
-v27 := v3 + #1
-v3 := v27
-IF v27 < #31 GOTO label17
+IF v3 < v6 GOTO label20
+LABEL label7 :
+v23 := v3 / v6
+v24 := v6 * v23
+IF v3 == v24 GOTO label8
+v30 := v6 + #1
+v6 := v30
+IF v3 >= v30 GOTO label7
+IF v5 == #2 GOTO label12
+v35 := v3 + #1
+v3 := v35
+IF v35 < #31 GOTO label17
+LABEL label16 :
+RETURN #0
+LABEL label20 :
+IF v5 != #2 GOTO label36
+LABEL label12 :
+WRITE v3
+v35 := v3 + #1
+v3 := v35
+IF v35 < #31 GOTO label17
 GOTO label16
 LABEL label8 :
-WRITE v3
-v27 := v3 + #1
-v3 := v27
-IF v27 < #31 GOTO label17
+v29 := v5 + #1
+v30 := v6 + #1
+v5 := v29
+v6 := v30
+IF v3 >= v30 GOTO label7
+IF v29 == #2 GOTO label12
+v35 := v3 + #1
+v3 := v35
+IF v35 < #31 GOTO label17
+GOTO label16
+LABEL label36 :
+v35 := v3 + #1
+v3 := v35
+IF v35 < #31 GOTO label17
 GOTO label16

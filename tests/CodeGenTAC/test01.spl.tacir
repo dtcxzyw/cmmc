@@ -1,12 +1,12 @@
 FUNCTION main :
 READ v7
-IF v7 > #0 GOTO label6
+IF v7 <= #0 GOTO label9
+WRITE #1
+RETURN #0
+LABEL label9 :
 IF v7 >= #0 GOTO label5
 WRITE #-1
 RETURN #0
 LABEL label5 :
 WRITE #0
-RETURN #0
-LABEL label6 :
-WRITE #1
 RETURN #0

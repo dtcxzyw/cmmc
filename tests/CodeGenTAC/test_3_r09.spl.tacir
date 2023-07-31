@@ -8,7 +8,11 @@ v7 := #0
 LABEL label5 :
 v28 := v6 / #10
 v30 := v7 + #1
-IF v28 > #0 GOTO label32
+IF v28 <= #0 GOTO label31
+v6 := v28
+v7 := v30
+GOTO label5
+LABEL label31 :
 v34 := v7 + #2
 v35 := v34 - v30
 v11 := #0
@@ -32,30 +36,9 @@ IF v18 == #1 GOTO label19
 v63 := v4 + #1
 v4 := v63
 IF v63 < #500 GOTO label26
-GOTO label23
-LABEL label32 :
-v6 := v28
-v7 := v30
-GOTO label5
-LABEL label12 :
-v41 := v13 * #2
-v42 := v41 - v13
-v43 := v42 + #-1
-v45 := v38 * v14
-IF v43 > #0 GOTO label47
-v49 := v11 + v45
-IF v40 > #0 GOTO label52
-IF v4 == v49 GOTO label56
-v18 := #0
-IF v18 == #1 GOTO label19
-v63 := v4 + #1
-v4 := v63
-IF v63 < #500 GOTO label26
-GOTO label23
-LABEL label47 :
-v13 := v43
-v14 := v45
-GOTO label12
+LABEL label23 :
+WRITE v3
+RETURN v3
 LABEL label52 :
 v11 := v49
 v36 := v40 / #10
@@ -78,9 +61,21 @@ IF v18 == #1 GOTO label19
 v63 := v4 + #1
 v4 := v63
 IF v63 < #500 GOTO label26
-LABEL label23 :
-WRITE v3
-RETURN v3
+GOTO label23
+LABEL label12 :
+v41 := v13 * #2
+v42 := v41 - v13
+v43 := v42 + #-1
+v45 := v38 * v14
+IF v43 <= #0 GOTO label46
+LABEL label47 :
+v13 := v43
+v14 := v45
+GOTO label12
+LABEL label46 :
+v49 := v11 + v45
+IF v40 > #0 GOTO label52
+IF v4 != v49 GOTO label68
 LABEL label56 :
 v18 := #1
 IF v18 == #1 GOTO label19
@@ -88,11 +83,19 @@ v63 := v4 + #1
 v4 := v63
 IF v63 < #500 GOTO label26
 GOTO label23
+LABEL label68 :
+v18 := #0
+IF v18 != #1 GOTO label76
 LABEL label19 :
 WRITE v4
 v62 := v3 + #1
 v63 := v4 + #1
 v3 := v62
+v4 := v63
+IF v63 < #500 GOTO label26
+GOTO label23
+LABEL label76 :
+v63 := v4 + #1
 v4 := v63
 IF v63 < #500 GOTO label26
 GOTO label23

@@ -1,22 +1,21 @@
 FUNCTION main :
 READ v8
-IF v8 > #1 GOTO label11
-v7 := #1
-GOTO label6
-LABEL label11 :
+IF v8 <= #1 GOTO label10
 v3 := v8
 v4 := #1
 LABEL label2 :
 v13 := v3 * v4
 v14 := v3 + #-1
-IF v14 != #1 GOTO label17
-v19 := v13 * v14
-v7 := v19
-GOTO label6
-LABEL label17 :
+IF v14 == #1 GOTO label16
 v3 := v14
 v4 := v13
 GOTO label2
+LABEL label10 :
+v7 := #1
 LABEL label6 :
 WRITE v7
 RETURN #0
+LABEL label16 :
+v19 := v13 * v14
+v7 := v19
+GOTO label6

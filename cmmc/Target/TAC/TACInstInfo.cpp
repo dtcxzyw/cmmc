@@ -75,6 +75,9 @@ static void inverseBranchImpl(MIRInst& inst, MIRBasicBlock* newTarget) {
         case BranchLt:
             inst.setOpcode(BranchGe);
             break;
+        case BranchLe:
+            inst.setOpcode(BranchGt);
+            break;
         case BranchGe:
             inst.setOpcode(BranchLt);
             break;

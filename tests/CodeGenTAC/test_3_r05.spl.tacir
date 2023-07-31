@@ -1,29 +1,31 @@
 FUNCTION main :
 READ v13
 IF v13 < #1 GOTO label2
-IF v13 == #1 GOTO label12
-IF v13 == #2 GOTO label12
-IF v13 > #2 GOTO label28
-GOTO label42
+GOTO label15
+LABEL label41 :
+RETURN #0
 LABEL label2 :
 WRITE #0
-LABEL label42 :
-RETURN #0
-LABEL label12 :
+GOTO label41
+LABEL label15 :
+IF v13 != #1 GOTO label37
+LABEL label5 :
 WRITE #1
 RETURN #0
-LABEL label28 :
-v8 := #3
-v9 := #1
-v10 := v9
-LABEL label7 :
-v30 := v8 + #1
-v32 := v9 + v10
-IF v13 < v30 GOTO label11
-v8 := v30
-v9 := v10
-v10 := v32
-GOTO label7
-LABEL label11 :
+LABEL label37 :
+IF v13 == #2 GOTO label5
+IF v13 <= #2 GOTO label41
+v9 := #3
+v10 := #1
+v11 := v10
+LABEL label8 :
+v30 := v9 + #1
+v32 := v10 + v11
+IF v13 < v30 GOTO label12
+v9 := v30
+v10 := v11
+v11 := v32
+GOTO label8
+LABEL label12 :
 WRITE v32
 RETURN #0

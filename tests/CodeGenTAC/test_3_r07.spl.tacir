@@ -4,23 +4,19 @@ READ v20
 v21 := v19 / v20
 v22 := v20 * v21
 v23 := v19 - v22
-IF v23 != #0 GOTO label26
-v6 := v20
-GOTO label5
-LABEL label26 :
+IF v23 == #0 GOTO label25
 v3 := v23
 v4 := v20
 LABEL label2 :
 v28 := v4 / v3
 v29 := v3 * v28
 v30 := v4 - v29
-IF v30 != #0 GOTO label33
-v6 := v3
-GOTO label5
-LABEL label33 :
+IF v30 == #0 GOTO label32
 v4 := v3
 v3 := v30
 GOTO label2
+LABEL label25 :
+v6 := v20
 LABEL label5 :
 WRITE v6
 v8 := v20
@@ -59,76 +55,8 @@ GOTO label122
 LABEL label11 :
 WRITE v12
 RETURN #0
-LABEL label72 :
-v12 := v16
-GOTO label11
-LABEL label122 :
-v15 := v50
-v16 := v9
-IF v50 < v9 GOTO label17
-v67 := v50 / v9
-v68 := v9 * v67
-v69 := v50 - v68
-IF v69 == #0 GOTO label72
-LABEL label125 :
-v8 := v69
-v9 := v16
-IF v69 < v16 GOTO label10
-v48 := v69 / v16
-v49 := v16 * v48
-v50 := v69 - v49
-IF v50 == #0 GOTO label53
-GOTO label122
-LABEL label10 :
-v40 := v9 / v8
-v41 := v8 * v40
-v42 := v9 - v41
-IF v42 == #0 GOTO label45
-v9 := v8
-v8 := v42
-IF v42 < v9 GOTO label10
-v48 := v42 / v9
-v49 := v9 * v48
-v50 := v42 - v49
-IF v50 == #0 GOTO label53
-v15 := v50
-v16 := v9
-IF v50 < v9 GOTO label17
-v67 := v50 / v9
-v68 := v9 * v67
-v69 := v50 - v68
-IF v69 == #0 GOTO label72
-v8 := v69
-IF v69 < v9 GOTO label10
-v48 := v69 / v9
-v49 := v9 * v48
-v50 := v69 - v49
-IF v50 == #0 GOTO label53
-v15 := v50
-IF v50 < v9 GOTO label17
-v67 := v50 / v9
-v68 := v9 * v67
-v69 := v50 - v68
-IF v69 == #0 GOTO label72
-v8 := v69
-IF v69 < v9 GOTO label10
-v48 := v69 / v9
-v49 := v9 * v48
-v50 := v69 - v49
-IF v50 == #0 GOTO label53
-GOTO label122
-LABEL label45 :
-v12 := v8
-GOTO label11
 LABEL label53 :
 v12 := v9
-GOTO label11
-LABEL label17 :
-v59 := v16 / v15
-v60 := v15 * v59
-v61 := v16 - v60
-IF v61 != #0 GOTO label64
-v12 := v15
 GOTO label11
 LABEL label64 :
 v16 := v15
@@ -162,5 +90,79 @@ IF v50 < v16 GOTO label17
 v67 := v50 / v16
 v68 := v16 * v67
 v69 := v50 - v68
+IF v69 != #0 GOTO label125
+LABEL label72 :
+v12 := v16
+GOTO label11
+LABEL label122 :
+v15 := v50
+v16 := v9
+IF v50 < v9 GOTO label17
+GOTO label124
+LABEL label87 :
+v67 := v15 / v16
+v68 := v16 * v67
+v69 := v15 - v68
 IF v69 == #0 GOTO label72
-GOTO label125
+v8 := v69
+v9 := v16
+IF v69 < v16 GOTO label10
+v48 := v69 / v16
+v49 := v16 * v48
+v50 := v69 - v49
+IF v50 == #0 GOTO label53
+v15 := v50
+IF v50 < v16 GOTO label17
+v67 := v50 / v16
+v68 := v16 * v67
+v69 := v50 - v68
+IF v69 == #0 GOTO label72
+v8 := v69
+IF v69 < v16 GOTO label10
+v48 := v69 / v16
+v49 := v16 * v48
+v50 := v69 - v49
+IF v50 == #0 GOTO label53
+GOTO label122
+LABEL label124 :
+v67 := v15 / v16
+v68 := v16 * v67
+v69 := v15 - v68
+IF v69 == #0 GOTO label72
+LABEL label125 :
+v8 := v69
+v9 := v16
+IF v69 < v16 GOTO label10
+v48 := v69 / v16
+v49 := v16 * v48
+v50 := v69 - v49
+IF v50 == #0 GOTO label53
+GOTO label122
+LABEL label10 :
+v40 := v9 / v8
+v41 := v8 * v40
+v42 := v9 - v41
+IF v42 == #0 GOTO label45
+v9 := v8
+v8 := v42
+IF v42 < v9 GOTO label10
+v48 := v42 / v9
+v49 := v9 * v48
+v50 := v42 - v49
+IF v50 == #0 GOTO label53
+v15 := v50
+v16 := v9
+IF v50 >= v9 GOTO label87
+LABEL label17 :
+v59 := v16 / v15
+v60 := v15 * v59
+v61 := v16 - v60
+IF v61 != #0 GOTO label64
+v12 := v15
+GOTO label11
+LABEL label32 :
+v6 := v3
+GOTO label5
+LABEL label45 :
+v12 := v8
+GOTO label11

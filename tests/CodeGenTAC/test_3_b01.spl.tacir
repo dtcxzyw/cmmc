@@ -2,58 +2,50 @@ FUNCTION main :
 DEC x21 400
 READ v23
 READ v25
-IF v23 > #0 GOTO label27
-v5 := #0
-v6 := v5
-v7 := #1
-IF v23 >= v7 GOTO label8
-GOTO label62
-LABEL label27 :
+IF v23 <= #0 GOTO label26
 v3 := #1
 LABEL label2 :
 v29 := v3 * #4
 v30 := &x21 + v29
 *v30 := #1
 v31 := v3 + #1
-IF v23 >= v31 GOTO label34
+IF v23 < v31 GOTO label33
+v3 := v31
+GOTO label2
+LABEL label26 :
 v5 := #0
 v6 := v5
 v7 := #1
-IF v23 >= v7 GOTO label8
-GOTO label62
-LABEL label34 :
-v3 := v31
-GOTO label2
+IF v23 < v7 GOTO label62
 LABEL label8 :
 v40 := v7 * #4
 v41 := &x21 + v40
 v42 := *v41
-IF v42 == #1 GOTO label9
-v15 := v5
-v16 := v6
+IF v42 != #1 GOTO label44
+v47 := v6 + v42
+IF v25 != v47 GOTO label49
+WRITE v7
+*v41 := #0
+v52 := v5 + #1
+v12 := #0
+IF v23 == v52 GOTO label62
+v15 := v52
+v16 := v12
 IF v23 == v7 GOTO label17
 v19 := v7
 v61 := v7 + #1
+v5 := v52
+v6 := v12
 v7 := v61
 IF v23 >= v61 GOTO label8
 LABEL label62 :
 RETURN #0
-LABEL label13 :
-WRITE v7
-*v41 := #0
-v56 := v5 + #1
-v11 := #0
-IF v23 == v56 GOTO label62
-v15 := v56
-v16 := v11
-IF v23 == v7 GOTO label17
-v19 := v7
-v61 := v7 + #1
-v5 := v56
-v6 := v11
-v7 := v61
-IF v23 >= v61 GOTO label8
-GOTO label62
+LABEL label49 :
+v12 := v47
+IF v23 == v5 GOTO label62
+v15 := v5
+v16 := v47
+IF v23 != v7 GOTO label69
 LABEL label17 :
 v19 := #0
 v61 := v19 + #1
@@ -62,17 +54,26 @@ v6 := v16
 v7 := v61
 IF v23 >= v61 GOTO label8
 GOTO label62
-LABEL label9 :
-v47 := v6 + v42
-IF v25 == v47 GOTO label13
-v11 := v47
-IF v23 == v5 GOTO label62
+LABEL label33 :
+v5 := #0
+v6 := v5
+v7 := #1
+IF v23 >= v7 GOTO label8
+GOTO label62
+LABEL label44 :
 v15 := v5
-v16 := v47
+v16 := v6
 IF v23 == v7 GOTO label17
 v19 := v7
 v61 := v7 + #1
-v6 := v47
+v7 := v61
+IF v23 >= v61 GOTO label8
+GOTO label62
+LABEL label69 :
+v19 := v7
+v61 := v7 + #1
+v5 := v15
+v6 := v16
 v7 := v61
 IF v23 >= v61 GOTO label8
 GOTO label62

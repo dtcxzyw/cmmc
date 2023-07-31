@@ -6,9 +6,9 @@ v6 := v3 + #1
 WRITE v6
 v7 := v4 + #1
 v9 := v3 + #2
-IF v7 < #2 GOTO label11
-RETURN #0
-LABEL label11 :
+IF v7 >= #2 GOTO label10
 v3 := v9
 v4 := v7
 GOTO label2
+LABEL label10 :
+RETURN #0

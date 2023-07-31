@@ -103,24 +103,45 @@ static BlockSeq solvePettisHansen(const std::vector<uint32_t>& weights, const st
     std::sort(edgeInfo.begin(), edgeInfo.end(), [](auto& lhs, auto& rhs) { return lhs.second > rhs.second; });
     Graph graph(blockCount);
     uint32_t p = 0;
+
+    constexpr auto dumpCFG = false;
+    if(dumpCFG) {
+        std::cerr << "digraph G {\n";
+    }
+
     for(auto& [e, f] : edgeInfo) {
         CMMC_UNUSED(f);
         auto& [u, v, prob] = e;
-        // std::cerr << u << " -> " << v << std::endl;
-        if(u == v)
+        if(dumpCFG) {
+            std::cerr << u << " -> " << v << "[color=";
+        }
+        if(u == v) {
+            if(dumpCFG)
+                std::cerr << "blue]";
             continue;
+        }
         graph[u].push_back(v);
         auto& [pv, cv] = chains[v];
         if(findFa(v) != v) {
+            if(dumpCFG)
+                std::cerr << "blue]";
             continue;  // merged
         }
         auto& [pu, cu] = chains[findFa(u)];
         if(cu.back() != u) {
+            if(dumpCFG)
+                std::cerr << "blue]";
             continue;  // merged
         }
         pu = std::min(std::min(pu, pv), ++p);
         cu.merge(cv);
         fa[v] = findFa(u);
+        if(dumpCFG)
+            std::cerr << "red]";
+    }
+
+    if(dumpCFG) {
+        std::cerr << "}\n";
     }
 
     // Stage2: code layout
