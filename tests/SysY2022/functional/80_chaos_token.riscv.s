@@ -153,11 +153,11 @@ pcrel183:
 	mv a1, zero
 	mv s3, zero
 	li a0, 23
-	slli a1, a0, 1
-	srli a2, a1, 59
-	add a3, a0, a2
-	andi a1, a3, -32
-	subw s1, a0, a1
+	slli a2, a0, 1
+	srli a3, a2, 59
+	add a1, a0, a3
+	andi a2, a1, -32
+	subw s1, a0, a2
 	beq s1, zero, label19
 	j label4
 label31:
@@ -194,13 +194,13 @@ label14:
 	lw a0, 0(sp)
 	bne a0, zero, label75
 	slliw a1, s1, 4
-	addw a2, a1, s1
-	addiw a0, a2, 23
-	slli a1, a0, 1
-	srli a2, a1, 59
-	add a3, a0, a2
-	andi a1, a3, -32
-	subw s1, a0, a1
+	addw a3, a1, s1
+	addiw a0, a3, 23
+	slli a2, a0, 1
+	srli a3, a2, 59
+	add a1, a0, a3
+	andi a2, a1, -32
+	subw s1, a0, a2
 	beq s1, zero, label19
 	j label4
 label70:
@@ -216,13 +216,13 @@ label12:
 	lw a0, 0(sp)
 	bne a0, zero, label75
 	slliw a1, s1, 4
-	addw a2, a1, s1
-	addiw a0, a2, 23
-	slli a1, a0, 1
-	srli a2, a1, 59
-	add a3, a0, a2
-	andi a1, a3, -32
-	subw s1, a0, a1
+	addw a3, a1, s1
+	addiw a0, a3, 23
+	slli a2, a0, 1
+	srli a3, a2, 59
+	add a1, a0, a3
+	andi a2, a1, -32
+	subw s1, a0, a2
 	beq s1, zero, label19
 	j label4
 label6:
@@ -247,13 +247,13 @@ pcrel184:
 	lw a0, 0(sp)
 	bne a0, zero, label75
 	slliw a1, s1, 4
-	addw a2, a1, s1
-	addiw a0, a2, 23
-	slli a1, a0, 1
-	srli a2, a1, 59
-	add a3, a0, a2
-	andi a1, a3, -32
-	subw s1, a0, a1
+	addw a3, a1, s1
+	addiw a0, a3, 23
+	slli a2, a0, 1
+	srli a3, a2, 59
+	add a1, a0, a3
+	andi a2, a1, -32
+	subw s1, a0, a2
 	beq s1, zero, label19
 	j label4
 label56:
@@ -283,13 +283,13 @@ pcrel185:
 	lw a0, 0(sp)
 	bne a0, zero, label75
 	slliw a1, s1, 4
-	addw a2, a1, s1
-	addiw a0, a2, 23
-	slli a1, a0, 1
-	srli a2, a1, 59
-	add a3, a0, a2
-	andi a1, a3, -32
-	subw s1, a0, a1
+	addw a3, a1, s1
+	addiw a0, a3, 23
+	slli a2, a0, 1
+	srli a3, a2, 59
+	add a1, a0, a3
+	andi a2, a1, -32
+	subw s1, a0, a2
 	beq s1, zero, label19
 	j label4
 .p2align 2
@@ -301,13 +301,13 @@ label10:
 	lw a1, 4(s3)
 	bne a1, zero, label10
 	slliw a1, s1, 4
-	addw a2, a1, s1
-	addiw a0, a2, 23
-	slli a1, a0, 1
-	srli a2, a1, 59
-	add a3, a0, a2
-	andi a1, a3, -32
-	subw s1, a0, a1
+	addw a3, a1, s1
+	addiw a0, a3, 23
+	slli a2, a0, 1
+	srli a3, a2, 59
+	add a1, a0, a3
+	andi a2, a1, -32
+	subw s1, a0, a2
 	beq s1, zero, label19
 	j label4
 .p2align 2
@@ -327,11 +327,11 @@ label2:
 	mv a1, zero
 	mv s3, zero
 	li a0, 23
-	slli a1, a0, 1
-	srli a2, a1, 59
-	add a3, a0, a2
-	andi a1, a3, -32
-	subw s1, a0, a1
+	slli a2, a0, 1
+	srli a3, a2, 59
+	add a1, a0, a3
+	andi a2, a1, -32
+	subw s1, a0, a2
 	beq s1, zero, label19
 label4:
 	li a1, 715827883
@@ -343,12 +343,12 @@ label4:
 	remw s3, s1, a0
 	bne a1, s3, label6
 	slliw a1, s1, 4
-	addw a2, a1, s1
-	addiw a0, a2, 23
-	slli a1, a0, 1
-	srli a2, a1, 59
-	add a3, a0, a2
-	andi a1, a3, -32
-	subw s1, a0, a1
+	addw a3, a1, s1
+	addiw a0, a3, 23
+	slli a2, a0, 1
+	srli a3, a2, 59
+	add a1, a0, a3
+	andi a2, a1, -32
+	subw s1, a0, a2
 	beq s1, zero, label19
 	j label4

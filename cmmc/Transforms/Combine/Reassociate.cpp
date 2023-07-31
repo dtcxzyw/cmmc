@@ -54,7 +54,8 @@ class Reassociate final : public TransformPass<Function> {
                 case InstructionID::Or:
                 case InstructionID::Xor:
                 case InstructionID::And:
-                    // TODO: max/min
+                case InstructionID::SMin:
+                case InstructionID::SMax:
                     break;
                 default:
                     return nullptr;
@@ -63,7 +64,9 @@ class Reassociate final : public TransformPass<Function> {
             // gather operands
             auto& args = map[inst];
             for(auto operand : inst->operands()) {
-                if(operand->getBlock() == &block && operand->as<Instruction>()->getInstID() == inst->getInstID()) {
+                if(operand->getBlock() == &block && operand->as<Instruction>()->getInstID() == inst->getInstID()
+                   // && operand->as<Instruction>()->hasExactlyOneUse()
+                ) {
                     auto& sub = map.at(operand);
                     if(sub.size() < 512U) {
                         args.insert(args.cend(), sub.cbegin(), sub.cend());
@@ -113,7 +116,10 @@ class Reassociate final : public TransformPass<Function> {
                     if(c & 1)
                         reduce(val);
                     c >>= 1;
-                    val = builder.makeOp<BinaryInst>(InstructionID::Mul, val, val);
+                    if(c)
+                        val = builder.makeOp<BinaryInst>(InstructionID::Mul, val, val);
+                    else
+                        break;
                 }
             };
 
@@ -138,7 +144,9 @@ class Reassociate final : public TransformPass<Function> {
                     }
                 } break;
                 case InstructionID::Or:
-                case InstructionID::And: {
+                case InstructionID::And:
+                case InstructionID::SMin:
+                case InstructionID::SMax: {
                     for(auto [c, v] : args) {
                         CMMC_UNUSED(c);
                         reduce(v);

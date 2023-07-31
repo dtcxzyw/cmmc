@@ -6,3 +6,11 @@ int test(int x) {
         sum = (sum + 4950) % 65535;
     return sum;
 }
+int test2(int x, int y) {
+    x = ((x % 65535) + 65535) % 65535;
+    y = ((y % 65535) + 65535) % 65535;
+    return (x + y) % 65535;
+}
+int test3(int x) {
+    return x % 2147483647;
+}

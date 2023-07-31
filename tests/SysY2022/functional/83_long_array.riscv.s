@@ -51,8 +51,8 @@ pcrel859:
 	sd s7, 40(sp)
 	sd s8, 32(sp)
 	sd s9, 24(sp)
-	sd s11, 16(sp)
-	sd s10, 8(sp)
+	sd s10, 16(sp)
+	sd s11, 8(sp)
 	sd ra, 0(sp)
 	mv s5, zero
 .p2align 2
@@ -61,15 +61,15 @@ label2:
 	li s7, 1717986919
 	addiw s5, s5, 16
 	mul s8, s3, s7
-	srli s11, s8, 63
+	srli s10, s8, 63
 	srai s9, s8, 34
-	add s8, s11, s9
-	sh2add s10, s8, s8
+	add s8, s10, s9
+	sh2add s9, s8, s8
 	addw s8, s3, t3
-	slliw s9, s10, 1
+	slliw s10, s9, 1
 	addiw t3, t3, 32
-	subw s11, s3, s9
 	mul s9, s8, s7
+	subw s11, s3, s10
 	srai s10, s9, 34
 	sw s11, 0(s6)
 	srli s11, s9, 63
@@ -129,10 +129,10 @@ label2:
 	srli s11, s9, 63
 	srai s10, s9, 34
 	add s9, s11, s10
-	sh2add s10, s9, s9
-	slliw s11, s10, 1
+	sh2add s11, s9, s9
+	slliw s10, s11, 1
+	subw s8, s8, s10
 	addiw s10, t4, 42
-	subw s8, s8, s11
 	addiw t4, t4, 224
 	sw s8, 24(s6)
 	addw s8, s3, s10
@@ -206,10 +206,10 @@ label2:
 	srli s11, s9, 63
 	srai s10, s9, 34
 	add s9, s11, s10
-	sh2add s10, s9, s9
-	slliw s11, s10, 1
+	sh2add s11, s9, s9
+	slliw s10, s11, 1
+	subw s8, s8, s10
 	addiw s10, a2, 182
-	subw s8, s8, s11
 	addiw a2, a2, 448
 	sw s8, 52(s6)
 	addw s8, s3, s10
@@ -300,21 +300,11 @@ label21:
 	srli t1, a5, 63
 	srai t0, a5, 34
 	add a5, t1, t0
-	sh2add t0, a5, a5
-	slliw t1, t0, 1
-	subw a4, a4, t1
+	sh2add t2, a5, a5
+	slliw t0, t2, 1
+	subw a4, a4, t0
 	sw a4, 20(a3)
 	lw t0, 24(a0)
-	mulw a4, t0, t0
-	mul a5, a4, a2
-	srli t1, a5, 63
-	srai t0, a5, 34
-	add a5, t1, t0
-	sh2add t0, a5, a5
-	slliw t1, t0, 1
-	subw a4, a4, t1
-	sw a4, 24(a3)
-	lw t0, 28(a0)
 	mulw a4, t0, t0
 	mul a5, a4, a2
 	srli t2, a5, 63
@@ -323,6 +313,16 @@ label21:
 	sh2add t1, a5, a5
 	slliw t0, t1, 1
 	subw a4, a4, t0
+	sw a4, 24(a3)
+	lw t0, 28(a0)
+	mulw a4, t0, t0
+	mul a5, a4, a2
+	srli t1, a5, 63
+	srai t0, a5, 34
+	add a5, t1, t0
+	sh2add t0, a5, a5
+	slliw t1, t0, 1
+	subw a4, a4, t1
 	sw a4, 28(a3)
 	lw t0, 32(a0)
 	mulw a4, t0, t0
@@ -429,37 +429,37 @@ label23:
 	lw t2, 4(a2)
 	mulw t0, t2, t2
 	mul t1, t0, a1
-	srli t3, t1, 63
+	srli t4, t1, 63
 	srai t2, t1, 37
-	add t1, t3, t2
-	mulw t2, t1, a3
-	lw t1, 4(a4)
-	subw t0, t0, t2
-	addw t3, t0, t1
-	sw t3, 4(a5)
+	add t1, t4, t2
+	lw t2, 4(a4)
+	mulw t3, t1, a3
+	subw t0, t0, t3
+	addw t1, t0, t2
+	sw t1, 4(a5)
 	lw t2, 8(a2)
 	mulw t0, t2, t2
 	mul t1, t0, a1
 	srli t3, t1, 63
 	srai t2, t1, 37
-	add t1, t3, t2
-	mulw t2, t1, a3
-	lw t1, 8(a4)
-	subw t0, t0, t2
-	addw t2, t0, t1
-	sw t2, 8(a5)
+	add t4, t3, t2
+	lw t2, 8(a4)
+	mulw t1, t4, a3
+	subw t0, t0, t1
+	addw t1, t0, t2
+	sw t1, 8(a5)
 	lw t0, 12(a2)
-	lw a4, 12(a4)
 	mulw a2, t0, t0
 	mul a1, a2, a1
-	srli t2, a1, 63
+	srli t1, a1, 63
 	srai t0, a1, 37
-	add t1, t2, t0
-	mulw a3, t1, a3
+	add t2, t1, t0
+	mulw a3, t2, a3
 	subw a1, a2, a3
-	addw a2, a1, a4
-	sw a2, 12(a5)
+	lw a2, 12(a4)
+	addw a3, a1, a2
 	li a2, 10000
+	sw a3, 12(a5)
 	blt a0, a2, label23
 	mv a1, zero
 	mv a2, zero
@@ -477,17 +477,17 @@ label28:
 	j label39
 .p2align 2
 label29:
-	sh2add a3, a2, s2
-	li a4, 1333
-	lw a2, 0(a3)
-	li a3, 824839931
-	addw a0, a1, a2
-	mul a1, a0, a3
+	sh2add a2, a2, s2
+	li a4, 824839931
+	lw a3, 0(a2)
+	addw a0, a1, a3
+	mul a1, a0, a4
 	srli a3, a1, 63
 	srai a2, a1, 40
 	add a1, a3, a2
-	mulw a2, a1, a4
-	subw s4, a0, a2
+	li a2, 1333
+	mulw a3, a1, a2
+	subw s4, a0, a3
 	mv a0, s4
 	jal putint
 	mv a2, s3
@@ -496,12 +496,12 @@ label29:
 	blt s3, a3, label28
 	j label45
 label39:
-	sh2add a3, a2, s2
-	lw a2, 0(a3)
-	li a3, 1407543789
-	sh3add a4, a2, a2
-	addw a0, a1, a4
-	mul a1, a0, a3
+	sh2add a4, a2, s2
+	lw a2, 0(a4)
+	li a4, 1407543789
+	sh3add a3, a2, a2
+	addw a0, a1, a3
+	mul a1, a0, a4
 	srli a3, a1, 63
 	srai a2, a1, 47
 	add a1, a3, a2
@@ -545,12 +545,12 @@ label36:
 	lw a4, 0(a1)
 	addw a1, a4, t0
 	mul a3, a1, a5
-	li a5, 13333
-	srli t0, a3, 63
+	srli a5, a3, 63
 	srai a4, a3, 42
-	add a3, t0, a4
-	mulw a4, a3, a5
-	subw s4, a1, a4
+	add a3, a5, a4
+	li a4, 13333
+	mulw a5, a3, a4
+	subw s4, a1, a5
 	li a1, 10000
 	blt a0, a1, label36
 	j label35
@@ -573,51 +573,51 @@ label41:
 	addiw a2, a2, 16
 	lw a4, 0(a1)
 	subw a5, t0, a4
-	lw a4, 4(a1)
+	lw t0, 4(a1)
 	addw a3, a0, a5
-	subw a5, a3, a4
-	lw a4, 8(a1)
-	addw a3, a0, a5
-	subw a5, a3, a4
-	lw a4, 12(a1)
-	addw a3, a0, a5
-	lw t0, 16(a1)
-	subw a5, a3, a4
-	addw a3, a0, a5
-	lw a5, 20(a1)
+	lw a5, 8(a1)
 	subw a4, a3, t0
-	lw t0, 24(a1)
 	addw a3, a0, a4
 	subw a4, a3, a5
+	lw a5, 12(a1)
 	addw a3, a0, a4
-	lw a4, 28(a1)
+	subw a4, a3, a5
+	lw a5, 16(a1)
+	addw a3, a0, a4
+	subw a4, a3, a5
+	lw a5, 20(a1)
+	addw a3, a0, a4
+	subw a4, a3, a5
+	lw a5, 24(a1)
+	addw a3, a0, a4
+	subw a4, a3, a5
+	lw a5, 28(a1)
+	addw a3, a0, a4
+	subw a4, a3, a5
+	lw a5, 32(a1)
+	addw a3, a0, a4
+	subw a4, a3, a5
+	lw a5, 36(a1)
+	addw a3, a0, a4
+	subw a4, a3, a5
+	lw a5, 40(a1)
+	addw a3, a0, a4
+	subw a4, a3, a5
+	lw a5, 44(a1)
+	addw a3, a0, a4
+	lw t0, 48(a1)
+	subw a4, a3, a5
+	addw a3, a0, a4
+	lw a4, 52(a1)
 	subw a5, a3, t0
 	addw a3, a0, a5
 	subw a5, a3, a4
-	lw a4, 32(a1)
+	lw a4, 56(a1)
 	addw a3, a0, a5
 	subw a5, a3, a4
-	lw a4, 36(a1)
+	lw a4, 60(a1)
 	addw a3, a0, a5
-	subw a5, a3, a4
-	lw a4, 40(a1)
-	addw a3, a0, a5
-	lw a5, 44(a1)
-	subw t0, a3, a4
-	addw a3, a0, t0
-	subw a4, a3, a5
-	lw a5, 48(a1)
-	addw a3, a0, a4
-	subw a4, a3, a5
-	lw a5, 52(a1)
-	addw a3, a0, a4
-	subw a4, a3, a5
-	lw a5, 56(a1)
-	addw a3, a0, a4
-	subw a4, a3, a5
-	lw a5, 60(a1)
-	addw a3, a0, a4
-	subw a1, a3, a5
+	subw a1, a3, a4
 	li a3, 9992
 	bge a2, a3, label44
 	mv a3, a1
@@ -625,19 +625,19 @@ label41:
 .p2align 2
 label44:
 	sh2add a2, a2, s0
-	addw a5, a0, a1
+	addw a4, a0, a1
 	lw a3, 0(a2)
-	subw a4, a5, a3
-	lw a3, 4(a2)
-	addw a1, a0, a4
-	subw a4, a1, a3
-	lw a3, 8(a2)
-	addw a1, a0, a4
-	subw a4, a1, a3
-	lw a3, 12(a2)
-	addw a1, a0, a4
-	subw a4, a1, a3
+	subw a5, a4, a3
+	lw a4, 4(a2)
+	addw a1, a0, a5
+	subw a3, a1, a4
+	lw a4, 8(a2)
+	addw a1, a0, a3
+	lw a5, 12(a2)
+	subw a3, a1, a4
+	addw a1, a0, a3
 	lw a3, 16(a2)
+	subw a4, a1, a5
 	addw a1, a0, a4
 	subw a4, a1, a3
 	lw a3, 20(a2)
@@ -658,8 +658,8 @@ label44:
 label45:
 	mv a0, a1
 	ld ra, 0(sp)
-	ld s10, 8(sp)
-	ld s11, 16(sp)
+	ld s11, 8(sp)
+	ld s10, 16(sp)
 	ld s9, 24(sp)
 	ld s8, 32(sp)
 	ld s7, 40(sp)

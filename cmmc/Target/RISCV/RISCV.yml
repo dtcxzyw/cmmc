@@ -1752,6 +1752,27 @@ InstSelection:
             Rs2: $Val
         Rs2: $Val
 
+  # a - (b - c) -> a + c - b
+  - Pattern:
+      SUBW:
+        Rd: $Dst
+        Rs1: $Lhs
+        Rs2:
+          SUBW:
+            Rd: $Rhs
+            Rs1: $SubLhs
+            Rs2: $SubRhs
+        $Predicate: ctx.hasOneUse($Rhs)
+    Replace:
+      SUBW:
+        Rd: $Dst
+        Rs1:
+          ADDW:
+            Rd: getVRegAs(ctx, $Dst)
+            Rs1: $Lhs
+            Rs2: $SubRhs
+        Rs2: $SubLhs
+
   - Pattern:
       SUBW:
         Rd: $Dst

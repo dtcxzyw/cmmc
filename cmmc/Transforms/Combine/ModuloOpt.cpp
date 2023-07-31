@@ -330,6 +330,30 @@ class ModuloOpt final : public TransformPass<Function> {
 
             return nullptr;
         });
+        // modified |= reduceBlock(builder, *block, [&](Instruction* inst) -> Value* {
+        //     if(inst->getInstID() != InstructionID::SRem)
+        //         return nullptr;
+
+        //     const auto lhs = inst->getOperand(0);
+        //     const auto rhs = inst->getOperand(1);
+        //     intmax_t rem;
+        //     if(int_(rem)(MatchContext<Value>{ rhs })) {
+        //         if(rem > 0 && rem * 2 > std::numeric_limits<int32_t>::max()) {
+        //             const auto cond =
+        //                 builder.makeOp<CompareInst>(InstructionID::ICmp, CompareOp::ICmpSignedGreaterEqual, lhs, rhs);
+        //             const auto remPos =
+        //                 builder.makeOp<SelectInst>(cond, builder.makeOp<BinaryInst>(InstructionID::Sub, lhs, rhs), lhs);
+        //             const auto cond2 = builder.makeOp<CompareInst>(InstructionID::ICmp, CompareOp::ICmpSignedLessEqual, lhs,
+        //                                                            ConstantInteger::get(rhs->getType(), -rem));
+        //             const auto remNeg =
+        //                 builder.makeOp<SelectInst>(cond2, builder.makeOp<BinaryInst>(InstructionID::Add, lhs, rhs), remPos);
+        //             return remNeg;
+        //         }
+        //         // TODO: rem < 0 ?
+        //     }
+        //     return nullptr;
+        // });
+
         return modified;
     }
 

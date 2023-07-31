@@ -73,8 +73,8 @@ main:
 	addi sp, sp, -16
 	li a0, 1
 	li a1, 15
-	addi a3, sp, 4
 	addi a2, sp, 0
+	addi a3, sp, 4
 	sd ra, 8(sp)
 	sw a0, 0(sp)
 	sw a0, 4(sp)
@@ -88,13 +88,13 @@ main:
 	srliw a3, a1, 31
 	sraiw a2, a1, 3
 	add a1, a3, a2
+	addw a3, a0, a1
 	slliw a2, a1, 4
-	subw a3, a2, a1
-	subw a1, a0, a3
+	subw a1, a3, a2
 	mv a0, a1
-	bge a1, zero, label69
+	bge a1, zero, label70
 	addiw a0, a1, 15
-label69:
+label70:
 	jal putint
 	ld ra, 8(sp)
 	mv a0, zero

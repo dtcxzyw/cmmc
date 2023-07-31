@@ -16,3 +16,11 @@ int test_overflow(int x, int y, int z) {
     int x3 = (v1 + v3) % 65536;
     return (x1 + x2 + x3) % 65536;
 }
+int test2(int x, int y) {
+    x = ((x % 65535) + 65535) % 65535;
+    y = ((y % 65535) + 65535) % 65535;
+    return (x + y) % 65535;
+}
+int test3(int x) {
+    return x % 2147483647;
+}

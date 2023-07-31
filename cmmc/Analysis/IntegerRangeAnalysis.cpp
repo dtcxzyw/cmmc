@@ -20,10 +20,12 @@
 #include <cmmc/Analysis/SCEVExpr.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
+#include <cmmc/IR/Function.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/IR/Type.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Transforms/Hyperparameters.hpp>
+#include <cmmc/Transforms/Util/PatternMatch.hpp>
 #include <cstdint>
 #include <iostream>
 #include <limits>
@@ -158,6 +160,13 @@ IntegerRangeAnalysisResult IntegerRangeAnalysis::run(Function& func, AnalysisPas
     };
 
     auto updateInstContextual = [&](Value* value, Instruction* ctx, const IntegerRange& newRange) {
+        // std::cerr << "ctx: ";
+        // ctx->dumpInst(std::cerr);
+        // std::cerr << ' ';
+        // value->dumpAsOperand(std::cerr);
+        // std::cerr << " -> \n";
+        // newRange.print(std::cerr);
+
         auto& range = instContextualRanges[value][ctx];
         const auto intersection = range.intersectSet(newRange);
         if(range != intersection) {
@@ -399,6 +408,22 @@ IntegerRangeAnalysisResult IntegerRangeAnalysis::run(Function& func, AnalysisPas
                 }
                 break;
             }
+            case InstructionID::Call: {
+                if(inst->getType()->isSame(i32)) {
+                    const auto& name = inst->lastOperand()->as<Function>()->getSymbol();
+                    if(name.prefix() == "getch") {
+                        IntegerRange r;
+                        r.setSignedRange(-1, 127);
+                        r.sync();
+                        update(inst, r);
+                    } else if(name.prefix() == "getarray" || name.prefix() == "getfarray") {
+                        update(inst, IntegerRange::getNonNegative());
+                    } else if(name.prefix() == "putarray" || name.prefix() == "putfarray") {
+                        updateContextual(inst->getOperand(0), inst->getBlock(), IntegerRange::getNonNegative());
+                    }
+                }
+                break;
+            }
             case InstructionID::ICmp: {
                 const auto setCompareContextual = [&](Value* lhs, Value* rhs, CompareOp op, auto updateFunc) {
                     const auto lhsRange = getRange(lhs, inst);
@@ -542,15 +567,27 @@ IntegerRangeAnalysisResult IntegerRangeAnalysis::run(Function& func, AnalysisPas
                         const auto falseVal = user->getOperand(2);
                         if(trueVal == falseVal)
                             continue;
+                        auto updateSelectInstContextual = [&](Value* baseVal, Value* val, const IntegerRange& newRange) {
+                            Value* v2;
+                            MatchContext<Value> ctx{ baseVal };
+                            if(baseVal == val)
+                                updateInstContextual(baseVal, user, newRange);
+                            else if(add(exactly(val), any(v2))(ctx)) {
+                                updateInstContextual(baseVal, user, newRange + getRange(v2, user));
+                            } else if(sub(exactly(val), any(v2))(ctx)) {
+                                updateInstContextual(baseVal, user, newRange - getRange(v2, user));
+                            } else if(sub(any(v2), exactly(val))(ctx)) {
+                                updateInstContextual(baseVal, user, getRange(v2, user) - newRange);
+                            }
+                        };
+
                         setCompareContextual(inst->getOperand(0), inst->getOperand(1), op,
                                              [&](Value* val, const IntegerRange& newRange) {
-                                                 if(val == trueVal)
-                                                     updateInstContextual(val, user, newRange);
+                                                 updateSelectInstContextual(trueVal, val, newRange);
                                              });
                         setCompareContextual(inst->getOperand(0), inst->getOperand(1), getInvertedOp(op),
                                              [&](Value* val, const IntegerRange& newRange) {
-                                                 if(val == falseVal)
-                                                     updateInstContextual(val, user, newRange);
+                                                 updateSelectInstContextual(falseVal, val, newRange);
                                              });
                     }
                 }

@@ -48,14 +48,14 @@ label3:
 	addw a3, a2, a0
 	mul a2, a3, a5
 	srli t2, a2, 63
-	srai t1, a2, 60
+	srai t0, a2, 60
 	li a2, 1000000007
-	add t0, t2, t1
-	mulw t1, t0, a2
-	subw t0, a3, t1
-	mv a3, t0
-	bge t0, zero, label129
-	addw a3, t0, a2
+	add t1, t2, t0
+	mulw t0, t1, a2
+	subw t1, a3, t0
+	mv a3, t1
+	bge t1, zero, label129
+	addw a3, t1, a2
 .p2align 2
 label129:
 	mulw t0, a3, a4
@@ -88,14 +88,14 @@ label131:
 	srliw t1, a3, 31
 	sraiw a4, a3, 4
 	add a3, t1, a4
-	slliw t3, a3, 4
+	slliw t2, a3, 4
 	sh2add t0, a3, s0
-	subw t2, t3, a3
-	slli t1, t2, 1
-	lw a4, 0(t0)
+	subw t1, t2, a3
 	li t2, 1
-	subw t0, a5, t1
+	slli t3, t1, 1
+	lw a4, 0(t0)
 	slli t1, a4, 1
+	subw t0, a5, t3
 	sllw a5, t2, t0
 	li t2, 64
 	subw t3, t2, t0

@@ -297,26 +297,26 @@ label22:
 	addiw a1, a1, 4
 	mulw t0, a0, a3
 	mul t1, t0, a4
-	srli t3, t1, 32
-	add a5, t3, t0
+	srli t2, t1, 32
+	add a5, t2, t0
 	srliw t3, a5, 31
-	sraiw t2, a5, 11
+	sraiw t1, a5, 11
 	li a5, 3724
-	add t1, t3, t2
-	mulw t2, t1, a5
+	add t2, t3, t1
+	mulw t1, t2, a5
+	subw t0, t0, t1
 	addiw t1, a0, 7
-	subw t0, t0, t2
 	sw t0, 0(a2)
 	mulw t0, t1, a3
 	mul t2, t0, a4
 	srli t3, t2, 32
 	add t1, t3, t0
-	srliw t3, t1, 31
+	srliw t4, t1, 31
 	sraiw t2, t1, 11
-	add t1, t3, t2
-	mulw t2, t1, a5
+	add t3, t4, t2
+	mulw t1, t3, a5
+	subw t0, t0, t1
 	addiw t1, a0, 14
-	subw t0, t0, t2
 	sw t0, 4(a2)
 	mulw t0, t1, a3
 	mul t2, t0, a4
@@ -350,12 +350,12 @@ label361:
 	j label22
 label25:
 	sh2add a2, a0, s2
-	li a4, 128875
-	li t1, -1932965947
+	li a5, 128875
+	li a4, -1932965947
 	addiw a0, a0, 1
-	mulw a3, a1, a4
+	mulw a3, a1, a5
 	addiw a1, a1, 7
-	mul a5, a3, t1
+	mul a5, a3, a4
 	srli t0, a5, 32
 	add a4, t0, a3
 	srliw t0, a4, 31

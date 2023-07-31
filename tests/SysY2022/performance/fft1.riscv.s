@@ -43,25 +43,25 @@ label4:
 label7:
 	slliw a1, a0, 1
 	li a3, 288737297
-	li a4, 998244353
 	mul a0, a1, a3
 	srli a3, a0, 63
 	srai a2, a0, 58
 	add a0, a3, a2
 	li a3, -2147483647
-	mulw a2, a0, a4
-	subw a0, a1, a2
+	li a2, 998244353
+	mulw a4, a0, a2
 	li a2, 1
+	subw a0, a1, a4
 	and a1, s1, a3
 	beq a1, a2, label9
 	j label2
 label10:
 	addiw a1, s1, -2
-	srliw a0, s1, 31
-	add a2, s1, a0
-	li a0, 2
-	sraiw s2, a2, 1
-	bltu a1, a0, label55
+	srliw a2, s1, 31
+	add a0, s1, a2
+	li a2, 2
+	sraiw s2, a0, 1
+	bltu a1, a2, label55
 	addiw a0, s1, 3
 	li a1, 7
 	bgeu a0, a1, label12
@@ -69,19 +69,19 @@ label10:
 	j label22
 label12:
 	addiw a1, s1, -4
-	slli a2, s1, 1
-	srli a0, a2, 62
-	add a3, s1, a0
+	slli a3, s1, 1
+	srli a0, a3, 62
+	add a2, s1, a0
 	li a0, 4
-	sraiw s3, a3, 2
+	sraiw s3, a2, 2
 	bgeu a1, a0, label13
 	li a2, 288737297
+	li a3, 998244353
 	mul a0, s0, a2
-	srli a3, a0, 63
-	li a2, 998244353
+	srli a2, a0, 63
 	srai a1, a0, 58
-	add a0, a3, a1
-	mulw a1, a0, a2
+	add a0, a2, a1
+	mulw a1, a0, a3
 	subw a0, s0, a1
 	j label22
 label13:
@@ -104,19 +104,19 @@ label14:
 	add a2, s1, a3
 	sraiw a1, a2, 4
 	jal multiply
-	li a4, 998244353
 	li a3, 288737297
 	slliw a1, a0, 1
 	mul a0, a1, a3
 	srli a3, a0, 63
 	srai a2, a0, 58
 	add a0, a3, a2
-	li a3, -2147483647
-	mulw a2, a0, a4
-	subw a0, a1, a2
-	li a2, 1
-	and a1, s4, a3
-	beq a1, a2, label16
+	li a2, 998244353
+	mulw a3, a0, a2
+	li a2, -2147483647
+	subw a0, a1, a3
+	li a3, 1
+	and a1, s4, a2
+	beq a1, a3, label16
 label18:
 	slliw a1, a0, 1
 	li a3, 288737297
@@ -203,22 +203,22 @@ label16:
 	addw a0, s0, a0
 	li a3, 288737297
 	mul a1, a0, a3
-	li a3, 998244353
-	srli a4, a1, 63
+	srli a3, a1, 63
 	srai a2, a1, 58
-	add a1, a4, a2
-	mulw a2, a1, a3
-	subw a0, a0, a2
+	add a1, a3, a2
+	li a2, 998244353
+	mulw a3, a1, a2
+	subw a0, a0, a3
 	j label18
 label77:
 	li a2, 288737297
 	mul a0, s0, a2
-	li a2, 998244353
-	srli a3, a0, 63
+	srli a2, a0, 63
 	srai a1, a0, 58
-	add a0, a3, a1
-	mulw a1, a0, a2
-	subw a0, s0, a1
+	add a0, a2, a1
+	li a1, 998244353
+	mulw a2, a0, a1
+	subw a0, s0, a2
 	j label18
 power:
 .p2align 2
@@ -378,11 +378,11 @@ label262:
 	li a1, 288737297
 	mul a2, a3, a1
 	srli t5, a2, 63
-	srai t4, a2, 58
+	srai a4, a2, 58
 	li a2, 998244353
-	add a4, t5, t4
-	mulw t4, a4, a2
-	subw a4, a3, t4
+	add t4, t5, a4
+	mulw t5, t4, a2
+	subw a4, a3, t5
 	subw a3, t3, a0
 	addw a0, a3, a2
 	sw a4, 0(t2)
@@ -390,9 +390,9 @@ label262:
 	srli a4, a1, 63
 	srai a3, a1, 58
 	add t2, a4, a3
-	mulw a2, t2, a2
-	subw a1, a0, a2
-	sw a1, 0(t1)
+	mulw a1, t2, a2
+	subw a2, a0, a1
+	sw a2, 0(t1)
 	mv a0, t0
 	mv a1, s0
 	jal multiply

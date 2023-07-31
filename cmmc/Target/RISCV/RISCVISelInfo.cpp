@@ -293,9 +293,7 @@ static bool buildMul64Imm(ISelContext& ctx, const MIROperand& lhs, const MIROper
         const auto shift = ilog2(static_cast<size_t>(rhsImm.imm()));
         ctx.newInst(SLLI).setOperand<0>(mulRes).setOperand<1>(lhs).setOperand<2>(MIROperand::asImm(shift, OperandType::Int32));
     } else {
-        const auto imm = getVRegAs(ctx, lhs);
-        ctx.newInst(InstLoadImm).setOperand<0>(imm).setOperand<1>(rhsImm);
-        ctx.newInst(MUL).setOperand<0>(mulRes).setOperand<1>(lhs).setOperand<2>(imm);
+        ctx.newInst(InstMul).setOperand<0>(mulRes).setOperand<1>(lhs).setOperand<2>(rhsImm);
     }
     out = getVReg64As(ctx, lhs);
     ctx.newInst(SRLI).setOperand<0>(out).setOperand<1>(mulRes).setOperand<2>(MIROperand::asImm(32, OperandType::Int32));

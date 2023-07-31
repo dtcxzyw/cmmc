@@ -139,16 +139,16 @@ label59:
 label62:
 	li a0, 19980130
 	li a3, 23333
-	li a4, 360287945
+	li a5, 360287945
 	mulw a1, s2, a0
 	addw a0, a1, a3
-	mul a1, a0, a4
+	mul a1, a0, a5
 	srli a5, a1, 63
-	srai a3, a1, 55
+	srai a4, a1, 55
 	li a1, 100000007
-	add a4, a5, a3
-	mulw a3, a4, a1
-	subw a0, a0, a3
+	add a3, a5, a4
+	mulw a4, a3, a1
+	subw a0, a0, a4
 	mv s2, a0
 	bge a0, zero, label357
 	addw s2, a0, a1

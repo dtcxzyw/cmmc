@@ -98,3 +98,45 @@ label4:
 	mov r0, r3
 	movgt r0, r1
 	b label2
+.globl test2
+test2:
+.p2align 4
+	push { r4 }
+	movw r2, #32769
+	movt r2, #32768
+	smmla r3, r0, r2, r0
+	smmla r2, r1, r2, r1
+	asr r4, r3, #15
+	add r3, r4, r3, lsr #31
+	rsb r3, r3, r3, lsl #16
+	subs r0, r0, r3
+	movw r3, #65535
+	add r4, r0, r3
+	movlt r0, r4
+	asr r4, r2, #15
+	add r2, r4, r2, lsr #31
+	rsb r2, r2, r2, lsl #16
+	subs r1, r1, r2
+	add r2, r1, r3
+	movw r3, #65534
+	movlt r1, r2
+	add r2, r0, r1
+	cmp r2, r3
+	movw r3, #1
+	movt r3, #65535
+	add r0, r0, r3
+	add r1, r1, r0
+	mov r0, r2
+	movgt r0, r1
+	pop { r4 }
+	bx lr
+.globl test3
+test3:
+.p2align 4
+	mov r1, #1073741825
+	smmul r1, r0, r1
+	asr r2, r1, #29
+	add r1, r2, r1, lsr #31
+	rsb r1, r1, r1, lsl #31
+	sub r0, r0, r1
+	bx lr

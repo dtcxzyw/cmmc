@@ -33,23 +33,23 @@ pcrel192:
 	sd ra, 0(sp)
 	li a1, 9072
 	add a0, a0, a2
-	slli a2, a3, 6
-	mul a3, s4, a1
-	sub a1, a2, s6
-	add a0, a0, a3
-	slli a2, a4, 3
-	sh3add a0, a1, a0
-	sub a1, a2, a4
+	mul a2, s4, a1
+	slli a1, a3, 6
+	add a0, a0, a2
+	sub a2, a1, a3
+	slli a3, a4, 3
+	sh3add a0, a2, a0
+	sub a1, a3, a4
 	sh2add s7, a1, a0
 	li a1, -1
 	sh2add a2, a5, s7
 	lw a0, 0(a2)
 	bne a0, a1, label19
-	addw a1, s1, s3
-	addw a2, s4, a1
-	addw a0, s6, a2
-	addw a1, a4, a0
-	bne a1, zero, label3
+	addw a2, s1, s3
+	addw a0, s4, a2
+	addw a1, s6, a0
+	addw a2, a4, a1
+	bne a2, zero, label3
 	li a0, 1
 	j label19
 label3:
@@ -79,12 +79,12 @@ label18:
 	mv a3, s6
 	mv a4, s5
 	jal dfs
-	li a4, 1000000007
-	xori a2, s2, 2
-	sltiu a3, a2, 1
-	subw a1, s1, a3
 	li a3, 1152921497
-	mulw a0, a0, a1
+	xori a1, s2, 2
+	sltiu a2, a1, 1
+	subw a4, s1, a2
+	mulw a0, a0, a4
+	li a4, 1000000007
 	mul a1, a0, a3
 	srli a3, a1, 63
 	srai a2, a1, 60
@@ -100,12 +100,12 @@ label6:
 	mv a3, s6
 	mv a4, s5
 	jal dfs
-	xori a1, s2, 3
-	sltiu a2, a1, 1
-	subw a3, s3, a2
-	mulw a1, a0, a3
+	xori a2, s2, 3
+	sltiu a1, a2, 1
+	subw a3, s3, a1
+	mulw a2, a0, a3
 	li a3, 1152921497
-	addw a0, s0, a1
+	addw a0, s0, a2
 	mul a1, a0, a3
 	srli a3, a1, 63
 	srai a2, a1, 60
@@ -179,14 +179,14 @@ label13:
 label16:
 	li a2, 1152921497
 	mul a0, s0, a2
-	li a2, 1000000007
-	srli a3, a0, 63
+	srli a2, a0, 63
 	srai a1, a0, 60
-	add a0, a3, a1
-	mulw a1, a0, a2
-	sh2add a2, s2, s7
-	subw a0, s0, a1
-	sw a0, 0(a2)
+	add a0, a2, a1
+	li a1, 1000000007
+	mulw a2, a0, a1
+	sh2add a1, s2, s7
+	subw a0, s0, a2
+	sw a0, 0(a1)
 	j label19
 .globl main
 main:
