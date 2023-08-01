@@ -890,6 +890,11 @@
       "parent": "48d1d909299606555ee6fd868cbcd8648fe7ee9d",
       "time": "2023-07-02 03:31:52 +0800"
     },
+    "df1be2c1cfc7dbadc189533186f436ba5ed148c8": {
+      "message": "feat(transform): select2branch",
+      "parent": "e27459b1043462ed8a0ef0130b70002791c39a3f",
+      "time": "2023-08-01 20:08:01 +0800"
+    },
     "df7551af60523f1ec1eb36e92ae19c1c45386d44": {
       "message": "feat(codegen): also eliminate redundant loads",
       "parent": "019d6e514365b22eb6a7f95d207d65272218b506",
@@ -919,6 +924,11 @@
       "message": "feat(transform): add lut2expr",
       "parent": "d59c49feebe67bdca8b7a92cca1d865c892253fb",
       "time": "2023-07-11 18:55:29 +0800"
+    },
+    "e27459b1043462ed8a0ef0130b70002791c39a3f": {
+      "message": "feat(codegen): optimize arm select_gpr",
+      "parent": "9ae3423d1a35cf507f68fe54715f47a05d4985a5",
+      "time": "2023-08-01 19:07:53 +0800"
     },
     "e65a04c5d006866fb356411e3978a98e19f6a0b4": {
       "message": "misc: update `.gitattributes` for generated references",
@@ -991,5 +1001,5 @@
       "time": "2023-07-06 01:05:50 +0800"
     }
   },
-  "head": "9ae3423d1a35cf507f68fe54715f47a05d4985a5"
+  "head": "df1be2c1cfc7dbadc189533186f436ba5ed148c8"
 }
