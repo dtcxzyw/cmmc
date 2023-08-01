@@ -19,11 +19,11 @@ cse_imm:
 .globl cse_global
 cse_global:
 pcrel24:
-	auipc a0, %pcrel_hi(x)
-	lw a2, %pcrel_lo(pcrel24)(a0)
-	addi a1, a0, %pcrel_lo(pcrel24)
-	lw a3, 4(a1)
-	addw a0, a2, a3
+	auipc a1, %pcrel_hi(x)
+	lw a2, %pcrel_lo(pcrel24)(a1)
+	addi a0, a1, %pcrel_lo(pcrel24)
+	lw a1, 4(a0)
+	addw a0, a2, a1
 	ret
 .p2align 2
 .globl cse_fp
@@ -37,19 +37,19 @@ cse_fp:
 .p2align 2
 .globl imm_build_pattern1
 imm_build_pattern1:
-	li a1, 1
-	li a2, 2
-	lui a3, 16384
-	sw a1, 0(a0)
-	li a1, 4
-	sw a2, 4(a0)
-	li a2, 8
-	sw a1, 8(a0)
-	li a1, 16
-	sw a2, 12(a0)
+	li a2, 1
+	li a1, 2
+	li a3, 16
+	sw a2, 0(a0)
+	li a2, 4
+	sw a1, 4(a0)
+	li a1, 8
+	sw a2, 8(a0)
 	li a2, 32
-	sw a1, 16(a0)
+	sw a1, 12(a0)
 	li a1, 64
+	sw a3, 16(a0)
+	lui a3, 16384
 	sw a2, 20(a0)
 	li a2, 128
 	sw a1, 24(a0)
@@ -104,20 +104,20 @@ imm_build_pattern1:
 .globl imm_build_pattern2
 imm_build_pattern2:
 	lui a1, 250
-	lui a2, 125
+	lui a3, 125
+	li a2, 256000
 	sw a1, 0(a0)
-	li a1, 256000
-	sw a2, 4(a0)
-	srli a2, a1, 1
-	sw a1, 8(a0)
 	srli a1, a2, 1
-	sw a2, 12(a0)
+	sw a3, 4(a0)
+	sw a2, 8(a0)
 	srli a2, a1, 1
-	sw a1, 16(a0)
-	srli a3, a2, 1
-	sw a2, 20(a0)
-	srli a1, a3, 1
-	sw a3, 24(a0)
+	sw a1, 12(a0)
+	srli a1, a2, 1
+	sw a2, 16(a0)
+	srli a2, a1, 1
+	sw a1, 20(a0)
+	srli a1, a2, 1
+	sw a2, 24(a0)
 	srli a2, a1, 1
 	sw a1, 28(a0)
 	sw a2, 32(a0)

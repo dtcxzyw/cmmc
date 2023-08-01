@@ -3,15 +3,16 @@
 .text
 .p2align 2
 hanoi:
-	addi sp, sp, -40
+	addi sp, sp, -48
 	sd ra, 0(sp)
 	sd s2, 8(sp)
 	mv s2, a3
-	sd s0, 16(sp)
-	li a3, 1
-	sd s1, 24(sp)
-	sd s3, 32(sp)
-	bne a0, a3, label13
+	sd s4, 16(sp)
+	li s4, 1
+	sd s0, 24(sp)
+	sd s1, 32(sp)
+	sd s3, 40(sp)
+	bne a0, s4, label13
 	mv a0, a1
 label2:
 	jal putint
@@ -25,10 +26,11 @@ label2:
 	jal putch
 	ld ra, 0(sp)
 	ld s2, 8(sp)
-	ld s0, 16(sp)
-	ld s1, 24(sp)
-	ld s3, 32(sp)
-	addi sp, sp, 40
+	ld s4, 16(sp)
+	ld s0, 24(sp)
+	ld s1, 32(sp)
+	ld s3, 40(sp)
+	addi sp, sp, 48
 	ret
 label13:
 	mv s0, a1
@@ -50,8 +52,7 @@ label4:
 	jal putch
 	li a0, 32
 	jal putch
-	li a1, 1
-	beq s3, a1, label18
+	beq s3, s4, label18
 	mv a0, s3
 	mv a1, s0
 	mv s0, s1
@@ -67,10 +68,10 @@ main:
 	sd ra, 0(sp)
 	sd s0, 8(sp)
 	jal getint
-	ble a0, zero, label37
+	ble a0, zero, label38
 	mv s0, a0
 .p2align 2
-label35:
+label36:
 	jal getint
 	li a3, 3
 	li a2, 2
@@ -79,8 +80,8 @@ label35:
 	li a0, 10
 	jal putch
 	addiw s0, s0, -1
-	bgt s0, zero, label35
-label37:
+	bgt s0, zero, label36
+label38:
 	mv a0, zero
 	ld ra, 0(sp)
 	ld s0, 8(sp)

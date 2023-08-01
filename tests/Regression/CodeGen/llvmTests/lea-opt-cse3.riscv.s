@@ -28,10 +28,10 @@ foo1_mult_basic_blocks:
 	li a3, 10
 	sh2add a0, a1, a2
 	beq a0, a3, label37
-	sh3add a3, a1, a2
-	li a2, 4294967295
-	mulw a1, a3, a0
-	and a0, a1, a2
+	sh3add a2, a1, a2
+	li a3, 4294967295
+	mulw a1, a2, a0
+	and a0, a1, a3
 	j label29
 label37:
 	mv a0, zero
@@ -44,10 +44,10 @@ foo1_mult_basic_blocks_illegal_scale:
 	li a3, 10
 	sh1add a0, a1, a2
 	beq a0, a3, label60
-	sh3add a3, a1, a2
-	li a2, 4294967295
-	mulw a1, a3, a0
-	and a0, a1, a2
+	sh3add a2, a1, a2
+	li a3, 4294967295
+	mulw a1, a2, a0
+	and a0, a1, a3
 	j label52
 label60:
 	mv a0, zero

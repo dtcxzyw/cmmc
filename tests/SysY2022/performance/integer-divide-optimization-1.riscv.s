@@ -4,112 +4,73 @@
 .p2align 2
 .globl main
 main:
-	addi sp, sp, -32
+	addi sp, sp, -16
 	sd ra, 0(sp)
 	sd s0, 8(sp)
-	sd s1, 16(sp)
-	sd s2, 24(sp)
 	jal getint
 	mv s0, a0
 	li a0, 1016
 	jal _sysy_starttime
-	ble s0, zero, label21
-	addiw a1, s0, -8
-	li a0, 8
-	ble s0, a0, label26
-	li a0, 7
-	li a2, 6
-	li a3, 5
-	li a4, 4
-	li t0, 3
-	li t1, 2
-	li t2, 1
+	li a0, 1073790977
+	li a1, 2147385347
+	ble s0, zero, label17
+	addiw a3, s0, -4
+	li a2, 4
+	ble s0, a2, label22
+	li a2, 3
+	li a4, 2
+	li t0, 1
 	mv a5, zero
-	mv t4, zero
-	mv t3, zero
+	mv t2, zero
+	mv t1, zero
+.p2align 2
 label3:
-	addw t6, a5, t4
-	addiw t3, t3, 8
-	addiw a5, a5, 8
-	li t4, 1073790977
-	mul t5, t6, t4
-	srai a6, t5, 61
-	srli t5, t5, 63
-	add a7, t5, a6
-	li t5, 2147385347
-	mulw a6, a7, t5
-	subw a7, t6, a6
-	addw t6, t2, a7
-	addiw t2, t2, 8
-	mul a6, t6, t4
-	srai a7, a6, 61
-	srli a6, a6, 63
-	add a7, a6, a7
-	mulw s1, a7, t5
-	subw a6, t6, s1
-	addw t6, t1, a6
-	addiw t1, t1, 8
-	mul a6, t6, t4
-	srli s2, a6, 63
-	srai a7, a6, 61
-	add a6, s2, a7
-	mulw s1, a6, t5
-	subw a7, t6, s1
-	addw t6, t0, a7
-	addiw t0, t0, 8
-	mul a6, t6, t4
-	srli s1, a6, 63
-	srai a7, a6, 61
-	add a6, s1, a7
-	mulw s2, a6, t5
-	subw a7, t6, s2
-	addw t6, a4, a7
-	addiw a4, a4, 8
-	mul a6, t6, t4
-	srai a7, a6, 61
-	srli a6, a6, 63
-	add s1, a6, a7
-	mulw a7, s1, t5
-	subw a6, t6, a7
-	addw t6, a3, a6
-	addiw a3, a3, 8
-	mul a6, t6, t4
-	srai a7, a6, 61
-	srli a6, a6, 63
-	add a7, a6, a7
-	mulw a6, a7, t5
-	subw a7, t6, a6
-	addw t6, a2, a7
-	addiw a2, a2, 8
-	mul a6, t6, t4
-	srai a7, a6, 61
-	srli a6, a6, 63
-	add a7, a6, a7
-	mulw a6, a7, t5
-	subw a7, t6, a6
-	addw t6, a0, a7
-	addiw a0, a0, 8
-	mul t4, t6, t4
-	srli a7, t4, 63
-	srai a6, t4, 61
-	add t4, a7, a6
-	mulw t5, t4, t5
-	subw t4, t6, t5
-	bgt a1, t3, label3
-label14:
-	addw a0, t3, t4
-	li a3, 1073790977
-	addiw t3, t3, 1
-	mul a1, a0, a3
-	srli a3, a1, 63
-	srai a2, a1, 61
-	add a1, a3, a2
-	li a2, 2147385347
-	mulw a3, a1, a2
-	subw t4, a0, a3
-	bgt s0, t3, label14
-	mv s0, t4
-label17:
+	addw t2, a5, t2
+	addiw t1, t1, 4
+	addiw a5, a5, 4
+	mul t3, t2, a0
+	srli t5, t3, 63
+	srai t4, t3, 61
+	add t3, t5, t4
+	mulw t4, t3, a1
+	subw t5, t2, t4
+	addw t2, t0, t5
+	addiw t0, t0, 4
+	mul t3, t2, a0
+	srli t6, t3, 63
+	srai t4, t3, 61
+	add t5, t6, t4
+	mulw t3, t5, a1
+	subw t4, t2, t3
+	addw t2, a4, t4
+	addiw a4, a4, 4
+	mul t3, t2, a0
+	srli t6, t3, 63
+	srai t4, t3, 61
+	add t5, t6, t4
+	mulw t3, t5, a1
+	subw t4, t2, t3
+	addw t2, a2, t4
+	addiw a2, a2, 4
+	mul t3, t2, a0
+	srli t5, t3, 63
+	srai t4, t3, 61
+	add t6, t5, t4
+	mulw t3, t6, a1
+	subw t2, t2, t3
+	bgt a3, t1, label3
+label10:
+	addw a2, t1, t2
+	addiw t1, t1, 1
+	mul a3, a2, a0
+	srli a5, a3, 63
+	srai a4, a3, 61
+	add a3, a5, a4
+	mulw a4, a3, a1
+	subw t2, a2, a4
+	bgt s0, t1, label10
+	mv s0, t2
+label13:
 	li a0, 1031
 	jal _sysy_stoptime
 	mv a0, s0
@@ -119,14 +80,12 @@ label17:
 	ld ra, 0(sp)
 	mv a0, zero
 	ld s0, 8(sp)
-	ld s1, 16(sp)
-	ld s2, 24(sp)
-	addi sp, sp, 32
+	addi sp, sp, 16
 	ret
-label21:
+label17:
 	mv s0, zero
-	j label17
-label26:
-	mv t3, zero
-	mv t4, zero
-	j label14
+	j label13
+label22:
+	mv t1, zero
+	mv t2, zero
+	j label10

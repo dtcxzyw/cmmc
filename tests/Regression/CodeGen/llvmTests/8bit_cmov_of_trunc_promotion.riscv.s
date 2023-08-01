@@ -23,11 +23,11 @@ label3:
 .p2align 2
 .globl neg_type_mismatch
 neg_type_mismatch:
-	li a3, 65535
+	li a4, 65535
 	addw a0, a0, a2
-	and a5, a2, a3
-	and a4, a1, a3
-	addw a1, a4, a5
+	and a5, a2, a4
+	and a3, a1, a4
+	addw a1, a3, a5
 	andi a4, a1, 255
 	sext.b a3, a4
 	andi a4, a0, 255

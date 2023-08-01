@@ -27,44 +27,44 @@ basic_5:
 .globl cross_64_with_9
 cross_64_with_9:
 	addiw a1, a0, -35
-	li a4, 1
-	li a3, 360287970357415681
-	sll a2, a4, a1
-	and a4, a2, a3
+	li a3, 1
+	li a5, 360287970357415681
+	sll a2, a3, a1
 	slti a3, a1, 0
+	and a4, a2, a5
 	sltiu a2, a4, 1
+	li a4, 93
 	or a1, a2, a3
-	li a2, 93
-	slt a3, a2, a0
-	or a0, a1, a3
+	slt a2, a4, a0
+	or a0, a1, a2
 	ret
 .p2align 2
 .globl cross_32_with_5
 cross_32_with_5:
 	addiw a1, a0, -35
-	li a4, 1
-	li a3, 3841
-	sll a2, a4, a1
-	and a4, a2, a3
+	li a3, 1
+	li a5, 3841
+	sll a2, a3, a1
 	slti a3, a1, 0
+	and a4, a2, a5
 	sltiu a2, a4, 1
+	li a4, 46
 	or a1, a2, a3
-	li a2, 46
-	slt a3, a2, a0
-	or a0, a1, a3
+	slt a2, a4, a0
+	or a0, a1, a2
 	ret
 .p2align 2
 .globl negative_5
 negative_5:
 	addiw a1, a0, 7
-	li a4, 1
-	li a3, 5201
-	sll a2, a4, a1
-	and a4, a2, a3
+	li a3, 1
+	li a5, 5201
+	sll a2, a3, a1
 	slti a3, a1, 0
+	and a4, a2, a5
 	sltiu a2, a4, 1
+	li a4, 5
 	or a1, a2, a3
-	li a2, 5
-	slt a3, a2, a0
-	or a0, a1, a3
+	slt a2, a4, a0
+	or a0, a1, a2
 	ret

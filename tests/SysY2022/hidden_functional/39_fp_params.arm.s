@@ -758,8 +758,8 @@ params_mix:
 	vldr s25, [sp, #600]
 	ldr r0, [sp, #608]
 	ldr r0, [r0, #0]
-	str r0, [sp, #256]
 	add r1, r2, r0, lsl #2
+	str r0, [sp, #256]
 	mov r2, #0
 	vldr s3, [r1, #0]
 	vadd.f32 s3, s0, s3
@@ -933,6 +933,7 @@ label4:
 	add r4, sp, #264
 	mov r1, r4
 	bl putarray
+	mov r2, #0
 	ldr r1, [sp, #244]
 	vmov s0, r1
 	vcvt.f32.s32 s0, s0
@@ -990,8 +991,7 @@ label4:
 	vcvt.s32.f32 s0, s0
 	vmov r0, s0
 	str r0, [sp, #296]
-	mov r0, #0
-	str r0, [sp, #300]
+	str r2, [sp, #300]
 	ldr r0, [sp, #256]
 	ldr r0, [r4, r0, lsl #2]
 	vmov s0, r0

@@ -23,20 +23,20 @@ r2:
 test:
 pcrel29:
 	auipc a0, %pcrel_hi(i)
+pcrel30:
+	auipc a3, %pcrel_hi(j)
 	lw a2, %pcrel_lo(pcrel29)(a0)
 	li a0, 4294967295
 	sltiu a1, a2, 1
 	and a2, a1, a0
-pcrel30:
-	auipc a1, %pcrel_hi(r1)
-	sw a2, %pcrel_lo(pcrel30)(a1)
 pcrel31:
-	auipc a2, %pcrel_hi(j)
-	lw a1, %pcrel_lo(pcrel31)(a2)
-	xori a3, a1, 99
+	auipc a1, %pcrel_hi(r1)
+	sw a2, %pcrel_lo(pcrel31)(a1)
+	lw a2, %pcrel_lo(pcrel30)(a3)
+	xori a1, a2, 99
+	sltiu a3, a1, 1
 pcrel32:
 	auipc a1, %pcrel_hi(r2)
-	sltiu a2, a3, 1
-	and a0, a2, a0
+	and a0, a3, a0
 	sw a0, %pcrel_lo(pcrel32)(a1)
 	ret

@@ -4,30 +4,30 @@
 .p2align 2
 .globl and0xf30_lshr4
 and0xf30_lshr4:
-	li a1, 3888
-	and a2, a0, a1
-	srliw a0, a2, 4
+	li a2, 3888
+	and a1, a0, a2
+	srliw a0, a1, 4
 	ret
 .p2align 2
 .globl and0xff0_lshr3
 and0xff0_lshr3:
-	li a1, 4080
-	and a2, a0, a1
-	srliw a0, a2, 3
+	li a2, 4080
+	and a1, a0, a2
+	srliw a0, a1, 3
 	ret
 .p2align 2
 .globl and0xff0_lshr4
 and0xff0_lshr4:
-	li a1, 4080
-	and a2, a0, a1
-	srliw a0, a2, 4
+	li a2, 4080
+	and a1, a0, a2
+	srliw a0, a1, 4
 	ret
 .p2align 2
 .globl and4080_ashr5
 and4080_ashr5:
-	li a1, 4080
-	and a2, a0, a1
-	srliw a0, a2, 5
+	li a2, 4080
+	and a1, a0, a2
+	srliw a0, a1, 5
 	ret
 .p2align 2
 .globl and4095

@@ -504,6 +504,7 @@ label173:
 label169:
 	mov r0, #86
 	b label102
+.p2align 4
 label125:
 	mov r0, #97
 	b label102

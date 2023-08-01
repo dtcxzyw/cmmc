@@ -11,10 +11,10 @@ test1:
 test10:
 	srliw a2, a0, 24
 	slliw a3, a0, 8
+	li a4, 65535
 	or a0, a2, a3
-	li a2, 65535
-	and a3, a0, a2
-	addw a0, a1, a3
+	and a2, a0, a4
+	addw a0, a1, a2
 	ret
 .p2align 2
 .globl test11
@@ -39,27 +39,27 @@ test13:
 .p2align 2
 .globl test14
 test14:
-	li a2, 65535
-	and a3, a0, a2
-	addw a0, a1, a3
+	li a3, 65535
+	and a2, a0, a3
+	addw a0, a1, a2
 	ret
 .p2align 2
 .globl test15
 test15:
 	srliw a2, a0, 8
-	li a3, 65535
-	and a4, a2, a3
-	addw a0, a1, a4
+	li a4, 65535
+	and a3, a2, a4
+	addw a0, a1, a3
 	ret
 .p2align 2
 .globl test16
 test16:
 	srliw a2, a0, 24
 	slliw a3, a0, 8
+	li a4, 65535
 	or a0, a2, a3
-	li a2, 65535
-	and a3, a0, a2
-	addw a0, a1, a3
+	and a2, a0, a4
+	addw a0, a1, a2
 	ret
 .p2align 2
 .globl test2
@@ -93,9 +93,9 @@ test5:
 .p2align 2
 .globl test6
 test6:
-	li a2, 65535
-	and a3, a1, a2
-	addw a0, a0, a3
+	li a3, 65535
+	and a2, a1, a3
+	addw a0, a0, a2
 	ret
 .p2align 2
 .globl test7
@@ -120,8 +120,8 @@ test8:
 test9:
 	srliw a2, a0, 8
 	slliw a3, a0, 24
+	li a4, 65535
 	or a0, a2, a3
-	li a2, 65535
-	and a3, a0, a2
-	addw a0, a1, a3
+	and a2, a0, a4
+	addw a0, a1, a2
 	ret

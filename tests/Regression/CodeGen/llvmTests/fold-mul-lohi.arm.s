@@ -23,34 +23,34 @@ foo:
 	push { r4, r5, r6 }
 	cmp r0, #0
 	ble label5
-	movw r1, #:lower16:B
-	mov r4, #17
+	movw r2, #:lower16:B
+	movw r3, #:lower16:A
+	movw r4, #:lower16:P
 	cmp r0, #1
-	movt r1, #:upper16:B
-	ldrsb r2, [r1, #0]
-	ldrb r2, [r1, #0]
-	lsl r2, r2, #1
-	uxtb r3, r2
-	movw r2, #:lower16:A
-	movt r2, #:upper16:A
-	strb r3, [r2, #0]
-	movw r3, #:lower16:P
-	movt r3, #:upper16:P
-	strb r4, [r3, #0]
+	movt r2, #:upper16:B
+	movt r3, #:upper16:A
+	movt r4, #:upper16:P
+	ldrsb r1, [r2, #0]
+	ldrb r1, [r2, #0]
+	lsl r1, r1, #1
+	uxtb r1, r1
+	strb r1, [r3, #0]
+	mov r1, #17
+	strb r1, [r4, #0]
 	beq label5
-	mov r4, #1
+	mov r1, #1
 label3:
-	add r5, r1, r4
-	ldrsb r6, [r1, r4]
+	add r5, r2, r1
+	ldrsb r6, [r2, r1]
 	mov r6, #17
 	ldrb r5, [r5, #0]
 	lsl r5, r5, #1
 	uxtb r5, r5
-	strb r5, [r2, r4]
-	add r5, r4, r4, lsl #3
-	add r4, r4, #1
-	strb r6, [r3, r5]
-	cmp r0, r4
+	strb r5, [r3, r1]
+	add r5, r1, r1, lsl #3
+	add r1, r1, #1
+	strb r6, [r4, r5]
+	cmp r0, r1
 	bne label3
 label5:
 	pop { r4, r5, r6 }

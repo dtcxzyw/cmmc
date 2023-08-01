@@ -13,24 +13,24 @@ g1:
 .globl test1
 test1:
 	lui $t1, %hi(g0)
-	addiu $t0, $t1, %lo(g0)
-	lw $t2, %lo(g0)($t1)
-	lui $t1, %hi(g1)
-	addiu $t1, $t1, %lo(g1)
+	lw $t0, %lo(g0)($t1)
 	bne $a0, $zero, label14
 	nop
-	addiu $t2, $t2, 11
-	sw $t2, 0($t0)
-	lw $t0, 0($t1)
+	addiu $t0, $t0, 11
+	sw $t0, %lo(g0)($t1)
+	lui $t0, %hi(g1)
+	lw $t0, %lo(g1)($t0)
 	addiu $v0, $t0, 23
 	b label3
 	nop
 label14:
-	addiu $t2, $t2, 1
-	sw $t2, 0($t0)
-	lw $t0, 0($t1)
+	addiu $t0, $t0, 1
+	sw $t0, %lo(g0)($t1)
+	lui $t0, %hi(g1)
+	lw $t0, %lo(g1)($t0)
 	addiu $v0, $t0, 23
 label3:
-	sw $v0, 0($t1)
+	lui $t0, %hi(g1)
+	sw $v0, %lo(g1)($t0)
 	jr $ra
 	nop

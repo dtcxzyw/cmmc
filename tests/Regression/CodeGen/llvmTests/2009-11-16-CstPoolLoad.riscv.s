@@ -9,7 +9,7 @@ __cmmc_fp_constant_pool:
 .globl h
 h:
 pcrel6:
-	auipc a0, %pcrel_hi(__cmmc_fp_constant_pool)
-	addi a1, a0, %pcrel_lo(pcrel6)
-	flw f10, 0(a1)
+	auipc a1, %pcrel_hi(__cmmc_fp_constant_pool)
+	addi a0, a1, %pcrel_lo(pcrel6)
+	flw f10, 0(a0)
 	ret

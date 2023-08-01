@@ -136,9 +136,9 @@ div11:
 .p2align 2
 .globl div30
 div30:
-	li a1, -2004318071
-	mul a3, a0, a1
-	srli a2, a3, 32
+	li a3, -2004318071
+	mul a1, a0, a3
+	srli a2, a1, 32
 	add a0, a2, a0
 	srliw a2, a0, 31
 	sraiw a1, a0, 4
@@ -147,9 +147,9 @@ div30:
 .p2align 2
 .globl divNeg30
 divNeg30:
-	li a1, 2004318071
-	mul a3, a0, a1
-	srli a2, a3, 32
+	li a3, 2004318071
+	mul a1, a0, a3
+	srli a2, a1, 32
 	sub a0, a2, a0
 	srliw a2, a0, 31
 	sraiw a1, a0, 4
@@ -159,11 +159,11 @@ divNeg30:
 .globl div_shl
 div_shl:
 	slli a2, a0, 1
-	li a3, 64
-	subw a4, a3, a1
-	srl a2, a2, a4
-	add a3, a0, a2
-	sraw a0, a3, a1
+	li a5, 64
+	subw a3, a5, a1
+	srl a4, a2, a3
+	add a2, a0, a4
+	sraw a0, a2, a1
 	ret
 .p2align 2
 .globl div_reg
@@ -213,25 +213,25 @@ mod30:
 .globl mod_large1
 mod_large1:
 	li a3, 1152921497
+	li a4, 1000000007
 	mul a1, a0, a3
 	srli a3, a1, 63
 	srai a2, a1, 60
 	add a1, a3, a2
-	li a2, 1000000007
-	mulw a3, a1, a2
-	subw a0, a0, a3
+	mulw a2, a1, a4
+	subw a0, a0, a2
 	ret
 .p2align 2
 .globl mod_large2
 mod_large2:
 	li a3, 1876499845
+	li a4, 300000
 	mul a1, a0, a3
 	srli a3, a1, 63
 	srai a2, a1, 49
 	add a1, a3, a2
-	li a2, 300000
-	mulw a3, a1, a2
-	subw a0, a0, a3
+	mulw a2, a1, a4
+	subw a0, a0, a2
 	ret
 .p2align 2
 .globl shl_imm
@@ -365,9 +365,9 @@ fp_imm0:
 .globl fp_imm1
 fp_imm1:
 pcrel268:
-	auipc a0, %pcrel_hi(__cmmc_fp_constant_pool)
-	addi a1, a0, %pcrel_lo(pcrel268)
-	flw f10, 0(a1)
+	auipc a1, %pcrel_hi(__cmmc_fp_constant_pool)
+	addi a0, a1, %pcrel_lo(pcrel268)
+	flw f10, 0(a0)
 	ret
 .p2align 2
 .globl and_trunc
@@ -583,12 +583,12 @@ mul_neg2:
 .globl andn
 andn:
 	fcvt.s.w f10, a1
-	lui a2, 266752
-	fmv.w.x f11, a2
-	sltu a2, zero, a0
-	feq.s a3, f10, f11
-	xori a1, a3, 1
-	and a0, a1, a2
+	lui a3, 266752
+	fmv.w.x f11, a3
+	sltu a3, zero, a0
+	feq.s a2, f10, f11
+	xori a1, a2, 1
+	and a0, a1, a3
 	ret
 .p2align 2
 .globl sign

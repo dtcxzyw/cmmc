@@ -8,100 +8,123 @@ a:
 .p2align 2
 .globl main
 main:
-	addi sp, sp, -32
+	addi sp, sp, -64
 	sd ra, 0(sp)
 	sd s1, 8(sp)
-	sd s2, 16(sp)
-	sd s0, 24(sp)
+	sd s6, 16(sp)
+	sd s2, 24(sp)
+	sd s0, 32(sp)
+	sd s5, 40(sp)
+	sd s3, 48(sp)
+	sd s4, 56(sp)
 	jal getint
 	mv s1, a0
 	jal getint
 	mv s2, a0
 	li a0, 56
 	jal _sysy_starttime
-pcrel144:
+	li a4, 1152921497
+	li t2, 1876499845
+	li t3, -2147483647
+	li t1, -2004318071
+	li a5, 1
+	li a0, 1000000007
+	li a3, 19981013
+	li a2, 19971231
+	li t0, 300000
+pcrel164:
 	auipc a1, %pcrel_hi(a)
-	addi s0, a1, %pcrel_lo(pcrel144)
+	addi s0, a1, %pcrel_lo(pcrel164)
+	li a1, 64
 	ble s1, zero, label2
-	mv a2, s2
-	mv a0, s1
+	mv t4, s2
 .p2align 2
 label3:
-	li a1, 19971231
-	li a4, 19981013
-	li a5, 1152921497
-	mulw a2, a2, a1
-	addw a3, a2, a4
-	mul a2, a3, a5
-	srli t2, a2, 63
-	srai t0, a2, 60
-	li a2, 1000000007
-	add t1, t2, t0
-	mulw t0, t1, a2
-	subw t1, a3, t0
-	mv a3, t1
-	bge t1, zero, label129
-	addw a3, t1, a2
+	mulw t6, t4, a2
+	addw t4, t6, a3
+	mul t5, t4, a4
+	srli a6, t5, 63
+	srai t6, t5, 60
+	add t5, a6, t6
+	mulw a7, t5, a0
+	subw t4, t4, a7
+	mv t6, t4
+	bge t4, zero, label141
+	addw t6, t4, a0
 .p2align 2
-label129:
-	mulw t0, a3, a1
-	addw a1, t0, a4
-	mul a4, a1, a5
-	srli t1, a4, 63
-	srai a5, a4, 60
-	add t0, t1, a5
-	mulw a5, t0, a2
-	subw a4, a1, a5
-	mv a1, a4
-	bge a4, zero, label131
-	addw a1, a4, a2
+label141:
+	mulw a6, t6, a2
+	addw t4, a6, a3
+	mul t5, t4, a4
+	srai a6, t5, 60
+	srli t5, t5, 63
+	add a7, t5, a6
+	mulw t5, a7, a0
+	subw a6, t4, t5
+	mv t4, a6
+	bge a6, zero, label143
+	addw t4, a6, a0
 .p2align 2
-label131:
-	andi a2, a1, 1
-	li t0, 1876499845
-	li t1, 300000
-	addiw a0, a0, -1
-	mul a4, a3, t0
-	srli t0, a4, 63
-	srai a5, a4, 49
-	add a4, t0, a5
-	mulw t0, a4, t1
-	subw a5, a3, t0
-	li a3, -2004318071
-	mul a4, a5, a3
-	srli t0, a4, 32
-	add a3, t0, a5
-	srliw t1, a3, 31
-	sraiw a4, a3, 4
-	add a3, t1, a4
-	slliw t2, a3, 4
-	sh2add t0, a3, s0
-	subw t1, t2, a3
-	li t2, 1
-	slli t3, t1, 1
-	lw a4, 0(t0)
-	slli t1, a4, 1
-	subw t0, a5, t3
-	li t3, 64
-	sllw a5, t2, t0
-	subw t2, t3, t0
-	srl t1, t1, t2
-	add t3, a4, t1
-	sraw t0, t3, t0
-	srliw t1, t0, 31
-	add t2, t0, t1
-	andi t3, t2, -2
-	subw t1, t0, t3
-	bne a2, t1, label7
-	sh2add a2, a3, s0
-	sw a4, 0(a2)
-	ble a0, zero, label2
+label143:
+	andi t5, t4, 1
+	mul a6, t6, t2
+	addiw s1, s1, -1
+	srai a7, a6, 49
+	srli a6, a6, 63
+	add a7, a6, a7
+	mulw a6, a7, t0
+	subw a7, t6, a6
+	mul t6, a7, t1
+	srli a6, t6, 32
+	add t6, a6, a7
+	srliw s2, t6, 31
+	sraiw a6, t6, 4
+	add t6, s2, a6
+	slliw s2, t6, 4
+	sh2add s3, t6, s0
+	subw s4, s2, t6
+	lw a6, 0(s3)
+	slli s3, s4, 1
+	subw s2, a7, s3
+	subw s5, a1, s2
+	slli s3, a6, 1
+	sllw a7, a5, s2
+	srl s4, s3, s5
+	add s3, a6, s4
+	sraw s2, s3, s2
+	srliw s6, s2, 31
+	add s5, s2, s6
+	andi s4, s5, -2
+	subw s3, s2, s4
+	bne t5, s3, label7
+	sh2add t5, t6, s0
+	sw a6, 0(t5)
+	bgt s1, zero, label3
+	j label2
 .p2align 2
-label46:
-	mv a2, a1
-	j label3
+label7:
+	andi s3, s2, 1
+	xori s5, t5, 1
+	or s4, s3, s5
+	mv s3, a7
+	beq s4, zero, label145
+	mv s3, zero
+.p2align 2
+label145:
+	and s4, s2, t3
+	xori s5, s4, 1
+	or s2, t5, s5
+	mv t5, s3
+	bne s2, zero, label147
+	subw t5, s3, a7
+.p2align 2
+label147:
+	addw a6, a6, t5
+	sh2add t5, t6, s0
+	sw a6, 0(t5)
+	bgt s1, zero, label3
 label2:
-	li a0, 64
+	mv a0, a1
 	jal _sysy_stoptime
 	mv a1, s0
 	li a0, 10000
@@ -109,31 +132,11 @@ label2:
 	ld ra, 0(sp)
 	mv a0, zero
 	ld s1, 8(sp)
-	ld s2, 16(sp)
-	ld s0, 24(sp)
-	addi sp, sp, 32
+	ld s6, 16(sp)
+	ld s2, 24(sp)
+	ld s0, 32(sp)
+	ld s5, 40(sp)
+	ld s3, 48(sp)
+	ld s4, 56(sp)
+	addi sp, sp, 64
 	ret
-.p2align 2
-label7:
-	andi t1, t0, 1
-	xori t3, a2, 1
-	or t2, t1, t3
-	mv t1, a5
-	beq t2, zero, label133
-	mv t1, zero
-.p2align 2
-label133:
-	li t2, -2147483647
-	and t3, t0, t2
-	xori t4, t3, 1
-	or t0, a2, t4
-	mv a2, t1
-	bne t0, zero, label135
-	subw a2, t1, a5
-.p2align 2
-label135:
-	addw a4, a4, a2
-	sh2add a2, a3, s0
-	sw a4, 0(a2)
-	bgt a0, zero, label46
-	j label2

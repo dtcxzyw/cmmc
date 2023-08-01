@@ -10,9 +10,9 @@ main:
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
 	mov r11, #9
 	mov r9, #8
-	mov r10, #5
 	mov r3, #2
 	sub sp, sp, #372
+	mov r10, #5
 	mov r1, #0
 	mov r5, #3
 	mov r7, #6
@@ -97,9 +97,9 @@ main:
 	str r7, [sp, #156]
 	str r6, [sp, #160]
 	str r5, [sp, #164]
+	mov r5, #39
 	str r3, [sp, #168]
 	str r4, [sp, #172]
-	mov r4, #39
 	str r3, [sp, #176]
 	str r3, [sp, #180]
 	mov r3, #19
@@ -108,75 +108,72 @@ main:
 label5:
 	ldr r0, [sp, #208]
 	cmp r0, #0
-	bne label6
-	mov r4, #1
+	beq label7
+	bl putint
 .p2align 4
 label7:
-	add r8, sp, #208
-	ldr r0, [r8, r4, lsl #2]
+	add r9, sp, #208
+	ldr r0, [r9, r4, lsl #2]
 	bl putint
 	add r4, r4, #1
 	cmp r4, #40
 	blt label7
-	mov r0, #0
+	mov r1, #0
 	add sp, sp, #372
+	mov r0, r1
 	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
 .p2align 4
 label10:
 	ldr r1, [r2, r3, lsl #2]
-	mov r6, #19
-	cmn r6, #1
+	mov r7, #19
+	cmn r7, #1
 	ble label122
 .p2align 4
 label14:
-	add r8, sp, #208
-	ldr r5, [r8, r4, lsl #2]
-	ldr r7, [r0, r6, lsl #2]
-	sub r6, r6, #1
-	mla r7, r1, r7, r5
-	sub r5, r4, #1
-	cmp r7, #9
+	add r9, sp, #208
+	ldr r6, [r9, r5, lsl #2]
+	ldr r8, [r0, r7, lsl #2]
+	sub r7, r7, #1
+	mla r8, r1, r8, r6
+	sub r6, r5, #1
+	cmp r8, #9
 	bgt label16
-	str r7, [r8, r4, lsl #2]
-	mov r4, r5
-	cmn r6, #1
+	str r8, [r9, r5, lsl #2]
+	mov r5, r6
+	cmn r7, #1
 	bgt label14
 	b label242
 .p2align 4
 label16:
-	add r8, sp, #208
-	movw r9, #26215
-	str r7, [r8, r4, lsl #2]
-	movt r9, #26214
-	add r4, r8, r5, lsl #2
-	smmul r7, r7, r9
-	ldr r8, [r4, #0]
-	asr r9, r7, #2
-	add r7, r9, r7, lsr #31
-	add r7, r8, r7
-	str r7, [r4, #0]
-	mov r4, r5
-	cmn r6, #1
+	add r9, sp, #208
+	movw r10, #26215
+	str r8, [r9, r5, lsl #2]
+	movt r10, #26214
+	add r5, r9, r6, lsl #2
+	smmul r8, r8, r10
+	ldr r9, [r5, #0]
+	asr r10, r8, #2
+	add r8, r10, r8, lsr #31
+	add r8, r9, r8
+	str r8, [r5, #0]
+	mov r5, r6
+	cmn r7, #1
 	bgt label14
-	add r4, r5, #19
+	add r5, r6, #19
 	sub r3, r3, #1
 	cmn r3, #1
 	bgt label10
 	b label5
 .p2align 4
 label242:
-	add r4, r4, #19
+	add r5, r5, #19
 	sub r3, r3, #1
 	cmn r3, #1
 	bgt label10
 	b label5
 label122:
-	add r4, r4, #19
+	add r5, r5, #19
 	sub r3, r3, #1
 	cmn r3, #1
 	bgt label10
 	b label5
-label6:
-	bl putint
-	mov r4, #1
-	b label7

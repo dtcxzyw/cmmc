@@ -22,29 +22,33 @@ write:
     mv a0, x0
     ret
 hanoi:
-	addi sp, sp, -48
+	addi sp, sp, -64
 	sd ra, 0(sp)
 	sd s3, 8(sp)
 	mv s3, a3
-	sd s2, 16(sp)
-	li a3, 10000
+	sd s5, 16(sp)
+	li s5, 10000
 	sd s0, 24(sp)
-	sd s1, 32(sp)
-	mulw a4, a1, a3
-	sd s4, 40(sp)
-	li a3, 1
-	addw s2, s3, a4
-	bne a0, a3, label16
+	sd s2, 32(sp)
+	sd s6, 40(sp)
+	mulw a3, a1, s5
+	li s6, 1
+	sd s1, 48(sp)
+	addw s2, s3, a3
+	sd s4, 56(sp)
+	bne a0, s6, label16
 	mv a0, s2
 label2:
 	jal write
 	ld ra, 0(sp)
 	ld s3, 8(sp)
-	ld s2, 16(sp)
+	ld s5, 16(sp)
 	ld s0, 24(sp)
-	ld s1, 32(sp)
-	ld s4, 40(sp)
-	addi sp, sp, 48
+	ld s2, 32(sp)
+	ld s6, 40(sp)
+	ld s1, 48(sp)
+	ld s4, 56(sp)
+	addi sp, sp, 64
 	ret
 label16:
 	mv s0, a1
@@ -58,11 +62,9 @@ label4:
 	jal hanoi
 	mv a0, s2
 	jal write
-	li a1, 10000
-	mulw a2, s1, a1
-	li a1, 1
-	addw a0, s3, a2
-	beq s4, a1, label2
+	mulw a1, s1, s5
+	addw a0, s3, a1
+	beq s4, s6, label2
 	mv s2, a0
 	mv a1, s0
 	mv a0, s4

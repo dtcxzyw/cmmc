@@ -20,20 +20,20 @@ main:
 	sd s2, 16(sp)
 	sd s1, 24(sp)
 	jal getint
-pcrel217:
+pcrel205:
 	auipc a1, %pcrel_hi(w)
 	mv s0, a0
-	addi a0, a1, %pcrel_lo(pcrel217)
-	mv s2, a0
+	addi s2, a1, %pcrel_lo(pcrel205)
+	mv a0, s2
 	jal getarray
 	li a0, 62
 	jal _sysy_starttime
-pcrel218:
+pcrel206:
+	auipc a2, %pcrel_hi(temp)
+pcrel207:
 	auipc a1, %pcrel_hi(dst)
-	addi s1, a1, %pcrel_lo(pcrel218)
-pcrel219:
-	auipc a1, %pcrel_hi(temp)
-	addi a0, a1, %pcrel_lo(pcrel219)
+	addi a0, a2, %pcrel_lo(pcrel206)
+	addi s1, a1, %pcrel_lo(pcrel207)
 	mv a1, zero
 label2:
 	bgt s0, a1, label4
@@ -55,7 +55,7 @@ label5:
 	sh2add a3, a3, a0
 	sw a4, 0(a3)
 	bgt s0, a2, label5
-	j label193
+	j label181
 .p2align 2
 label52:
 	li a4, -1
@@ -81,7 +81,7 @@ label74:
 	bgt s0, zero, label18
 	j label17
 .p2align 2
-label197:
+label185:
 	addiw a5, a5, 1
 	mulw a3, s0, a5
 	addw a1, a4, a3
@@ -106,39 +106,34 @@ label26:
 	addi sp, sp, 32
 	ret
 label27:
-	addiw a2, s2, -8
-	li a3, 8
+	addiw a2, s2, -4
+	li a3, 4
 	ble s2, a3, label123
 	mv a1, zero
+	j label30
 label28:
 	sh2add a3, a1, a0
 	sh2add a4, a1, s1
+	lw a2, 0(a3)
+	addiw a1, a1, 1
+	sw a2, 0(a4)
+	bgt s2, a1, label28
+	j label26
+.p2align 2
+label30:
+	sh2add a3, a1, a0
+	sh2add a4, a1, s1
 	lw a5, 0(a3)
-	addiw a1, a1, 8
+	addiw a1, a1, 4
 	sw a5, 0(a4)
 	lw a5, 4(a3)
 	sw a5, 4(a4)
-	lw t1, 8(a3)
-	sw t1, 8(a4)
-	lw t0, 12(a3)
-	sw t0, 12(a4)
-	lw a5, 16(a3)
-	sw a5, 16(a4)
-	lw t0, 20(a3)
-	sw t0, 20(a4)
-	lw a5, 24(a3)
-	sw a5, 24(a4)
-	lw a3, 28(a3)
-	sw a3, 28(a4)
-	bgt a2, a1, label28
-label30:
-	sh2add a4, a1, a0
-	sh2add a3, a1, s1
-	lw a2, 0(a4)
-	addiw a1, a1, 1
-	sw a2, 0(a3)
-	bgt s2, a1, label30
-	j label26
+	lw t0, 8(a3)
+	sw t0, 8(a4)
+	lw a3, 12(a3)
+	sw a3, 12(a4)
+	bgt a2, a1, label30
+	j label28
 .p2align 2
 label18:
 	sh2add t2, a1, a0
@@ -146,7 +141,7 @@ label18:
 	bge t1, zero, label19
 	addiw t0, t0, 1
 	bgt s0, t0, label18
-	j label197
+	j label185
 .p2align 2
 label19:
 	addw t4, a2, t0
@@ -186,9 +181,9 @@ label22:
 	j label25
 .p2align 2
 label21:
-	sh2add t2, t3, a0
-	lw t4, 0(t2)
-	blt t1, t4, label22
+	sh2add t4, t3, a0
+	lw t2, 0(t4)
+	blt t1, t2, label22
 	addiw t0, t0, 1
 	bgt s0, t0, label18
 	addiw a5, a5, 1
@@ -210,7 +205,7 @@ label17:
 	bgt s0, a4, label68
 	j label25
 .p2align 2
-label193:
+label181:
 	addiw a1, a1, 1
 	bgt s0, a1, label4
 	j label42
@@ -221,7 +216,7 @@ label73:
 	j label25
 label123:
 	mv a1, zero
-	j label30
+	j label28
 label45:
 	addiw a1, a1, 1
 	j label2

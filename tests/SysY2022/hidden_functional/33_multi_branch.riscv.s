@@ -4,49 +4,56 @@
 .p2align 2
 .globl main
 main:
-	addi sp, sp, -24
+	addi sp, sp, -56
 	sd ra, 0(sp)
-	sd s0, 8(sp)
-	sd s1, 16(sp)
+	sd s1, 8(sp)
+	sd s5, 16(sp)
+	sd s0, 24(sp)
+	sd s2, 32(sp)
+	sd s3, 40(sp)
+	sd s4, 48(sp)
 	jal getint
-	mv s1, zero
-	mv s0, a0
+	li s4, 96
+	li s2, 98
+	li s0, 99
+	mv s5, zero
+	li s3, 97
+	mv s1, a0
 	ble a0, zero, label104
 .p2align 2
 label4:
 	jal getint
-	li a2, 99
 	addiw a1, a0, -1
-	bltu a1, a2, label5
+	bltu a1, s0, label5
 	li a0, 100
 .p2align 2
 label102:
 	jal putint
 	li a0, 10
 	jal putch
-	addiw s1, s1, 1
-	bgt s0, s1, label4
+	addiw s5, s5, 1
+	bgt s1, s5, label4
 label104:
 	mv a0, zero
 	ld ra, 0(sp)
-	ld s0, 8(sp)
-	ld s1, 16(sp)
-	addi sp, sp, 24
+	ld s1, 8(sp)
+	ld s5, 16(sp)
+	ld s0, 24(sp)
+	ld s2, 32(sp)
+	ld s3, 40(sp)
+	ld s4, 48(sp)
+	addi sp, sp, 56
 	ret
 .p2align 2
 label5:
-	li a1, 99
-	bge a0, a1, label117
-	li a1, 98
-	blt a0, a1, label7
-	li a0, 98
+	bge a0, s0, label117
+	blt a0, s2, label7
+	mv a0, s2
 	j label102
 .p2align 2
 label7:
-	li a1, 97
-	bge a0, a1, label125
-	li a1, 96
-	bge a0, a1, label129
+	bge a0, s3, label125
+	bge a0, s4, label129
 	li a1, 95
 	bge a0, a1, label133
 	li a1, 94
@@ -344,12 +351,12 @@ label97:
 	bge a0, a1, label497
 	slti a1, a0, 2
 	li a4, 2
-	li a2, 3
-	subw a3, a4, a1
-	mv a1, a3
-	blt a0, a2, label606
+	li a3, 3
+	subw a2, a4, a1
+	mv a1, a2
+	blt a0, a3, label611
 	li a1, 3
-label606:
+label611:
 	mv a0, a1
 	j label102
 label189:
@@ -501,13 +508,13 @@ label305:
 	j label102
 .p2align 2
 label117:
-	li a0, 99
+	mv a0, s0
 	j label102
 label169:
 	li a0, 86
 	j label102
 label129:
-	li a0, 96
+	mv a0, s4
 	j label102
 label185:
 	li a0, 82
@@ -515,8 +522,9 @@ label185:
 label309:
 	li a0, 51
 	j label102
+.p2align 2
 label125:
-	li a0, 97
+	mv a0, s3
 	j label102
 label173:
 	li a0, 85

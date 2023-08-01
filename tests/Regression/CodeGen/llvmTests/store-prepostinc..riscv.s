@@ -14,21 +14,21 @@ test10:
 	li a3, 458759
 	srliw a0, a0, 7
 	and a1, a2, a3
-	li a2, 16253176
-	and a3, a0, a2
-	or a0, a1, a3
+	li a3, 16253176
+	and a2, a0, a3
+	or a0, a1, a2
 	ret
 .p2align 2
 .globl test11
 test11:
 	andi a1, a0, 3
-	li a2, 65537
-	sllw a3, a2, a1
-	li a2, 458759
-	sraiw a0, a3, 1
-	li a3, 4294967295
-	and a1, a0, a2
-	and a0, a1, a3
+	li a3, 65537
+	sllw a2, a3, a1
+	li a3, 458759
+	sraiw a0, a2, 1
+	li a2, 4294967295
+	and a1, a0, a3
+	and a0, a1, a2
 	ret
 .p2align 2
 .globl test2
@@ -62,21 +62,21 @@ test5:
 .globl test6
 test6:
 	srliw a2, a0, 16
+	lui a3, 4080
 	slliw a0, a0, 16
 	andi a1, a2, 255
-	lui a2, 4080
-	and a3, a0, a2
-	or a0, a1, a3
+	and a2, a0, a3
+	or a0, a1, a2
 	ret
 .p2align 2
 .globl test7
 test7:
 	srliw a2, a0, 16
+	lui a3, 4080
 	slliw a0, a0, 16
 	andi a1, a2, 255
-	lui a2, 4080
-	and a3, a0, a2
-	or a0, a1, a3
+	and a2, a0, a3
+	or a0, a1, a2
 	ret
 .p2align 2
 .globl test8

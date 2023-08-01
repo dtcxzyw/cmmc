@@ -11,106 +11,107 @@ a:
 .p2align 4
 .globl main
 main:
-	push { r4, r5, r6, r7, r8, r9, lr }
-	sub sp, sp, #4
+	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
+	sub sp, sp, #12
 	bl getint
 	mov r5, r0
 	bl getint
-	mov r6, r0
+	mov r4, r0
 	mov r0, #56
 	bl _sysy_starttime
+	movw r0, #51719
+	movw r2, #48287
+	movw r1, #58069
 	cmp r5, #0
-	movw r4, #:lower16:a
-	movt r4, #:upper16:a
+	movw r9, #:lower16:a
+	movt r0, #15258
+	movt r2, #304
+	movt r1, #304
+	str r9, [sp, #0]
+	movt r9, #:upper16:a
+	str r9, [sp, #0]
 	ble label8
-	mov r3, r6
-	mov r0, r5
+	mov r3, r5
 .p2align 4
 label2:
-	movw r1, #58069
-	movw r2, #48287
-	movw r6, #12185
-	sub r0, r0, #1
-	movt r1, #304
-	movt r2, #304
-	movt r6, #17592
-	mla r3, r3, r2, r1
-	smmul r5, r3, r6
-	asr r7, r5, #28
-	add r7, r7, r5, lsr #31
-	movw r5, #51719
-	movt r5, #15258
-	mls r3, r7, r5, r3
-	add r7, r3, r5
-	cmp r3, #0
-	movlt r3, r7
-	mla r1, r3, r2, r1
-	smmul r2, r1, r6
-	asr r6, r2, #28
-	add r2, r6, r2, lsr #31
-	mls r1, r2, r5, r1
-	add r2, r1, r5
-	cmp r1, #0
-	movw r5, #7557
-	movlt r1, r2
-	movt r5, #28633
-	and r2, r1, #1
-	smmul r5, r3, r5
-	asr r6, r5, #17
-	add r5, r6, r5, lsr #31
-	movw r6, #37856
-	movt r6, #4
-	mls r6, r5, r6, r3
-	movw r3, #34953
-	movt r3, #34952
-	smmla r3, r6, r3, r6
-	asr r5, r3, #4
-	add r3, r5, r3, lsr #31
-	rsb r7, r3, r3, lsl #4
-	ldr r5, [r4, r3, lsl #2]
-	sub r7, r6, r7, lsl #1
-	mov r6, #1
-	asr r8, r5, #31
-	rsb r9, r7, #32
-	lsl r6, r6, r7
-	add r8, r5, r8, lsr r9
-	asr r7, r8, r7
-	add r8, r7, r7, lsr #31
-	asr r8, r8, #1
-	sub r8, r7, r8, lsl #1
-	cmp r2, r8
+	mla r5, r4, r2, r1
+	ldr r9, [sp, #0]
+	sub r3, r3, #1
+	movw r4, #12185
+	movt r4, #17592
+	smmul r6, r5, r4
+	asr r7, r6, #28
+	add r6, r7, r6, lsr #31
+	mls r5, r6, r0, r5
+	movs r6, r5
+	add r7, r5, r0
+	movlt r6, r7
+	mla r5, r6, r2, r1
+	smmul r4, r5, r4
+	asr r7, r4, #28
+	add r4, r7, r4, lsr #31
+	movw r7, #7557
+	mls r4, r4, r0, r5
+	movt r7, #28633
+	smmul r7, r6, r7
+	add r5, r4, r0
+	cmp r4, #0
+	asr r8, r7, #17
+	movlt r4, r5
+	add r7, r8, r7, lsr #31
+	and r5, r4, #1
+	movw r8, #37856
+	movt r8, #4
+	mls r8, r7, r8, r6
+	movw r6, #34953
+	movt r6, #34952
+	smmla r6, r8, r6, r8
+	asr r7, r6, #4
+	add r6, r7, r6, lsr #31
+	ldr r7, [r9, r6, lsl #2]
+	rsb r9, r6, r6, lsl #4
+	sub r9, r8, r9, lsl #1
+	asr r10, r7, #31
+	mov r8, #1
+	rsb r11, r9, #32
+	lsl r8, r8, r9
+	add r10, r7, r10, lsr r11
+	asr r9, r10, r9
+	add r10, r9, r9, lsr #31
+	asr r10, r10, #1
+	sub r10, r9, r10, lsl #1
+	cmp r5, r10
 	bne label6
-	str r5, [r4, r3, lsl #2]
-	cmp r0, #0
-	ble label8
+	ldr r9, [sp, #0]
+	str r7, [r9, r6, lsl #2]
+	cmp r3, #0
+	bgt label2
+	b label8
 .p2align 4
-label46:
-	mov r3, r1
-	b label2
+label6:
+	and r10, r9, #1
+	eor r11, r5, #1
+	and r9, r9, #-2147483647
+	orrs r10, r10, r11
+	eor r9, r9, #1
+	mov r10, #0
+	moveq r10, r8
+	orrs r5, r5, r9
+	sub r8, r10, r8
+	ldr r9, [sp, #0]
+	mov r5, r10
+	moveq r5, r8
+	add r5, r7, r5
+	str r5, [r9, r6, lsl #2]
+	cmp r3, #0
+	bgt label2
 label8:
 	mov r0, #64
 	bl _sysy_stoptime
-	mov r1, r4
 	movw r0, #10000
+	ldr r9, [sp, #0]
+	mov r1, r9
 	bl putarray
-	add sp, sp, #4
+	add sp, sp, #12
 	mov r0, #0
-	pop { r4, r5, r6, r7, r8, r9, pc }
-.p2align 4
-label6:
-	and r8, r7, #1
-	eor r9, r2, #1
-	and r7, r7, #-2147483647
-	orrs r8, r8, r9
-	eor r7, r7, #1
-	mov r8, #0
-	moveq r8, r6
-	orrs r2, r2, r7
-	sub r6, r8, r6
-	mov r2, r8
-	moveq r2, r6
-	add r2, r5, r2
-	str r2, [r4, r3, lsl #2]
-	cmp r0, #0
-	bgt label46
-	b label8
+	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }

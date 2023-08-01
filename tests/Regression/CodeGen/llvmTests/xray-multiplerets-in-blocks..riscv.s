@@ -76,10 +76,10 @@ f2:
 	andi a3, a0, 255
 	or a2, a2, a3
 	and a3, a1, a4
+	lui a4, 4080
 	or a1, a2, a3
-	lui a2, 4080
-	and a3, a0, a2
-	or a0, a1, a3
+	and a2, a0, a4
+	or a0, a1, a2
 	ret
 .p2align 2
 .globl not_rev16

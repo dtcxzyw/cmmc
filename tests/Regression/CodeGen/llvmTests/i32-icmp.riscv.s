@@ -20,20 +20,20 @@ icmp_eq_constant:
 .p2align 2
 .globl icmp_eq_constant_2048
 icmp_eq_constant_2048:
-	li a2, 2048
-	xor a3, a0, a2
-	li a2, 4294967295
-	sltiu a1, a3, 1
-	and a0, a1, a2
+	li a3, 2048
+	xor a2, a0, a3
+	li a3, 4294967295
+	sltiu a1, a2, 1
+	and a0, a1, a3
 	ret
 .p2align 2
 .globl icmp_eq_constant_2049
 icmp_eq_constant_2049:
-	li a2, 2049
-	xor a3, a0, a2
-	li a2, 4294967295
-	sltiu a1, a3, 1
-	and a0, a1, a2
+	li a3, 2049
+	xor a2, a0, a3
+	li a3, 4294967295
+	sltiu a1, a2, 1
+	and a0, a1, a3
 	ret
 .p2align 2
 .globl icmp_eq_constant_neg_2047
@@ -77,20 +77,20 @@ icmp_ne_constant:
 .p2align 2
 .globl icmp_ne_constant_2048
 icmp_ne_constant_2048:
-	li a2, 2048
-	xor a3, a0, a2
-	li a2, 4294967295
-	sltu a1, zero, a3
-	and a0, a1, a2
+	li a3, 2048
+	xor a2, a0, a3
+	li a3, 4294967295
+	sltu a1, zero, a2
+	and a0, a1, a3
 	ret
 .p2align 2
 .globl icmp_ne_constant_2049
 icmp_ne_constant_2049:
-	li a2, 2049
-	xor a3, a0, a2
-	li a2, 4294967295
-	sltu a1, zero, a3
-	and a0, a1, a2
+	li a3, 2049
+	xor a2, a0, a3
+	li a3, 4294967295
+	sltu a1, zero, a2
+	and a0, a1, a3
 	ret
 .p2align 2
 .globl icmp_ne_constant_neg_2047

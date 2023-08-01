@@ -55,7 +55,9 @@ void MIRBasicBlock::dump(std::ostream& out, const CodeGenContext& ctx) const {
     out << ":\n";
     for(auto& inst : mInsts) {
         out << '\t';
-        ctx.instInfo.getInstInfo(inst).print(out, inst, true);
+        auto& instInfo = ctx.instInfo.getInstInfo(inst);
+        out << '[' << instInfo.getUniqueName() << "] ";
+        instInfo.print(out, inst, true);
         out << '\n';
     }
 }

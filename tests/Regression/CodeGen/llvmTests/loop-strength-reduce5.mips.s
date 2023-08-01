@@ -16,23 +16,23 @@ Y:
 foo:
 	blez $a0, label5
 	nop
-	lui $t1, %hi(X)
-	addiu $t0, $t1, %lo(X)
-	sh $zero, %lo(X)($t1)
-	lui $t2, %hi(Y)
-	addiu $t1, $t2, %lo(Y)
-	sh $zero, %lo(Y)($t2)
-	li $t2, 1
-	beq $a0, $t2, label5
+	lui $t0, %hi(X)
+	sh $zero, %lo(X)($t0)
+	lui $t0, %hi(Y)
+	sh $zero, %lo(Y)($t0)
+	li $t0, 1
+	beq $a0, $t0, label5
 	nop
 label3:
-	andi $t3, $t2, 65535
-	sh $t3, 0($t0)
-	sll $t3, $t3, 2
-	andi $t3, $t3, 65535
-	sh $t3, 0($t1)
-	addiu $t2, $t2, 1
-	bne $a0, $t2, label3
+	andi $t1, $t0, 65535
+	lui $t2, %hi(X)
+	sh $t1, %lo(X)($t2)
+	sll $t1, $t1, 2
+	andi $t1, $t1, 65535
+	lui $t2, %hi(Y)
+	sh $t1, %lo(Y)($t2)
+	addiu $t0, $t0, 1
+	bne $a0, $t0, label3
 	nop
 label5:
 	jr $ra

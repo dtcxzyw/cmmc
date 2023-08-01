@@ -34,27 +34,26 @@ main:
 	addiu $t0, $t0, -1
 	andi $t2, $t0, 65535
 	sh $t2, %lo(a)($t1)
-	andi $t1, $t0, 65535
-	lui $t2, %hi(d)
-	addiu $t0, $t2, %lo(d)
-	lb $t2, %lo(d)($t2)
+	andi $t0, $t0, 65535
+	lui $t1, %hi(d)
+	lb $t2, %lo(d)($t1)
 	andi $t2, $t2, 255
 	subu $t2, $zero, $t2
-	bne $t1, $zero, label26
+	bne $t0, $zero, label26
 	nop
-	move $t1, $zero
+	move $t0, $zero
 	b label2
 	nop
 label26:
-	lui $t1, %hi(b)
-	lw $t1, %lo(b)($t1)
-	sltu $t1, $zero, $t1
+	lui $t0, %hi(b)
+	lw $t0, %lo(b)($t0)
+	sltu $t0, $zero, $t0
 label2:
-	andi $t1, $t1, 255
+	andi $t0, $t0, 255
 	andi $t2, $t2, 255
-	or $t1, $t1, $t2
-	andi $t1, $t1, 255
-	sb $t1, 0($t0)
+	or $t0, $t0, $t2
+	andi $t0, $t0, 255
+	sb $t0, %lo(d)($t1)
 	move $v0, $zero
 	jr $ra
 	nop

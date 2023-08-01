@@ -38,18 +38,7 @@ void postLegalizeFunc(MIRFunction& func, CodeGenContext& ctx);
 void preRALegalizeFunc(MIRFunction& func, CodeGenContext& ctx);
 
 bool removeUnusedInsts(MIRFunction& func, const CodeGenContext& ctx);
-bool removeIndirectCopy(MIRFunction& func, const CodeGenContext& ctx);
-void forEachOperands(MIRFunction& func, const CodeGenContext& ctx, const std::function<void(MIROperand& op)>& functor);
-void forEachUseOperands(MIRFunction& func, const CodeGenContext& ctx,
-                        const std::function<void(MIRInst& inst, MIROperand& op)>& functor);
-void forEachOperands(MIRBasicBlock& block, const CodeGenContext& ctx, const std::function<void(MIROperand& op)>& functor);
-void forEachUseOperands(MIRBasicBlock& block, const CodeGenContext& ctx,
-                        const std::function<void(MIRInst& inst, MIROperand& op)>& functor);
 void forEachDefOperands(MIRBasicBlock& block, const CodeGenContext& ctx, const std::function<void(MIROperand& op)>& functor);
-bool removeIdentityCopies(MIRFunction& func, const CodeGenContext& ctx);
-void useZeroRegister(MIRFunction& func, MIROperand zero, uint32_t size);
-bool eliminateStackLoads(MIRFunction& func, const CodeGenContext& ctx);
-bool applySSAPropagation(MIRFunction& func, const CodeGenContext& ctx);
 bool redirectGoto(MIRFunction& func, const CodeGenContext& ctx);
 
 void dumpAssembly(std::ostream& out, const CodeGenContext& ctx, const MIRModule& module, const std::function<void()>& emitData,

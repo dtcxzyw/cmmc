@@ -11,11 +11,10 @@ X:
 foo:
 	blez $a0, label10
 	nop
-	lui $t1, %hi(X)
-	addiu $t0, $t1, %lo(X)
-	sh $zero, %lo(X)($t1)
-	li $t1, 1
-	bne $a0, $t1, label16
+	lui $t0, %hi(X)
+	sh $zero, %lo(X)($t0)
+	li $t0, 1
+	bne $a0, $t0, label16
 	nop
 	li $v0, 1
 	b label5
@@ -28,8 +27,9 @@ label5:
 label16:
 	li $v0, 1
 label3:
-	andi $t1, $v0, 65535
-	sh $t1, 0($t0)
+	andi $t0, $v0, 65535
+	lui $t1, %hi(X)
+	sh $t0, %lo(X)($t1)
 	addiu $v0, $v0, 1
 	bne $a0, $v0, label3
 	nop

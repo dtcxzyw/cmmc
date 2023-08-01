@@ -51,9 +51,9 @@ clamp_mask:
 .p2align 2
 .globl clamp_mask2
 clamp_mask2:
-	li a1, 255
-	min a2, a0, a1
-	max a0, a2, zero
+	li a2, 255
+	min a1, a0, a2
+	max a0, a1, zero
 	ret
 .p2align 2
 .globl smax_zero

@@ -22,6 +22,7 @@
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/Config.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
+#include <cmmc/Transforms/Hyperparameters.hpp>
 #include <cstdint>
 #include <iostream>
 #include <iterator>
@@ -98,7 +99,7 @@ bool removeUnusedInsts(MIRFunction& func, const CodeGenContext& ctx) {
     return !remove.empty();
 }
 
-bool removeIdentityCopies(MIRFunction& func, const CodeGenContext& ctx) {
+static bool removeIdentityCopies(MIRFunction& func, const CodeGenContext& ctx) {
     bool modified = false;
     for(auto& block : func.blocks()) {
         block->instructions().remove_if([&](const MIRInst& inst) {
@@ -111,7 +112,7 @@ bool removeIdentityCopies(MIRFunction& func, const CodeGenContext& ctx) {
     return modified;
 }
 
-bool eliminateStackLoads(MIRFunction& func, const CodeGenContext& ctx) {
+static bool eliminateStackLoads(MIRFunction& func, const CodeGenContext& ctx) {
     if(!ctx.registerInfo || ctx.flags.preRA)
         return false;
     // func.dump(std::cerr, ctx);
@@ -174,107 +175,76 @@ bool eliminateStackLoads(MIRFunction& func, const CodeGenContext& ctx) {
     return modified;
 }
 
-/*
-bool applySSAPropagation(MIRFunction& func, const CodeGenContext& ctx) {
-    if(!ctx.flags.inSSAForm)
-        return false;
-    bool dirty = false;
-    while(true) {
-        std::unordered_map<MIROperand, MIROperand, MIROperandHasher> writer;
-        const auto count = [&](const MIROperand& op, const MIROperand& val) {
-            if(op.isReg() && isVirtualReg(op.reg())) {
-                if(const auto iter = writer.find(op); iter != writer.cend()) {
-                    iter->second = MIROperand{};
-                } else {
-                    auto& ref = writer[op];
-                    if(val.isReg() && isVirtualReg(val.reg()))
-                        ref = val;
-                    else
-                        ref = MIROperand{};
-                }
-            }
-        };
-
-        for(auto& block : func.blocks())
-            for(auto& inst : block->instructions()) {
-                MIROperand dst, src;
-                if(ctx.instInfo.matchCopy(inst, dst, src)) {
-                    count(dst, src);
-                } else {
-                    auto& instInfo = ctx.instInfo.getInstInfo(inst);
-                    for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx)
-                        if(instInfo.getOperandFlag(idx) & OperandFlagDef)
-                            count(inst.getOperand(idx), MIROperand{});
-                }
-            }
-
-        std::unordered_map<MIROperand, MIROperand, MIROperandHasher> replace;
-        for(auto& [op, val] : writer) {
-            if(!val.isUnused()) {
-                replace.emplace(op, val);
-            }
-        }
-
-        if(replace.empty())
-            break;
-
-        bool modified = false;
-        forEachUseOperands(func, ctx, [&](MIRInst&, MIROperand& operand) {
-            if(const auto iter = replace.find(operand); iter != replace.cend()) {
-                operand = iter->second;
-                modified = true;
-            }
-        });
-        if(modified) {
-            // func.dump(std::cerr, ctx);
-            removeIdentityCopies(func, ctx);
-            removeUnusedInsts(func, ctx);
-            dirty = true;
-        } else
-            break;
-    }
-    return dirty;
-}
-*/
-
-static bool machineConstantHoist(MIRFunction& func, CodeGenContext& ctx) {
-    if(!ctx.flags.inSSAForm)
-        return false;
-
-    const auto cfg = calcCFG(func, ctx);
-    const auto freq = calcFreq(func, cfg);
-
+static auto collectDefCount(MIRFunction& func, const CodeGenContext& ctx) {
     std::unordered_map<MIROperand, uint32_t, MIROperandHasher> defCount;
-
-    bool modified = false;
     for(auto& block : func.blocks()) {
         auto& instructions = block->instructions();
         for(auto& inst : instructions) {
             auto& instInfo = ctx.instInfo.getInstInfo(inst);
             if(requireFlag(instInfo.getInstFlag(), InstFlagLoadConstant)) {
                 auto& dst = inst.getOperand(0);
-                ++defCount[dst];
+                if(isOperandVReg(dst))
+                    ++defCount[dst];
             } else {
                 for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx)
-                    if(instInfo.getOperandFlag(idx) & OperandFlagDef)
-                        ++defCount[inst.getOperand(idx)];
+                    if(instInfo.getOperandFlag(idx) & OperandFlagDef) {
+                        auto& def = inst.getOperand(idx);
+                        if(isOperandVReg(def))
+                            ++defCount[def];
+                    }
             }
         }
     }
-    auto& entryBlockInst = func.blocks().front()->instructions();
-    for(auto& block : func.blocks()) {
-        if(&block == &func.blocks().front() || freq.query(block.get()) <= 1.0)
-            continue;
+    return defCount;
+}
 
-        auto& instructions = block->instructions();
-        for(auto& inst : instructions) {
+static bool applySSAPropagation(MIRFunction& func, const CodeGenContext& ctx) {
+    if(!ctx.flags.inSSAForm)
+        return false;
+    bool modified = false;
+    auto defCount = collectDefCount(func, ctx);
+
+    std::unordered_set<MIROperand, MIROperandHasher> constants;
+
+    for(auto& block : func.blocks()) {
+        for(auto& inst : block->instructions()) {
             auto& instInfo = ctx.instInfo.getInstInfo(inst);
             if(requireFlag(instInfo.getInstFlag(), InstFlagLoadConstant)) {
                 auto& dst = inst.getOperand(0);
-                if(defCount[dst] <= 1) {
-                    entryBlockInst.insert(std::prev(entryBlockInst.end()), inst);
-                    inst = MIRInst{ InstCopy }.setOperand<0>(MIROperand::asVReg(ctx.nextId(), dst.type())).setOperand<1>(dst);
-                    modified = true;
+                if(isOperandVReg(dst) && defCount[dst] <= 1) {
+                    constants.insert(dst);
+                }
+            }
+        }
+    }
+
+    std::unordered_map<MIROperand, MIROperand, MIROperandHasher> copy;
+
+    for(auto& block : func.blocks()) {
+        for(auto& inst : block->instructions()) {
+            MIROperand dst, src;
+            if(ctx.instInfo.matchCopy(inst, dst, src) && isOperandVReg(dst) && isOperandVReg(src) && constants.count(src)) {
+                if(defCount[dst] <= 1 && defCount[src] <= 1) {
+                    copy[dst] = src;
+                }
+            }
+        }
+    }
+
+    if(copy.empty())
+        return false;
+
+    for(auto& block : func.blocks()) {
+        auto& instructions = block->instructions();
+        for(auto& inst : instructions) {
+            auto& instInfo = ctx.instInfo.getInstInfo(inst);
+            for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
+                if(instInfo.getOperandFlag(idx) & OperandFlagUse) {
+                    auto& op = inst.getOperand(idx);
+                    if(auto iter = copy.find(op); iter != copy.cend()) {
+                        op = iter->second;
+                        modified = true;
+                    }
                 }
             }
         }
@@ -283,9 +253,93 @@ static bool machineConstantHoist(MIRFunction& func, CodeGenContext& ctx) {
     return modified;
 }
 
+static bool machineConstantHoist(MIRFunction& func, CodeGenContext& ctx) {
+    if(!ctx.flags.inSSAForm)
+        return false;
+
+    // func.dump(std::cerr, ctx);
+    // func.dumpCFG(std::cerr, ctx);
+
+    const uint32_t maxCount = ctx.target.getOptHeuristic().maxConstantHoistCount;
+    if(maxCount == 0)
+        return false;
+
+    uint32_t count = 0;
+    for(auto& inst : func.blocks().front()->instructions()) {
+        auto& instInfo = ctx.instInfo.getInstInfo(inst);
+        if(requireFlag(instInfo.getInstFlag(), InstFlagLoadConstant)) {
+            auto& dst = inst.getOperand(0);
+            if(isOperandVReg(dst))
+                ++count;
+        }
+    }
+
+    if(count >= maxCount)
+        return false;
+
+    const auto cfg = calcCFG(func, ctx);
+    const auto freq = calcFreq(func, cfg);
+    auto defCount = collectDefCount(func, ctx);
+    bool modified = false;
+
+    auto& entryBlockInst = func.blocks().front()->instructions();
+    std::vector<std::pair<MIRInst*, double>> constants;
+    for(auto& block : func.blocks()) {
+        if(&block == &func.blocks().front())
+            continue;
+        const auto blockFreq = freq.query(block.get());
+        if(blockFreq <= primaryPathThreshold / 2.0)
+            continue;
+
+        auto& instructions = block->instructions();
+        for(auto& inst : instructions) {
+            auto& instInfo = ctx.instInfo.getInstInfo(inst);
+            if(requireFlag(instInfo.getInstFlag(), InstFlagLoadConstant)) {
+                auto& dst = inst.getOperand(0);
+                if(isOperandVReg(dst) && defCount[dst] <= 1) {
+                    constants.emplace_back(&inst, blockFreq);
+                }
+            }
+        }
+    }
+
+    if(constants.empty())
+        return false;
+
+    std::stable_sort(constants.begin(), constants.end(),
+                     [](const auto& lhs, const auto& rhs) { return lhs.second > rhs.second; });
+    for(auto [inst, blockFreq] : constants) {
+        CMMC_UNUSED(blockFreq);
+        auto& dst = inst->getOperand(0);
+        entryBlockInst.insert(std::prev(entryBlockInst.end()), *inst);
+        *inst = MIRInst{ InstCopy }.setOperand<0>(MIROperand::asVReg(ctx.nextId(), dst.type())).setOperand<1>(dst);
+        modified = true;
+        ++count;
+        if(count >= maxCount)
+            break;
+    }
+
+    return modified;
+}
+
 static bool machineConstantCSE(MIRFunction& func, const CodeGenContext& ctx) {
     if(!ctx.flags.inSSAForm)
         return false;
+
+    auto defCount = collectDefCount(func, ctx);
+
+    auto& entryBlockInst = func.blocks().front()->instructions();
+    std::unordered_map<uint32_t, std::unordered_map<MIROperand, MIROperand, MIROperandHasher>> commonConstants;
+    for(auto& inst : entryBlockInst) {
+        auto& instInfo = ctx.instInfo.getInstInfo(inst);
+        if(requireFlag(instInfo.getInstFlag(), InstFlagLoadConstant)) {
+            auto& dst = inst.getOperand(0);
+            if(isOperandVReg(dst) && defCount[dst] <= 1) {
+                auto& src = inst.getOperand(1);
+                commonConstants[inst.opcode()].emplace(src, dst);
+            }
+        }
+    }
 
     // std::cerr << "before\n";
     // func.dump(std::cerr, ctx);
@@ -298,8 +352,13 @@ static bool machineConstantCSE(MIRFunction& func, const CodeGenContext& ctx) {
             if(requireFlag(instInfo.getInstFlag(), InstFlagLoadConstant)) {
                 auto& dst = inst.getOperand(0);
                 auto& src = inst.getOperand(1);
+                auto& commonMap = commonConstants[inst.opcode()];
                 auto& map = constants[inst.opcode()];
-                if(auto iter = map.find(src); iter != map.end()) {
+                if(auto it = commonMap.find(src); it != commonMap.end() && &block != &func.blocks().front()) {
+                    auto& lastDef = it->second;
+                    inst = MIRInst{ selectCopyOpcode(dst, lastDef) }.setOperand<0>(dst).setOperand<1>(lastDef);
+                    modified = true;
+                } else if(auto iter = map.find(src); iter != map.end()) {
                     auto& lastDef = iter->second;
                     inst = MIRInst{ selectCopyOpcode(dst, lastDef) }.setOperand<0>(dst).setOperand<1>(lastDef);
                     modified = true;
@@ -641,13 +700,9 @@ bool genericPeepholeOpt(MIRFunction& func, CodeGenContext& ctx) {
     modified |= removeIndirectCopy(func, ctx);
     modified |= removeIdentityCopies(func, ctx);
     modified |= removeUnusedInsts(func, ctx);
-    // func.dump(std::cerr, ctx);
-    // FIXME: incompatible with expanded Phi value setup
-    // modified |= applySSAPropagation(func, ctx);
-    // func.dump(std::cerr, ctx);
-    // modified |= machineConstantHoist(func, ctx);
-    CMMC_UNUSED(machineConstantHoist);
+    modified |= applySSAPropagation(func, ctx);
     modified |= machineConstantCSE(func, ctx);
+    modified |= machineConstantHoist(func, ctx);
     modified |= machineInstCSE(func, ctx);
     modified |= deadInstElimination(func, ctx);
     modified |= ctx.scheduleModel.peepholeOpt(func, ctx);

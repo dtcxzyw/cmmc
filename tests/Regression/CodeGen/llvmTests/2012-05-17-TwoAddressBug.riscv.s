@@ -4,9 +4,9 @@
 .p2align 2
 .globl t
 t:
-	li a2, -65535
-	addw a3, a0, a2
-	andi a2, a0, 1
-	srli a1, a3, 23
-	addw a0, a1, a2
+	li a3, -65535
+	addw a2, a0, a3
+	andi a3, a0, 1
+	srli a1, a2, 23
+	addw a0, a1, a3
 	ret

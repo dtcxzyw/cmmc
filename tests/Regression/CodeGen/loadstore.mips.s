@@ -139,39 +139,36 @@ label107:
 	jr $ra
 	nop
 label108:
-	addiu $t2, $a0, -8
+	addiu $t1, $a0, -4
 	lui $t0, %hi(arr)
 	addiu $t0, $t0, %lo(arr)
-	blez $t2, label122
+	blez $t1, label122
 	nop
-	move $t1, $zero
+	move $t2, $zero
+.p2align 2
 label109:
-	sll $t3, $t1, 2
+	sll $t3, $t2, 2
 	addu $t3, $t0, $t3
 	sw $zero, 0($t3)
 	sw $zero, 4($t3)
 	sw $zero, 8($t3)
 	sw $zero, 12($t3)
-	sw $zero, 16($t3)
-	sw $zero, 20($t3)
-	sw $zero, 24($t3)
-	sw $zero, 28($t3)
-	addiu $t1, $t1, 8
-	subu $t3, $t2, $t1
+	addiu $t2, $t2, 4
+	subu $t3, $t1, $t2
 	bgtz $t3, label109
 	nop
 label111:
-	sll $t2, $t1, 2
-	addu $t2, $t0, $t2
-	sw $zero, 0($t2)
-	addiu $t1, $t1, 1
-	subu $t2, $a0, $t1
-	bgtz $t2, label111
+	sll $t1, $t2, 2
+	addu $t1, $t0, $t1
+	sw $zero, 0($t1)
+	addiu $t2, $t2, 1
+	subu $t1, $a0, $t2
+	bgtz $t1, label111
 	nop
 	b label107
 	nop
 label122:
-	move $t1, $zero
+	move $t2, $zero
 	b label111
 	nop
 .p2align 2

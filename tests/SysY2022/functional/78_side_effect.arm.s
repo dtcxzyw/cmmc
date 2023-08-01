@@ -77,6 +77,7 @@ label15:
 	cmn r5, #1
 	bgt label6
 	b label18
+.p2align 4
 label9:
 	mov r0, r6
 	bl putint

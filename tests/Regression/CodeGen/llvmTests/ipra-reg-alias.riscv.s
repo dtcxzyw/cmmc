@@ -4,8 +4,8 @@
 .p2align 2
 .globl main
 main:
-	li a2, 4294967295
-	and a3, a0, a2
-	addiw a1, a3, 1
+	li a3, 4294967295
+	and a2, a0, a3
+	addiw a1, a2, 1
 	sh2add a0, a1, a1
 	ret

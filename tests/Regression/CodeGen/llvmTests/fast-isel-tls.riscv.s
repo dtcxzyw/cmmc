@@ -10,15 +10,15 @@ v:
 .globl f
 f:
 pcrel8:
-	auipc a1, %pcrel_hi(v)
-	lw a2, %pcrel_lo(pcrel8)(a1)
-	addiw a0, a2, 1
+	auipc a2, %pcrel_hi(v)
+	lw a1, %pcrel_lo(pcrel8)(a2)
+	addiw a0, a1, 1
 	ret
 .p2align 2
 .globl f_alias
 f_alias:
 pcrel16:
-	auipc a1, %pcrel_hi(v)
-	lw a2, %pcrel_lo(pcrel16)(a1)
-	addiw a0, a2, 1
+	auipc a2, %pcrel_hi(v)
+	lw a1, %pcrel_lo(pcrel16)(a2)
+	addiw a0, a1, 1
 	ret

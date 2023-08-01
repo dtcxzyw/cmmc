@@ -3,16 +3,16 @@
 .p2align 2
 .globl sdiv_exact_even_even_fail_unknown
 sdiv_exact_even_even_fail_unknown:
-	andi $t1, $a0, 255
-	li $t0, -2
-	and $t1, $t1, $t0
-	sll $t1, $t1, 24
-	sra $t1, $t1, 24
-	andi $t2, $a1, 255
-	and $t0, $t2, $t0
+	andi $t0, $a0, 255
+	li $t1, -2
+	and $t0, $t0, $t1
 	sll $t0, $t0, 24
 	sra $t0, $t0, 24
-	div $zero, $t1, $t0
+	andi $t2, $a1, 255
+	and $t1, $t2, $t1
+	sll $t1, $t1, 24
+	sra $t1, $t1, 24
+	div $zero, $t0, $t1
 	mflo $t0
 	andi $t0, $t0, 1
 	andi $v0, $t0, 255
@@ -57,12 +57,12 @@ sdiv_neg_neg_high_bits:
 .p2align 2
 .globl udiv_exact_even_even_fail_unknown
 udiv_exact_even_even_fail_unknown:
-	andi $t1, $a0, 255
-	li $t0, -2
-	and $t1, $t1, $t0
+	andi $t0, $a0, 255
+	li $t1, -2
+	and $t0, $t0, $t1
 	andi $t2, $a1, 255
-	and $t0, $t2, $t0
-	div $zero, $t1, $t0
+	and $t1, $t2, $t1
+	div $zero, $t0, $t1
 	mflo $t0
 	andi $t0, $t0, 1
 	andi $v0, $t0, 255

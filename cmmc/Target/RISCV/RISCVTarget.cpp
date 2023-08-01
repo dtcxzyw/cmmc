@@ -207,13 +207,14 @@ public:
     [[nodiscard]] const TargetOptHeuristic& getOptHeuristic() const noexcept override {
         static TargetOptHeuristic defaultHeuristic{
             .registerLength = 64U,
-            .unrollBlockSize = 8U,
+            .unrollBlockSize = 4U,
             .maxUnrollBodySize = 128U,
             .duplicationThreshold = 10U,
             .duplicationIterations = 10U,
             .branchLimit = 400U,
             .disableSelectionOpt = true,
             .branchPredictionWarmupThreshold = 2U,
+            .maxConstantHoistCount = 12U,
         };
 
         return defaultHeuristic;

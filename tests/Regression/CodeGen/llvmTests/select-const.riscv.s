@@ -51,22 +51,22 @@ label42:
 .p2align 2
 .globl select_eq_10000_10001
 select_eq_10000_10001:
-	xor a3, a0, a1
-	li a2, 10002
-	sltiu a0, a3, 1
-	li a3, 4294967295
-	subw a1, a2, a0
-	and a0, a1, a3
+	xor a2, a0, a1
+	li a3, 10002
+	sltiu a0, a2, 1
+	li a2, 4294967295
+	subw a1, a3, a0
+	and a0, a1, a2
 	ret
 .p2align 2
 .globl select_eq_1_2
 select_eq_1_2:
-	xor a3, a0, a1
-	li a2, 2
-	sltiu a0, a3, 1
-	li a3, 4294967295
-	subw a1, a2, a0
-	and a0, a1, a3
+	xor a2, a0, a1
+	li a3, 2
+	sltiu a0, a2, 1
+	li a2, 4294967295
+	subw a1, a3, a0
+	and a0, a1, a2
 	ret
 .p2align 2
 .globl select_eq_zero_negone
@@ -80,22 +80,22 @@ select_eq_zero_negone:
 .p2align 2
 .globl select_ne_10001_10002
 select_ne_10001_10002:
-	xor a3, a0, a1
-	li a2, 10002
-	sltu a0, zero, a3
-	li a3, 4294967295
-	subw a1, a2, a0
-	and a0, a1, a3
+	xor a2, a0, a1
+	li a3, 10002
+	sltu a0, zero, a2
+	li a2, 4294967295
+	subw a1, a3, a0
+	and a0, a1, a2
 	ret
 .p2align 2
 .globl select_ne_1_2
 select_ne_1_2:
-	xor a3, a0, a1
-	li a2, 2
-	sltu a0, zero, a3
-	li a3, 4294967295
-	subw a1, a2, a0
-	and a0, a1, a3
+	xor a2, a0, a1
+	li a3, 2
+	sltu a0, zero, a2
+	li a2, 4294967295
+	subw a1, a3, a0
+	and a0, a1, a2
 	ret
 .p2align 2
 .globl select_ne_zero_negone

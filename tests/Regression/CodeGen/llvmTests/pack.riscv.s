@@ -22,10 +22,10 @@ test10:
 test2:
 	slliw a2, a1, 12
 	lui a3, 1048560
+	li a4, 65535
 	and a1, a2, a3
-	li a2, 65535
-	and a3, a0, a2
-	or a0, a1, a3
+	and a2, a0, a4
+	or a0, a1, a2
 	ret
 .p2align 2
 .globl test3
@@ -65,20 +65,20 @@ test5a:
 test6:
 	srliw a2, a1, 12
 	li a3, 65535
+	lui a4, 1048560
 	and a1, a2, a3
-	lui a2, 1048560
-	and a3, a0, a2
-	or a0, a1, a3
+	and a2, a0, a4
+	or a0, a1, a2
 	ret
 .p2align 2
 .globl test7
 test7:
 	srliw a2, a1, 18
 	li a3, 65535
+	lui a4, 1048560
 	and a1, a2, a3
-	lui a2, 1048560
-	and a3, a0, a2
-	or a0, a1, a3
+	and a2, a0, a4
+	or a0, a1, a2
 	ret
 .p2align 2
 .globl test8

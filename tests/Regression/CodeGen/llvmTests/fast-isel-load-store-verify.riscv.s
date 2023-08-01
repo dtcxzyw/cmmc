@@ -40,11 +40,11 @@ pcrel23:
 .globl t3
 t3:
 pcrel34:
-	auipc a0, %pcrel_hi(c)
-	li a3, 4294967295
-	lw a2, %pcrel_lo(pcrel34)(a0)
-	addiw a1, a2, 1
-	and a0, a1, a3
+	auipc a2, %pcrel_hi(c)
+	lw a0, %pcrel_lo(pcrel34)(a2)
+	li a2, 4294967295
+	addiw a1, a0, 1
+	and a0, a1, a2
 	ret
 .p2align 2
 .globl t4

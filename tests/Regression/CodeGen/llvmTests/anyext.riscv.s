@@ -4,11 +4,11 @@
 .p2align 2
 .globl bar
 bar:
-	li a2, 65535
-	and a1, a1, a2
-	and a3, a0, a2
+	li a3, 65535
+	and a1, a1, a3
+	and a2, a0, a3
+	divw a0, a2, a1
 	li a2, 4294967295
-	divw a0, a3, a1
 	and a1, a0, a2
 	andi a0, a1, 1
 	ret
@@ -17,8 +17,8 @@ bar:
 foo:
 	andi a2, a0, 255
 	andi a3, a1, 255
-	li a1, 4294967295
 	divw a0, a2, a3
-	and a2, a0, a1
-	andi a0, a2, 1
+	li a2, 4294967295
+	and a1, a0, a2
+	andi a0, a1, 1
 	ret

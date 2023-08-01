@@ -41,52 +41,56 @@ z4:
 .globl calc_seleq
 calc_seleq:
 	lui $t0, %hi(a)
-	lw $t3, %lo(a)($t0)
+	lw $t1, %lo(a)($t0)
 	lui $t0, %hi(b)
-	lw $t4, %lo(b)($t0)
-	lui $t0, %hi(f)
-	addiu $t1, $t0, %lo(f)
-	lui $t0, %hi(t)
-	addiu $t2, $t0, %lo(t)
-	bne $t3, $t4, label29
+	lw $t2, %lo(b)($t0)
+	bne $t1, $t2, label29
 	nop
-	lw $t0, 0($t1)
+	lui $t0, %hi(f)
+	lw $t0, %lo(f)($t0)
 	b label2
 	nop
 label29:
-	lw $t0, 0($t2)
+	lui $t0, %hi(t)
+	lw $t0, %lo(t)($t0)
 label2:
-	lui $t5, %hi(z1)
-	sw $t0, %lo(z1)($t5)
-	bne $t3, $t4, label35
+	lui $t3, %hi(z1)
+	sw $t0, %lo(z1)($t3)
+	bne $t1, $t2, label35
 	nop
-	lw $t0, 0($t1)
+	lui $t0, %hi(f)
+	lw $t0, %lo(f)($t0)
 	b label5
 	nop
 label35:
-	lw $t0, 0($t2)
+	lui $t0, %hi(t)
+	lw $t0, %lo(t)($t0)
 label5:
-	lui $t4, %hi(z2)
-	sw $t0, %lo(z2)($t4)
+	lui $t2, %hi(z2)
+	sw $t0, %lo(z2)($t2)
 	lui $t0, %hi(c)
-	lw $t4, %lo(c)($t0)
-	bne $t3, $t4, label45
+	lw $t2, %lo(c)($t0)
+	bne $t1, $t2, label45
 	nop
-	lw $t0, 0($t2)
+	lui $t0, %hi(t)
+	lw $t0, %lo(t)($t0)
 	b label8
 	nop
 label45:
-	lw $t0, 0($t1)
+	lui $t0, %hi(f)
+	lw $t0, %lo(f)($t0)
 label8:
-	lui $t5, %hi(z3)
-	sw $t0, %lo(z3)($t5)
-	bne $t3, $t4, label52
+	lui $t3, %hi(z3)
+	sw $t0, %lo(z3)($t3)
+	bne $t1, $t2, label52
 	nop
-	lw $t0, 0($t2)
+	lui $t0, %hi(t)
+	lw $t0, %lo(t)($t0)
 	b label11
 	nop
 label52:
-	lw $t0, 0($t1)
+	lui $t0, %hi(f)
+	lw $t0, %lo(f)($t0)
 label11:
 	lui $t1, %hi(z4)
 	sw $t0, %lo(z4)($t1)

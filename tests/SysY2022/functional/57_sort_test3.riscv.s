@@ -150,6 +150,7 @@ label30:
 label390:
 	bgt a3, s5, label28
 	j label113
+.p2align 2
 label389:
 	bgt a3, s5, label27
 label113:
@@ -212,6 +213,7 @@ label47:
 label372:
 	bgt a3, s7, label49
 	j label171
+.p2align 2
 label409:
 	bgt a3, s7, label48
 label171:
@@ -301,6 +303,7 @@ label401:
 label253:
 	bgt a3, s9, label59
 	j label58
+.p2align 2
 label402:
 	bgt a3, s3, label72
 	j label11
@@ -313,50 +316,51 @@ label220:
 .p2align 2
 .globl main
 main:
-	addi sp, sp, -64
+	addi sp, sp, -72
 	li a1, 4
 	li a0, 3
 	li a2, 9
-	li a3, 7
 	sd ra, 0(sp)
 	sd s0, 8(sp)
-	addi s0, sp, 24
+	addi s0, sp, 32
 	sd s1, 16(sp)
-	sw a1, 24(sp)
-	li a1, 6
-	sw a0, 28(sp)
-	li a0, 2
-	sw a2, 32(sp)
+	sd s2, 24(sp)
+	sw a1, 32(sp)
+	li a1, 1
 	sw a0, 36(sp)
-	li a0, 1
-	sw zero, 40(sp)
+	li a0, 2
+	sw a2, 40(sp)
 	sw a0, 44(sp)
-	li a0, 5
-	sw a1, 48(sp)
-	li a1, 8
-	sw a0, 52(sp)
-	sw a3, 56(sp)
+	li a0, 6
+	sw zero, 48(sp)
+	sw a1, 52(sp)
+	li a1, 5
+	sw a0, 56(sp)
+	li a0, 7
 	sw a1, 60(sp)
+	li a1, 8
+	sw a0, 64(sp)
+	sw a1, 68(sp)
 	mv a1, zero
 	mv a0, s0
 	jal QuickSort
-	li a1, 10
-	bge a0, a1, label461
-	mv s1, a0
+	li s1, 10
+	bge a0, s1, label461
+	mv s2, a0
 .p2align 2
 label459:
-	sh2add a1, s1, s0
+	sh2add a1, s2, s0
 	lw a0, 0(a1)
 	jal putint
-	li a0, 10
+	mv a0, s1
 	jal putch
-	li a0, 10
-	addiw s1, s1, 1
-	blt s1, a0, label459
+	addiw s2, s2, 1
+	blt s2, s1, label459
 label461:
 	mv a0, zero
 	ld ra, 0(sp)
 	ld s0, 8(sp)
 	ld s1, 16(sp)
-	addi sp, sp, 64
+	ld s2, 24(sp)
+	addi sp, sp, 72
 	ret

@@ -15,7 +15,7 @@ pcrel14:
 	andi a2, a1, 255
 	sraiw a0, a2, 5
 	andi a1, a0, 7
-	slliw a2, a1, 5
-	sraiw a3, a2, 5
-	sext.b a0, a3
+	slliw a3, a1, 5
+	sraiw a2, a3, 5
+	sext.b a0, a2
 	ret

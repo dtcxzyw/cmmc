@@ -5,9 +5,9 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
     i1 %1 = icmp sgt i32 %0, i32 0;
     cbr i1 %1(prob = 0.984615), ^super.header, ^b;
   ^super.header:
-    i32 %2 = add i32 %0, i32 -8;
-    i1 %3 = icmp sgt i32 %0, i32 8;
-    cbr i1 %3(prob = 0.888889), ^for.body, ^for.body1;
+    i32 %2 = add i32 %0, i32 -4;
+    i1 %3 = icmp sgt i32 %0, i32 4;
+    cbr i1 %3(prob = 0.941176), ^for.body, ^for.body1;
   ^b:
     i32 %4 = phi [^entry, i32 1149590] [^for.body1, i32 %17];
     ret i32 %4;
@@ -15,17 +15,17 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
     i32 %5 = phi [^super.header, i32 0] [^for.body, i32 %12];
     i32 %6 = phi [^super.header, i32 1149590] [^for.body, i32 %9];
     i32 %7 = phi [^super.header, i32 0] [^for.body, i32 %10];
-    i32 %8 = add i32 %5, i32 28;
+    i32 %8 = add i32 %5, i32 6;
     i32 %9 = add i32 %6, i32 %8;
-    i32 %10 = add i32 %7, i32 8;
+    i32 %10 = add i32 %7, i32 4;
     i1 %11 = icmp sgt i32 %2, i32 %10;
-    i32 %12 = add i32 %5, i32 64;
-    cbr i1 %11(prob = 0.888889), ^for.body, ^for.body1;
+    i32 %12 = add i32 %5, i32 16;
+    cbr i1 %11(prob = 0.941176), ^for.body, ^for.body1;
   ^for.body1 {scalar}:
     i32 %13 = phi [^super.header, i32 0] [^for.body, i32 %10] [^for.body1, i32 %15];
     i32 %14 = phi [^super.header, i32 1149590] [^for.body, i32 %9] [^for.body1, i32 %17];
     i32 %15 = add i32 %13, i32 1;
     i1 %16 = icmp sgt i32 %0, i32 %15;
     i32 %17 = add i32 %13, i32 %14;
-    cbr i1 %16(prob = 0.875), ^for.body1, ^b;
+    cbr i1 %16(prob = 0.75), ^for.body1, ^b;
 }

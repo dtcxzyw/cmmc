@@ -771,11 +771,13 @@ label4:
 .p2align 2
 .globl main
 main:
-	addi sp, sp, -24
+	addi sp, sp, -32
 	sd ra, 0(sp)
 	sd s0, 8(sp)
 	li s0, 1
 	sd s1, 16(sp)
+	li s1, 21
+	sd s2, 24(sp)
 .p2align 2
 label851:
 	li a0, 102
@@ -790,7 +792,7 @@ label851:
 	jal putint
 	mv a0, s0
 	jal fib
-	mv s1, a0
+	mv s2, a0
 	li a0, 41
 	jal putch
 	li a0, 32
@@ -799,16 +801,16 @@ label851:
 	jal putch
 	li a0, 32
 	jal putch
-	mv a0, s1
+	mv a0, s2
 	jal putint
 	li a0, 10
 	jal putch
-	li a0, 21
 	addiw s0, s0, 1
-	blt s0, a0, label851
+	blt s0, s1, label851
 	mv a0, zero
 	ld ra, 0(sp)
 	ld s0, 8(sp)
 	ld s1, 16(sp)
-	addi sp, sp, 24
+	ld s2, 24(sp)
+	addi sp, sp, 32
 	ret

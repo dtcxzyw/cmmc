@@ -4,10 +4,10 @@
 .p2align 2
 .globl rot0
 rot0:
-	li a3, 32
-	subw a4, a3, a1
+	li a4, 32
+	subw a3, a4, a1
 	sllw a1, a0, a1
-	srlw a2, a0, a4
+	srlw a2, a0, a3
 	or a0, a2, a1
 	ret
 .p2align 2
@@ -20,10 +20,10 @@ rot1:
 .p2align 2
 .globl rot2
 rot2:
-	li a3, 32
-	subw a4, a3, a1
+	li a4, 32
+	subw a3, a4, a1
 	srlw a1, a0, a1
-	sllw a2, a0, a4
+	sllw a2, a0, a3
 	or a0, a2, a1
 	ret
 .p2align 2

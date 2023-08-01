@@ -5,20 +5,21 @@
 .globl main
 main:
 	addi sp, sp, -8
-	li a0, 112
+	li a2, 112
+	li a0, 1000
+	li a1, 10
 	sd ra, 0(sp)
 .p2align 2
 label2:
-	addiw a1, a0, -88
-	addiw a2, a0, -76
-	li a3, 1000
-	mv a0, a2
-	blt a1, a3, label17
-	mv a0, a1
+	addiw a3, a2, -88
+	addiw a4, a2, -76
+	mv a2, a4
+	blt a3, a0, label19
+	mv a2, a3
 .p2align 2
-label17:
-	li a1, 10
-	bgt a0, a1, label2
+label19:
+	bgt a2, a1, label2
+	mv a0, a2
 	jal putint
 	ld ra, 0(sp)
 	li a0, 3390

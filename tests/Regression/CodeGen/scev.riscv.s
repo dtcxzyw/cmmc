@@ -5,30 +5,23 @@
 .globl foo4
 foo4:
 	ble a1, zero, label9
-	addiw a4, a1, -8
-	li a3, 8
+	addiw a4, a1, -4
+	li a3, 4
 	ble a1, a3, label18
 	mv a3, zero
 	mv a2, zero
+.p2align 2
 label3:
 	sh2add a5, a3, a0
-	addiw t1, a2, 4
-	addiw t0, a2, 8
-	addiw a3, a3, 8
+	addiw t0, a2, 4
+	addiw t1, a2, 8
+	addiw a3, a3, 4
 	sw a2, 0(a5)
-	sw t1, 4(a5)
-	addiw t1, a2, 12
-	sw t0, 8(a5)
-	addiw t0, a2, 16
-	sw t1, 12(a5)
-	addiw t1, a2, 20
-	sw t0, 16(a5)
-	addiw t0, a2, 24
-	sw t1, 20(a5)
-	addiw t1, a2, 28
-	sw t0, 24(a5)
-	addiw a2, a2, 32
-	sw t1, 28(a5)
+	sw t0, 4(a5)
+	addiw t0, a2, 12
+	sw t1, 8(a5)
+	addiw a2, a2, 16
+	sw t0, 12(a5)
 	bgt a4, a3, label3
 label6:
 	sh2add a4, a3, a0

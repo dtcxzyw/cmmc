@@ -28,45 +28,12 @@
 
 CMMC_MIR_NAMESPACE_BEGIN
 
-void forEachOperands(MIRFunction& func, const CodeGenContext& ctx, const std::function<void(MIROperand& op)>& functor) {
-    for(auto& param : func.args())
-        functor(param);
-    for(auto& block : func.blocks())
-        forEachOperands(*block, ctx, functor);
-}
-
-void forEachOperands(MIRBasicBlock& block, const CodeGenContext& ctx, const std::function<void(MIROperand& op)>& functor) {
-    for(auto& inst : block.instructions()) {
-        auto& instInfo = ctx.instInfo.getInstInfo(inst);
-        for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
-            functor(inst.getOperand(idx));
-        }
-    }
-}
-
 void forEachDefOperands(MIRBasicBlock& block, const CodeGenContext& ctx, const std::function<void(MIROperand& op)>& functor) {
     for(auto& inst : block.instructions()) {
         auto& instInfo = ctx.instInfo.getInstInfo(inst);
         for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
             if(instInfo.getOperandFlag(idx) & OperandFlagDef)
                 functor(inst.getOperand(idx));
-        }
-    }
-}
-
-void forEachUseOperands(MIRFunction& func, const CodeGenContext& ctx,
-                        const std::function<void(MIRInst& inst, MIROperand& op)>& functor) {
-    for(auto& block : func.blocks())
-        forEachUseOperands(*block, ctx, functor);
-}
-
-void forEachUseOperands(MIRBasicBlock& block, const CodeGenContext& ctx,
-                        const std::function<void(MIRInst& inst, MIROperand& op)>& functor) {
-    for(auto& inst : block.instructions()) {
-        auto& instInfo = ctx.instInfo.getInstInfo(inst);
-        for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
-            if(instInfo.getOperandFlag(idx) & OperandFlagUse)
-                functor(inst, inst.getOperand(idx));
         }
     }
 }
@@ -125,7 +92,7 @@ void dumpAssembly(std::ostream& out, const CodeGenContext& ctx, const MIRModule&
             for(auto& block : func.blocks()) {
                 auto isPCRelLabel = [](const std::string_view& label) { return label == "pcrel"; };
                 if(emitAlignment && !isPCRelLabel(block->symbol().prefix()) &&
-                   (&block == &func.blocks().front() || block->getTripCount() >= primaryPathThreshold)) {
+                   (&block == &func.blocks().front() || block->getTripCount() >= primaryPathThreshold / 2.0)) {
                     out << ".p2align " << p2Align << '\n';
                 }
                 if(&block != &func.blocks().front()) {

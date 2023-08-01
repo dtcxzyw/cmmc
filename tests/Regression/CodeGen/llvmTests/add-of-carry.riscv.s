@@ -5,10 +5,10 @@
 .globl test1
 test1:
 	addw a2, a0, a1
+	li a3, 4294967295
 	sltu a0, a2, a1
-	li a1, 4294967295
-	and a3, a0, a1
-	addw a0, a2, a3
+	and a1, a0, a3
+	addw a0, a2, a1
 	ret
 .p2align 2
 .globl test2

@@ -15,9 +15,9 @@ s:
 foo:
 	beq a0, zero, label8
 pcrel27:
-	auipc a1, %pcrel_hi(u)
-	lb a2, %pcrel_lo(pcrel27)(a1)
-	andi a0, a2, 255
+	auipc a2, %pcrel_hi(u)
+	lb a1, %pcrel_lo(pcrel27)(a2)
+	andi a0, a1, 255
 	j label3
 label8:
 	auipc a2, %pcrel_hi(s)

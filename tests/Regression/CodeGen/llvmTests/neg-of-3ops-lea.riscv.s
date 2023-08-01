@@ -4,9 +4,9 @@
 .p2align 2
 .globl t0
 t0:
-	li a2, 32
-	subw a3, a2, a0
-	subw a0, a3, a1
+	li a3, 32
+	subw a2, a3, a0
+	subw a0, a2, a1
 	ret
 .p2align 2
 .globl t1

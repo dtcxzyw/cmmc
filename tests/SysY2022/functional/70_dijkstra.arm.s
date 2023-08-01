@@ -12,42 +12,42 @@ e:
 .globl main
 main:
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
-	mov r0, #0
+	mov r9, #0
 	sub sp, sp, #132
-	add r5, sp, #64
+	str r9, [sp, #0]
 	mov r7, sp
-	str r0, [sp, #0]
-	str r0, [sp, #4]
-	str r0, [sp, #8]
-	str r0, [sp, #12]
-	str r0, [sp, #16]
-	str r0, [sp, #20]
-	str r0, [sp, #24]
-	str r0, [sp, #28]
-	str r0, [sp, #32]
-	str r0, [sp, #36]
-	str r0, [sp, #40]
-	str r0, [sp, #44]
-	str r0, [sp, #48]
-	str r0, [sp, #52]
-	str r0, [sp, #56]
-	str r0, [sp, #60]
-	str r0, [sp, #64]
-	str r0, [sp, #68]
-	str r0, [sp, #72]
-	str r0, [sp, #76]
-	str r0, [sp, #80]
-	str r0, [sp, #84]
-	str r0, [sp, #88]
-	str r0, [sp, #92]
-	str r0, [sp, #96]
-	str r0, [sp, #100]
-	str r0, [sp, #104]
-	str r0, [sp, #108]
-	str r0, [sp, #112]
-	str r0, [sp, #116]
-	str r0, [sp, #120]
-	str r0, [sp, #124]
+	add r5, sp, #64
+	str r9, [sp, #4]
+	str r9, [sp, #8]
+	str r9, [sp, #12]
+	str r9, [sp, #16]
+	str r9, [sp, #20]
+	str r9, [sp, #24]
+	str r9, [sp, #28]
+	str r9, [sp, #32]
+	str r9, [sp, #36]
+	str r9, [sp, #40]
+	str r9, [sp, #44]
+	str r9, [sp, #48]
+	str r9, [sp, #52]
+	str r9, [sp, #56]
+	str r9, [sp, #60]
+	str r9, [sp, #64]
+	str r9, [sp, #68]
+	str r9, [sp, #72]
+	str r9, [sp, #76]
+	str r9, [sp, #80]
+	str r9, [sp, #84]
+	str r9, [sp, #88]
+	str r9, [sp, #92]
+	str r9, [sp, #96]
+	str r9, [sp, #100]
+	str r9, [sp, #104]
+	str r9, [sp, #108]
+	str r9, [sp, #112]
+	str r9, [sp, #116]
+	str r9, [sp, #120]
+	str r9, [sp, #124]
 	bl getint
 	mov r4, r0
 	bl getint
@@ -67,11 +67,11 @@ label33:
 	mov r2, #1
 .p2align 4
 label34:
-	mov r3, #0
-	movw r9, #65535
+	movw r3, #65535
 	cmp r0, r2
-	moveq r9, r3
-	str r9, [r1, r2, lsl #2]
+	mov r9, #0
+	moveq r3, r9
+	str r3, [r1, r2, lsl #2]
 	add r2, r2, #1
 	cmp r4, r2
 	bge label34
@@ -106,9 +106,9 @@ label99:
 .p2align 4
 label8:
 	ldr r3, [r1, r2, lsl #2]
+	mov r9, #0
 	str r3, [r5, r2, lsl #2]
-	mov r3, #0
-	str r3, [r7, r2, lsl #2]
+	str r9, [r7, r2, lsl #2]
 	add r2, r2, #1
 	cmp r4, r2
 	bge label8
@@ -119,8 +119,9 @@ label11:
 .p2align 4
 label116:
 	movw r8, #65535
-	mov r2, #0
+	mov r9, #0
 	mov r3, #1
+	mov r2, r9
 	cmp r4, r3
 	bge label25
 	b label17
@@ -138,7 +139,8 @@ label30:
 	mov r0, #10
 	bl putch
 	add sp, sp, #132
-	mov r0, #0
+	mov r9, #0
+	mov r0, r9
 	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
 .p2align 4
 label31:
@@ -157,25 +159,25 @@ label20:
 	b label29
 .p2align 4
 label25:
-	ldr r9, [r5, r3, lsl #2]
-	cmp r8, r9
+	ldr r10, [r5, r3, lsl #2]
+	cmp r8, r10
 	bgt label28
-	mov r10, #0
-	cmp r10, #0
+	mov r9, #0
+	cmp r9, #0
 	movne r2, r3
-	movne r8, r9
+	movne r8, r10
 	add r3, r3, #1
 	cmp r4, r3
 	bge label25
 	b label248
 .p2align 4
 label28:
-	ldr r10, [r7, r3, lsl #2]
-	clz r10, r10
-	lsr r10, r10, #5
-	cmp r10, #0
+	ldr r9, [r7, r3, lsl #2]
+	clz r9, r9
+	lsr r9, r9, #5
+	cmp r9, #0
 	movne r2, r3
-	movne r8, r9
+	movne r8, r10
 	add r3, r3, #1
 	cmp r4, r3
 	bge label25

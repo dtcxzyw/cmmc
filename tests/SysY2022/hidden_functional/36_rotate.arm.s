@@ -23,12 +23,10 @@ label2:
 	vpop { s16 }
 	pop { pc }
 label4:
-	movw r0, #0
-	movt r0, #16448
-	vmov s1, r0
-	movw r0, #14269
-	movt r0, #13702
+	movw r1, #0
 	vmov s2, r0
+	movt r1, #16448
+	vmov s1, r1
 	vdiv.f32 s0, s0, s1
 	vabs.f32 s1, s0
 	vcmp.f32 s1, s2
@@ -128,8 +126,8 @@ label56:
 	vdiv.f32 s1, s0, s3
 	vcmp.f32 s0, s3
 	vmrs APSR_nzcv, FPSCR
-	vcmp.f32 s0, s4
 	movwgt r0, #1
+	vcmp.f32 s0, s4
 	vmrs APSR_nzcv, FPSCR
 	movwmi r1, #1
 	orrs r9, r0, r1
@@ -153,13 +151,13 @@ label56:
 	vmrs APSR_nzcv, FPSCR
 	vmovmi.f32 s0, s1
 	bl my_sin_impl
-	vcmp.f32 s19, s3
 	mov r0, #0
-	vmov.f32 s1, s19
 	mov r1, #0
+	vmov.f32 s1, s19
+	vcmp.f32 s19, s3
 	vmov.f32 s18, s0
-	vmrs APSR_nzcv, FPSCR
 	vdiv.f32 s0, s19, s3
+	vmrs APSR_nzcv, FPSCR
 	movwgt r0, #1
 	vcmp.f32 s19, s4
 	vmrs APSR_nzcv, FPSCR
@@ -203,6 +201,7 @@ label56:
 	cmp r7, r9
 	bgt label59
 	b label152
+.p2align 4
 label67:
 	cmp r4, #0
 	ble label68
@@ -220,6 +219,7 @@ label70:
 	cmp r7, r10
 	bgt label67
 	b label56
+.p2align 4
 label59:
 	sub r0, r9, r8
 	cmp r4, #0
@@ -230,6 +230,7 @@ label59:
 	ble label60
 	mov r10, #0
 	b label61
+.p2align 4
 label60:
 	mov r0, #10
 	bl putch

@@ -18,13 +18,13 @@ kkkk:
 .globl test
 test:
 pcrel17:
-	auipc a2, %pcrel_hi(iiii)
+	auipc a1, %pcrel_hi(iiii)
 pcrel18:
-	auipc a1, %pcrel_hi(jjjj)
-	lw a0, %pcrel_lo(pcrel17)(a2)
-	lw a2, %pcrel_lo(pcrel18)(a1)
+	auipc a2, %pcrel_hi(jjjj)
+	lw a0, %pcrel_lo(pcrel17)(a1)
+	lw a1, %pcrel_lo(pcrel18)(a2)
 pcrel19:
-	auipc a1, %pcrel_hi(kkkk)
-	divuw a0, a0, a2
-	sw a0, %pcrel_lo(pcrel19)(a1)
+	auipc a2, %pcrel_hi(kkkk)
+	divuw a0, a0, a1
+	sw a0, %pcrel_lo(pcrel19)(a2)
 	ret

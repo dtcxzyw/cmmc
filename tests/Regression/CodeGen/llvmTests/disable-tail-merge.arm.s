@@ -16,21 +16,21 @@ g1:
 .p2align 4
 .globl test1
 test1:
-	movs r1, r0
+	movw r3, #:lower16:g0
 	movw r2, #:lower16:g1
-	movw r0, #:lower16:g0
+	cmp r0, #0
+	movt r3, #:upper16:g0
 	movt r2, #:upper16:g1
-	movt r0, #:upper16:g0
-	ldr r3, [r0, #0]
+	ldr r1, [r3, #0]
 	bne label14
-	add r1, r3, #11
-	str r1, [r0, #0]
+	add r0, r1, #11
+	str r0, [r3, #0]
 	ldr r0, [r2, #0]
 	add r0, r0, #23
 	b label3
 label14:
-	add r1, r3, #1
-	str r1, [r0, #0]
+	add r0, r1, #1
+	str r0, [r3, #0]
 	ldr r0, [r2, #0]
 	add r0, r0, #23
 label3:

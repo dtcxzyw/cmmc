@@ -391,9 +391,9 @@ sext_divw_zext_zext:
 .globl sext_i32_remw_sext_zext_i16
 sext_i32_remw_sext_zext_i16:
 	sext.h a2, a0
-	li a0, 65535
-	and a3, a1, a0
-	remw a1, a2, a3
+	li a3, 65535
+	and a0, a1, a3
+	remw a1, a2, a0
 	li a2, 4294967295
 	and a0, a1, a2
 	ret

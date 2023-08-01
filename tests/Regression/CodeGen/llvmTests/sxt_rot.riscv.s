@@ -70,9 +70,9 @@ test5:
 .globl test6
 test6:
 	sext.b a2, a0
-	li a3, 4294967295
-	and a4, a2, a3
-	addw a0, a1, a4
+	li a4, 4294967295
+	and a3, a2, a4
+	addw a0, a1, a3
 	ret
 .p2align 2
 .globl test7
@@ -85,9 +85,9 @@ test7:
 .globl test8
 test8:
 	sext.h a2, a0
-	li a3, 4294967295
-	and a4, a2, a3
-	addw a0, a1, a4
+	li a4, 4294967295
+	and a3, a2, a4
+	addw a0, a1, a3
 	ret
 .p2align 2
 .globl test9

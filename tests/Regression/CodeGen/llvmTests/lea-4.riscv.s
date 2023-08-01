@@ -5,10 +5,10 @@
 .globl t1
 t1:
 	addiw a3, a0, -1
-	li a1, 65535
-	slliw a2, a3, 1
-	and a3, a2, a1
-	and a0, a3, a1
+	li a2, 65535
+	slliw a1, a3, 1
+	and a3, a1, a2
+	and a0, a3, a2
 	ret
 .p2align 2
 .globl t2

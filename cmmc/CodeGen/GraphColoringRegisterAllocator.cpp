@@ -440,6 +440,8 @@ static void graphColoringAllocateImpl(MIRFunction& mfunc, CodeGenContext& ctx, I
             }
             if(auto iter = copyHint.find(vreg); iter != copyHint.end())
                 weight += 100.0 * static_cast<double>(iter->second.size());
+            if(constants.count(vreg))
+                weight -= 1.0;
             weights.emplace(vreg, weight);
         }
         for(auto& block : mfunc.blocks()) {

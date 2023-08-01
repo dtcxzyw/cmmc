@@ -11,67 +11,66 @@ dp:
 .p2align 2
 .globl main
 main:
-	addi sp, sp, -56
+	addi sp, sp, -72
 	sd ra, 0(sp)
 	sd s3, 8(sp)
-	sd s2, 16(sp)
-	sd s1, 24(sp)
+	sd s4, 16(sp)
+	sd s5, 24(sp)
 	sd s0, 32(sp)
-	sd s5, 40(sp)
-	sd s4, 48(sp)
+	sd s1, 40(sp)
+	sd s6, 48(sp)
+	sd s2, 56(sp)
+	sd s7, 64(sp)
 	jal getint
-pcrel135:
-	auipc a1, %pcrel_hi(dp)
+	li s5, 140
 	mv s3, a0
-	addi a0, a1, %pcrel_lo(pcrel135)
-	li a1, 140
-	mv s2, a0
-	mul a2, s3, a1
-	add s1, a0, a2
+pcrel138:
+	auipc a0, %pcrel_hi(dp)
+	addi s4, a0, %pcrel_lo(pcrel138)
+	mul a0, s3, s5
+	add s1, s4, a0
 	jal getint
+	li s2, 1
 	mv s0, a0
-pcrel136:
+pcrel139:
 	auipc a0, %pcrel_hi(t)
-	addi s4, a0, %pcrel_lo(pcrel136)
+	addi s6, a0, %pcrel_lo(pcrel139)
 	bgt s3, zero, label28
 label27:
-	li a3, 1
+	mv a3, s2
 	j label2
 label28:
-	li s5, 1
+	mv s7, s2
 	j label16
 label2:
-	addiw a0, a3, -1
-	li a2, 140
-	sh3add a1, a3, s4
-	mul a4, a0, a2
-	add a0, s2, a4
-	mul a4, a3, a2
-	add a2, s2, a4
+	addiw a1, a3, -1
+	mul a4, a3, s5
+	mul a2, a1, s5
+	sh3add a1, a3, s6
+	add a0, s4, a2
+	add a2, s4, a4
 	bge s3, a3, label39
 	j label10
 .p2align 2
 label16:
 	jal getint
-	andi a2, a0, 1
-	li a4, 140
-	sh3add a0, s5, s4
-	mul a3, s5, a4
-	sh2add a1, a2, a0
-	addiw s5, s5, 1
-	li a2, 1
-	sw a2, 0(a1)
-	add a1, s2, a3
+	mul a3, s7, s5
+	andi a1, a0, 1
+	sh3add a0, s7, s6
+	addiw s7, s7, 1
+	sh2add a2, a1, a0
+	add a1, s4, a3
+	sw s2, 0(a2)
 	lw a2, -140(a1)
 	lw a3, 4(a0)
 	addw a0, a2, a3
 	sw a0, 0(a1)
-	bge s3, s5, label16
+	bge s3, s7, label16
 	j label27
 .p2align 2
 label39:
-	li a4, 1
-	blt s0, a4, label42
+	mv a4, s2
+	blt s0, s2, label42
 .p2align 2
 label6:
 	addiw a5, a4, 1
@@ -88,7 +87,7 @@ label6:
 	mv a4, a5
 	sw t1, 0(t0)
 	bge s0, a5, label6
-	j label128
+	j label131
 .p2align 2
 label7:
 	sh2add t1, a4, a2
@@ -96,25 +95,23 @@ label7:
 	sw t0, 0(t1)
 	bge s0, a5, label6
 	addiw a3, a3, 1
-	addiw a0, a3, -1
-	li a2, 140
-	sh3add a1, a3, s4
-	mul a4, a0, a2
-	add a0, s2, a4
-	mul a4, a3, a2
-	add a2, s2, a4
+	addiw a1, a3, -1
+	mul a4, a3, s5
+	mul a2, a1, s5
+	sh3add a1, a3, s6
+	add a0, s4, a2
+	add a2, s4, a4
 	bge s3, a3, label39
 	j label10
 .p2align 2
-label128:
+label131:
 	addiw a3, a3, 1
-	addiw a0, a3, -1
-	li a2, 140
-	sh3add a1, a3, s4
-	mul a4, a0, a2
-	add a0, s2, a4
-	mul a4, a3, a2
-	add a2, s2, a4
+	addiw a1, a3, -1
+	mul a4, a3, s5
+	mul a2, a1, s5
+	sh3add a1, a3, s6
+	add a0, s4, a2
+	add a2, s4, a4
 	bge s3, a3, label39
 label10:
 	blt s0, zero, label67
@@ -131,22 +128,23 @@ label11:
 label14:
 	ld ra, 0(sp)
 	ld s3, 8(sp)
-	ld s2, 16(sp)
-	ld s1, 24(sp)
+	ld s4, 16(sp)
+	ld s5, 24(sp)
 	ld s0, 32(sp)
-	ld s5, 40(sp)
-	ld s4, 48(sp)
-	addi sp, sp, 56
+	ld s1, 40(sp)
+	ld s6, 48(sp)
+	ld s2, 56(sp)
+	ld s7, 64(sp)
+	addi sp, sp, 72
 	ret
 label42:
 	addiw a3, a3, 1
-	addiw a0, a3, -1
-	li a2, 140
-	sh3add a1, a3, s4
-	mul a4, a0, a2
-	add a0, s2, a4
-	mul a4, a3, a2
-	add a2, s2, a4
+	addiw a1, a3, -1
+	mul a4, a3, s5
+	mul a2, a1, s5
+	sh3add a1, a3, s6
+	add a0, s4, a2
+	add a2, s4, a4
 	bge s3, a3, label39
 	j label10
 label67:

@@ -19,9 +19,9 @@ test_mul_by_10:
 .globl test_mul_by_11
 test_mul_by_11:
 	andi a1, a0, 255
-	li a2, 11
-	mulw a3, a1, a2
-	andi a0, a3, 255
+	li a3, 11
+	mulw a2, a1, a3
+	andi a0, a2, 255
 	ret
 .p2align 2
 .globl test_mul_by_12
@@ -35,9 +35,9 @@ test_mul_by_12:
 .globl test_mul_by_13
 test_mul_by_13:
 	andi a1, a0, 255
-	li a2, 13
-	mulw a3, a1, a2
-	andi a0, a3, 255
+	li a3, 13
+	mulw a2, a1, a3
+	andi a0, a2, 255
 	ret
 .p2align 2
 .globl test_mul_by_14
@@ -83,9 +83,9 @@ test_mul_by_18:
 .globl test_mul_by_19
 test_mul_by_19:
 	andi a1, a0, 255
-	li a2, 19
-	mulw a3, a1, a2
-	andi a0, a3, 255
+	li a3, 19
+	mulw a2, a1, a3
+	andi a0, a2, 255
 	ret
 .p2align 2
 .globl test_mul_by_2
@@ -106,25 +106,25 @@ test_mul_by_20:
 .globl test_mul_by_21
 test_mul_by_21:
 	andi a1, a0, 255
-	li a2, 21
-	mulw a3, a1, a2
-	andi a0, a3, 255
+	li a3, 21
+	mulw a2, a1, a3
+	andi a0, a2, 255
 	ret
 .p2align 2
 .globl test_mul_by_22
 test_mul_by_22:
 	andi a1, a0, 255
-	li a2, 22
-	mulw a3, a1, a2
-	andi a0, a3, 255
+	li a3, 22
+	mulw a2, a1, a3
+	andi a0, a2, 255
 	ret
 .p2align 2
 .globl test_mul_by_23
 test_mul_by_23:
 	andi a1, a0, 255
-	li a2, 23
-	mulw a3, a1, a2
-	andi a0, a3, 255
+	li a3, 23
+	mulw a2, a1, a3
+	andi a0, a2, 255
 	ret
 .p2align 2
 .globl test_mul_by_24
@@ -138,25 +138,25 @@ test_mul_by_24:
 .globl test_mul_by_25
 test_mul_by_25:
 	andi a1, a0, 255
-	li a2, 25
-	mulw a3, a1, a2
-	andi a0, a3, 255
+	li a3, 25
+	mulw a2, a1, a3
+	andi a0, a2, 255
 	ret
 .p2align 2
 .globl test_mul_by_26
 test_mul_by_26:
 	andi a1, a0, 255
-	li a2, 26
-	mulw a3, a1, a2
-	andi a0, a3, 255
+	li a3, 26
+	mulw a2, a1, a3
+	andi a0, a2, 255
 	ret
 .p2align 2
 .globl test_mul_by_27
 test_mul_by_27:
 	andi a1, a0, 255
-	li a2, 27
-	mulw a3, a1, a2
-	andi a0, a3, 255
+	li a3, 27
+	mulw a2, a1, a3
+	andi a0, a2, 255
 	ret
 .p2align 2
 .globl test_mul_by_28
@@ -171,9 +171,9 @@ test_mul_by_28:
 .globl test_mul_by_29
 test_mul_by_29:
 	andi a1, a0, 255
-	li a2, 29
-	mulw a3, a1, a2
-	andi a0, a3, 255
+	li a3, 29
+	mulw a2, a1, a3
+	andi a0, a2, 255
 	ret
 .p2align 2
 .globl test_mul_by_3
@@ -210,9 +210,9 @@ test_mul_by_32:
 .globl test_mul_by_37
 test_mul_by_37:
 	andi a1, a0, 255
-	li a2, 37
-	mulw a3, a1, a2
-	andi a0, a3, 255
+	li a3, 37
+	mulw a2, a1, a3
+	andi a0, a2, 255
 	ret
 .p2align 2
 .globl test_mul_by_4
@@ -225,9 +225,9 @@ test_mul_by_4:
 .globl test_mul_by_41
 test_mul_by_41:
 	andi a1, a0, 255
-	li a2, 41
-	mulw a3, a1, a2
-	andi a0, a3, 255
+	li a3, 41
+	mulw a2, a1, a3
+	andi a0, a2, 255
 	ret
 .p2align 2
 .globl test_mul_by_5
@@ -281,9 +281,9 @@ test_mul_by_7:
 .globl test_mul_by_73
 test_mul_by_73:
 	andi a1, a0, 255
-	li a2, 73
-	mulw a3, a1, a2
-	andi a0, a3, 255
+	li a3, 73
+	mulw a2, a1, a3
+	andi a0, a2, 255
 	ret
 .p2align 2
 .globl test_mul_by_8

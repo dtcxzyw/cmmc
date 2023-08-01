@@ -46,11 +46,11 @@ pcrel42:
 	lhu a0, %pcrel_lo(pcrel42)(a1)
 pcrel43:
 	auipc a1, %pcrel_hi(a)
-	lh a2, %pcrel_lo(pcrel43)(a1)
-	li a2, 65535
-	lhu a3, %pcrel_lo(pcrel43)(a1)
-	addw a1, a0, a3
-	and a0, a1, a2
+	lh a3, %pcrel_lo(pcrel43)(a1)
+	li a3, 65535
+	lhu a2, %pcrel_lo(pcrel43)(a1)
+	addw a1, a0, a2
+	and a0, a1, a3
 	ret
 .p2align 2
 .globl unsigned_i8
@@ -82,11 +82,11 @@ pcrel85:
 	lhu a0, %pcrel_lo(pcrel85)(a1)
 pcrel86:
 	auipc a1, %pcrel_hi(a)
-	lh a2, %pcrel_lo(pcrel86)(a1)
-	li a2, 65535
-	lhu a3, %pcrel_lo(pcrel86)(a1)
-	addw a1, a0, a3
-	and a0, a1, a2
+	lh a3, %pcrel_lo(pcrel86)(a1)
+	li a3, 65535
+	lhu a2, %pcrel_lo(pcrel86)(a1)
+	addw a1, a0, a2
+	and a0, a1, a3
 	ret
 .p2align 2
 .globl use_i8

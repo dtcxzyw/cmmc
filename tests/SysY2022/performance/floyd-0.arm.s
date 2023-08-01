@@ -27,10 +27,11 @@ main:
 	bl getarray
 	mov r0, #62
 	bl _sysy_starttime
-	movw r0, #:lower16:temp
 	mov r1, #0
+	movw r0, #:lower16:temp
 	movw r6, #:lower16:dst
 	movt r0, #:upper16:temp
+	str r6, [sp, #0]
 	movt r6, #:upper16:dst
 	str r6, [sp, #0]
 label2:
@@ -54,7 +55,7 @@ label5:
 	str r6, [r0, r3, lsl #2]
 	cmp r4, r2
 	bgt label5
-	b label184
+	b label172
 .p2align 4
 label52:
 	mvn r6, #0
@@ -84,7 +85,7 @@ label74:
 	bgt label18
 	b label17
 .p2align 4
-label188:
+label176:
 	add r6, r6, #1
 	mul r3, r4, r6
 	cmp r4, r6
@@ -109,41 +110,36 @@ label26:
 	mov r0, #0
 	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
 label27:
-	sub r2, r5, #8
-	cmp r5, #8
+	sub r1, r5, #4
+	cmp r5, #4
 	ble label123
-	mov r1, #0
+	mov r2, #0
+	b label30
 label28:
-	add r3, r0, r1, lsl #2
+	ldr r1, [r0, r2, lsl #2]
+	ldr r6, [sp, #0]
+	str r1, [r6, r2, lsl #2]
+	add r2, r2, #1
+	cmp r5, r2
+	bgt label28
+	b label26
+.p2align 4
+label30:
+	add r3, r0, r2, lsl #2
 	ldr r7, [r3, #0]
 	ldr r6, [sp, #0]
-	add r4, r6, r1, lsl #2
-	add r1, r1, #8
+	add r4, r6, r2, lsl #2
+	add r2, r2, #4
 	str r7, [r4, #0]
-	cmp r2, r1
+	cmp r1, r2
 	ldr r6, [r3, #4]
 	str r6, [r4, #4]
 	ldr r6, [r3, #8]
 	str r6, [r4, #8]
-	ldr r6, [r3, #12]
-	str r6, [r4, #12]
-	ldr r6, [r3, #16]
-	str r6, [r4, #16]
-	ldr r6, [r3, #20]
-	str r6, [r4, #20]
-	ldr r6, [r3, #24]
-	str r6, [r4, #24]
-	ldr r3, [r3, #28]
-	str r3, [r4, #28]
-	bgt label28
-label30:
-	ldr r2, [r0, r1, lsl #2]
-	ldr r6, [sp, #0]
-	str r2, [r6, r1, lsl #2]
-	add r1, r1, #1
-	cmp r5, r1
+	ldr r3, [r3, #12]
+	str r3, [r4, #12]
 	bgt label30
-	b label26
+	b label28
 .p2align 4
 label18:
 	ldr r8, [r0, r1, lsl #2]
@@ -152,7 +148,7 @@ label18:
 	add r7, r7, #1
 	cmp r4, r7
 	bgt label18
-	b label188
+	b label176
 .p2align 4
 label19:
 	add r9, r2, r7
@@ -226,7 +222,7 @@ label17:
 	bgt label68
 	b label25
 .p2align 4
-label184:
+label172:
 	add r1, r1, #1
 	cmp r4, r1
 	bgt label4
@@ -238,8 +234,8 @@ label73:
 	bgt label68
 	b label25
 label123:
-	mov r1, #0
-	b label30
+	mov r2, #0
+	b label28
 label45:
 	add r1, r1, #1
 	b label2

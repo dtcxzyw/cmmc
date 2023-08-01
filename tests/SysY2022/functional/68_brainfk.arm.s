@@ -117,6 +117,7 @@ label26:
 	subs r0, r0, #1
 	bgt label24
 	b label9
+.p2align 4
 label29:
 	add r0, r5, r6, lsl #2
 	ldr r1, [r0, #0]

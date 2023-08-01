@@ -12,12 +12,11 @@ X:
 foo:
 	mv a1, a0
 	ble a0, zero, label10
-pcrel33:
+pcrel34:
 	auipc a0, %pcrel_hi(X)
-	li a3, 1
-	sh zero, %pcrel_lo(pcrel33)(a0)
-	addi a2, a0, %pcrel_lo(pcrel33)
-	bne a1, a3, label16
+	li a2, 1
+	sh zero, %pcrel_lo(pcrel34)(a0)
+	bne a1, a2, label16
 	li a0, 1
 	j label5
 label10:
@@ -28,8 +27,10 @@ label16:
 	li a0, 1
 label3:
 	li a4, 65535
-	and a3, a0, a4
+pcrel35:
+	auipc a3, %pcrel_hi(X)
+	and a2, a0, a4
 	addiw a0, a0, 1
-	sh a3, 0(a2)
+	sh a2, %pcrel_lo(pcrel35)(a3)
 	bne a1, a0, label3
 	j label5

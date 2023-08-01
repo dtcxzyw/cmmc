@@ -21,26 +21,26 @@ foo:
 	push { r4 }
 	cmp r0, #0
 	ble label5
-	movw r1, #:lower16:X
-	mov r3, #0
-	movw r2, #:lower16:Y
+	movw r2, #:lower16:X
+	mov r1, #0
+	movw r3, #:lower16:Y
 	cmp r0, #1
-	movt r1, #:upper16:X
-	movt r2, #:upper16:Y
-	strh r3, [r1, #0]
-	strh r3, [r2, #0]
+	movt r2, #:upper16:X
+	movt r3, #:upper16:Y
+	strh r1, [r2, #0]
+	strh r1, [r3, #0]
 	beq label5
-	mov r3, #1
+	mov r1, #1
 label3:
-	uxth r4, r3
-	strh r4, [r1, #0]
-	movw r4, #65535
-	and r4, r3, r4
-	add r3, r3, #1
-	lsl r4, r4, #2
-	cmp r0, r3
-	uxth r4, r4
+	uxth r4, r1
 	strh r4, [r2, #0]
+	movw r4, #65535
+	and r4, r1, r4
+	add r1, r1, #1
+	lsl r4, r4, #2
+	cmp r0, r1
+	uxth r4, r4
+	strh r4, [r3, #0]
 	bne label3
 label5:
 	pop { r4 }

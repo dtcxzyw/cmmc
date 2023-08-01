@@ -8,354 +8,359 @@ array:
 .p2align 2
 .globl main
 main:
-	addi sp, sp, -8
-pcrel424:
+	addi sp, sp, -32
+pcrel438:
 	auipc a0, %pcrel_hi(array)
-	mv a2, zero
-	addi a1, a0, %pcrel_lo(pcrel424)
+	mv a3, zero
+	li a2, 400
+	li a4, 1
+	li a5, 2
+	li t0, 3
+	li t1, 4
+	li t2, 5
+	li t3, 6
+	li t4, 7
+	li t5, 8
+	li t6, 9
+	li a6, 10
 	sd ra, 0(sp)
+	addi a1, a0, %pcrel_lo(pcrel438)
+	sd s0, 8(sp)
+	sd s1, 16(sp)
+	sd s2, 24(sp)
 .p2align 2
 label2:
-	li a4, 400
-	li a5, 3
-	li t0, 28
-	mul a3, a2, a4
-	addiw a2, a2, 1
-	li a4, 2
-	add a0, a1, a3
-	li a3, 1
+	mul a7, a3, a2
+	li s0, 21
+	li s1, 22
+	li s2, 29
+	addiw a3, a3, 1
+	add a0, a1, a7
+	li a7, 11
 	sw zero, 0(a0)
-	sw a3, 4(a0)
-	li a3, 4
-	sw a4, 8(a0)
-	li a4, 5
-	sw a5, 12(a0)
-	li a5, 8
-	sw a3, 16(a0)
-	li a3, 6
-	sw a4, 20(a0)
-	li a4, 7
-	sw a3, 24(a0)
-	li a3, 9
-	sw a4, 28(a0)
-	li a4, 10
-	sw a5, 32(a0)
-	li a5, 19
-	sw a3, 36(a0)
-	li a3, 11
-	sw a4, 40(a0)
-	li a4, 12
-	sw a3, 44(a0)
-	li a3, 13
-	sw a4, 48(a0)
-	li a4, 14
-	sw a3, 52(a0)
-	li a3, 15
-	sw a4, 56(a0)
-	li a4, 16
-	sw a3, 60(a0)
-	li a3, 17
-	sw a4, 64(a0)
-	li a4, 18
-	sw a3, 68(a0)
-	li a3, 20
-	sw a4, 72(a0)
-	li a4, 22
-	sw a5, 76(a0)
-	li a5, 21
-	sw a3, 80(a0)
-	sw a5, 84(a0)
-	li a5, 23
-	sw a4, 88(a0)
-	li a4, 24
-	sw a5, 92(a0)
-	li a5, 25
-	sw a4, 96(a0)
-	li a4, 26
-	sw a5, 100(a0)
-	li a5, 27
-	sw a4, 104(a0)
-	li a4, 29
-	sw a5, 108(a0)
-	li a5, 30
-	sw t0, 112(a0)
-	li t0, 35
-	sw a4, 116(a0)
-	li a4, 31
-	sw a5, 120(a0)
-	li a5, 32
-	sw a4, 124(a0)
-	li a4, 33
-	sw a5, 128(a0)
-	li a5, 34
-	sw a4, 132(a0)
-	li a4, 36
-	sw a5, 136(a0)
-	li a5, 37
-	sw t0, 140(a0)
-	li t0, 39
-	sw a4, 144(a0)
-	li a4, 38
-	sw a5, 148(a0)
-	li a5, 40
-	sw a4, 152(a0)
-	li a4, 41
-	sw t0, 156(a0)
-	li t0, 43
-	sw a5, 160(a0)
-	li a5, 42
-	sw a4, 164(a0)
-	li a4, 44
-	sw a5, 168(a0)
-	li a5, 45
-	sw t0, 172(a0)
-	li t0, 46
-	sw a4, 176(a0)
-	li a4, 47
-	sw a5, 180(a0)
-	li a5, 48
-	sw t0, 184(a0)
-	li t0, 52
-	sw a4, 188(a0)
-	li a4, 49
-	sw a5, 192(a0)
-	li a5, 50
-	sw a4, 196(a0)
-	li a4, 51
-	sw a5, 200(a0)
-	li a5, 53
-	sw a4, 204(a0)
-	li a4, 54
-	sw t0, 208(a0)
-	li t0, 55
-	sw a5, 212(a0)
-	li a5, 56
-	sw a4, 216(a0)
-	li a4, 57
-	sw t0, 220(a0)
-	li t0, 64
-	sw a5, 224(a0)
-	li a5, 58
-	sw a4, 228(a0)
-	li a4, 59
-	sw a5, 232(a0)
-	li a5, 60
-	sw a4, 236(a0)
-	li a4, 61
-	sw a5, 240(a0)
-	li a5, 62
-	sw a4, 244(a0)
-	li a4, 63
-	sw a5, 248(a0)
-	li a5, 65
-	sw a4, 252(a0)
-	li a4, 66
-	sw t0, 256(a0)
-	li t0, 72
-	sw a5, 260(a0)
-	li a5, 67
-	sw a4, 264(a0)
-	li a4, 68
-	sw a5, 268(a0)
-	li a5, 69
-	sw a4, 272(a0)
-	li a4, 70
-	sw a5, 276(a0)
-	li a5, 71
-	sw a4, 280(a0)
-	li a4, 73
-	sw a5, 284(a0)
-	li a5, 74
-	sw t0, 288(a0)
-	li t0, 79
-	sw a4, 292(a0)
-	li a4, 75
-	sw a5, 296(a0)
-	li a5, 76
-	sw a4, 300(a0)
-	li a4, 77
-	sw a5, 304(a0)
-	li a5, 78
-	sw a4, 308(a0)
-	li a4, 80
-	sw a5, 312(a0)
-	li a5, 81
-	sw t0, 316(a0)
-	li t0, 85
-	sw a4, 320(a0)
-	li a4, 82
-	sw a5, 324(a0)
-	li a5, 83
-	sw a4, 328(a0)
-	li a4, 84
-	sw a5, 332(a0)
-	li a5, 86
-	sw a4, 336(a0)
-	li a4, 87
-	sw t0, 340(a0)
-	li t0, 96
-	sw a5, 344(a0)
-	li a5, 88
-	sw a4, 348(a0)
-	li a4, 89
-	sw a5, 352(a0)
-	li a5, 90
-	sw a4, 356(a0)
-	li a4, 91
-	sw a5, 360(a0)
-	li a5, 92
-	sw a4, 364(a0)
-	li a4, 93
-	sw a5, 368(a0)
-	li a5, 94
-	sw a4, 372(a0)
-	li a4, 95
-	sw a5, 376(a0)
-	li a5, 97
-	sw a4, 380(a0)
-	li a4, 98
-	sw t0, 384(a0)
-	sw a5, 388(a0)
-	li a5, 99
-	sw a4, 392(a0)
-	sw a5, 396(a0)
-	blt a2, a3, label2
+	sw a4, 4(a0)
+	sw a5, 8(a0)
+	sw t0, 12(a0)
+	sw t1, 16(a0)
+	sw t2, 20(a0)
+	sw t3, 24(a0)
+	sw t4, 28(a0)
+	sw t5, 32(a0)
+	sw t6, 36(a0)
+	sw a6, 40(a0)
+	sw a7, 44(a0)
+	li a7, 12
+	sw a7, 48(a0)
+	li a7, 13
+	sw a7, 52(a0)
+	li a7, 14
+	sw a7, 56(a0)
+	li a7, 15
+	sw a7, 60(a0)
+	li a7, 16
+	sw a7, 64(a0)
+	li a7, 17
+	sw a7, 68(a0)
+	li a7, 18
+	sw a7, 72(a0)
+	li a7, 19
+	sw a7, 76(a0)
+	li a7, 20
+	sw a7, 80(a0)
+	sw s0, 84(a0)
+	li s0, 23
+	sw s1, 88(a0)
+	li s1, 24
+	sw s0, 92(a0)
+	li s0, 25
+	sw s1, 96(a0)
+	li s1, 26
+	sw s0, 100(a0)
+	li s0, 27
+	sw s1, 104(a0)
+	li s1, 28
+	sw s0, 108(a0)
+	li s0, 30
+	sw s1, 112(a0)
+	li s1, 31
+	sw s2, 116(a0)
+	li s2, 32
+	sw s0, 120(a0)
+	li s0, 33
+	sw s1, 124(a0)
+	li s1, 34
+	sw s2, 128(a0)
+	li s2, 41
+	sw s0, 132(a0)
+	li s0, 35
+	sw s1, 136(a0)
+	li s1, 36
+	sw s0, 140(a0)
+	li s0, 37
+	sw s1, 144(a0)
+	li s1, 38
+	sw s0, 148(a0)
+	li s0, 39
+	sw s1, 152(a0)
+	li s1, 40
+	sw s0, 156(a0)
+	li s0, 42
+	sw s1, 160(a0)
+	li s1, 43
+	sw s2, 164(a0)
+	li s2, 46
+	sw s0, 168(a0)
+	li s0, 44
+	sw s1, 172(a0)
+	li s1, 45
+	sw s0, 176(a0)
+	li s0, 47
+	sw s1, 180(a0)
+	li s1, 49
+	sw s2, 184(a0)
+	li s2, 48
+	sw s0, 188(a0)
+	li s0, 50
+	sw s2, 192(a0)
+	li s2, 57
+	sw s1, 196(a0)
+	li s1, 51
+	sw s0, 200(a0)
+	li s0, 52
+	sw s1, 204(a0)
+	li s1, 53
+	sw s0, 208(a0)
+	li s0, 54
+	sw s1, 212(a0)
+	li s1, 55
+	sw s0, 216(a0)
+	li s0, 56
+	sw s1, 220(a0)
+	li s1, 58
+	sw s0, 224(a0)
+	li s0, 59
+	sw s2, 228(a0)
+	li s2, 65
+	sw s1, 232(a0)
+	li s1, 60
+	sw s0, 236(a0)
+	li s0, 61
+	sw s1, 240(a0)
+	li s1, 62
+	sw s0, 244(a0)
+	li s0, 63
+	sw s1, 248(a0)
+	li s1, 64
+	sw s0, 252(a0)
+	li s0, 66
+	sw s1, 256(a0)
+	li s1, 68
+	sw s2, 260(a0)
+	li s2, 67
+	sw s0, 264(a0)
+	li s0, 69
+	sw s2, 268(a0)
+	li s2, 73
+	sw s1, 272(a0)
+	li s1, 70
+	sw s0, 276(a0)
+	li s0, 71
+	sw s1, 280(a0)
+	li s1, 72
+	sw s0, 284(a0)
+	li s0, 74
+	sw s1, 288(a0)
+	li s1, 75
+	sw s2, 292(a0)
+	li s2, 81
+	sw s0, 296(a0)
+	li s0, 76
+	sw s1, 300(a0)
+	li s1, 77
+	sw s0, 304(a0)
+	li s0, 78
+	sw s1, 308(a0)
+	li s1, 79
+	sw s0, 312(a0)
+	li s0, 80
+	sw s1, 316(a0)
+	li s1, 82
+	sw s0, 320(a0)
+	li s0, 83
+	sw s2, 324(a0)
+	li s2, 85
+	sw s1, 328(a0)
+	li s1, 84
+	sw s0, 332(a0)
+	li s0, 86
+	sw s1, 336(a0)
+	li s1, 87
+	sw s2, 340(a0)
+	li s2, 89
+	sw s0, 344(a0)
+	li s0, 88
+	sw s1, 348(a0)
+	li s1, 90
+	sw s0, 352(a0)
+	li s0, 91
+	sw s2, 356(a0)
+	li s2, 95
+	sw s1, 360(a0)
+	li s1, 92
+	sw s0, 364(a0)
+	li s0, 93
+	sw s1, 368(a0)
+	li s1, 94
+	sw s0, 372(a0)
+	li s0, 96
+	sw s1, 376(a0)
+	li s1, 97
+	sw s2, 380(a0)
+	sw s0, 384(a0)
+	li s0, 98
+	sw s1, 388(a0)
+	li s1, 99
+	sw s0, 392(a0)
+	sw s1, 396(a0)
+	blt a3, a7, label2
 	li a0, 7692
-	addi a2, a0, -492
-	add a4, a1, a0
-	add a5, a1, a2
-	addi a0, a0, -20
-	addi a2, a2, -400
-	lw a3, 0(a4)
-	sh2add a4, a3, a5
-	add a5, a1, a2
-	addi a2, a2, -400
-	lw a3, 0(a4)
-	sh2add a4, a3, a5
-	add a5, a1, a2
-	addi a2, a2, -400
-	lw a3, 0(a4)
-	sh2add a4, a3, a5
-	add a5, a1, a2
-	addi a2, a2, -400
-	lw a3, 0(a4)
-	sh2add a4, a3, a5
-	lw a3, 0(a4)
-	add a4, a1, a2
-	addi a2, a2, -400
-	sh2add a5, a3, a4
-	lw a3, 0(a5)
-	add a5, a1, a2
-	addi a2, a2, -400
-	sh2add a4, a3, a5
-	add a5, a1, a2
-	addi a2, a2, -400
-	lw a3, 0(a4)
-	sh2add a4, a3, a5
-	add a5, a1, a2
-	addi a2, a2, -400
-	lw a3, 0(a4)
-	sh2add a4, a3, a5
-	add a5, a1, a2
-	addi a2, a2, -400
-	lw a3, 0(a4)
-	sh2add a4, a3, a5
-	add a5, a1, a2
-	addi a2, a2, -400
-	lw a3, 0(a4)
-	sh2add a4, a3, a5
-	lw a3, 0(a4)
-	add a4, a1, a2
-	addi a2, a2, -400
-	sh2add a5, a3, a4
-	add a4, a1, a2
-	addi a2, a2, -400
-	lw a3, 0(a5)
-	sh2add a5, a3, a4
-	add a4, a1, a2
-	lw a3, 0(a5)
-	addi a5, a1, 800
-	sh2add a3, a3, a4
-	addi a4, a1, 2000
-	lw a2, 0(a3)
-	sh2add a3, a2, a4
-	addi a4, a1, 1600
-	lw a2, 0(a3)
-	sh2add a3, a2, a4
-	addi a4, a1, 1200
-	lw a2, 0(a3)
-	sh2add a3, a2, a4
-	lw a2, 0(a3)
-	addi a3, a1, 400
-	sh2add a4, a2, a5
-	lw a2, 0(a4)
-	sh2add a5, a2, a3
-	lw a4, 0(a5)
-	sh2add a3, a4, a1
-	add a4, a1, a0
-	li a0, 400
-	lw a2, 0(a3)
-	lw a3, 0(a4)
-	mul t0, a3, a0
-	add a4, a1, t0
-	lw a5, 68(a4)
-	mul a3, a5, a0
-	add a4, a1, a3
-	lw a5, 64(a4)
-	mul a3, a5, a0
-	add a4, a1, a3
-	lw a5, 60(a4)
-	mul a3, a5, a0
-	add a4, a1, a3
-	lw a5, 56(a4)
-	mul a3, a5, a0
-	add a4, a1, a3
-	lw a5, 52(a4)
-	mul a3, a5, a0
-	add a4, a1, a3
-	lw a5, 48(a4)
-	mul a3, a5, a0
-	add a4, a1, a3
-	lw a5, 44(a4)
-	mul a3, a5, a0
-	add a4, a1, a3
-	lw t0, 40(a4)
-	mul a5, t0, a0
-	add a3, a1, a5
-	lw a4, 36(a3)
-	mul a5, a4, a0
-	add a3, a1, a5
-	lw a4, 32(a3)
-	mul a5, a4, a0
-	add a3, a1, a5
-	lw a4, 28(a3)
-	mul a5, a4, a0
-	add a3, a1, a5
-	lw a4, 24(a3)
-	mul a5, a4, a0
-	add a3, a1, a5
-	lw a4, 20(a3)
-	mul t1, a4, a0
-	add t0, a1, t1
-	lw a5, 16(t0)
-	mul a3, a5, a0
-	add a4, a1, a3
-	lw a5, 12(a4)
-	mul a3, a5, a0
-	add a4, a1, a3
-	lw a5, 8(a4)
-	mul a3, a5, a0
-	add a4, a1, a3
-	lw a5, 4(a4)
-	mul a3, a5, a0
+	addi a3, a0, -492
+	add a5, a1, a0
 	add t0, a1, a3
+	addi a0, a0, -20
+	addi a3, a3, -400
+	lw a4, 0(a5)
+	sh2add a5, a4, t0
+	add t0, a1, a3
+	addi a3, a3, -400
+	lw a4, 0(a5)
+	sh2add a5, a4, t0
+	add t0, a1, a3
+	addi a3, a3, -400
+	lw a4, 0(a5)
+	sh2add a5, a4, t0
+	lw a4, 0(a5)
+	add a5, a1, a3
+	addi a3, a3, -400
+	sh2add t0, a4, a5
+	add a5, a1, a3
+	addi a3, a3, -400
 	lw a4, 0(t0)
-	mul a0, a4, a0
+	sh2add t0, a4, a5
+	lw a4, 0(t0)
+	add t0, a1, a3
+	addi a3, a3, -400
+	sh2add a5, a4, t0
+	add t0, a1, a3
+	addi a3, a3, -400
+	lw a4, 0(a5)
+	sh2add a5, a4, t0
+	add t0, a1, a3
+	addi a3, a3, -400
+	lw a4, 0(a5)
+	sh2add a5, a4, t0
+	add t0, a1, a3
+	addi a3, a3, -400
+	lw a4, 0(a5)
+	sh2add a5, a4, t0
+	add t0, a1, a3
+	addi a3, a3, -400
+	lw a4, 0(a5)
+	sh2add a5, a4, t0
+	lw a4, 0(a5)
+	add a5, a1, a3
+	addi a3, a3, -400
+	sh2add t0, a4, a5
+	add a5, a1, a3
+	addi a3, a3, -400
+	lw a4, 0(t0)
+	sh2add t0, a4, a5
+	add a5, a1, a3
+	lw a4, 0(t0)
+	sh2add t0, a4, a5
+	addi a4, a1, 2000
+	lw a3, 0(t0)
+	sh2add a5, a3, a4
+	addi a4, a1, 1600
+	lw a3, 0(a5)
+	sh2add a5, a3, a4
+	addi a4, a1, 1200
+	lw a3, 0(a5)
+	sh2add a5, a3, a4
+	addi a4, a1, 800
+	lw a3, 0(a5)
+	sh2add a5, a3, a4
+	addi a4, a1, 400
+	lw a3, 0(a5)
+	sh2add t0, a3, a4
+	lw a5, 0(t0)
+	add t0, a1, a0
+	sh2add a4, a5, a1
+	lw a3, 0(a4)
+	lw a4, 0(t0)
+	mul a5, a4, a2
+	add a0, a1, a5
+	lw a4, 68(a0)
+	mul a5, a4, a2
+	add a0, a1, a5
+	lw a4, 64(a0)
+	mul a5, a4, a2
+	add a0, a1, a5
+	lw a4, 60(a0)
+	mul a5, a4, a2
+	add a0, a1, a5
+	lw a4, 56(a0)
+	mul a5, a4, a2
+	add a0, a1, a5
+	lw a4, 52(a0)
+	mul a5, a4, a2
+	add a0, a1, a5
+	lw a4, 48(a0)
+	mul a5, a4, a2
+	add a0, a1, a5
+	lw a4, 44(a0)
+	mul a5, a4, a2
+	add a0, a1, a5
+	lw a4, 40(a0)
+	mul t0, a4, a2
+	add a5, a1, t0
+	lw a0, 36(a5)
+	mul a4, a0, a2
+	add a5, a1, a4
+	lw a0, 32(a5)
+	mul a4, a0, a2
+	add a5, a1, a4
+	lw a0, 28(a5)
+	mul a4, a0, a2
+	add a5, a1, a4
+	lw a0, 24(a5)
+	mul a4, a0, a2
+	add a5, a1, a4
+	lw a0, 20(a5)
+	mul a4, a0, a2
+	add t1, a1, a4
+	lw t0, 16(t1)
+	mul a5, t0, a2
+	add a0, a1, a5
+	lw a4, 12(a0)
+	mul a5, a4, a2
+	add a0, a1, a5
+	lw a4, 8(a0)
+	mul t1, a4, a2
+	add t0, a1, t1
+	lw a5, 4(t0)
+	mul a0, a5, a2
+	add a4, a1, a0
+	lw a5, 0(a4)
+	mul a0, a5, a2
 	add a1, a1, a0
-	lw a3, 224(a1)
-	addw a0, a2, a3
+	lw a2, 224(a1)
+	addw a0, a3, a2
 	jal putint
 	ld ra, 0(sp)
 	mv a0, zero
-	addi sp, sp, 8
+	ld s0, 8(sp)
+	ld s1, 16(sp)
+	ld s2, 24(sp)
+	addi sp, sp, 32
 	ret

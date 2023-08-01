@@ -32,17 +32,17 @@ label6:
 	bne a0, zero, label6
 label9:
 	li a3, 1739733589
+	li a4, 79
 	ld ra, 0(sp)
 	ld s0, 8(sp)
-	ld s1, 16(sp)
 	mul a0, a1, a3
-	addi sp, sp, 424
+	ld s1, 16(sp)
 	srli a3, a0, 63
 	srai a2, a0, 37
+	addi sp, sp, 424
 	add a0, a3, a2
-	li a2, 79
-	mulw a3, a0, a2
-	subw a0, a1, a3
+	mulw a2, a0, a4
+	subw a0, a1, a2
 	ret
 label23:
 	mv a1, zero

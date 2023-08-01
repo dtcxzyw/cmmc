@@ -12,28 +12,28 @@ a:
 .globl main
 main:
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
-	movw r6, #:lower16:a
+	movw r4, #:lower16:a
 	sub sp, sp, #12
-	movt r6, #:upper16:a
-	mov r0, r6
-	mov r4, r6
+	movt r4, #:upper16:a
+	mov r0, r4
 	bl getarray
-	sub r7, r0, #1
+	sub r6, r0, #1
 	str r0, [sp, #0]
 	add r0, r0, r0, lsr #31
 	asr r5, r0, #1
 	mov r0, #59
 	bl _sysy_starttime
-	mov r1, r6
+	mov r1, r4
 	mov r2, #0
-	mov r0, r7
-	ldr r3, [r6, #0]
-	add r6, r7, #1
+	mov r0, r6
+	ldr r3, [r4, #0]
+	add r6, r6, #1
 	mov r7, r2
 label8:
 	cmp r6, r7
 	bgt label11
 	b label12
+.p2align 4
 label17:
 	str r3, [r1, #0]
 	add r6, r4, r7, lsl #2
@@ -88,6 +88,7 @@ label20:
 	asr r1, r1, #8
 	sub r0, r0, r1, lsl #8
 	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
+.p2align 4
 label47:
 	add r8, r4, r6, lsl #2
 	add r9, r4, r7, lsl #2

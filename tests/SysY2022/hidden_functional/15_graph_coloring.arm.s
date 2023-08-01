@@ -80,33 +80,34 @@ label35:
 .p2align 4
 .globl main
 main:
-	push { lr }
-	mov r2, #0
+	push { r4, lr }
+	mov r4, #0
 	mov r1, #1
-	sub sp, sp, #84
+	sub sp, sp, #80
 	add r3, sp, #64
 	mov r0, sp
-	str r2, [sp, #0]
+	str r4, [sp, #0]
 	str r1, [sp, #4]
 	str r1, [sp, #8]
 	str r1, [sp, #12]
 	str r1, [sp, #16]
-	str r2, [sp, #20]
+	str r4, [sp, #20]
 	str r1, [sp, #24]
-	str r2, [sp, #28]
+	str r4, [sp, #28]
 	str r1, [sp, #32]
 	str r1, [sp, #36]
-	str r2, [sp, #40]
+	str r4, [sp, #40]
 	str r1, [sp, #44]
 	str r1, [sp, #48]
-	str r2, [sp, #52]
+	str r4, [sp, #52]
 	str r1, [sp, #56]
 	mov r1, #3
-	str r2, [sp, #60]
-	str r2, [sp, #64]
-	str r2, [sp, #68]
-	str r2, [sp, #72]
-	str r2, [sp, #76]
+	str r4, [sp, #60]
+	str r4, [sp, #64]
+	str r4, [sp, #68]
+	str r4, [sp, #72]
+	str r4, [sp, #76]
+	mov r2, r4
 	bl graphColoring
 	cmp r0, #0
 	bne label98
@@ -129,6 +130,6 @@ main:
 	mov r0, #116
 	bl putch
 label98:
-	mov r0, #0
-	add sp, sp, #84
-	pop { pc }
+	mov r0, r4
+	add sp, sp, #80
+	pop { r4, pc }

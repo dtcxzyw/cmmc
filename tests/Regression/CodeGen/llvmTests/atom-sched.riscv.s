@@ -30,16 +30,16 @@ f:
 .globl func
 func:
 pcrel40:
-	auipc a2, %pcrel_hi(b)
+	auipc a1, %pcrel_hi(b)
 pcrel41:
-	auipc a1, %pcrel_hi(c)
+	auipc a3, %pcrel_hi(c)
 pcrel42:
 	auipc a4, %pcrel_hi(f)
-	lw a0, %pcrel_lo(pcrel40)(a2)
-	lw a3, %pcrel_lo(pcrel41)(a1)
-	mulw a2, a0, a3
+	lw a0, %pcrel_lo(pcrel40)(a1)
+	lw a1, %pcrel_lo(pcrel41)(a3)
 pcrel43:
 	auipc a3, %pcrel_hi(e)
+	mulw a2, a0, a1
 	li a0, 4294967295
 	and a1, a2, a0
 pcrel44:

@@ -105,40 +105,37 @@ global_addressing_array:
 memset_impl:
 	push { r4, r5 }
 	cmp r0, #0
+	mov r1, r0
+	mov r0, #0
 	bgt label102
 label101:
 	pop { r4, r5 }
 	bx lr
 label102:
-	sub r3, r0, #8
-	movw r1, #:lower16:arr
-	cmp r0, #8
-	movt r1, #:upper16:arr
+	sub r4, r1, #4
+	movw r2, #:lower16:arr
+	cmp r1, #4
+	movt r2, #:upper16:arr
 	ble label116
-	mov r2, #0
+	mov r3, r0
+.p2align 4
 label103:
-	add r4, r1, r2, lsl #2
-	mov r5, #0
-	add r2, r2, #8
-	str r5, [r4, #0]
-	cmp r3, r2
-	str r5, [r4, #4]
-	str r5, [r4, #8]
-	str r5, [r4, #12]
-	str r5, [r4, #16]
-	str r5, [r4, #20]
-	str r5, [r4, #24]
-	str r5, [r4, #28]
+	add r5, r2, r3, lsl #2
+	add r3, r3, #4
+	str r0, [r5, #0]
+	cmp r4, r3
+	str r0, [r5, #4]
+	str r0, [r5, #8]
+	str r0, [r5, #12]
 	bgt label103
 label105:
-	mov r3, #0
-	str r3, [r1, r2, lsl #2]
-	add r2, r2, #1
-	cmp r0, r2
+	str r0, [r2, r3, lsl #2]
+	add r3, r3, #1
+	cmp r1, r3
 	bgt label105
 	b label101
 label116:
-	mov r2, #0
+	mov r3, r0
 	b label105
 .p2align 4
 .globl fused_store

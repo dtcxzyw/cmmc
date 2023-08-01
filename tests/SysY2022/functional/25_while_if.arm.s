@@ -8,16 +8,17 @@
 .globl main
 main:
 	push { lr }
-	mov r0, #4
+	mov r0, #168
+	mov r1, #4
 	sub sp, sp, #4
 .p2align 4
 label2:
-	add r0, r0, #42
-	mov r1, #168
-	cmp r0, #99
-	movgt r0, r1
-	cmp r0, #75
+	add r1, r1, #42
+	cmp r1, #99
+	movgt r1, r0
+	cmp r1, #75
 	blt label2
+	mov r0, r1
 	bl putint
 	add sp, sp, #4
 	mov r0, #0

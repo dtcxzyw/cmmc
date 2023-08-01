@@ -42,26 +42,26 @@ main:
 	strh r2, [r0, #0]
 	movw r0, #65535
 	ands r0, r1, r0
-	movw r0, #:lower16:d
-	movt r0, #:upper16:d
-	ldrsb r1, [r0, #0]
-	ldrb r1, [r0, #0]
-	rsb r2, r1, #0
+	movw r1, #:lower16:d
+	movt r1, #:upper16:d
+	ldrsb r0, [r1, #0]
+	ldrb r0, [r1, #0]
+	rsb r2, r0, #0
 	bne label26
-	mov r1, #0
+	mov r0, #0
 	b label2
 label26:
-	movw r1, #:lower16:b
-	movt r1, #:upper16:b
-	ldr r1, [r1, #0]
-	cmp r1, #0
-	mov r1, #0
-	movwne r1, #1
+	movw r0, #:lower16:b
+	movt r0, #:upper16:b
+	ldr r0, [r0, #0]
+	cmp r0, #0
+	mov r0, #0
+	movwne r0, #1
 label2:
-	and r1, r1, #255
+	and r0, r0, #255
 	and r2, r2, #255
-	orr r1, r1, r2
-	uxtb r1, r1
-	strb r1, [r0, #0]
+	orr r0, r0, r2
+	uxtb r0, r0
+	strb r0, [r1, #0]
 	mov r0, #0
 	bx lr

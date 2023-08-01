@@ -26,18 +26,18 @@ var_370:
 .globl _Z3foov
 _Z3foov:
 pcrel42:
-	auipc a2, %pcrel_hi(var_21)
+	auipc a1, %pcrel_hi(var_21)
 pcrel43:
-	auipc a1, %pcrel_hi(var_29)
-	lw a0, %pcrel_lo(pcrel42)(a2)
-	lb a3, %pcrel_lo(pcrel43)(a1)
+	auipc a2, %pcrel_hi(var_29)
+	lw a0, %pcrel_lo(pcrel42)(a1)
+	lb a1, %pcrel_lo(pcrel43)(a2)
+	sext.b a3, a1
 	li a1, 4294967295
-	sext.b a4, a3
-	subw a2, zero, a4
+	subw a2, zero, a3
 	and a3, a2, a1
-	sltu a0, a0, a3
-	addiw a4, a0, -1
-	andi a3, a4, 255
+	sltu a2, a0, a3
+	addiw a0, a2, -1
+	andi a3, a0, 255
 	sltiu a2, a3, 1
 	and a0, a2, a1
 pcrel44:

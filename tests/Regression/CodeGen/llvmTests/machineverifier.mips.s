@@ -8,9 +8,8 @@ g:
 .p2align 2
 .globl foo
 foo:
-	lui $t1, %hi(g)
-	addiu $t0, $t1, %lo(g)
-	lw $t1, %lo(g)($t1)
+	lui $t0, %hi(g)
+	lw $t1, %lo(g)($t0)
 	bne $t1, $zero, label8
 	nop
 label2:
@@ -18,6 +17,6 @@ label2:
 	nop
 label8:
 	addiu $t1, $t1, 10
-	sw $t1, 0($t0)
+	sw $t1, %lo(g)($t0)
 	b label2
 	nop

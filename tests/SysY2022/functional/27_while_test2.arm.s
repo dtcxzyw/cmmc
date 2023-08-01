@@ -27,13 +27,13 @@ label12:
 label16:
 	cmp r2, #20
 	bge label17
-	add r3, r2, #24
+	add r3, r2, #12
 	cmp r3, #20
 	bge label48
 .p2align 4
 label20:
-	add r2, r2, #24
-	cmn r2, #4
+	add r2, r2, #12
+	cmp r2, #8
 	blt label20
 .p2align 4
 label22:

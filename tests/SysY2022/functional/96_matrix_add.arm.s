@@ -7,14 +7,15 @@
 .p2align 4
 .globl main
 main:
-	push { r4, r5, r6, r7, lr }
-	sub sp, sp, #60
-	mov r6, #0
+	push { r4, r5, r6, r7, r8, lr }
+	sub sp, sp, #56
+	mov r4, #0
 	mov r0, #1073741824
-	mov r7, sp
-	vmov s0, r6
-	add r5, sp, #24
-	add r4, sp, #40
+	mov r8, sp
+	vmov s0, r4
+	add r6, sp, #24
+	add r5, sp, #40
+	mov r7, r4
 	vstr s0, [sp, #0]
 	vstr s0, [sp, #24]
 	vstr s0, [sp, #40]
@@ -29,18 +30,30 @@ main:
 	vstr s0, [sp, #32]
 	vstr s0, [sp, #48]
 label2:
-	add r0, r7, r6, lsl #2
+	add r0, r8, r7, lsl #2
 	vldr s0, [r0, #0]
 	vcvt.s32.f32 s0, s0
 	vmov r0, s0
 	bl putint
-	add r6, r6, #1
-	cmp r6, #3
+	add r7, r7, #1
+	cmp r7, #3
 	blt label2
 	mov r0, #10
 	bl putch
-	mov r6, #0
+	mov r7, r4
 label5:
+	add r0, r6, r7, lsl #2
+	vldr s0, [r0, #0]
+	vcvt.s32.f32 s0, s0
+	vmov r0, s0
+	bl putint
+	add r7, r7, #1
+	cmp r7, #3
+	blt label5
+	mov r0, #10
+	bl putch
+	mov r6, r4
+label8:
 	add r0, r5, r6, lsl #2
 	vldr s0, [r0, #0]
 	vcvt.s32.f32 s0, s0
@@ -48,21 +61,9 @@ label5:
 	bl putint
 	add r6, r6, #1
 	cmp r6, #3
-	blt label5
-	mov r0, #10
-	bl putch
-	mov r5, #0
-label8:
-	add r0, r4, r5, lsl #2
-	vldr s0, [r0, #0]
-	vcvt.s32.f32 s0, s0
-	vmov r0, s0
-	bl putint
-	add r5, r5, #1
-	cmp r5, #3
 	blt label8
 	mov r0, #10
 	bl putch
-	add sp, sp, #60
-	mov r0, #0
-	pop { r4, r5, r6, r7, pc }
+	add sp, sp, #56
+	mov r0, r4
+	pop { r4, r5, r6, r7, r8, pc }

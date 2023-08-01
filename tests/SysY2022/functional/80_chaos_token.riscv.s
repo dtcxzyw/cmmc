@@ -142,8 +142,8 @@ pcrel165:
 	addi s1, a0, %pcrel_lo(pcrel165)
 	sd zero, 72(sp)
 	sw zero, 80(sp)
-	lw a0, %pcrel_lo(pcrel165)(a0)
-	bne a0, zero, label31
+	lw a1, %pcrel_lo(pcrel165)(a0)
+	bne a1, zero, label31
 label30:
 	mv s1, zero
 	j label4
@@ -159,14 +159,14 @@ label2:
 	bne a1, zero, label2
 	j label30
 label4:
-	li a1, 715827883
-	mul a0, s1, a1
-	srli a3, a0, 63
-	srli a2, a0, 32
-	li a0, 6
-	add a1, a3, a2
-	remw s3, s1, a0
-	bne a1, s3, label6
+	li a2, 715827883
+	mul a0, s1, a2
+	srli a2, a0, 63
+	srli a1, a0, 32
+	add a0, a2, a1
+	li a1, 6
+	remw s2, s1, a1
+	bne a0, s2, label6
 label18:
 	slliw a1, s1, 4
 	addw a3, a1, s1
@@ -189,21 +189,20 @@ label18:
 	addi sp, sp, 88
 	ret
 label6:
-	auipc a2, %pcrel_hi(N4__mE___)
-	addi a0, a2, %pcrel_lo(label6)
+	auipc a1, %pcrel_hi(N4__mE___)
 	li a2, 200
-	mv s2, a0
-	mul a1, a1, a2
-	add s4, a0, a1
-	lw a0, 0(s4)
-	beq a0, zero, label7
+	addi s3, a1, %pcrel_lo(label6)
+	mul a0, a0, a2
+	add s4, s3, a0
+	lw a1, 0(s4)
+	beq a1, zero, label7
 	mv s5, zero
 	j label16
 label7:
 	auipc a0, %pcrel_hi(saY_HeI10_To)
+	lw a1, %pcrel_lo(label7)(a0)
 	addi s4, a0, %pcrel_lo(label7)
-	lw a0, %pcrel_lo(label7)(a0)
-	bne a0, zero, label63
+	bne a1, zero, label63
 	j label8
 .p2align 2
 label16:
@@ -219,8 +218,8 @@ label63:
 	j label14
 label8:
 	li a1, 200
-	mul a0, s3, a1
-	add s2, s2, a0
+	mul a0, s2, a1
+	add s2, s3, a0
 	lw a1, 0(s2)
 	bne a1, zero, label70
 	j label9

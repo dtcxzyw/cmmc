@@ -15,9 +15,9 @@ add_after_lsl_imm:
 .p2align 2
 .globl add_after_lsr
 add_after_lsr:
-	li a3, 4294967295
-	and a4, a2, a3
-	srlw a1, a1, a4
+	li a4, 4294967295
+	and a3, a2, a4
+	srlw a1, a1, a3
 	addw a0, a0, a1
 	ret
 .p2align 2
@@ -59,9 +59,9 @@ rsb_after_lsl_imm:
 .p2align 2
 .globl sub_after_lsr
 sub_after_lsr:
-	li a3, 4294967295
-	and a4, a2, a3
-	srlw a1, a1, a4
+	li a4, 4294967295
+	and a3, a2, a4
+	srlw a1, a1, a3
 	subw a0, a0, a1
 	ret
 .p2align 2
@@ -97,9 +97,9 @@ and_after_lsl_imm:
 .p2align 2
 .globl and_after_lsr
 and_after_lsr:
-	li a3, 4294967295
-	and a4, a2, a3
-	srlw a1, a1, a4
+	li a4, 4294967295
+	and a3, a2, a4
+	srlw a1, a1, a3
 	and a0, a0, a1
 	ret
 .p2align 2
@@ -147,16 +147,16 @@ fused_mul_sub:
 .p2align 2
 .globl fused_mul_sub_imm
 fused_mul_sub_imm:
-	li a2, 777
-	mulw a3, a1, a2
-	subw a0, a0, a3
+	li a3, 777
+	mulw a2, a1, a3
+	subw a0, a0, a2
 	ret
 .p2align 2
 .globl fused_mul_sub2
 fused_mul_sub2:
-	li a2, 1
-	subw a3, a2, a1
-	mulw a0, a0, a3
+	li a3, 1
+	subw a2, a3, a1
+	mulw a0, a0, a2
 	ret
 .p2align 2
 .globl fused_div_rem
@@ -173,9 +173,9 @@ fused_div_rem_constant:
 	srli a3, a1, 63
 	srli a2, a1, 32
 	add a1, a3, a2
-	sh1add a2, a1, a1
-	subw a3, a0, a2
-	addw a0, a1, a3
+	sh1add a4, a1, a1
+	subw a2, a0, a4
+	addw a0, a1, a2
 	ret
 .p2align 2
 .globl fused_mvn_and

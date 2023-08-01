@@ -10,7 +10,7 @@ x:
 .globl test
 test:
 pcrel8:
-	auipc a1, %pcrel_hi(x)
-	lw a2, %pcrel_lo(pcrel8)(a1)
-	slliw a0, a2, 1
+	auipc a2, %pcrel_hi(x)
+	lw a1, %pcrel_lo(pcrel8)(a2)
+	slliw a0, a1, 1
 	ret
