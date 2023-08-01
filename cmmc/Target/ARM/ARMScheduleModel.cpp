@@ -435,7 +435,7 @@ static bool removeUnusedDefCC(MIRBasicBlock& block, const CodeGenContext& ctx) {
     return modified;
 }
 
-bool removeDeadBranch(MIRBasicBlock& block, const CodeGenContext& ctx) {
+static bool removeDeadBranch(MIRBasicBlock& block, const CodeGenContext& ctx) {
     bool modified = false;
 
     auto& insts = block.instructions();
@@ -462,6 +462,106 @@ bool removeDeadBranch(MIRBasicBlock& block, const CodeGenContext& ctx) {
 
     return modified;
 }
+static bool branchToNext2ConditionalImpl(MIRBasicBlock& block, MIRBasicBlock* next) {
+    auto& insts = block.instructions();
+    auto isCheap = [](uint32_t opcode) {
+        switch(opcode) {
+            case ADD:
+            case SUB:
+            case AND:
+            case ORR:
+            case EOR:
+            case ORN:
+            case BIC:
+            case RSB:
+            case MOV:
+            case MVN:
+                return true;
+            default:
+                return false;
+        }
+    };
+
+    constexpr uint32_t maxInstCount = 3;
+    uint32_t count = 0;
+
+    for(auto iter = insts.rbegin(); iter != insts.rend(); ++iter) {
+        const auto& inst = *iter;
+        if(inst.opcode() == B_Cond) {
+            const auto target = inst.getOperand(1).reloc();
+            if(target != next)
+                return false;
+            const auto tmp = MIROperand::asInvalidReg();
+            const auto cf = inst.getOperand(0);
+            const auto cc = inst.getOperand(2);
+            *iter = MIRInst{ InstCopy }.setOperand<0>(tmp).setOperand<1>(tmp);
+            for(auto it = std::prev(iter);; --it) {
+                switch(it->opcode()) {
+                    case ADD:
+                    case SUB:
+                    case AND:
+                    case ORR:
+                    case EOR:
+                    case ORN:
+                    case BIC:
+                    case RSB: {
+                        const auto rd = it->getOperand(0);
+                        const auto rn = it->getOperand(1);
+                        const auto op2 = it->getOperand(2);
+                        *it = MIRInst{ it->opcode() - ADD + ADD_Cond }
+                                  .setOperand<0>(cf)
+                                  .setOperand<1>(rd)
+                                  .setOperand<2>(rn)
+                                  .setOperand<3>(op2)
+                                  .setOperand<4>(cc)
+                                  .setOperand<5>(rd);
+                        break;
+                    }
+                    case MOV:
+                    case MVN: {
+                        const auto rd = it->getOperand(0);
+                        const auto op2 = it->getOperand(1);
+                        *it = MIRInst{ it->opcode() - MOV + MOV_Cond }
+                                  .setOperand<0>(cf)
+                                  .setOperand<1>(rd)
+                                  .setOperand<2>(op2)
+                                  .setOperand<3>(cc)
+                                  .setOperand<4>(rd);
+                        break;
+                    }
+                    default:
+                        reportUnreachable(CMMC_LOCATION());
+                }
+                if(it == insts.rbegin())
+                    break;
+            }
+            return true;
+        }
+        if(!isCheap(inst.opcode()))
+            return false;
+        if(++count > maxInstCount)
+            return false;
+    }
+
+    return false;
+}
+static bool branchToNext2Conditional(MIRFunction& func, const CodeGenContext& ctx) {
+    if(ctx.flags.endsWithTerminator)
+        return false;
+
+    bool modified = false;
+    for(auto it = func.blocks().begin(); it != func.blocks().end(); ++it) {
+        const auto next = std::next(it);
+        if(next == func.blocks().end())
+            break;
+
+        auto& block = *it;
+        auto& nextBlock = *next;
+        modified |= branchToNext2ConditionalImpl(*block, nextBlock.get());
+    }
+
+    return modified;
+}
 
 bool ARMScheduleModel_cortex_a72::peepholeOpt(MIRFunction& func, CodeGenContext& ctx) const {
     // CMMC_UNUSED(func);
@@ -471,12 +571,14 @@ bool ARMScheduleModel_cortex_a72::peepholeOpt(MIRFunction& func, CodeGenContext&
         //     modified |= optimizeConditionalCopyOfComputationalInst(*block);
         modified |= optimizeFusedCompareWithZero(*block, ctx);
         modified |= removeUnusedDefCC(*block, ctx);
-        if(!ctx.flags.endsWithTerminator)
+        if(!ctx.flags.endsWithTerminator) {
             modified |= removeDeadBranch(*block, ctx);
+        }
     }
     if(ctx.flags.dontForward)
         modified |= createIndirectCopy(func, ctx);
     modified |= expandMulWithConstant(func, ctx, 2);
+    modified |= branchToNext2Conditional(func, ctx);
     return modified;
 }
 
