@@ -191,13 +191,13 @@ func @main() -> i32 { NoRecurse Entry } {
     call (i32) -> void @putint(i32 %43);
     ret i32 0;
   ^indirect:
-    i1 %44 = icmp sgt i32 %31, i32 8;
-    cbr i1 %44(prob = 0.888889), ^prebody, ^while.body1;
+    i1 %44 = icmp sgt i32 %31, i32 4;
+    cbr i1 %44(prob = 0.941176), ^prebody, ^while.body1;
   ^prebody:
-    i32 %45 = add i32 %31, i32 -8;
+    i32 %45 = add i32 %31, i32 -4;
     ubr ^while.body2;
   ^while.body1 {scalar}:
-    i32 %46 = phi [^indirect, i32 0] [^while.body1, i32 %56] [^while.body2, i32 %124];
+    i32 %46 = phi [^indirect, i32 0] [^while.body1, i32 %56] [^while.body2, i32 %92];
     [2 * i32]* %47 = getelementptr &([600 * [2 * i32]]* %34)[i64 0][i32 %46];
     i32* %48 = getelementptr &([2 * i32]* %47)[i64 0][i64 0];
     i32 %49 = load i32* %48;
@@ -211,9 +211,9 @@ func @main() -> i32 { NoRecurse Entry } {
     store i32* %55 with i32 1;
     i32 %56 = add i32 %46, i32 1;
     i1 %57 = icmp sgt i32 %31, i32 %56;
-    cbr i1 %57(prob = 0.875), ^while.body1, ^b;
+    cbr i1 %57(prob = 0.75), ^while.body1, ^b;
   ^while.body2:
-    i32 %58 = phi [^prebody, i32 0] [^while.body2, i32 %124];
+    i32 %58 = phi [^prebody, i32 0] [^while.body2, i32 %92];
     [2 * i32]* %59 = getelementptr &([600 * [2 * i32]]* %34)[i64 0][i32 %58];
     i32* %60 = getelementptr &([2 * i32]* %59)[i64 0][i64 0];
     i32 %61 = load i32* %60;
@@ -255,48 +255,8 @@ func @main() -> i32 { NoRecurse Entry } {
     [30 * i32]* %90 = getelementptr &([30 * [30 * i32]]* %33)[i64 0][i32 %88];
     i32* %91 = getelementptr &([30 * i32]* %90)[i64 0][i32 %85];
     store i32* %91 with i32 1;
-    i32* %92 = getelementptr &([2 * i32]* %59)[i64 4][i64 0];
-    i32 %93 = load i32* %92;
-    [30 * i32]* %94 = getelementptr &([30 * [30 * i32]]* %33)[i64 0][i32 %93];
-    i32* %95 = getelementptr &([2 * i32]* %59)[i64 4][i64 1];
-    i32 %96 = load i32* %95;
-    i32* %97 = getelementptr &([30 * i32]* %94)[i64 0][i32 %96];
-    store i32* %97 with i32 1;
-    [30 * i32]* %98 = getelementptr &([30 * [30 * i32]]* %33)[i64 0][i32 %96];
-    i32* %99 = getelementptr &([30 * i32]* %98)[i64 0][i32 %93];
-    store i32* %99 with i32 1;
-    i32* %100 = getelementptr &([2 * i32]* %59)[i64 5][i64 0];
-    i32 %101 = load i32* %100;
-    [30 * i32]* %102 = getelementptr &([30 * [30 * i32]]* %33)[i64 0][i32 %101];
-    i32* %103 = getelementptr &([2 * i32]* %59)[i64 5][i64 1];
-    i32 %104 = load i32* %103;
-    i32* %105 = getelementptr &([30 * i32]* %102)[i64 0][i32 %104];
-    store i32* %105 with i32 1;
-    [30 * i32]* %106 = getelementptr &([30 * [30 * i32]]* %33)[i64 0][i32 %104];
-    i32* %107 = getelementptr &([30 * i32]* %106)[i64 0][i32 %101];
-    store i32* %107 with i32 1;
-    i32* %108 = getelementptr &([2 * i32]* %59)[i64 6][i64 0];
-    i32 %109 = load i32* %108;
-    [30 * i32]* %110 = getelementptr &([30 * [30 * i32]]* %33)[i64 0][i32 %109];
-    i32* %111 = getelementptr &([2 * i32]* %59)[i64 6][i64 1];
-    i32 %112 = load i32* %111;
-    i32* %113 = getelementptr &([30 * i32]* %110)[i64 0][i32 %112];
-    store i32* %113 with i32 1;
-    [30 * i32]* %114 = getelementptr &([30 * [30 * i32]]* %33)[i64 0][i32 %112];
-    i32* %115 = getelementptr &([30 * i32]* %114)[i64 0][i32 %109];
-    store i32* %115 with i32 1;
-    i32* %116 = getelementptr &([2 * i32]* %59)[i64 7][i64 0];
-    i32 %117 = load i32* %116;
-    [30 * i32]* %118 = getelementptr &([30 * [30 * i32]]* %33)[i64 0][i32 %117];
-    i32* %119 = getelementptr &([2 * i32]* %59)[i64 7][i64 1];
-    i32 %120 = load i32* %119;
-    i32* %121 = getelementptr &([30 * i32]* %118)[i64 0][i32 %120];
-    store i32* %121 with i32 1;
-    [30 * i32]* %122 = getelementptr &([30 * [30 * i32]]* %33)[i64 0][i32 %120];
-    i32* %123 = getelementptr &([30 * i32]* %122)[i64 0][i32 %117];
-    store i32* %123 with i32 1;
-    i32 %124 = add i32 %58, i32 8;
-    i1 %125 = icmp sgt i32 %45, i32 %124;
-    cbr i1 %125(prob = 0.888889), ^while.body2, ^while.body1;
+    i32 %92 = add i32 %58, i32 4;
+    i1 %93 = icmp sgt i32 %45, i32 %92;
+    cbr i1 %93(prob = 0.941176), ^while.body2, ^while.body1;
 }
 internal [600 * [2 * i32]]* @edges, align 8 { Flexible };

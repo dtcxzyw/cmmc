@@ -295,9 +295,9 @@ func @main() -> i32 { NoRecurse Entry } {
     store i32* %157 with i32 -1;
     ubr ^while.header;
   ^while.header:
-    i32 %158 = phi [^while.body5, i32 0] [^b7, i32 %277] [^if.then, i32 %158];
-    i32 %159 = phi [^while.body5, i32 %37] [^b7, i32 %166] [^if.then, i32 %166];
-    i1 %160 = icmp neq i32 %159, i32 0;
+    i32 %158 = phi [^while.body5, i32 %37] [^b7, i32 %166] [^if.then, i32 %166];
+    i32 %159 = phi [^while.body5, i32 0] [^b7, i32 %277] [^if.then, i32 %159];
+    i1 %160 = icmp neq i32 %158, i32 0;
     cbr i1 %160(prob = 0.984615), ^while.body6, ^b2;
   ^while.body6:
     i32 %161 = call () -> i32 @getch();
@@ -309,7 +309,7 @@ func @main() -> i32 { NoRecurse Entry } {
     ret i32 0;
   ^b3:
     i1 %165 = icmp eq i32 %161, i32 81;
-    i32 %166 = add i32 %159, i32 -1;
+    i32 %166 = add i32 %158, i32 -1;
     cbr i1 %165(prob = 0.5), ^entry1, ^entry2;
   ^entry1:
     i32 %167 = call () -> i32 @getch();
@@ -443,22 +443,22 @@ func @main() -> i32 { NoRecurse Entry } {
     i1 %265 = icmp neq i32 %248, i32 0;
     i32 %266 = neg i32 %264;
     i32 %267 = select i1 %265 ? i32 %266 : i32 %264;
-    i32* %268 = getelementptr &([5005 * i32]* %7)[i64 0][i32 %158];
+    i32* %268 = getelementptr &([5005 * i32]* %7)[i64 0][i32 %159];
     store i32* %268 with i32 %267;
     i32* %269 = getelementptr &([1005 * i32]* %6)[i64 0][i32 %226];
     i32 %270 = load i32* %269;
-    i32* %271 = getelementptr &([5005 * i32]* %8)[i64 0][i32 %158];
+    i32* %271 = getelementptr &([5005 * i32]* %8)[i64 0][i32 %159];
     store i32* %271 with i32 %270;
     i32* %272 = getelementptr &([1005 * i32]* %6)[i64 0][i32 %267];
-    store i32* %269 with i32 %158;
+    store i32* %269 with i32 %159;
     i32* %273 = getelementptr &(i32* %268)[i64 1];
     store i32* %273 with i32 %226;
     i32 %274 = load i32* %272;
     i32* %275 = getelementptr &(i32* %271)[i64 1];
     store i32* %275 with i32 %274;
-    i32 %276 = add i32 %158, i32 1;
+    i32 %276 = add i32 %159, i32 1;
     store i32* %272 with i32 %276;
-    i32 %277 = add i32 %158, i32 2;
+    i32 %277 = add i32 %159, i32 2;
     ubr ^while.header;
   ^while.body14:
     i32 %278 = phi [^246, i32 %247] [^while.body14, i32 %280];

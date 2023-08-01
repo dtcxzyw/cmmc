@@ -75,8 +75,6 @@ public:
                     continue;
                 loopTripCount = std::min(static_cast<uint32_t>(size.maxSignedValue()), estimatedLoopTripCount);
             }
-            if(loop.header->getTransformMetadata().unrollCount > 0)
-                continue;
 
             const auto terminator = loop.latch->getTerminator();
             const auto cond = terminator->getOperand(0);

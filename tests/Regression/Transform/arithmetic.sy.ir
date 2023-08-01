@@ -906,17 +906,26 @@ func @getNumPos(i32 %num, i32 %pos) -> i32 { NoMemoryRead NoMemoryWrite NoSideEf
     i1 %1 = icmp sgt i32 %pos, i32 0;
     cbr i1 %1(prob = 0.984615), ^prebody, ^b1;
   ^b:
-    i32 %2 = phi [^entry, i32 0] [^b1, i32 %9];
+    i32 %2 = phi [^entry, i32 0] [^b1, i32 %7];
     ret i32 %2;
   ^prebody:
     i32 %3 = mul i32 %pos, i32 4;
     i32 %4 = shl i32 1, i32 %3;
-    i32 %5 = sdiv i32 %num, i32 %4;
-    i1 %6 = icmp slt i32 %pos, i32 8;
-    i32 %7 = select i1 %6 ? i32 %5 : i32 0;
-    ubr ^b1;
+    i1 %5 = icmp slt i32 %pos, i32 8;
+    ubr ^while.body;
   ^b1:
-    i32 %8 = phi [^while.header, i32 %num] [^prebody, i32 %7];
-    i32 %9 = srem i32 %8, i32 16;
+    i32 %6 = phi [^while.header, i32 %num] [^while.body1, i32 %10];
+    i32 %7 = srem i32 %6, i32 16;
     ubr ^b;
+  ^while.body:
+    i32 %8 = phi [^prebody, i32 0] [^while.body1, i32 %11];
+    cbr i1 %5(prob = 0.5), ^b2, ^while.body1;
+  ^b2:
+    i32 %9 = sdiv i32 %num, i32 %4;
+    ubr ^while.body1;
+  ^while.body1:
+    i32 %10 = phi [^while.body, i32 0] [^b2, i32 %9];
+    i32 %11 = add i32 %8, i32 1;
+    i1 %12 = icmp sgt i32 %pos, i32 %11;
+    cbr i1 %12(prob = 0.984615), ^while.body, ^b1;
 }
