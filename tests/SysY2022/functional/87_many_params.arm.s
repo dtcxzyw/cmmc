@@ -76,25 +76,16 @@ main:
 	str r0, [sp, #204]
 	mov r0, #0
 	cmp r0, #15
-	blt label4
-	b label10
+	bge label10
 .p2align 4
-label7:
-	ldr r3, [r4, r0, lsl #2]
-	ldr r5, [r4, r1, lsl #2]
-	cmp r3, r5
-	blt label8
-	add r1, r1, #1
-	cmp r1, #16
+label4:
+	add r2, r0, #1
+	mov r1, r2
+	cmp r2, #16
 	blt label7
-	b label245
+	b label85
 .p2align 4
-label8:
-	str r5, [r4, r0, lsl #2]
-	str r3, [r4, r1, lsl #2]
-	add r1, r1, #1
-	cmp r1, #16
-	blt label7
+label245:
 	mov r0, r2
 	cmp r2, #15
 	blt label4
@@ -269,14 +260,22 @@ label13:
 	str r0, [sp, #20]
 	b label13
 .p2align 4
-label4:
-	add r2, r0, #1
-	mov r1, r2
-	cmp r2, #16
+label7:
+	ldr r3, [r4, r0, lsl #2]
+	ldr r5, [r4, r1, lsl #2]
+	cmp r3, r5
+	blt label8
+	add r1, r1, #1
+	cmp r1, #16
 	blt label7
-	b label85
+	b label245
 .p2align 4
-label245:
+label8:
+	str r5, [r4, r0, lsl #2]
+	str r3, [r4, r1, lsl #2]
+	add r1, r1, #1
+	cmp r1, #16
+	blt label7
 	mov r0, r2
 	cmp r2, #15
 	blt label4

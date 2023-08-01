@@ -174,21 +174,21 @@ label3:
 label27:
 	ldr r8, [r4, r1, lsl #2]
 	cmp r5, #0
-	ble label30
+	ble label257
 	asr r9, r8, #31
 	rsb r10, r0, #32
 	cmp r2, #0
 	add r8, r8, r9, lsr r10
-	asr r9, r8, r0
-	mov r8, #0
-	movne r8, r9
+	mov r9, #0
+	asr r8, r8, r0
+	movne r9, r8
 .p2align 4
 label30:
-	and r8, r8, #15
-	add r9, sp, #128
+	and r8, r9, #15
 	add r1, r1, #1
-	add r8, r9, r8, lsl #2
+	add r9, sp, #128
 	cmp r3, r1
+	add r8, r9, r8, lsl #2
 	ldr r9, [r8, #0]
 	add r9, r9, #1
 	str r9, [r8, #0]
@@ -308,6 +308,9 @@ label191:
 	cmp r1, #16
 	blt label6
 	b label181
+label257:
+	mov r9, r8
+	b label30
 .p2align 4
 label23:
 	sub r0, r5, #1
@@ -340,46 +343,69 @@ main:
 	bl radixSort
 	cmp r5, #0
 	ble label378
-	sub r2, r5, #4
-	cmp r5, #4
+	sub r0, r5, #8
+	cmp r5, #8
 	ble label383
-	mov r1, #0
-	mov r0, r1
+	mov r2, #0
+	mov r1, r2
+.p2align 4
 label366:
-	add r7, r4, r1, lsl #2
-	add r6, r1, #3
-	ldr r3, [r7, #0]
-	ldr r8, [r7, #4]
-	sdiv r9, r8, r6
-	mls r8, r9, r6, r8
-	mla r9, r8, r1, r8
-	add r8, r1, #2
-	sdiv r10, r3, r8
-	mls r3, r10, r8, r3
-	ldr r10, [r7, #8]
-	ldr r7, [r7, #12]
-	mla r9, r1, r3, r9
-	add r3, r1, #4
-	add r1, r1, #5
-	cmp r2, r3
-	sdiv r11, r10, r3
-	mls r10, r11, r3, r10
-	mla r8, r8, r10, r9
-	sdiv r9, r7, r1
-	mls r1, r9, r1, r7
-	mla r1, r6, r1, r8
-	add r0, r0, r1
-	ble label369
-	mov r1, r3
+	add r3, r4, r2, lsl #2
+	add r6, r2, #3
+	ldr r8, [r3, #0]
+	ldr r7, [r3, #4]
+	sdiv r9, r7, r6
+	mls r7, r9, r6, r7
+	mla r9, r7, r2, r7
+	add r7, r2, #2
+	sdiv r10, r8, r7
+	mls r8, r10, r7, r8
+	ldr r10, [r3, #8]
+	mla r9, r2, r8, r9
+	add r8, r2, #4
+	sdiv r11, r10, r8
+	mls r10, r11, r8, r10
+	mla r7, r7, r10, r9
+	add r9, r2, #5
+	ldr r10, [r3, #12]
+	sdiv r11, r10, r9
+	mls r10, r11, r9, r10
+	mla r6, r6, r10, r7
+	add r7, r2, #6
+	ldr r10, [r3, #16]
+	sdiv r11, r10, r7
+	mls r10, r11, r7, r10
+	mla r6, r8, r10, r6
+	add r8, r2, #7
+	ldr r10, [r3, #20]
+	sdiv r11, r10, r8
+	mls r10, r11, r8, r10
+	mla r9, r9, r10, r6
+	add r6, r2, #8
+	ldr r10, [r3, #24]
+	add r2, r2, #9
+	cmp r0, r6
+	ldr r3, [r3, #28]
+	sdiv r11, r10, r6
+	mls r10, r11, r6, r10
+	mla r7, r7, r10, r9
+	sdiv r9, r3, r2
+	mls r2, r9, r2, r3
+	mla r2, r8, r2, r7
+	add r1, r1, r2
+	ble label437
+	mov r2, r6
 	b label366
+label437:
+	mov r0, r1
 label369:
-	ldr r1, [r4, r3, lsl #2]
-	add r2, r3, #2
-	sdiv r6, r1, r2
-	mls r1, r6, r2, r1
-	mla r0, r3, r1, r0
-	add r3, r3, #1
-	cmp r5, r3
+	ldr r1, [r4, r6, lsl #2]
+	add r2, r6, #2
+	sdiv r3, r1, r2
+	mls r1, r3, r2, r1
+	mla r0, r6, r1, r0
+	add r6, r6, #1
+	cmp r5, r6
 	bgt label369
 	mov r4, r0
 label372:
@@ -395,7 +421,7 @@ label372:
 	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
 label383:
 	mov r0, #0
-	mov r3, r0
+	mov r6, r0
 	b label369
 label378:
 	mov r4, #0

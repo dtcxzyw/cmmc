@@ -7,7 +7,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     f32 %0 = phi [^entry, f32 0] [^b, f32 %8];
     i32 %1 = phi [^entry, i32 1] [^b, i32 %9];
     i1 %2 = icmp slt i32 %1, i32 101;
-    cbr i1 %2(prob = 0.97), ^for.body, ^jump;
+    cbr i1 %2(prob = 0.992248), ^for.body, ^jump;
   ^for.body:
     f32 %3 = call () -> f32 @getfloat();
     i1 %4 = fcmp olt f32 %3, f32 0;

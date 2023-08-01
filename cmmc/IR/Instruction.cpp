@@ -450,9 +450,7 @@ void BranchInst::dumpInst(std::ostream& out) const {
         mTrueTarget->dumpAsTarget(out);
     } else {
         getOperand(0)->dumpAsOperand(out);
-        const auto prec = out.precision(2);
         out << "(prob = " << mBranchProb << "), "sv;
-        out.precision(prec);
         mTrueTarget->dumpAsTarget(out);
         out << ", "sv;
         mFalseTarget->dumpAsTarget(out);

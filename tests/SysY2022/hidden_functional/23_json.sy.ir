@@ -36,7 +36,7 @@ internal func @detect_item(i32 %type, i32* %buf, i32 %len, i32* %0) -> i32 {
     i1 %20 = icmp eq i32 %15, i32 13;
     i1 %21 = or i1 %19, i1 %20;
     i1 %22 = or i1 %18, i1 %21;
-    cbr i1 %22(prob = 0.94), ^if.then, ^b1;
+    cbr i1 %22(prob = 0.9375), ^if.then, ^b1;
   ^if.then:
     i32 %23 = add i32 %13, i32 1;
     store i32* %0 with i32 %23;
@@ -91,7 +91,7 @@ internal func @detect_item(i32 %type, i32* %buf, i32 %len, i32* %0) -> i32 {
   ^while.header:
     i32 %46 = phi [^if.then4, i32 %39] [^b4, i32 %76];
     i1 %47 = icmp sgt i32 %len, i32 %46;
-    cbr i1 %47(prob = 0.97), ^while.body1, ^indirect;
+    cbr i1 %47(prob = 0.992248), ^while.body1, ^indirect;
   ^if.else5:
     i32 %48 = load i32* %0;
     i32* %49 = getelementptr &(i32* %buf)[i32 %48];
@@ -106,7 +106,7 @@ internal func @detect_item(i32 %type, i32* %buf, i32 %len, i32* %0) -> i32 {
     i32 %56 = add i32 %26, i32 -48;
     i1 %57 = icmp ult i32 %56, i32 10;
     i1 %58 = or i1 %55, i1 %57;
-    cbr i1 %58(prob = 0.88), ^2, ^if.else7;
+    cbr i1 %58(prob = 0.875), ^2, ^if.else7;
   ^if.else6:
     i1 %59 = icmp eq i32 %6, i32 4;
     cbr i1 %59(prob = 0.5), ^if.then6, ^if.else8;
@@ -131,7 +131,7 @@ internal func @detect_item(i32 %type, i32* %buf, i32 %len, i32* %0) -> i32 {
   ^while.header1:
     i32 %69 = phi [^if.else5, i32 %48] [^b7, i32 %112];
     i1 %70 = icmp sgt i32 %len, i32 %69;
-    cbr i1 %70(prob = 0.97), ^while.body4, ^indirect2;
+    cbr i1 %70(prob = 0.992248), ^while.body4, ^indirect2;
   ^if.else7:
     i1 %71 = icmp eq i32 %26, i32 116;
     cbr i1 %71(prob = 0.5), ^if.then7, ^if.else9;
@@ -169,7 +169,7 @@ internal func @detect_item(i32 %type, i32* %buf, i32 %len, i32* %0) -> i32 {
     i1 %89 = icmp eq i32 %84, i32 13;
     i1 %90 = or i1 %88, i1 %89;
     i1 %91 = or i1 %87, i1 %90;
-    cbr i1 %91(prob = 0.94), ^if.then9, ^if.then10;
+    cbr i1 %91(prob = 0.9375), ^if.then9, ^if.then10;
   ^while.body3:
     i32 %92 = phi [^if.then6, i32 %66] [^if.then15, i32 %139];
     i1 %93 = icmp sle i32 %len, i32 %92;
@@ -231,7 +231,7 @@ internal func @detect_item(i32 %type, i32* %buf, i32 %len, i32* %0) -> i32 {
     i1 %123 = icmp eq i32 %118, i32 13;
     i1 %124 = or i1 %122, i1 %123;
     i1 %125 = or i1 %121, i1 %124;
-    cbr i1 %125(prob = 0.94), ^if.then15, ^if.then16;
+    cbr i1 %125(prob = 0.9375), ^if.then15, ^if.then16;
   ^if.else12:
     i32* %126 = getelementptr &(i32* %buf)[i32 %99];
     i32 %127 = load i32* %126;
@@ -311,7 +311,7 @@ internal func @detect_item(i32 %type, i32* %buf, i32 %len, i32* %0) -> i32 {
     i32 %165 = add i32 %164, i32 1;
     i1 %166 = icmp sgt i32 %len, i32 %165;
     store i32* %0 with i32 %165;
-    cbr i1 %166(prob = 0.97), ^while.body5, ^b12;
+    cbr i1 %166(prob = 0.992248), ^while.body5, ^b12;
   ^b11:
     i32 %167 = call (i32, i32*, i32, i32*) -> i32 @detect_item(i32 2, i32* %buf, i32 %len, i32* %0);
     i1 %168 = icmp eq i32 %167, i32 0;
@@ -396,7 +396,7 @@ internal func @detect_item(i32 %type, i32* %buf, i32 %len, i32* %0) -> i32 {
     i1 %216 = icmp eq i32 %211, i32 13;
     i1 %217 = or i1 %215, i1 %216;
     i1 %218 = or i1 %214, i1 %217;
-    cbr i1 %218(prob = 0.94), ^if.then24, ^b15;
+    cbr i1 %218(prob = 0.9375), ^if.then24, ^b15;
   ^b14:
     i32 %219 = phi [^if.else20, i32 %99] [^if.else26, i32 %157];
     i32 %220 = add i32 %219, i32 4;
@@ -426,7 +426,7 @@ internal func @detect_item(i32 %type, i32* %buf, i32 %len, i32* %0) -> i32 {
     i32* %232 = getelementptr &(i32* %buf)[i32 %231];
     i32 %233 = load i32* %232;
     i1 %234 = icmp eq i32 %233, i32 44;
-    cbr i1 %234(prob = 0.97), ^while.body8, ^entry5;
+    cbr i1 %234(prob = 0.992248), ^while.body8, ^entry5;
   ^if.then25:
     i32* %235 = getelementptr &(i32* %buf)[i32 %205];
     i32 %236 = load i32* %235;
@@ -447,7 +447,7 @@ internal func @detect_item(i32 %type, i32* %buf, i32 %len, i32* %0) -> i32 {
     i1 %247 = icmp eq i32 %242, i32 13;
     i1 %248 = or i1 %246, i1 %247;
     i1 %249 = or i1 %245, i1 %248;
-    cbr i1 %249(prob = 0.94), ^if.then27, ^b18;
+    cbr i1 %249(prob = 0.9375), ^if.then27, ^b18;
   ^if.else25:
     i32* %250 = getelementptr &(i32* %buf)[i32 %130];
     i32 %251 = load i32* %250;
@@ -515,7 +515,7 @@ internal func @detect_item(i32 %type, i32* %buf, i32 %len, i32* %0) -> i32 {
   ^while.header2:
     i32 %279 = phi [^indirect8, i32 %262] [^if.then28, i32 %265] [^if.then29, i32 %271];
     i1 %280 = icmp sgt i32 %len, i32 %279;
-    cbr i1 %280(prob = 0.97), ^while.body12, ^b;
+    cbr i1 %280(prob = 0.992248), ^while.body12, ^b;
   ^indirect9:
     i32 %281 = load i32* %0;
     ubr ^b24;
@@ -538,7 +538,7 @@ internal func @detect_item(i32 %type, i32* %buf, i32 %len, i32* %0) -> i32 {
     i1 %292 = icmp eq i32 %287, i32 13;
     i1 %293 = or i1 %291, i1 %292;
     i1 %294 = or i1 %290, i1 %293;
-    cbr i1 %294(prob = 0.94), ^if.then30, ^while.body11;
+    cbr i1 %294(prob = 0.9375), ^if.then30, ^while.body11;
   ^b23:
     i32 %295 = load i32* %0;
     i32* %296 = getelementptr &(i32* %buf)[i32 %295];
@@ -550,7 +550,7 @@ internal func @detect_item(i32 %type, i32* %buf, i32 %len, i32* %0) -> i32 {
     i1 %302 = icmp eq i32 %297, i32 13;
     i1 %303 = or i1 %301, i1 %302;
     i1 %304 = or i1 %300, i1 %303;
-    cbr i1 %304(prob = 0.94), ^if.then31, ^b24;
+    cbr i1 %304(prob = 0.9375), ^if.then31, ^b24;
   ^while.body12:
     i32 %305 = load i32* %0;
     i32* %306 = getelementptr &(i32* %buf)[i32 %305];
@@ -594,7 +594,7 @@ internal func @detect_item(i32 %type, i32* %buf, i32 %len, i32* %0) -> i32 {
     i1 %328 = icmp eq i32 %323, i32 13;
     i1 %329 = or i1 %327, i1 %328;
     i1 %330 = or i1 %326, i1 %329;
-    cbr i1 %330(prob = 0.94), ^if.then32, ^b26;
+    cbr i1 %330(prob = 0.9375), ^if.then32, ^b26;
   ^if.then32:
     i32 %331 = add i32 %321, i32 1;
     store i32* %0 with i32 %331;
@@ -620,7 +620,7 @@ internal func @detect_item(i32 %type, i32* %buf, i32 %len, i32* %0) -> i32 {
     i1 %343 = icmp eq i32 %338, i32 13;
     i1 %344 = or i1 %342, i1 %343;
     i1 %345 = or i1 %341, i1 %344;
-    cbr i1 %345(prob = 0.94), ^if.then33, ^b29;
+    cbr i1 %345(prob = 0.9375), ^if.then33, ^b29;
   ^if.then33:
     i32 %346 = add i32 %336, i32 1;
     store i32* %0 with i32 %346;
@@ -630,7 +630,7 @@ internal func @detect_item(i32 %type, i32* %buf, i32 %len, i32* %0) -> i32 {
     i32* %348 = getelementptr &(i32* %buf)[i32 %347];
     i32 %349 = load i32* %348;
     i1 %350 = icmp eq i32 %349, i32 44;
-    cbr i1 %350(prob = 0.97), ^while.body15, ^entry7;
+    cbr i1 %350(prob = 0.992248), ^while.body15, ^entry7;
   ^while.body15:
     i32 %351 = add i32 %347, i32 1;
     store i32* %0 with i32 %351;
@@ -664,7 +664,7 @@ internal func @detect_item(i32 %type, i32* %buf, i32 %len, i32* %0) -> i32 {
     i1 %367 = icmp eq i32 %362, i32 13;
     i1 %368 = or i1 %366, i1 %367;
     i1 %369 = or i1 %365, i1 %368;
-    cbr i1 %369(prob = 0.94), ^if.then34, ^while.body18;
+    cbr i1 %369(prob = 0.9375), ^if.then34, ^while.body18;
   ^b31:
     i32 %370 = load i32* %0;
     i32* %371 = getelementptr &(i32* %buf)[i32 %370];
@@ -676,7 +676,7 @@ internal func @detect_item(i32 %type, i32* %buf, i32 %len, i32* %0) -> i32 {
     i1 %377 = icmp eq i32 %372, i32 13;
     i1 %378 = or i1 %376, i1 %377;
     i1 %379 = or i1 %375, i1 %378;
-    cbr i1 %379(prob = 0.94), ^if.then35, ^b32;
+    cbr i1 %379(prob = 0.9375), ^if.then35, ^b32;
   ^if.then34:
     i32 %380 = add i32 %360, i32 1;
     store i32* %0 with i32 %380;
@@ -715,7 +715,7 @@ internal func @detect_item(i32 %type, i32* %buf, i32 %len, i32* %0) -> i32 {
     i1 %398 = icmp eq i32 %393, i32 13;
     i1 %399 = or i1 %397, i1 %398;
     i1 %400 = or i1 %396, i1 %399;
-    cbr i1 %400(prob = 0.94), ^if.then36, ^b34;
+    cbr i1 %400(prob = 0.9375), ^if.then36, ^b34;
   ^if.then36:
     i32 %401 = add i32 %391, i32 1;
     store i32* %0 with i32 %401;
@@ -752,7 +752,7 @@ internal func @detect_item(i32 %type, i32* %buf, i32 %len, i32* %0) -> i32 {
     i1 %419 = icmp eq i32 %414, i32 13;
     i1 %420 = or i1 %418, i1 %419;
     i1 %421 = or i1 %417, i1 %420;
-    cbr i1 %421(prob = 0.94), ^if.then37, ^b37;
+    cbr i1 %421(prob = 0.9375), ^if.then37, ^b37;
   ^if.then37:
     i32 %422 = add i32 %412, i32 1;
     store i32* %0 with i32 %422;
@@ -766,7 +766,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i32 %0 = call () -> i32 @getch();
     i1 %1 = icmp neq i32 %0, i32 35;
     [50000000 * i32]* %2 = ptrcast [50000000 * i32]* @buffer to [50000000 * i32]*;
-    cbr i1 %1(prob = 0.97), ^while.body, ^b;
+    cbr i1 %1(prob = 0.992248), ^while.body, ^b;
   ^b:
     i32 %3 = phi [^entry, i32 0] [^indirect, i32 %12];
     i32 %4 = phi [^entry, i32 0] [^indirect, i32 %11];
@@ -780,7 +780,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i32 %9 = call () -> i32 @getch();
     i1 %10 = icmp neq i32 %9, i32 35;
     i32 %11 = add i32 %7, i32 1;
-    cbr i1 %10(prob = 0.97), ^while.body, ^indirect;
+    cbr i1 %10(prob = 0.992248), ^while.body, ^indirect;
   ^indirect:
     i32 %12 = load i32* %pos;
     ubr ^b;
@@ -803,7 +803,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i1 %24 = icmp eq i32 %19, i32 13;
     i1 %25 = or i1 %23, i1 %24;
     i1 %26 = or i1 %22, i1 %25;
-    cbr i1 %26(prob = 0.94), ^if.then, ^b1;
+    cbr i1 %26(prob = 0.9375), ^if.then, ^b1;
   ^if.then:
     i32 %27 = add i32 %17, i32 1;
     store i32* %pos with i32 %27;
@@ -826,7 +826,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i1 %38 = icmp eq i32 %33, i32 13;
     i1 %39 = or i1 %37, i1 %38;
     i1 %40 = or i1 %36, i1 %39;
-    cbr i1 %40(prob = 0.94), ^if.then2, ^b3;
+    cbr i1 %40(prob = 0.9375), ^if.then2, ^b3;
   ^if.then1:
     call (i32) -> void @putch(i32 111);
     call (i32) -> void @putch(i32 107);

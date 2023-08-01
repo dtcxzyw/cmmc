@@ -16,11 +16,15 @@
 #include <cmmc/Analysis/DominateAnalysis.hpp>
 #include <cmmc/Analysis/IntegerRange.hpp>
 #include <cmmc/Analysis/IntegerRangeAnalysis.hpp>
+#include <cmmc/Analysis/PointerBaseAnalysis.hpp>
 #include <cmmc/Analysis/SCEVAnalysis.hpp>
 #include <cmmc/Analysis/SCEVExpr.hpp>
+#include <cmmc/CodeGen/DataLayout.hpp>
+#include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/Function.hpp>
+#include <cmmc/IR/GlobalVariable.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/IR/Type.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
@@ -142,6 +146,8 @@ IntegerRangeAnalysisResult IntegerRangeAnalysis::run(Function& func, AnalysisPas
     auto& dom = analysis.get<DominateAnalysis>(func);
     auto& cfg = analysis.get<CFGAnalysis>(func);
     auto& scev = analysis.get<SCEVAnalysis>(func);
+    auto& ptrBase = analysis.get<PointerBaseAnalysis>(func);
+
     IntegerRangeAnalysisResult ret;
     auto& ranges = ret.storage();
     auto& contextualRanges = ret.contextualStorage();
@@ -481,15 +487,28 @@ IntegerRangeAnalysisResult IntegerRangeAnalysis::run(Function& func, AnalysisPas
             case InstructionID::Call: {
                 if(inst->getType()->isSame(i32)) {
                     const auto& name = inst->lastOperand()->as<Function>()->getSymbol();
+                    auto getPtrBound = [&](Value* val) {
+                        const auto base = ptrBase.lookup(val);
+                        if(base && (base->is<StackAllocInst>() || base->is<GlobalVariable>())) {
+                            auto& dataLayout = analysis.module().getTarget().getDataLayout();
+                            const auto arraySize = base->getType()->as<PointerType>()->getPointee()->getSize(dataLayout);
+                            IntegerRange r;
+                            r.setSignedRange(0, static_cast<intmax_t>(arraySize) / static_cast<intmax_t>(sizeof(int32_t)));
+                            r.sync();
+                            return r;
+                        }
+                        return IntegerRange::getNonNegative();
+                    };
+
                     if(name.prefix() == "getch") {
                         IntegerRange r;
                         r.setSignedRange(-1, 127);
                         r.sync();
                         update(inst, r);
                     } else if(name.prefix() == "getarray" || name.prefix() == "getfarray") {
-                        update(inst, IntegerRange::getNonNegative());
+                        update(inst, getPtrBound(inst->getOperand(0)));
                     } else if(name.prefix() == "putarray" || name.prefix() == "putfarray") {
-                        updateContextual(inst->getOperand(0), inst->getBlock(), IntegerRange::getNonNegative());
+                        updateContextual(inst->getOperand(0), inst->getBlock(), getPtrBound(inst->getOperand(1)));
                     }
                 }
                 break;

@@ -12,22 +12,7 @@ main:
 	li s2, -1
 	sd s1, 24(sp)
 	li s1, 5
-label2:
-	bge s1, zero, label6
-	j label18
-.p2align 2
-label7:
-	addiw a0, s2, 2
-	bne a0, zero, label8
-	addiw s2, a0, 1
-	addiw s1, s1, -1
-	li a1, 14
-	blt s2, a1, label12
-	addiw s2, a0, 2
-	bne s2, zero, label15
-label73:
-	addiw s2, s2, 1
-	j label2
+	blt s1, zero, label18
 .p2align 2
 label6:
 	addiw a0, s2, 1
@@ -60,32 +45,50 @@ label18:
 	ld s1, 24(sp)
 	addi sp, sp, 32
 	ret
-label66:
-	addiw s2, a0, 2
-	bne s2, zero, label15
-	addiw s2, s2, 1
+.p2align 2
+label7:
+	addiw a0, s2, 2
+	bne a0, zero, label8
+	addiw s2, a0, 1
+	addiw s1, s1, -1
+	li a1, 14
+	blt s2, a1, label12
+	addiw a1, a0, 2
+	bne a1, zero, label15
+	addiw s2, a1, 1
 	bge s1, zero, label6
 	j label18
-label35:
+.p2align 2
+label8:
+	addiw s2, s2, 3
+	bne s2, zero, label9
 	mv a0, s2
 	addiw s2, s2, 1
 	addiw s1, s1, -1
 	li a1, 14
 	blt s2, a1, label12
-	addiw s2, a0, 2
-	beq s2, zero, label73
+	addiw a1, a0, 2
+	beq a1, zero, label74
+.p2align 2
 label15:
 	addiw a1, a0, 3
 	addiw s2, a0, 4
 	subw a0, a1, s2
-	addiw a1, a0, 1
-	bne a1, zero, label12
+	addiw a2, a0, 1
+	bne a2, zero, label12
+	mv a1, s2
 	addiw s2, s2, 1
 	bge s1, zero, label6
 	j label18
-label8:
-	addiw s2, s2, 3
-	beq s2, zero, label35
+.p2align 2
+label66:
+	addiw a1, a0, 2
+	bne a1, zero, label15
+	addiw s2, a1, 1
+	bge s1, zero, label6
+	j label18
+.p2align 2
+label9:
 	mv a0, s2
 	jal putint
 	li a0, 32
@@ -99,8 +102,12 @@ label8:
 	addiw s1, s1, -1
 	li a1, 14
 	blt s2, a1, label12
-	addiw s2, a0, 2
-	bne s2, zero, label15
-	addiw s2, s2, 1
+	addiw a1, a0, 2
+	bne a1, zero, label15
+	addiw s2, a1, 1
+	bge s1, zero, label6
+	j label18
+label74:
+	addiw s2, a1, 1
 	bge s1, zero, label6
 	j label18

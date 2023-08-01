@@ -63,7 +63,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i32 %32 = add i32 %28, i32 %31;
     i32 %33 = add i32 %20, i32 1;
     i1 %34 = icmp slt i32 %33, i32 20;
-    cbr i1 %34(prob = 0.94), ^while.body, ^b;
+    cbr i1 %34(prob = 0.944444), ^while.body, ^b;
   ^b:
     ret i32 %32;
 }

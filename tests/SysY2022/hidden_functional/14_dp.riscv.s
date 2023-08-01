@@ -35,20 +35,20 @@ pcrel136:
 	addi s4, a0, %pcrel_lo(pcrel136)
 	bgt s3, zero, label28
 label27:
-	li a1, 1
+	li a3, 1
 	j label2
 label28:
 	li s5, 1
 	j label16
 label2:
-	addiw a0, a1, -1
-	li a3, 140
-	sh3add a2, a1, s4
-	mul a4, a0, a3
+	addiw a0, a3, -1
+	li a2, 140
+	sh3add a1, a3, s4
+	mul a4, a0, a2
 	add a0, s2, a4
-	mul a4, a1, a3
-	add a3, s2, a4
-	bge s3, a1, label39
+	mul a4, a3, a2
+	add a2, s2, a4
+	bge s3, a3, label39
 	j label10
 .p2align 2
 label16:
@@ -71,19 +71,51 @@ label16:
 .p2align 2
 label39:
 	li a4, 1
-	bge s0, a4, label6
-	j label42
+	blt s0, a4, label42
+.p2align 2
+label6:
+	addiw a5, a4, 1
+	sh2add t1, a4, a0
+	andi t0, a5, 1
+	sh2add t2, t0, a1
+	lw t0, 0(t1)
+	lw t2, 0(t2)
+	addw t0, t0, t2
+	lw t3, -4(t1)
+	addw t1, t2, t3
+	blt t1, t0, label7
+	sh2add t0, a4, a2
+	mv a4, a5
+	sw t1, 0(t0)
+	bge s0, a5, label6
+	j label128
+.p2align 2
+label7:
+	sh2add t1, a4, a2
+	mv a4, a5
+	sw t0, 0(t1)
+	bge s0, a5, label6
+	addiw a3, a3, 1
+	addiw a0, a3, -1
+	li a2, 140
+	sh3add a1, a3, s4
+	mul a4, a0, a2
+	add a0, s2, a4
+	mul a4, a3, a2
+	add a2, s2, a4
+	bge s3, a3, label39
+	j label10
 .p2align 2
 label128:
-	addiw a1, a1, 1
-	addiw a0, a1, -1
-	li a3, 140
-	sh3add a2, a1, s4
-	mul a4, a0, a3
+	addiw a3, a3, 1
+	addiw a0, a3, -1
+	li a2, 140
+	sh3add a1, a3, s4
+	mul a4, a0, a2
 	add a0, s2, a4
-	mul a4, a1, a3
-	add a3, s2, a4
-	bge s3, a1, label39
+	mul a4, a3, a2
+	add a2, s2, a4
+	bge s3, a3, label39
 label10:
 	blt s0, zero, label67
 	mv a0, zero
@@ -106,49 +138,16 @@ label14:
 	ld s4, 48(sp)
 	addi sp, sp, 56
 	ret
-.p2align 2
-label6:
-	addiw a5, a4, 1
-	sh2add t2, a4, a0
-	andi t0, a5, 1
-	sh2add t1, t0, a2
-	lw t0, 0(t2)
-	lw t1, 0(t1)
-	addw t0, t0, t1
-	lw t3, -4(t2)
-	addw t2, t1, t3
-	blt t2, t0, label7
-	sh2add t0, a4, a3
-	mv a4, a5
-	sw t2, 0(t0)
-	bge s0, a5, label6
-	j label128
-.p2align 2
-label7:
-	sh2add t1, a4, a3
-	mv a4, a5
-	sw t0, 0(t1)
-	bge s0, a5, label6
-	addiw a1, a1, 1
-	addiw a0, a1, -1
-	li a3, 140
-	sh3add a2, a1, s4
-	mul a4, a0, a3
-	add a0, s2, a4
-	mul a4, a1, a3
-	add a3, s2, a4
-	bge s3, a1, label39
-	j label10
 label42:
-	addiw a1, a1, 1
-	addiw a0, a1, -1
-	li a3, 140
-	sh3add a2, a1, s4
-	mul a4, a0, a3
+	addiw a3, a3, 1
+	addiw a0, a3, -1
+	li a2, 140
+	sh3add a1, a3, s4
+	mul a4, a0, a2
 	add a0, s2, a4
-	mul a4, a1, a3
-	add a3, s2, a4
-	bge s3, a1, label39
+	mul a4, a3, a2
+	add a2, s2, a4
+	bge s3, a3, label39
 	j label10
 label67:
 	mv a0, zero

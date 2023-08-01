@@ -904,7 +904,7 @@ func @getNumPos(i32 %num, i32 %pos) -> i32 { NoMemoryRead NoMemoryWrite NoSideEf
     cbr i1 %0(prob = 0.5), ^while.header, ^b;
   ^while.header:
     i1 %1 = icmp sgt i32 %pos, i32 0;
-    cbr i1 %1(prob = 0.97), ^prebody, ^b1;
+    cbr i1 %1(prob = 0.992248), ^prebody, ^b1;
   ^b:
     i32 %2 = phi [^entry, i32 0] [^b1, i32 %9];
     ret i32 %2;

@@ -82,7 +82,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i32 %31 = f2s f32 %30 to i32;
     i1 %32 = icmp slt i32 %31, i32 1000000000;
     i32 %33 = add i32 %12, i32 1;
-    cbr i1 %32(prob = 0.97), ^while.body, ^b;
+    cbr i1 %32(prob = 0.992248), ^while.body, ^b;
   ^b:
     call (i32, f32*) -> void @putfarray(i32 %10, f32* %0);
     ret i32 0;

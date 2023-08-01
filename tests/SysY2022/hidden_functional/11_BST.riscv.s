@@ -467,9 +467,9 @@ label633:
 	li a0, 10
 	jal putch
 	jal getint
-	mv s1, a0
+	mv s0, a0
 	ble a0, zero, label667
-	mv s0, zero
+	mv s1, zero
 	mv s2, zero
 .p2align 2
 label634:
@@ -477,8 +477,8 @@ label634:
 	mv a1, a0
 	mv a0, s2
 	jal delete
-	addiw s0, s0, 1
-	ble s1, s0, label637
+	addiw s1, s1, 1
+	ble s0, s1, label637
 	mv s2, a0
 	j label634
 label637:

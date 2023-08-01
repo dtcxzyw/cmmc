@@ -16,22 +16,22 @@ main:
 label7:
 	addiw a3, a1, 10
 	addiw t0, a0, 3
+	addiw t2, a0, 6
 	li t3, 1
 	addw a4, a5, a3
-	sh1add t2, t0, t0
 	addiw a5, a0, 1
 	sh1add t1, a5, a4
 	sh1add a4, a0, t1
-	addiw t1, a0, 7
-	addw a5, a4, t2
-	slliw t0, t1, 1
+	sh1add t1, t0, t0
+	addiw t0, a0, 7
+	addw a5, a4, t1
 	addiw a4, a0, 13
-	addiw t2, a0, 6
+	slliw t1, t0, 1
 	beq a2, t3, label8
 	addw a5, a3, a5
 	addiw a0, a0, 9
 	addiw a2, a2, 1
-	addw a3, t0, a5
+	addw a3, t1, a5
 	sh1add a1, t2, a3
 	sh1add a3, a0, a0
 	mv a0, a4
@@ -44,9 +44,9 @@ label7:
 label8:
 	addiw a2, a5, 10
 	addiw a5, a0, 8
-	addw t1, t1, a2
+	addw t0, t0, a2
 	addiw a0, a0, 10
-	addw a3, t0, t1
+	addw a3, t1, t0
 	sh1add a2, a5, a3
 	sh1add a3, a0, a0
 	mv a0, a4

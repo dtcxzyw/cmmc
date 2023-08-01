@@ -192,10 +192,10 @@ label358:
 .p2align 2
 label359:
 	fcvt.s.w f10, s2
-pcrel391:
+pcrel389:
 	auipc a1, %pcrel_hi(__cmmc_fp_constant_pool)
 	fcvt.s.w f13, a2
-	addi a0, a1, %pcrel_lo(pcrel391)
+	addi a0, a1, %pcrel_lo(pcrel389)
 	lui a1, 269312
 	flw f11, 4(a0)
 	fdiv.s f10, f10, f11
@@ -211,20 +211,43 @@ pcrel391:
 	flt.s a3, f10, f11
 	or a0, a1, a3
 	bne a0, zero, label68
-pcrel392:
+pcrel390:
 	auipc a0, %pcrel_hi(__cmmc_fp_constant_pool)
-	addi a3, a0, %pcrel_lo(pcrel392)
+	addi a3, a0, %pcrel_lo(pcrel390)
 	flw f11, 20(a3)
 	flw f2, 8(a3)
 	flt.s a0, f11, f10
 	fsub.s f12, f10, f2
 	fmv.s f11, f12
 	bne a0, zero, label361
-	j label377
-.p2align 2
-label383:
+	fmv.s f11, f10
+	flw f10, 24(a3)
+	fadd.s f12, f11, f2
+	flt.s a0, f11, f10
+	fmv.s f10, f12
+	bne a0, zero, label363
 	fmv.s f10, f11
 	j label363
+.p2align 2
+label68:
+	auipc a1, %pcrel_hi(__cmmc_fp_constant_pool)
+	addi a0, a1, %pcrel_lo(label68)
+	flw f11, 8(a0)
+	fdiv.s f13, f10, f11
+	fcvt.w.s a0, f13, rtz
+	fcvt.s.w f12, a0
+	fmul.s f11, f12, f11
+	fsub.s f10, f10, f11
+pcrel391:
+	auipc a0, %pcrel_hi(__cmmc_fp_constant_pool)
+	addi a3, a0, %pcrel_lo(pcrel391)
+	flw f11, 20(a3)
+	flw f2, 8(a3)
+	flt.s a0, f11, f10
+	fsub.s f12, f10, f2
+	fmv.s f11, f12
+	bne a0, zero, label361
+	fmv.s f11, f10
 .p2align 2
 label361:
 	flw f10, 24(a3)
@@ -241,10 +264,36 @@ label363:
 	flw f10, 16(a3)
 	flt.s a1, f1, f10
 	or a0, a0, a1
-	bne a0, zero, label82
+	beq a0, zero, label71
+pcrel392:
+	auipc a1, %pcrel_hi(__cmmc_fp_constant_pool)
+	addi a0, a1, %pcrel_lo(pcrel392)
+	flw f10, 8(a0)
+	fdiv.s f12, f1, f10
+	fcvt.w.s a0, f12, rtz
+	fcvt.s.w f11, a0
+	fmul.s f10, f11, f10
+	fsub.s f1, f1, f10
 pcrel393:
 	auipc a1, %pcrel_hi(__cmmc_fp_constant_pool)
 	addi a0, a1, %pcrel_lo(pcrel393)
+	flw f10, 20(a0)
+	flw f11, 8(a0)
+	flt.s a1, f10, f1
+	fsub.s f12, f1, f11
+	fmv.s f10, f12
+	bne a1, zero, label365
+	fmv.s f10, f1
+	flw f12, 24(a0)
+	fadd.s f13, f1, f11
+	flt.s a0, f1, f12
+	fmv.s f11, f13
+	bne a0, zero, label367
+	j label366
+.p2align 2
+label71:
+	auipc a1, %pcrel_hi(__cmmc_fp_constant_pool)
+	addi a0, a1, %pcrel_lo(label71)
 	flw f10, 20(a0)
 	flw f11, 8(a0)
 	flt.s a1, f10, f1
@@ -352,16 +401,16 @@ pcrel394:
 	fadd.s f2, f1, f3
 	fmul.s f1, f2, f12
 	fdiv.s f3, f13, f1
-	fadd.s f5, f1, f3
-	fmul.s f1, f5, f12
-	fdiv.s f2, f13, f1
-	fadd.s f3, f1, f2
-	fmul.s f1, f3, f12
-	fdiv.s f2, f13, f1
-	fadd.s f3, f1, f2
-	fmul.s f1, f3, f12
-	fdiv.s f2, f13, f1
-	fadd.s f3, f1, f2
+	fadd.s f2, f1, f3
+	fmul.s f1, f2, f12
+	fdiv.s f3, f13, f1
+	fadd.s f2, f1, f3
+	fmul.s f1, f2, f12
+	fdiv.s f3, f13, f1
+	fadd.s f2, f1, f3
+	fmul.s f1, f2, f12
+	fdiv.s f5, f13, f1
+	fadd.s f3, f1, f5
 	fmul.s f1, f3, f12
 	fdiv.s f2, f13, f1
 	fadd.s f3, f1, f2
@@ -409,53 +458,6 @@ label371:
 	blt a2, a0, label64
 	j label80
 .p2align 2
-label68:
-	auipc a1, %pcrel_hi(__cmmc_fp_constant_pool)
-	addi a0, a1, %pcrel_lo(label68)
-	flw f11, 8(a0)
-	fdiv.s f13, f10, f11
-	fcvt.w.s a0, f13, rtz
-	fcvt.s.w f12, a0
-	fmul.s f11, f12, f11
-	fsub.s f10, f10, f11
-pcrel395:
-	auipc a0, %pcrel_hi(__cmmc_fp_constant_pool)
-	addi a3, a0, %pcrel_lo(pcrel395)
-	flw f11, 20(a3)
-	flw f2, 8(a3)
-	flt.s a0, f11, f10
-	fsub.s f12, f10, f2
-	fmv.s f11, f12
-	bne a0, zero, label361
-	fmv.s f11, f10
-	j label361
-.p2align 2
-label82:
-	auipc a1, %pcrel_hi(__cmmc_fp_constant_pool)
-	addi a0, a1, %pcrel_lo(label82)
-	flw f10, 8(a0)
-	fdiv.s f12, f1, f10
-	fcvt.w.s a0, f12, rtz
-	fcvt.s.w f11, a0
-	fmul.s f10, f11, f10
-	fsub.s f1, f1, f10
-pcrel396:
-	auipc a1, %pcrel_hi(__cmmc_fp_constant_pool)
-	addi a0, a1, %pcrel_lo(pcrel396)
-	flw f10, 20(a0)
-	flw f11, 8(a0)
-	flt.s a1, f10, f1
-	fsub.s f12, f1, f11
-	fmv.s f10, f12
-	bne a1, zero, label365
-	fmv.s f10, f1
-	flw f12, 24(a0)
-	fadd.s f13, f1, f11
-	flt.s a0, f1, f12
-	fmv.s f11, f13
-	bne a0, zero, label367
-	j label366
-.p2align 2
 label184:
 	fmv.w.x f1, zero
 	fadd.s f15, f15, f1
@@ -463,12 +465,3 @@ label184:
 	li a0, 24
 	blt a2, a0, label64
 	j label80
-.p2align 2
-label377:
-	fmv.s f11, f10
-	flw f10, 24(a3)
-	fadd.s f12, f11, f2
-	flt.s a0, f11, f10
-	fmv.s f10, f12
-	bne a0, zero, label363
-	j label383

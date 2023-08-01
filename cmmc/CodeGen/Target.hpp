@@ -43,7 +43,7 @@ enum class RuntimeType { None, SplRuntime };
 struct TargetOptHeuristic final {
     uint32_t registerLength = 32U;
     // loop unrolling
-    intmax_t unrollBlockSize = 4U;
+    intmax_t unrollBlockSize = 8U;
     uint32_t maxUnrollBodySize = 128U;  // in number of instructions
     // tail duplication
     uint32_t duplicationThreshold = 10U;

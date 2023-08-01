@@ -15,12 +15,16 @@
 // Loop unrolling without interval information (only apply for simple loops)
 
 #include <cmmc/Analysis/CFGAnalysis.hpp>
+#include <cmmc/Analysis/DominateAnalysis.hpp>
+#include <cmmc/Analysis/IntegerRange.hpp>
+#include <cmmc/Analysis/IntegerRangeAnalysis.hpp>
 #include <cmmc/Analysis/LoopAnalysis.hpp>
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/IRBuilder.hpp>
 #include <cmmc/IR/Instruction.hpp>
+#include <cmmc/IR/Type.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Transforms/Hyperparameters.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
@@ -34,6 +38,8 @@ CMMC_NAMESPACE_BEGIN
 class DynamicLoopUnroll final : public TransformPass<Function> {
 public:
     bool run(Function& func, AnalysisPassManager& analysis) const override {
+        auto& rangeInfo = analysis.get<IntegerRangeAnalysis>(func);
+        auto& dom = analysis.get<DominateAnalysis>(func);
         auto& loopInfo = analysis.get<LoopAnalysis>(func);
         auto& cfg = analysis.get<CFGAnalysis>(func);
         const auto& target = analysis.module().getTarget();
@@ -58,6 +64,18 @@ public:
                 continue;
             if((std::max(2U, estimateBlockSize(loop.header, true)) - 1U) * heuristic.unrollBlockSize >
                heuristic.maxUnrollBodySize)
+                continue;
+            uint32_t loopTripCount = estimatedLoopTripCount;
+            if(loop.bound->getType()->as<IntegerType>()->getBitwidth() == 32 && loop.step > 0) {
+                const auto ctx = loop.header->instructions().front();
+                const auto initial = rangeInfo.query(loop.initial, dom, ctx, 5);
+                const auto bound = rangeInfo.query(loop.bound, dom, ctx, 5);
+                const auto size = (bound - initial).sdiv(IntegerRange{ loop.step });
+                if(size.maxSignedValue() < heuristic.unrollBlockSize)
+                    continue;
+                loopTripCount = std::min(static_cast<uint32_t>(size.maxSignedValue()), estimatedLoopTripCount);
+            }
+            if(loop.header->getTransformMetadata().unrollCount > 0)
                 continue;
 
             const auto terminator = loop.latch->getTerminator();
@@ -181,8 +199,7 @@ public:
                 batchCond->mutableOperands()[1]->resetValue(bound);
                 builder.setInsertPoint(head, head->instructions().end());
 
-                auto exitProb =
-                    1.0 / (1 + static_cast<double>(estimatedLoopTripCount) / static_cast<double>(heuristic.unrollBlockSize));
+                auto exitProb = 1.0 / (1 + static_cast<double>(loopTripCount) / static_cast<double>(heuristic.unrollBlockSize));
                 builder.makeOp<BranchInst>(batchCond, 1.0 - exitProb, loop.latch /*place holder*/, loop.latch);
                 prev = head;
             }

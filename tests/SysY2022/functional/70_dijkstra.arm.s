@@ -150,6 +150,11 @@ label31:
 	cmp r4, r6
 	bge label31
 	b label30
+label20:
+	add r1, r1, #1
+	cmp r0, r1
+	bge label116
+	b label29
 .p2align 4
 label25:
 	ldr r9, [r5, r3, lsl #2]
@@ -195,8 +200,7 @@ label23:
 	ldr r10, [r5, r2, lsl #2]
 	add r8, r8, r10
 	cmp r9, r8
-	ble label147
-	str r8, [r5, r3, lsl #2]
+	bgt label24
 	add r3, r3, #1
 	cmp r4, r3
 	bge label21
@@ -205,7 +209,8 @@ label23:
 	bge label116
 	b label29
 .p2align 4
-label147:
+label24:
+	str r8, [r5, r3, lsl #2]
 	add r3, r3, #1
 	cmp r4, r3
 	bge label21
@@ -218,11 +223,7 @@ label17:
 	str r3, [r7, r2, lsl #2]
 	cmp r4, r3
 	bge label21
-label20:
-	add r1, r1, #1
-	cmp r0, r1
-	bge label116
-	b label29
+	b label20
 .p2align 4
 label248:
 	mov r3, #1

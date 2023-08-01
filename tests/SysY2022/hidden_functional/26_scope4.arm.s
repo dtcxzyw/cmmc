@@ -17,11 +17,11 @@ main:
 .p2align 4
 label7:
 	add r3, r1, #10
-	add r7, r0, #7
+	add r6, r0, #7
 	add r8, r0, #6
 	cmp r2, #1
 	add r4, r5, r3
-	lsl r6, r7, #1
+	lsl r7, r6, #1
 	add r5, r0, #1
 	add r4, r4, r5, lsl #1
 	add r5, r0, #3
@@ -33,7 +33,7 @@ label7:
 	add r1, r3, r5
 	add r0, r0, #9
 	add r2, r2, #1
-	add r1, r6, r1
+	add r1, r7, r1
 	add r0, r0, r0, lsl #1
 	add r1, r1, r8, lsl #1
 	add r5, r1, r0
@@ -46,9 +46,9 @@ label7:
 label8:
 	add r2, r5, #10
 	add r3, r0, #8
-	add r2, r7, r2
-	add r0, r0, #10
 	add r2, r6, r2
+	add r0, r0, #10
+	add r2, r7, r2
 	add r0, r0, r0, lsl #1
 	add r2, r2, r3, lsl #1
 	add r5, r2, r0

@@ -11,23 +11,8 @@ main:
 	mov r5, #5
 	mvn r6, #0
 	mov r4, #1
-label2:
 	cmn r5, #1
-	bgt label6
-	b label18
-.p2align 4
-label7:
-	adds r0, r6, #2
-	bne label8
-	add r6, r0, #1
-	sub r5, r5, #1
-	cmp r6, #14
-	blt label12
-	adds r6, r0, #2
-	bne label15
-label68:
-	add r6, r6, #1
-	b label2
+	ble label18
 .p2align 4
 label6:
 	adds r0, r6, #1
@@ -56,21 +41,32 @@ label18:
 	bl putch
 	mov r0, r6
 	pop { r4, r5, r6, pc }
-label61:
+.p2align 4
+label7:
+	adds r0, r6, #2
+	bne label8
+	add r6, r0, #1
+	sub r5, r5, #1
+	cmp r6, #14
+	blt label12
 	adds r6, r0, #2
 	bne label15
 	add r6, r6, #1
 	cmn r5, #1
 	bgt label6
 	b label18
-label35:
+.p2align 4
+label8:
+	adds r6, r6, #3
+	bne label9
 	mov r0, r6
 	add r6, r6, #1
 	sub r5, r5, #1
 	cmp r6, #14
 	blt label12
 	adds r6, r0, #2
-	beq label68
+	beq label69
+.p2align 4
 label15:
 	add r1, r0, #3
 	add r6, r0, #4
@@ -81,9 +77,16 @@ label15:
 	cmn r5, #1
 	bgt label6
 	b label18
-label8:
-	adds r6, r6, #3
-	beq label35
+.p2align 4
+label61:
+	adds r6, r0, #2
+	bne label15
+	add r6, r6, #1
+	cmn r5, #1
+	bgt label6
+	b label18
+.p2align 4
+label9:
 	mov r0, r6
 	bl putint
 	mov r0, #32
@@ -99,6 +102,11 @@ label8:
 	blt label12
 	adds r6, r0, #2
 	bne label15
+	add r6, r6, #1
+	cmn r5, #1
+	bgt label6
+	b label18
+label69:
 	add r6, r6, #1
 	cmn r5, #1
 	bgt label6

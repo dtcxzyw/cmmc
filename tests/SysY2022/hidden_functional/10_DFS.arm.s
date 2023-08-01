@@ -36,11 +36,13 @@ same:
 	movt r10, #:upper16:next
 	movt r11, #:upper16:to
 	ldr r4, [r9, r0, lsl #2]
-	b label3
+	b label5
 label36:
 	mov r0, #1
-	b label26
-label3:
+label2:
+	add sp, sp, #12
+	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
+label5:
 	cmn r4, #1
 	beq label48
 	ldr r0, [r11, r4, lsl #2]
@@ -52,67 +54,63 @@ label3:
 	ldr r1, [sp, #0]
 	cmp r1, r0
 	beq label36
-	b label64
-label26:
-	add sp, sp, #12
-	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
-label64:
 	ldr r5, [r9, r0, lsl #2]
-label8:
+label10:
 	cmn r5, #1
 	beq label58
 	ldr r0, [r11, r5, lsl #2]
 	ldr r1, [r6, r0, lsl #2]
 	cmp r1, #0
-	bne label81
+	bne label13
 	mov r1, #1
 	str r1, [r6, r0, lsl #2]
 	ldr r1, [sp, #0]
 	cmp r1, r0
 	beq label36
 	ldr r7, [r9, r0, lsl #2]
+	b label16
 label13:
+	ldr r5, [r10, r5, lsl #2]
+	b label10
+label16:
 	cmn r7, #1
-	beq label81
+	beq label13
 	ldr r0, [r11, r7, lsl #2]
 	ldr r1, [r6, r0, lsl #2]
 	cmp r1, #0
-	beq label17
-label16:
+	beq label20
+label19:
 	ldr r7, [r10, r7, lsl #2]
-	b label13
-label17:
+	b label16
+label20:
 	mov r1, #1
 	str r1, [r6, r0, lsl #2]
 	ldr r1, [sp, #0]
 	cmp r1, r0
 	beq label36
 	ldr r8, [r9, r0, lsl #2]
-label19:
+label22:
 	cmn r8, #1
-	beq label16
+	beq label19
 	ldr r0, [r11, r8, lsl #2]
 	ldr r1, [r6, r0, lsl #2]
 	cmp r1, #0
-	beq label23
-label22:
+	beq label25
+label133:
 	ldr r8, [r10, r8, lsl #2]
-	b label19
-label23:
+	b label22
+label25:
 	ldr r1, [sp, #0]
 	bl same
 	cmp r0, #0
 	bne label36
-	b label22
+	b label133
 label58:
 	ldr r4, [r10, r4, lsl #2]
-	b label3
-label81:
-	ldr r5, [r10, r5, lsl #2]
-	b label8
+	b label5
 label48:
 	mov r0, #0
-	b label26
+	b label2
 .globl main
 main:
 .p2align 4
@@ -132,33 +130,30 @@ main:
 	str r1, [sp, #4]
 	movt r3, #:upper16:next
 	str r3, [sp, #0]
-	bls label283
+	bls label282
 	mov r5, r0
 	mov r6, #0
 .p2align 4
-label269:
+label191:
 	bl getch
 	cmp r5, #45
 	mov r2, #1
 	sub r1, r0, #48
 	moveq r6, r2
 	cmp r1, #9
-	bls label621
+	bls label290
 	mov r5, r0
-	b label269
-label192:
+	b label191
+label290:
+	mov r5, r6
+label194:
 	sub r1, r0, #48
 	cmp r1, #10
-	blo label289
-	b label288
-label621:
-	mov r5, r6
-	b label192
-label289:
+	bhs label295
 	mov r6, r0
 	mov r7, #0
 .p2align 4
-label195:
+label197:
 	bl getch
 	add r2, r7, r7, lsl #2
 	sub r1, r0, #48
@@ -166,10 +161,10 @@ label195:
 	lsl r2, r2, #1
 	sub r2, r2, #48
 	add r7, r6, r2
-	bhs label198
+	bhs label200
 	mov r6, r0
-	b label195
-label198:
+	b label197
+label200:
 	bl getch
 	rsb r2, r7, #0
 	cmp r5, #0
@@ -177,30 +172,30 @@ label198:
 	mov r5, r7
 	movne r5, r2
 	cmp r1, #9
-	bls label307
+	bls label314
 	mov r6, r0
 	mov r7, #0
 .p2align 4
-label200:
+label202:
 	bl getch
 	cmp r6, #45
 	mov r2, #1
 	sub r1, r0, #48
 	moveq r7, r2
 	cmp r1, #9
-	bls label315
+	bls label322
 	mov r6, r0
-	b label200
-label315:
+	b label202
+label322:
 	mov r6, r7
-label203:
+label205:
 	sub r1, r0, #48
 	cmp r1, #10
-	bhs label320
+	bhs label327
 	mov r7, r0
 	mov r8, #0
 .p2align 4
-label206:
+label208:
 	bl getch
 	add r2, r8, r8, lsl #2
 	sub r1, r0, #48
@@ -208,17 +203,17 @@ label206:
 	lsl r2, r2, #1
 	sub r2, r2, #48
 	add r8, r7, r2
-	bhs label329
+	bhs label336
 	mov r7, r0
-	b label206
-label329:
+	b label208
+label336:
 	cmp r6, #0
 	rsb r0, r8, #0
 	mov r7, r8
 	mov r2, #0
 	movne r7, r0
 .p2align 4
-label211:
+label213:
 	add r0, r4, r2, lsl #2
 	mvn r1, #0
 	add r2, r2, #64
@@ -287,7 +282,7 @@ label211:
 	str r1, [r0, #244]
 	str r1, [r0, #248]
 	str r1, [r0, #252]
-	blt label211
+	blt label213
 	add r0, r4, r2, lsl #2
 	mov r6, #0
 	str r1, [r0, #0]
@@ -336,244 +331,24 @@ label211:
 	str r1, [r0, #172]
 	str r1, [r0, #176]
 	cmp r7, #0
-	beq label217
+	beq label219
 .p2align 4
-label218:
+label220:
 	bl getch
-	mov r2, #0
 	mov r1, #0
+	mov r2, #0
 	cmp r0, #81
 	movwne r1, #1
 	cmp r0, #85
 	movwne r2, #1
 	ands r1, r1, r2
-	bne label218
+	bne label220
 	sub r7, r7, #1
 	cmp r0, #81
-	beq label243
-	bl getch
-	sub r1, r0, #48
-	cmp r1, #9
-	bhi label471
-	b label470
+	beq label245
+	b label222
 .p2align 4
-label589:
-	mov r0, #1
-.p2align 4
-label260:
-	mov r2, #0
-	ldr r3, [sp, #8]
-	str r2, [r3, r0, lsl #2]
-	add r0, r0, #1
-	cmp r5, r0
-	bge label260
-.p2align 4
-label262:
-	mov r0, r8
-	bl same
-	bl putint
-	mov r0, #10
-	bl putch
-	cmp r7, #0
-	bne label218
-	b label217
-.p2align 4
-label605:
-	cmp r9, #0
-	rsb r0, r11, #0
-	mov r1, r11
-	movne r1, r0
-	cmp r5, #0
-	bgt label589
-	b label262
-.p2align 4
-label243:
-	bl getch
-	sub r1, r0, #48
-	cmp r1, #9
-	bls label546
-	mov r8, r0
-	mov r9, #0
-.p2align 4
-label244:
-	bl getch
-	cmp r8, #45
-	mov r2, #1
-	sub r1, r0, #48
-	moveq r9, r2
-	cmp r1, #9
-	bls label554
-	mov r8, r0
-	b label244
-.p2align 4
-label554:
-	mov r8, r9
-	sub r1, r0, #48
-	cmp r1, #10
-	bhs label784
-.p2align 4
-label560:
-	mov r9, r0
-	mov r10, #0
-.p2align 4
-label250:
-	bl getch
-	add r2, r10, r10, lsl #2
-	sub r1, r0, #48
-	cmp r1, #10
-	lsl r2, r2, #1
-	sub r2, r2, #48
-	add r10, r9, r2
-	bhs label253
-	mov r9, r0
-	b label250
-.p2align 4
-label253:
-	bl getch
-	rsb r2, r10, #0
-	cmp r8, #0
-	sub r1, r0, #48
-	mov r8, r10
-	movne r8, r2
-	cmp r1, #9
-	bls label577
-	mov r9, r0
-	mov r10, #0
-.p2align 4
-label266:
-	bl getch
-	cmp r9, #45
-	mov r2, #1
-	sub r1, r0, #48
-	moveq r10, r2
-	cmp r1, #9
-	bls label613
-	mov r9, r0
-	b label266
-label582:
-	mov r11, #0
-	b label258
-.p2align 4
-label583:
-	mov r10, r0
-	mov r11, #0
-	b label263
-label258:
-	cmp r9, #0
-	rsb r0, r11, #0
-	mov r1, r11
-	movne r1, r0
-	cmp r5, #0
-	bgt label589
-	b label262
-.p2align 4
-label613:
-	mov r9, r10
-	sub r1, r0, #48
-	cmp r1, #10
-	blo label583
-	b label582
-.p2align 4
-label263:
-	bl getch
-	add r2, r11, r11, lsl #2
-	sub r1, r0, #48
-	cmp r1, #10
-	lsl r2, r2, #1
-	sub r2, r2, #48
-	add r11, r10, r2
-	bhs label605
-	mov r10, r0
-	b label263
-label217:
-	mov r0, #0
-	add sp, sp, #20
-	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
-label577:
-	mov r9, #0
-	sub r1, r0, #48
-	cmp r1, #10
-	blo label583
-	b label582
-label470:
-	mov r8, #0
-	sub r1, r0, #48
-	cmp r1, #10
-	blo label476
-label475:
-	mov r10, #0
-	b label227
-.p2align 4
-label476:
-	mov r9, r0
-	mov r10, #0
-	b label224
-.p2align 4
-label540:
-	mov r8, r9
-	sub r1, r0, #48
-	cmp r1, #10
-	blo label476
-	b label475
-.p2align 4
-label224:
-	bl getch
-	add r2, r10, r10, lsl #2
-	sub r1, r0, #48
-	cmp r1, #10
-	lsl r2, r2, #1
-	sub r2, r2, #48
-	add r10, r9, r2
-	bhs label227
-	mov r9, r0
-	b label224
-.p2align 4
-label227:
-	bl getch
-	rsb r2, r10, #0
-	cmp r8, #0
-	sub r1, r0, #48
-	mov r8, r10
-	movne r8, r2
-	cmp r1, #9
-	bls label493
-	mov r9, r0
-	mov r10, #0
-.p2align 4
-label229:
-	bl getch
-	cmp r9, #45
-	mov r2, #1
-	sub r1, r0, #48
-	moveq r10, r2
-	cmp r1, #9
-	bls label501
-	mov r9, r0
-	b label229
-.p2align 4
-label501:
-	mov r9, r10
-	sub r1, r0, #48
-	cmp r1, #10
-	bhs label781
-.p2align 4
-label507:
-	mov r10, r0
-	mov r11, #0
-.p2align 4
-label237:
-	bl getch
-	add r2, r11, r11, lsl #2
-	sub r1, r0, #48
-	cmp r1, #10
-	lsl r2, r2, #1
-	sub r2, r2, #48
-	add r11, r10, r2
-	bhs label235
-	mov r10, r0
-	b label237
-.p2align 4
-label235:
+label234:
 	cmp r9, #0
 	rsb r1, r11, #0
 	add r2, r4, r8, lsl #2
@@ -595,59 +370,283 @@ label235:
 	add r6, r6, #2
 	str r1, [r0, #0]
 	cmp r7, #0
-	bne label218
-	b label217
-label546:
-	mov r8, #0
-	b label247
-label784:
-	mov r10, #0
-	b label253
-label247:
-	sub r1, r0, #48
-	cmp r1, #10
-	blo label560
-	b label784
-label493:
-	mov r9, #0
-	b label232
-label781:
-	mov r11, #0
-	b label235
-label232:
-	sub r1, r0, #48
-	cmp r1, #10
-	blo label507
-	b label781
+	bne label220
+	b label219
 .p2align 4
-label471:
+label245:
+	bl getch
+	sub r1, r0, #48
+	cmp r1, #9
+	bls label553
 	mov r8, r0
 	mov r9, #0
 .p2align 4
-label240:
+label268:
 	bl getch
 	cmp r8, #45
 	mov r2, #1
 	sub r1, r0, #48
 	moveq r9, r2
 	cmp r1, #9
-	bls label540
+	bls label620
 	mov r8, r0
-	b label240
-label320:
+	b label268
+label558:
+	mov r10, #0
+	b label249
+.p2align 4
+label559:
+	mov r9, r0
+	mov r10, #0
+.p2align 4
+label265:
+	bl getch
+	add r2, r10, r10, lsl #2
+	sub r1, r0, #48
+	cmp r1, #10
+	lsl r2, r2, #1
+	sub r2, r2, #48
+	add r10, r9, r2
+	bhs label249
+	mov r9, r0
+	b label265
+.p2align 4
+label620:
+	mov r8, r9
+	sub r1, r0, #48
+	cmp r1, #10
+	blo label559
+	b label558
+.p2align 4
+label222:
+	bl getch
+	sub r1, r0, #48
+	cmp r1, #9
+	bls label477
+	mov r8, r0
+	mov r9, #0
+.p2align 4
+label223:
+	bl getch
+	cmp r8, #45
+	mov r2, #1
+	sub r1, r0, #48
+	moveq r9, r2
+	cmp r1, #9
+	bls label485
+	mov r8, r0
+	b label223
+.p2align 4
+label249:
+	bl getch
+	rsb r2, r10, #0
+	cmp r8, #0
+	sub r1, r0, #48
+	mov r8, r10
+	movne r8, r2
+	cmp r1, #9
+	bhi label568
+	b label567
+.p2align 4
+label485:
+	mov r8, r9
+	sub r1, r0, #48
+	cmp r1, #10
+	bhs label780
+.p2align 4
+label491:
+	mov r9, r0
+	mov r10, #0
+.p2align 4
+label242:
+	bl getch
+	add r2, r10, r10, lsl #2
+	sub r1, r0, #48
+	cmp r1, #10
+	lsl r2, r2, #1
+	sub r2, r2, #48
+	add r10, r9, r2
+	bhs label229
+	mov r9, r0
+	b label242
+.p2align 4
+label229:
+	bl getch
+	rsb r2, r10, #0
+	cmp r8, #0
+	sub r1, r0, #48
+	mov r8, r10
+	movne r8, r2
+	cmp r1, #9
+	bhi label500
+	b label499
+label219:
+	mov r0, #0
+	add sp, sp, #20
+	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
+label567:
+	mov r9, #0
+	sub r1, r0, #48
+	cmp r1, #10
+	blo label573
+label572:
+	mov r11, #0
+	b label254
+.p2align 4
+label573:
+	mov r10, r0
+	mov r11, #0
+	b label259
+label254:
+	cmp r9, #0
+	rsb r0, r11, #0
+	mov r1, r11
+	movne r1, r0
+	cmp r5, #0
+	bgt label579
+	b label258
+.p2align 4
+label259:
+	bl getch
+	add r2, r11, r11, lsl #2
+	sub r1, r0, #48
+	cmp r1, #10
+	lsl r2, r2, #1
+	sub r2, r2, #48
+	add r11, r10, r2
+	bhs label595
+	mov r10, r0
+	b label259
+.p2align 4
+label603:
+	mov r9, r10
+	sub r1, r0, #48
+	cmp r1, #10
+	blo label573
+	b label572
+.p2align 4
+label579:
+	mov r0, #1
+.p2align 4
+label256:
+	mov r2, #0
+	ldr r3, [sp, #8]
+	str r2, [r3, r0, lsl #2]
+	add r0, r0, #1
+	cmp r5, r0
+	bge label256
+.p2align 4
+label258:
+	mov r0, r8
+	bl same
+	bl putint
+	mov r0, #10
+	bl putch
+	cmp r7, #0
+	bne label220
+	b label219
+.p2align 4
+label595:
+	cmp r9, #0
+	rsb r0, r11, #0
+	mov r1, r11
+	movne r1, r0
+	cmp r5, #0
+	bgt label579
+	b label258
+label477:
+	mov r8, #0
+	b label226
+label780:
+	mov r10, #0
+	b label229
+label226:
+	sub r1, r0, #48
+	cmp r1, #10
+	blo label491
+	b label780
+label499:
+	mov r9, #0
+	sub r1, r0, #48
+	cmp r1, #10
+	blo label505
+label504:
+	mov r11, #0
+	b label234
+.p2align 4
+label505:
+	mov r10, r0
+	mov r11, #0
+	b label236
+.p2align 4
+label538:
+	mov r9, r10
+	sub r1, r0, #48
+	cmp r1, #10
+	blo label505
+	b label504
+.p2align 4
+label236:
+	bl getch
+	add r2, r11, r11, lsl #2
+	sub r1, r0, #48
+	cmp r1, #10
+	lsl r2, r2, #1
+	sub r2, r2, #48
+	add r11, r10, r2
+	bhs label234
+	mov r10, r0
+	b label236
+label553:
+	mov r8, #0
+	sub r1, r0, #48
+	cmp r1, #10
+	blo label559
+	b label558
+label282:
+	mov r5, #0
+	b label194
+.p2align 4
+label568:
+	mov r9, r0
+	mov r10, #0
+.p2align 4
+label262:
+	bl getch
+	cmp r9, #45
+	mov r2, #1
+	sub r1, r0, #48
+	moveq r10, r2
+	cmp r1, #9
+	bls label603
+	mov r9, r0
+	b label262
+label314:
+	mov r6, #0
+	b label205
+label327:
 	mov r8, #0
 	cmp r6, #0
 	rsb r0, r8, #0
 	mov r7, r8
 	mov r2, #0
 	movne r7, r0
-	b label211
-label288:
+	b label213
+.p2align 4
+label500:
+	mov r9, r0
+	mov r10, #0
+.p2align 4
+label239:
+	bl getch
+	cmp r9, #45
+	mov r2, #1
+	sub r1, r0, #48
+	moveq r10, r2
+	cmp r1, #9
+	bls label538
+	mov r9, r0
+	b label239
+label295:
 	mov r7, #0
-	b label198
-label283:
-	mov r5, #0
-	b label192
-label307:
-	mov r6, #0
-	b label203
+	b label200

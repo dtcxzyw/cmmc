@@ -492,12 +492,14 @@ static void graphColoringAllocateImpl(MIRFunction& mfunc, CodeGenContext& ctx, I
                     return std::nullopt;
                 double maxWeight = 0.0;
                 RegNum best = invalidReg;
-                for(auto [reg, v] : map)
+                for(auto [reg, v] : map) {
+                    assert(v > 0.0);
                     if(v > maxWeight) {
                         maxWeight = v;
                         best = reg;
                     }
-
+                }
+                assert(best != invalidReg);
                 return best;
             };
 

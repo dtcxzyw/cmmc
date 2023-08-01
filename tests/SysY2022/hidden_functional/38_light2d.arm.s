@@ -170,6 +170,55 @@ label56:
 	movwmi r2, #1
 	orrs r0, r0, r2
 	bne label60
+	b label61
+.p2align 4
+label70:
+	vadd.f32 s4, s4, s7
+	add r1, r1, #1
+	cmp r1, #24
+	blt label56
+.p2align 4
+label72:
+	movw r0, #0
+	movt r0, #16832
+	vmov s0, r0
+	movw r0, #0
+	movt r0, #17279
+	vmov s1, r0
+	vdiv.f32 s0, s4, s0
+	vmul.f32 s0, s0, s1
+	vcvt.s32.f32 s0, s0
+	vmov r0, s0
+	cmp r0, #255
+	movge r0, #255
+	bl putint
+	mov r0, #32
+	bl putch
+	add r5, r5, #1
+	cmp r5, #192
+	blt label53
+	mov r0, #10
+	bl putch
+	add r4, r4, #1
+	vmov s0, r4
+	movw r0, #0
+	cmp r4, #192
+	movt r0, #17216
+	vmov s1, r0
+	vcvt.f32.s32 s0, s0
+	vdiv.f32 s16, s0, s1
+	blt label81
+	b label52
+.p2align 4
+label60:
+	movw r0, #4059
+	movt r0, #16585
+	vmov s1, r0
+	vdiv.f32 s2, s0, s1
+	vcvt.s32.f32 s2, s2
+	vcvt.f32.s32 s2, s2
+	vmul.f32 s1, s2, s1
+	vsub.f32 s0, s0, s1
 .p2align 4
 label61:
 	movw r0, #4059
@@ -203,7 +252,15 @@ label61:
 	vmrs APSR_nzcv, FPSCR
 	movwmi r2, #1
 	orrs r0, r0, r2
-	bne label74
+	beq label63
+	movw r0, #4059
+	movt r0, #16585
+	vmov s0, r0
+	vdiv.f32 s1, s6, s0
+	vcvt.s32.f32 s1, s1
+	vcvt.f32.s32 s1, s1
+	vmul.f32 s0, s1, s0
+	vsub.f32 s6, s6, s0
 .p2align 4
 label63:
 	movw r0, #4059
@@ -362,45 +419,7 @@ label65:
 	vmovmi.f32 s7, s8
 	vcmp.f32 s2, s6
 	vmrs APSR_nzcv, FPSCR
-	bpl label69
-	vadd.f32 s4, s4, s7
-	add r1, r1, #1
-	cmp r1, #24
-	blt label56
-.p2align 4
-label72:
-	movw r0, #0
-	movt r0, #16832
-	vmov s0, r0
-	movw r0, #0
-	movt r0, #17279
-	vmov s1, r0
-	vdiv.f32 s0, s4, s0
-	vmul.f32 s0, s0, s1
-	vcvt.s32.f32 s0, s0
-	vmov r0, s0
-	cmp r0, #255
-	movge r0, #255
-	bl putint
-	mov r0, #32
-	bl putch
-	add r5, r5, #1
-	cmp r5, #192
-	blt label53
-	mov r0, #10
-	bl putch
-	add r4, r4, #1
-	vmov s0, r4
-	movw r0, #0
-	cmp r4, #192
-	movt r0, #17216
-	vmov s1, r0
-	vcvt.f32.s32 s0, s0
-	vdiv.f32 s16, s0, s1
-	blt label81
-	b label52
-.p2align 4
-label69:
+	bmi label70
 	vadd.f32 s1, s1, s2
 	add r0, r0, #1
 	b label65
@@ -413,25 +432,3 @@ label166:
 	cmp r1, #24
 	blt label56
 	b label72
-.p2align 4
-label74:
-	movw r0, #4059
-	movt r0, #16585
-	vmov s0, r0
-	vdiv.f32 s1, s6, s0
-	vcvt.s32.f32 s1, s1
-	vcvt.f32.s32 s1, s1
-	vmul.f32 s0, s1, s0
-	vsub.f32 s6, s6, s0
-	b label63
-.p2align 4
-label60:
-	movw r0, #4059
-	movt r0, #16585
-	vmov s1, r0
-	vdiv.f32 s2, s0, s1
-	vcvt.s32.f32 s2, s2
-	vcvt.f32.s32 s2, s2
-	vmul.f32 s1, s2, s1
-	vsub.f32 s0, s0, s1
-	b label61

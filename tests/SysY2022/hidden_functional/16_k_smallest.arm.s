@@ -42,11 +42,11 @@ label24:
 	b label31
 .p2align 4
 label12:
-	ldr r7, [r4, r2, lsl #2]
-	cmp r3, r7
+	ldr r7, [r4, r3, lsl #2]
+	cmp r2, r7
 	bge label13
-	add r2, r2, #1
-	cmp r1, r2
+	add r3, r3, #1
+	cmp r1, r3
 	bgt label12
 	b label16
 .p2align 4
@@ -54,10 +54,10 @@ label13:
 	add r8, r4, r6, lsl #2
 	add r6, r6, #1
 	ldr r9, [r8, #0]
-	str r9, [r4, r2, lsl #2]
+	str r9, [r4, r3, lsl #2]
 	str r7, [r8, #0]
-	add r2, r2, #1
-	cmp r1, r2
+	add r3, r3, #1
+	cmp r1, r3
 	bgt label12
 label16:
 	add r2, r4, r6, lsl #2
@@ -85,9 +85,9 @@ label23:
 	add sp, sp, #4
 	pop { r4, r5, r6, r7, r8, r9, pc }
 label8:
-	ldr r3, [r4, r1, lsl #2]
+	ldr r2, [r4, r1, lsl #2]
 	mov r6, r0
-	mov r2, r0
+	mov r3, r0
 	cmp r1, r0
 	bgt label12
 	b label16

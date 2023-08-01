@@ -51,6 +51,21 @@ label9:
 label55:
 	mov r1, #0
 	mov r0, r1
+label13:
+	ldr r2, [r6, r0, lsl #2]
+	cmp r2, #0
+	beq label62
+	ldr r3, [r4, r1, lsl #2]
+	cmp r2, r3
+	beq label20
+	ldr r1, [r5, r1, lsl #2]
+	mov r3, #0
+	cmn r1, #1
+	add r2, r1, #1
+	moveq r1, r3
+	clz r2, r2
+	lsr r2, r2, #5
+	add r0, r0, r2
 	b label13
 .p2align 4
 label21:
@@ -75,22 +90,6 @@ label22:
 	cmp r2, #0
 	bne label21
 	b label55
-label13:
-	ldr r2, [r6, r0, lsl #2]
-	cmp r2, #0
-	beq label62
-	ldr r3, [r4, r1, lsl #2]
-	cmp r2, r3
-	beq label20
-	ldr r1, [r5, r1, lsl #2]
-	mov r3, #0
-	cmn r1, #1
-	add r2, r1, #1
-	moveq r1, r3
-	clz r2, r2
-	lsr r2, r2, #5
-	add r0, r0, r2
-	b label13
 label4:
 	add r6, r6, #1
 	b label2

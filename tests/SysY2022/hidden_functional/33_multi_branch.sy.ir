@@ -8,7 +8,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
   ^while.header:
     i32 %1 = phi [^entry, i32 0] [^b1, i32 %7];
     i1 %2 = icmp sgt i32 %0, i32 %1;
-    cbr i1 %2(prob = 0.97), ^while.body, ^b;
+    cbr i1 %2(prob = 0.992248), ^while.body, ^b;
   ^while.body:
     i32 %3 = call () -> i32 @getint();
     i32 %4 = add i32 %3, i32 -1;

@@ -70,12 +70,12 @@ pcrel211:
 	addi a2, a0, %pcrel_lo(pcrel210)
 	addi a3, a1, %pcrel_lo(pcrel211)
 pcrel212:
-	auipc a1, %pcrel_hi(value)
-	addi a0, a1, %pcrel_lo(pcrel212)
+	auipc a0, %pcrel_hi(value)
+	addi a1, a0, %pcrel_lo(pcrel212)
 pcrel213:
-	auipc a1, %pcrel_hi(next)
-	addi a4, a1, %pcrel_lo(pcrel213)
-	addi a1, a5, %pcrel_lo(pcrel209)
+	auipc a0, %pcrel_hi(next)
+	addi a4, a0, %pcrel_lo(pcrel213)
+	addi a0, a5, %pcrel_lo(pcrel209)
 	ble s4, zero, label13
 	mv t0, zero
 	mv a5, zero
@@ -93,11 +93,11 @@ label2:
 	sh2add t4, t3, a3
 	sh2add t3, t0, a2
 	sw t0, 0(t4)
-	sh2add t4, t0, a0
+	sh2add t4, t0, a1
 	sw t1, 0(t3)
 	sh2add t1, t0, a4
 	sw t2, 0(t4)
-	sh2add t2, t0, a1
+	sh2add t2, t0, a0
 	sw zero, 0(t1)
 	sw zero, 0(t2)
 .p2align 2
@@ -120,24 +120,24 @@ label125:
 	j label24
 .p2align 2
 label19:
-	sh2add t2, t1, a2
-	lw t3, 0(t2)
-	bne t0, t3, label132
+	sh2add t3, t1, a2
+	lw t2, 0(t3)
+	bne t0, t2, label132
 	mv t0, t1
 	mv t1, zero
-	sh2add t2, t0, a0
-	lw t3, 0(t2)
-	sh2add t2, t0, a1
-	mv t1, t3
-	lw t0, 0(t2)
+	sh2add t3, t0, a1
+	lw t2, 0(t3)
+	sh2add t3, t0, a0
+	mv t1, t2
+	lw t0, 0(t3)
 	beq t0, zero, label24
 .p2align 2
 label21:
-	sh2add t2, t0, a0
-	lw t3, 0(t2)
-	sh2add t2, t0, a1
-	addw t1, t1, t3
-	lw t0, 0(t2)
+	sh2add t3, t0, a1
+	lw t2, 0(t3)
+	sh2add t3, t0, a0
+	addw t1, t1, t2
+	lw t0, 0(t3)
 	bne t0, zero, label21
 .p2align 2
 label24:
@@ -162,12 +162,12 @@ label10:
 	sh2add a6, t5, a2
 	lw t6, 0(a6)
 	bne t1, t6, label98
-	sh2add t1, t5, a1
-	sh2add t4, t0, a1
+	sh2add t1, t5, a0
+	sh2add t4, t0, a0
 	lw t3, 0(t1)
 	sw t3, 0(t4)
 	sw t0, 0(t1)
-	sh2add t1, t0, a0
+	sh2add t1, t0, a1
 	sw t2, 0(t1)
 	addiw a5, a5, 1
 	bgt s4, a5, label2
@@ -201,9 +201,9 @@ label9:
 	sh2add t4, t0, a2
 	sw t0, 0(t3)
 	sw t1, 0(t4)
-	sh2add t1, t0, a0
+	sh2add t1, t0, a1
 	sw t2, 0(t1)
-	sh2add t2, t0, a1
+	sh2add t2, t0, a0
 	sw zero, 0(t2)
 	j label6
 .p2align 2

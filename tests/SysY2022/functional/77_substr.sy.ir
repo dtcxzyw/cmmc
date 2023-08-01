@@ -205,11 +205,11 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     [16 * i32]* %100 = getelementptr &([16 * [16 * i32]]* %28)[i64 0][i32 %97];
     [16 * i32]* %101 = getelementptr &([16 * i32]* %100)[i64 -1];
     i1 %102 = icmp slt i32 %97, i32 16;
-    cbr i1 %102(prob = 0.97), ^while.header1, ^b1;
+    cbr i1 %102(prob = 0.992248), ^while.header1, ^b1;
   ^while.header1:
     i32 %103 = phi [^while.header, i32 1] [^if.then, i32 %114] [^if.else, i32 %114];
     i1 %104 = icmp slt i32 %103, i32 14;
-    cbr i1 %104(prob = 0.97), ^while.body, ^b2;
+    cbr i1 %104(prob = 0.992248), ^while.body, ^b2;
   ^b1:
     i32* %105 = getelementptr &([16 * [16 * i32]]* %28)[i64 0][i64 15][i64 13];
     i32 %106 = load i32* %105;

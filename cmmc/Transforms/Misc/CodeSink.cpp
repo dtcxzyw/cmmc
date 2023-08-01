@@ -26,6 +26,7 @@
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
 #include <cstdint>
+#include <iostream>
 #include <iterator>
 #include <unordered_set>
 #include <vector>
@@ -71,7 +72,7 @@ public:
                         return false;
                     }
                 }
-                return true;
+                return blockTripCount.query(targetBlock) < freq - 1e-8;
             };
 
             const auto moveToTrueTarget = shouldMoveToTarget(trueTarget);

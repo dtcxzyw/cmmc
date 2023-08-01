@@ -16,22 +16,22 @@ main:
 .p2align 4
 	push { r4, lr }
 	movw r4, #:lower16:c
+	mov r2, #0
 	mov r0, #1
-	mov r3, #0
 	movt r4, #:upper16:c
-	add r2, r4, #24
+	add r3, r4, #24
 	str r0, [r4, #0]
 	mov r0, #2
 	str r0, [r4, #4]
 	mov r0, #3
-	str r3, [r4, #8]
-	str r3, [r4, #12]
+	str r2, [r4, #8]
+	str r2, [r4, #12]
 	str r0, [r4, #16]
 	mov r0, #4
 	str r0, [r4, #20]
 .p2align 4
 label2:
-	add r0, r2, r3, lsl #2
+	add r0, r3, r2, lsl #2
 	mov r1, #0
 	str r1, [r0, #0]
 	str r1, [r0, #4]
@@ -97,13 +97,13 @@ label2:
 	str r1, [r0, #244]
 	str r1, [r0, #248]
 	str r1, [r0, #252]
-	add r0, r3, #64
+	add r0, r2, #64
 	cmp r0, #4032
 	bge label4
-	mov r3, r0
+	mov r2, r0
 	b label2
 label4:
-	add r0, r2, r0, lsl #2
+	add r0, r3, r0, lsl #2
 	mov r1, #0
 	str r1, [r0, #0]
 	str r1, [r0, #4]
@@ -153,25 +153,23 @@ label4:
 	str r1, [r0, #180]
 	str r1, [r0, #184]
 	str r1, [r0, #188]
-	add r0, r3, #112
+	str r1, [r0, #192]
+	str r1, [r0, #196]
+	str r1, [r0, #200]
+	str r1, [r0, #204]
+	str r1, [r0, #208]
+	str r1, [r0, #212]
+	str r1, [r0, #216]
+	str r1, [r0, #220]
+	add r0, r2, #120
+.p2align 4
 label5:
-	add r1, r2, r0, lsl #2
-	mov r3, #0
-	add r0, r0, #4
-	str r3, [r1, #0]
-	str r3, [r1, #4]
-	str r3, [r1, #8]
-	str r3, [r1, #12]
-	movw r1, #4086
-	cmp r0, r1
-	blt label5
-label7:
 	mov r1, #0
-	str r1, [r2, r0, lsl #2]
+	str r1, [r3, r0, lsl #2]
 	movw r1, #4090
 	add r0, r0, #1
 	cmp r0, r1
-	blt label7
+	blt label5
 	movw r1, #:lower16:a
 	mov r0, #4000
 	movt r1, #:upper16:a

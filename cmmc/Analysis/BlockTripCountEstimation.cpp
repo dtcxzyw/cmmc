@@ -84,7 +84,7 @@ static std::vector<double> solve(size_t n, std::vector<double>& a) {
         for(uint32_t j = ui + 1; j < n; ++j)
             sum -= mat(ui, j) * d[j];
 
-        d[ui] = sum / mat(ui, ui);
+        d[ui] = std::max(1e-4, sum / mat(ui, ui));
     }
 
     return d;

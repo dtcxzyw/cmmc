@@ -56,7 +56,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
   ^while.header:
     i32 %32 = phi [^entry, i32 0] [^while.header1, i32 %35];
     i1 %33 = icmp slt i32 %32, i32 15;
-    cbr i1 %33(prob = 0.97), ^while.body, ^entry1;
+    cbr i1 %33(prob = 0.992248), ^while.body, ^entry1;
   ^while.body:
     i32* %34 = getelementptr &(i32* %16)[i32 %32];
     i32 %35 = add i32 %32, i32 1;
@@ -83,7 +83,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
   ^while.header1:
     i32 %53 = phi [^while.body, i32 %35] [^b1, i32 %98];
     i1 %54 = icmp slt i32 %53, i32 16;
-    cbr i1 %54(prob = 0.97), ^while.body1, ^while.header;
+    cbr i1 %54(prob = 0.992248), ^while.body1, ^while.header;
   ^if.else:
     i32 %55 = phi [^entry1, i32 %36] [^if.else, i32 %89];
     i32 %56 = phi [^entry1, i32 %38] [^if.else, i32 %88];

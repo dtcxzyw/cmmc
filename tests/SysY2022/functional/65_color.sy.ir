@@ -148,15 +148,15 @@ func @main() -> i32 { NoRecurse Entry } {
     i32 %22 = phi [^entry, i32 0] [^b, i32 %29];
     [18 * [18 * [18 * [18 * [7 * i32]]]]]* %23 = getelementptr &([18 * [18 * [18 * [18 * [18 * [7 * i32]]]]]]* %21)[i64 0][i32 %22];
     i1 %24 = icmp slt i32 %22, i32 18;
-    cbr i1 %24(prob = 0.97), ^while.header1, ^while.header2;
+    cbr i1 %24(prob = 0.992248), ^while.header1, ^while.header2;
   ^while.header1:
     i32 %25 = phi [^while.header, i32 0] [^b2, i32 %46];
     [18 * [18 * [18 * [7 * i32]]]]* %26 = getelementptr &([18 * [18 * [18 * [18 * [7 * i32]]]]]* %23)[i64 0][i32 %25];
     i1 %27 = icmp slt i32 %25, i32 18;
-    cbr i1 %27(prob = 0.97), ^while.header3, ^b;
+    cbr i1 %27(prob = 0.992248), ^while.header3, ^b;
   ^while.header2:
     i1 %28 = icmp sgt i32 %20, i32 0;
-    cbr i1 %28(prob = 0.97), ^while.body, ^b1;
+    cbr i1 %28(prob = 0.992248), ^while.body, ^b1;
   ^b:
     i32 %29 = add i32 %22, i32 1;
     ubr ^while.header;
@@ -164,7 +164,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i32 %30 = phi [^while.header1, i32 0] [^b3, i32 %177];
     [18 * [18 * [7 * i32]]]* %31 = getelementptr &([18 * [18 * [18 * [7 * i32]]]]* %26)[i64 0][i32 %30];
     i1 %32 = icmp slt i32 %30, i32 18;
-    cbr i1 %32(prob = 0.97), ^prebody, ^b2;
+    cbr i1 %32(prob = 0.992248), ^prebody, ^b2;
   ^while.body:
     i32 %33 = phi [^while.header2, i32 0] [^while.body, i32 %38];
     i32 %34 = call () -> i32 @getint();
@@ -174,7 +174,7 @@ func @main() -> i32 { NoRecurse Entry } {
     store i32* %35 with i32 %37;
     i32 %38 = add i32 %33, i32 1;
     i1 %39 = icmp sgt i32 %20, i32 %38;
-    cbr i1 %39(prob = 0.97), ^while.body, ^b1;
+    cbr i1 %39(prob = 0.992248), ^while.body, ^b1;
   ^b1:
     i32 %40 = load i32* %1;
     i32 %41 = load i32* %2;
@@ -444,7 +444,7 @@ func @main() -> i32 { NoRecurse Entry } {
     store i32* %174 with i32 -1;
     i32 %175 = add i32 %47, i32 1;
     i1 %176 = icmp slt i32 %175, i32 18;
-    cbr i1 %176(prob = 0.94), ^prebody, ^b3;
+    cbr i1 %176(prob = 0.944444), ^prebody, ^b3;
   ^b3:
     i32 %177 = add i32 %30, i32 1;
     ubr ^while.header3;

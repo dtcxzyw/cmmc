@@ -17,6 +17,33 @@ label17:
 	mv s0, zero
 	li a0, 5
 	blt zero, a0, label7
+	j label6
+.p2align 2
+label1000:
+	li a0, 111
+.p2align 2
+label1001:
+	jal putch
+	li a0, 116
+	bne s0, zero, label1003
+	li a0, 103
+.p2align 2
+label1003:
+	jal putch
+	li a0, 10
+	jal putch
+	ld a0, 168(sp)
+	addiw a0, a0, -1
+	sd a0, 168(sp)
+	bgt a0, zero, label17
+label11:
+	mv a0, zero
+	ld ra, 0(sp)
+	ld s0, 8(sp)
+	ld s1, 16(sp)
+	ld s2, 24(sp)
+	addi sp, sp, 424
+	ret
 .p2align 2
 label6:
 	lw a7, 192(sp)
@@ -51,11 +78,11 @@ label6:
 	sd a7, 360(sp)
 	sd t1, 104(sp)
 	lw a7, 216(sp)
-	slli t1, a7, 4
-	subw t2, t1, a7
+	slli t6, a7, 4
+	subw t2, t6, a7
 	sd a7, 304(sp)
 	slli a2, t2, 3
-	sd t1, 80(sp)
+	sd t6, 80(sp)
 	subw a3, zero, a2
 	sd t2, 416(sp)
 	addw a1, a1, a3
@@ -154,6 +181,7 @@ label6:
 	ld a7, 392(sp)
 	mulw a5, t1, t0
 	mulw t1, a7, t5
+	li t5, -121
 	ld a7, 384(sp)
 	slli t2, a7, 6
 	subw t3, t2, a7
@@ -180,7 +208,6 @@ label6:
 	ld a7, 352(sp)
 	subw t4, zero, t3
 	addw t2, t1, t4
-	li t4, -121
 	li t1, 67
 	mulw t3, a7, t1
 	ld a7, 344(sp)
@@ -190,8 +217,9 @@ label6:
 	ld a7, 184(sp)
 	addw t1, t2, t3
 	ld t6, 128(sp)
-	mulw t2, a7, t4
+	mulw t2, a7, t5
 	ld a7, 112(sp)
+	li t5, -106
 	addw t1, t1, t2
 	slli t2, t6, 3
 	subw t3, t2, t6
@@ -455,24 +483,24 @@ label6:
 	addw t4, t4, t6
 	mulw t6, a7, t5
 	li a7, 127
-	addw t5, t4, t6
-	max t4, t5, zero
-	li t5, -106
-	min t6, t4, a7
+	addw t4, t4, t6
+	max t5, t4, zero
+	min t4, t5, a7
 	ld a7, 392(sp)
-	mulw a6, t6, t5
-	li t6, -104
-	addw t4, t1, a6
+	li t5, -106
+	mulw t6, t4, t5
+	addw t4, t1, t6
 	sh3add t1, a7, t2
 	ld a7, 384(sp)
 	mulw t5, a7, s0
 	li s0, -95
 	addw t1, t1, t5
 	sd t5, 64(sp)
-	li t5, 101
+	li t5, -104
 	ld a7, 376(sp)
-	mulw t2, a7, t6
+	mulw t2, a7, t5
 	ld a7, 296(sp)
+	li t5, 101
 	addw t1, t1, t2
 	li t2, -116
 	mulw t6, a7, t5
@@ -482,16 +510,16 @@ label6:
 	ld a7, 360(sp)
 	addw t6, t1, a6
 	ld t1, 104(sp)
-	subw a6, a7, t1
-	ld t1, 80(sp)
-	addw t6, t6, a6
-	subw a7, zero, t1
+	subw a7, a7, t1
 	addw a6, t6, a7
+	ld t6, 80(sp)
+	subw a7, zero, t6
 	li t6, -70
-	ld a7, 352(sp)
-	mulw a7, a7, t6
-	li t6, 75
 	addw t1, a6, a7
+	ld a7, 352(sp)
+	mulw a6, a7, t6
+	li t6, 75
+	addw t1, t1, a6
 	ld a7, 184(sp)
 	mulw a6, a7, t6
 	ld t6, 128(sp)
@@ -578,16 +606,16 @@ label6:
 	ld a7, 360(sp)
 	addw t4, t4, t6
 	slli s0, a7, 4
+	subw s1, a7, s0
 	subw t6, s0, a7
 	slli t6, t6, 1
-	subw s0, a7, s0
-	addw s1, t4, s0
+	addw s0, t4, s1
 	li t4, 55
-	sd s0, 56(sp)
+	sd s1, 56(sp)
 	ld a7, 304(sp)
-	mulw s2, a7, t4
+	mulw s1, a7, t4
 	ld a7, 352(sp)
-	addw s0, s1, s2
+	addw s0, s0, s1
 	mulw t5, a7, t5
 	ld a7, 344(sp)
 	addw s0, s0, t5
@@ -823,21 +851,21 @@ label6:
 	sh1add a6, a7, a7
 	ld a7, 136(sp)
 	slliw t5, a6, 5
-	subw t6, zero, t5
-	addw t4, t4, t6
-	li t6, -104
-	mulw a6, a7, t6
-	ld a7, 144(sp)
-	addw t5, t4, a6
 	li a6, 83
-	li t4, -121
-	mulw t6, a7, t4
+	subw t6, zero, t5
+	li t5, -104
+	addw t4, t4, t6
+	mulw t6, a7, t5
+	li t5, -121
+	addw t4, t4, t6
+	ld a7, 144(sp)
+	mulw t6, a7, t5
 	ld a7, 160(sp)
-	li t4, 97
-	addw t5, t5, t6
-	mulw t6, a7, t4
+	li t5, 97
+	addw t4, t4, t6
+	mulw t6, a7, t5
 	mulw a7, a2, a6
-	addw t4, t5, t6
+	addw t4, t4, t6
 	li a6, -77
 	mulw t6, a3, a4
 	addw t5, t4, a7
@@ -852,9 +880,9 @@ label6:
 	mulw t5, t4, s0
 	ld t4, 96(sp)
 	addw t3, t3, t5
-	ld s0, 56(sp)
+	ld s1, 56(sp)
 	ld a7, 48(sp)
-	addw t5, t4, s0
+	addw t5, t4, s1
 	addw t4, a7, t5
 	ld a7, 392(sp)
 	li t5, -29
@@ -924,7 +952,6 @@ label6:
 	mulw t4, a7, t2
 	ld a7, 160(sp)
 	addw t1, t1, t4
-	li t4, -121
 	mulw t2, a7, t0
 	ld a7, 120(sp)
 	addw t0, t1, t2
@@ -1013,8 +1040,9 @@ label6:
 	li t2, 29
 	addw a1, a1, a5
 	mulw a5, a7, t5
-	ld a7, 144(sp)
+	li t5, -121
 	addw a1, a1, a5
+	ld a7, 144(sp)
 	li a5, 115
 	mulw t1, a7, t2
 	ld a7, 152(sp)
@@ -1022,7 +1050,7 @@ label6:
 	mulw t1, a7, a5
 	ld a7, 160(sp)
 	addw a1, a1, t1
-	mulw t1, a7, t4
+	mulw t1, a7, t5
 	ld a7, 120(sp)
 	addw a5, a1, t1
 	sh2add a1, a2, a5
@@ -1042,23 +1070,7 @@ label6:
 	jal putch
 	li a0, 97
 	bne s0, zero, label1001
-	li a0, 111
-.p2align 2
-label1001:
-	jal putch
-	li a0, 116
-	bne s0, zero, label1003
-	li a0, 103
-.p2align 2
-label1003:
-	jal putch
-	li a0, 10
-	jal putch
-	ld a0, 168(sp)
-	addiw a0, a0, -1
-	sd a0, 168(sp)
-	bgt a0, zero, label17
-	j label11
+	j label1000
 .p2align 2
 label7:
 	sh2add a0, s0, s0
@@ -1076,11 +1088,3 @@ label8:
 	addiw s0, s0, 1
 	blt s0, a0, label7
 	j label6
-label11:
-	mv a0, zero
-	ld ra, 0(sp)
-	ld s0, 8(sp)
-	ld s1, 16(sp)
-	ld s2, 24(sp)
-	addi sp, sp, 424
-	ret

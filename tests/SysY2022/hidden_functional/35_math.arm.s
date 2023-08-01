@@ -401,13 +401,13 @@ label274:
 	mov r0, #3
 	vmul.f32 s1, s1, s2
 	vadd.f32 s2, s0, s3
-	vadd.f32 s2, s2, s1
-	vmov.f32 s1, s0
+	vadd.f32 s1, s2, s1
+	vmov.f32 s2, s0
 .p2align 4
 label276:
-	vmul.f32 s4, s3, s1
+	vmul.f32 s4, s3, s2
 	ands r1, r0, #1
-	vmul.f32 s1, s1, s1
+	vmul.f32 s2, s2, s2
 	add r0, r0, r0, lsr #31
 	asr r0, r0, #1
 	vmovne.f32 s3, s4
@@ -415,18 +415,18 @@ label276:
 	bne label276
 	movw r0, #0
 	movt r0, #16576
-	vmov s1, r0
+	vmov s2, r0
 	mov r0, #1065353216
-	vdiv.f32 s1, s3, s1
+	vdiv.f32 s2, s3, s2
 	vmov s3, r0
 	mov r0, #4
-	vadd.f32 s2, s2, s1
-	vmov.f32 s1, s0
+	vadd.f32 s1, s1, s2
+	vmov.f32 s2, s0
 .p2align 4
 label281:
-	vmul.f32 s4, s3, s1
+	vmul.f32 s4, s3, s2
 	ands r1, r0, #1
-	vmul.f32 s1, s1, s1
+	vmul.f32 s2, s2, s2
 	add r0, r0, r0, lsr #31
 	asr r0, r0, #1
 	vmovne.f32 s3, s4
@@ -434,10 +434,10 @@ label281:
 	bne label281
 	movw r0, #0
 	movt r0, #16832
-	vmov s1, r0
+	vmov s2, r0
 	mov r0, #1065353216
-	vdiv.f32 s1, s3, s1
-	vadd.f32 s1, s2, s1
+	vdiv.f32 s2, s3, s2
+	vadd.f32 s1, s1, s2
 	vmov s2, r0
 	mov r0, #5
 .p2align 4

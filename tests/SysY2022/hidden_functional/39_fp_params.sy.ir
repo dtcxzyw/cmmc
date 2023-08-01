@@ -585,7 +585,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i32 %4 = call (f32*) -> i32 @getfarray(f32* %3);
     i32 %5 = add i32 %1, i32 1;
     i1 %6 = icmp slt i32 %5, i32 40;
-    cbr i1 %6(prob = 0.97), ^while.body, ^while.body1;
+    cbr i1 %6(prob = 0.975), ^while.body, ^while.body1;
   ^while.body1:
     i32 %7 = phi [^while.body, i32 0] [^while.body1, i32 %11];
     [3 * i32]* %8 = getelementptr &([24 * [3 * i32]]* %arr2)[i64 0][i32 %7];
@@ -593,7 +593,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i32 %10 = call (i32*) -> i32 @getarray(i32* %9);
     i32 %11 = add i32 %7, i32 1;
     i1 %12 = icmp slt i32 %11, i32 24;
-    cbr i1 %12(prob = 0.96), ^while.body1, ^b;
+    cbr i1 %12(prob = 0.958333), ^while.body1, ^b;
   ^b:
     [3 * f32]* %13 = getelementptr &([40 * [3 * f32]]* %arr)[i64 0][i64 0];
     i32 %14 = load i32* %k;

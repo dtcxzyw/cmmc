@@ -21,7 +21,7 @@ internal func @QuickSort(i32* %arr, i32 %low, i32 %high) -> i32 {
     i32 %9 = phi [^if.then, i32 %high] [^b6, i32 %14] [^if.then3, i32 %42];
     i32 %10 = phi [^if.then, i32 %3] [^b6, i32 %29] [^if.then3, i32 %29];
     i1 %11 = icmp sgt i32 %9, i32 %10;
-    cbr i1 %11(prob = 0.97), ^while.header1, ^b1;
+    cbr i1 %11(prob = 0.992248), ^while.header1, ^b1;
   ^b1:
     i32* %12 = getelementptr &(i32* %arr)[i32 %10];
     store i32* %12 with i32 %7;
@@ -35,7 +35,7 @@ internal func @QuickSort(i32* %arr, i32 %low, i32 %high) -> i32 {
   ^b2:
     i32 %17 = load i32* %16;
     i1 %18 = icmp slt i32 %8, i32 %17;
-    cbr i1 %18(prob = 0.97), ^while.body, ^b3;
+    cbr i1 %18(prob = 0.992248), ^while.body, ^b3;
   ^b3:
     cbr i1 %15(prob = 0.5), ^if.then1, ^while.header2;
   ^entry1:
@@ -67,12 +67,12 @@ internal func @QuickSort(i32* %arr, i32 %low, i32 %high) -> i32 {
     i32 %31 = phi [^if.then2, i32 %13] [^b12, i32 %43] [^if.then6, i32 %71];
     i32 %32 = phi [^if.then2, i32 %19] [^b12, i32 %58] [^if.then6, i32 %58];
     i1 %33 = icmp sgt i32 %31, i32 %32;
-    cbr i1 %33(prob = 0.97), ^while.header4, ^b7;
+    cbr i1 %33(prob = 0.992248), ^while.header4, ^b7;
   ^b5:
     i32* %34 = getelementptr &(i32* %arr)[i32 %29];
     i32 %35 = load i32* %34;
     i1 %36 = icmp sgt i32 %7, i32 %35;
-    cbr i1 %36(prob = 0.97), ^while.body1, ^b6;
+    cbr i1 %36(prob = 0.992248), ^while.body1, ^b6;
   ^b6:
     cbr i1 %30(prob = 0.5), ^if.then3, ^while.header;
   ^while.body1:
@@ -97,7 +97,7 @@ internal func @QuickSort(i32* %arr, i32 %low, i32 %high) -> i32 {
   ^b8:
     i32 %46 = load i32* %45;
     i1 %47 = icmp slt i32 %27, i32 %46;
-    cbr i1 %47(prob = 0.97), ^while.body2, ^b9;
+    cbr i1 %47(prob = 0.992248), ^while.body2, ^b9;
   ^b9:
     cbr i1 %44(prob = 0.5), ^if.then4, ^while.header5;
   ^entry2:
@@ -129,12 +129,12 @@ internal func @QuickSort(i32* %arr, i32 %low, i32 %high) -> i32 {
     i32 %60 = phi [^if.then5, i32 %39] [^b18, i32 %72] [^if.then9, i32 %102];
     i32 %61 = phi [^if.then5, i32 %48] [^b18, i32 %87] [^if.then9, i32 %87];
     i1 %62 = icmp sgt i32 %60, i32 %61;
-    cbr i1 %62(prob = 0.97), ^while.header7, ^b13;
+    cbr i1 %62(prob = 0.992248), ^while.header7, ^b13;
   ^b11:
     i32* %63 = getelementptr &(i32* %arr)[i32 %58];
     i32 %64 = load i32* %63;
     i1 %65 = icmp sgt i32 %26, i32 %64;
-    cbr i1 %65(prob = 0.97), ^while.body3, ^b12;
+    cbr i1 %65(prob = 0.992248), ^while.body3, ^b12;
   ^b12:
     cbr i1 %59(prob = 0.5), ^if.then6, ^while.header3;
   ^while.body3:
@@ -159,7 +159,7 @@ internal func @QuickSort(i32* %arr, i32 %low, i32 %high) -> i32 {
   ^b14:
     i32 %75 = load i32* %74;
     i1 %76 = icmp slt i32 %56, i32 %75;
-    cbr i1 %76(prob = 0.97), ^while.body4, ^b15;
+    cbr i1 %76(prob = 0.992248), ^while.body4, ^b15;
   ^b15:
     cbr i1 %73(prob = 0.5), ^if.then7, ^while.header8;
   ^entry3:
@@ -191,12 +191,12 @@ internal func @QuickSort(i32* %arr, i32 %low, i32 %high) -> i32 {
     i32 %89 = phi [^if.then8, i32 %68] [^b23, i32 %103] [^if.then11, i32 %120];
     i32 %90 = phi [^if.then8, i32 %77] [^b23, i32 %112] [^if.then11, i32 %112];
     i1 %91 = icmp sgt i32 %89, i32 %90;
-    cbr i1 %91(prob = 0.97), ^while.header10, ^b19;
+    cbr i1 %91(prob = 0.992248), ^while.header10, ^b19;
   ^b17:
     i32* %92 = getelementptr &(i32* %arr)[i32 %87];
     i32 %93 = load i32* %92;
     i1 %94 = icmp sgt i32 %55, i32 %93;
-    cbr i1 %94(prob = 0.97), ^while.body5, ^b18;
+    cbr i1 %94(prob = 0.992248), ^while.body5, ^b18;
   ^b18:
     cbr i1 %88(prob = 0.5), ^if.then9, ^while.header6;
   ^while.body5:
@@ -223,7 +223,7 @@ internal func @QuickSort(i32* %arr, i32 %low, i32 %high) -> i32 {
   ^b20:
     i32 %106 = load i32* %105;
     i1 %107 = icmp slt i32 %85, i32 %106;
-    cbr i1 %107(prob = 0.97), ^while.body6, ^b21;
+    cbr i1 %107(prob = 0.992248), ^while.body6, ^b21;
   ^b21:
     cbr i1 %104(prob = 0.5), ^if.then10, ^while.header11;
   ^while.body6:
@@ -243,7 +243,7 @@ internal func @QuickSort(i32* %arr, i32 %low, i32 %high) -> i32 {
     i32* %114 = getelementptr &(i32* %arr)[i32 %112];
     i32 %115 = load i32* %114;
     i1 %116 = icmp sgt i32 %84, i32 %115;
-    cbr i1 %116(prob = 0.97), ^while.body7, ^b23;
+    cbr i1 %116(prob = 0.992248), ^while.body7, ^b23;
   ^b23:
     cbr i1 %113(prob = 0.5), ^if.then11, ^while.header9;
   ^while.body7:
@@ -281,7 +281,7 @@ func @main() -> i32 { NoRecurse Entry } {
     store i32* %9 with i32 8;
     i32 %10 = call (i32*, i32, i32) -> i32 @QuickSort(i32* %0, i32 0, i32 9);
     i1 %11 = icmp slt i32 %10, i32 10;
-    cbr i1 %11(prob = 0.97), ^while.body, ^b;
+    cbr i1 %11(prob = 0.992248), ^while.body, ^b;
   ^while.body:
     i32 %12 = phi [^entry, i32 %10] [^while.body, i32 %15];
     i32* %13 = getelementptr &([10 * i32]* %a)[i64 0][i32 %12];
@@ -290,7 +290,7 @@ func @main() -> i32 { NoRecurse Entry } {
     call (i32) -> void @putch(i32 10);
     i32 %15 = add i32 %12, i32 1;
     i1 %16 = icmp slt i32 %15, i32 10;
-    cbr i1 %16(prob = 0.97), ^while.body, ^b;
+    cbr i1 %16(prob = 0.992248), ^while.body, ^b;
   ^b:
     ret i32 0;
 }

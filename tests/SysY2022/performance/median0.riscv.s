@@ -9,11 +9,11 @@ a:
 main:
 .p2align 2
 	addi sp, sp, -48
-pcrel117:
+pcrel115:
 	auipc a0, %pcrel_hi(a)
 	sd ra, 0(sp)
 	sd s3, 8(sp)
-	addi s3, a0, %pcrel_lo(pcrel117)
+	addi s3, a0, %pcrel_lo(pcrel115)
 	sd s0, 16(sp)
 	mv s0, s3
 	sd s1, 24(sp)
@@ -29,21 +29,19 @@ pcrel117:
 	sraiw s2, a1, 1
 	jal _sysy_starttime
 	mv a1, s3
-	mv a2, zero
-	mv a0, s4
+	mv a0, zero
+	mv a2, s4
 	lw a3, 0(s3)
 	addiw a4, s4, 1
 	mv a5, zero
 label8:
 	bgt a4, a5, label11
 	j label12
-label54:
-	ble s2, a5, label20
-	addiw a2, a5, 1
-	sh2add a1, a2, s0
+label55:
+	mv a2, a5
 	lw a3, 0(a1)
-	addiw a4, a0, 1
-	mv a5, a2
+	addiw a4, a5, 1
+	mv a5, a0
 	j label8
 .p2align 2
 label11:
@@ -64,28 +62,20 @@ label22:
 	bgt a4, a5, label22
 .p2align 2
 label15:
-	beq a4, a5, label17
-	sh2add t0, a4, s0
-	sh2add t1, a5, s0
-	lw t2, 0(t1)
-	lw t3, 0(t0)
-	sw t3, 0(t1)
-	sw t2, 0(t0)
-	bgt a4, a5, label11
-	j label12
-label17:
+	bne a4, a5, label47
 	sw a3, 0(a1)
 	sh2add a4, a5, s0
 	lw t0, 0(a4)
 	sw t0, 0(a1)
 	sw a3, 0(a4)
-	bge s2, a5, label54
-	mv a0, a5
+	blt s2, a5, label55
+	ble s2, a5, label20
+	addiw a0, a5, 1
+	sh2add a1, a0, s0
 	lw a3, 0(a1)
-	addiw a4, a5, 1
-	mv a5, a2
-	bgt a4, a2, label11
-	j label12
+	addiw a4, a2, 1
+	mv a5, a0
+	j label8
 label20:
 	li a0, 61
 	jal _sysy_stoptime
@@ -107,3 +97,12 @@ label20:
 	ld s2, 40(sp)
 	addi sp, sp, 48
 	ret
+label47:
+	sh2add t0, a4, s0
+	sh2add t1, a5, s0
+	lw t2, 0(t1)
+	lw t3, 0(t0)
+	sw t3, 0(t1)
+	sw t2, 0(t0)
+	bgt a4, a5, label11
+	j label12

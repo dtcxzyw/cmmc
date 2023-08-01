@@ -136,13 +136,13 @@ main:
 	sd s3, 48(sp)
 	sd s4, 56(sp)
 	sw a0, 64(sp)
-pcrel163:
+pcrel165:
 	auipc a0, %pcrel_hi(__HELLO)
 	sw zero, 68(sp)
-	addi s1, a0, %pcrel_lo(pcrel163)
+	addi s1, a0, %pcrel_lo(pcrel165)
 	sd zero, 72(sp)
 	sw zero, 80(sp)
-	lw a0, %pcrel_lo(pcrel163)(a0)
+	lw a0, %pcrel_lo(pcrel165)(a0)
 	bne a0, zero, label31
 label30:
 	mv s1, zero
@@ -166,17 +166,7 @@ label4:
 	li a0, 6
 	add a1, a3, a2
 	remw s3, s1, a0
-	beq a1, s3, label18
-pcrel164:
-	auipc a2, %pcrel_hi(N4__mE___)
-	addi a0, a2, %pcrel_lo(pcrel164)
-	li a2, 200
-	mv s2, a0
-	mul a1, a1, a2
-	add s4, a0, a1
-	lw a0, 0(s4)
-	bne a0, zero, label56
-	j label7
+	bne a1, s3, label6
 label18:
 	slliw a1, s1, 4
 	addw a3, a1, s1
@@ -186,9 +176,27 @@ label18:
 	add a1, a0, a3
 	andi a2, a1, -32
 	subw s1, a0, a2
-	beq s1, zero, label19
-	j label4
-label56:
+	bne s1, zero, label4
+	mv a0, zero
+	ld ra, 0(sp)
+	ld s0, 8(sp)
+	ld s5, 16(sp)
+	ld s1, 24(sp)
+	ld s6, 32(sp)
+	ld s2, 40(sp)
+	ld s3, 48(sp)
+	ld s4, 56(sp)
+	addi sp, sp, 88
+	ret
+label6:
+	auipc a2, %pcrel_hi(N4__mE___)
+	addi a0, a2, %pcrel_lo(label6)
+	li a2, 200
+	mv s2, a0
+	mul a1, a1, a2
+	add s4, a0, a1
+	lw a0, 0(s4)
+	beq a0, zero, label7
 	mv s5, zero
 	j label16
 label7:
@@ -252,15 +260,3 @@ label10:
 	lw a1, 4(s3)
 	bne a1, zero, label10
 	j label18
-label19:
-	mv a0, zero
-	ld ra, 0(sp)
-	ld s0, 8(sp)
-	ld s5, 16(sp)
-	ld s1, 24(sp)
-	ld s6, 32(sp)
-	ld s2, 40(sp)
-	ld s3, 48(sp)
-	ld s4, 56(sp)
-	addi sp, sp, 88
-	ret

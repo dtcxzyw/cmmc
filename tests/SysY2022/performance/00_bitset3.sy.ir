@@ -11,7 +11,7 @@ func @main() -> i32 { NoRecurse Entry } {
     call (i32) -> void @starttime(i32 56);
     [10000 * i32]* %3 = ptrcast [10000 * i32]* @a to [10000 * i32]*;
     i32* %4 = getelementptr &([10000 * i32]* %3)[i64 0][i64 0];
-    cbr i1 %1(prob = 0.97), ^while.body, ^b;
+    cbr i1 %1(prob = 0.992248), ^while.body, ^b;
   ^while.body:
     i32 %5 = phi [^entry, i32 %2] [^while.body1, i32 %18];
     i32 %6 = phi [^entry, i32 %0] [^while.body1, i32 %29];
@@ -63,5 +63,5 @@ func @main() -> i32 { NoRecurse Entry } {
     ubr ^while.body1;
   ^while.body1:
     i1 %42 = icmp sgt i32 %29, i32 0;
-    cbr i1 %42(prob = 0.97), ^while.body, ^b;
+    cbr i1 %42(prob = 0.992248), ^while.body, ^b;
 }

@@ -42,6 +42,21 @@ label11:
 	ble label107
 	mov r1, r6
 	mov r0, #0
+.p2align 4
+label20:
+	movw r2, #26215
+	movt r2, #26214
+	smmul r2, r1, r2
+	asr r3, r2, #2
+	add r2, r3, r2, lsr #31
+	cmp r2, #0
+	add r3, r2, r2, lsl #2
+	sub r1, r1, r3, lsl #1
+	add r1, r1, #48
+	str r1, [r4, r0, lsl #2]
+	add r0, r0, #1
+	ble label85
+	mov r1, r2
 	b label20
 .p2align 4
 label17:
@@ -63,22 +78,6 @@ label85:
 	movs r6, r0
 	bgt label18
 	b label17
-.p2align 4
-label20:
-	movw r2, #26215
-	movt r2, #26214
-	smmul r2, r1, r2
-	asr r3, r2, #2
-	add r2, r3, r2, lsr #31
-	cmp r2, #0
-	add r3, r2, r2, lsl #2
-	sub r1, r1, r3, lsl #1
-	add r1, r1, #48
-	str r1, [r4, r0, lsl #2]
-	add r0, r0, #1
-	ble label85
-	mov r1, r2
-	b label20
 label7:
 	mov r0, #0
 	add sp, sp, #64

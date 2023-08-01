@@ -6,7 +6,7 @@ main:
 .p2align 2
 	addi sp, sp, -392
 	li a3, 1
-	li a2, 2
+	li a1, 2
 	li a4, 3
 	li a5, 4
 	li t3, 5
@@ -15,7 +15,7 @@ main:
 	li t2, 8
 	li t4, 9
 	sd ra, 0(sp)
-	addi a1, sp, 128
+	addi a2, sp, 128
 	addi a0, sp, 24
 	sd s0, 8(sp)
 	addi s0, sp, 232
@@ -41,7 +41,7 @@ main:
 	sd zero, 376(sp)
 	sd zero, 384(sp)
 	sw a3, 24(sp)
-	sw a2, 28(sp)
+	sw a1, 28(sp)
 	sw a4, 32(sp)
 	sw a5, 36(sp)
 	sw t3, 40(sp)
@@ -51,7 +51,7 @@ main:
 	sw t4, 56(sp)
 	sw zero, 60(sp)
 	sw a3, 64(sp)
-	sw a2, 68(sp)
+	sw a1, 68(sp)
 	sw a4, 72(sp)
 	sw a5, 76(sp)
 	sw t3, 80(sp)
@@ -60,10 +60,10 @@ main:
 	sw t2, 92(sp)
 	sw t4, 96(sp)
 	sw zero, 100(sp)
-	sw a2, 128(sp)
+	sw a1, 128(sp)
 	sw a4, 132(sp)
 	sw a5, 136(sp)
-	sw a2, 140(sp)
+	sw a1, 140(sp)
 	sw t3, 144(sp)
 	sw t1, 148(sp)
 	sw t4, 152(sp)
@@ -77,23 +77,30 @@ main:
 	sw a5, 184(sp)
 	sw a4, 188(sp)
 	li a4, 39
-	sw a2, 192(sp)
+	sw a1, 192(sp)
 	sw a3, 196(sp)
 	li a3, 19
-	sw a2, 200(sp)
-	sw a2, 204(sp)
+	sw a1, 200(sp)
+	sw a1, 204(sp)
 	bge a3, zero, label10
 label5:
 	lw a0, 232(sp)
 	bne a0, zero, label6
 	li s1, 1
-	j label7
 .p2align 2
-label10:
-	sh2add a5, a3, a1
-	li t0, 19
-	lw a2, 0(a5)
-	blt t0, zero, label122
+label7:
+	sh2add a1, s1, s0
+	lw a0, 0(a1)
+	jal putint
+	li a0, 40
+	addiw s1, s1, 1
+	blt s1, a0, label7
+	mv a0, zero
+	ld ra, 0(sp)
+	ld s0, 8(sp)
+	ld s1, 16(sp)
+	addi sp, sp, 392
+	ret
 .p2align 2
 label14:
 	sh2add t2, a4, s0
@@ -101,7 +108,7 @@ label14:
 	lw a5, 0(t2)
 	addiw t0, t0, -1
 	lw t2, 0(t1)
-	mulw t3, a2, t2
+	mulw t3, a1, t2
 	li t2, 9
 	addw t1, a5, t3
 	addiw a5, a4, -1
@@ -128,25 +135,14 @@ label16:
 	bge t0, zero, label14
 	addiw a4, a5, 19
 	addiw a3, a3, -1
-	bge a3, zero, label10
-	j label5
-label6:
-	jal putint
-	li s1, 1
+	blt a3, zero, label5
 .p2align 2
-label7:
-	sh2add a1, s1, s0
-	lw a0, 0(a1)
-	jal putint
-	li a0, 40
-	addiw s1, s1, 1
-	blt s1, a0, label7
-	mv a0, zero
-	ld ra, 0(sp)
-	ld s0, 8(sp)
-	ld s1, 16(sp)
-	addi sp, sp, 392
-	ret
+label10:
+	sh2add a5, a3, a2
+	li t0, 19
+	lw a1, 0(a5)
+	bge t0, zero, label14
+	j label122
 .p2align 2
 label207:
 	addiw a4, a4, 19
@@ -158,3 +154,7 @@ label122:
 	addiw a3, a3, -1
 	bge a3, zero, label10
 	j label5
+label6:
+	jal putint
+	li s1, 1
+	j label7
