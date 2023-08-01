@@ -630,6 +630,11 @@
       "parent": "77647bb276d3cd17b652e9f52f197a2963439072",
       "time": "2023-07-02 03:27:32 +0800"
     },
+    "9ae3423d1a35cf507f68fe54715f47a05d4985a5": {
+      "message": "feat(codegen): hoist constants",
+      "parent": "6d44124a80e777712e32d41c7e9e197da7e0edd5",
+      "time": "2023-08-01 17:46:55 +0800"
+    },
     "9b2d702f4dd7429a9c9cf9cbf42e4e024133e2a5": {
       "message": "feat(transform): fold strunc/ztrunc",
       "parent": "78bb4ca547117d424c00fbb8537e9c2b90e322fb",
@@ -986,5 +991,5 @@
       "time": "2023-07-06 01:05:50 +0800"
     }
   },
-  "head": "6d44124a80e777712e32d41c7e9e197da7e0edd5"
+  "head": "9ae3423d1a35cf507f68fe54715f47a05d4985a5"
 }
