@@ -145,6 +145,11 @@
       "parent": "fd09d81a7f01e2eea69cfec9e186c92b254fc584",
       "time": "2023-07-01 23:20:11 +0800"
     },
+    "2dec3aadf64ca2c11c5a9ec8c596b14ea4083756": {
+      "message": "fmt:format code",
+      "parent": "c131bbedb497272e11cf13042074882c73d7117b",
+      "time": "2023-08-02 02:55:07 +0800"
+    },
     "2eb7ac2d5b6aceb7d0fc92b7b3bfe0886a3c9e29": {
       "message": "fix(codegen): fix bug that divided by zero",
       "parent": "6f138f87fa3ea11c75c258342c4a49a897c2b7cb",
@@ -1026,5 +1031,5 @@
       "time": "2023-07-06 01:05:50 +0800"
     }
   },
-  "head": "c131bbedb497272e11cf13042074882c73d7117b"
+  "head": "2dec3aadf64ca2c11c5a9ec8c596b14ea4083756"
 }
