@@ -1075,6 +1075,28 @@
         "sysy_time": 0.60701,
         "task-clock": 599.86
       }
+    ],
+    "df1be2c1cfc7dbadc189533186f436ba5ed148c8": [
+      {
+        "sysy_time": 0.703246,
+        "task-clock:u": 687.23
+      },
+      {
+        "sysy_time": 0.702961,
+        "task-clock:u": 686.77
+      },
+      {
+        "sysy_time": 0.703931,
+        "task-clock:u": 687.69
+      },
+      {
+        "sysy_time": 0.703164,
+        "task-clock:u": 686.77
+      },
+      {
+        "sysy_time": 0.704772,
+        "task-clock:u": 688.58
+      }
     ]
   },
   "gcc": [
