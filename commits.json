@@ -435,6 +435,11 @@
       "parent": "7501d07d092337845cfebf755d1c0414e9cc3318",
       "time": "2023-07-22 12:05:03 +0800"
     },
+    "6a8343af9aa9121e470323c549778720072f0b19": {
+      "message": "feat(transform): introduce range info into constraint reduce",
+      "parent": "dbb1591ab79e9718b0364472a585d7063d3c167e",
+      "time": "2023-08-02 02:00:34 +0800"
+    },
     "6d44124a80e777712e32d41c7e9e197da7e0edd5": {
       "message": "fix(transform): fix estimated loop trip count",
       "parent": "2682f7828e46506eb8e5fd18762092fb42654a4d",
@@ -625,6 +630,11 @@
       "parent": "7a2e69d433cec97066e8d5e11b8549f2efd3233c",
       "time": "2023-07-11 04:53:37 +0800"
     },
+    "98ee07d10545613e510d754df2a4083d5e8ed302": {
+      "message": "feat(codegen): duplicate oneuse cmp",
+      "parent": "6a8343af9aa9121e470323c549778720072f0b19",
+      "time": "2023-08-02 02:30:28 +0800"
+    },
     "99c96ab3877598e40db347786b94293026922ee6": {
       "message": "ci: support collecting multiple commits at one push",
       "parent": "77647bb276d3cd17b652e9f52f197a2963439072",
@@ -669,6 +679,11 @@
       "message": "feat(transform): mark flexible arrays",
       "parent": "1c9c17bbd7b24fabfa48b8c00cc043dee604737e",
       "time": "2023-07-22 17:17:51 +0800"
+    },
+    "a6e6ff5c684f39be92c329d13c1c2ba00d87c859": {
+      "message": "feat(codegen): branch2cond for arm",
+      "parent": "df1be2c1cfc7dbadc189533186f436ba5ed148c8",
+      "time": "2023-08-01 21:59:59 +0800"
     },
     "a91e65b0fca3872769dbf87485e5f29b11066c21": {
       "message": "ci: fix RISC-V perf events",
@@ -759,6 +774,11 @@
       "message": "misc: relax time limitation",
       "parent": "31ee101773cca21aabbf09112fc6980d32b7be0c",
       "time": "2023-07-06 21:06:55 +0800"
+    },
+    "c131bbedb497272e11cf13042074882c73d7117b": {
+      "message": "feat(transform): run interpreter on 32-bit platforms",
+      "parent": "98ee07d10545613e510d754df2a4083d5e8ed302",
+      "time": "2023-08-02 02:48:12 +0800"
     },
     "c21d0e32e6bc1ddcba9e943da4e07765c9455f0c": {
       "message": "fix(transform): fix miscompilations",
@@ -879,6 +899,11 @@
       "message": "fix(transform): fix miscompilation",
       "parent": "44b7164453e5b369e050d45aaff72a466037fbed",
       "time": "2023-07-10 19:14:37 +0800"
+    },
+    "dbb1591ab79e9718b0364472a585d7063d3c167e": {
+      "message": "fix(transform): revert select2branch",
+      "parent": "a6e6ff5c684f39be92c329d13c1c2ba00d87c859",
+      "time": "2023-08-01 23:30:48 +0800"
     },
     "dc7db4146929b1047ca1cd6beeeabf309cbc496e": {
       "message": "feat(transform): improve lut2expr",
@@ -1001,5 +1026,5 @@
       "time": "2023-07-06 01:05:50 +0800"
     }
   },
-  "head": "df1be2c1cfc7dbadc189533186f436ba5ed148c8"
+  "head": "c131bbedb497272e11cf13042074882c73d7117b"
 }
