@@ -445,7 +445,7 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
         const uint16_t endianTest = 0xAABB;
         const auto base = reinterpret_cast<const uint8_t*>(&endianTest);
 
-        if(dataLayout.getPointerSize() != 8 || dataLayout.getEndian() != Endian::Little)
+        if(dataLayout.getEndian() != Endian::Little)
             return SimulationFailReason::UnsupportedTarget;
 
         if(!(base[0] == 0xBB && base[1] == 0xAA) || sizeof(uintptr_t) != 8) {
@@ -987,11 +987,15 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
                 break;
             }
             case InstructionID::PtrToInt: {
+                if(dataLayout.getPointerSize() != sizeof(uintptr_t))
+                    return SimulationFailReason::UnsupportedTarget;
                 addUInt(getPtr(0));
                 --instructionCount;
                 break;
             }
             case InstructionID::IntToPtr: {
+                if(dataLayout.getPointerSize() != sizeof(uintptr_t))
+                    return SimulationFailReason::UnsupportedTarget;
                 addPtr(getUInt(0));
                 --instructionCount;
                 break;

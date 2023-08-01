@@ -181,6 +181,7 @@ callee16_cmmc_noinline:
 calling_convention:
 	addiu $sp, $sp, -64
 	sw $ra, 16($sp)
+	swc1 $f20, 20($sp)
 	addiu $t2, $sp, 24
 	jal callee1_cmmc_noinline
 	nop
@@ -192,15 +193,15 @@ calling_convention:
 	nop
 	lui $t0, %hi(__cmmc_fp_constant_pool)
 	addiu $t0, $t0, %lo(__cmmc_fp_constant_pool)
-	lwc1 $f8, 0($t0)
-	mov.s $f12, $f8
+	lwc1 $f20, 0($t0)
+	mov.s $f12, $f20
 	jal callee4_cmmc_noinline
 	nop
 	li $a0, 1
-	mov.s $f14, $f8
+	mov.s $f14, $f20
 	jal callee5_cmmc_noinline
 	nop
-	mov.s $f12, $f8
+	mov.s $f12, $f20
 	li $a1, 1
 	jal callee6_cmmc_noinline
 	nop
@@ -208,23 +209,23 @@ calling_convention:
 	li $a1, 1
 	jal callee7_cmmc_noinline
 	nop
-	mov.s $f12, $f8
-	mov.s $f14, $f8
+	mov.s $f12, $f20
+	mov.s $f14, $f20
 	jal callee8_cmmc_noinline
 	nop
-	mov.s $f12, $f8
-	mov.s $f14, $f8
-	mfc1 $a2, $f8
+	mov.s $f12, $f20
+	mov.s $f14, $f20
+	mfc1 $a2, $f20
 	jal callee9_cmmc_noinline
 	nop
-	mov.s $f12, $f8
-	mov.s $f14, $f8
+	mov.s $f12, $f20
+	mov.s $f14, $f20
 	li $a2, 1
 	jal callee10_cmmc_noinline
 	nop
 	li $a0, 1
-	mov.s $f14, $f8
-	mfc1 $a2, $f8
+	mov.s $f14, $f20
+	mfc1 $a2, $f20
 	jal callee11_cmmc_noinline
 	nop
 	li $a0, 1
@@ -232,17 +233,14 @@ calling_convention:
 	li $a2, 1
 	jal callee12_cmmc_noinline
 	nop
-	jal callee15_cmmc_noinline
-	nop
-	move $a0, $v0
+	move $a0, $zero
 	jal putint
 	nop
-	jal callee16_cmmc_noinline
-	nop
-	mov.s $f12, $f0
+	mov.s $f12, $f20
 	jal putfloat
 	nop
 	lw $ra, 16($sp)
+	lwc1 $f20, 20($sp)
 	addiu $sp, $sp, 64
 	jr $ra
 	nop

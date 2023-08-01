@@ -165,7 +165,8 @@ callee16_cmmc_noinline:
 .globl calling_convention
 calling_convention:
 	push { lr }
-	sub sp, sp, #44
+	vpush { s16 }
+	sub sp, sp, #40
 	mov r2, sp
 	bl callee1_cmmc_noinline
 	mov r0, #1
@@ -173,40 +174,41 @@ calling_convention:
 	mov r0, r2
 	bl callee3_cmmc_noinline
 	mov r0, #1065353216
-	vmov s3, r0
-	vmov.f32 s0, s3
+	vmov s16, r0
+	vmov.f32 s0, s16
 	bl callee4_cmmc_noinline
 	mov r0, #1
-	vmov.f32 s0, s3
+	vmov.f32 s0, s16
 	bl callee5_cmmc_noinline
 	mov r0, #1
-	vmov.f32 s0, s3
+	vmov.f32 s0, s16
 	bl callee6_cmmc_noinline
 	mov r1, #1
 	mov r0, #1
 	bl callee7_cmmc_noinline
-	vmov.f32 s0, s3
-	vmov.f32 s1, s3
+	vmov.f32 s0, s16
+	vmov.f32 s1, s16
 	bl callee8_cmmc_noinline
-	vmov.f32 s0, s3
-	vmov.f32 s1, s3
-	vmov.f32 s2, s3
+	vmov.f32 s0, s16
+	vmov.f32 s1, s16
+	vmov.f32 s2, s16
 	bl callee9_cmmc_noinline
 	mov r0, #1
-	vmov.f32 s0, s3
-	vmov.f32 s1, s3
+	vmov.f32 s0, s16
+	vmov.f32 s1, s16
 	bl callee10_cmmc_noinline
-	vmov.f32 s0, s3
+	vmov.f32 s0, s16
 	mov r0, #1
-	vmov.f32 s1, s3
+	vmov.f32 s1, s16
 	bl callee11_cmmc_noinline
 	mov r2, #1
 	mov r1, #1
 	mov r0, #1
 	bl callee12_cmmc_noinline
-	bl callee15_cmmc_noinline
+	mov r0, #0
 	bl putint
-	bl callee16_cmmc_noinline
+	vmov.f32 s0, s16
 	bl putfloat
-	add sp, sp, #44
+	add sp, sp, #40
+	vpop { s16 }
 	pop { pc }
