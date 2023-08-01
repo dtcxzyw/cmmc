@@ -112,7 +112,7 @@ label7:
 	mov r7, r8
 	movne r7, r0
 	adds r7, r7, #1
-	bne label20
+	bne label9
 	b label101
 label21:
 	ldr r8, [sp, #12]
@@ -120,6 +120,10 @@ label21:
 	mls r0, r0, r8, r5
 	b label7
 label9:
+	ldr r0, [sp, #20]
+	sdiv r8, r0, r7
+	mls r0, r8, r7, r0
+label10:
 	add r7, r9, r0
 	cmp r0, #0
 	mov r0, r7
@@ -131,31 +135,21 @@ label9:
 	ldr r7, [sp, #4]
 	mla r0, r2, r0, r2
 	cmp r7, #0
-	bne label19
-	b label11
-label20:
-	ldr r0, [sp, #20]
-	sdiv r8, r0, r7
-	mls r0, r8, r7, r0
-	b label9
-label11:
+	bne label20
+label12:
 	ldr r7, [sp, #8]
 	cmp r3, #0
 	sub r1, r7, r3
 	moveq r1, r7
 	cmp r4, #0
 	add r1, r1, #1
-	bne label13
+	bne label19
 	b label14
-label19:
+label20:
 	ldr r7, [sp, #4]
 	sdiv r1, r0, r7
 	mls r0, r1, r7, r0
-	b label11
-label13:
-	rsb r2, r4, #0
-	sdiv r3, r1, r2
-	mls r1, r3, r2, r1
+	b label12
 label14:
 	clz r2, r6
 	ldr r8, [sp, #12]
@@ -166,6 +160,12 @@ label14:
 	cmp r5, #0
 	mul r1, r1, r2
 	bne label18
+	b label16
+label19:
+	rsb r2, r4, #0
+	sdiv r3, r1, r2
+	mls r1, r3, r2, r1
+	b label14
 label16:
 	ldr r8, [sp, #32]
 	add r2, r8, r1
@@ -186,7 +186,7 @@ label18:
 	b label16
 label101:
 	ldr r0, [sp, #20]
-	b label9
+	b label10
 label77:
 	mov r0, r5
 	b label7

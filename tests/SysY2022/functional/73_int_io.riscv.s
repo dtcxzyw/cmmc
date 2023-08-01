@@ -28,55 +28,55 @@ label3:
 	sh1add s4, a0, a1
 	j label3
 label6:
-	ble s4, zero, label7
+	ble s4, zero, label22
+.p2align 2
+label9:
+	jal getch
+	addiw s5, a0, -48
+	bgtu s5, s3, label9
 .p2align 2
 label10:
 	jal getch
-	addiw s5, a0, -48
-	bgtu s5, s3, label10
-.p2align 2
-label11:
-	jal getch
 	addiw a0, a0, -48
-	bltu a0, s2, label13
+	bltu a0, s2, label12
 	ble s5, zero, label128
-	mv a1, s5
-	mv a0, zero
-	j label20
+	mv a0, s5
+	mv a1, zero
+	j label19
 .p2align 2
-label17:
+label16:
 	mv a0, s2
 	jal putch
 	addiw s4, s4, -1
-	bgt s4, zero, label10
-	j label7
+	bgt s4, zero, label9
+	j label22
 .p2align 2
-label18:
+label17:
 	addiw s5, s5, -1
 	sh2add a1, s5, s0
 	lw a0, 0(a1)
 	jal putch
-	bgt s5, zero, label18
-	j label17
+	bgt s5, zero, label17
+	j label16
 .p2align 2
-label20:
-	sh2add a2, a0, s0
-	mul a3, a1, s1
-	addiw a0, a0, 1
+label19:
+	sh2add a2, a1, s0
+	mul a3, a0, s1
+	addiw a1, a1, 1
 	srli a5, a3, 63
 	srai a4, a3, 34
 	add a3, a5, a4
-	sh2add t0, a3, a3
-	slliw a4, t0, 1
-	subw a1, a1, a4
-	addi a5, a1, 48
-	mv a1, a3
-	sw a5, 0(a2)
-	bgt a3, zero, label20
-	mv s5, a0
-	bgt a0, zero, label18
-	j label17
-label7:
+	sh2add a4, a3, a3
+	slliw a5, a4, 1
+	subw a0, a0, a5
+	addi a4, a0, 48
+	mv a0, a3
+	sw a4, 0(a2)
+	bgt a3, zero, label19
+	mv s5, a1
+	bgt a1, zero, label17
+	j label16
+label22:
 	mv a0, zero
 	ld ra, 0(sp)
 	ld s0, 8(sp)
@@ -89,9 +89,9 @@ label7:
 	ret
 label128:
 	mv s5, zero
-	j label17
+	j label16
 .p2align 2
-label13:
+label12:
 	sh2add a1, s5, s5
 	sh1add s5, a1, a0
-	j label11
+	j label10

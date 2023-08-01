@@ -15,16 +15,16 @@ dst:
 .globl main
 main:
 	addi sp, sp, -56
-pcrel148:
+pcrel149:
 	auipc a0, %pcrel_hi(dst)
 	sd ra, 0(sp)
 	sd s1, 8(sp)
-	addi s1, a0, %pcrel_lo(pcrel148)
+	addi s1, a0, %pcrel_lo(pcrel149)
 	sd s4, 16(sp)
-pcrel149:
+pcrel150:
 	auipc s4, %pcrel_hi(next)
 	sd s2, 24(sp)
-	addi s2, s4, %pcrel_lo(pcrel149)
+	addi s2, s4, %pcrel_lo(pcrel150)
 	sd s3, 32(sp)
 	mv s3, zero
 	sd s0, 40(sp)
@@ -37,24 +37,27 @@ label2:
 	sw a0, 0(a1)
 	bne a0, a2, label4
 	sh2add a0, s3, s1
-pcrel150:
+pcrel151:
 	auipc a1, %pcrel_hi(src)
 	mv s5, zero
-	addi s3, a1, %pcrel_lo(pcrel150)
+	addi s3, a1, %pcrel_lo(pcrel151)
 	sw zero, 0(a0)
 label6:
 	jal getch
 	li a2, 10
 	sh2add a1, s5, s3
 	sw a0, 0(a1)
-	bne a0, a2, label8
+	beq a0, a2, label9
+	addiw s5, s5, 1
+	j label6
+label9:
 	sh2add a0, s5, s3
 	mv a1, zero
 	sw zero, 0(a0)
 	mv a0, s0
-pcrel151:
+pcrel152:
 	auipc s4, %pcrel_hi(next)
-	sw s0, %pcrel_lo(pcrel151)(s4)
+	sw s0, %pcrel_lo(pcrel152)(s4)
 	mv a3, s1
 	lw a2, 0(s1)
 	bne a2, zero, label21
@@ -64,9 +67,9 @@ label55:
 	j label13
 .p2align 2
 label21:
-	bne a0, s0, label22
+	bne a0, s0, label89
 .p2align 2
-label24:
+label22:
 	addiw a1, a1, 1
 	addiw a0, a0, 1
 	sh2add a2, a1, s2
@@ -76,10 +79,10 @@ label24:
 	bne a2, zero, label21
 	j label55
 .p2align 2
-label22:
-	sh2add a4, a0, s1
-	lw a3, 0(a4)
-	beq a2, a3, label24
+label89:
+	sh2add a3, a0, s1
+	lw a4, 0(a3)
+	beq a2, a4, label22
 	sh2add a2, a0, s2
 	lw a0, 0(a2)
 	sh2add a3, a1, s1
@@ -106,9 +109,15 @@ label134:
 label4:
 	addiw s3, s3, 1
 	j label2
-label8:
-	addiw s5, s5, 1
-	j label6
+label20:
+	addiw a1, a1, 1
+	addiw a0, a0, 1
+	sh2add a3, a1, s1
+	lw a2, 0(a3)
+	beq a2, zero, label16
+	j label13
+label62:
+	mv a0, s0
 label16:
 	jal putint
 	li a0, 10
@@ -123,13 +132,3 @@ label16:
 	ld s5, 48(sp)
 	addi sp, sp, 56
 	ret
-label20:
-	addiw a1, a1, 1
-	addiw a0, a0, 1
-	sh2add a3, a1, s1
-	lw a2, 0(a3)
-	beq a2, zero, label16
-	j label13
-label62:
-	mv a0, s0
-	j label16

@@ -22,7 +22,7 @@ main:
 	sub r0, r1, #4
 	cmp r0, #16
 	sub r1, r1, #20
-	ble label35
+	ble label42
 	mov r2, #0
 	mov r4, #1
 	mov r5, #2
@@ -30,7 +30,7 @@ main:
 	mov r3, r2
 	mov r7, r2
 .p2align 4
-label4:
+label7:
 	add r9, r7, r3
 	movw r7, #49153
 	movt r7, #16384
@@ -133,14 +133,29 @@ label4:
 	mls r7, r7, r8, r9
 	add r8, r2, #16
 	cmp r1, r8
-	ble label88
+	ble label95
 	mov r2, r8
-	b label4
-label88:
+	b label7
+label3:
+	add r1, r0, r7
+	movw r8, #32771
+	movt r8, #32766
+	add r0, r0, #1
+	movw r7, #49153
+	movt r7, #16384
+	smmul r2, r1, r7
+	asr r3, r2, #29
+	add r2, r3, r2, lsr #31
+	mls r7, r2, r8, r1
+	ldr r1, [sp, #0]
+	cmp r1, r0
+	bgt label3
+	b label21
+label95:
 	mov r2, r6
 	mov r1, r3
 	mov r3, r8
-label11:
+label14:
 	add r6, r1, r7
 	add r3, r3, #4
 	add r1, r1, #4
@@ -171,22 +186,9 @@ label11:
 	asr r9, r7, #29
 	add r7, r9, r7, lsr #31
 	mls r7, r7, r8, r6
-	bgt label11
+	bgt label14
 	mov r0, r3
-label18:
-	add r1, r0, r7
-	movw r8, #32771
-	movt r8, #32766
-	add r0, r0, #1
-	movw r7, #49153
-	movt r7, #16384
-	smmul r2, r1, r7
-	asr r3, r2, #29
-	add r2, r3, r2, lsr #31
-	mls r7, r2, r8, r1
-	ldr r1, [sp, #0]
-	cmp r1, r0
-	bgt label18
+	b label3
 label21:
 	movw r0, #1031
 	bl _sysy_stoptime
@@ -200,15 +202,15 @@ label21:
 label29:
 	mov r0, #0
 	mov r7, r0
-	b label18
-label35:
+	b label3
+label42:
 	mov r2, #3
 	mov r5, #2
 	mov r4, #1
 	mov r1, #0
 	mov r3, r1
 	mov r7, r1
-	b label11
+	b label14
 label25:
 	mov r7, #0
 	b label21

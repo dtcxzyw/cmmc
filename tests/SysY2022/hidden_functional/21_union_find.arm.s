@@ -19,38 +19,38 @@ find:
 	beq label22
 	ldr r6, [r7, r5, lsl #2]
 	cmp r5, r6
-	bne label5
+	bne label7
 	mov r0, r5
 	str r5, [r7, r4, lsl #2]
-	b label12
+	b label2
 label22:
 	mov r0, r4
-label12:
+label2:
 	pop { r4, r5, r6, r7, r8, pc }
-label5:
+label7:
 	ldr r8, [r7, r6, lsl #2]
 	cmp r6, r8
 	beq label38
 	ldr r0, [r7, r8, lsl #2]
 	cmp r8, r0
-	bne label11
+	bne label13
 	mov r0, r8
 	str r8, [r7, r6, lsl #2]
 	str r8, [r7, r5, lsl #2]
 	str r8, [r7, r4, lsl #2]
-	b label12
+	b label2
 label38:
 	mov r0, r6
 	str r6, [r7, r5, lsl #2]
 	str r6, [r7, r4, lsl #2]
-	b label12
-label11:
+	b label2
+label13:
 	bl find
 	str r0, [r7, r8, lsl #2]
 	str r0, [r7, r6, lsl #2]
 	str r0, [r7, r5, lsl #2]
 	str r0, [r7, r4, lsl #2]
-	b label12
+	b label2
 .p2align 4
 .globl main
 main:

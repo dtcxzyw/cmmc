@@ -21,33 +21,33 @@ f:
 	sd s3, 8(sp)
 	mv s3, a0
 	sd s2, 16(sp)
-pcrel143:
+pcrel141:
 	auipc a0, %pcrel_hi(ans)
 	mv s2, a2
 	sd s7, 24(sp)
-	addi s7, a0, %pcrel_lo(pcrel143)
+	addi s7, a0, %pcrel_lo(pcrel141)
 	sd s4, 32(sp)
-pcrel144:
+pcrel142:
 	auipc a0, %pcrel_hi(row)
 	addiw s4, s3, 1
 	sd s5, 40(sp)
-	addi s5, a0, %pcrel_lo(pcrel144)
+	addi s5, a0, %pcrel_lo(pcrel142)
 	sd s0, 48(sp)
-pcrel145:
+pcrel143:
 	auipc a0, %pcrel_hi(line2)
 	sd s6, 56(sp)
 	sd s1, 64(sp)
 	li s1, 1
 	sd s8, 72(sp)
 	mv s0, s1
-	addi s8, a0, %pcrel_lo(pcrel145)
+	addi s8, a0, %pcrel_lo(pcrel143)
 	sd s9, 80(sp)
 	sd s10, 88(sp)
 	sd s11, 96(sp)
 	sd a1, 104(sp)
-pcrel146:
+pcrel144:
 	auipc a1, %pcrel_hi(line1)
-	addi s6, a1, %pcrel_lo(pcrel146)
+	addi s6, a1, %pcrel_lo(pcrel144)
 	lw a0, 0(a2)
 	bgt s1, a0, label17
 .p2align 2
@@ -112,21 +112,16 @@ label10:
 	addi a0, a2, 1
 	sw a0, 0(a1)
 	lw s11, 0(s2)
-	bgt s0, s11, label82
+	ble s0, s11, label13
+label82:
+	mv a0, s11
+	j label8
 .p2align 2
 label13:
 	sh2add a1, s10, s7
 	lw a0, 0(a1)
 	jal putint
-	bne s10, s11, label14
-	li a0, 10
-	jal putch
-	lw a0, 0(s2)
-	j label8
-label82:
-	mv a0, s11
-	j label8
-label14:
+	beq s10, s11, label14
 	li a0, 32
 	jal putch
 	addiw s10, s10, 1
@@ -155,6 +150,11 @@ label47:
 	lw a0, 0(s2)
 	ble s1, a0, label4
 	j label17
+label14:
+	li a0, 10
+	jal putch
+	lw a0, 0(s2)
+	j label8
 .p2align 2
 .globl main
 main:
@@ -167,10 +167,10 @@ main:
 	sd s2, 24(sp)
 	sw zero, 32(sp)
 	jal getint
-	ble a0, zero, label159
+	ble a0, zero, label157
 	mv s2, a0
 .p2align 2
-label148:
+label146:
 	jal getint
 	sw a0, 36(sp)
 	mv a1, s1
@@ -178,15 +178,15 @@ label148:
 	mv a2, s0
 	jal f
 	addiw s2, s2, -1
-	bgt s2, zero, label148
+	bgt s2, zero, label146
 	lw a0, 32(sp)
-label151:
+label149:
 	ld ra, 0(sp)
 	ld s0, 8(sp)
 	ld s1, 16(sp)
 	ld s2, 24(sp)
 	addi sp, sp, 40
 	ret
-label159:
+label157:
 	mv a0, zero
-	j label151
+	j label149

@@ -169,13 +169,13 @@ label4:
 	bne a0, s2, label6
 label18:
 	slliw a1, s1, 4
-	addw a3, a1, s1
-	addiw a0, a3, 23
-	slli a2, a0, 1
-	srli a3, a2, 59
-	add a1, a0, a3
-	andi a2, a1, -32
-	subw s1, a0, a2
+	addw a2, a1, s1
+	addiw a0, a2, 23
+	slli a1, a0, 1
+	srli a3, a1, 59
+	add a2, a0, a3
+	andi a1, a2, -32
+	subw s1, a0, a1
 	bne s1, zero, label4
 	mv a0, zero
 	ld ra, 0(sp)
@@ -192,18 +192,33 @@ label6:
 	auipc a1, %pcrel_hi(N4__mE___)
 	li a2, 200
 	addi s3, a1, %pcrel_lo(label6)
-	mul a0, a0, a2
-	add s4, s3, a0
-	lw a1, 0(s4)
-	beq a1, zero, label7
+	mul a1, a0, a2
+	add s4, s3, a1
+	lw a0, 0(s4)
+	beq a0, zero, label9
+	mv s5, zero
+.p2align 2
+label7:
+	sh2add s6, s5, s4
+	lw a0, 0(s6)
+	jal putch
+	addiw s5, s5, 1
+	lw a1, 4(s6)
+	bne a1, zero, label7
+label9:
+	auipc a0, %pcrel_hi(saY_HeI10_To)
+	lw a1, %pcrel_lo(label9)(a0)
+	addi s4, a0, %pcrel_lo(label9)
+	beq a1, zero, label10
 	mv s5, zero
 	j label16
-label7:
-	auipc a0, %pcrel_hi(saY_HeI10_To)
-	lw a1, %pcrel_lo(label7)(a0)
-	addi s4, a0, %pcrel_lo(label7)
-	bne a1, zero, label63
-	j label8
+label10:
+	li a0, 200
+	mul a1, s2, a0
+	add s2, s3, a1
+	lw a0, 0(s2)
+	bne a0, zero, label80
+	j label11
 .p2align 2
 label16:
 	sh2add s6, s5, s4
@@ -212,48 +227,31 @@ label16:
 	addiw s5, s5, 1
 	lw a1, 4(s6)
 	bne a1, zero, label16
-	j label7
-label63:
-	mv s5, zero
-	j label14
-label8:
-	li a1, 200
-	mul a0, s2, a1
-	add s2, s3, a0
-	lw a1, 0(s2)
-	bne a1, zero, label70
-	j label9
-.p2align 2
-label14:
-	sh2add s6, s5, s4
-	lw a0, 0(s6)
-	jal putch
-	addiw s5, s5, 1
-	lw a1, 4(s6)
-	bne a1, zero, label14
-	j label8
-label70:
+	j label10
+label80:
 	mv s3, zero
-	j label12
-label9:
+	j label14
+label11:
 	lw a0, 64(sp)
-	beq a0, zero, label18
-	mv s2, zero
-.p2align 2
-label10:
-	sh2add s3, s2, s0
-	lw a0, 0(s3)
-	jal putch
-	addiw s2, s2, 1
-	lw a1, 4(s3)
-	bne a1, zero, label10
+	bne a0, zero, label85
 	j label18
 .p2align 2
-label12:
+label14:
 	sh2add s4, s3, s2
 	lw a0, 0(s4)
 	jal putch
 	addiw s3, s3, 1
 	lw a1, 4(s4)
+	bne a1, zero, label14
+	j label11
+label85:
+	mv s2, zero
+.p2align 2
+label12:
+	sh2add s3, s2, s0
+	lw a0, 0(s3)
+	jal putch
+	addiw s2, s2, 1
+	lw a1, 4(s3)
 	bne a1, zero, label12
-	j label9
+	j label18

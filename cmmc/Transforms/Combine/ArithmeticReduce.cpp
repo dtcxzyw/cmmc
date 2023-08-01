@@ -23,6 +23,7 @@
 #include <cmmc/IR/Function.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/IR/Type.hpp>
+#include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
 #include <cmmc/Transforms/Util/PatternMatch.hpp>
@@ -1198,6 +1199,13 @@ class ArithmeticReduce final : public TransformPass<Function> {
             //     return builder.makeOp<BinaryInst>(InstructionID::Add, v2,
             //                                       builder.makeOp<BinaryInst>(InstructionID::And, v3, mask));
             // }
+
+            // TODO: check overflow
+            if(icmp(cmp, sub(any(v1), zext(boolean(v2))), exactly(v1))(matchCtx)) {
+                if(cmp == CompareOp::ICmpSignedLessThan)
+                    return v2;
+                reportNotImplemented(CMMC_LOCATION());
+            }
 
             return nullptr;
         });

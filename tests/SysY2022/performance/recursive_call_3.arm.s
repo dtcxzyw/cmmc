@@ -42,22 +42,22 @@ label63:
 label24:
 	vadd.f32 s16, s16, s0
 	cmp r7, #0
-	bge label26
+	bge label28
 	mov r0, #0
 	vmov s0, r0
 	vsub.f32 s0, s16, s0
 	b label2
-label26:
+label28:
 	cmp r6, #0
-	blt label126
+	blt label127
 	cmp r5, #0
-	bge label39
+	bge label41
 	mov r0, #0
 	vmov s0, r0
-label40:
+label42:
 	vadd.f32 s17, s16, s0
 	cmp r5, #0
-	blt label168
+	blt label169
 	vmov.f32 s0, s17
 	mov r0, r4
 	bl func
@@ -67,29 +67,26 @@ label40:
 	bl func
 	vsub.f32 s0, s18, s0
 	vsub.f32 s0, s17, s0
-	b label27
-label126:
+	b label29
+label127:
 	mov r0, #0
 	vmov s0, r0
-label27:
+label29:
 	vadd.f32 s17, s16, s0
 	cmp r6, #0
-	blt label132
+	blt label133
 	cmp r5, #0
-	bge label32
-	mov r0, #0
-	vmov s0, r0
-label33:
+	blt label139
+	vmov.f32 s0, s17
+	mov r0, r4
+	bl func
 	vadd.f32 s18, s17, s0
-	cmp r5, #0
-	bge label37
-	mov r0, #0
-	vmov s0, r0
+	vmov.f32 s0, s18
+	mov r0, r4
+	bl func
 	vsub.f32 s0, s18, s0
-	vsub.f32 s0, s17, s0
-	vsub.f32 s0, s16, s0
-	b label2
-label132:
+	b label35
+label133:
 	mov r0, #0
 	vmov s0, r0
 	vsub.f32 s0, s17, s0
@@ -107,22 +104,25 @@ label10:
 	mov r0, #0
 	vmov s0, r0
 	b label11
-label32:
-	vmov.f32 s0, s17
-	mov r0, r4
-	bl func
-	vadd.f32 s18, s17, s0
-	vmov.f32 s0, s18
-	mov r0, r4
-	bl func
-	vsub.f32 s0, s18, s0
-	b label33
-label168:
+label169:
 	mov r0, #0
 	vmov s0, r0
 	vsub.f32 s0, s17, s0
-	b label27
-label37:
+	b label29
+label139:
+	mov r0, #0
+	vmov s0, r0
+label35:
+	vadd.f32 s18, s17, s0
+	cmp r5, #0
+	bge label39
+	mov r0, #0
+	vmov s0, r0
+	vsub.f32 s0, s18, s0
+	vsub.f32 s0, s17, s0
+	vsub.f32 s0, s16, s0
+	b label2
+label39:
 	vmov.f32 s0, s18
 	mov r0, r4
 	bl func
@@ -135,7 +135,7 @@ label37:
 	vsub.f32 s0, s17, s0
 	vsub.f32 s0, s16, s0
 	b label2
-label39:
+label41:
 	vmov.f32 s0, s16
 	mov r0, r4
 	bl func
@@ -144,7 +144,7 @@ label39:
 	mov r0, r4
 	bl func
 	vsub.f32 s0, s17, s0
-	b label40
+	b label42
 label11:
 	vadd.f32 s18, s17, s0
 	cmp r5, #0
@@ -225,10 +225,10 @@ main:
 	vsub.f32 s0, s0, s1
 	vcmp.f32 s0, #0
 	vmrs APSR_nzcv, FPSCR
-	bne label190
+	bne label189
 	mov r0, #112
 	bl putch
-label190:
+label189:
 	mov r0, #32
 	bl _sysy_stoptime
 	add sp, sp, #4

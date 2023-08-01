@@ -17,9 +17,25 @@ main:
 label17:
 	mov r4, #0
 	cmp r4, #5
-	blt label7
+	bge label10
 .p2align 4
 label6:
+	add r0, r4, r4, lsl #2
+	add r1, sp, #112
+	mov r6, #0
+	add r5, r1, r0, lsl #2
+.p2align 4
+label7:
+	bl getint
+	str r0, [r5, r6, lsl #2]
+	add r6, r6, #1
+	cmp r6, #5
+	blt label7
+	add r4, r4, #1
+	cmp r4, #5
+	blt label6
+.p2align 4
+label10:
 	ldr r5, [sp, #112]
 	mov r0, #85
 	mov r2, #23
@@ -282,12 +298,12 @@ label6:
 	ldr r6, [sp, #80]
 	add r3, r3, r4
 	mvn r4, #98
-	mla r4, r6, r4, r3
+	mla r3, r6, r4, r3
 	ldr r6, [sp, #84]
-	add r3, r6, r6, lsl #6
-	str r3, [sp, #56]
+	add r6, r6, r6, lsl #6
+	add r3, r3, r6
+	str r6, [sp, #56]
 	ldr r6, [sp, #88]
-	add r3, r4, r3
 	rsb r4, r6, r6, lsl #4
 	ldr r6, [sp, #92]
 	add r3, r3, r4, lsl #3
@@ -585,8 +601,8 @@ label6:
 	add r4, r4, r5
 	ldr r5, [sp, #252]
 	mla r4, r6, r7, r4
-	mov r7, #52
 	ldr r6, [sp, #60]
+	mov r7, #52
 	add r4, r4, r5, lsl #1
 	mvn r5, #109
 	mla r5, r6, r5, r4
@@ -639,8 +655,8 @@ label6:
 	mvn r4, #94
 	mla r4, r5, r4, r3
 	ldr r5, [sp, #228]
-	ldr r3, [sp, #56]
-	mla r3, r5, r7, r3
+	ldr r6, [sp, #56]
+	mla r3, r5, r7, r6
 	mov r7, #67
 	ldr r5, [sp, #212]
 	add r5, r5, r5, lsl #5
@@ -879,24 +895,6 @@ label6:
 	subs r0, r0, #1
 	str r0, [sp, #100]
 	bgt label17
-	b label11
-.p2align 4
-label7:
-	add r0, r4, r4, lsl #2
-	add r1, sp, #112
-	mov r6, #0
-	add r5, r1, r0, lsl #2
-.p2align 4
-label8:
-	bl getint
-	str r0, [r5, r6, lsl #2]
-	add r6, r6, #1
-	cmp r6, #5
-	blt label8
-	add r4, r4, #1
-	cmp r4, #5
-	blt label7
-	b label6
 label11:
 	mov r0, #0
 	add sp, sp, #280

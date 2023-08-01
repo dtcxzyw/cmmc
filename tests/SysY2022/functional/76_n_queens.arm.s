@@ -108,7 +108,10 @@ label10:
 	str r0, [r7, #0]
 	ldr r11, [r4, #0]
 	cmp r10, r11
-	bgt label82
+	ble label13
+label82:
+	mov r0, r11
+	b label8
 .p2align 4
 label13:
 	movw r1, #:lower16:ans
@@ -116,15 +119,7 @@ label13:
 	ldr r0, [r1, r10, lsl #2]
 	bl putint
 	cmp r10, r11
-	bne label14
-	mov r0, #10
-	bl putch
-	ldr r0, [r4, #0]
-	b label8
-label82:
-	mov r0, r11
-	b label8
-label14:
+	beq label14
 	mov r0, #32
 	bl putch
 	add r10, r10, #1
@@ -142,6 +137,11 @@ label47:
 	cmp r6, r0
 	ble label4
 	b label17
+label14:
+	mov r0, #10
+	bl putch
+	ldr r0, [r4, #0]
+	b label8
 .p2align 4
 .globl main
 main:
@@ -153,10 +153,10 @@ main:
 	add r4, sp, #4
 	bl getint
 	cmp r0, #0
-	ble label138
+	ble label136
 	mov r6, r0
 .p2align 4
-label127:
+label125:
 	bl getint
 	str r0, [sp, #4]
 	mov r1, r5
@@ -164,11 +164,11 @@ label127:
 	mov r2, r4
 	bl f
 	subs r6, r6, #1
-	bgt label127
+	bgt label125
 	ldr r0, [sp, #0]
-label130:
+label128:
 	add sp, sp, #8
 	pop { r4, r5, r6, pc }
-label138:
+label136:
 	mov r0, r6
-	b label130
+	b label128

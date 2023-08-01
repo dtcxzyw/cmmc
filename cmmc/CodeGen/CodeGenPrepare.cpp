@@ -95,6 +95,34 @@ public:
 
 CMMC_TRANSFORM_PASS(DuplicateGEP);
 
+class DuplicateCmp final : public TransformPass<Function> {
+public:
+    bool run(Function& func, AnalysisPassManager&) const override {
+        bool modified = false;
+        for(auto block : func.blocks()) {
+            const auto terminator = block->getTerminator();
+            if(terminator->getInstID() == InstructionID::ConditionalBranch) {
+                const auto cond = terminator->getOperand(0);
+                if(cond->getBlock() && cond->getBlock() != block && cond->is<CompareInst>()) {
+                    const auto condInst = cond->as<CompareInst>();
+                    if(condInst->hasExactlyOneUse()) {
+                        condInst->insertBefore(block, terminator->asIterator());
+                        modified = true;
+                    }
+                }
+            }
+        }
+
+        return modified;
+    }
+
+    [[nodiscard]] std::string_view name() const noexcept override {
+        return "DuplicateCmp"sv;
+    }
+};
+
+CMMC_TRANSFORM_PASS(DuplicateCmp);
+
 class SDivWithPowerOf2 final : public TransformPass<Function> {
 public:
     bool run(Function& func, AnalysisPassManager& analysis) const override {

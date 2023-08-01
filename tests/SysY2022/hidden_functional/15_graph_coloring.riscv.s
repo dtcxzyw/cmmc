@@ -27,24 +27,32 @@ label15:
 	jal graphColoring
 	beq a0, zero, label73
 	li a0, 1
-	j label2
+	j label13
 label25:
 	mv a2, zero
-label4:
+label2:
 	bge a2, s4, label28
 	slliw a1, a2, 4
 	addiw a0, a2, 1
 	add a3, s0, a1
 	mv a1, a0
-label7:
+label5:
 	bge a1, s4, label35
-	sh2add a4, a1, a3
-	lw a5, 0(a4)
-	bne a5, zero, label10
+	sh2add a5, a1, a3
+	lw a4, 0(a5)
+	bne a4, zero, label8
 label42:
 	addiw a1, a1, 1
-	j label7
-label2:
+	j label5
+label8:
+	sh2add a5, a1, s1
+	sh2add t0, a2, s1
+	lw a4, 0(a5)
+	lw a5, 0(t0)
+	bne a4, a5, label42
+label53:
+	mv a0, zero
+label13:
 	ld ra, 0(sp)
 	ld s0, 8(sp)
 	ld s2, 16(sp)
@@ -53,29 +61,20 @@ label2:
 	ld s3, 40(sp)
 	addi sp, sp, 48
 	ret
-label10:
-	sh2add a5, a1, s1
-	sh2add t0, a2, s1
-	lw a4, 0(a5)
-	lw a5, 0(t0)
-	bne a4, a5, label42
-label53:
-	mv a0, zero
-	j label2
 label28:
 	mv s0, zero
-label12:
+label10:
 	sh2add a2, s0, s1
 	lw a0, 0(a2)
 	jal putint
 	li a0, 32
 	jal putch
 	addiw s0, s0, 1
-	blt s0, s4, label12
+	blt s0, s4, label10
 	li a0, 10
 	jal putch
 	li a0, 1
-	j label2
+	j label13
 label73:
 	sh2add a1, s2, s1
 	addiw s3, s3, 1
@@ -83,7 +82,7 @@ label73:
 	j label15
 label35:
 	mv a2, a0
-	j label4
+	j label2
 .p2align 2
 .globl main
 main:
@@ -91,8 +90,8 @@ main:
 	li a1, 1
 	mv a2, zero
 	addi a3, sp, 72
-	addi a0, sp, 8
 	sd ra, 0(sp)
+	addi a0, sp, 8
 	sw zero, 8(sp)
 	sw a1, 12(sp)
 	sw a1, 16(sp)

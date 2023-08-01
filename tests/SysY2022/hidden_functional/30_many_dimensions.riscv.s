@@ -65,9 +65,28 @@ label4:
 	bge a2, a0, label56
 	mv a1, zero
 label7:
-	bge a1, a0, label134
+	blt a1, a0, label135
+	j label134
+label138:
+	addiw a1, a1, 1
+	j label7
+label135:
 	mv a5, zero
-	j label10
+label10:
+	bge a5, a0, label138
+	mv a4, zero
+label13:
+	bge a4, a0, label142
+	mv t0, zero
+label16:
+	bge t0, a0, label146
+	mv t1, zero
+label19:
+	blt t1, a0, label151
+	j label150
+label154:
+	addiw t1, t1, 1
+	j label19
 label56:
 	auipc a6, %pcrel_hi(array)
 	lw a1, %pcrel_lo(label56)(a6)
@@ -131,52 +150,35 @@ label56:
 	ld s4, 56(sp)
 	addi sp, sp, 64
 	ret
-label10:
-	blt a5, a0, label139
-	j label138
 label142:
 	addiw a5, a5, 1
 	j label10
-label134:
-	addiw a2, a2, 1
-	j label4
-label139:
-	mv a4, zero
-label13:
-	blt a4, a0, label143
-	j label142
-label146:
-	addiw a4, a4, 1
-	j label13
-label143:
-	mv t0, zero
-label16:
-	bge t0, a0, label146
-	mv t1, zero
-label19:
-	blt t1, a0, label151
-	j label150
-label154:
-	addiw t1, t1, 1
-	j label19
+label150:
+	addiw t0, t0, 1
+	j label16
 label151:
 	mv t2, zero
 label22:
-	bge t2, a0, label154
+	blt t2, a0, label155
+	j label154
+label158:
+	addiw t2, t2, 1
+	j label22
+label155:
 	mv t3, zero
 label25:
 	bge t3, a0, label158
 	mv t4, zero
 label28:
-	bge t4, a0, label162
+	blt t4, a0, label163
+	j label162
+label166:
+	addiw t4, t4, 1
+	j label28
+label163:
 	mv t5, zero
 label31:
-	blt t5, a0, label167
-	j label166
-label170:
-	addiw t5, t5, 1
-	j label31
-label167:
+	bge t5, a0, label166
 	mv t6, zero
 label34:
 	bge t6, a0, label170
@@ -347,18 +349,15 @@ label41:
 	addiw a7, a7, 1
 	blt a7, a0, label40
 	j label174
-label150:
-	addiw t0, t0, 1
-	j label16
-label166:
-	addiw t4, t4, 1
-	j label28
-label138:
-	addiw a1, a1, 1
-	j label7
-label158:
-	addiw t2, t2, 1
-	j label22
 label162:
 	addiw t3, t3, 1
 	j label25
+label146:
+	addiw a4, a4, 1
+	j label13
+label134:
+	addiw a2, a2, 1
+	j label4
+label170:
+	addiw t5, t5, 1
+	j label31

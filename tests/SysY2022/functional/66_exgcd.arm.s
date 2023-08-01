@@ -11,19 +11,19 @@ exgcd:
 	mov r7, r2
 	movs r5, r1
 	mov r4, r0
-	bne label5
+	bne label3
 	mov r0, #1
 	str r0, [r2, #0]
 	mov r0, #0
 	str r0, [r3, #0]
 	mov r0, r4
-label3:
+label8:
 	pop { r4, r5, r6, r7, r8, pc }
-label5:
+label3:
 	sdiv r0, r4, r5
 	mls r8, r0, r5, r4
 	cmp r8, #0
-	bne label9
+	bne label7
 	mov r0, #1
 	str r0, [r7, #0]
 	mov r0, #0
@@ -36,8 +36,8 @@ label5:
 	sdiv r2, r4, r5
 	mls r1, r2, r3, r1
 	str r1, [r6, #0]
-	b label3
-label9:
+	b label8
+label7:
 	sdiv r0, r5, r8
 	mls r1, r0, r8, r5
 	mov r0, r8
@@ -58,7 +58,7 @@ label9:
 	sdiv r2, r4, r5
 	mls r1, r2, r3, r1
 	str r1, [r6, #0]
-	b label3
+	b label8
 .p2align 4
 .globl main
 main:

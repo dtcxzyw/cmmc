@@ -249,11 +249,11 @@ label244:
 label250:
 	mv a6, zero
 .p2align 2
-label201:
-	slli a1, a6, 6
-	sub a7, a1, a6
+label202:
+	slli a7, a6, 6
+	sub s2, a7, a6
 	addiw a6, a6, 1
-	sh3add a1, a7, a3
+	sh3add a1, s2, a3
 	sw a0, 0(a1)
 	sw a0, 4(a1)
 	sw a0, 8(a1)
@@ -380,7 +380,7 @@ label201:
 	sw a0, 492(a1)
 	sw a0, 496(a1)
 	sw a0, 500(a1)
-	blt a6, a2, label201
+	blt a6, a2, label202
 	addiw t6, t6, 1
 	mul a1, t6, a4
 	add a3, a5, a1

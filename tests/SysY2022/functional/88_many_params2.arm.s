@@ -356,27 +356,11 @@ label18:
 	mov r0, #10
 	bl putch
 	cmp r10, #10
-	blt label25
-label21:
-	add r0, r8, #3
-	add r4, r0, r0, lsl #1
-	cmn r4, #1
-	ble label22
-.p2align 4
-label23:
-	ldr r0, [r6, r4, lsl #2]
-	bl putint
-	mov r0, #32
-	bl putch
-	sub r4, r4, #1
-	cmn r4, #1
-	bgt label23
-	b label22
-label25:
+	bge label28
 	add r0, r10, #4
 	cmp r0, #10
-	blt label29
-label26:
+	blt label25
+label22:
 	mul r0, r9, r4
 	movw r1, #18373
 	movt r1, #36041
@@ -389,10 +373,10 @@ label26:
 	str r0, [r7, r10, lsl #2]
 	add r10, r10, #1
 	cmp r10, #10
-	blt label26
-	b label21
+	blt label22
+	b label28
 .p2align 4
-label29:
+label25:
 	add r0, r7, r10, lsl #2
 	movw r1, #18373
 	movt r1, #36041
@@ -427,11 +411,26 @@ label29:
 	add r1, r5, r1, lsr #31
 	mls r1, r1, r2, r3
 	str r1, [r0, #12]
-	blt label29
-	b label26
-label22:
+	blt label25
+	b label22
+label28:
+	add r0, r8, #3
+	add r4, r0, r0, lsl #1
+	cmn r4, #1
+	bgt label30
+label29:
 	mov r0, #10
 	bl putch
 	ldr r0, [sp, #0]
 	add sp, sp, #12
 	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
+.p2align 4
+label30:
+	ldr r0, [r6, r4, lsl #2]
+	bl putint
+	mov r0, #32
+	bl putch
+	sub r4, r4, #1
+	cmn r4, #1
+	bgt label30
+	b label29
