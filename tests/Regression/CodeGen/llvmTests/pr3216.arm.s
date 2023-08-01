@@ -9,9 +9,9 @@ foo:
 .syntax unified
 .arm
 .fpu vfpv4
+.p2align 4
 .globl main
 main:
-.p2align 4
 	movw r0, #:lower16:foo
 	movt r0, #:upper16:foo
 	ldrsb r1, [r0, #0]

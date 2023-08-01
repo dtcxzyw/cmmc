@@ -17,14 +17,14 @@ a:
 b:
 	.zero	400040
 .text
+.p2align 2
 .globl main
 main:
-.p2align 2
 	addi sp, sp, -64
-pcrel290:
+pcrel291:
 	auipc a1, %pcrel_hi(x)
 	sd ra, 0(sp)
-	addi a0, a1, %pcrel_lo(pcrel290)
+	addi a0, a1, %pcrel_lo(pcrel291)
 	sd s4, 8(sp)
 	mv s4, a0
 	sd s5, 16(sp)
@@ -34,28 +34,28 @@ pcrel290:
 	sd s3, 48(sp)
 	sd s2, 56(sp)
 	jal getarray
-pcrel291:
+pcrel292:
 	auipc a1, %pcrel_hi(y)
 	addiw s6, a0, -9
 	addiw s5, a0, -1
-	addi a0, a1, %pcrel_lo(pcrel291)
+	addi a0, a1, %pcrel_lo(pcrel292)
 	mv s0, a0
 	jal getarray
-pcrel292:
+pcrel293:
 	auipc a1, %pcrel_hi(v)
-	addi a0, a1, %pcrel_lo(pcrel292)
+	addi a0, a1, %pcrel_lo(pcrel293)
 	mv s1, a0
 	jal getarray
-pcrel293:
+pcrel294:
 	auipc a1, %pcrel_hi(a)
-	addi a0, a1, %pcrel_lo(pcrel293)
+	addi a0, a1, %pcrel_lo(pcrel294)
 	mv s3, a0
 	jal getarray
 	li a0, 39
 	jal _sysy_starttime
-pcrel294:
+pcrel295:
 	auipc a1, %pcrel_hi(b)
-	addi s2, a1, %pcrel_lo(pcrel294)
+	addi s2, a1, %pcrel_lo(pcrel295)
 	mv a1, zero
 .p2align 2
 label2:
@@ -202,7 +202,7 @@ label21:
 	sh2add a0, a2, s4
 	lw a4, 0(a5)
 	lw a0, 0(a0)
-	bge a4, a0, label151
+	bge a4, a0, label148
 	mv a5, a4
 	sh2add t1, a4, s0
 	sh2add t3, a4, s1
@@ -261,6 +261,13 @@ label258:
 label53:
 	mv a3, zero
 	bgt s5, zero, label11
+	j label81
+.p2align 2
+label148:
+	blt a4, a0, label23
+	mv a3, a2
+	bgt s5, a2, label21
+	j label137
 label81:
 	bgt s5, zero, label30
 	j label258
@@ -269,21 +276,11 @@ label110:
 	mv a3, a2
 	bgt s5, a2, label11
 	j label81
-label151:
-	mv a3, a2
-	bgt s5, a2, label21
-	j label137
 .p2align 2
 label264:
 	blt a4, a0, label23
 	j label267
-label194:
-	mv a0, zero
-	mv a2, s3
-	li a0, 1
-	sw zero, 0(s3)
-	bgt s5, a0, label33
-	j label215
+.p2align 2
 label56:
 	mv a0, zero
 	mv a2, s2
@@ -291,6 +288,15 @@ label56:
 	sw zero, 0(s2)
 	bgt s5, a0, label5
 	j label63
+.p2align 2
+label194:
+	mv a0, zero
+	mv a2, s3
+	li a0, 1
+	sw zero, 0(s3)
+	bgt s5, a0, label33
+	j label215
+.p2align 2
 label255:
 	sh2add a2, a0, s2
 	addiw a0, a0, 1

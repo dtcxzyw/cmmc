@@ -4,9 +4,9 @@
 .syntax unified
 .arm
 .fpu vfpv4
+.p2align 4
 .globl mulw
 mulw:
-.p2align 4
 	mov r2, r1
 	cmp r0, r1
 	bge label15

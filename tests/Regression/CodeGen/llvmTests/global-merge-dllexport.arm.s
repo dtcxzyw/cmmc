@@ -13,9 +13,9 @@ y:
 .syntax unified
 .arm
 .fpu vfpv4
+.p2align 4
 .globl f1
 f1:
-.p2align 4
 	movw r2, #:lower16:x
 	movt r2, #:upper16:x
 	str r0, [r2, #0]

@@ -18,6 +18,7 @@
 #include <cmmc/CodeGen/ISelInfo.hpp>
 #include <cmmc/CodeGen/InstInfo.hpp>
 #include <cmmc/CodeGen/MIR.hpp>
+#include <cmmc/CodeGen/MIRCFGAnalysis.hpp>
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/Config.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
@@ -27,6 +28,7 @@
 #include <optional>
 #include <queue>
 #include <stack>
+#include <unordered_map>
 #include <variant>
 #include <vector>
 
@@ -234,6 +236,52 @@ bool applySSAPropagation(MIRFunction& func, const CodeGenContext& ctx) {
     return dirty;
 }
 */
+
+static bool machineConstantHoist(MIRFunction& func, CodeGenContext& ctx) {
+    if(!ctx.flags.inSSAForm)
+        return false;
+
+    const auto cfg = calcCFG(func, ctx);
+    const auto freq = calcFreq(func, cfg);
+
+    std::unordered_map<MIROperand, uint32_t, MIROperandHasher> defCount;
+
+    bool modified = false;
+    for(auto& block : func.blocks()) {
+        auto& instructions = block->instructions();
+        for(auto& inst : instructions) {
+            auto& instInfo = ctx.instInfo.getInstInfo(inst);
+            if(requireFlag(instInfo.getInstFlag(), InstFlagLoadConstant)) {
+                auto& dst = inst.getOperand(0);
+                ++defCount[dst];
+            } else {
+                for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx)
+                    if(instInfo.getOperandFlag(idx) & OperandFlagDef)
+                        ++defCount[inst.getOperand(idx)];
+            }
+        }
+    }
+    auto& entryBlockInst = func.blocks().front()->instructions();
+    for(auto& block : func.blocks()) {
+        if(&block == &func.blocks().front() || freq.query(block.get()) <= 1.0)
+            continue;
+
+        auto& instructions = block->instructions();
+        for(auto& inst : instructions) {
+            auto& instInfo = ctx.instInfo.getInstInfo(inst);
+            if(requireFlag(instInfo.getInstFlag(), InstFlagLoadConstant)) {
+                auto& dst = inst.getOperand(0);
+                if(defCount[dst] <= 1) {
+                    entryBlockInst.insert(std::prev(entryBlockInst.end()), inst);
+                    inst = MIRInst{ InstCopy }.setOperand<0>(MIROperand::asVReg(ctx.nextId(), dst.type())).setOperand<1>(dst);
+                    modified = true;
+                }
+            }
+        }
+    }
+
+    return modified;
+}
 
 static bool machineConstantCSE(MIRFunction& func, const CodeGenContext& ctx) {
     if(!ctx.flags.inSSAForm)
@@ -597,6 +645,8 @@ bool genericPeepholeOpt(MIRFunction& func, CodeGenContext& ctx) {
     // FIXME: incompatible with expanded Phi value setup
     // modified |= applySSAPropagation(func, ctx);
     // func.dump(std::cerr, ctx);
+    // modified |= machineConstantHoist(func, ctx);
+    CMMC_UNUSED(machineConstantHoist);
     modified |= machineConstantCSE(func, ctx);
     modified |= machineInstCSE(func, ctx);
     modified |= deadInstElimination(func, ctx);

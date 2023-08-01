@@ -8,9 +8,9 @@ a:
 .syntax unified
 .arm
 .fpu vfpv4
+.p2align 4
 .globl main
 main:
-.p2align 4
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
 	movw r6, #:lower16:a
 	sub sp, sp, #12
@@ -34,36 +34,7 @@ label8:
 	cmp r6, r7
 	bgt label11
 	b label12
-label55:
-	mov r0, r7
-	ldr r3, [r1, #0]
-	add r6, r7, #1
-	mov r7, r2
-	b label8
-.p2align 4
-label11:
-	sub r6, r6, #1
-	ldr r8, [r4, r6, lsl #2]
-	cmp r3, r8
-	bgt label12
-	cmp r6, r7
-	bgt label11
-.p2align 4
-label12:
-	cmp r6, r7
-	ble label15
-.p2align 4
-label22:
-	add r7, r7, #1
-	ldr r8, [r4, r7, lsl #2]
-	cmp r3, r8
-	ble label15
-	cmp r6, r7
-	bgt label22
-.p2align 4
-label15:
-	cmp r6, r7
-	bne label47
+label17:
 	str r3, [r1, #0]
 	add r6, r4, r7, lsl #2
 	cmp r5, r7
@@ -78,6 +49,32 @@ label15:
 	add r6, r0, #1
 	mov r7, r2
 	b label8
+.p2align 4
+label11:
+	sub r6, r6, #1
+	ldr r8, [r4, r6, lsl #2]
+	cmp r3, r8
+	bgt label12
+	cmp r6, r7
+	bgt label11
+.p2align 4
+label12:
+	cmp r6, r7
+	bgt label22
+.p2align 4
+label15:
+	cmp r6, r7
+	beq label17
+	b label47
+.p2align 4
+label22:
+	add r7, r7, #1
+	ldr r8, [r4, r7, lsl #2]
+	cmp r3, r8
+	ble label15
+	cmp r6, r7
+	bgt label22
+	b label15
 label20:
 	mov r0, #61
 	bl _sysy_stoptime
@@ -99,5 +96,13 @@ label47:
 	str r11, [r9, #0]
 	str r10, [r8, #0]
 	cmp r6, r7
+	bgt label11
+	b label12
+label55:
+	mov r0, r7
+	ldr r3, [r1, #0]
+	add r6, r7, #1
+	mov r7, r2
+	cmp r6, r2
 	bgt label11
 	b label12

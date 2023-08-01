@@ -1,8 +1,8 @@
 .data
 .text
+.p2align 2
 .globl f
 f:
-.p2align 2
 	ori $t0, $a0, 1
 	sll $t0, $t0, 5
 	srl $t1, $a0, 27

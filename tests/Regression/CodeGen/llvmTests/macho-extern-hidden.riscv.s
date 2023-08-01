@@ -6,9 +6,9 @@
 bar:
 	.zero	4
 .text
+.p2align 2
 .globl foo
 foo:
-.p2align 2
 pcrel7:
 	auipc a1, %pcrel_hi(bar)
 	lw a0, %pcrel_lo(pcrel7)(a1)

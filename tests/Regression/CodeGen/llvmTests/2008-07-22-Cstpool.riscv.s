@@ -6,9 +6,9 @@ __cmmc_fp_constant_pool:
 	.4byte	1082759578
 	.4byte	1082340147
 .text
+.p2align 2
 .globl F
 F:
-.p2align 2
 pcrel12:
 	auipc a1, %pcrel_hi(__cmmc_fp_constant_pool)
 	addi a0, a1, %pcrel_lo(pcrel12)

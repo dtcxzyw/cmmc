@@ -4,35 +4,35 @@
 .syntax unified
 .arm
 .fpu vfpv4
+.p2align 4
 .globl f1
 f1:
-.p2align 4
 	mov r0, #16
 	bx lr
+.p2align 4
 .globl f2
 f2:
-.p2align 4
 	mov r0, #16
 	bx lr
+.p2align 4
 .globl f3
 f3:
-.p2align 4
 	mov r0, #16
 	bx lr
+.p2align 4
 .globl f4
 f4:
-.p2align 4
 	bx lr
+.p2align 4
 .globl f5
 f5:
-.p2align 4
 	bx lr
+.p2align 4
 .globl f6
 f6:
-.p2align 4
 	bx lr
+.p2align 4
 .globl main
 main:
-.p2align 4
 	mov r0, #0
 	bx lr

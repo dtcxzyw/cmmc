@@ -17,8 +17,8 @@ line2:
 .syntax unified
 .arm
 .fpu vfpv4
-f:
 .p2align 4
+f:
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
 	mov r5, #1
 	movw r6, #:lower16:line1
@@ -118,19 +118,12 @@ label10:
 	ldr r10, [r10, #0]
 	cmp r9, r10
 	bgt label16
-.p2align 4
 label13:
 	ldr r1, [sp, #0]
 	ldr r0, [r1, r9, lsl #2]
 	bl putint
 	cmp r9, r10
-	bne label14
-	mov r0, #10
-	bl putch
-	ldr r10, [sp, #8]
-	ldr r10, [r10, #0]
-	b label16
-label14:
+	beq label15
 	mov r0, #32
 	bl putch
 	add r9, r9, #1
@@ -150,9 +143,15 @@ label49:
 	cmp r5, r0
 	ble label5
 	b label4
+label15:
+	mov r0, #10
+	bl putch
+	ldr r10, [sp, #8]
+	ldr r10, [r10, #0]
+	b label16
+.p2align 4
 .globl main
 main:
-.p2align 4
 	push { r4, r5, r6, lr }
 	mov r0, #0
 	sub sp, sp, #8
@@ -161,10 +160,10 @@ main:
 	add r4, sp, #4
 	bl getint
 	cmp r0, #0
-	ble label143
+	ble label142
 	mov r6, r0
 .p2align 4
-label132:
+label131:
 	bl getint
 	str r0, [sp, #4]
 	mov r1, r5
@@ -172,11 +171,11 @@ label132:
 	mov r2, r4
 	bl f
 	subs r6, r6, #1
-	bgt label132
+	bgt label131
 	ldr r0, [sp, #0]
-label135:
+label134:
 	add sp, sp, #8
 	pop { r4, r5, r6, pc }
-label143:
+label142:
 	mov r0, #0
-	b label135
+	b label134

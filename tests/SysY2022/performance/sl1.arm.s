@@ -8,9 +8,9 @@ x:
 .syntax unified
 .arm
 .fpu vfpv4
+.p2align 4
 .globl main
 main:
-.p2align 4
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
 	sub sp, sp, #28
 	bl getint
@@ -21,7 +21,7 @@ main:
 	str r9, [sp, #8]
 	bl getint
 	str r0, [sp, #12]
-	mov r11, r0
+	mov r10, r0
 	mov r0, #13
 	bl _sysy_starttime
 	mov r1, #0
@@ -129,7 +129,13 @@ label9:
 	ldr r9, [sp, #8]
 	sub r1, r0, #4800
 	cmp r9, #1
-	ble label61
+	bgt label62
+	mov r4, r7
+	cmp r9, r7
+	bgt label9
+	b label48
+.p2align 4
+label62:
 	mov r8, #1
 .p2align 4
 label10:
@@ -145,9 +151,9 @@ label10:
 	ldr r11, [r9, #-4]
 	add r10, r10, r11
 	ldr r11, [r9, #4]
-	add r10, r10, r11
-	ldr r11, [sp, #12]
-	sdiv r10, r10, r11
+	add r11, r10, r11
+	ldr r10, [sp, #12]
+	sdiv r10, r11, r10
 	str r10, [r9, #0]
 	ldr r9, [sp, #8]
 	cmp r9, r8
@@ -211,13 +217,6 @@ label12:
 	add sp, sp, #28
 	mov r0, #0
 	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
-.p2align 4
-label61:
-	mov r4, r7
-	ldr r9, [sp, #8]
-	cmp r9, r7
-	bgt label9
-	b label48
 label175:
 	add r1, r1, #1
 	b label2

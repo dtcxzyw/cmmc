@@ -4,8 +4,8 @@
 .syntax unified
 .arm
 .fpu vfpv4
-graphColoring:
 .p2align 4
+graphColoring:
 	push { r4, r5, r6, r7, lr }
 	mov r5, r3
 	cmp r2, #4
@@ -77,9 +77,9 @@ label73:
 label35:
 	mov r2, r0
 	b label4
+.p2align 4
 .globl main
 main:
-.p2align 4
 	push { lr }
 	mov r2, #0
 	mov r1, #1

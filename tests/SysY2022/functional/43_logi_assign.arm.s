@@ -4,9 +4,9 @@
 .syntax unified
 .arm
 .fpu vfpv4
+.p2align 4
 .globl main
 main:
-.p2align 4
 	push { r4, lr }
 	bl getint
 	mov r4, r0

@@ -9,9 +9,9 @@ x:
 y:
 	.zero	4
 .text
+.p2align 2
 .globl t
 t:
-.p2align 2
 	lui $t0, %hi(y)
 	lw $t0, %lo(y)($t0)
 	lui $t1, %hi(x)

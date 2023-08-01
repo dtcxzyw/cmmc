@@ -14,16 +14,16 @@ b:
 c:
 	.zero	4
 .text
+.p2align 2
 .globl fn1
 fn1:
-.p2align 2
 	bne a1, zero, label7
 	mv a0, zero
 label7:
 	ret
+.p2align 2
 .globl fn2
 fn2:
-.p2align 2
 pcrel34:
 	auipc a2, %pcrel_hi(b)
 pcrel35:

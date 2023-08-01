@@ -22,9 +22,9 @@ var_11:
 var_370:
 	.zero	1
 .text
+.p2align 2
 .globl _Z3foov
 _Z3foov:
-.p2align 2
 pcrel42:
 	auipc a2, %pcrel_hi(var_21)
 pcrel43:

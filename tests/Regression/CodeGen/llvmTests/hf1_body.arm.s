@@ -9,9 +9,9 @@ x:
 .syntax unified
 .arm
 .fpu vfpv4
+.p2align 4
 .globl v_sf
 v_sf:
-.p2align 4
 	movw r0, #:lower16:x
 	movt r0, #:upper16:x
 	vstr s0, [r0, #0]

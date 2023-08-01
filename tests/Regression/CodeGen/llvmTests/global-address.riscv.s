@@ -10,7 +10,7 @@ g:
 G:
 	.4byte	0
 .text
+.p2align 2
 .globl foo
 foo:
-.p2align 2
 	ret

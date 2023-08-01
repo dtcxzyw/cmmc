@@ -5,9 +5,9 @@
 g:
 	.zero	4
 .text
+.p2align 2
 .globl foo
 foo:
-.p2align 2
 	lui $t1, %hi(g)
 	addiu $t0, $t1, %lo(g)
 	lw $t1, %lo(g)($t1)

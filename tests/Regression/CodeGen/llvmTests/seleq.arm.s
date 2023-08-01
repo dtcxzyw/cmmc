@@ -41,9 +41,9 @@ z4:
 .syntax unified
 .arm
 .fpu vfpv4
+.p2align 4
 .globl calc_seleq
 calc_seleq:
-.p2align 4
 	push { r4, r5 }
 	movw r2, #:lower16:t
 	movw r0, #:lower16:a

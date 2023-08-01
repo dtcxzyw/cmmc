@@ -13,9 +13,9 @@ A:
 P:
 	.zero	1000
 .text
+.p2align 2
 .globl foo
 foo:
-.p2align 2
 	blez $a0, label5
 	nop
 	lui $t1, %hi(B)

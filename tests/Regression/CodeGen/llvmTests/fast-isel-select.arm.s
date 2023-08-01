@@ -4,9 +4,9 @@
 .syntax unified
 .arm
 .fpu vfpv4
+.p2align 4
 .globl fastisel_select
 fastisel_select:
-.p2align 4
 	subs r1, r0, r1
 	mov r0, #0
 	movw r1, #56279

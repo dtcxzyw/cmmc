@@ -15,7 +15,7 @@ func @main() -> i32 { NoRecurse Entry } {
   ^while.header:
     i32 %4 = phi [^entry, i32 1] [^b, i32 %173];
     i1 %5 = icmp slt i32 %4, i32 1023;
-    cbr i1 %5(prob = 0.992248), ^prebody, ^while.body;
+    cbr i1 %5(prob = 0.984615), ^prebody, ^while.body;
   ^prebody:
     i32 %6 = add i32 %4, i32 -1;
     ubr ^while.body1;

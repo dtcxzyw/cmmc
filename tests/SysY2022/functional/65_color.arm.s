@@ -8,8 +8,8 @@ dp:
 .syntax unified
 .arm
 .fpu vfpv4
-dfs:
 .p2align 4
+dfs:
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
 	sub sp, sp, #12
 	mov r5, r0
@@ -179,41 +179,41 @@ label15:
 	movt r2, #15258
 	mls r4, r1, r2, r0
 	b label109
+.p2align 4
 .globl main
 main:
-.p2align 4
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
-	mov r8, #0
+	mov r7, #0
 	sub sp, sp, #92
-	str r8, [sp, #8]
+	str r7, [sp, #8]
 	add r6, sp, #8
-	str r8, [sp, #12]
-	str r8, [sp, #16]
-	str r8, [sp, #20]
-	str r8, [sp, #24]
-	str r8, [sp, #28]
-	str r8, [sp, #32]
-	str r8, [sp, #36]
-	str r8, [sp, #40]
-	str r8, [sp, #44]
-	str r8, [sp, #48]
-	str r8, [sp, #52]
-	str r8, [sp, #56]
-	str r8, [sp, #60]
-	str r8, [sp, #64]
-	str r8, [sp, #68]
-	str r8, [sp, #72]
-	str r8, [sp, #76]
-	str r8, [sp, #80]
-	str r8, [sp, #84]
+	str r7, [sp, #12]
+	str r7, [sp, #16]
+	str r7, [sp, #20]
+	str r7, [sp, #24]
+	str r7, [sp, #28]
+	str r7, [sp, #32]
+	str r7, [sp, #36]
+	str r7, [sp, #40]
+	str r7, [sp, #44]
+	str r7, [sp, #48]
+	str r7, [sp, #52]
+	str r7, [sp, #56]
+	str r7, [sp, #60]
+	str r7, [sp, #64]
+	str r7, [sp, #68]
+	str r7, [sp, #72]
+	str r7, [sp, #76]
+	str r7, [sp, #80]
+	str r7, [sp, #84]
 	bl getint
-	movw r7, #:lower16:dp
+	movw r8, #:lower16:dp
 	mov r5, r0
-	movt r7, #:upper16:dp
+	movt r8, #:upper16:dp
 	movw r0, #55744
-	cmp r8, #18
+	cmp r7, #18
 	movt r0, #44
-	mla r4, r8, r0, r7
+	mla r4, r7, r0, r8
 	bge label214
 .p2align 4
 label246:
@@ -224,11 +224,11 @@ label246:
 	mla r3, r9, r0, r4
 	blt label252
 label251:
-	add r8, r8, #1
+	add r7, r7, #1
 	movw r0, #55744
-	cmp r8, #18
+	cmp r7, #18
 	movt r0, #44
-	mla r4, r8, r0, r7
+	mla r4, r7, r0, r8
 	blt label246
 	b label214
 .p2align 4
@@ -393,11 +393,11 @@ label209:
 	movt r0, #2
 	mla r3, r9, r0, r4
 	blt label252
-	add r8, r8, #1
+	add r7, r7, #1
 	movw r0, #55744
-	cmp r8, #18
+	cmp r7, #18
 	movt r0, #44
-	mla r4, r8, r0, r7
+	mla r4, r7, r0, r8
 	blt label246
 label214:
 	cmp r5, #0

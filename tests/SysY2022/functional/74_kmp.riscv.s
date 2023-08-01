@@ -11,20 +11,20 @@ src:
 dst:
 	.zero	16384
 .text
+.p2align 2
 .globl main
 main:
-.p2align 2
 	addi sp, sp, -40
-pcrel143:
+pcrel144:
 	auipc a0, %pcrel_hi(dst)
 	sd ra, 0(sp)
 	sd s0, 8(sp)
-	addi s0, a0, %pcrel_lo(pcrel143)
+	addi s0, a0, %pcrel_lo(pcrel144)
 	sd s1, 16(sp)
-pcrel144:
+pcrel145:
 	auipc a0, %pcrel_hi(next)
 	sd s2, 24(sp)
-	addi s1, a0, %pcrel_lo(pcrel144)
+	addi s1, a0, %pcrel_lo(pcrel145)
 	mv s2, zero
 	sd s3, 32(sp)
 label2:
@@ -34,21 +34,17 @@ label2:
 	sw a0, 0(a1)
 	bne a0, a2, label4
 	sh2add a0, s2, s0
-pcrel145:
+pcrel146:
 	auipc a1, %pcrel_hi(src)
 	mv s3, zero
-	addi s2, a1, %pcrel_lo(pcrel145)
+	addi s2, a1, %pcrel_lo(pcrel146)
 	sw zero, 0(a0)
 label6:
 	jal getch
 	li a2, 10
 	sh2add a1, s3, s2
 	sw a0, 0(a1)
-	beq a0, a2, label9
-	addiw s3, s3, 1
-	j label6
-label9:
-	sh2add a1, s3, s2
+	bne a0, a2, label8
 	li a0, -1
 	sw zero, 0(a1)
 	mv a1, zero
@@ -105,6 +101,9 @@ label132:
 label4:
 	addiw s2, s2, 1
 	j label2
+label8:
+	addiw s3, s3, 1
+	j label6
 label16:
 	jal putint
 	li a0, 10

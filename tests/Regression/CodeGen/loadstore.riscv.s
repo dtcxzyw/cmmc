@@ -10,65 +10,65 @@ y:
 arr:
 	.zero	400
 .text
+.p2align 2
 .globl load
 load:
-.p2align 2
 	sh2add a2, a1, a0
 	lw a0, 0(a2)
 	ret
+.p2align 2
 .globl load_byte
 load_byte:
-.p2align 2
 	add a2, a0, a1
 	lb a0, 0(a2)
 	ret
+.p2align 2
 .globl load_float
 load_float:
-.p2align 2
 	sh2add a2, a1, a0
 	flw f10, 0(a2)
 	ret
+.p2align 2
 .globl store
 store:
-.p2align 2
 	sh2add a0, a1, a0
 	sw a2, 0(a0)
 	ret
+.p2align 2
 .globl store_float
 store_float:
-.p2align 2
 	sh2add a0, a1, a0
 	fsw f10, 0(a0)
 	ret
+.p2align 2
 .globl store_float_constant
 store_float_constant:
-.p2align 2
 	sh2add a2, a1, a0
 	lui a0, 260096
 	fmv.w.x f10, a0
 	fsw f10, 0(a2)
 	ret
+.p2align 2
 .globl gep_const
 gep_const:
-.p2align 2
 	lw a0, 12(a0)
 	ret
+.p2align 2
 .globl gep1
 gep1:
-.p2align 2
 	sh2add a2, a1, a0
 	lw a0, 0(a2)
 	ret
+.p2align 2
 .globl gep2
 gep2:
-.p2align 2
 	addiw a2, a1, 3
 	sh2add a3, a2, a0
 	lw a0, 0(a3)
 	ret
+.p2align 2
 .globl gepseq
 gepseq:
-.p2align 2
 	sh2add a2, a1, a0
 	lw a3, 0(a2)
 	lw a1, 4(a2)
@@ -78,35 +78,35 @@ gepseq:
 	addw a1, a0, a3
 	addw a0, a1, a2
 	ret
+.p2align 2
 .globl lb
 lb:
-.p2align 2
 	lb a0, 1(a0)
 	ret
+.p2align 2
 .globl sb
 sb:
-.p2align 2
 	sb a1, 1(a0)
 	ret
+.p2align 2
 .globl global_addressing_scalar
 global_addressing_scalar:
-.p2align 2
 pcrel94:
 	auipc a1, %pcrel_hi(y)
 	lw a0, %pcrel_lo(pcrel94)(a1)
 	ret
+.p2align 2
 .globl global_addressing_array
 global_addressing_array:
-.p2align 2
 pcrel104:
 	auipc a1, %pcrel_hi(arr)
 	addi a2, a1, %pcrel_lo(pcrel104)
 	sh2add a3, a0, a2
 	lw a0, 0(a3)
 	ret
+.p2align 2
 .globl memset_impl
 memset_impl:
-.p2align 2
 	bgt a0, zero, label107
 label106:
 	ret
@@ -118,7 +118,6 @@ pcrel152:
 	addi a1, a2, %pcrel_lo(pcrel152)
 	ble a0, a4, label121
 	mv a2, zero
-.p2align 2
 label108:
 	sh2add a4, a2, a1
 	addiw a2, a2, 8
@@ -136,9 +135,9 @@ label110:
 label121:
 	mv a2, zero
 	j label110
+.p2align 2
 .globl fused_store
 fused_store:
-.p2align 2
 pcrel188:
 	auipc a1, %pcrel_hi(arr)
 	li a2, 2

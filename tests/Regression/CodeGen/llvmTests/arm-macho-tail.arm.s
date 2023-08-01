@@ -4,15 +4,15 @@
 .syntax unified
 .arm
 .fpu vfpv4
+.p2align 4
 .globl bar
 bar:
-.p2align 4
 	bx lr
+.p2align 4
 .globl foo
 foo:
-.p2align 4
 	bx lr
+.p2align 4
 .globl one_inst
 one_inst:
-.p2align 4
 	bx lr

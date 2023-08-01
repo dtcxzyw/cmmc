@@ -4,7 +4,7 @@
 .syntax unified
 .arm
 .fpu vfpv4
+.p2align 4
 .globl count
 count:
-.p2align 4
 	.inst 0xdeff

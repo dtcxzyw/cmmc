@@ -5,8 +5,8 @@
 dp:
 	.zero	52907904
 .text
-dfs:
 .p2align 2
+dfs:
 	addi sp, sp, -72
 	sd ra, 0(sp)
 	sd s1, 8(sp)
@@ -189,9 +189,9 @@ label13:
 label52:
 	li a0, 1
 	j label19
+.p2align 2
 .globl main
 main:
-.p2align 2
 	addi sp, sp, -112
 	sd ra, 0(sp)
 	sd s1, 8(sp)

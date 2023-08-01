@@ -5,9 +5,9 @@
 x:
 	.zero	864000000
 .text
+.p2align 2
 .globl main
 main:
-.p2align 2
 	addi sp, sp, -56
 	sd ra, 0(sp)
 	sd s2, 8(sp)
@@ -130,12 +130,12 @@ label62:
 	li a5, 1
 .p2align 2
 label10:
-	sh2add t6, a5, a3
-	sh2add t5, a5, a2
-	lw t4, 0(t6)
-	sh2add a6, a5, a0
-	lw t6, 0(t5)
+	sh2add t5, a5, a3
+	sh2add a6, a5, a2
+	lw t4, 0(t5)
 	sh2add t5, a5, a1
+	lw t6, 0(a6)
+	sh2add a6, a5, a0
 	addw t4, t4, t6
 	lw t6, 0(t5)
 	addw t4, t4, t6

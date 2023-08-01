@@ -4,7 +4,7 @@
 .syntax unified
 .arm
 .fpu vfpv4
+.p2align 4
 .globl nothing
 nothing:
-.p2align 4
 	bx lr

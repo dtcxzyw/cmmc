@@ -11,9 +11,9 @@ B:
 C:
 	.zero	8040
 .text
+.p2align 2
 .globl main
 main:
-.p2align 2
 	addi sp, sp, -56
 	sd ra, 0(sp)
 	sd s0, 8(sp)
@@ -86,9 +86,9 @@ label22:
 	sh2add a5, a2, s1
 	lw t1, 0(a5)
 	lw t0, 0(t0)
-	mulw a4, a4, t0
-	addw t1, t1, a4
-	sw t1, 0(a5)
+	mulw t2, a4, t0
+	addw a4, t1, t2
+	sw a4, 0(a5)
 .p2align 2
 label23:
 	addiw a3, a3, 1
@@ -258,13 +258,6 @@ label227:
 	bgt s0, a2, label68
 	bgt s0, zero, label11
 	j label226
-label73:
-	mv a0, zero
-	mv a2, s1
-	li a0, 1
-	sw zero, 0(s1)
-	bgt s0, a0, label14
-	j label226
 label150:
 	mv a0, zero
 	mv a2, s2
@@ -272,12 +265,19 @@ label150:
 	sw zero, 0(s2)
 	bgt s0, a0, label33
 	j label157
+label73:
+	mv a0, zero
+	mv a2, s1
+	li a0, 1
+	sw zero, 0(s1)
+	bgt s0, a0, label14
+	j label226
+label67:
+	bgt s0, zero, label11
+	j label226
 label237:
 	sh2add a2, a0, s2
 	addiw a0, a0, 1
 	sw zero, 0(a2)
 	bgt s0, a0, label33
 	j label239
-label67:
-	bgt s0, zero, label11
-	j label226

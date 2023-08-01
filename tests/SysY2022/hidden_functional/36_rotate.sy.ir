@@ -69,7 +69,7 @@ func @main() -> i32 { NoRecurse Entry } {
   ^while.header:
     i32 %20 = phi [^b3, i32 0] [^b4, i32 %56];
     i1 %21 = icmp sgt i32 %9, i32 %20;
-    cbr i1 %21(prob = 0.992248), ^while.header1, ^entry1;
+    cbr i1 %21(prob = 0.984615), ^while.header1, ^entry1;
   ^entry1:
     f32 %22 = fadd f32 %0, f32 1.5708;
     f32 %23 = fdiv f32 %22, f32 6.28319;
@@ -115,7 +115,7 @@ func @main() -> i32 { NoRecurse Entry } {
     call (i32) -> void @putch(i32 10);
     ubr ^while.header2;
   ^while.header1:
-    cbr i1 %18(prob = 0.992248), ^prebody, ^b4;
+    cbr i1 %18(prob = 0.984615), ^prebody, ^b4;
   ^prebody:
     i32 %55 = mul i32 %7, i32 %20;
     ubr ^while.body;
@@ -125,7 +125,7 @@ func @main() -> i32 { NoRecurse Entry } {
   ^while.header2:
     i32 %57 = phi [^entry1, i32 0] [^b5, i32 %69];
     i1 %58 = icmp sgt i32 %9, i32 %57;
-    cbr i1 %58(prob = 0.992248), ^while.header3, ^b1;
+    cbr i1 %58(prob = 0.984615), ^while.header3, ^b1;
   ^while.body:
     i32 %59 = phi [^prebody, i32 0] [^while.body, i32 %63];
     i32 %60 = call () -> i32 @getint();
@@ -134,13 +134,13 @@ func @main() -> i32 { NoRecurse Entry } {
     store i32* %62 with i32 %60;
     i32 %63 = add i32 %59, i32 1;
     i1 %64 = icmp sgt i32 %7, i32 %63;
-    cbr i1 %64(prob = 0.992248), ^while.body, ^b4;
+    cbr i1 %64(prob = 0.984615), ^while.body, ^b4;
   ^while.header3:
     i32 %65 = sub i32 %57, i32 %14;
     f32 %66 = s2f i32 %65 to f32;
     f32 %67 = fmul f32 %66, f32 %38;
     f32 %68 = fmul f32 %66, f32 %54;
-    cbr i1 %18(prob = 0.992248), ^while.body1, ^b5;
+    cbr i1 %18(prob = 0.984615), ^while.body1, ^b5;
   ^b5:
     call (i32) -> void @putch(i32 10);
     i32 %69 = add i32 %57, i32 1;
@@ -169,7 +169,7 @@ func @main() -> i32 { NoRecurse Entry } {
     call (i32) -> void @putch(i32 32);
     i32 %87 = add i32 %70, i32 1;
     i1 %88 = icmp sgt i32 %7, i32 %87;
-    cbr i1 %88(prob = 0.992248), ^while.body1, ^b5;
+    cbr i1 %88(prob = 0.984615), ^while.body1, ^b5;
   ^b7:
     i1 %89 = icmp sle i32 %9, i32 %83;
     cbr i1 %89(prob = 0.5), ^b6, ^b8;

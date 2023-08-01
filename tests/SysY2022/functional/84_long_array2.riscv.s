@@ -8,9 +8,9 @@ a:
 c:
 	.zero	16384
 .text
+.p2align 2
 .globl main
 main:
-.p2align 2
 	addi sp, sp, -16
 pcrel180:
 	auipc a1, %pcrel_hi(c)

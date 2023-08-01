@@ -1,198 +1,198 @@
 .data
 .text
+.p2align 2
 .globl seqz
 seqz:
-.p2align 2
 	sltiu $v0, $a0, 1
 	jr $ra
 	nop
+.p2align 2
 .globl seqi
 seqi:
-.p2align 2
 	xori $t0, $a0, 1
 	sltiu $v0, $t0, 1
 	jr $ra
 	nop
+.p2align 2
 .globl seq
 seq:
-.p2align 2
 	xor $t0, $a0, $a1
 	sltiu $v0, $t0, 1
 	jr $ra
 	nop
+.p2align 2
 .globl snei
 snei:
-.p2align 2
 	xori $t0, $a0, 1
 	sltu $v0, $zero, $t0
 	jr $ra
 	nop
+.p2align 2
 .globl sne
 sne:
-.p2align 2
 	xor $t0, $a0, $a1
 	sltu $v0, $zero, $t0
 	jr $ra
 	nop
+.p2align 2
 .globl snez
 snez:
-.p2align 2
 	sltu $v0, $zero, $a0
 	jr $ra
 	nop
+.p2align 2
 .globl slti
 slti:
-.p2align 2
 	slti $v0, $a0, 1
 	jr $ra
 	nop
+.p2align 2
 .globl slt
 slt:
-.p2align 2
 	slt $v0, $a0, $a1
 	jr $ra
 	nop
+.p2align 2
 .globl sgti
 sgti:
-.p2align 2
 	li $t0, 1
 	slt $v0, $t0, $a0
 	jr $ra
 	nop
+.p2align 2
 .globl sgt
 sgt:
-.p2align 2
 	slt $v0, $a1, $a0
 	jr $ra
 	nop
+.p2align 2
 .globl slei
 slei:
-.p2align 2
 	slti $v0, $a0, 2
 	jr $ra
 	nop
+.p2align 2
 .globl sle
 sle:
-.p2align 2
 	slt $t0, $a1, $a0
 	xori $v0, $t0, 1
 	jr $ra
 	nop
+.p2align 2
 .globl sgei
 sgei:
-.p2align 2
 	slt $v0, $zero, $a0
 	jr $ra
 	nop
+.p2align 2
 .globl sge
 sge:
-.p2align 2
 	slt $t0, $a0, $a1
 	xori $v0, $t0, 1
 	jr $ra
 	nop
+.p2align 2
 .globl seq_all_one
 seq_all_one:
-.p2align 2
 	li $t0, -1
 	xor $t0, $a0, $t0
 	sltiu $v0, $t0, 1
 	jr $ra
 	nop
+.p2align 2
 .globl sne_all_one
 sne_all_one:
-.p2align 2
 	li $t0, -1
 	xor $t0, $a0, $t0
 	sltu $v0, $zero, $t0
 	jr $ra
 	nop
+.p2align 2
 .globl slt_all_one
 slt_all_one:
-.p2align 2
 	slti $v0, $a0, -1
 	jr $ra
 	nop
+.p2align 2
 .globl sgt_all_one
 sgt_all_one:
-.p2align 2
 	li $t0, -1
 	slt $v0, $t0, $a0
 	jr $ra
 	nop
+.p2align 2
 .globl sle_all_one
 sle_all_one:
-.p2align 2
 	srl $v0, $a0, 31
 	jr $ra
 	nop
+.p2align 2
 .globl sge_all_one
 sge_all_one:
-.p2align 2
 	li $t0, -2
 	slt $v0, $t0, $a0
 	jr $ra
 	nop
+.p2align 2
 .globl feq
 feq:
-.p2align 2
 	c.eq.s $f12, $f14
 	li $v0, 1
 	movf $v0, $zero, $fcc0
 	jr $ra
 	nop
+.p2align 2
 .globl fne
 fne:
-.p2align 2
 	c.eq.s $f12, $f14
 	li $v0, 1
 	movt $v0, $zero, $fcc0
 	jr $ra
 	nop
+.p2align 2
 .globl flt
 flt:
-.p2align 2
 	c.olt.s $f12, $f14
 	li $v0, 1
 	movf $v0, $zero, $fcc0
 	jr $ra
 	nop
+.p2align 2
 .globl fgt
 fgt:
-.p2align 2
 	c.ule.s $f12, $f14
 	li $v0, 1
 	movt $v0, $zero, $fcc0
 	jr $ra
 	nop
+.p2align 2
 .globl fle
 fle:
-.p2align 2
 	c.ole.s $f12, $f14
 	li $v0, 1
 	movf $v0, $zero, $fcc0
 	jr $ra
 	nop
+.p2align 2
 .globl fge
 fge:
-.p2align 2
 	c.ult.s $f12, $f14
 	li $v0, 1
 	movt $v0, $zero, $fcc0
 	jr $ra
 	nop
+.p2align 2
 .globl fltz
 fltz:
-.p2align 2
 	mtc1 $zero, $f4
 	c.olt.s $f12, $f4
 	li $v0, 1
 	movf $v0, $zero, $fcc0
 	jr $ra
 	nop
+.p2align 2
 .globl sgez
 sgez:
-.p2align 2
 	li $t0, -1
 	slt $v0, $t0, $a0
 	jr $ra

@@ -1,9 +1,9 @@
 .attribute arch, "rv64i2p1_m2p0_a2p1_f2p2_d2p2_c2p0_zicsr2p0_zifencei2p0_zba1p0_zbb1p0"
 .data
 .text
+.p2align 2
 .globl main
 main:
-.p2align 2
 	addi sp, sp, -64
 	li a0, 4
 	li a1, 3
@@ -36,16 +36,7 @@ main:
 .p2align 2
 label8:
 	li a5, 9
-	blt a3, a5, label9
-	mv a4, zero
-	sext.w a3, a3
-	sh2add t0, a2, s0
-	sh2add a5, a3, s0
-	lw a4, 0(t0)
-	lw a5, 0(a5)
-	bgt a4, a5, label13
-	j label157
-label9:
+	bge a3, a5, label46
 	sh2add a4, a3, s0
 	lw a5, 0(a4)
 	lw t0, 4(a4)
@@ -55,7 +46,16 @@ label9:
 	sh2add a5, a3, s0
 	lw a4, 0(t0)
 	lw a5, 0(a5)
-	ble a4, a5, label12
+	bgt a4, a5, label13
+	sh2add a2, a3, s0
+	sw a5, 0(t0)
+	slliw a5, a3, 1
+	sw a4, 0(a2)
+	mv a2, a3
+	addiw a4, a5, 1
+	mv a3, a4
+	li a4, 10
+	blt a3, a4, label8
 label13:
 	addiw a0, a0, -1
 	blt a0, zero, label75
@@ -66,8 +66,14 @@ label13:
 	li a4, 10
 	blt a3, a4, label8
 	j label13
-label12:
+label46:
+	mv a4, zero
+	sext.w a3, a3
 	sh2add t0, a2, s0
+	sh2add a5, a3, s0
+	lw a4, 0(t0)
+	lw a5, 0(a5)
+	bgt a4, a5, label13
 	sh2add a2, a3, s0
 	sw a5, 0(t0)
 	slliw a5, a3, 1
@@ -104,17 +110,7 @@ label19:
 	ble a0, a3, label19
 .p2align 2
 label23:
-	bgt a1, a3, label27
-	mv a4, zero
-	sext.w a3, a3
-	sh2add t0, a2, s0
-	sh2add a5, a3, s0
-	lw a4, 0(t0)
-	lw a5, 0(a5)
-	bgt a4, a5, label19
-	j label26
-.p2align 2
-label27:
+	ble a1, a3, label100
 	sh2add a4, a3, s0
 	lw a5, 0(a4)
 	lw t0, 4(a4)
@@ -134,8 +130,15 @@ label27:
 	mv a3, a4
 	bgt a0, a4, label23
 	j label19
-label26:
+.p2align 2
+label100:
+	mv a4, zero
+	sext.w a3, a3
 	sh2add t0, a2, s0
+	sh2add a5, a3, s0
+	lw a4, 0(t0)
+	lw a5, 0(a5)
+	bgt a4, a5, label19
 	sh2add a2, a3, s0
 	sw a5, 0(t0)
 	slliw a5, a3, 1
@@ -163,15 +166,3 @@ label20:
 	ld s1, 16(sp)
 	addi sp, sp, 64
 	ret
-label157:
-	sh2add t0, a2, s0
-	sh2add a2, a3, s0
-	sw a5, 0(t0)
-	slliw a5, a3, 1
-	sw a4, 0(a2)
-	mv a2, a3
-	addiw a4, a5, 1
-	mv a3, a4
-	li a4, 10
-	blt a3, a4, label8
-	j label13

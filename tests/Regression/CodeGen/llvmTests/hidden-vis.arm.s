@@ -14,11 +14,11 @@ b:
 .syntax unified
 .arm
 .fpu vfpv4
+.p2align 4
 .globl t1
 t1:
-.p2align 4
 	bx lr
+.p2align 4
 .globl t2
 t2:
-.p2align 4
 	bx lr

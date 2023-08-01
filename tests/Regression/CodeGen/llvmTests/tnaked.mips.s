@@ -1,12 +1,12 @@
 .data
 .text
+.p2align 2
 .globl tnaked
 tnaked:
-.p2align 2
 	jr $ra
 	nop
+.p2align 2
 .globl tnonaked
 tnonaked:
-.p2align 2
 	jr $ra
 	nop

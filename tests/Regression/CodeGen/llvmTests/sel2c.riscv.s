@@ -14,9 +14,9 @@ j:
 k:
 	.4byte	0
 .text
+.p2align 2
 .globl t
 t:
-.p2align 2
 pcrel24:
 	auipc a1, %pcrel_hi(i)
 pcrel25:

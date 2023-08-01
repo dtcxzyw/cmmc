@@ -8,9 +8,9 @@ image_in:
 image_out:
 	.zero	2097152
 .text
+.p2align 2
 .globl main
 main:
-.p2align 2
 	addi sp, sp, -32
 pcrel298:
 	auipc a1, %pcrel_hi(image_in)
@@ -45,18 +45,18 @@ label4:
 .p2align 2
 label5:
 	addw t0, a0, a3
+	addw t4, a1, a4
 	addiw a5, a5, 1
 	sh2add t3, t0, s0
 	sh2add t0, t0, s1
 	lw t2, 0(t3)
-	addw t3, a1, a4
+	sh2add t3, t4, s0
 	slli t1, t2, 3
-	sh2add t2, t3, s0
+	lw t2, 0(t3)
 	addw t3, a0, a4
-	lw t4, 0(t2)
+	subw t1, t1, t2
 	addiw a4, a4, 512
 	sh2add t2, t3, s0
-	subw t1, t1, t4
 	lw t4, 0(t2)
 	lw t2, 4(t2)
 	subw t3, t1, t4
@@ -64,24 +64,24 @@ label5:
 	addw t3, a1, a3
 	addiw a3, a3, 512
 	sh2add t2, t3, s0
-	lw t5, 0(t2)
-	lw t4, 8(t2)
-	subw t3, t1, t5
-	addw t2, a1, a2
-	subw t1, t3, t4
-	sh2add t4, t2, s0
-	lw t3, 0(t4)
-	addw t4, a0, a2
-	subw t1, t1, t3
+	lw t4, 0(t2)
+	lw t2, 8(t2)
+	subw t3, t1, t4
+	subw t1, t3, t2
+	addw t3, a1, a2
+	sh2add t4, t3, s0
+	addw t3, a0, a2
+	lw t2, 0(t4)
 	addiw a2, a2, 512
-	sh2add t2, t4, s0
-	li t4, 255
-	lw t3, 0(t2)
-	lw t5, 4(t2)
-	subw t1, t1, t3
-	subw t2, t1, t5
-	min t3, t2, t4
-	max t1, t3, zero
+	subw t1, t1, t2
+	sh2add t2, t3, s0
+	lw t4, 0(t2)
+	lw t2, 4(t2)
+	subw t3, t1, t4
+	subw t1, t3, t2
+	li t3, 255
+	min t2, t1, t3
+	max t1, t2, zero
 	sw t1, 0(t0)
 	li t0, 1023
 	blt a5, t0, label5

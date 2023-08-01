@@ -4,9 +4,9 @@
 .syntax unified
 .arm
 .fpu vfpv4
+.p2align 4
 .globl PR28968
 PR28968:
-.p2align 4
 	mov r1, #1
 	mvn r2, #0
 	cmp r0, #1

@@ -1,9 +1,9 @@
 .attribute arch, "rv64i2p1_m2p0_a2p1_f2p2_d2p2_c2p0_zicsr2p0_zifencei2p0_zba1p0_zbb1p0"
 .data
 .text
+.p2align 2
 .globl test
 test:
-.p2align 2
 	bgt a0, zero, label7
 	mv a0, zero
 	j label2
@@ -15,9 +15,9 @@ label7:
 	sext.w a0, a1
 label2:
 	ret
+.p2align 2
 .globl test2
 test2:
-.p2align 2
 	li a3, -2147450879
 	mul a4, a0, a3
 	srli a5, a4, 32
@@ -56,9 +56,9 @@ label63:
 	mv a0, a1
 label65:
 	ret
+.p2align 2
 .globl test3
 test3:
-.p2align 2
 	slli a3, a0, 30
 	add a1, a3, a0
 	srli a3, a1, 63

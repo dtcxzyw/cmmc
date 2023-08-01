@@ -5,9 +5,9 @@
 e:
 	.zero	1024
 .text
+.p2align 2
 .globl main
 main:
-.p2align 2
 	addi sp, sp, -192
 	sd ra, 0(sp)
 	sd s1, 8(sp)
@@ -39,9 +39,9 @@ main:
 	mv s0, a0
 	jal getint
 	mv s4, a0
-pcrel254:
+pcrel252:
 	auipc a0, %pcrel_hi(e)
-	addi s2, a0, %pcrel_lo(pcrel254)
+	addi s2, a0, %pcrel_lo(pcrel252)
 	li a0, 1
 	bge s0, a0, label33
 label4:
@@ -141,12 +141,17 @@ label31:
 	addiw s2, s2, 1
 	bge s0, s2, label31
 	j label30
+label20:
+	addiw a1, a1, 1
+	bge a0, a1, label116
+	j label29
 .p2align 2
 label25:
 	sh2add t0, a3, s1
 	lw a5, 0(t0)
 	bgt a4, a5, label28
-	j label156
+	mv t0, zero
+	mv a5, a4
 .p2align 2
 label218:
 	mv t1, a3
@@ -158,7 +163,34 @@ label220:
 	mv a4, a5
 	mv a2, t1
 	bge s0, a3, label25
-	j label235
+	sh2add a4, t1, s3
+	li a3, 1
+	sw a3, 0(a4)
+	blt s0, a3, label20
+.p2align 2
+label21:
+	slli a4, a2, 6
+	add t0, s2, a4
+	sh2add a5, a3, t0
+	li t0, 65535
+	lw a4, 0(a5)
+	blt a4, t0, label23
+	addiw a3, a3, 1
+	bge s0, a3, label21
+	j label232
+.p2align 2
+label23:
+	sh2add t0, a3, s1
+	sh2add t1, a2, s1
+	lw a5, 0(t0)
+	lw t0, 0(t1)
+	addw a4, a4, t0
+	bgt a5, a4, label24
+	addiw a3, a3, 1
+	bge s0, a3, label21
+	addiw a1, a1, 1
+	bge a0, a1, label116
+	j label29
 .p2align 2
 label28:
 	sh2add t1, a3, s3
@@ -176,36 +208,7 @@ label28:
 	bge s0, a3, label21
 	j label20
 .p2align 2
-label156:
-	mv t0, zero
-	mv a5, a4
-	j label218
-.p2align 2
-label21:
-	slli a4, a2, 6
-	add a5, s2, a4
-	sh2add t0, a3, a5
-	li a5, 65535
-	lw a4, 0(t0)
-	blt a4, a5, label23
-	addiw a3, a3, 1
-	bge s0, a3, label21
-	j label232
-.p2align 2
-label147:
-	addiw a3, a3, 1
-	bge s0, a3, label21
-	addiw a1, a1, 1
-	bge a0, a1, label116
-	j label29
-.p2align 2
-label23:
-	sh2add t0, a3, s1
-	sh2add t1, a2, s1
-	lw a5, 0(t0)
-	lw t0, 0(t1)
-	addw a4, a4, t0
-	ble a5, a4, label147
+label24:
 	sh2add a5, a3, s1
 	sw a4, 0(a5)
 	addiw a3, a3, 1
@@ -214,16 +217,6 @@ label23:
 	bge a0, a1, label116
 	j label29
 label17:
-	sh2add a4, a2, s3
-	li a3, 1
-	sw a3, 0(a4)
-	bge s0, a3, label21
-label20:
-	addiw a1, a1, 1
-	bge a0, a1, label116
-	j label29
-.p2align 2
-label235:
 	sh2add a4, a2, s3
 	li a3, 1
 	sw a3, 0(a4)

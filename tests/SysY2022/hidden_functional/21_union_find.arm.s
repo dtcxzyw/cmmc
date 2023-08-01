@@ -8,8 +8,8 @@ parent:
 .syntax unified
 .arm
 .fpu vfpv4
-find:
 .p2align 4
+find:
 	push { r4, r5, r6, r7, r8, lr }
 	movw r5, #:lower16:parent
 	mov r4, r0
@@ -51,9 +51,9 @@ label13:
 	str r0, [r5, r6, lsl #2]
 	str r0, [r5, r4, lsl #2]
 	b label2
+.p2align 4
 .globl main
 main:
-.p2align 4
 	push { r4, r5, r6, r7, r8, lr }
 	bl getint
 	mov r5, r0
@@ -67,7 +67,6 @@ main:
 	cmp r5, #8
 	ble label98
 	mov r0, #0
-.p2align 4
 label74:
 	add r2, r4, r0, lsl #2
 	add r3, r0, #1
@@ -97,6 +96,11 @@ label78:
 	cmp r6, #0
 	ble label130
 	mov r7, #0
+	b label79
+label130:
+	mov r1, #0
+	mov r0, r1
+	b label83
 .p2align 4
 label79:
 	bl getint
@@ -120,9 +124,7 @@ label81:
 	add r7, r7, #1
 	cmp r6, r7
 	bgt label79
-label130:
-	mov r1, #0
-	mov r0, r1
+	b label130
 .p2align 4
 label83:
 	cmp r5, r0

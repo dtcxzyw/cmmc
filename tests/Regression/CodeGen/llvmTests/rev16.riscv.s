@@ -1,9 +1,9 @@
 .attribute arch, "rv64i2p1_m2p0_a2p1_f2p2_d2p2_c2p0_zicsr2p0_zifencei2p0_zba1p0_zbb1p0"
 .data
 .text
+.p2align 2
 .globl bswap_ror_commuted
 bswap_ror_commuted:
-.p2align 2
 	srliw a3, a0, 8
 	li a2, 16711935
 	slliw a0, a0, 8
@@ -12,16 +12,16 @@ bswap_ror_commuted:
 	and a3, a0, a2
 	or a0, a1, a3
 	ret
+.p2align 2
 .globl different_constant
 different_constant:
-.p2align 2
 	srliw a1, a0, 8
 	li a2, 16711935
 	and a0, a1, a2
 	ret
+.p2align 2
 .globl different_op
 different_op:
-.p2align 2
 	slliw a3, a0, 8
 	li a2, 16711936
 	srliw a0, a0, 8
@@ -30,9 +30,9 @@ different_op:
 	and a3, a0, a2
 	or a0, a1, a3
 	ret
+.p2align 2
 .globl different_shift_amount
 different_shift_amount:
-.p2align 2
 	slliw a3, a0, 9
 	li a2, -16711936
 	srliw a0, a0, 8
@@ -41,9 +41,9 @@ different_shift_amount:
 	and a3, a0, a2
 	or a0, a1, a3
 	ret
+.p2align 2
 .globl different_vars
 different_vars:
-.p2align 2
 	slliw a3, a0, 8
 	li a2, -16711936
 	srliw a1, a1, 8
@@ -52,9 +52,9 @@ different_vars:
 	and a3, a1, a2
 	or a0, a0, a3
 	ret
+.p2align 2
 .globl extra_maskop_uses2
 extra_maskop_uses2:
-.p2align 2
 	slliw a3, a0, 8
 	li a2, -16711936
 	xori a4, a2, -1
@@ -65,9 +65,9 @@ extra_maskop_uses2:
 	mulw a1, a1, a0
 	mulw a0, a2, a1
 	ret
+.p2align 2
 .globl f2
 f2:
-.p2align 2
 	slliw a1, a0, 8
 	li a3, 65280
 	lui a4, 1044480
@@ -81,9 +81,9 @@ f2:
 	and a3, a0, a2
 	or a0, a1, a3
 	ret
+.p2align 2
 .globl not_rev16
 not_rev16:
-.p2align 2
 	srliw a3, a0, 8
 	li a2, -16711936
 	slliw a0, a0, 8
@@ -92,9 +92,9 @@ not_rev16:
 	and a3, a0, a2
 	or a0, a1, a3
 	ret
+.p2align 2
 .globl rev16
 rev16:
-.p2align 2
 	slliw a3, a0, 8
 	li a2, -16711936
 	srliw a0, a0, 8

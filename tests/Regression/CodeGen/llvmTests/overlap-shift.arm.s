@@ -9,9 +9,9 @@ G:
 .syntax unified
 .arm
 .fpu vfpv4
+.p2align 4
 .globl test1
 test1:
-.p2align 4
 	lsl r1, r0, #2
 	movw r2, #:lower16:G
 	movt r2, #:upper16:G

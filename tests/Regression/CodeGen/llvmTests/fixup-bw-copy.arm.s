@@ -4,21 +4,21 @@
 .syntax unified
 .arm
 .fpu vfpv4
+.p2align 4
 .globl test_movb
 test_movb:
-.p2align 4
 	bx lr
+.p2align 4
 .globl test_movb_Os
 test_movb_Os:
-.p2align 4
 	bx lr
+.p2align 4
 .globl test_movb_Oz
 test_movb_Oz:
-.p2align 4
 	bx lr
+.p2align 4
 .globl test_movb_hreg
 test_movb_hreg:
-.p2align 4
 	uxth r1, r0
 	uxtb r0, r0
 	asr r1, r1, #8
@@ -27,7 +27,7 @@ test_movb_hreg:
 	add r0, r1, r0
 	uxtb r0, r0
 	bx lr
+.p2align 4
 .globl test_movw
 test_movw:
-.p2align 4
 	bx lr

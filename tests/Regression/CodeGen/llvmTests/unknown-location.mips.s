@@ -1,8 +1,8 @@
 .data
 .text
+.p2align 2
 .globl foo
 foo:
-.p2align 2
 	addu $t0, $a0, $a1
 	div $zero, $t0, $a2
 	mflo $t0

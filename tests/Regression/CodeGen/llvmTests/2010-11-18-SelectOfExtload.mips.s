@@ -9,9 +9,9 @@ u:
 s:
 	.zero	1
 .text
+.p2align 2
 .globl foo
 foo:
-.p2align 2
 	beq $a0, $zero, label8
 	nop
 	lui $t0, %hi(u)

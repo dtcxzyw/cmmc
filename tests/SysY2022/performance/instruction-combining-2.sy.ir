@@ -8,11 +8,11 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i32 %0 = call () -> i32 @getint();
     i1 %1 = icmp sgt i32 %0, i32 0;
     call (i32) -> void @starttime(i32 10015);
-    cbr i1 %1(prob = 0.992248), ^super.header, ^b;
+    cbr i1 %1(prob = 0.984615), ^super.header, ^b;
   ^super.header:
     i32 %2 = add i32 %0, i32 -8;
     i1 %3 = icmp sgt i32 %0, i32 8;
-    cbr i1 %3(prob = 0.941176), ^prebody, ^prebody1;
+    cbr i1 %3(prob = 0.888889), ^prebody, ^prebody1;
   ^b:
     i32 %4 = phi [^entry, i32 0] [^prebody1, i32 %35];
     call (i32) -> void @stoptime(i32 10030);
@@ -47,7 +47,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i32 %29 = srem i32 %28, i32 536854529;
     i32 %30 = add i32 %6, i32 8;
     i1 %31 = icmp sgt i32 %2, i32 %30;
-    cbr i1 %31(prob = 0.941176), ^prebody, ^prebody1;
+    cbr i1 %31(prob = 0.888889), ^prebody, ^prebody1;
   ^prebody1 {scalar}:
     i32 %32 = phi [^super.header, i32 0] [^prebody, i32 %30] [^prebody1, i32 %36];
     i32 %33 = phi [^super.header, i32 0] [^prebody, i32 %29] [^prebody1, i32 %35];

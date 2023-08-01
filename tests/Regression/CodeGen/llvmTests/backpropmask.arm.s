@@ -21,9 +21,9 @@ a:
 .syntax unified
 .arm
 .fpu vfpv4
+.p2align 4
 .globl PR37060
 PR37060:
-.p2align 4
 	movw r0, #:lower16:b
 	movw r1, #:lower16:c
 	mvn r2, #0
@@ -39,9 +39,9 @@ PR37060:
 	movt r1, #:upper16:a
 	str r0, [r1, #0]
 	bx lr
+.p2align 4
 .globl PR37667
 PR37667:
-.p2align 4
 	movw r0, #:lower16:b
 	movw r1, #:lower16:d
 	movt r0, #:upper16:b

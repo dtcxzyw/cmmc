@@ -8,9 +8,9 @@ e:
 .syntax unified
 .arm
 .fpu vfpv4
+.p2align 4
 .globl main
 main:
-.p2align 4
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
 	mov r0, #0
 	sub sp, sp, #132
@@ -200,7 +200,8 @@ label23:
 	ldr r10, [r5, r2, lsl #2]
 	add r8, r8, r10
 	cmp r9, r8
-	bgt label24
+	ble label147
+	str r8, [r5, r3, lsl #2]
 	add r3, r3, #1
 	cmp r4, r3
 	bge label21
@@ -209,8 +210,7 @@ label23:
 	bge label116
 	b label29
 .p2align 4
-label24:
-	str r8, [r5, r3, lsl #2]
+label147:
 	add r3, r3, #1
 	cmp r4, r3
 	bge label21

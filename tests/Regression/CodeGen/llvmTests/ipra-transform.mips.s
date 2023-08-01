@@ -1,17 +1,17 @@
 .data
 .text
+.p2align 2
 .globl bar1
 bar1:
-.p2align 2
 	jr $ra
 	nop
+.p2align 2
 .globl bar2
 bar2:
-.p2align 2
 	jr $ra
 	nop
+.p2align 2
 .globl foo
 foo:
-.p2align 2
 	jr $ra
 	nop

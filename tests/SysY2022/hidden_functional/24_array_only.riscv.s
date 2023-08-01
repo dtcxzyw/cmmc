@@ -1,9 +1,9 @@
 .attribute arch, "rv64i2p1_m2p0_a2p1_f2p2_d2p2_c2p0_zicsr2p0_zifencei2p0_zba1p0_zbb1p0"
 .data
 .text
+.p2align 2
 .globl main
 main:
-.p2align 2
 	addi sp, sp, -56
 	li a0, -1
 	sd ra, 0(sp)
@@ -28,6 +28,19 @@ label2:
 	li a0, 5
 	bge s4, a0, label28
 	mv s3, s4
+	j label6
+label4:
+	li a0, 10
+	jal putch
+	ld ra, 0(sp)
+	mv a0, zero
+	ld s2, 8(sp)
+	ld s0, 16(sp)
+	ld s1, 24(sp)
+	ld s4, 32(sp)
+	ld s3, 40(sp)
+	addi sp, sp, 56
+	ret
 .p2align 2
 label6:
 	mv a0, s2
@@ -44,11 +57,14 @@ label6:
 	addiw a0, s0, -1
 	slliw a1, a1, 1
 	bne a0, zero, label11
-	j label138
-.p2align 2
-label141:
+	addw a1, s1, a1
+	sw a1, 48(sp)
+	mv a0, s0
+	addiw a0, s0, -1
+	slliw s3, s3, 1
+	bne a0, zero, label16
 	addw s3, s1, s3
-	bne s0, zero, label143
+	bne s0, zero, label146
 .p2align 2
 label23:
 	lw a1, 48(sp)
@@ -81,15 +97,14 @@ label36:
 	bne a1, zero, label36
 	j label34
 .p2align 2
-label9:
-	lw a1, 48(sp)
+label11:
+	addiw a0, a0, -1
+	slliw a1, a1, 1
+	bne a0, zero, label11
 	addw a1, s1, a1
 	sw a1, 48(sp)
 	beq s0, zero, label19
 	mv a0, s0
-	addiw a0, s0, -1
-	slliw s3, s3, 1
-	beq a0, zero, label141
 .p2align 2
 label16:
 	addiw a0, a0, -1
@@ -104,23 +119,24 @@ label19:
 	addiw a0, s0, -1
 	slliw a1, a1, 1
 	bne a0, zero, label25
+.p2align 2
+label139:
 	subw s4, a1, s1
 	li a0, 5
 	sw s4, 48(sp)
 	blt s3, a0, label6
 	j label28
 .p2align 2
-label11:
-	addiw a0, a0, -1
-	slliw a1, a1, 1
-	bne a0, zero, label11
+label9:
+	lw a1, 48(sp)
 	addw a1, s1, a1
 	sw a1, 48(sp)
 	beq s0, zero, label19
 	mv a0, s0
-	j label16
-.p2align 2
-label143:
+	addiw a0, s0, -1
+	slliw s3, s3, 1
+	bne a0, zero, label16
+	addw s3, s1, s3
 	lw a1, 48(sp)
 	mv a0, s0
 	addiw a0, s0, -1
@@ -136,44 +152,19 @@ label25:
 	sw s4, 48(sp)
 	blt s3, a0, label6
 	j label28
-.p2align 2
-label138:
-	addw a1, s1, a1
-	sw a1, 48(sp)
-	beq s0, zero, label19
-	mv a0, s0
-	addiw a0, s0, -1
-	slliw s3, s3, 1
-	bne a0, zero, label16
-	addw s3, s1, s3
+label146:
 	lw a1, 48(sp)
 	mv a0, s0
 	addiw a0, s0, -1
 	slliw a1, a1, 1
 	bne a0, zero, label25
-	subw s4, a1, s1
-	li a0, 5
-	sw s4, 48(sp)
-	blt s3, a0, label6
-	j label28
+	j label139
 label145:
 	subw s4, a1, s1
 	li a0, 5
 	sw s4, 48(sp)
 	blt s3, a0, label6
 	j label28
-label4:
-	li a0, 10
-	jal putch
-	ld ra, 0(sp)
-	mv a0, zero
-	ld s2, 8(sp)
-	ld s0, 16(sp)
-	ld s1, 24(sp)
-	ld s4, 32(sp)
-	ld s3, 40(sp)
-	addi sp, sp, 56
-	ret
 label100:
 	mv s2, a0
 	j label29

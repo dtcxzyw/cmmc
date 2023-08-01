@@ -18,9 +18,9 @@ c:
 a:
 	.4byte	0
 .text
+.p2align 2
 .globl PR37060
 PR37060:
-.p2align 2
 pcrel23:
 	auipc a2, %pcrel_hi(b)
 pcrel24:
@@ -37,9 +37,9 @@ pcrel25:
 	andi a0, a1, 255
 	sw a0, %pcrel_lo(pcrel25)(a2)
 	ret
+.p2align 2
 .globl PR37667
 PR37667:
-.p2align 2
 pcrel49:
 	auipc a2, %pcrel_hi(b)
 pcrel50:

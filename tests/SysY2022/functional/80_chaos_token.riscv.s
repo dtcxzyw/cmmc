@@ -121,9 +121,9 @@ saY_HeI10_To:
 	.4byte	32
 	.zero	100
 .text
+.p2align 2
 .globl main
 main:
-.p2align 2
 	addi sp, sp, -88
 	li a0, 10
 	sd ra, 0(sp)
@@ -238,18 +238,7 @@ label70:
 	j label12
 label9:
 	lw a0, 64(sp)
-	bne a0, zero, label75
-	j label18
-.p2align 2
-label12:
-	sh2add s4, s3, s2
-	lw a0, 0(s4)
-	jal putch
-	addiw s3, s3, 1
-	lw a1, 4(s4)
-	bne a1, zero, label12
-	j label9
-label75:
+	beq a0, zero, label18
 	mv s2, zero
 .p2align 2
 label10:
@@ -260,3 +249,12 @@ label10:
 	lw a1, 4(s3)
 	bne a1, zero, label10
 	j label18
+.p2align 2
+label12:
+	sh2add s4, s3, s2
+	lw a0, 0(s4)
+	jal putch
+	addiw s3, s3, 1
+	lw a1, 4(s4)
+	bne a1, zero, label12
+	j label9

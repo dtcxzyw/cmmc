@@ -4,9 +4,9 @@
 .syntax unified
 .arm
 .fpu vfpv4
+.p2align 4
 .globl main
 main:
-.p2align 4
 	push { r4, r5, r6, r7, r8, lr }
 	mov r7, #0
 	mvn r0, #0
@@ -28,6 +28,13 @@ label2:
 	cmp r8, #5
 	bge label28
 	mov r7, r8
+	b label6
+label4:
+	mov r0, #10
+	bl putch
+	add sp, sp, #8
+	mov r0, #0
+	pop { r4, r5, r6, r7, r8, pc }
 .p2align 4
 label6:
 	mov r0, r6
@@ -45,12 +52,14 @@ label6:
 	subs r0, r4, #1
 	lsl r1, r1, #1
 	bne label11
-	b label137
-.p2align 4
-label140:
+	add r0, r5, r1
+	str r0, [sp, #0]
+	beq label19
+	mov r0, r4
+	subs r0, r4, #1
+	lsl r7, r7, #1
+	bne label16
 	add r7, r5, r7
-	cmp r4, #0
-	bne label142
 .p2align 4
 label23:
 	ldr r1, [sp, #0]
@@ -86,16 +95,15 @@ label36:
 	bne label36
 	b label34
 .p2align 4
-label9:
-	ldr r1, [sp, #0]
+label11:
+	subs r0, r0, #1
+	lsl r1, r1, #1
+	bne label11
 	add r0, r5, r1
 	cmp r4, #0
 	str r0, [sp, #0]
 	beq label19
 	mov r0, r4
-	subs r0, r4, #1
-	lsl r7, r7, #1
-	beq label140
 .p2align 4
 label16:
 	subs r0, r0, #1
@@ -117,18 +125,18 @@ label19:
 	blt label6
 	b label28
 .p2align 4
-label11:
-	subs r0, r0, #1
-	lsl r1, r1, #1
-	bne label11
+label9:
+	ldr r1, [sp, #0]
 	add r0, r5, r1
 	cmp r4, #0
 	str r0, [sp, #0]
 	beq label19
 	mov r0, r4
-	b label16
-.p2align 4
-label142:
+	subs r0, r4, #1
+	lsl r7, r7, #1
+	bne label16
+	add r7, r5, r7
+	beq label23
 	ldr r1, [sp, #0]
 	mov r0, r4
 	subs r0, r4, #1
@@ -144,40 +152,12 @@ label25:
 	str r8, [sp, #0]
 	blt label6
 	b label28
-.p2align 4
-label137:
-	add r0, r5, r1
-	cmp r4, #0
-	str r0, [sp, #0]
-	beq label19
-	mov r0, r4
-	subs r0, r4, #1
-	lsl r7, r7, #1
-	bne label16
-	add r7, r5, r7
-	beq label23
-	ldr r1, [sp, #0]
-	mov r0, r4
-	subs r0, r4, #1
-	lsl r1, r1, #1
-	bne label25
-	sub r8, r1, r5
-	cmp r7, #5
-	str r8, [sp, #0]
-	blt label6
-	b label28
 label144:
 	sub r8, r1, r5
 	cmp r7, #5
 	str r8, [sp, #0]
 	blt label6
 	b label28
-label4:
-	mov r0, #10
-	bl putch
-	add sp, sp, #8
-	mov r0, #0
-	pop { r4, r5, r6, r7, r8, pc }
 label100:
 	mov r6, r0
 	mov r0, r1

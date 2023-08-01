@@ -18,9 +18,9 @@ c:
 .syntax unified
 .arm
 .fpu vfpv4
+.p2align 4
 .globl t1
 t1:
-.p2align 4
 	movw r0, #:lower16:a
 	movt r0, #:upper16:a
 	ldrsb r0, [r0, #0]
@@ -28,9 +28,9 @@ t1:
 	add r0, r0, #1
 	uxtb r0, r0
 	bx lr
+.p2align 4
 .globl t2
 t2:
-.p2align 4
 	movw r0, #:lower16:b
 	movt r0, #:upper16:b
 	ldrsh r0, [r0, #0]
@@ -38,17 +38,17 @@ t2:
 	add r0, r0, #1
 	uxth r0, r0
 	bx lr
+.p2align 4
 .globl t3
 t3:
-.p2align 4
 	movw r0, #:lower16:c
 	movt r0, #:upper16:c
 	ldr r0, [r0, #0]
 	add r0, r0, #1
 	bx lr
+.p2align 4
 .globl t4
 t4:
-.p2align 4
 	sxtb r0, r0
 	movw r1, #:lower16:a
 	add r0, r0, #1
@@ -56,9 +56,9 @@ t4:
 	uxtb r0, r0
 	strb r0, [r1, #0]
 	bx lr
+.p2align 4
 .globl t5
 t5:
-.p2align 4
 	sxth r0, r0
 	movw r1, #:lower16:b
 	add r0, r0, #1
@@ -66,9 +66,9 @@ t5:
 	uxth r0, r0
 	strh r0, [r1, #0]
 	bx lr
+.p2align 4
 .globl t6
 t6:
-.p2align 4
 	add r0, r0, #1
 	movw r1, #:lower16:c
 	movt r1, #:upper16:c

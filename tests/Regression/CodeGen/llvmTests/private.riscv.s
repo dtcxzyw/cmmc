@@ -6,14 +6,14 @@
 baz:
 	.4byte	4
 .text
+.p2align 2
 .globl bar
 bar:
-.p2align 2
 pcrel7:
 	auipc a1, %pcrel_hi(baz)
 	lw a0, %pcrel_lo(pcrel7)(a1)
 	ret
+.p2align 2
 .globl foo
 foo:
-.p2align 2
 	ret

@@ -4,8 +4,8 @@
 .syntax unified
 .arm
 .fpu vfpv4
-hanoi:
 .p2align 4
+hanoi:
 	push { r4, r5, r6, r7, lr }
 	cmp r0, #1
 	mov r6, r3
@@ -54,9 +54,9 @@ label4:
 label18:
 	mov r0, r5
 	b label2
+.p2align 4
 .globl main
 main:
-.p2align 4
 	push { r4, lr }
 	bl getint
 	cmp r0, #0

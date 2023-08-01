@@ -13,9 +13,9 @@ b:
 d:
 	.zero	4
 .text
+.p2align 2
 .globl fn1
 fn1:
-.p2align 2
 	lui $t0, %hi(c)
 	lw $t0, %lo(c)($t0)
 	sltiu $t0, $t0, 1

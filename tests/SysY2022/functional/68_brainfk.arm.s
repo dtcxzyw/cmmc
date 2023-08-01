@@ -11,9 +11,9 @@ program:
 .syntax unified
 .arm
 .fpu vfpv4
+.p2align 4
 .globl main
 main:
-.p2align 4
 	push { r4, r5, r6, r7, lr }
 	sub sp, sp, #4
 	bl getint
@@ -60,9 +60,17 @@ label30:
 .p2align 4
 label52:
 	cmp r0, #60
-	beq label13
+	bne label155
+	sub r6, r6, #1
+	add r7, r7, #1
+	ldr r0, [r4, r7, lsl #2]
+	cmp r0, #0
+	bne label7
+	b label30
+.p2align 4
+label155:
 	cmp r0, #43
-	bne label166
+	bne label165
 	add r0, r5, r6, lsl #2
 	ldr r1, [r0, #0]
 	add r1, r1, #1
@@ -73,9 +81,43 @@ label52:
 	bne label7
 	b label30
 .p2align 4
-label166:
+label165:
 	cmp r0, #45
-	bne label169
+	beq label29
+	cmp r0, #46
+	beq label28
+	cmp r0, #44
+	bne label19
+	bl getch
+	str r0, [r5, r6, lsl #2]
+	b label9
+label19:
+	cmp r0, #93
+	bne label9
+	ldr r0, [r5, r6, lsl #2]
+	cmp r0, #0
+	beq label9
+	mov r0, #1
+	cmp r0, #0
+	ble label9
+.p2align 4
+label24:
+	sub r7, r7, #1
+	ldr r1, [r4, r7, lsl #2]
+	cmp r1, #91
+	beq label26
+	sub r1, r1, #93
+	clz r1, r1
+	lsr r1, r1, #5
+	adds r0, r0, r1
+	bgt label24
+	b label9
+.p2align 4
+label26:
+	subs r0, r0, #1
+	bgt label24
+	b label9
+label29:
 	add r0, r5, r6, lsl #2
 	ldr r1, [r0, #0]
 	sub r1, r1, #1
@@ -85,59 +127,9 @@ label166:
 	cmp r0, #0
 	bne label7
 	b label30
-label169:
-	cmp r0, #46
-	beq label28
-	cmp r0, #44
-	beq label27
-	cmp r0, #93
-	bne label9
-	ldr r0, [r5, r6, lsl #2]
-	cmp r0, #0
-	beq label9
-	mov r1, r7
-	mov r0, #1
-	cmp r0, #0
-	ble label94
-.p2align 4
-label24:
-	sub r1, r1, #1
-	ldr r2, [r4, r1, lsl #2]
-	cmp r2, #91
-	beq label26
-	sub r2, r2, #93
-	clz r2, r2
-	lsr r2, r2, #5
-	adds r0, r0, r2
-	bgt label24
-	b label94
-.p2align 4
-label26:
-	subs r0, r0, #1
-	bgt label24
-	b label94
-.p2align 4
-label13:
-	sub r6, r6, #1
-	add r7, r7, #1
-	ldr r0, [r4, r7, lsl #2]
-	cmp r0, #0
-	bne label7
-	b label30
-label94:
-	mov r7, r1
-	b label9
 label28:
 	ldr r0, [r5, r6, lsl #2]
 	bl putch
-	add r7, r7, #1
-	ldr r0, [r4, r7, lsl #2]
-	cmp r0, #0
-	bne label7
-	b label30
-label27:
-	bl getch
-	str r0, [r5, r6, lsl #2]
 	add r7, r7, #1
 	ldr r0, [r4, r7, lsl #2]
 	cmp r0, #0

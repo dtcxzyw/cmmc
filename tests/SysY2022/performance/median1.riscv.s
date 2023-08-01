@@ -5,15 +5,15 @@
 a:
 	.zero	40000000
 .text
+.p2align 2
 .globl main
 main:
-.p2align 2
 	addi sp, sp, -48
-pcrel115:
+pcrel117:
 	auipc a0, %pcrel_hi(a)
 	sd ra, 0(sp)
 	sd s3, 8(sp)
-	addi s3, a0, %pcrel_lo(pcrel115)
+	addi s3, a0, %pcrel_lo(pcrel117)
 	sd s0, 16(sp)
 	mv s0, s3
 	sd s1, 24(sp)
@@ -28,8 +28,8 @@ pcrel115:
 	li a0, 59
 	sraiw s2, a1, 1
 	jal _sysy_starttime
-	mv a1, s3
-	mv a0, zero
+	mv a0, s3
+	mv a1, zero
 	mv a2, s4
 	lw a3, 0(s3)
 	addiw a4, s4, 1
@@ -37,11 +37,19 @@ pcrel115:
 label8:
 	bgt a4, a5, label11
 	j label12
-label55:
-	mv a2, a5
-	lw a3, 0(a1)
-	addiw a4, a5, 1
-	mv a5, a0
+label17:
+	sw a3, 0(a0)
+	sh2add a4, a5, s0
+	lw t0, 0(a4)
+	sw t0, 0(a0)
+	sw a3, 0(a4)
+	blt s2, a5, label55
+	ble s2, a5, label20
+	addiw a1, a5, 1
+	sh2add a0, a1, s0
+	lw a3, 0(a0)
+	addiw a4, a2, 1
+	mv a5, a1
 	j label8
 .p2align 2
 label11:
@@ -52,7 +60,11 @@ label11:
 	bgt a4, a5, label11
 .p2align 2
 label12:
-	ble a4, a5, label15
+	bgt a4, a5, label22
+.p2align 2
+label15:
+	beq a4, a5, label17
+	j label47
 .p2align 2
 label22:
 	addiw a5, a5, 1
@@ -60,22 +72,7 @@ label22:
 	lw t1, 0(t0)
 	ble a3, t1, label15
 	bgt a4, a5, label22
-.p2align 2
-label15:
-	bne a4, a5, label47
-	sw a3, 0(a1)
-	sh2add a4, a5, s0
-	lw t0, 0(a4)
-	sw t0, 0(a1)
-	sw a3, 0(a4)
-	blt s2, a5, label55
-	ble s2, a5, label20
-	addiw a0, a5, 1
-	sh2add a1, a0, s0
-	lw a3, 0(a1)
-	addiw a4, a2, 1
-	mv a5, a0
-	j label8
+	j label15
 label20:
 	li a0, 61
 	jal _sysy_stoptime
@@ -105,4 +102,11 @@ label47:
 	sw t3, 0(t1)
 	sw t2, 0(t0)
 	bgt a4, a5, label11
+	j label12
+label55:
+	mv a2, a5
+	lw a3, 0(a0)
+	addiw a4, a5, 1
+	mv a5, a1
+	bgt a4, a1, label11
 	j label12

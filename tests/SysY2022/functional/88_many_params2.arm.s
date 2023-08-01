@@ -11,9 +11,9 @@ a:
 .syntax unified
 .arm
 .fpu vfpv4
+.p2align 4
 .globl main
 main:
-.p2align 4
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
 	mov r2, #0
 	movw r4, #:lower16:a
@@ -348,7 +348,6 @@ label14:
 	bge label318
 	mov r0, r8
 	mov r1, r9
-.p2align 4
 label18:
 	add r2, r6, r1, lsl #2
 	movw r3, #63339

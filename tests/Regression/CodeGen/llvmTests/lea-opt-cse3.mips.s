@@ -1,8 +1,8 @@
 .data
 .text
+.p2align 2
 .globl foo
 foo:
-.p2align 2
 	addiu $t0, $a0, 4
 	sll $t1, $a1, 1
 	addu $t1, $t0, $t1
@@ -12,9 +12,9 @@ foo:
 	mflo $v0
 	jr $ra
 	nop
+.p2align 2
 .globl foo1
 foo1:
-.p2align 2
 	addiu $t0, $a0, 4
 	sll $t1, $a1, 2
 	addu $t1, $t0, $t1
@@ -24,9 +24,9 @@ foo1:
 	mflo $v0
 	jr $ra
 	nop
+.p2align 2
 .globl foo1_mult_basic_blocks
 foo1_mult_basic_blocks:
-.p2align 2
 	addiu $t0, $a0, 4
 	sll $t1, $a1, 2
 	addu $t1, $t0, $t1
@@ -44,9 +44,9 @@ label35:
 label27:
 	jr $ra
 	nop
+.p2align 2
 .globl foo1_mult_basic_blocks_illegal_scale
 foo1_mult_basic_blocks_illegal_scale:
-.p2align 2
 	addiu $t0, $a0, 4
 	sll $t1, $a1, 1
 	addu $t1, $t0, $t1

@@ -6,9 +6,9 @@
 foo:
 	.byte	127
 .text
+.p2align 2
 .globl main
 main:
-.p2align 2
 pcrel14:
 	auipc a0, %pcrel_hi(foo)
 	lb a1, %pcrel_lo(pcrel14)(a0)

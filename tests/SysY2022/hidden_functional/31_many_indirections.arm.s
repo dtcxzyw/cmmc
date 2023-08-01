@@ -8,9 +8,9 @@ array:
 .syntax unified
 .arm
 .fpu vfpv4
+.p2align 4
 .globl main
 main:
-.p2align 4
 	push { lr }
 	mov r2, #0
 	movw r1, #:lower16:array

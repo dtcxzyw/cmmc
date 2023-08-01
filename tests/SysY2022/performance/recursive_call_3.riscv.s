@@ -5,8 +5,8 @@
 __cmmc_fp_constant_pool:
 	.4byte	1065361605
 .text
-func:
 .p2align 2
+func:
 	addi sp, sp, -64
 	sd ra, 0(sp)
 	fsw f8, 8(sp)
@@ -196,9 +196,9 @@ label99:
 	fmv.w.x f11, zero
 	fsub.s f11, f9, f11
 	j label6
+.p2align 2
 .globl main
 main:
-.p2align 2
 	addi sp, sp, -8
 	li a0, 21
 	sd ra, 0(sp)

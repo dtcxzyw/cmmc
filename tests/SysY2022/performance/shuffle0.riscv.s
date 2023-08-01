@@ -29,9 +29,9 @@ requests:
 ans:
 	.zero	40000000
 .text
+.p2align 2
 .globl main
 main:
-.p2align 2
 	addi sp, sp, -56
 	sd ra, 0(sp)
 	sd s0, 8(sp)
@@ -120,9 +120,9 @@ label125:
 	j label24
 .p2align 2
 label19:
-	sh2add t3, t1, a2
-	lw t2, 0(t3)
-	bne t0, t2, label132
+	sh2add t2, t1, a2
+	lw t3, 0(t2)
+	bne t0, t3, label132
 	mv t0, t1
 	mv t1, zero
 	sh2add t3, t0, a1
@@ -159,9 +159,9 @@ label62:
 	beq t4, zero, label9
 .p2align 2
 label10:
-	sh2add a6, t5, a2
-	lw t6, 0(a6)
-	bne t1, t6, label98
+	sh2add t6, t5, a2
+	lw a6, 0(t6)
+	bne t1, a6, label98
 	sh2add t1, t5, a0
 	sh2add t4, t0, a0
 	lw t3, 0(t1)

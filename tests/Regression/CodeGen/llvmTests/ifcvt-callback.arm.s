@@ -4,9 +4,9 @@
 .syntax unified
 .arm
 .fpu vfpv4
+.p2align 4
 .globl test_ifcvt
 test_ifcvt:
-.p2align 4
 	cmp r0, #0
 	bne label9
 	sub r0, r1, #1

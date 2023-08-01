@@ -33,11 +33,11 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
   ^while.header:
     i32 %26 = phi [^entry, i32 %0] [^entry1, i32 %582];
     i1 %27 = icmp sgt i32 %26, i32 0;
-    cbr i1 %27(prob = 0.992248), ^while.header1, ^b;
+    cbr i1 %27(prob = 0.984615), ^while.header1, ^b;
   ^while.header1:
     i32 %28 = phi [^while.header, i32 0] [^b1, i32 %588];
     i1 %29 = icmp slt i32 %28, i32 5;
-    cbr i1 %29(prob = 0.992248), ^prebody, ^entry1;
+    cbr i1 %29(prob = 0.984615), ^prebody, ^entry1;
   ^b:
     ret i32 0;
   ^prebody:

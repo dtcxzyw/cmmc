@@ -5,9 +5,9 @@
 array:
 	.zero	8000
 .text
+.p2align 2
 .globl main
 main:
-.p2align 2
 	addi sp, sp, -8
 pcrel424:
 	auipc a0, %pcrel_hi(array)

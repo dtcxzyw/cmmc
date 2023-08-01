@@ -9,9 +9,9 @@ g0:
 g1:
 	.4byte	0
 .text
+.p2align 2
 .globl test1
 test1:
-.p2align 2
 	lui $t1, %hi(g0)
 	addiu $t0, $t1, %lo(g0)
 	lw $t2, %lo(g0)($t1)

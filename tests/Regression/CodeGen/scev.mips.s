@@ -1,8 +1,8 @@
 .data
 .text
+.p2align 2
 .globl foo4
 foo4:
-.p2align 2
 	blez $a1, label9
 	nop
 	addiu $t2, $a1, -8
@@ -10,7 +10,6 @@ foo4:
 	nop
 	move $t1, $zero
 	move $t0, $zero
-.p2align 2
 label3:
 	sll $t3, $t1, 2
 	addu $t3, $a0, $t3

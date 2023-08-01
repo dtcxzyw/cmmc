@@ -1,12 +1,12 @@
 func @licm1(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i1 %0 = icmp sgt i32 %x, i32 0;
-    cbr i1 %0(prob = 0.992248), ^prebody, ^b;
+    cbr i1 %0(prob = 0.984615), ^prebody, ^b;
   ^prebody:
     i32 %1 = mul i32 %x, i32 %x;
     i32 %2 = mul i32 %x, i32 %1;
     i1 %3 = icmp sgt i32 %x, i32 8;
-    cbr i1 %3(prob = 0.941176), ^prebody1, ^for.body;
+    cbr i1 %3(prob = 0.888889), ^prebody1, ^for.body;
   ^b:
     i32 %4 = phi [^entry, i32 0] [^for.body, i32 %13];
     ret i32 %4;
@@ -45,7 +45,7 @@ func @licm1(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless N
     i32 %32 = add i32 %22, i32 16;
     i32 %33 = add i32 %19, i32 128;
     i32 %34 = add i32 %18, i32 448;
-    cbr i1 %31(prob = 0.941176), ^for.body1, ^for.body;
+    cbr i1 %31(prob = 0.888889), ^for.body1, ^for.body;
 }
 func @licm2(i32* %head, i32* %tail, i32 %i) -> i32 { NoRecurse } {
   ^entry:
@@ -56,7 +56,7 @@ func @licm2(i32* %head, i32* %tail, i32 %i) -> i32 { NoRecurse } {
     i32 %2 = load i32* %0;
     i32 %3 = load i32* %1;
     i1 %4 = icmp slt i32 %2, i32 %3;
-    cbr i1 %4(prob = 0.992248), ^while.body, ^b;
+    cbr i1 %4(prob = 0.984615), ^while.body, ^b;
   ^while.body:
     i32 %5 = add i32 %2, i32 1;
     store i32* %0 with i32 %5;
@@ -69,7 +69,7 @@ func @licm2(i32* %head, i32* %tail, i32 %i) -> i32 { NoRecurse } {
 func @licm3(i32 %x) -> void { NoRecurse } {
   ^entry:
     i1 %0 = icmp sgt i32 %x, i32 0;
-    cbr i1 %0(prob = 0.992248), ^prebody, ^b;
+    cbr i1 %0(prob = 0.984615), ^prebody, ^b;
   ^prebody:
     [123 * i32]* %1 = ptrcast [123 * i32]* @a to [123 * i32]*;
     i32* %2 = getelementptr &([123 * i32]* %1)[i64 0][i32 %x];
@@ -77,7 +77,7 @@ func @licm3(i32 %x) -> void { NoRecurse } {
     i32 %4 = add i32 %x, i32 -8;
     i1 %5 = icmp sgt i32 %x, i32 8;
     [123 * i32]* %6 = ptrcast [123 * i32]* @b to [123 * i32]*;
-    cbr i1 %5(prob = 0.938462), ^for.body, ^for.body1;
+    cbr i1 %5(prob = 0.888889), ^for.body, ^for.body1;
   ^b:
     ret;
   ^for.body:
@@ -100,7 +100,7 @@ func @licm3(i32 %x) -> void { NoRecurse } {
     store i32* %15 with i32 %3;
     i32 %16 = add i32 %7, i32 8;
     i1 %17 = icmp sgt i32 %4, i32 %16;
-    cbr i1 %17(prob = 0.938462), ^for.body, ^for.body1;
+    cbr i1 %17(prob = 0.888889), ^for.body, ^for.body1;
   ^for.body1 {scalar}:
     i32 %18 = phi [^prebody, i32 0] [^for.body, i32 %16] [^for.body1, i32 %20];
     i32* %19 = getelementptr &([123 * i32]* %6)[i64 0][i32 %18];
@@ -112,13 +112,13 @@ func @licm3(i32 %x) -> void { NoRecurse } {
 func @licm4(i32* %a, f32* %b, i32 %c, i32 %n) -> void { NoRecurse } {
   ^entry:
     i1 %0 = icmp sgt i32 %n, i32 0;
-    cbr i1 %0(prob = 0.992248), ^prebody, ^b1;
+    cbr i1 %0(prob = 0.984615), ^prebody, ^b1;
   ^prebody:
     f32* %1 = getelementptr &(f32* %b)[i32 %c];
     f32 %2 = load f32* %1;
     i32 %3 = add i32 %n, i32 -8;
     i1 %4 = icmp sgt i32 %n, i32 8;
-    cbr i1 %4(prob = 0.941176), ^for.body, ^for.body1;
+    cbr i1 %4(prob = 0.888889), ^for.body, ^for.body1;
   ^b1:
     ret;
   ^for.body:
@@ -173,7 +173,7 @@ func @licm4(i32* %a, f32* %b, i32 %c, i32 %n) -> void { NoRecurse } {
     store i32* %41 with i32 %45;
     i32 %46 = add i32 %5, i32 8;
     i1 %47 = icmp sgt i32 %3, i32 %46;
-    cbr i1 %47(prob = 0.941176), ^for.body, ^for.body1;
+    cbr i1 %47(prob = 0.888889), ^for.body, ^for.body1;
   ^for.body1 {scalar}:
     i32 %48 = phi [^prebody, i32 0] [^for.body, i32 %46] [^for.body1, i32 %54];
     i32* %49 = getelementptr &(i32* %a)[i32 %48];
@@ -195,7 +195,7 @@ func @licm5(i32 %i) -> i32 { NoRecurse } {
     i32* %4 = getelementptr &([123 * i32]* %3)[i64 0][i32 %i];
     i32 %5 = load i32* %4;
     i1 %6 = icmp slt i32 %2, i32 %5;
-    cbr i1 %6(prob = 0.992248), ^while.body, ^b;
+    cbr i1 %6(prob = 0.984615), ^while.body, ^b;
   ^while.body:
     store i32* %1 with i32 %5;
     ubr ^b;

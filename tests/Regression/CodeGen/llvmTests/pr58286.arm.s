@@ -9,11 +9,11 @@ var:
 .syntax unified
 .arm
 .fpu vfpv4
+.p2align 4
 .globl func
 func:
-.p2align 4
 	bx lr
+.p2align 4
 .globl shrink_wrap
 shrink_wrap:
-.p2align 4
 	bx lr

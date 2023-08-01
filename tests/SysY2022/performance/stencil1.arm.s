@@ -11,9 +11,9 @@ image_out:
 .syntax unified
 .arm
 .fpu vfpv4
+.p2align 4
 .globl main
 main:
-.p2align 4
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
 	movw r4, #:lower16:image_in
 	sub sp, sp, #12

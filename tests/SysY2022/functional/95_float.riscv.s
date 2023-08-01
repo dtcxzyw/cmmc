@@ -5,9 +5,9 @@
 __cmmc_fp_constant_pool:
 	.4byte	1078530011
 .text
+.p2align 2
 .globl main
 main:
-.p2align 2
 	addi sp, sp, -88
 	li a0, 111
 	sd ra, 0(sp)

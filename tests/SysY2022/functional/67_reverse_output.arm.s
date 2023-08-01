@@ -4,8 +4,8 @@
 .syntax unified
 .arm
 .fpu vfpv4
-reverse:
 .p2align 4
+reverse:
 	push { r4, r5, lr }
 	cmp r0, #2
 	mov r4, r0
@@ -24,9 +24,9 @@ label4:
 	mov r0, r5
 	bl putint
 	b label3
+.p2align 4
 .globl main
 main:
-.p2align 4
 	push { lr }
 	mov r0, #200
 	sub sp, sp, #4

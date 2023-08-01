@@ -15,8 +15,8 @@ __cmmc_fp_constant_pool:
 	.4byte	1058642330
 	.4byte	1028443341
 .text
-my_sin_impl:
 .p2align 2
+my_sin_impl:
 	addi sp, sp, -16
 	fabs.s f11, f10
 pcrel54:
@@ -74,9 +74,9 @@ label7:
 	fmul.s f12, f10, f13
 	fsub.s f10, f12, f11
 	j label2
+.p2align 2
 .globl main
 main:
-.p2align 2
 	addi sp, sp, -40
 	li a0, 80
 	sd ra, 0(sp)

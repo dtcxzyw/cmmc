@@ -1,8 +1,8 @@
 .data
 .text
+.p2align 2
 .globl PR32316
 PR32316:
-.p2align 2
 	andi $t0, $a0, 255
 	sltiu $t0, $t0, 1
 	sltu $t0, $a1, $t0

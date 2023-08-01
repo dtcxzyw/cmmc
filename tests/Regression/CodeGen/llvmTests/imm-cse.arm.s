@@ -13,9 +13,9 @@ dst:
 .syntax unified
 .arm
 .fpu vfpv4
+.p2align 4
 .globl imm32_cse
 imm32_cse:
-.p2align 4
 	movw r0, #:lower16:src
 	movw r1, #4099
 	movt r0, #:upper16:src

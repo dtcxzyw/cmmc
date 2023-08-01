@@ -14,9 +14,9 @@ c:
 .syntax unified
 .arm
 .fpu vfpv4
+.p2align 4
 .globl main
 main:
-.p2align 4
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
 	movw r4, #:lower16:c
 	movw r7, #:lower16:b
@@ -37,13 +37,19 @@ label2:
 	mla r0, r4, r0, r1
 	bl getarray
 	cmp r0, #1000
-	beq label5
+	bne label6
+	add r4, r4, #1
+	b label2
 label6:
 	add sp, sp, #20
 	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
-label5:
-	add r4, r4, #1
-	b label2
+label29:
+	mov r0, #92
+	bl _sysy_stoptime
+	mov r0, r5
+	bl putint
+	mov r0, #0
+	b label6
 label8:
 	mov r0, #23
 	bl _sysy_starttime
@@ -539,20 +545,20 @@ label45:
 	str r1, [r2, #156]
 	b label9
 label67:
-	mov r3, #0
+	mov r2, #0
 label11:
 	mov r0, #4000
 	ldr r4, [sp, #8]
-	cmp r3, #1000
+	cmp r2, #1000
 	ldr r1, [sp, #4]
-	mla r2, r3, r0, r4
-	mla r1, r3, r0, r1
+	mla r3, r2, r0, r4
+	mla r1, r2, r0, r1
 	bge label75
 	mov r0, #0
 	cmp r0, #1000
 	blt label905
 label904:
-	add r3, r3, #1
+	add r2, r2, #1
 	b label11
 .p2align 4
 label905:
@@ -562,48 +568,48 @@ label905:
 label40:
 	mov r6, #4000
 	ldr r7, [sp, #0]
-	mla r6, r4, r6, r7
-	add r7, r1, r4, lsl #2
+	mla r7, r4, r6, r7
+	add r6, r1, r4, lsl #2
 	add r4, r4, #8
-	ldr r8, [r7, #0]
+	ldr r8, [r6, #0]
 	cmp r4, #1000
-	add r11, r6, #4000
-	ldr r9, [r6, r0, lsl #2]
-	ldr r10, [r7, #4]
-	ldr r11, [r11, r0, lsl #2]
-	mul r10, r10, r11
+	add r10, r7, #4000
+	ldr r9, [r7, r0, lsl #2]
+	ldr r11, [r6, #4]
+	ldr r10, [r10, r0, lsl #2]
+	mul r10, r11, r10
 	mla r8, r8, r9, r10
-	ldr r10, [r7, #8]
-	add r9, r6, #8000
+	ldr r10, [r6, #8]
+	add r9, r7, #8000
 	ldr r9, [r9, r0, lsl #2]
 	mla r8, r10, r9, r8
+	ldr r10, [r6, #12]
 	movw r9, #12000
-	add r10, r6, r9
-	ldr r9, [r7, #12]
-	ldr r10, [r10, r0, lsl #2]
-	mla r8, r9, r10, r8
-	ldr r9, [r7, #16]
-	add r10, r6, #16000
-	ldr r10, [r10, r0, lsl #2]
-	mla r8, r9, r10, r8
-	ldr r10, [r7, #20]
+	add r9, r7, r9
+	ldr r9, [r9, r0, lsl #2]
+	mla r8, r10, r9, r8
+	ldr r10, [r6, #16]
+	add r9, r7, #16000
+	ldr r9, [r9, r0, lsl #2]
+	mla r8, r10, r9, r8
+	ldr r10, [r6, #20]
 	movw r9, #20000
-	add r9, r6, r9
+	add r9, r7, r9
 	ldr r9, [r9, r0, lsl #2]
 	mla r8, r10, r9, r8
-	ldr r10, [r7, #24]
 	movw r9, #24000
-	add r9, r6, r9
-	ldr r9, [r9, r0, lsl #2]
-	ldr r7, [r7, #28]
-	mla r8, r10, r9, r8
+	add r10, r7, r9
+	ldr r9, [r6, #24]
+	ldr r10, [r10, r0, lsl #2]
+	ldr r6, [r6, #28]
+	mla r8, r9, r10, r8
 	movw r9, #28000
-	add r6, r6, r9
-	ldr r6, [r6, r0, lsl #2]
-	mla r6, r7, r6, r8
+	add r7, r7, r9
+	ldr r7, [r7, r0, lsl #2]
+	mla r6, r6, r7, r8
 	add r5, r5, r6
 	blt label40
-	str r5, [r2, r0, lsl #2]
+	str r5, [r3, r0, lsl #2]
 	add r0, r0, #1
 	cmp r0, #1000
 	blt label905
@@ -1066,45 +1072,45 @@ label15:
 label18:
 	mov r3, #4000
 	ldr r4, [sp, #8]
-	mla r3, r2, r3, r4
-	ldr r4, [r3, r0, lsl #2]
-	rsb r5, r4, #0
-	add r4, r1, r2, lsl #2
+	mla r4, r2, r3, r4
+	ldr r3, [r4, r0, lsl #2]
+	rsb r5, r3, #0
+	add r3, r1, r2, lsl #2
 	add r2, r2, #8
-	str r5, [r4, #0]
+	str r5, [r3, #0]
 	cmp r2, #1000
-	add r5, r3, #4000
+	add r5, r4, #4000
 	ldr r5, [r5, r0, lsl #2]
 	rsb r5, r5, #0
-	str r5, [r4, #4]
-	add r5, r3, #8000
+	str r5, [r3, #4]
+	add r5, r4, #8000
 	ldr r5, [r5, r0, lsl #2]
 	rsb r5, r5, #0
-	str r5, [r4, #8]
+	str r5, [r3, #8]
 	movw r5, #12000
-	add r5, r3, r5
+	add r5, r4, r5
 	ldr r5, [r5, r0, lsl #2]
 	rsb r5, r5, #0
-	str r5, [r4, #12]
-	add r5, r3, #16000
+	str r5, [r3, #12]
+	add r5, r4, #16000
 	ldr r5, [r5, r0, lsl #2]
 	rsb r5, r5, #0
-	str r5, [r4, #16]
+	str r5, [r3, #16]
 	movw r5, #20000
-	add r5, r3, r5
+	add r5, r4, r5
 	ldr r5, [r5, r0, lsl #2]
 	rsb r5, r5, #0
-	str r5, [r4, #20]
+	str r5, [r3, #20]
 	movw r5, #24000
-	add r5, r3, r5
+	add r5, r4, r5
 	ldr r5, [r5, r0, lsl #2]
 	rsb r5, r5, #0
-	str r5, [r4, #24]
+	str r5, [r3, #24]
 	movw r5, #28000
-	add r3, r3, r5
-	ldr r3, [r3, r0, lsl #2]
-	rsb r3, r3, #0
-	str r3, [r4, #28]
+	add r4, r4, r5
+	ldr r4, [r4, r0, lsl #2]
+	rsb r4, r4, #0
+	str r4, [r3, #28]
 	blt label18
 	add r0, r0, #1
 	b label15
@@ -1119,6 +1125,91 @@ label21:
 	mov r3, #0
 	mla r2, r1, r0, r4
 	mov r4, r5
+	b label25
+label28:
+	add r2, r2, r3, lsl #2
+	add r1, r1, #1
+	ldr r3, [r2, #0]
+	add r0, r0, r3
+	ldr r3, [r2, #4]
+	add r0, r0, r3
+	ldr r3, [r2, #8]
+	add r0, r0, r3
+	ldr r3, [r2, #12]
+	add r0, r0, r3
+	ldr r3, [r2, #16]
+	add r0, r0, r3
+	ldr r3, [r2, #20]
+	add r0, r0, r3
+	ldr r3, [r2, #24]
+	add r0, r0, r3
+	ldr r3, [r2, #28]
+	add r0, r0, r3
+	ldr r3, [r2, #32]
+	add r0, r0, r3
+	ldr r3, [r2, #36]
+	add r0, r0, r3
+	ldr r3, [r2, #40]
+	add r0, r0, r3
+	ldr r3, [r2, #44]
+	add r0, r0, r3
+	ldr r3, [r2, #48]
+	add r0, r0, r3
+	ldr r3, [r2, #52]
+	add r0, r0, r3
+	ldr r3, [r2, #56]
+	add r0, r0, r3
+	ldr r3, [r2, #60]
+	add r0, r0, r3
+	ldr r3, [r2, #64]
+	add r0, r0, r3
+	ldr r3, [r2, #68]
+	add r0, r0, r3
+	ldr r3, [r2, #72]
+	add r0, r0, r3
+	ldr r3, [r2, #76]
+	add r0, r0, r3
+	ldr r3, [r2, #80]
+	add r0, r0, r3
+	ldr r3, [r2, #84]
+	add r0, r0, r3
+	ldr r3, [r2, #88]
+	add r0, r0, r3
+	ldr r3, [r2, #92]
+	add r0, r0, r3
+	ldr r3, [r2, #96]
+	add r0, r0, r3
+	ldr r3, [r2, #100]
+	add r0, r0, r3
+	ldr r3, [r2, #104]
+	add r0, r0, r3
+	ldr r3, [r2, #108]
+	add r0, r0, r3
+	ldr r3, [r2, #112]
+	add r0, r0, r3
+	ldr r3, [r2, #116]
+	add r0, r0, r3
+	ldr r3, [r2, #120]
+	add r0, r0, r3
+	ldr r3, [r2, #124]
+	add r0, r0, r3
+	ldr r3, [r2, #128]
+	add r0, r0, r3
+	ldr r3, [r2, #132]
+	add r0, r0, r3
+	ldr r3, [r2, #136]
+	add r0, r0, r3
+	ldr r3, [r2, #140]
+	add r0, r0, r3
+	ldr r3, [r2, #144]
+	add r0, r0, r3
+	ldr r3, [r2, #148]
+	add r0, r0, r3
+	ldr r3, [r2, #152]
+	ldr r2, [r2, #156]
+	add r0, r0, r3
+	add r5, r0, r2
+	b label21
 .p2align 4
 label25:
 	add r0, r2, r3, lsl #2
@@ -1251,95 +1342,7 @@ label25:
 	ldr r5, [r0, #248]
 	ldr r0, [r0, #252]
 	add r4, r4, r5
-	add r4, r4, r0
-	blt label25
-	add r0, r2, r3, lsl #2
-	add r1, r1, #1
-	ldr r2, [r0, #0]
-	ldr r3, [r0, #4]
-	add r2, r4, r2
-	add r2, r2, r3
-	ldr r3, [r0, #8]
-	add r2, r2, r3
-	ldr r3, [r0, #12]
-	add r2, r2, r3
-	ldr r3, [r0, #16]
-	add r2, r2, r3
-	ldr r3, [r0, #20]
-	add r2, r2, r3
-	ldr r3, [r0, #24]
-	add r2, r2, r3
-	ldr r3, [r0, #28]
-	add r2, r2, r3
-	ldr r3, [r0, #32]
-	add r2, r2, r3
-	ldr r3, [r0, #36]
-	add r2, r2, r3
-	ldr r3, [r0, #40]
-	add r2, r2, r3
-	ldr r3, [r0, #44]
-	add r2, r2, r3
-	ldr r3, [r0, #48]
-	add r2, r2, r3
-	ldr r3, [r0, #52]
-	add r2, r2, r3
-	ldr r3, [r0, #56]
-	add r2, r2, r3
-	ldr r3, [r0, #60]
-	add r2, r2, r3
-	ldr r3, [r0, #64]
-	add r2, r2, r3
-	ldr r3, [r0, #68]
-	add r2, r2, r3
-	ldr r3, [r0, #72]
-	add r2, r2, r3
-	ldr r3, [r0, #76]
-	add r2, r2, r3
-	ldr r3, [r0, #80]
-	add r2, r2, r3
-	ldr r3, [r0, #84]
-	add r2, r2, r3
-	ldr r3, [r0, #88]
-	add r2, r2, r3
-	ldr r3, [r0, #92]
-	add r2, r2, r3
-	ldr r3, [r0, #96]
-	add r2, r2, r3
-	ldr r3, [r0, #100]
-	add r2, r2, r3
-	ldr r3, [r0, #104]
-	add r2, r2, r3
-	ldr r3, [r0, #108]
-	add r2, r2, r3
-	ldr r3, [r0, #112]
-	add r2, r2, r3
-	ldr r3, [r0, #116]
-	add r2, r2, r3
-	ldr r3, [r0, #120]
-	add r2, r2, r3
-	ldr r3, [r0, #124]
-	add r2, r2, r3
-	ldr r3, [r0, #128]
-	add r2, r2, r3
-	ldr r3, [r0, #132]
-	add r2, r2, r3
-	ldr r3, [r0, #136]
-	add r2, r2, r3
-	ldr r3, [r0, #140]
-	add r2, r2, r3
-	ldr r3, [r0, #144]
-	add r2, r2, r3
-	ldr r3, [r0, #148]
-	add r2, r2, r3
-	ldr r3, [r0, #152]
-	ldr r0, [r0, #156]
-	add r2, r2, r3
-	add r5, r2, r0
-	b label21
-label29:
-	mov r0, #92
-	bl _sysy_stoptime
-	mov r0, r5
-	bl putint
-	mov r0, #0
-	b label6
+	add r0, r4, r0
+	bge label28
+	mov r4, r0
+	b label25

@@ -3,11 +3,11 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
   ^entry:
     i32 %0 = call () -> i32 @getint();
     i1 %1 = icmp sgt i32 %0, i32 0;
-    cbr i1 %1(prob = 0.992248), ^super.header, ^b;
+    cbr i1 %1(prob = 0.984615), ^super.header, ^b;
   ^super.header:
     i32 %2 = add i32 %0, i32 -8;
     i1 %3 = icmp sgt i32 %0, i32 8;
-    cbr i1 %3(prob = 0.941176), ^for.body, ^for.body1;
+    cbr i1 %3(prob = 0.888889), ^for.body, ^for.body1;
   ^b:
     i32 %4 = phi [^entry, i32 1149590] [^for.body1, i32 %17];
     ret i32 %4;
@@ -20,7 +20,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
     i32 %10 = add i32 %7, i32 8;
     i1 %11 = icmp sgt i32 %2, i32 %10;
     i32 %12 = add i32 %5, i32 64;
-    cbr i1 %11(prob = 0.941176), ^for.body, ^for.body1;
+    cbr i1 %11(prob = 0.888889), ^for.body, ^for.body1;
   ^for.body1 {scalar}:
     i32 %13 = phi [^super.header, i32 0] [^for.body, i32 %10] [^for.body1, i32 %15];
     i32 %14 = phi [^super.header, i32 1149590] [^for.body, i32 %9] [^for.body1, i32 %17];

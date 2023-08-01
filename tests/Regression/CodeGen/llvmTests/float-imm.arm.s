@@ -4,16 +4,16 @@
 .syntax unified
 .arm
 .fpu vfpv4
+.p2align 4
 .globl float_imm
 float_imm:
-.p2align 4
 	movw r0, #4059
 	movt r0, #16457
 	vmov s0, r0
 	bx lr
+.p2align 4
 .globl float_imm_op
 float_imm_op:
-.p2align 4
 	mov r0, #1065353216
 	vmov s1, r0
 	vadd.f32 s0, s0, s1

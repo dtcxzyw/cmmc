@@ -6,9 +6,9 @@
 x:
 	.zero	4
 .text
+.p2align 2
 .globl v_sf
 v_sf:
-.p2align 2
 pcrel7:
 	auipc a0, %pcrel_hi(x)
 	fsw f10, %pcrel_lo(pcrel7)(a0)

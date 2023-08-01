@@ -9,7 +9,7 @@ c:
 .syntax unified
 .arm
 .fpu vfpv4
+.p2align 4
 .globl _Z1av
 _Z1av:
-.p2align 4
 	bx lr

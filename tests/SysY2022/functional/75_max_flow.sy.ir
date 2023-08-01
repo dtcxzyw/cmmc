@@ -24,7 +24,7 @@ internal func @dfs(i32 %s, i32 %t, i32 %f, [10 * i32]* %0, [10 * i32]* %1) -> i3
     i32 %10 = phi [^b, i32 0] [^if.then, i32 %18];
     i32 %11 = load i32* %8;
     i1 %12 = icmp slt i32 %10, i32 %11;
-    cbr i1 %12(prob = 0.992248), ^while.body, ^b1;
+    cbr i1 %12(prob = 0.984615), ^while.body, ^b1;
   ^while.body:
     i32* %13 = getelementptr &([10 * i32]* %7)[i64 0][i32 %10];
     i32 %14 = load i32* %13;
@@ -73,7 +73,7 @@ internal func @dfs(i32 %s, i32 %t, i32 %f, [10 * i32]* %0, [10 * i32]* %1) -> i3
     i32 %40 = phi [^b4, i32 0] [^if.then2, i32 %48];
     i32 %41 = load i32* %27;
     i1 %42 = icmp slt i32 %40, i32 %41;
-    cbr i1 %42(prob = 0.992248), ^while.body1, ^b5;
+    cbr i1 %42(prob = 0.984615), ^while.body1, ^b5;
   ^while.body1:
     i32* %43 = getelementptr &([10 * i32]* %26)[i64 0][i32 %40];
     i32 %44 = load i32* %43;
@@ -121,7 +121,7 @@ internal func @dfs(i32 %s, i32 %t, i32 %f, [10 * i32]* %0, [10 * i32]* %1) -> i3
     i32 %69 = phi [^b8, i32 0] [^if.then4, i32 %77];
     i32 %70 = load i32* %56;
     i1 %71 = icmp slt i32 %69, i32 %70;
-    cbr i1 %71(prob = 0.992248), ^while.body2, ^b9;
+    cbr i1 %71(prob = 0.984615), ^while.body2, ^b9;
   ^while.body2:
     i32* %72 = getelementptr &([10 * i32]* %55)[i64 0][i32 %69];
     i32 %73 = load i32* %72;
@@ -169,7 +169,7 @@ internal func @dfs(i32 %s, i32 %t, i32 %f, [10 * i32]* %0, [10 * i32]* %1) -> i3
     i32 %98 = phi [^b12, i32 0] [^if.then6, i32 %106];
     i32 %99 = load i32* %85;
     i1 %100 = icmp slt i32 %98, i32 %99;
-    cbr i1 %100(prob = 0.992248), ^while.body3, ^b13;
+    cbr i1 %100(prob = 0.984615), ^while.body3, ^b13;
   ^while.body3:
     i32* %101 = getelementptr &([10 * i32]* %84)[i64 0][i32 %98];
     i32 %102 = load i32* %101;
@@ -245,7 +245,7 @@ func @main() -> i32 { NoRecurse Entry } {
     [10 * [10 * i32]]* %23 = ptrcast [10 * [10 * i32]]* @to to [10 * [10 * i32]]*;
     [10 * [10 * i32]]* %24 = ptrcast [10 * [10 * i32]]* @cap to [10 * [10 * i32]]*;
     [10 * [10 * i32]]* %25 = ptrcast [10 * [10 * i32]]* @rev to [10 * [10 * i32]]*;
-    cbr i1 %2(prob = 0.992248), ^while.body, ^while.header;
+    cbr i1 %2(prob = 0.984615), ^while.body, ^while.header;
   ^while.body:
     i32 %26 = phi [^entry, i32 %1] [^while.body, i32 %49];
     i32 %27 = call () -> i32 @getint();
@@ -280,7 +280,7 @@ func @main() -> i32 { NoRecurse Entry } {
     store i32* %38 with i32 %48;
     i32 %49 = add i32 %26, i32 -1;
     i1 %50 = icmp sgt i32 %49, i32 0;
-    cbr i1 %50(prob = 0.992248), ^while.body, ^while.header;
+    cbr i1 %50(prob = 0.984615), ^while.body, ^while.header;
   ^while.header:
     i32 %51 = phi [^entry, i32 0] [^while.body, i32 0] [^b, i32 %54];
     store i32* %13 with i32 0;

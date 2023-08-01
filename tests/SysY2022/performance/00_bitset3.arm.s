@@ -8,9 +8,9 @@ a:
 .syntax unified
 .arm
 .fpu vfpv4
+.p2align 4
 .globl main
 main:
-.p2align 4
 	push { r4, r5, r6, r7, r8, r9, lr }
 	sub sp, sp, #4
 	bl getint
@@ -87,6 +87,15 @@ label2:
 label46:
 	mov r3, r1
 	b label2
+label8:
+	mov r0, #64
+	bl _sysy_stoptime
+	mov r1, r4
+	movw r0, #10000
+	bl putarray
+	add sp, sp, #4
+	mov r0, #0
+	pop { r4, r5, r6, r7, r8, r9, pc }
 .p2align 4
 label6:
 	and r8, r7, #1
@@ -104,12 +113,4 @@ label6:
 	str r2, [r4, r3, lsl #2]
 	cmp r0, #0
 	bgt label46
-label8:
-	mov r0, #64
-	bl _sysy_stoptime
-	mov r1, r4
-	movw r0, #10000
-	bl putarray
-	add sp, sp, #4
-	mov r0, #0
-	pop { r4, r5, r6, r7, r8, r9, pc }
+	b label8

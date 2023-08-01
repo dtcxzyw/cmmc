@@ -1,8 +1,8 @@
 .data
 .text
+.p2align 2
 .globl test
 test:
-.p2align 2
 	addiu $t0, $a0, -1
 	addiu $t1, $a1, 1
 	mult $t0, $t1

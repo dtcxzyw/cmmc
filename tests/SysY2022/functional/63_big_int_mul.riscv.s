@@ -1,9 +1,9 @@
 .attribute arch, "rv64i2p1_m2p0_a2p1_f2p2_d2p2_c2p0_zicsr2p0_zifencei2p0_zba1p0_zbb1p0"
 .data
 .text
+.p2align 2
 .globl main
 main:
-.p2align 2
 	addi sp, sp, -392
 	li a3, 1
 	li a1, 2
@@ -102,15 +102,21 @@ label7:
 	addi sp, sp, 392
 	ret
 .p2align 2
+label10:
+	sh2add a5, a3, a2
+	li t0, 19
+	lw a1, 0(a5)
+	blt t0, zero, label122
+.p2align 2
 label14:
 	sh2add t2, a4, s0
 	sh2add t1, t0, a0
 	lw a5, 0(t2)
 	addiw t0, t0, -1
-	lw t2, 0(t1)
-	mulw t3, a1, t2
+	lw t3, 0(t1)
+	mulw t2, a1, t3
+	addw t1, a5, t2
 	li t2, 9
-	addw t1, a5, t3
 	addiw a5, a4, -1
 	bgt t1, t2, label16
 	sh2add t2, a4, s0
@@ -135,14 +141,8 @@ label16:
 	bge t0, zero, label14
 	addiw a4, a5, 19
 	addiw a3, a3, -1
-	blt a3, zero, label5
-.p2align 2
-label10:
-	sh2add a5, a3, a2
-	li t0, 19
-	lw a1, 0(a5)
-	bge t0, zero, label14
-	j label122
+	bge a3, zero, label10
+	j label5
 .p2align 2
 label207:
 	addiw a4, a4, 19

@@ -6,7 +6,7 @@
 var:
 	.4byte	0
 .text
+.p2align 2
 .globl fn
 fn:
-.p2align 2
 	ret

@@ -4,8 +4,8 @@
 .syntax unified
 .arm
 .fpu vfpv4
-fib:
 .p2align 4
+fib:
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
 	cmp r0, #3
 	mov r4, r0
@@ -824,9 +824,9 @@ label4:
 	bic r0, r2, r0
 	add r0, r0, r1, lsl #1
 	b label2
+.p2align 4
 .globl main
 main:
-.p2align 4
 	push { r4, r5, lr }
 	mov r4, #1
 	sub sp, sp, #4

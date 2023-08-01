@@ -4,12 +4,12 @@
 .syntax unified
 .arm
 .fpu vfpv4
+.p2align 4
 .globl testStackProbesOff
 testStackProbesOff:
-.p2align 4
 	mov r0, #0
 	bx lr
+.p2align 4
 .globl testStackProbesOn
 testStackProbesOn:
-.p2align 4
 	bx lr

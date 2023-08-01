@@ -1,8 +1,8 @@
 .data
 .text
+.p2align 2
 .globl hoge
 hoge:
-.p2align 2
 	li $t0, -1
 	sllv $t1, $t0, $a0
 	xor $t0, $t1, $t0

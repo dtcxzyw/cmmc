@@ -1,26 +1,26 @@
 .data
 .text
+.p2align 2
 .globl test_movb
 test_movb:
-.p2align 2
 	move $v0, $a0
 	jr $ra
 	nop
+.p2align 2
 .globl test_movb_Os
 test_movb_Os:
-.p2align 2
 	move $v0, $a0
 	jr $ra
 	nop
+.p2align 2
 .globl test_movb_Oz
 test_movb_Oz:
-.p2align 2
 	move $v0, $a0
 	jr $ra
 	nop
+.p2align 2
 .globl test_movb_hreg
 test_movb_hreg:
-.p2align 2
 	andi $t0, $a0, 65535
 	sra $t0, $t0, 8
 	andi $t0, $t0, 255
@@ -30,9 +30,9 @@ test_movb_hreg:
 	andi $v0, $t0, 255
 	jr $ra
 	nop
+.p2align 2
 .globl test_movw
 test_movw:
-.p2align 2
 	move $v0, $a0
 	jr $ra
 	nop

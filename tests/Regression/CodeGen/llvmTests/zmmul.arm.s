@@ -4,9 +4,9 @@
 .syntax unified
 .arm
 .fpu vfpv4
+.p2align 4
 .globl foo
 foo:
-.p2align 4
 	udiv r2, r0, r1
 	sdiv r2, r0, r2
 	mul r2, r1, r2

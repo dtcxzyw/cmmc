@@ -1,8 +1,8 @@
 .attribute arch, "rv64i2p1_m2p0_a2p1_f2p2_d2p2_c2p0_zicsr2p0_zifencei2p0_zba1p0_zbb1p0"
 .data
 .text
-params_f40:
 .p2align 2
+params_f40:
 	addi sp, sp, -376
 	sd ra, 256(sp)
 	fsw f26, 264(sp)
@@ -174,8 +174,8 @@ label1033:
 	mv a0, s0
 	jal params_f40
 	j label1031
-params_f40_i24:
 .p2align 2
+params_f40_i24:
 	addi sp, sp, -648
 	fmv.s f2, f15
 	sd ra, 392(sp)
@@ -459,8 +459,8 @@ label729:
 	fmv.s f15, f2
 	jal params_f40_i24
 	j label727
-params_fa40:
 .p2align 2
+params_fa40:
 	addi sp, sp, -464
 	mv t6, a5
 	sd ra, 264(sp)
@@ -744,8 +744,8 @@ label412:
 	mv a7, s2
 	jal params_fa40
 	j label410
-params_mix:
 .p2align 2
+params_mix:
 	addi sp, sp, -688
 	sd ra, 392(sp)
 	fsw f19, 400(sp)
@@ -1132,9 +1132,9 @@ label5:
 	mv a5, s1
 	jal params_mix
 	j label2
+.p2align 2
 .globl main
 main:
-.p2align 2
 	addi sp, sp, -1744
 	sd ra, 392(sp)
 	fsw f26, 400(sp)

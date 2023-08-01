@@ -1,8 +1,8 @@
 .data
 .text
+.p2align 2
 .globl t
 t:
-.p2align 2
 	li $t0, -65535
 	addu $t0, $a0, $t0
 	srl $t0, $t0, 23

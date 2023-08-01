@@ -4,9 +4,9 @@
 .syntax unified
 .arm
 .fpu vfpv4
+.p2align 4
 .globl t
 t:
-.p2align 4
 	movw r1, #1
 	movt r1, #65535
 	add r1, r0, r1

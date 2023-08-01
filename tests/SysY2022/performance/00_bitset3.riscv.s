@@ -5,9 +5,9 @@
 a:
 	.zero	40000
 .text
+.p2align 2
 .globl main
 main:
-.p2align 2
 	addi sp, sp, -32
 	sd ra, 0(sp)
 	sd s1, 8(sp)
@@ -124,9 +124,9 @@ label7:
 .p2align 2
 label133:
 	li t2, -2147483647
-	and t4, t0, t2
-	xori t3, t4, 1
-	or t0, a2, t3
+	and t3, t0, t2
+	xori t4, t3, 1
+	or t0, a2, t4
 	mv a2, t1
 	bne t0, zero, label135
 	subw a2, t1, a5

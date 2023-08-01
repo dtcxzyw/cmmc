@@ -10,9 +10,9 @@ x:
 y:
 	.4byte	0
 .text
+.p2align 2
 .globl f1
 f1:
-.p2align 2
 pcrel12:
 	auipc a2, %pcrel_hi(x)
 	sw a0, %pcrel_lo(pcrel12)(a2)

@@ -1,8 +1,8 @@
 .data
 .text
+.p2align 2
 .globl ilpsched
 ilpsched:
-.p2align 2
 	mtc1 $a2, $f4
 	mtc1 $a3, $f6
 	lwc1 $f8, 16($sp)

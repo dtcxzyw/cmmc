@@ -17,17 +17,17 @@ c:
 .syntax unified
 .arm
 .fpu vfpv4
+.p2align 4
 .globl fn1
 fn1:
-.p2align 4
 	cmp r1, #0
 	mov r1, #0
 	movne r1, r0
 	mov r0, r1
 	bx lr
+.p2align 4
 .globl fn2
 fn2:
-.p2align 4
 	movw r0, #:lower16:b
 	movt r0, #:upper16:b
 	ldr r1, [r0, #0]

@@ -14,8 +14,8 @@ right_child:
 .syntax unified
 .arm
 .fpu vfpv4
-insert:
 .p2align 4
+insert:
 	push { r4, r5, r6, r7, lr }
 	movw r5, #:lower16:right_child
 	movw r3, #:lower16:left_child
@@ -68,8 +68,8 @@ label5:
 	mov r0, r4
 	str r7, [r6, r4, lsl #2]
 	b label6
-delete:
 .p2align 4
+delete:
 	push { r4, r5, r6, r7, r8, lr }
 	cmn r0, #1
 	mov r4, r0
@@ -304,8 +304,8 @@ label298:
 label234:
 	mov r0, r7
 	b label94
-inorder:
 .p2align 4
+inorder:
 	push { r4, lr }
 	cmn r0, #1
 	beq label549
@@ -328,9 +328,9 @@ label547:
 	bne label547
 label549:
 	pop { r4, pc }
+.p2align 4
 .globl main
 main:
-.p2align 4
 	push { r4, r5, r6, lr }
 	sub sp, sp, #8
 	mov r4, sp

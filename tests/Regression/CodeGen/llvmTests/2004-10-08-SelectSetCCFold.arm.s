@@ -4,9 +4,9 @@
 .syntax unified
 .arm
 .fpu vfpv4
+.p2align 4
 .globl test
 test:
-.p2align 4
 	cmp r0, #0
 	beq label10
 	mov r0, r1

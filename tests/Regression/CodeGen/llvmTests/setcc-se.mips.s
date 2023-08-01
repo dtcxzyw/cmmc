@@ -5,21 +5,21 @@
 g1:
 	.zero	4
 .text
+.p2align 2
 .globl seteq0
 seteq0:
-.p2align 2
 	sltiu $v0, $a0, 1
 	jr $ra
 	nop
+.p2align 2
 .globl setne0
 setne0:
-.p2align 2
 	sltu $v0, $zero, $a0
 	jr $ra
 	nop
+.p2align 2
 .globl slti_beq0
 slti_beq0:
-.p2align 2
 	li $t0, 32768
 	addu $t0, $a0, $t0
 	bgez $t0, label13
@@ -29,9 +29,9 @@ slti_beq0:
 label13:
 	jr $ra
 	nop
+.p2align 2
 .globl slti_beq1
 slti_beq1:
-.p2align 2
 	li $t0, 32769
 	addu $t0, $a0, $t0
 	bgez $t0, label29
@@ -41,9 +41,9 @@ slti_beq1:
 label29:
 	jr $ra
 	nop
+.p2align 2
 .globl slti_beq2
 slti_beq2:
-.p2align 2
 	addiu $t0, $a0, -32767
 	bgez $t0, label46
 	nop
@@ -52,9 +52,9 @@ slti_beq2:
 label46:
 	jr $ra
 	nop
+.p2align 2
 .globl slti_beq3
 slti_beq3:
-.p2align 2
 	addiu $t0, $a0, -32768
 	bgez $t0, label61
 	nop
@@ -63,9 +63,9 @@ slti_beq3:
 label61:
 	jr $ra
 	nop
+.p2align 2
 .globl sltiu_beq0
 sltiu_beq0:
-.p2align 2
 	sltiu $t0, $a0, 32767
 	beq $t0, $zero, label77
 	nop
@@ -74,9 +74,9 @@ sltiu_beq0:
 label77:
 	jr $ra
 	nop
+.p2align 2
 .globl sltiu_beq1
 sltiu_beq1:
-.p2align 2
 	li $t0, 32768
 	sltu $t0, $a0, $t0
 	beq $t0, $zero, label90
@@ -86,9 +86,9 @@ sltiu_beq1:
 label90:
 	jr $ra
 	nop
+.p2align 2
 .globl sltiu_beq2
 sltiu_beq2:
-.p2align 2
 	sltiu $t0, $a0, -32768
 	beq $t0, $zero, label104
 	nop
@@ -97,9 +97,9 @@ sltiu_beq2:
 label104:
 	jr $ra
 	nop
+.p2align 2
 .globl sltiu_beq3
 sltiu_beq3:
-.p2align 2
 	li $t0, -32769
 	sltu $t0, $a0, $t0
 	beq $t0, $zero, label117

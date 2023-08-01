@@ -1,69 +1,69 @@
 .attribute arch, "rv64i2p1_m2p0_a2p1_f2p2_d2p2_c2p0_zicsr2p0_zifencei2p0_zba1p0_zbb1p0"
 .data
 .text
+.p2align 2
 .globl test1
 test1:
-.p2align 2
 	fadd.s f11, f10, f10
 	fadd.s f10, f11, f11
 	ret
+.p2align 2
 .globl test10
 test10:
-.p2align 2
 	fneg.s f11, f10
 	fadd.s f10, f10, f11
 	ret
+.p2align 2
 .globl test2
 test2:
-.p2align 2
 	lui a0, 264192
 	fadd.s f13, f10, f10
 	fmv.w.x f12, a0
 	fmul.s f11, f10, f12
 	fadd.s f10, f11, f13
 	ret
+.p2align 2
 .globl test3
 test3:
-.p2align 2
 	lui a0, 264192
 	fadd.s f13, f10, f10
 	fmv.w.x f12, a0
 	fmul.s f11, f10, f12
 	fadd.s f10, f11, f13
 	ret
+.p2align 2
 .globl test4
 test4:
-.p2align 2
 	fadd.s f11, f10, f10
 	lui a0, 264192
 	fmv.w.x f12, a0
 	fmul.s f13, f10, f12
 	fadd.s f10, f11, f13
 	ret
+.p2align 2
 .globl test5
 test5:
-.p2align 2
 	fadd.s f11, f10, f10
 	lui a0, 264192
 	fmv.w.x f12, a0
 	fmul.s f13, f10, f12
 	fadd.s f10, f11, f13
 	ret
+.p2align 2
 .globl test6
 test6:
-.p2align 2
 	fmv.w.x f10, zero
 	ret
+.p2align 2
 .globl test7
 test7:
-.p2align 2
 	fmv.w.x f10, zero
 	ret
+.p2align 2
 .globl test8
 test8:
-.p2align 2
 	ret
+.p2align 2
 .globl test9
 test9:
-.p2align 2
 	ret

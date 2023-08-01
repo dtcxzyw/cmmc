@@ -14,9 +14,9 @@ y:
 z:
 	.zero	4
 .text
+.p2align 2
 .globl main
 main:
-.p2align 2
 	li a0, 1
 pcrel17:
 	auipc a1, %pcrel_hi(x)

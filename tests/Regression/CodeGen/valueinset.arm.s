@@ -4,9 +4,9 @@
 .syntax unified
 .arm
 .fpu vfpv4
+.p2align 4
 .globl basic_3
 basic_3:
-.p2align 4
 	cmp r0, #0
 	mov r1, #0
 	mov r2, #0
@@ -19,9 +19,9 @@ basic_3:
 	movwne r0, #1
 	and r0, r1, r0
 	bx lr
+.p2align 4
 .globl basic_5
 basic_5:
-.p2align 4
 	mov r1, #1
 	cmp r0, #0
 	lsl r1, r1, r0
@@ -33,9 +33,9 @@ basic_5:
 	mov r0, r1
 	orrgt r0, r1, #1
 	bx lr
+.p2align 4
 .globl cross_64_with_9
 cross_64_with_9:
-.p2align 4
 	push { r4 }
 	subs r2, r0, #35
 	mov r1, #1
@@ -59,9 +59,9 @@ cross_64_with_9:
 	orrgt r0, r1, #1
 	pop { r4 }
 	bx lr
+.p2align 4
 .globl cross_32_with_5
 cross_32_with_5:
-.p2align 4
 	subs r1, r0, #35
 	mov r2, #1
 	lsl r1, r2, r1
@@ -74,9 +74,9 @@ cross_32_with_5:
 	mov r0, r1
 	orrgt r0, r1, #1
 	bx lr
+.p2align 4
 .globl negative_5
 negative_5:
-.p2align 4
 	adds r1, r0, #7
 	mov r2, #1
 	lsl r1, r2, r1

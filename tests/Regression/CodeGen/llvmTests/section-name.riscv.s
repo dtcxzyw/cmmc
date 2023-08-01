@@ -1,15 +1,15 @@
 .attribute arch, "rv64i2p1_m2p0_a2p1_f2p2_d2p2_c2p0_zicsr2p0_zifencei2p0_zba1p0_zbb1p0"
 .data
 .text
+.p2align 2
 .globl test1
 test1:
-.p2align 2
 	ret
+.p2align 2
 .globl test2
 test2:
-.p2align 2
 	ret
+.p2align 2
 .globl test3
 test3:
-.p2align 2
 	ret

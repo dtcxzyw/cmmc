@@ -8,9 +8,9 @@ sheet1:
 sheet2:
 	.zero	1000000
 .text
+.p2align 2
 .globl main
 main:
-.p2align 2
 	addi sp, sp, -64
 	sd ra, 0(sp)
 	sd s0, 8(sp)
@@ -89,20 +89,8 @@ label144:
 	li a2, 1
 	j label29
 label22:
-	blt s1, s4, label24
-.p2align 2
-label25:
-	li a1, 2000
-	mul a0, s4, a1
-	add s3, s2, a0
-	ble s0, zero, label26
-	li s5, 1
-	sh2add a1, s5, s3
-	li a2, 1
-	lw a0, 0(a1)
-	li a1, 35
-	beq a0, a2, label223
-	j label237
+	bge s1, s4, label25
+	j label24
 label29:
 	blt s1, a2, label143
 .p2align 2
@@ -124,6 +112,13 @@ label32:
 	addiw a2, a2, 1
 	bge s1, a2, label31
 	j label143
+.p2align 2
+label25:
+	li a1, 2000
+	mul a0, s4, a1
+	add s3, s2, a0
+	bgt s0, zero, label153
+	j label26
 .p2align 2
 label237:
 	li a1, 46
@@ -253,6 +248,15 @@ label24:
 label66:
 	li s4, 1
 	j label20
+.p2align 2
+label153:
+	li s5, 1
+	sh2add a1, s5, s3
+	li a2, 1
+	lw a0, 0(a1)
+	li a1, 35
+	beq a0, a2, label223
+	j label237
 label174:
 	addiw a2, a2, 1
 	j label29

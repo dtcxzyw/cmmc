@@ -15,9 +15,9 @@ b:
 	.byte	0
 	.byte	0
 .text
+.p2align 2
 .globl signed_i8
 signed_i8:
-.p2align 2
 	lui $t0, %hi(x)
 	lw $t0, %lo(x)($t0)
 	xori $t0, $t0, 42
@@ -25,18 +25,18 @@ signed_i8:
 	andi $v0, $t0, 255
 	jr $ra
 	nop
+.p2align 2
 .globl unsigned_i1
 unsigned_i1:
-.p2align 2
 	lui $t0, %hi(x)
 	lw $t0, %lo(x)($t0)
 	xori $t0, $t0, 42
 	sltiu $v0, $t0, 1
 	jr $ra
 	nop
+.p2align 2
 .globl unsigned_i16
 unsigned_i16:
-.p2align 2
 	lui $t0, %hi(b)
 	lh $t0, %lo(b)($t0)
 	andi $t0, $t0, 65535
@@ -47,9 +47,9 @@ unsigned_i16:
 	andi $v0, $t0, 65535
 	jr $ra
 	nop
+.p2align 2
 .globl unsigned_i8
 unsigned_i8:
-.p2align 2
 	lui $t0, %hi(x)
 	lw $t0, %lo(x)($t0)
 	xori $t0, $t0, 42
@@ -57,18 +57,18 @@ unsigned_i8:
 	andi $v0, $t0, 255
 	jr $ra
 	nop
+.p2align 2
 .globl use_i1
 use_i1:
-.p2align 2
 	lui $t0, %hi(x)
 	lw $t0, %lo(x)($t0)
 	xori $t0, $t0, 42
 	sltiu $v0, $t0, 1
 	jr $ra
 	nop
+.p2align 2
 .globl use_i16
 use_i16:
-.p2align 2
 	lui $t0, %hi(b)
 	lh $t0, %lo(b)($t0)
 	andi $t0, $t0, 65535
@@ -79,9 +79,9 @@ use_i16:
 	andi $v0, $t0, 65535
 	jr $ra
 	nop
+.p2align 2
 .globl use_i8
 use_i8:
-.p2align 2
 	lui $t0, %hi(x)
 	lw $t0, %lo(x)($t0)
 	xori $t0, $t0, 42

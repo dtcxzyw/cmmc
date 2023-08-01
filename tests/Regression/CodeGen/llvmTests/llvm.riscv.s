@@ -10,9 +10,9 @@ i:
 j:
 	.4byte	0
 .text
+.p2align 2
 .globl main
 main:
-.p2align 2
 pcrel18:
 	auipc a2, %pcrel_hi(i)
 	li a0, 10

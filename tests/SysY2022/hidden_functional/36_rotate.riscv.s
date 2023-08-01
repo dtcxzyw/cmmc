@@ -14,8 +14,8 @@ __cmmc_fp_constant_pool:
 image:
 	.zero	4194304
 .text
-my_sin_impl:
 .p2align 2
+my_sin_impl:
 	addi sp, sp, -16
 	fabs.s f11, f10
 pcrel54:
@@ -73,9 +73,9 @@ label7:
 	fmul.s f12, f10, f13
 	fsub.s f10, f12, f11
 	j label2
+.p2align 2
 .globl main
 main:
-.p2align 2
 	addi sp, sp, -104
 	sd ra, 0(sp)
 	fsw f20, 8(sp)
@@ -165,7 +165,6 @@ label64:
 	fmv.s f12, f11
 	bne a1, zero, label241
 	j label240
-.p2align 2
 label75:
 	ble s0, zero, label76
 	mulw s5, s0, s6
@@ -245,7 +244,6 @@ label251:
 	jal putch
 	mv s5, zero
 	ble s3, zero, label165
-.p2align 2
 label67:
 	subw a0, s5, s4
 	fcvt.s.w f10, a0
@@ -254,7 +252,6 @@ label67:
 	ble s0, zero, label68
 	mv s6, zero
 	j label69
-.p2align 2
 label68:
 	li a0, 10
 	jal putch
@@ -299,10 +296,10 @@ label191:
 	sh2add a3, a1, s1
 	lw a0, 0(a3)
 	j label73
-label165:
-	mv a0, zero
-	j label57
 label76:
 	addiw s6, s6, 1
 	bgt s3, s6, label75
 	j label64
+label165:
+	mv a0, zero
+	j label57

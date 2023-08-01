@@ -4,8 +4,8 @@
 .syntax unified
 .arm
 .fpu vfpv4
-params_f40:
 .p2align 4
+params_f40:
 	push { r4, r5, lr }
 	vpush { s16, s17, s18, s19, s20, s21, s22, s23, s24, s25, s26, s27, s28, s29, s30, s31 }
 	vadd.f32 s0, s0, s1
@@ -159,8 +159,8 @@ label1030:
 	mov r0, r4
 	bl params_f40
 	b label1028
-params_f40_i24:
 .p2align 4
+params_f40_i24:
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
 	vpush { s16, s17, s18, s19, s20, s21, s22, s23, s24, s25, s26, s27, s28, s29, s30 }
 	mov r6, r2
@@ -454,8 +454,8 @@ label726:
 	mov r2, r6
 	bl params_f40_i24
 	b label724
-params_fa40:
 .p2align 4
+params_fa40:
 	push { r4, r5, r6, r7, r8, r9, r10, lr }
 	sub sp, sp, #208
 	mov r8, r0
@@ -730,8 +730,8 @@ label418:
 	mov r3, r8
 	bl params_fa40
 	b label416
-params_mix:
 .p2align 4
+params_mix:
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
 	vpush { s16, s17, s18, s19, s20, s21, s22, s23, s24, s25, s26, s27, s28 }
 	sub sp, sp, #344
@@ -1110,9 +1110,9 @@ label5:
 	mov r0, r4
 	bl params_mix
 	b label2
+.p2align 4
 .globl main
 main:
-.p2align 4
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
 	vpush { s16, s17, s18, s19, s20, s21, s22, s23, s24, s25, s26, s27, s28, s29 }
 	movw r12, #1348

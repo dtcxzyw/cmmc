@@ -10,9 +10,9 @@ src:
 dst:
 	.4byte	0
 .text
+.p2align 2
 .globl imm32_cse
 imm32_cse:
-.p2align 2
 pcrel13:
 	auipc a0, %pcrel_hi(src)
 	li a2, 4099

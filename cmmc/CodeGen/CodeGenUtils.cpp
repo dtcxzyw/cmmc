@@ -122,7 +122,6 @@ void dumpAssembly(std::ostream& out, const CodeGenContext& ctx, const MIRModule&
             if(func.blocks().empty())
                 continue;
 
-            dumpSymbol(*global);
             for(auto& block : func.blocks()) {
                 auto isPCRelLabel = [](const std::string_view& label) { return label == "pcrel"; };
                 if(emitAlignment && !isPCRelLabel(block->symbol().prefix()) &&
@@ -132,6 +131,8 @@ void dumpAssembly(std::ostream& out, const CodeGenContext& ctx, const MIRModule&
                 if(&block != &func.blocks().front()) {
                     block->dumpAsTarget(out);
                     out << ":\n";
+                } else {
+                    dumpSymbol(*global);
                 }
                 for(auto& inst : block->instructions()) {
                     out << '\t';

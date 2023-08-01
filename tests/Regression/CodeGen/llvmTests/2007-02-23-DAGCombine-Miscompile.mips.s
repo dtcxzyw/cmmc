@@ -1,8 +1,8 @@
 .data
 .text
+.p2align 2
 .globl test
 test:
-.p2align 2
 	li $t0, -1
 	slt $t0, $t0, $a0
 	li $t1, 2

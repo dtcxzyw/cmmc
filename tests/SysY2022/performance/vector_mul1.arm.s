@@ -14,9 +14,9 @@ vectorA:
 .syntax unified
 .arm
 .fpu vfpv4
+.p2align 4
 .globl main
 main:
-.p2align 4
 	push { r4, r5, r6, r7, r8, lr }
 	mov r0, #62
 	bl _sysy_starttime
@@ -199,7 +199,48 @@ label65:
 	movw r2, #34464
 	movt r2, #1
 	cmp r6, r2
-	bge label509
+	blt label26
+	b label509
+.p2align 4
+label15:
+	add r3, r2, #1
+	movw r7, #34464
+	movt r7, #1
+	cmp r6, r7
+	bge label200
+.p2align 4
+label16:
+	add r7, r2, r6
+	add r8, r3, r6
+	mul r7, r7, r8
+	add r7, r7, r7, lsr #31
+	asr r8, r7, #1
+	add r7, r6, #1
+	add r6, r0, r6, lsl #2
+	add r8, r8, r7
+	vmov s1, r8
+	vldr s2, [r6, #0]
+	movw r6, #34464
+	movt r6, #1
+	cmp r7, r6
+	vcvt.f32.s32 s1, s1
+	vdiv.f32 s1, s2, s1
+	vadd.f32 s0, s0, s1
+	blt label217
+	movw r6, #34464
+	movt r6, #1
+	add r2, r4, r2, lsl #2
+	vstr s0, [r2, #0]
+	mov r2, r3
+	movw r3, #34464
+	movt r3, #1
+	cmp r2, r3
+	blt label15
+	b label517
+.p2align 4
+label217:
+	mov r6, r7
+	b label16
 .p2align 4
 label26:
 	add r2, r3, #1
@@ -295,58 +336,6 @@ label443:
 	mov r6, r7
 	b label58
 .p2align 4
-label15:
-	add r3, r2, #1
-	movw r7, #34464
-	movt r7, #1
-	cmp r6, r7
-	blt label16
-	b label200
-.p2align 4
-label216:
-	movw r6, #34464
-	movt r6, #1
-	add r2, r4, r2, lsl #2
-	vstr s0, [r2, #0]
-	mov r2, r3
-	movw r3, #34464
-	movt r3, #1
-	cmp r2, r3
-	blt label15
-	mov r6, #0
-	mov r3, r6
-	vmov s0, r6
-	movw r2, #34464
-	movt r2, #1
-	cmp r6, r2
-	blt label26
-	mov r2, r6
-	movw r3, #34464
-	movt r3, #1
-	cmp r6, r3
-	blt label57
-	b label511
-.p2align 4
-label16:
-	add r7, r2, r6
-	add r8, r3, r6
-	mul r7, r7, r8
-	add r7, r7, r7, lsr #31
-	asr r8, r7, #1
-	add r7, r6, #1
-	add r6, r0, r6, lsl #2
-	add r8, r8, r7
-	vmov s1, r8
-	vldr s2, [r6, #0]
-	movw r6, #34464
-	movt r6, #1
-	cmp r7, r6
-	vcvt.f32.s32 s1, s1
-	vdiv.f32 s1, s2, s1
-	vadd.f32 s0, s0, s1
-	bge label216
-	mov r6, r7
-	b label16
 label187:
 	mov r6, #0
 	mov r2, r6
@@ -363,6 +352,24 @@ label193:
 	movt r2, #1
 	cmp r6, r2
 	blt label26
+	b label509
+.p2align 4
+label449:
+	add r3, r0, r3, lsl #2
+	vstr s0, [r3, #0]
+	mov r3, r2
+	movw r2, #34464
+	movt r2, #1
+	cmp r3, r2
+	blt label64
+	mov r6, #0
+	mov r2, r6
+	vmov s0, r6
+	movw r3, #34464
+	movt r3, #1
+	cmp r6, r3
+	blt label15
+	b label193
 label509:
 	mov r6, #0
 	mov r2, r6
@@ -390,23 +397,6 @@ label200:
 	blt label26
 	b label509
 .p2align 4
-label449:
-	add r3, r0, r3, lsl #2
-	vstr s0, [r3, #0]
-	mov r3, r2
-	movw r2, #34464
-	movt r2, #1
-	cmp r3, r2
-	blt label64
-	mov r6, #0
-	mov r2, r6
-	vmov s0, r6
-	movw r3, #34464
-	movt r3, #1
-	cmp r6, r3
-	blt label15
-	b label193
-.p2align 4
 label426:
 	add r2, r5, r2, lsl #2
 	vstr s0, [r2, #0]
@@ -418,6 +408,22 @@ label426:
 	add r1, r1, #1
 	cmp r1, #1000
 	blt label5
+	b label38
+.p2align 4
+label517:
+	mov r6, #0
+	mov r3, r6
+	vmov s0, r6
+	movw r2, #34464
+	movt r2, #1
+	cmp r6, r2
+	blt label26
+	mov r2, r6
+	movw r3, #34464
+	movt r3, #1
+	cmp r6, r3
+	blt label57
+	b label511
 label38:
 	mov r0, #76
 	bl _sysy_stoptime
@@ -600,6 +606,7 @@ label511:
 	cmp r1, #1000
 	blt label5
 	b label38
+.p2align 4
 label519:
 	mov r6, #0
 	mov r2, r6

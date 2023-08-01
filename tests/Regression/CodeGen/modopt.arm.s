@@ -4,9 +4,9 @@
 .syntax unified
 .arm
 .fpu vfpv4
+.p2align 4
 .globl test
 test:
-.p2align 4
 	push { r4, r5, r6, r7, r8, r9, r10 }
 	cmp r0, #1
 	bge label4
@@ -98,9 +98,9 @@ label4:
 	mov r0, r3
 	movgt r0, r1
 	b label2
+.p2align 4
 .globl test2
 test2:
-.p2align 4
 	push { r4 }
 	movw r2, #32769
 	movt r2, #32768
@@ -130,9 +130,9 @@ test2:
 	movgt r0, r1
 	pop { r4 }
 	bx lr
+.p2align 4
 .globl test3
 test3:
-.p2align 4
 	mov r1, #1073741825
 	smmul r1, r0, r1
 	asr r2, r1, #29

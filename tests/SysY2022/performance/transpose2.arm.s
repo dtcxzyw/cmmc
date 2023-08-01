@@ -11,9 +11,9 @@ a:
 .syntax unified
 .arm
 .fpu vfpv4
+.p2align 4
 .globl main
 main:
-.p2align 4
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
 	sub sp, sp, #36
 	bl getint
@@ -36,7 +36,6 @@ main:
 	cmp r5, #8
 	ble label53
 	mov r0, #0
-.p2align 4
 label3:
 	ldr r7, [sp, #24]
 	add r3, r0, #1
@@ -81,10 +80,26 @@ label9:
 label95:
 	mov r7, #0
 	cmp r1, r7
-	bgt label17
-	b label216
+	ble label216
 .p2align 4
-label222:
+label17:
+	add r8, r7, #1
+	cmp r0, r7
+	blt label110
+	mla r9, r2, r7, r0
+	add r10, r3, r7
+	ldr r7, [sp, #24]
+	ldr r10, [r7, r10, lsl #2]
+	str r10, [r7, r9, lsl #2]
+	mov r7, r8
+	cmp r1, r8
+	bgt label17
+	b label222
+.p2align 4
+label110:
+	mov r7, r8
+	cmp r1, r8
+	bgt label17
 	add r0, r0, #1
 	mul r3, r1, r0
 	cmp r2, r0
@@ -105,21 +120,20 @@ label19:
 	mov r10, #5
 	str r9, [sp, #16]
 	mov r0, #4
-	mov r1, #3
+	mov r3, #3
 	str r8, [sp, #8]
 	mov r6, #0
 	mov r4, #1
 	str r7, [sp, #4]
 	mov r2, r0
-	mov r3, r6
+	mov r1, r6
 	str r10, [sp, #0]
 	str r4, [sp, #12]
 	mov r5, r6
-.p2align 4
 label23:
 	ldr r7, [sp, #24]
-	add r8, r7, r3, lsl #2
-	add r3, r3, #8
+	add r8, r7, r1, lsl #2
+	add r1, r1, #8
 	ldr r7, [r8, #0]
 	ldr r9, [r8, #4]
 	ldr r4, [sp, #12]
@@ -131,9 +145,9 @@ label23:
 	add r2, r2, #32
 	ldr r9, [r8, #8]
 	mla r7, r9, r10, r7
-	add r10, r1, #6
+	add r10, r3, #6
 	ldr r9, [r8, #12]
-	add r1, r1, #48
+	add r3, r3, #48
 	add r10, r5, r10
 	mla r7, r9, r10, r7
 	add r10, r0, #12
@@ -166,7 +180,7 @@ label23:
 	ldr r10, [sp, #0]
 	ldr r9, [sp, #20]
 	add r10, r10, #80
-	cmp r9, r3
+	cmp r9, r1
 	ble label185
 	mov r9, r11
 	str r11, [sp, #16]
@@ -176,24 +190,7 @@ label23:
 	str r4, [sp, #12]
 	b label23
 .p2align 4
-label17:
-	add r8, r7, #1
-	cmp r0, r7
-	blt label110
-	mla r9, r2, r7, r0
-	add r10, r3, r7
-	ldr r7, [sp, #24]
-	ldr r10, [r7, r10, lsl #2]
-	str r10, [r7, r9, lsl #2]
-	mov r7, r8
-	cmp r1, r8
-	bgt label17
-	b label222
-.p2align 4
-label110:
-	mov r7, r8
-	cmp r1, r8
-	bgt label17
+label222:
 	add r0, r0, #1
 	mul r3, r1, r0
 	cmp r2, r0
@@ -215,18 +212,18 @@ label20:
 	mov r0, #0
 	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
 label185:
-	mov r1, r6
+	mov r2, r6
 label35:
 	ldr r7, [sp, #24]
-	ldr r0, [r7, r3, lsl #2]
-	add r3, r3, #1
-	mla r1, r5, r0, r1
+	ldr r0, [r7, r1, lsl #2]
+	add r1, r1, #1
+	mla r2, r5, r0, r2
 	ldr r0, [sp, #28]
 	add r5, r5, r4
 	add r4, r4, #2
-	cmp r0, r3
+	cmp r0, r1
 	bgt label35
-	mov r4, r1
+	mov r4, r2
 	b label20
 .p2align 4
 label216:
@@ -254,6 +251,6 @@ label53:
 label125:
 	mov r5, #0
 	mov r4, #1
+	mov r2, r5
 	mov r1, r5
-	mov r3, r5
 	b label35

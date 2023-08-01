@@ -1,20 +1,20 @@
 .data
 .text
+.p2align 2
 .globl func1
 func1:
-.p2align 2
 	move $v0, $zero
 	jr $ra
 	nop
+.p2align 2
 .globl func2
 func2:
-.p2align 2
 	move $v0, $zero
 	jr $ra
 	nop
+.p2align 2
 .globl func3
 func3:
-.p2align 2
 	move $v0, $zero
 	jr $ra
 	nop

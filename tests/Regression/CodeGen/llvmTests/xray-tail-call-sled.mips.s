@@ -1,14 +1,14 @@
 .data
 .text
+.p2align 2
 .globl callee
 callee:
-.p2align 2
 	move $v0, $zero
 	jr $ra
 	nop
+.p2align 2
 .globl caller
 caller:
-.p2align 2
 	move $v0, $zero
 	jr $ra
 	nop

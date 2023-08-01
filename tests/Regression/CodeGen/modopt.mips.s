@@ -1,8 +1,8 @@
 .data
 .text
+.p2align 2
 .globl test
 test:
-.p2align 2
 	addiu $t0, $a0, -1
 	bgez $t0, label4
 	nop
@@ -82,9 +82,9 @@ label4:
 	movn $v0, $t1, $t0
 	b label2
 	nop
+.p2align 2
 .globl test2
 test2:
-.p2align 2
 	li $t2, 65535
 	div $zero, $a0, $t2
 	mfhi $t0
@@ -105,9 +105,9 @@ test2:
 	movn $v0, $t0, $t2
 	jr $ra
 	nop
+.p2align 2
 .globl test3
 test3:
-.p2align 2
 	li $t0, 2147483647
 	div $zero, $a0, $t0
 	mfhi $v0

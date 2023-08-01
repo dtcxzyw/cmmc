@@ -5,13 +5,13 @@
 var:
 	.zero	4
 .text
+.p2align 2
 .globl func
 func:
-.p2align 2
 	jr $ra
 	nop
+.p2align 2
 .globl shrink_wrap
 shrink_wrap:
-.p2align 2
 	jr $ra
 	nop

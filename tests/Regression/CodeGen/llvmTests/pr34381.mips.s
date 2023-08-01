@@ -21,9 +21,9 @@ var_11:
 var_370:
 	.zero	1
 .text
+.p2align 2
 .globl _Z3foov
 _Z3foov:
-.p2align 2
 	lui $t0, %hi(var_21)
 	lw $t0, %lo(var_21)($t0)
 	lui $t1, %hi(var_29)

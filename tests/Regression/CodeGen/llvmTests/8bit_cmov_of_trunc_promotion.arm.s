@@ -4,9 +4,9 @@
 .syntax unified
 .arm
 .fpu vfpv4
+.p2align 4
 .globl neg_only_one_truncation
 neg_only_one_truncation:
-.p2align 4
 	uxtb r1, r1
 	and r3, r2, #255
 	add r0, r0, r2
@@ -24,9 +24,9 @@ label20:
 label3:
 	uxtb r0, r0
 	bx lr
+.p2align 4
 .globl neg_type_mismatch
 neg_type_mismatch:
-.p2align 4
 	uxth r1, r1
 	movw r3, #65535
 	add r0, r0, r2
@@ -45,9 +45,9 @@ label46:
 label29:
 	uxtb r0, r0
 	bx lr
+.p2align 4
 .globl negative_CopyFromReg
 negative_CopyFromReg:
-.p2align 4
 	add r1, r1, r2
 	uxtb r3, r0
 	uxtb r2, r1
@@ -62,9 +62,9 @@ label70:
 label56:
 	uxtb r0, r0
 	bx lr
+.p2align 4
 .globl negative_CopyFromRegs
 negative_CopyFromRegs:
-.p2align 4
 	uxtb r2, r0
 	uxtb r3, r1
 	sxtb r2, r2
@@ -78,9 +78,9 @@ label91:
 label79:
 	uxtb r0, r0
 	bx lr
+.p2align 4
 .globl t0
 t0:
-.p2align 4
 	add r0, r0, r2
 	add r1, r1, r2
 	uxtb r3, r0

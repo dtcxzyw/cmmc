@@ -1,9 +1,9 @@
 .attribute arch, "rv64i2p1_m2p0_a2p1_f2p2_d2p2_c2p0_zicsr2p0_zifencei2p0_zba1p0_zbb1p0"
 .data
 .text
+.p2align 2
 .globl main
 main:
-.p2align 2
 	addi sp, sp, -424
 	sd ra, 0(sp)
 	sd s0, 8(sp)
@@ -17,43 +17,17 @@ label17:
 	mv s0, zero
 	li a0, 5
 	blt zero, a0, label7
-	j label6
-.p2align 2
-label1000:
-	li a0, 111
-.p2align 2
-label1001:
-	jal putch
-	li a0, 116
-	bne s0, zero, label1003
-	li a0, 103
-.p2align 2
-label1003:
-	jal putch
-	li a0, 10
-	jal putch
-	ld a0, 168(sp)
-	addiw a0, a0, -1
-	sd a0, 168(sp)
-	bgt a0, zero, label17
-label11:
-	mv a0, zero
-	ld ra, 0(sp)
-	ld s0, 8(sp)
-	ld s1, 16(sp)
-	ld s2, 24(sp)
-	addi sp, sp, 424
-	ret
 .p2align 2
 label6:
 	lw a7, 192(sp)
 	li a0, 85
 	li a2, 23
 	li t1, -103
-	li t5, -123
+	li t6, -123
+	li t5, -106
 	li s0, -21
-	sd a7, 392(sp)
 	mulw a1, a7, a0
+	sd a7, 392(sp)
 	lw a7, 196(sp)
 	mulw a3, a7, a2
 	sd a7, 384(sp)
@@ -68,9 +42,8 @@ label6:
 	sd a7, 296(sp)
 	addw a1, a1, a2
 	lw a7, 208(sp)
-	mulw a2, a7, t5
+	mulw a2, a7, t6
 	sd a7, 368(sp)
-	li t5, -106
 	addw a1, a1, a2
 	lw a7, 212(sp)
 	slli t1, a7, 6
@@ -445,17 +418,17 @@ label6:
 	addw t5, t5, a6
 	slli t6, a7, 5
 	subw a6, a7, t6
+	li t6, -123
+	addw t5, t5, a6
 	ld a7, 320(sp)
-	addw t6, t5, a6
-	li t5, -123
-	mulw a6, a7, t5
+	mulw a6, a7, t6
+	li t6, 83
+	addw t5, t5, a6
 	ld a7, 312(sp)
-	addw t6, t6, a6
-	li a6, 83
-	mulw a7, a7, a6
-	addw t5, t6, a7
+	mulw a6, a7, t6
 	ld a7, 176(sp)
 	li t6, 122
+	addw t5, t5, a6
 	mulw a6, a7, t6
 	li t6, 11
 	addw t5, t5, a6
@@ -851,7 +824,6 @@ label6:
 	sh1add a6, a7, a7
 	ld a7, 136(sp)
 	slliw t5, a6, 5
-	li a6, 83
 	subw t6, zero, t5
 	li t5, -104
 	addw t4, t4, t6
@@ -863,13 +835,14 @@ label6:
 	ld a7, 160(sp)
 	li t5, 97
 	addw t4, t4, t6
-	mulw t6, a7, t5
-	mulw a7, a2, a6
-	addw t4, t4, t6
-	li a6, -77
-	mulw t6, a3, a4
-	addw t5, t4, a7
+	li t6, 83
+	mulw a6, a7, t5
 	ld a7, 120(sp)
+	addw t4, t4, a6
+	mulw a6, a2, t6
+	mulw t6, a3, a4
+	addw t5, t4, a6
+	li a6, -77
 	addw t4, t5, t6
 	li t5, -84
 	mulw t6, a7, t5
@@ -919,7 +892,7 @@ label6:
 	ld a7, 408(sp)
 	addw t2, t2, t5
 	mulw t4, a7, t6
-	li t6, 75
+	li t6, -123
 	addw t2, t2, t4
 	ld a7, 336(sp)
 	li t4, -73
@@ -970,7 +943,7 @@ label6:
 	min t0, t1, a7
 	ld a7, 392(sp)
 	mulw t1, t0, t5
-	li t5, -123
+	li t5, 38
 	addw t0, t3, t1
 	li t1, 67
 	mulw t2, a7, t1
@@ -985,8 +958,8 @@ label6:
 	li t1, -92
 	addw a5, a5, t2
 	ld a7, 296(sp)
-	mulw t2, a7, t5
-	li t5, 38
+	mulw t2, a7, t6
+	li t6, 75
 	addw a5, a5, t2
 	ld a7, 368(sp)
 	mulw t2, a7, t1
@@ -1070,7 +1043,23 @@ label6:
 	jal putch
 	li a0, 97
 	bne s0, zero, label1001
-	j label1000
+	li a0, 111
+.p2align 2
+label1001:
+	jal putch
+	li a0, 116
+	bne s0, zero, label1003
+	li a0, 103
+.p2align 2
+label1003:
+	jal putch
+	li a0, 10
+	jal putch
+	ld a0, 168(sp)
+	addiw a0, a0, -1
+	sd a0, 168(sp)
+	bgt a0, zero, label17
+	j label11
 .p2align 2
 label7:
 	sh2add a0, s0, s0
@@ -1088,3 +1077,11 @@ label8:
 	addiw s0, s0, 1
 	blt s0, a0, label7
 	j label6
+label11:
+	mv a0, zero
+	ld ra, 0(sp)
+	ld s0, 8(sp)
+	ld s1, 16(sp)
+	ld s2, 24(sp)
+	addi sp, sp, 424
+	ret

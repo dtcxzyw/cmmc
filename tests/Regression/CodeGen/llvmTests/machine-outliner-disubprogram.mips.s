@@ -1,41 +1,41 @@
 .data
 .text
+.p2align 2
 .globl f1
 f1:
-.p2align 2
 	li $v0, 16
 	jr $ra
 	nop
+.p2align 2
 .globl f2
 f2:
-.p2align 2
 	li $v0, 16
 	jr $ra
 	nop
+.p2align 2
 .globl f3
 f3:
-.p2align 2
 	li $v0, 16
 	jr $ra
 	nop
+.p2align 2
 .globl f4
 f4:
-.p2align 2
 	jr $ra
 	nop
+.p2align 2
 .globl f5
 f5:
-.p2align 2
 	jr $ra
 	nop
+.p2align 2
 .globl f6
 f6:
-.p2align 2
 	jr $ra
 	nop
+.p2align 2
 .globl main
 main:
-.p2align 2
 	move $v0, $zero
 	jr $ra
 	nop

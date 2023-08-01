@@ -22,9 +22,9 @@ result1:
 result2:
 	.4byte	1
 .text
+.p2align 2
 .globl test
 test:
-.p2align 2
 pcrel39:
 	auipc a2, %pcrel_hi(i)
 pcrel40:

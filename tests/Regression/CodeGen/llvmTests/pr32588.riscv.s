@@ -14,9 +14,9 @@ b:
 d:
 	.zero	4
 .text
+.p2align 2
 .globl fn1
 fn1:
-.p2align 2
 pcrel15:
 	auipc a2, %pcrel_hi(c)
 	lw a0, %pcrel_lo(pcrel15)(a2)

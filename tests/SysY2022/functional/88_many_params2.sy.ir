@@ -528,16 +528,16 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     call (i32) -> void @putint(i32 %265);
     call (i32) -> void @putch(i32 10);
     i1 %266 = icmp slt i32 %258, i32 10;
-    cbr i1 %266(prob = 0.992248), ^super.header, ^b7;
+    cbr i1 %266(prob = 0.984615), ^super.header, ^b7;
   ^super.header:
     i32 %267 = add i32 %258, i32 8;
     i1 %268 = icmp slt i32 %267, i32 10;
-    cbr i1 %268(prob = 0.941176), ^while.body1, ^while.body2;
+    cbr i1 %268(prob = 0.888889), ^while.body1, ^while.body2;
   ^b7:
     i32 %269 = add i32 %254, i32 3;
     i32 %270 = mul i32 %269, i32 3;
     i1 %271 = icmp sgt i32 %270, i32 -1;
-    cbr i1 %271(prob = 0.992248), ^while.body3, ^b8;
+    cbr i1 %271(prob = 0.984615), ^while.body3, ^b8;
   ^while.body1:
     i32 %272 = phi [^super.header, i32 %256] [^while.body1, i32 %307];
     i32 %273 = phi [^super.header, i32 %258] [^while.body1, i32 %305];
@@ -583,7 +583,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i32 %305 = add i32 %273, i32 8;
     i1 %306 = icmp slt i32 %305, i32 2;
     i32 %307 = add i32 %272, i32 56;
-    cbr i1 %306(prob = 0.941176), ^while.body1, ^while.body2;
+    cbr i1 %306(prob = 0.888889), ^while.body1, ^while.body2;
   ^while.body2 {scalar}:
     i32 %308 = phi [^super.header, i32 %258] [^while.body1, i32 %305] [^while.body2, i32 %313];
     i32 %309 = phi [^super.header, i32 %256] [^while.body1, i32 %307] [^while.body2, i32 %315];
@@ -603,7 +603,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     call (i32) -> void @putch(i32 32);
     i32 %319 = add i32 %316, i32 -1;
     i1 %320 = icmp sgt i32 %319, i32 -1;
-    cbr i1 %320(prob = 0.992248), ^while.body3, ^b8;
+    cbr i1 %320(prob = 0.984615), ^while.body3, ^b8;
   ^b8:
     call (i32) -> void @putch(i32 10);
     ret i32 0;

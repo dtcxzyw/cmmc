@@ -1,8 +1,8 @@
 .data
 .text
+.p2align 2
 .globl t1
 t1:
-.p2align 2
 	bne $a0, $zero, label9
 	nop
 	addiu $v0, $a1, -1

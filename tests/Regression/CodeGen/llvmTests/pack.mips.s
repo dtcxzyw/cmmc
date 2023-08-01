@@ -1,25 +1,25 @@
 .data
 .text
+.p2align 2
 .globl test1
 test1:
-.p2align 2
 	andi $t0, $a0, 65535
 	sll $t1, $a1, 16
 	or $v0, $t0, $t1
 	jr $ra
 	nop
+.p2align 2
 .globl test10
 test10:
-.p2align 2
 	li $t0, -65536
 	and $t0, $a0, $t0
 	srl $t1, $a1, 17
 	or $v0, $t0, $t1
 	jr $ra
 	nop
+.p2align 2
 .globl test2
 test2:
-.p2align 2
 	sll $t0, $a1, 12
 	li $t1, -65536
 	and $t0, $t0, $t1
@@ -27,44 +27,44 @@ test2:
 	or $v0, $t0, $t1
 	jr $ra
 	nop
+.p2align 2
 .globl test3
 test3:
-.p2align 2
 	andi $t0, $a0, 65535
 	sll $t1, $a1, 18
 	or $v0, $t0, $t1
 	jr $ra
 	nop
+.p2align 2
 .globl test4
 test4:
-.p2align 2
 	andi $t0, $a0, 65535
 	li $t1, -65536
 	and $t1, $a1, $t1
 	or $v0, $t0, $t1
 	jr $ra
 	nop
+.p2align 2
 .globl test5
 test5:
-.p2align 2
 	li $t0, -65536
 	and $t0, $a0, $t0
 	srl $t1, $a1, 16
 	or $v0, $t0, $t1
 	jr $ra
 	nop
+.p2align 2
 .globl test5a
 test5a:
-.p2align 2
 	li $t0, -65536
 	and $t0, $a0, $t0
 	srl $t1, $a1, 16
 	or $v0, $t0, $t1
 	jr $ra
 	nop
+.p2align 2
 .globl test6
 test6:
-.p2align 2
 	srl $t0, $a1, 12
 	andi $t0, $t0, 65535
 	li $t1, -65536
@@ -72,9 +72,9 @@ test6:
 	or $v0, $t0, $t1
 	jr $ra
 	nop
+.p2align 2
 .globl test7
 test7:
-.p2align 2
 	srl $t0, $a1, 18
 	andi $t0, $t0, 65535
 	li $t1, -65536
@@ -82,18 +82,18 @@ test7:
 	or $v0, $t0, $t1
 	jr $ra
 	nop
+.p2align 2
 .globl test8
 test8:
-.p2align 2
 	li $t0, -65536
 	and $t0, $a0, $t0
 	srl $t1, $a1, 22
 	or $v0, $t0, $t1
 	jr $ra
 	nop
+.p2align 2
 .globl test9
 test9:
-.p2align 2
 	li $t0, -65536
 	and $t0, $a0, $t0
 	srl $t1, $a1, 16

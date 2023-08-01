@@ -14,9 +14,9 @@ a:
 b:
 	.4byte	0
 .text
+.p2align 2
 .globl foo
 foo:
-.p2align 2
 pcrel26:
 	auipc a0, %pcrel_hi(x)
 	addi a1, a0, %pcrel_lo(pcrel26)

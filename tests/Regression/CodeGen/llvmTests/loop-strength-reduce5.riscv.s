@@ -12,9 +12,9 @@ Y:
 	.byte	0
 	.byte	0
 .text
+.p2align 2
 .globl foo
 foo:
-.p2align 2
 	ble a0, zero, label5
 pcrel40:
 	auipc a2, %pcrel_hi(X)

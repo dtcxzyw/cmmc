@@ -11,11 +11,11 @@ a:
 b:
 	.zero	4
 .text
+.p2align 2
 .globl t1
 t1:
-.p2align 2
 	ret
+.p2align 2
 .globl t2
 t2:
-.p2align 2
 	ret

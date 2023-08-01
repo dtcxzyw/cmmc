@@ -4,201 +4,201 @@
 .syntax unified
 .arm
 .fpu vfpv4
+.p2align 4
 .globl seqz
 seqz:
-.p2align 4
 	clz r0, r0
 	lsr r0, r0, #5
 	bx lr
+.p2align 4
 .globl seqi
 seqi:
-.p2align 4
 	sub r0, r0, #1
 	clz r0, r0
 	lsr r0, r0, #5
 	bx lr
+.p2align 4
 .globl seq
 seq:
-.p2align 4
 	sub r0, r0, r1
 	clz r0, r0
 	lsr r0, r0, #5
 	bx lr
+.p2align 4
 .globl snei
 snei:
-.p2align 4
 	cmp r0, #1
 	mov r0, #0
 	movwne r0, #1
 	bx lr
+.p2align 4
 .globl sne
 sne:
-.p2align 4
 	cmp r0, r1
 	mov r0, #0
 	movwne r0, #1
 	bx lr
+.p2align 4
 .globl snez
 snez:
-.p2align 4
 	cmp r0, #0
 	mov r0, #0
 	movwne r0, #1
 	bx lr
+.p2align 4
 .globl slti
 slti:
-.p2align 4
 	cmp r0, #1
 	mov r0, #0
 	movwlt r0, #1
 	bx lr
+.p2align 4
 .globl slt
 slt:
-.p2align 4
 	cmp r0, r1
 	mov r0, #0
 	movwlt r0, #1
 	bx lr
+.p2align 4
 .globl sgti
 sgti:
-.p2align 4
 	cmp r0, #1
 	mov r0, #0
 	movwgt r0, #1
 	bx lr
+.p2align 4
 .globl sgt
 sgt:
-.p2align 4
 	cmp r0, r1
 	mov r0, #0
 	movwgt r0, #1
 	bx lr
+.p2align 4
 .globl slei
 slei:
-.p2align 4
 	cmp r0, #2
 	mov r0, #0
 	movwlt r0, #1
 	bx lr
+.p2align 4
 .globl sle
 sle:
-.p2align 4
 	cmp r0, r1
 	mov r0, #0
 	movwle r0, #1
 	bx lr
+.p2align 4
 .globl sgei
 sgei:
-.p2align 4
 	cmp r0, #0
 	mov r0, #0
 	movwgt r0, #1
 	bx lr
+.p2align 4
 .globl sge
 sge:
-.p2align 4
 	cmp r0, r1
 	mov r0, #0
 	movwge r0, #1
 	bx lr
+.p2align 4
 .globl seq_all_one
 seq_all_one:
-.p2align 4
 	add r0, r0, #1
 	clz r0, r0
 	lsr r0, r0, #5
 	bx lr
+.p2align 4
 .globl sne_all_one
 sne_all_one:
-.p2align 4
 	cmn r0, #1
 	mov r0, #0
 	movwne r0, #1
 	bx lr
+.p2align 4
 .globl slt_all_one
 slt_all_one:
-.p2align 4
 	cmn r0, #1
 	mov r0, #0
 	movwlt r0, #1
 	bx lr
+.p2align 4
 .globl sgt_all_one
 sgt_all_one:
-.p2align 4
 	mvn r0, r0
 	lsr r0, r0, #31
 	bx lr
+.p2align 4
 .globl sle_all_one
 sle_all_one:
-.p2align 4
 	lsr r0, r0, #31
 	bx lr
+.p2align 4
 .globl sge_all_one
 sge_all_one:
-.p2align 4
 	cmn r0, #2
 	mov r0, #0
 	movwgt r0, #1
 	bx lr
+.p2align 4
 .globl feq
 feq:
-.p2align 4
 	vcmp.f32 s0, s1
 	mov r0, #0
 	vmrs APSR_nzcv, FPSCR
 	movweq r0, #1
 	bx lr
+.p2align 4
 .globl fne
 fne:
-.p2align 4
 	vcmp.f32 s0, s1
 	mov r0, #0
 	vmrs APSR_nzcv, FPSCR
 	movwne r0, #1
 	bx lr
+.p2align 4
 .globl flt
 flt:
-.p2align 4
 	vcmp.f32 s0, s1
 	mov r0, #0
 	vmrs APSR_nzcv, FPSCR
 	movwmi r0, #1
 	bx lr
+.p2align 4
 .globl fgt
 fgt:
-.p2align 4
 	vcmp.f32 s0, s1
 	mov r0, #0
 	vmrs APSR_nzcv, FPSCR
 	movwgt r0, #1
 	bx lr
+.p2align 4
 .globl fle
 fle:
-.p2align 4
 	vcmp.f32 s0, s1
 	mov r0, #0
 	vmrs APSR_nzcv, FPSCR
 	movwls r0, #1
 	bx lr
+.p2align 4
 .globl fge
 fge:
-.p2align 4
 	vcmp.f32 s0, s1
 	mov r0, #0
 	vmrs APSR_nzcv, FPSCR
 	movwge r0, #1
 	bx lr
+.p2align 4
 .globl fltz
 fltz:
-.p2align 4
 	vcmp.f32 s0, #0
 	mov r0, #0
 	vmrs APSR_nzcv, FPSCR
 	movwmi r0, #1
 	bx lr
+.p2align 4
 .globl sgez
 sgez:
-.p2align 4
 	mvn r0, r0
 	lsr r0, r0, #31
 	bx lr

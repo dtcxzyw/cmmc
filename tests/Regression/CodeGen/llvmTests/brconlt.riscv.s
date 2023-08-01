@@ -18,9 +18,9 @@ k:
 result:
 	.4byte	0
 .text
+.p2align 2
 .globl test
 test:
-.p2align 2
 pcrel26:
 	auipc a1, %pcrel_hi(j)
 pcrel27:

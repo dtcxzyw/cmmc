@@ -1,15 +1,15 @@
 .data
 .text
+.p2align 2
 .globl test1
 test1:
-.p2align 2
 	sll $t0, $a0, 3
 	addiu $v0, $t0, 7
 	jr $ra
 	nop
+.p2align 2
 .globl test2
 test2:
-.p2align 2
 	addiu $t0, $a0, -4
 	blez $t0, label12
 	nop

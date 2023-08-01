@@ -9,9 +9,9 @@ X:
 .syntax unified
 .arm
 .fpu vfpv4
+.p2align 4
 .globl _Z3fooi
 _Z3fooi:
-.p2align 4
 	uxtb r1, r0
 	movw r2, #:lower16:X
 	sxtb r1, r1

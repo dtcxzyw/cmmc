@@ -5,9 +5,9 @@
 i:
 	.4byte	15
 .text
+.p2align 2
 .globl f
 f:
-.p2align 2
 	lui $t0, %hi(i)
 	lw $v0, %lo(i)($t0)
 	jr $ra

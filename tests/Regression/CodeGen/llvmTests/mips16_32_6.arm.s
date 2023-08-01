@@ -4,16 +4,16 @@
 .syntax unified
 .arm
 .fpu vfpv4
+.p2align 4
 .globl foo
 foo:
-.p2align 4
 	bx lr
+.p2align 4
 .globl main
 main:
-.p2align 4
 	mov r0, #0
 	bx lr
+.p2align 4
 .globl nofoo
 nofoo:
-.p2align 4
 	bx lr

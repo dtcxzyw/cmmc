@@ -13,9 +13,9 @@ g1:
 .syntax unified
 .arm
 .fpu vfpv4
+.p2align 4
 .globl test1
 test1:
-.p2align 4
 	movs r1, r0
 	movw r2, #:lower16:g1
 	movw r0, #:lower16:g0

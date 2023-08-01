@@ -11,8 +11,8 @@ left_child:
 right_child:
 	.zero	40000
 .text
-insert:
 .p2align 2
+insert:
 	addi sp, sp, -40
 pcrel92:
 	auipc a3, %pcrel_hi(value)
@@ -90,8 +90,8 @@ label82:
 	mv a0, s0
 	sw s2, 0(a1)
 	j label6
-delete:
 .p2align 2
+delete:
 	addi sp, sp, -40
 	sd ra, 0(sp)
 	sd s0, 8(sp)
@@ -391,8 +391,8 @@ label315:
 label367:
 	mv a0, a1
 	j label139
-inorder:
 .p2align 2
+inorder:
 	addi sp, sp, -16
 	li a1, -1
 	sd ra, 0(sp)
@@ -425,9 +425,9 @@ label589:
 	ld s0, 8(sp)
 	addi sp, sp, 16
 	ret
+.p2align 2
 .globl main
 main:
-.p2align 2
 	addi sp, sp, -40
 	sd ra, 0(sp)
 	sd s0, 8(sp)

@@ -13,33 +13,33 @@ f:
 .syntax unified
 .arm
 .fpu vfpv4
+.p2align 4
 .globl foo
 foo:
-.p2align 4
 	movw r0, #:lower16:f
 	mov r1, #1073741824
 	movt r0, #:upper16:f
 	vmov s0, r1
 	vstr s0, [r0, #0]
 	bx lr
+.p2align 4
 .globl fv
 fv:
-.p2align 4
 	mov r0, #1065353216
 	vmov s0, r0
 	bx lr
+.p2align 4
 .globl iv
 iv:
-.p2align 4
 	movw r0, #:lower16:i
 	movt r0, #:upper16:i
 	ldr r0, [r0, #0]
 	bx lr
+.p2align 4
 .globl vif
 vif:
-.p2align 4
 	bx lr
+.p2align 4
 .globl vv
 vv:
-.p2align 4
 	bx lr

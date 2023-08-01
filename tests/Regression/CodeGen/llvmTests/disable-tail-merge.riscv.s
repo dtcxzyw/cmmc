@@ -10,9 +10,9 @@ g0:
 g1:
 	.4byte	0
 .text
+.p2align 2
 .globl test1
 test1:
-.p2align 2
 	mv a2, a0
 pcrel37:
 	auipc a1, %pcrel_hi(g0)

@@ -4,9 +4,9 @@
 .syntax unified
 .arm
 .fpu vfpv4
+.p2align 4
 .globl fn
 fn:
-.p2align 4
 	sub r1, r1, #1
 	mov r2, #2
 	clz r1, r1

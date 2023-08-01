@@ -13,9 +13,9 @@ j:
 result:
 	.4byte	0
 .text
+.p2align 2
 .globl test
 test:
-.p2align 2
 	lui $t0, %hi(i)
 	lw $t0, %lo(i)($t0)
 	lui $t1, %hi(j)

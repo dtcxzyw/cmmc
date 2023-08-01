@@ -13,9 +13,9 @@ result:
 .syntax unified
 .arm
 .fpu vfpv4
+.p2align 4
 .globl test
 test:
-.p2align 4
 	movw r0, #:lower16:j
 	movt r0, #:upper16:j
 	ldr r0, [r0, #0]

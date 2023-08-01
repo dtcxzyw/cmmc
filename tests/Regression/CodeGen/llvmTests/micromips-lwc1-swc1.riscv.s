@@ -6,16 +6,16 @@
 gf0:
 	.zero	4
 .text
+.p2align 2
 .globl test_lwc1
 test_lwc1:
-.p2align 2
 pcrel7:
 	auipc a0, %pcrel_hi(gf0)
 	flw f10, %pcrel_lo(pcrel7)(a0)
 	ret
+.p2align 2
 .globl test_swc1
 test_swc1:
-.p2align 2
 pcrel14:
 	auipc a0, %pcrel_hi(gf0)
 	fsw f10, %pcrel_lo(pcrel14)(a0)

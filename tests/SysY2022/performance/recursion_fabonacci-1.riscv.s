@@ -5,8 +5,8 @@
 __cmmc_fp_constant_pool:
 	.4byte	1282491304
 .text
-fibFP:
 .p2align 2
+fibFP:
 	addi sp, sp, -32
 	lui a1, 262144
 	sd ra, 0(sp)
@@ -275,8 +275,8 @@ label259:
 	fadd.s f10, f9, f10
 	fadd.s f10, f8, f10
 	j label2
-takFP:
 .p2align 2
+takFP:
 	addi sp, sp, -48
 	sd ra, 0(sp)
 	fsw f8, 8(sp)
@@ -419,9 +419,9 @@ label365:
 	fmv.s f21, f24
 	fmv.s f22, f10
 	j label305
+.p2align 2
 .globl main
 main:
-.p2align 2
 	addi sp, sp, -24
 	li a0, 19
 	sd ra, 0(sp)

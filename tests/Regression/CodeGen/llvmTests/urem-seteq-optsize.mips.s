@@ -1,8 +1,8 @@
 .data
 .text
+.p2align 2
 .globl test_minsize
 test_minsize:
-.p2align 2
 	li $t0, 5
 	divu $zero, $a0, $t0
 	mfhi $t0
@@ -12,9 +12,9 @@ test_minsize:
 	movn $v0, $t1, $t0
 	jr $ra
 	nop
+.p2align 2
 .globl test_optsize
 test_optsize:
-.p2align 2
 	li $t0, 5
 	divu $zero, $a0, $t0
 	mfhi $t0

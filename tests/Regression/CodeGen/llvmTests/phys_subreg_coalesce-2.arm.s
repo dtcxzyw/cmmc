@@ -4,9 +4,9 @@
 .syntax unified
 .arm
 .fpu vfpv4
+.p2align 4
 .globl binomial
 binomial:
-.p2align 4
 	push { r4 }
 	cmp r0, r1
 	mov r2, r1

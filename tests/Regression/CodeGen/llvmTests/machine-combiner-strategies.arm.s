@@ -4,9 +4,9 @@
 .syntax unified
 .arm
 .fpu vfpv4
+.p2align 4
 .globl test_local_strategy
 test_local_strategy:
-.p2align 4
 	push { r4, r5 }
 	sdiv r0, r0, r1
 	ldr r5, [sp, #8]

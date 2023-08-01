@@ -5,8 +5,8 @@
 var:
 	.zero	4
 .text
+.p2align 2
 .globl func
 func:
-.p2align 2
 	jr $ra
 	nop

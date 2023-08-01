@@ -124,9 +124,9 @@ saY_HeI10_To:
 .syntax unified
 .arm
 .fpu vfpv4
+.p2align 4
 .globl main
 main:
-.p2align 4
 	push { r4, r5, r6, r7, r8, r9, r10, lr }
 	sub sp, sp, #24
 	movw r5, #:lower16:__HELLO
@@ -229,19 +229,7 @@ label70:
 label9:
 	ldr r0, [sp, #0]
 	cmp r0, #0
-	bne label75
-	b label18
-.p2align 4
-label12:
-	add r8, r6, r7, lsl #2
-	ldr r0, [r8, #0]
-	bl putch
-	add r7, r7, #1
-	ldr r0, [r8, #4]
-	cmp r0, #0
-	bne label12
-	b label9
-label75:
+	beq label18
 	mov r6, #0
 .p2align 4
 label10:
@@ -253,3 +241,13 @@ label10:
 	cmp r0, #0
 	bne label10
 	b label18
+.p2align 4
+label12:
+	add r8, r6, r7, lsl #2
+	ldr r0, [r8, #0]
+	bl putch
+	add r7, r7, #1
+	ldr r0, [r8, #4]
+	cmp r0, #0
+	bne label12
+	b label9

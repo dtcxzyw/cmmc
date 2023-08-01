@@ -1,8 +1,8 @@
 .data
 .text
+.p2align 2
 .globl fn
 fn:
-.p2align 2
 	xori $t0, $a1, 1
 	sltiu $t0, $t0, 1
 	sltu $t0, $zero, $t0

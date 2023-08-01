@@ -1,8 +1,8 @@
 .data
 .text
+.p2align 2
 .globl x
 x:
-.p2align 2
 	andi $t0, $a0, 256
 	sltiu $t0, $t0, 1
 	li $v0, -26

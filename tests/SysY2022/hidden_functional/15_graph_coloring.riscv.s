@@ -1,8 +1,8 @@
 .attribute arch, "rv64i2p1_m2p0_a2p1_f2p2_d2p2_c2p0_zicsr2p0_zifencei2p0_zba1p0_zbb1p0"
 .data
 .text
-graphColoring:
 .p2align 2
+graphColoring:
 	addi sp, sp, -40
 	sd ra, 0(sp)
 	sd s0, 8(sp)
@@ -86,9 +86,9 @@ label73:
 label35:
 	mv a2, a0
 	j label4
+.p2align 2
 .globl main
 main:
-.p2align 2
 	addi sp, sp, -88
 	li a1, 1
 	mv a2, zero

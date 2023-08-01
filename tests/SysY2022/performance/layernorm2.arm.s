@@ -14,9 +14,9 @@ mean:
 .syntax unified
 .arm
 .fpu vfpv4
+.p2align 4
 .globl main
 main:
-.p2align 4
 	push { r4, r5, r6, r7, lr }
 	vpush { s16 }
 	movw r6, #:lower16:var
@@ -28,7 +28,12 @@ main:
 	movt r4, #:upper16:a
 label2:
 	cmp r7, #1000
-	bge label8
+	blt label6
+	b label8
+label4:
+	vpop { s16 }
+	pop { r4, r5, r6, r7, pc }
+label6:
 	mov r0, #4000
 	mla r0, r7, r0, r4
 	bl getfarray
@@ -43,11 +48,8 @@ label8:
 	vmov s0, r0
 label9:
 	cmp r0, #100
-	bge label73
-	mov r2, #0
-	cmp r2, #1000
-	blt label14
-	b label77
+	blt label74
+	b label73
 label410:
 	vmov.f32 s2, s0
 	mov r2, #0
@@ -120,10 +122,45 @@ label22:
 	vabs.f32 s6, s6
 	vcmp.f32 s6, s7
 	vmrs APSR_nzcv, FPSCR
-	bgt label30
-	b label483
+	ble label483
 .p2align 4
-label910:
+label30:
+	vcmp.f32 s5, s1
+	vmrs APSR_nzcv, FPSCR
+	bgt label32
+	vadd.f32 s4, s2, s3
+	mov r2, #1056964608
+	vmov s5, r2
+	vmul.f32 s5, s4, s5
+	vmov.f32 s4, s2
+	vmov.f32 s2, s5
+	vmul.f32 s5, s5, s5
+	movw r2, #4719
+	movt r2, #14979
+	vmov s7, r2
+	vsub.f32 s6, s5, s1
+	vabs.f32 s6, s6
+	vcmp.f32 s6, s7
+	vmrs APSR_nzcv, FPSCR
+	bgt label30
+	b label910
+.p2align 4
+label32:
+	vadd.f32 s3, s2, s4
+	mov r2, #1056964608
+	vmov s5, r2
+	vmul.f32 s5, s3, s5
+	vmov.f32 s3, s2
+	vmov.f32 s2, s5
+	vmul.f32 s5, s5, s5
+	movw r2, #4719
+	movt r2, #14979
+	vmov s7, r2
+	vsub.f32 s6, s5, s1
+	vabs.f32 s6, s6
+	vcmp.f32 s6, s7
+	vmrs APSR_nzcv, FPSCR
+	bgt label30
 	add r2, r6, r1, lsl #2
 	add r1, r1, #1
 	vstr s2, [r2, #0]
@@ -196,50 +233,10 @@ label38:
 	cmp r2, #1000
 	blt label37
 	b label504
-.p2align 4
-label30:
-	vcmp.f32 s5, s1
-	vmrs APSR_nzcv, FPSCR
-	bgt label32
-	vadd.f32 s4, s2, s3
-	mov r2, #1056964608
-	vmov s5, r2
-	vmul.f32 s5, s4, s5
-	vmov.f32 s4, s2
-	vmov.f32 s2, s5
-	vmul.f32 s5, s5, s5
-	movw r2, #4719
-	movt r2, #14979
-	vmov s7, r2
-	vsub.f32 s6, s5, s1
-	vabs.f32 s6, s6
-	vcmp.f32 s6, s7
-	vmrs APSR_nzcv, FPSCR
-	bgt label30
-	b label910
-.p2align 4
-label32:
-	vadd.f32 s3, s2, s4
-	mov r2, #1056964608
-	vmov s5, r2
-	vmul.f32 s5, s3, s5
-	vmov.f32 s3, s2
-	vmov.f32 s2, s5
-	vmul.f32 s5, s5, s5
-	movw r2, #4719
-	movt r2, #14979
-	vmov s7, r2
-	vsub.f32 s6, s5, s1
-	vabs.f32 s6, s6
-	vcmp.f32 s6, s7
-	vmrs APSR_nzcv, FPSCR
-	bgt label30
-	add r2, r6, r1, lsl #2
-	add r1, r1, #1
-	vstr s2, [r2, #0]
-	cmp r1, #1000
-	blt label21
-	b label410
+label74:
+	mov r2, #0
+	cmp r2, #1000
+	blt label14
 label77:
 	mov r1, #0
 	b label19
@@ -478,6 +475,21 @@ label19:
 	cmp r1, #1000
 	blt label21
 	b label410
+.p2align 4
+label910:
+	add r2, r6, r1, lsl #2
+	add r1, r1, #1
+	vstr s2, [r2, #0]
+	cmp r1, #1000
+	blt label21
+	b label410
+label483:
+	add r2, r6, r1, lsl #2
+	add r1, r1, #1
+	vstr s2, [r2, #0]
+	cmp r1, #1000
+	blt label21
+	b label410
 label73:
 	vmov.f32 s16, s0
 	mov r1, #0
@@ -705,9 +717,6 @@ label48:
 	vldr s1, [r0, #156]
 	vadd.f32 s16, s0, s1
 	b label43
-label4:
-	vpop { s16 }
-	pop { r4, r5, r6, r7, pc }
 label46:
 	mov r0, #95
 	bl _sysy_stoptime
@@ -715,10 +724,3 @@ label46:
 	bl putfloat
 	mov r0, #0
 	b label4
-label483:
-	add r2, r6, r1, lsl #2
-	add r1, r1, #1
-	vstr s2, [r2, #0]
-	cmp r1, #1000
-	blt label21
-	b label410

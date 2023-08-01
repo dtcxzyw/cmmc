@@ -1,7 +1,7 @@
 .data
 .text
+.p2align 2
 .globl _test
 _test:
-.p2align 2
 	jr $ra
 	nop

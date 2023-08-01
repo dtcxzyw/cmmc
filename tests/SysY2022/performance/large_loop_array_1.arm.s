@@ -11,15 +11,15 @@ x:
 .syntax unified
 .arm
 .fpu vfpv4
+.p2align 4
 .globl main
 main:
-.p2align 4
 	push { r4, r5, r6, r7, r8, lr }
 	vpush { s16 }
 	sub sp, sp, #4
 	bl getint
-	sub r4, r0, #8
-	mov r5, r0
+	sub r5, r0, #8
+	mov r4, r0
 	mov r0, #22
 	bl _sysy_starttime
 	mov r3, #0
@@ -60,10 +60,10 @@ label13:
 	vadd.f32 s1, s1, s2
 	vmov s2, r6
 	vmovne.f32 s1, s2
-	cmp r5, r3
+	cmp r4, r3
 	ble label19
 	add r6, r3, #8
-	cmp r5, r6
+	cmp r4, r6
 	bgt label17
 .p2align 4
 label15:
@@ -76,9 +76,9 @@ label15:
 	add r6, r1, r3, lsl #2
 	add r3, r3, #1
 	vstr s2, [r6, #0]
-	cmp r5, r3
+	cmp r4, r3
 	bgt label15
-	movs r3, r5
+	movs r3, r4
 	bgt label23
 	b label252
 .p2align 4
@@ -130,7 +130,7 @@ label17:
 	vmov s2, r8
 	add r8, r3, #7
 	add r3, r3, #8
-	cmp r4, r3
+	cmp r5, r3
 	vcvt.f32.s32 s2, s2
 	vadd.f32 s3, s1, s2
 	vadd.f32 s2, s0, s2
@@ -146,7 +146,7 @@ label17:
 	b label15
 .p2align 4
 label23:
-	cmp r5, #8
+	cmp r4, #8
 	bgt label156
 	mov r6, #0
 	vmov s2, r6
@@ -155,7 +155,7 @@ label23:
 	add r7, r1, r6, lsl #2
 	add r6, r6, #1
 	vldr s4, [r7, #0]
-	cmp r5, r6
+	cmp r4, r6
 	vmul.f32 s3, s3, s4
 	vadd.f32 s2, s2, s3
 	bgt label24
@@ -172,7 +172,7 @@ label24:
 	add r7, r1, r6, lsl #2
 	add r6, r6, #1
 	vldr s4, [r7, #0]
-	cmp r5, r6
+	cmp r4, r6
 	vmul.f32 s3, s3, s4
 	vadd.f32 s2, s2, s3
 	bgt label24
@@ -192,7 +192,7 @@ label27:
 	vldr s3, [r7, #0]
 	add r6, r6, #8
 	vldr s4, [r8, #0]
-	cmp r4, r6
+	cmp r5, r6
 	vmul.f32 s3, s3, s4
 	vadd.f32 s2, s2, s3
 	vldr s3, [r7, #4]
@@ -229,7 +229,7 @@ label27:
 	add r7, r1, r6, lsl #2
 	add r6, r6, #1
 	vldr s4, [r7, #0]
-	cmp r5, r6
+	cmp r4, r6
 	vmul.f32 s3, s3, s4
 	vadd.f32 s2, s2, s3
 	bgt label24
@@ -245,7 +245,7 @@ label252:
 	vmov s2, r6
 	b label21
 label19:
-	cmp r5, #0
+	cmp r4, #0
 	bgt label23
 	b label252
 label21:

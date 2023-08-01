@@ -1,8 +1,8 @@
 .data
 .text
+.p2align 2
 .globl sdiv_exact_even_even_fail_unknown
 sdiv_exact_even_even_fail_unknown:
-.p2align 2
 	andi $t1, $a0, 255
 	li $t0, -2
 	and $t1, $t1, $t0
@@ -18,9 +18,9 @@ sdiv_exact_even_even_fail_unknown:
 	andi $v0, $t0, 255
 	jr $ra
 	nop
+.p2align 2
 .globl sdiv_exact_odd_odd
 sdiv_exact_odd_odd:
-.p2align 2
 	andi $t0, $a0, 255
 	ori $t0, $t0, 1
 	sll $t0, $t0, 24
@@ -35,9 +35,9 @@ sdiv_exact_odd_odd:
 	andi $v0, $t0, 255
 	jr $ra
 	nop
+.p2align 2
 .globl sdiv_neg_neg_high_bits
 sdiv_neg_neg_high_bits:
-.p2align 2
 	andi $t1, $a0, 255
 	li $t0, -128
 	or $t1, $t1, $t0
@@ -54,9 +54,9 @@ sdiv_neg_neg_high_bits:
 	andi $v0, $t0, 255
 	jr $ra
 	nop
+.p2align 2
 .globl udiv_exact_even_even_fail_unknown
 udiv_exact_even_even_fail_unknown:
-.p2align 2
 	andi $t1, $a0, 255
 	li $t0, -2
 	and $t1, $t1, $t0
@@ -68,9 +68,9 @@ udiv_exact_even_even_fail_unknown:
 	andi $v0, $t0, 255
 	jr $ra
 	nop
+.p2align 2
 .globl udiv_exact_even_odd
 udiv_exact_even_odd:
-.p2align 2
 	andi $t0, $a0, 255
 	li $t1, -2
 	and $t0, $t0, $t1

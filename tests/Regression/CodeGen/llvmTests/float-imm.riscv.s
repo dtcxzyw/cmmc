@@ -5,17 +5,17 @@
 __cmmc_fp_constant_pool:
 	.4byte	1078530011
 .text
+.p2align 2
 .globl float_imm
 float_imm:
-.p2align 2
 pcrel6:
 	auipc a0, %pcrel_hi(__cmmc_fp_constant_pool)
 	addi a1, a0, %pcrel_lo(pcrel6)
 	flw f10, 0(a1)
 	ret
+.p2align 2
 .globl float_imm_op
 float_imm_op:
-.p2align 2
 	lui a0, 260096
 	fmv.w.x f11, a0
 	fadd.s f10, f10, f11

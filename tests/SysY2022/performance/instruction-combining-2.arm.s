@@ -4,9 +4,9 @@
 .syntax unified
 .arm
 .fpu vfpv4
+.p2align 4
 .globl main
 main:
-.p2align 4
 	push { r4, r5, r6, r7, lr }
 	sub sp, sp, #4
 	bl getint
@@ -20,7 +20,6 @@ main:
 	ble label18
 	mov r2, #0
 	mov r0, r2
-.p2align 4
 label3:
 	add r5, r2, r0
 	movw r2, #32767
@@ -76,20 +75,21 @@ label3:
 	add r2, r6, r2, lsr #31
 	mls r2, r2, r3, r5
 	bgt label3
+	mov r1, r2
 label6:
-	add r1, r0, r2
-	add r0, r0, #1
+	add r1, r0, r1
 	movw r2, #32767
-	cmp r4, r0
+	add r0, r0, #1
 	movt r2, #16384
+	cmp r4, r0
 	smmul r2, r1, r2
 	asr r3, r2, #27
 	add r2, r3, r2, lsr #31
 	movw r3, #49153
 	movt r3, #8191
-	mls r2, r2, r3, r1
+	mls r1, r2, r3, r1
 	bgt label6
-	mov r4, r2
+	mov r4, r1
 label9:
 	movw r0, #10030
 	bl _sysy_stoptime
@@ -105,5 +105,5 @@ label13:
 	b label9
 label18:
 	mov r0, #0
-	mov r2, r0
+	mov r1, r0
 	b label6

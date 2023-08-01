@@ -17,9 +17,9 @@ kkkk:
 llll:
 	.4byte	0
 .text
+.p2align 2
 .globl test
 test:
-.p2align 2
 	lui $t0, %hi(iiii)
 	lw $t0, %lo(iiii)($t0)
 	lui $t1, %hi(jjjj)

@@ -14,9 +14,9 @@ jjjj:
 kkkk:
 	.4byte	0
 .text
+.p2align 2
 .globl test
 test:
-.p2align 2
 pcrel17:
 	auipc a2, %pcrel_hi(iiii)
 pcrel18:

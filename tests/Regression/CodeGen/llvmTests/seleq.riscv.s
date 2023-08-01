@@ -38,9 +38,9 @@ z3:
 z4:
 	.4byte	0
 .text
+.p2align 2
 .globl calc_seleq
 calc_seleq:
-.p2align 2
 pcrel87:
 	auipc a0, %pcrel_hi(a)
 pcrel88:

@@ -7,51 +7,51 @@ __cmmc_fp_constant_pool:
 	.4byte	3226013648
 	.4byte	1086918628
 .text
+.p2align 2
 .globl select_gpr_gpr_gpr
 select_gpr_gpr_gpr:
-.p2align 2
 	sltu $t0, $zero, $a0
 	move $v0, $a2
 	movn $v0, $a1, $t0
 	jr $ra
 	nop
+.p2align 2
 .globl select_not_gpr_gpr_gpr
 select_not_gpr_gpr_gpr:
-.p2align 2
 	sltiu $t0, $a0, 1
 	move $v0, $a2
 	movn $v0, $a1, $t0
 	jr $ra
 	nop
+.p2align 2
 .globl select_gpr_fpr_fpr
 select_gpr_fpr_fpr:
-.p2align 2
 	mtc1 $a2, $f4
 	sltu $t0, $zero, $a0
 	mov.s $f0, $f14
 	movz.s $f0, $f4, $t0
 	jr $ra
 	nop
+.p2align 2
 .globl select_not_gpr_fpr_fpr
 select_not_gpr_fpr_fpr:
-.p2align 2
 	mtc1 $a2, $f4
 	sltiu $t0, $a0, 1
 	mov.s $f0, $f14
 	movz.s $f0, $f4, $t0
 	jr $ra
 	nop
+.p2align 2
 .globl select_slt_gpr_gpr
 select_slt_gpr_gpr:
-.p2align 2
 	slt $t0, $a0, $a1
 	move $v0, $a3
 	movn $v0, $a2, $t0
 	jr $ra
 	nop
+.p2align 2
 .globl select_slt_fpr_fpr
 select_slt_fpr_fpr:
-.p2align 2
 	mtc1 $a2, $f4
 	mtc1 $a3, $f6
 	slt $t0, $a0, $a1
@@ -59,18 +59,18 @@ select_slt_fpr_fpr:
 	movz.s $f0, $f6, $t0
 	jr $ra
 	nop
+.p2align 2
 .globl select_sle_gpr_gpr
 select_sle_gpr_gpr:
-.p2align 2
 	slt $t0, $a1, $a0
 	xori $t0, $t0, 1
 	movn $a3, $a2, $t0
 	move $v0, $a3
 	jr $ra
 	nop
+.p2align 2
 .globl select_sle_fpr_fpr
 select_sle_fpr_fpr:
-.p2align 2
 	mtc1 $a2, $f4
 	mtc1 $a3, $f6
 	slt $t0, $a1, $a0
@@ -79,17 +79,17 @@ select_sle_fpr_fpr:
 	movz.s $f0, $f6, $t0
 	jr $ra
 	nop
+.p2align 2
 .globl select_sgt_gpr_gpr
 select_sgt_gpr_gpr:
-.p2align 2
 	slt $t0, $a1, $a0
 	move $v0, $a3
 	movn $v0, $a2, $t0
 	jr $ra
 	nop
+.p2align 2
 .globl select_sgt_fpr_fpr
 select_sgt_fpr_fpr:
-.p2align 2
 	mtc1 $a2, $f4
 	mtc1 $a3, $f6
 	slt $t0, $a1, $a0
@@ -97,18 +97,18 @@ select_sgt_fpr_fpr:
 	movz.s $f0, $f6, $t0
 	jr $ra
 	nop
+.p2align 2
 .globl select_sge_gpr_gpr
 select_sge_gpr_gpr:
-.p2align 2
 	slt $t0, $a0, $a1
 	xori $t0, $t0, 1
 	movn $a3, $a2, $t0
 	move $v0, $a3
 	jr $ra
 	nop
+.p2align 2
 .globl select_sge_fpr_fpr
 select_sge_fpr_fpr:
-.p2align 2
 	mtc1 $a2, $f4
 	mtc1 $a3, $f6
 	slt $t0, $a0, $a1
@@ -117,18 +117,18 @@ select_sge_fpr_fpr:
 	movz.s $f0, $f6, $t0
 	jr $ra
 	nop
+.p2align 2
 .globl select_eq_gpr_gpr
 select_eq_gpr_gpr:
-.p2align 2
 	xor $t0, $a0, $a1
 	sltiu $t0, $t0, 1
 	movn $a3, $a2, $t0
 	move $v0, $a3
 	jr $ra
 	nop
+.p2align 2
 .globl select_eq_fpr_fpr
 select_eq_fpr_fpr:
-.p2align 2
 	mtc1 $a2, $f4
 	mtc1 $a3, $f6
 	xor $t0, $a0, $a1
@@ -137,18 +137,18 @@ select_eq_fpr_fpr:
 	movz.s $f0, $f6, $t0
 	jr $ra
 	nop
+.p2align 2
 .globl select_ne_gpr_gpr
 select_ne_gpr_gpr:
-.p2align 2
 	xor $t0, $a0, $a1
 	sltu $t0, $zero, $t0
 	movn $a3, $a2, $t0
 	move $v0, $a3
 	jr $ra
 	nop
+.p2align 2
 .globl select_ne_fpr_fpr
 select_ne_fpr_fpr:
-.p2align 2
 	mtc1 $a2, $f4
 	mtc1 $a3, $f6
 	xor $t0, $a0, $a1
@@ -157,9 +157,9 @@ select_ne_fpr_fpr:
 	movz.s $f0, $f6, $t0
 	jr $ra
 	nop
+.p2align 2
 .globl select_feq_gpr_gpr
 select_feq_gpr_gpr:
-.p2align 2
 	c.eq.s $f12, $f14
 	li $t0, 1
 	movf $t0, $zero, $fcc0
@@ -167,9 +167,9 @@ select_feq_gpr_gpr:
 	move $v0, $a3
 	jr $ra
 	nop
+.p2align 2
 .globl select_feq_fpr_fpr
 select_feq_fpr_fpr:
-.p2align 2
 	mtc1 $a2, $f4
 	mtc1 $a3, $f6
 	c.eq.s $f12, $f14
@@ -179,9 +179,9 @@ select_feq_fpr_fpr:
 	movz.s $f0, $f6, $t0
 	jr $ra
 	nop
+.p2align 2
 .globl select_fne_gpr_gpr
 select_fne_gpr_gpr:
-.p2align 2
 	c.eq.s $f12, $f14
 	li $t0, 1
 	movt $t0, $zero, $fcc0
@@ -189,9 +189,9 @@ select_fne_gpr_gpr:
 	move $v0, $a3
 	jr $ra
 	nop
+.p2align 2
 .globl select_fne_fpr_fpr
 select_fne_fpr_fpr:
-.p2align 2
 	mtc1 $a2, $f4
 	mtc1 $a3, $f6
 	c.eq.s $f12, $f14
@@ -201,9 +201,9 @@ select_fne_fpr_fpr:
 	movz.s $f0, $f6, $t0
 	jr $ra
 	nop
+.p2align 2
 .globl select_flt_gpr_gpr
 select_flt_gpr_gpr:
-.p2align 2
 	c.olt.s $f12, $f14
 	li $t0, 1
 	movf $t0, $zero, $fcc0
@@ -211,9 +211,9 @@ select_flt_gpr_gpr:
 	move $v0, $a3
 	jr $ra
 	nop
+.p2align 2
 .globl select_flt_fpr_fpr
 select_flt_fpr_fpr:
-.p2align 2
 	mtc1 $a2, $f4
 	mtc1 $a3, $f6
 	c.olt.s $f12, $f14
@@ -223,9 +223,9 @@ select_flt_fpr_fpr:
 	movz.s $f0, $f6, $t0
 	jr $ra
 	nop
+.p2align 2
 .globl select_fle_gpr_gpr
 select_fle_gpr_gpr:
-.p2align 2
 	c.ole.s $f12, $f14
 	li $t0, 1
 	movf $t0, $zero, $fcc0
@@ -233,9 +233,9 @@ select_fle_gpr_gpr:
 	move $v0, $a3
 	jr $ra
 	nop
+.p2align 2
 .globl select_fle_fpr_fpr
 select_fle_fpr_fpr:
-.p2align 2
 	mtc1 $a2, $f4
 	mtc1 $a3, $f6
 	c.ole.s $f12, $f14
@@ -245,9 +245,9 @@ select_fle_fpr_fpr:
 	movz.s $f0, $f6, $t0
 	jr $ra
 	nop
+.p2align 2
 .globl select_fgt_gpr_gpr
 select_fgt_gpr_gpr:
-.p2align 2
 	c.ule.s $f12, $f14
 	li $t0, 1
 	movt $t0, $zero, $fcc0
@@ -255,9 +255,9 @@ select_fgt_gpr_gpr:
 	move $v0, $a3
 	jr $ra
 	nop
+.p2align 2
 .globl select_fgt_fpr_fpr
 select_fgt_fpr_fpr:
-.p2align 2
 	mtc1 $a2, $f4
 	mtc1 $a3, $f6
 	c.ule.s $f12, $f14
@@ -267,9 +267,9 @@ select_fgt_fpr_fpr:
 	movz.s $f0, $f6, $t0
 	jr $ra
 	nop
+.p2align 2
 .globl select_fge_gpr_gpr
 select_fge_gpr_gpr:
-.p2align 2
 	c.ult.s $f12, $f14
 	li $t0, 1
 	movt $t0, $zero, $fcc0
@@ -277,9 +277,9 @@ select_fge_gpr_gpr:
 	move $v0, $a3
 	jr $ra
 	nop
+.p2align 2
 .globl select_fge_fpr_fpr
 select_fge_fpr_fpr:
-.p2align 2
 	mtc1 $a2, $f4
 	mtc1 $a3, $f6
 	c.ult.s $f12, $f14
@@ -289,9 +289,9 @@ select_fge_fpr_fpr:
 	movz.s $f0, $f6, $t0
 	jr $ra
 	nop
+.p2align 2
 .globl select_cross
 select_cross:
-.p2align 2
 	slt $v0, $a0, $a1
 	li $t1, 1
 	li $t0, 10
@@ -300,9 +300,9 @@ select_cross:
 	movn $v0, $t0, $t1
 	jr $ra
 	nop
+.p2align 2
 .globl select_cross_fpr
 select_cross_fpr:
-.p2align 2
 	slt $t0, $a0, $a1
 	move $t1, $t0
 	subu $t2, $a1, $a2
@@ -322,9 +322,9 @@ label222:
 label213:
 	jr $ra
 	nop
+.p2align 2
 .globl select_round
 select_round:
-.p2align 2
 	lui $t0, %hi(__cmmc_fp_constant_pool)
 	addiu $t1, $t0, %lo(__cmmc_fp_constant_pool)
 	lwc1 $f4, 8($t1)
@@ -337,9 +337,9 @@ select_round:
 	movz.s $f0, $f12, $t0
 	jr $ra
 	nop
+.p2align 2
 .globl select_bitset
 select_bitset:
-.p2align 2
 	xori $t0, $a1, 1
 	or $t0, $a0, $t0
 	sltiu $t0, $t0, 1
@@ -347,64 +347,64 @@ select_bitset:
 	and $v0, $a2, $t0
 	jr $ra
 	nop
+.p2align 2
 .globl select_imax
 select_imax:
-.p2align 2
 	slt $t0, $a1, $a0
 	move $v0, $a1
 	movn $v0, $a0, $t0
 	jr $ra
 	nop
+.p2align 2
 .globl select_imin
 select_imin:
-.p2align 2
 	slt $t0, $a0, $a1
 	move $v0, $a1
 	movn $v0, $a0, $t0
 	jr $ra
 	nop
+.p2align 2
 .globl select_zero
 select_zero:
-.p2align 2
 	sltiu $t0, $a0, 1
 	subu $t0, $zero, $t0
 	and $v0, $a1, $t0
 	jr $ra
 	nop
+.p2align 2
 .globl select_sgt_zero
 select_sgt_zero:
-.p2align 2
 	slt $t0, $zero, $a0
 	subu $t0, $zero, $t0
 	and $v0, $a1, $t0
 	jr $ra
 	nop
+.p2align 2
 .globl select_slt_zero
 select_slt_zero:
-.p2align 2
 	sra $t0, $a0, 31
 	and $v0, $a1, $t0
 	jr $ra
 	nop
+.p2align 2
 .globl select_imm
 select_imm:
-.p2align 2
 	sltu $t0, $zero, $a0
 	addiu $v0, $t0, 1
 	jr $ra
 	nop
+.p2align 2
 .globl select_one
 select_one:
-.p2align 2
 	xori $t0, $a0, 1
 	sltiu $t0, $t0, 1
 	movn $a2, $a1, $t0
 	move $v0, $a2
 	jr $ra
 	nop
+.p2align 2
 .globl select_constant
 select_constant:
-.p2align 2
 	sltu $t0, $zero, $a0
 	li $t1, -1894007588
 	li $v0, -899497722

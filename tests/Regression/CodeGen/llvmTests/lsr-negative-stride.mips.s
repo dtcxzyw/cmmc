@@ -1,8 +1,8 @@
 .data
 .text
+.p2align 2
 .globl t
 t:
-.p2align 2
 	bne $a0, $a1, label14
 	nop
 	move $v0, $a0

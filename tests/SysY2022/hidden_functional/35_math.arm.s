@@ -4,8 +4,8 @@
 .syntax unified
 .arm
 .fpu vfpv4
-my_sqrt:
 .p2align 4
+my_sqrt:
 	push { lr }
 	movw r0, #0
 	sub sp, sp, #4
@@ -128,8 +128,8 @@ label4:
 	vmov s1, r0
 	vmul.f32 s0, s0, s1
 	b label5
-asr5:
 .p2align 4
+asr5:
 	push { lr }
 	vpush { s16, s17, s18, s19, s20, s21, s22, s23, s24, s25, s26, s27, s28 }
 	vmov.f32 s18, s1
@@ -305,8 +305,8 @@ label128:
 	vadd.f32 s0, s16, s0
 	vadd.f32 s0, s19, s0
 	b label121
-eee:
 .p2align 4
+eee:
 	push { lr }
 	movw r0, #4719
 	sub sp, sp, #4
@@ -465,8 +465,8 @@ label291:
 	vmul.f32 s0, s0, s0
 	vmul.f32 s0, s0, s0
 	b label272
-my_exp:
 .p2align 4
+my_exp:
 	push { lr }
 	vcmp.f32 s0, #0
 	sub sp, sp, #4
@@ -534,9 +534,9 @@ label496:
 	mov r0, #1065353216
 	vmov s5, r0
 	b label444
+.p2align 4
 .globl main
 main:
-.p2align 4
 	push { r4, r5, lr }
 	vpush { s16, s17, s18 }
 	bl getint

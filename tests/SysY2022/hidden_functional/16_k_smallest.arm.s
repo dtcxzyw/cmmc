@@ -8,9 +8,9 @@ array:
 .syntax unified
 .arm
 .fpu vfpv4
+.p2align 4
 .globl main
 main:
-.p2align 4
 	push { r4, r5, r6, r7, r8, r9, lr }
 	sub sp, sp, #4
 	bl getint
@@ -40,13 +40,19 @@ label24:
 	cmp r6, r7
 	bgt label24
 	b label31
+label8:
+	ldr r3, [r4, r1, lsl #2]
+	mov r6, r0
+	mov r2, r0
+	cmp r1, r0
+	ble label16
 .p2align 4
 label12:
-	ldr r7, [r4, r3, lsl #2]
-	cmp r2, r7
+	ldr r7, [r4, r2, lsl #2]
+	cmp r3, r7
 	bge label13
-	add r3, r3, #1
-	cmp r1, r3
+	add r2, r2, #1
+	cmp r1, r2
 	bgt label12
 	b label16
 .p2align 4
@@ -54,10 +60,10 @@ label13:
 	add r8, r4, r6, lsl #2
 	add r6, r6, #1
 	ldr r9, [r8, #0]
-	str r9, [r4, r3, lsl #2]
+	str r9, [r4, r2, lsl #2]
 	str r7, [r8, #0]
-	add r3, r3, #1
-	cmp r1, r3
+	add r2, r2, #1
+	cmp r1, r2
 	bgt label12
 label16:
 	add r2, r4, r6, lsl #2
@@ -67,7 +73,11 @@ label16:
 	ldr r8, [r7, #0]
 	str r8, [r2, #0]
 	str r3, [r7, #0]
-	bne label17
+	beq label20
+	bge label18
+	sub r1, r6, #1
+	b label6
+label20:
 	cmp r6, #0
 	ble label23
 	mov r5, #0
@@ -84,18 +94,6 @@ label23:
 	mov r0, #0
 	add sp, sp, #4
 	pop { r4, r5, r6, r7, r8, r9, pc }
-label8:
-	ldr r2, [r4, r1, lsl #2]
-	mov r6, r0
-	mov r3, r0
-	cmp r1, r0
-	bgt label12
-	b label16
-label17:
-	cmp r5, r6
-	blt label19
+label18:
 	add r0, r6, #1
-	b label6
-label19:
-	sub r1, r6, #1
 	b label6

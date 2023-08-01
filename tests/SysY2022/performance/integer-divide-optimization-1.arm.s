@@ -4,9 +4,9 @@
 .syntax unified
 .arm
 .fpu vfpv4
+.p2align 4
 .globl main
 main:
-.p2align 4
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
 	sub sp, sp, #36
 	bl getint
@@ -29,20 +29,19 @@ main:
 	mov r5, #3
 	mov r10, #2
 	str r8, [sp, #16]
-	mov r0, #1
-	mov r1, #0
+	mov r1, #1
+	mov r0, #0
 	str r7, [sp, #12]
-	mov r3, r1
+	mov r3, r0
 	str r6, [sp, #8]
 	str r5, [sp, #4]
 	str r10, [sp, #0]
-	mov r2, r1
-.p2align 4
+	mov r2, r0
 label3:
-	add r5, r1, r3
+	add r5, r0, r3
 	ldr r10, [sp, #0]
 	add r2, r2, #8
-	add r1, r1, #8
+	add r0, r0, #8
 	movw r3, #49153
 	movt r3, #16384
 	smmul r4, r5, r3
@@ -51,8 +50,8 @@ label3:
 	movw r4, #32771
 	movt r4, #32766
 	mls r5, r6, r4, r5
-	add r5, r0, r5
-	add r0, r0, #8
+	add r5, r1, r5
+	add r1, r1, #8
 	smmul r6, r5, r3
 	asr r7, r6, #29
 	add r6, r7, r6, lsr #31

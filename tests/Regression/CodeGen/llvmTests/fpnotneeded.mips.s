@@ -14,9 +14,9 @@ __cmmc_fp_constant_pool:
 	.4byte	1073741824
 	.4byte	1065353216
 .text
+.p2align 2
 .globl foo
 foo:
-.p2align 2
 	lui $t0, %hi(__cmmc_fp_constant_pool)
 	addiu $t0, $t0, %lo(__cmmc_fp_constant_pool)
 	lwc1 $f4, 0($t0)
@@ -24,28 +24,28 @@ foo:
 	swc1 $f4, %lo(f)($t0)
 	jr $ra
 	nop
+.p2align 2
 .globl fv
 fv:
-.p2align 2
 	lui $t0, %hi(__cmmc_fp_constant_pool)
 	addiu $t0, $t0, %lo(__cmmc_fp_constant_pool)
 	lwc1 $f0, 4($t0)
 	jr $ra
 	nop
+.p2align 2
 .globl iv
 iv:
-.p2align 2
 	lui $t0, %hi(i)
 	lw $v0, %lo(i)($t0)
 	jr $ra
 	nop
+.p2align 2
 .globl vif
 vif:
-.p2align 2
 	jr $ra
 	nop
+.p2align 2
 .globl vv
 vv:
-.p2align 2
 	jr $ra
 	nop

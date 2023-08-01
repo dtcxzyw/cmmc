@@ -5,7 +5,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
   ^while.header:
     i32 %0 = call () -> i32 @getint();
     i1 %1 = icmp neq i32 %0, i32 0;
-    cbr i1 %1(prob = 0.992248), ^while.body, ^b;
+    cbr i1 %1(prob = 0.984615), ^while.body, ^b;
   ^while.body:
     i32 %2 = call () -> i32 @getint();
     i1 %3 = icmp neq i32 %2, i32 0;

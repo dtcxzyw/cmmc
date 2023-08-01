@@ -5,9 +5,9 @@
 g:
 	.zero	40
 .text
+.p2align 2
 .globl f
 f:
-.p2align 2
 	addiu $t0, $a0, 4
 	lui $t1, %hi(g)
 	addiu $t1, $t1, %lo(g)

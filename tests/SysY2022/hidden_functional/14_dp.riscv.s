@@ -8,9 +8,9 @@ t:
 dp:
 	.zero	140700
 .text
+.p2align 2
 .globl main
 main:
-.p2align 2
 	addi sp, sp, -56
 	sd ra, 0(sp)
 	sd s3, 8(sp)

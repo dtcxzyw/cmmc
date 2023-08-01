@@ -6,9 +6,9 @@
 g:
 	.zero	40
 .text
+.p2align 2
 .globl f
 f:
-.p2align 2
 	addiw a2, a0, 4
 	li a3, 4294967295
 pcrel12:

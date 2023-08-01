@@ -8,8 +8,8 @@ image:
 .syntax unified
 .arm
 .fpu vfpv4
-my_sin_impl:
 .p2align 4
+my_sin_impl:
 	push { lr }
 	vpush { s16 }
 	movw r0, #14269
@@ -62,9 +62,9 @@ label7:
 	vmul.f32 s0, s0, s16
 	vsub.f32 s0, s0, s1
 	b label5
+.p2align 4
 .globl main
 main:
-.p2align 4
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
 	vpush { s16, s17, s18, s19, s20, s21 }
 	sub sp, sp, #4
@@ -203,7 +203,6 @@ label56:
 	cmp r7, r9
 	bgt label59
 	b label152
-.p2align 4
 label67:
 	cmp r4, #0
 	ble label68
@@ -277,14 +276,14 @@ label65:
 	cmp r4, r10
 	bgt label61
 	b label60
-label152:
-	mov r0, #0
-	b label49
 label68:
 	add r10, r10, #1
 	cmp r7, r10
 	bgt label67
 	b label56
+label152:
+	mov r0, #0
+	b label49
 .p2align 4
 label224:
 	mla r0, r4, r2, r0

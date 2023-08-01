@@ -1,8 +1,8 @@
 .data
 .text
+.p2align 2
 .globl bswap_ror_commuted
 bswap_ror_commuted:
-.p2align 2
 	srl $t0, $a0, 8
 	li $t1, 16711935
 	and $t0, $t0, $t1
@@ -12,17 +12,17 @@ bswap_ror_commuted:
 	or $v0, $t0, $t1
 	jr $ra
 	nop
+.p2align 2
 .globl different_constant
 different_constant:
-.p2align 2
 	srl $t0, $a0, 8
 	li $t1, 16711935
 	and $v0, $t0, $t1
 	jr $ra
 	nop
+.p2align 2
 .globl different_op
 different_op:
-.p2align 2
 	sll $t0, $a0, 8
 	li $t1, 16711936
 	addu $t0, $t0, $t1
@@ -32,9 +32,9 @@ different_op:
 	or $v0, $t0, $t1
 	jr $ra
 	nop
+.p2align 2
 .globl different_shift_amount
 different_shift_amount:
-.p2align 2
 	sll $t0, $a0, 9
 	li $t1, -16711936
 	and $t0, $t0, $t1
@@ -44,9 +44,9 @@ different_shift_amount:
 	or $v0, $t0, $t1
 	jr $ra
 	nop
+.p2align 2
 .globl different_vars
 different_vars:
-.p2align 2
 	sll $t0, $a0, 8
 	li $t1, -16711936
 	and $t0, $t0, $t1
@@ -56,9 +56,9 @@ different_vars:
 	or $v0, $t0, $t1
 	jr $ra
 	nop
+.p2align 2
 .globl extra_maskop_uses2
 extra_maskop_uses2:
-.p2align 2
 	sll $t0, $a0, 8
 	li $t1, -16711936
 	and $t0, $t0, $t1
@@ -72,9 +72,9 @@ extra_maskop_uses2:
 	mflo $v0
 	jr $ra
 	nop
+.p2align 2
 .globl f2
 f2:
-.p2align 2
 	sll $t1, $a0, 8
 	andi $t2, $t1, 65280
 	srl $t0, $a0, 8
@@ -88,9 +88,9 @@ f2:
 	or $v0, $t1, $t0
 	jr $ra
 	nop
+.p2align 2
 .globl not_rev16
 not_rev16:
-.p2align 2
 	srl $t0, $a0, 8
 	li $t1, -16711936
 	and $t0, $t0, $t1
@@ -100,9 +100,9 @@ not_rev16:
 	or $v0, $t0, $t1
 	jr $ra
 	nop
+.p2align 2
 .globl rev16
 rev16:
-.p2align 2
 	sll $t0, $a0, 8
 	li $t1, -16711936
 	and $t0, $t0, $t1

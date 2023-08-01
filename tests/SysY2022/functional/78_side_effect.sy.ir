@@ -8,7 +8,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i32 %1 = phi [^entry, i32 -1] [^if.then, i32 %12] [^entry6, i32 %19];
     i32 %2 = phi [^entry, i32 5] [^if.then, i32 %11] [^entry6, i32 %11];
     i1 %3 = icmp sgt i32 %2, i32 -1;
-    cbr i1 %3(prob = 0.992248), ^entry1, ^b;
+    cbr i1 %3(prob = 0.984615), ^entry1, ^b;
   ^entry1:
     i32 %4 = add i32 %1, i32 1;
     i1 %5 = icmp neq i32 %4, i32 0;

@@ -4,8 +4,8 @@
 .syntax unified
 .arm
 .fpu vfpv4
-exgcd:
 .p2align 4
+exgcd:
 	push { r4, r5, r6, r7, r8, lr }
 	mov r6, r3
 	mov r7, r2
@@ -59,9 +59,9 @@ label9:
 	mls r1, r2, r3, r1
 	str r1, [r6, #0]
 	b label3
+.p2align 4
 .globl main
 main:
-.p2align 4
 	push { lr }
 	mov r1, #15
 	mov r0, #1

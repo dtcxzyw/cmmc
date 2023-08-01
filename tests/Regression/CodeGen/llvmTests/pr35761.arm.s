@@ -17,9 +17,9 @@ z:
 .syntax unified
 .arm
 .fpu vfpv4
+.p2align 4
 .globl PR35761
 PR35761:
-.p2align 4
 	movw r1, #:lower16:x
 	movw r3, #32767
 	movt r1, #:upper16:x

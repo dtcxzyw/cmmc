@@ -4,9 +4,9 @@
 .syntax unified
 .arm
 .fpu vfpv4
+.p2align 4
 .globl max
 max:
-.p2align 4
 	cmp r0, r1
 	movgt r1, r0
 	mov r0, r1

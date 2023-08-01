@@ -1,8 +1,8 @@
 .data
 .text
+.p2align 2
 .globl PR15705
 PR15705:
-.p2align 2
 	xor $t0, $a0, $a2
 	sltiu $t1, $t0, 1
 	move $t0, $a1

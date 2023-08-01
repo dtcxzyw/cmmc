@@ -16,7 +16,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i1 %7 = icmp eq i32 %6, i32 32;
     i1 %8 = icmp eq i32 %6, i32 10;
     i1 %9 = or i1 %7, i1 %8;
-    cbr i1 %9(prob = 0.992248), ^entry1, ^entry2;
+    cbr i1 %9(prob = 0.984615), ^entry1, ^entry2;
   ^entry2:
     i32 %10 = add i32 %6, i32 -48;
     i1 %11 = icmp ult i32 %10, i32 10;
@@ -29,7 +29,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i32 %14 = call () -> i32 @getch();
     i32 %15 = add i32 %14, i32 -48;
     i1 %16 = icmp ult i32 %15, i32 10;
-    cbr i1 %16(prob = 0.992248), ^while.body, ^entry4;
+    cbr i1 %16(prob = 0.984615), ^while.body, ^entry4;
   ^while.body:
     i32 %17 = mul i32 %13, i32 10;
     i32 %18 = add i32 %15, i32 %17;
@@ -39,7 +39,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i32 %20 = phi [^if.else, i32 0] [^entry3, i32 %13];
     i32 %21 = phi [^if.else, i32 1] [^entry3, i32 0];
     i1 %22 = icmp neq i32 %0, i32 0;
-    cbr i1 %22(prob = 0.992248), ^while.body1, ^b;
+    cbr i1 %22(prob = 0.984615), ^while.body1, ^b;
   ^while.body1:
     i32 %23 = phi [^entry4, i32 %19] [^b8, i32 %295];
     i32 %24 = phi [^entry4, i32 %20] [^b8, i32 %296];
@@ -584,7 +584,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i1 %292 = icmp eq i32 %287, i32 32;
     i1 %293 = icmp eq i32 %287, i32 10;
     i1 %294 = or i1 %292, i1 %293;
-    cbr i1 %294(prob = 0.992248), ^entry7, ^entry8;
+    cbr i1 %294(prob = 0.984615), ^entry7, ^entry8;
   ^b8:
     i32 %295 = phi [^entry6, i32 %284] [^entry19, i32 %356];
     i32 %296 = phi [^entry6, i32 %285] [^entry19, i32 %357];
@@ -594,13 +594,13 @@ func @main() -> i32 { NoRecurse Entry } {
     call (i32) -> void @putch(i32 10);
     i32 %299 = add i32 %26, i32 -1;
     i1 %300 = icmp neq i32 %299, i32 0;
-    cbr i1 %300(prob = 0.992248), ^while.body1, ^b;
+    cbr i1 %300(prob = 0.984615), ^while.body1, ^b;
   ^entry7:
     i32 %301 = call () -> i32 @getch();
     i1 %302 = icmp eq i32 %301, i32 32;
     i1 %303 = icmp eq i32 %301, i32 10;
     i1 %304 = or i1 %302, i1 %303;
-    cbr i1 %304(prob = 0.992248), ^entry7, ^entry8;
+    cbr i1 %304(prob = 0.984615), ^entry7, ^entry8;
   ^entry8:
     i32 %305 = phi [^b7, i32 %287] [^entry7, i32 %301];
     i32 %306 = add i32 %305, i32 -48;
@@ -611,7 +611,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i32 %309 = call () -> i32 @getch();
     i32 %310 = add i32 %309, i32 -48;
     i1 %311 = icmp ult i32 %310, i32 10;
-    cbr i1 %311(prob = 0.992248), ^while.body2, ^entry10;
+    cbr i1 %311(prob = 0.984615), ^while.body2, ^entry10;
   ^if.else1:
     i32 %312 = call () -> i32 @getch();
     i1 %313 = icmp eq i32 %305, i32 43;
@@ -640,18 +640,18 @@ func @main() -> i32 { NoRecurse Entry } {
     i1 %328 = icmp eq i32 %327, i32 32;
     i1 %329 = icmp eq i32 %327, i32 10;
     i1 %330 = or i1 %328, i1 %329;
-    cbr i1 %330(prob = 0.992248), ^entry11, ^entry13;
+    cbr i1 %330(prob = 0.984615), ^entry11, ^entry13;
   ^entry11:
     i32 %331 = call () -> i32 @getch();
     i1 %332 = icmp eq i32 %331, i32 32;
     i1 %333 = icmp eq i32 %331, i32 10;
     i1 %334 = or i1 %332, i1 %333;
-    cbr i1 %334(prob = 0.992248), ^entry11, ^entry13;
+    cbr i1 %334(prob = 0.984615), ^entry11, ^entry13;
   ^entry12:
     i1 %335 = icmp eq i32 %312, i32 32;
     i1 %336 = icmp eq i32 %312, i32 10;
     i1 %337 = or i1 %335, i1 %336;
-    cbr i1 %337(prob = 0.992248), ^entry14, ^entry16;
+    cbr i1 %337(prob = 0.984615), ^entry14, ^entry16;
   ^entry13:
     i32 %338 = phi [^entry10, i32 %327] [^entry11, i32 %331];
     i32 %339 = add i32 %338, i32 -48;
@@ -665,13 +665,13 @@ func @main() -> i32 { NoRecurse Entry } {
     i1 %343 = icmp eq i32 %342, i32 32;
     i1 %344 = icmp eq i32 %342, i32 10;
     i1 %345 = or i1 %343, i1 %344;
-    cbr i1 %345(prob = 0.992248), ^entry14, ^entry16;
+    cbr i1 %345(prob = 0.984615), ^entry14, ^entry16;
   ^entry15:
     i32 %346 = phi [^entry13, i32 %339] [^while.body3, i32 %354];
     i32 %347 = call () -> i32 @getch();
     i32 %348 = add i32 %347, i32 -48;
     i1 %349 = icmp ult i32 %348, i32 10;
-    cbr i1 %349(prob = 0.992248), ^while.body3, ^entry17;
+    cbr i1 %349(prob = 0.984615), ^while.body3, ^entry17;
   ^entry16:
     i32 %350 = phi [^entry12, i32 %312] [^entry14, i32 %342];
     i32 %351 = add i32 %350, i32 -48;
@@ -690,13 +690,13 @@ func @main() -> i32 { NoRecurse Entry } {
     i32 %358 = phi [^if.else2, i32 1] [^entry15, i32 0] [^b12, i32 %358];
     i32 %359 = load i32* %5;
     i1 %360 = icmp neq i32 %359, i32 0;
-    cbr i1 %360(prob = 0.992248), ^entry20, ^entry19;
+    cbr i1 %360(prob = 0.984615), ^entry20, ^entry19;
   ^entry18:
     i32 %361 = phi [^entry16, i32 %351] [^while.body4, i32 %366];
     i32 %362 = call () -> i32 @getch();
     i32 %363 = add i32 %362, i32 -48;
     i1 %364 = icmp ult i32 %363, i32 10;
-    cbr i1 %364(prob = 0.992248), ^while.body4, ^entry21;
+    cbr i1 %364(prob = 0.984615), ^while.body4, ^entry21;
   ^while.body4:
     i32 %365 = mul i32 %361, i32 10;
     i32 %366 = add i32 %363, i32 %365;
@@ -762,7 +762,7 @@ func @main() -> i32 { NoRecurse Entry } {
     ubr ^b12;
   ^b13:
     i1 %401 = icmp slt i32 %324, i32 11;
-    cbr i1 %401(prob = 0.992248), ^entry24, ^entry23;
+    cbr i1 %401(prob = 0.984615), ^entry24, ^entry23;
   ^b14:
     i1 %402 = icmp eq i32 %388, i32 42;
     i1 %403 = icmp eq i32 %388, i32 47;
@@ -771,7 +771,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i1 %406 = or i1 %404, i1 %405;
     i1 %407 = icmp slt i32 %324, i32 1;
     i1 %408 = or i1 %406, i1 %407;
-    cbr i1 %408(prob = 0.992248), ^entry24, ^entry23;
+    cbr i1 %408(prob = 0.984615), ^entry24, ^entry23;
   ^b15:
     i1 %409 = icmp eq i32 %371, i32 42;
     cbr i1 %409(prob = 0.5), ^if.then2, ^b16;

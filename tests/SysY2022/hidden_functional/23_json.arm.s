@@ -8,8 +8,8 @@ buffer:
 .syntax unified
 .arm
 .fpu vfpv4
-detect_item:
 .p2align 4
+detect_item:
 	push { r4, r5, r6, r7, lr }
 	mov r5, r3
 	mov r6, r2
@@ -482,8 +482,10 @@ label19:
 	cmp r0, #116
 	beq label20
 	cmp r0, #102
-	bne label23
-	mov r0, #6
+	beq label22
+	cmp r0, #110
+	bne label198
+	mov r0, #7
 	mov r1, r4
 	mov r2, r6
 	mov r3, r5
@@ -497,25 +499,7 @@ label726:
 	add r0, r0, #1
 	str r0, [r5, #0]
 	cmp r6, r0
-	ble label145
-	ldr r0, [r5, #0]
-	ldr r1, [r4, r0, lsl #2]
-	sub r3, r1, #9
-	sub r2, r1, #32
-	clz r3, r3
-	clz r2, r2
-	lsr r3, r3, #5
-	lsr r2, r2, #5
-	orr r2, r2, r3
-	sub r3, r1, #10
-	sub r1, r1, #13
-	clz r3, r3
-	clz r1, r1
-	lsr r3, r3, #5
-	lsr r1, r1, #5
-	orr r1, r3, r1
-	orrs r1, r2, r1
-	bne label726
+	bgt label143
 label145:
 	mov r0, #0
 	mov r1, r4
@@ -538,26 +522,16 @@ label160:
 	add r0, r0, #1
 	str r0, [r5, #0]
 	cmp r6, r0
-	ble label163
-	ldr r0, [r5, #0]
-	ldr r1, [r4, r0, lsl #2]
-	sub r3, r1, #9
-	sub r2, r1, #32
-	clz r3, r3
-	clz r2, r2
-	lsr r3, r3, #5
-	lsr r2, r2, #5
-	orr r2, r2, r3
-	sub r3, r1, #10
-	sub r1, r1, #13
-	clz r3, r3
-	clz r1, r1
-	lsr r3, r3, #5
-	lsr r1, r1, #5
-	orr r1, r3, r1
-	orrs r1, r2, r1
-	bne label160
-	b label163
+	bgt label179
+label163:
+	mov r0, #2
+	mov r1, r4
+	mov r2, r6
+	mov r3, r5
+	bl detect_item
+	cmp r0, #0
+	beq label198
+	b label805
 label181:
 	ldr r0, [r5, #0]
 	b label149
@@ -588,10 +562,46 @@ label112:
 	str r0, [r5, #0]
 	mov r0, #1
 	b label7
-label23:
-	cmp r0, #110
-	beq label24
-	b label198
+label143:
+	ldr r0, [r5, #0]
+	ldr r1, [r4, r0, lsl #2]
+	sub r3, r1, #9
+	sub r2, r1, #32
+	clz r3, r3
+	clz r2, r2
+	lsr r3, r3, #5
+	lsr r2, r2, #5
+	orr r2, r2, r3
+	sub r3, r1, #10
+	sub r1, r1, #13
+	clz r3, r3
+	clz r1, r1
+	lsr r3, r3, #5
+	lsr r1, r1, #5
+	orr r1, r3, r1
+	orrs r1, r2, r1
+	bne label726
+	b label145
+label179:
+	ldr r0, [r5, #0]
+	ldr r1, [r4, r0, lsl #2]
+	sub r3, r1, #9
+	sub r2, r1, #32
+	clz r3, r3
+	clz r2, r2
+	lsr r3, r3, #5
+	lsr r2, r2, #5
+	orr r2, r2, r3
+	sub r3, r1, #10
+	sub r1, r1, #13
+	clz r3, r3
+	clz r1, r1
+	lsr r3, r3, #5
+	lsr r1, r1, #5
+	orr r1, r3, r1
+	orrs r1, r2, r1
+	bne label160
+	b label163
 label182:
 	ldr r0, [r5, #0]
 	ldr r1, [r4, r0, lsl #2]
@@ -614,50 +624,11 @@ label182:
 	add r0, r0, #1
 	str r0, [r5, #0]
 	b label147
-label163:
-	mov r0, #2
-	mov r1, r4
-	mov r2, r6
-	mov r3, r5
-	bl detect_item
-	cmp r0, #0
-	beq label198
+label805:
 	ldr r0, [r5, #0]
 label165:
 	cmp r6, r0
-	bgt label168
-	ldr r0, [r5, #0]
-label170:
-	cmp r6, r0
-	ble label198
-	ldr r1, [r4, r0, lsl #2]
-	cmp r1, #58
-	bne label198
-label837:
-	add r0, r0, #1
-	str r0, [r5, #0]
-	cmp r6, r0
-	ble label178
-	ldr r0, [r5, #0]
-	ldr r1, [r4, r0, lsl #2]
-	sub r3, r1, #9
-	sub r2, r1, #32
-	clz r3, r3
-	clz r2, r2
-	lsr r3, r3, #5
-	lsr r2, r2, #5
-	orr r2, r2, r3
-	sub r3, r1, #10
-	sub r1, r1, #13
-	clz r3, r3
-	clz r1, r1
-	lsr r3, r3, #5
-	lsr r1, r1, #5
-	orr r1, r3, r1
-	orrs r1, r2, r1
-	bne label837
-	b label178
-label168:
+	ble label167
 	ldr r0, [r5, #0]
 	ldr r1, [r4, r0, lsl #2]
 	sub r3, r1, #9
@@ -679,6 +650,28 @@ label168:
 	add r0, r0, #1
 	str r0, [r5, #0]
 	b label165
+label167:
+	ldr r0, [r5, #0]
+label170:
+	cmp r6, r0
+	ble label198
+	ldr r1, [r4, r0, lsl #2]
+	cmp r1, #58
+	bne label198
+label837:
+	add r0, r0, #1
+	str r0, [r5, #0]
+	cmp r6, r0
+	bgt label176
+label178:
+	mov r0, #0
+	mov r1, r4
+	mov r2, r6
+	mov r3, r5
+	bl detect_item
+	cmp r0, #0
+	bne label751
+	b label198
 label466:
 	ldr r0, [r5, #0]
 label91:
@@ -717,15 +710,26 @@ label97:
 	cmp r1, #93
 	bne label198
 	b label406
-label178:
-	mov r0, #0
-	mov r1, r4
-	mov r2, r6
-	mov r3, r5
-	bl detect_item
-	cmp r0, #0
-	bne label751
-	b label198
+label176:
+	ldr r0, [r5, #0]
+	ldr r1, [r4, r0, lsl #2]
+	sub r3, r1, #9
+	sub r2, r1, #32
+	clz r3, r3
+	clz r2, r2
+	lsr r3, r3, #5
+	lsr r2, r2, #5
+	orr r2, r2, r3
+	sub r3, r1, #10
+	sub r1, r1, #13
+	clz r3, r3
+	clz r1, r1
+	lsr r3, r3, #5
+	lsr r1, r1, #5
+	orr r1, r3, r1
+	orrs r1, r2, r1
+	bne label837
+	b label178
 label151:
 	ldr r0, [r5, #0]
 label152:
@@ -752,6 +756,8 @@ label152:
 	add r0, r0, #1
 	str r0, [r5, #0]
 	b label152
+label154:
+	ldr r0, [r5, #0]
 label155:
 	cmp r6, r0
 	ble label198
@@ -759,21 +765,18 @@ label155:
 	cmp r1, #125
 	bne label198
 	b label406
-label24:
-	mov r0, #7
-	mov r1, r4
-	mov r2, r6
-	mov r3, r5
-	bl detect_item
-	b label7
-label154:
-	ldr r0, [r5, #0]
-	b label155
 label56:
 	ldr r0, [r5, #0]
 	add r0, r0, #1
 	str r0, [r5, #0]
 	b label45
+label22:
+	mov r0, #6
+	mov r1, r4
+	mov r2, r6
+	mov r3, r5
+	bl detect_item
+	b label7
 label20:
 	mov r0, #5
 	mov r1, r4
@@ -784,9 +787,9 @@ label20:
 label293:
 	ldr r0, [r5, #0]
 	b label35
+.p2align 4
 .globl main
 main:
-.p2align 4
 	push { r4, r5, r6, lr }
 	mov r0, #0
 	sub sp, sp, #8

@@ -1,9 +1,9 @@
 .attribute arch, "rv64i2p1_m2p0_a2p1_f2p2_d2p2_c2p0_zicsr2p0_zifencei2p0_zba1p0_zbb1p0"
 .data
 .text
+.p2align 2
 .globl neg_only_one_truncation
 neg_only_one_truncation:
-.p2align 2
 	andi a3, a1, 255
 	andi a5, a2, 255
 	addw a0, a0, a2
@@ -20,9 +20,9 @@ label20:
 label3:
 	andi a0, a0, 255
 	ret
+.p2align 2
 .globl neg_type_mismatch
 neg_type_mismatch:
-.p2align 2
 	li a3, 65535
 	addw a0, a0, a2
 	and a5, a2, a3
@@ -40,9 +40,9 @@ label46:
 label29:
 	andi a0, a0, 255
 	ret
+.p2align 2
 .globl negative_CopyFromReg
 negative_CopyFromReg:
-.p2align 2
 	addw a3, a1, a2
 	andi a2, a0, 255
 	andi a4, a3, 255
@@ -56,9 +56,9 @@ label71:
 label57:
 	andi a0, a0, 255
 	ret
+.p2align 2
 .globl negative_CopyFromRegs
 negative_CopyFromRegs:
-.p2align 2
 	andi a4, a0, 255
 	andi a3, a1, 255
 	sext.b a2, a4
@@ -71,9 +71,9 @@ label92:
 label80:
 	andi a0, a0, 255
 	ret
+.p2align 2
 .globl t0
 t0:
-.p2align 2
 	addw a0, a0, a2
 	addw a1, a1, a2
 	andi a4, a0, 255

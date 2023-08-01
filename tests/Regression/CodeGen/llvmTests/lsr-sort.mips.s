@@ -6,9 +6,9 @@ X:
 	.byte	0
 	.byte	0
 .text
+.p2align 2
 .globl foo
 foo:
-.p2align 2
 	blez $a0, label10
 	nop
 	lui $t1, %hi(X)

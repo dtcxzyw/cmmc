@@ -6,9 +6,9 @@
 G:
 	.zero	4
 .text
+.p2align 2
 .globl test1
 test1:
-.p2align 2
 	slliw a1, a0, 2
 pcrel8:
 	auipc a2, %pcrel_hi(G)

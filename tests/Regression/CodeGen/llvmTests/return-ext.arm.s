@@ -19,9 +19,9 @@ b:
 .syntax unified
 .arm
 .fpu vfpv4
+.p2align 4
 .globl signed_i8
 signed_i8:
-.p2align 4
 	movw r0, #:lower16:x
 	movt r0, #:upper16:x
 	ldr r0, [r0, #0]
@@ -30,9 +30,9 @@ signed_i8:
 	lsr r0, r0, #5
 	uxtb r0, r0
 	bx lr
+.p2align 4
 .globl unsigned_i1
 unsigned_i1:
-.p2align 4
 	movw r0, #:lower16:x
 	movt r0, #:upper16:x
 	ldr r0, [r0, #0]
@@ -40,9 +40,9 @@ unsigned_i1:
 	clz r0, r0
 	lsr r0, r0, #5
 	bx lr
+.p2align 4
 .globl unsigned_i16
 unsigned_i16:
-.p2align 4
 	movw r0, #:lower16:b
 	movt r0, #:upper16:b
 	ldrsh r1, [r0, #0]
@@ -54,9 +54,9 @@ unsigned_i16:
 	add r0, r0, r1
 	uxth r0, r0
 	bx lr
+.p2align 4
 .globl unsigned_i8
 unsigned_i8:
-.p2align 4
 	movw r0, #:lower16:x
 	movt r0, #:upper16:x
 	ldr r0, [r0, #0]
@@ -65,9 +65,9 @@ unsigned_i8:
 	lsr r0, r0, #5
 	uxtb r0, r0
 	bx lr
+.p2align 4
 .globl use_i1
 use_i1:
-.p2align 4
 	movw r0, #:lower16:x
 	movt r0, #:upper16:x
 	ldr r0, [r0, #0]
@@ -75,9 +75,9 @@ use_i1:
 	clz r0, r0
 	lsr r0, r0, #5
 	bx lr
+.p2align 4
 .globl use_i16
 use_i16:
-.p2align 4
 	movw r0, #:lower16:b
 	movt r0, #:upper16:b
 	ldrsh r1, [r0, #0]
@@ -90,9 +90,9 @@ use_i16:
 	movw r1, #65535
 	and r0, r0, r1
 	bx lr
+.p2align 4
 .globl use_i8
 use_i8:
-.p2align 4
 	movw r0, #:lower16:x
 	movt r0, #:upper16:x
 	ldr r0, [r0, #0]

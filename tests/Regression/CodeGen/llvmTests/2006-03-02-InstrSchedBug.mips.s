@@ -1,8 +1,8 @@
 .data
 .text
+.p2align 2
 .globl g
 g:
-.p2align 2
 	sll $t0, $a1, 1
 	addu $t0, $a0, $t0
 	mult $a0, $t0

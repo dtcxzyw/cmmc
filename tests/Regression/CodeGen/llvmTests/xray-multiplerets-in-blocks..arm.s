@@ -4,9 +4,9 @@
 .syntax unified
 .arm
 .fpu vfpv4
+.p2align 4
 .globl bswap_ror_commuted
 bswap_ror_commuted:
-.p2align 4
 	movw r1, #255
 	movw r2, #65280
 	movt r1, #255
@@ -15,16 +15,16 @@ bswap_ror_commuted:
 	and r0, r2, r0, lsl #8
 	orr r0, r1, r0
 	bx lr
+.p2align 4
 .globl different_constant
 different_constant:
-.p2align 4
 	movw r1, #255
 	movt r1, #255
 	and r0, r1, r0, lsr #8
 	bx lr
+.p2align 4
 .globl different_op
 different_op:
-.p2align 4
 	movw r1, #256
 	movw r2, #255
 	movt r1, #255
@@ -33,9 +33,9 @@ different_op:
 	and r0, r2, r0, lsr #8
 	orr r0, r1, r0
 	bx lr
+.p2align 4
 .globl different_shift_amount
 different_shift_amount:
-.p2align 4
 	movw r1, #65280
 	movw r2, #255
 	movt r1, #65280
@@ -44,9 +44,9 @@ different_shift_amount:
 	and r0, r2, r0, lsr #8
 	orr r0, r1, r0
 	bx lr
+.p2align 4
 .globl different_vars
 different_vars:
-.p2align 4
 	movw r2, #65280
 	movt r2, #65280
 	and r0, r2, r0, lsl #8
@@ -55,9 +55,9 @@ different_vars:
 	and r1, r2, r1, lsr #8
 	orr r0, r0, r1
 	bx lr
+.p2align 4
 .globl extra_maskop_uses2
 extra_maskop_uses2:
-.p2align 4
 	movw r1, #65280
 	movw r2, #255
 	movt r1, #65280
@@ -68,9 +68,9 @@ extra_maskop_uses2:
 	mul r0, r1, r0
 	mul r0, r2, r0
 	bx lr
+.p2align 4
 .globl f2
 f2:
-.p2align 4
 	lsl r1, r0, #8
 	lsr r0, r0, #8
 	and r2, r1, #65280
@@ -81,9 +81,9 @@ f2:
 	orr r1, r2, r1
 	orr r0, r1, r0
 	bx lr
+.p2align 4
 .globl not_rev16
 not_rev16:
-.p2align 4
 	movw r1, #65280
 	movw r2, #255
 	movt r1, #65280
@@ -92,9 +92,9 @@ not_rev16:
 	and r0, r2, r0, lsl #8
 	orr r0, r1, r0
 	bx lr
+.p2align 4
 .globl rev16
 rev16:
-.p2align 4
 	movw r1, #65280
 	movw r2, #255
 	movt r1, #65280

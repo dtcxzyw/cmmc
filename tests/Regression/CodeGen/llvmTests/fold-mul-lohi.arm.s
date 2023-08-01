@@ -17,9 +17,9 @@ P:
 .syntax unified
 .arm
 .fpu vfpv4
+.p2align 4
 .globl foo
 foo:
-.p2align 4
 	push { r4, r5, r6 }
 	cmp r0, #0
 	ble label5

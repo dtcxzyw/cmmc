@@ -18,9 +18,9 @@ r1:
 r2:
 	.4byte	0
 .text
+.p2align 2
 .globl test
 test:
-.p2align 2
 pcrel29:
 	auipc a0, %pcrel_hi(i)
 	lw a2, %pcrel_lo(pcrel29)(a0)

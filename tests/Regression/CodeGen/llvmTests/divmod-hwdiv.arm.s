@@ -4,15 +4,15 @@
 .syntax unified
 .arm
 .fpu vfpv4
+.p2align 4
 .globl test_i32_srem
 test_i32_srem:
-.p2align 4
 	sdiv r2, r0, r1
 	mls r0, r2, r1, r0
 	bx lr
+.p2align 4
 .globl test_i32_urem
 test_i32_urem:
-.p2align 4
 	udiv r2, r0, r1
 	mls r0, r2, r1, r0
 	bx lr

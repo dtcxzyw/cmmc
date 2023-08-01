@@ -14,9 +14,9 @@ a3:
 .syntax unified
 .arm
 .fpu vfpv4
+.p2align 4
 .globl main
 main:
-.p2align 4
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
 	mov r2, #3
 	mov r0, #5
@@ -336,50 +336,6 @@ label37:
 	add sp, sp, #36
 	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
 .p2align 4
-label22:
-	cmp r0, #30
-	bge label23
-	movw r1, #5000
-	movw r2, #10000
-	cmp r1, r2
-	bge label27
-.p2align 4
-label28:
-	movw r2, #2233
-	cmp r1, r2
-	bgt label30
-	ldr r6, [sp, #28]
-	ldr r2, [r6, r0, lsl #2]
-	ldr r5, [sp, #20]
-	add r2, r4, r2
-	ldr r3, [r5, r1, lsl #2]
-	add r1, r1, #2
-	add r2, r3, r2
-	movw r3, #19047
-	movt r3, #5033
-	smmul r3, r2, r3
-	asr r4, r3, #10
-	add r3, r4, r3, lsr #31
-	movw r4, #13333
-	mls r4, r3, r4, r2
-	movw r2, #10000
-	cmp r1, r2
-	blt label28
-	b label27
-.p2align 4
-label30:
-	ldr r3, [sp, #24]
-	ldr r2, [r3, r0, lsl #2]
-	ldr r6, [sp, #28]
-	add r2, r4, r2
-	ldr r3, [r6, r1, lsl #2]
-	add r1, r1, #1
-	sub r4, r2, r3
-	movw r2, #10000
-	cmp r1, r2
-	blt label28
-	b label27
-.p2align 4
 label31:
 	ldr r5, [sp, #20]
 	movw r1, #5000
@@ -425,6 +381,60 @@ label32:
 	blt label20
 	b label37
 .p2align 4
+label22:
+	cmp r0, #30
+	bge label23
+	movw r1, #5000
+	movw r2, #10000
+	cmp r1, r2
+	blt label28
+.p2align 4
+label27:
+	mov r0, r4
+	bl putint
+	ldr r1, [sp, #16]
+	mov r0, r1
+	movw r1, #10000
+	cmp r0, r1
+	blt label20
+	b label37
+.p2align 4
+label28:
+	movw r2, #2233
+	cmp r1, r2
+	bgt label30
+	ldr r6, [sp, #28]
+	ldr r2, [r6, r0, lsl #2]
+	ldr r5, [sp, #20]
+	add r2, r4, r2
+	ldr r3, [r5, r1, lsl #2]
+	add r1, r1, #2
+	add r2, r3, r2
+	movw r3, #19047
+	movt r3, #5033
+	smmul r3, r2, r3
+	asr r4, r3, #10
+	add r3, r4, r3, lsr #31
+	movw r4, #13333
+	mls r4, r3, r4, r2
+	movw r2, #10000
+	cmp r1, r2
+	blt label28
+	b label27
+.p2align 4
+label30:
+	ldr r3, [sp, #24]
+	ldr r2, [r3, r0, lsl #2]
+	ldr r6, [sp, #28]
+	add r2, r4, r2
+	ldr r3, [r6, r1, lsl #2]
+	add r1, r1, #1
+	sub r4, r2, r3
+	movw r2, #10000
+	cmp r1, r2
+	blt label28
+	b label27
+.p2align 4
 label23:
 	ldr r5, [sp, #20]
 	movw r1, #27117
@@ -438,16 +448,6 @@ label23:
 	movw r2, #34452
 	movt r2, #1
 	mls r4, r1, r2, r0
-	ldr r1, [sp, #16]
-	mov r0, r1
-	movw r1, #10000
-	cmp r0, r1
-	blt label20
-	b label37
-.p2align 4
-label27:
-	mov r0, r4
-	bl putint
 	ldr r1, [sp, #16]
 	mov r0, r1
 	movw r1, #10000

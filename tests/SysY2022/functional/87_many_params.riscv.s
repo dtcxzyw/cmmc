@@ -1,9 +1,9 @@
 .attribute arch, "rv64i2p1_m2p0_a2p1_f2p2_d2p2_c2p0_zicsr2p0_zifencei2p0_zba1p0_zbb1p0"
 .data
 .text
+.p2align 2
 .globl main
 main:
-.p2align 2
 	addi sp, sp, -344
 	sd ra, 0(sp)
 	sd s0, 8(sp)
@@ -106,10 +106,27 @@ label4:
 	addiw a2, a0, 1
 	mv a1, a2
 	li a3, 16
-	blt a2, a3, label7
-	j label85
+	bge a2, a3, label85
 .p2align 2
-label229:
+label7:
+	sh2add a4, a1, s0
+	sh2add a5, a0, s0
+	lw a3, 0(a5)
+	lw a4, 0(a4)
+	blt a3, a4, label8
+	addiw a1, a1, 1
+	li a3, 16
+	blt a1, a3, label7
+	j label229
+.p2align 2
+label8:
+	sh2add a5, a0, s0
+	sw a4, 0(a5)
+	sh2add a4, a1, s0
+	sw a3, 0(a4)
+	addiw a1, a1, 1
+	li a3, 16
+	blt a1, a3, label7
 	mv a0, a2
 	li a1, 15
 	blt a2, a1, label4
@@ -217,30 +234,6 @@ label13:
 	mv s7, s10
 	mv s10, zero
 	j label13
-.p2align 2
-label7:
-	sh2add a4, a1, s0
-	sh2add a5, a0, s0
-	lw a3, 0(a5)
-	lw a4, 0(a4)
-	blt a3, a4, label8
-	addiw a1, a1, 1
-	li a3, 16
-	blt a1, a3, label7
-	j label229
-.p2align 2
-label8:
-	sh2add a5, a0, s0
-	sw a4, 0(a5)
-	sh2add a4, a1, s0
-	sw a3, 0(a4)
-	addiw a1, a1, 1
-	li a3, 16
-	blt a1, a3, label7
-	mv a0, a2
-	li a1, 15
-	blt a2, a1, label4
-	j label10
 label11:
 	slliw a1, s8, 5
 	li a2, 281648
@@ -264,6 +257,12 @@ label11:
 	ld s11, 96(sp)
 	addi sp, sp, 344
 	ret
+.p2align 2
+label229:
+	mv a0, a2
+	li a1, 15
+	blt a2, a1, label4
+	j label10
 label85:
 	mv a0, a2
 	li a1, 15

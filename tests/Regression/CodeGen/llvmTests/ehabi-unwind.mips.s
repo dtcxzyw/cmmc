@@ -1,12 +1,12 @@
 .data
 .text
+.p2align 2
 .globl _Z1fv
 _Z1fv:
-.p2align 2
 	jr $ra
 	nop
+.p2align 2
 .globl _Z1gv
 _Z1gv:
-.p2align 2
 	jr $ra
 	nop

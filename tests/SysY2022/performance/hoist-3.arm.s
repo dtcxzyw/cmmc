@@ -4,9 +4,9 @@
 .syntax unified
 .arm
 .fpu vfpv4
+.p2align 4
 .globl main
 main:
-.p2align 4
 	push { r4, r5, lr }
 	sub sp, sp, #4
 	bl getint
@@ -20,7 +20,6 @@ main:
 	ble label18
 	mov r2, #0
 	mov r0, r2
-.p2align 4
 label3:
 	add r0, r0, #8
 	add r2, r2, #120

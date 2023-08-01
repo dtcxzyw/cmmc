@@ -1,8 +1,8 @@
 .data
 .text
+.p2align 2
 .globl foo
 foo:
-.p2align 2
 	andi $t0, $a0, 3
 	xori $t0, $t0, 1
 	sltiu $t0, $t0, 1

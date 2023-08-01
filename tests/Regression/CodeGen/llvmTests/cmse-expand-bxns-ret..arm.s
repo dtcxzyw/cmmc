@@ -9,9 +9,9 @@ counter:
 .syntax unified
 .arm
 .fpu vfpv4
+.p2align 4
 .globl foo
 foo:
-.p2align 4
 	movw r0, #:lower16:counter
 	mov r1, #5
 	movt r0, #:upper16:counter

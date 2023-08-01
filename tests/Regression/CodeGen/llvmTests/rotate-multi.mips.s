@@ -1,8 +1,8 @@
 .data
 .text
+.p2align 2
 .globl f0
 f0:
-.p2align 2
 	sll $t0, $a0, 7
 	srl $t1, $a0, 25
 	or $t0, $t0, $t1
@@ -12,9 +12,9 @@ f0:
 	or $v0, $t0, $t1
 	jr $ra
 	nop
+.p2align 2
 .globl f1
 f1:
-.p2align 2
 	sll $t0, $a0, 7
 	or $t0, $a1, $t0
 	sll $t1, $a0, 9
@@ -23,9 +23,9 @@ f1:
 	or $v0, $t0, $t1
 	jr $ra
 	nop
+.p2align 2
 .globl f2
 f2:
-.p2align 2
 	sll $t0, $a0, 11
 	sll $t1, $a1, 19
 	or $t0, $t0, $t1
@@ -35,9 +35,9 @@ f2:
 	or $v0, $t0, $t1
 	jr $ra
 	nop
+.p2align 2
 .globl f3
 f3:
-.p2align 2
 	sll $t0, $a0, 3
 	sll $t1, $a0, 5
 	or $t0, $t0, $t1

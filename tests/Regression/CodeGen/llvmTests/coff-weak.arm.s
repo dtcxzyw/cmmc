@@ -4,31 +4,31 @@
 .syntax unified
 .arm
 .fpu vfpv4
+.p2align 4
 .globl bar
 bar:
-.p2align 4
 	bx lr
+.p2align 4
 .globl bar_comdat
 bar_comdat:
-.p2align 4
 	bx lr
+.p2align 4
 .globl baz
 baz:
-.p2align 4
 	bx lr
+.p2align 4
 .globl baz_comdat
 baz_comdat:
-.p2align 4
 	bx lr
+.p2align 4
 .globl foo
 foo:
-.p2align 4
 	bx lr
+.p2align 4
 .globl quux
 quux:
-.p2align 4
 	bx lr
+.p2align 4
 .globl quux_comdat
 quux_comdat:
-.p2align 4
 	bx lr

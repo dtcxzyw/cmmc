@@ -14,9 +14,9 @@ C:
 .syntax unified
 .arm
 .fpu vfpv4
+.p2align 4
 .globl main
 main:
-.p2align 4
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
 	sub sp, sp, #12
 	bl getint
@@ -262,14 +262,6 @@ label236:
 	cmp r4, #0
 	bgt label11
 	b label235
-label73:
-	mov r1, #0
-	mov r2, #0
-	str r2, [r5, r1, lsl #2]
-	add r1, r1, #1
-	cmp r4, r1
-	bgt label14
-	b label235
 label150:
 	mov r1, #0
 	mov r2, #0
@@ -278,6 +270,14 @@ label150:
 	cmp r4, r1
 	bgt label33
 	b label157
+label73:
+	mov r1, #0
+	mov r2, #0
+	str r2, [r5, r1, lsl #2]
+	add r1, r1, #1
+	cmp r4, r1
+	bgt label14
+	b label235
 label67:
 	cmp r4, #0
 	bgt label11

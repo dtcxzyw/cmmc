@@ -1,8 +1,8 @@
 .data
 .text
+.p2align 2
 .globl test
 test:
-.p2align 2
 	beq $a0, $zero, label10
 	nop
 	move $v0, $a1

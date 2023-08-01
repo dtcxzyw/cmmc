@@ -4,9 +4,9 @@
 .syntax unified
 .arm
 .fpu vfpv4
+.p2align 4
 .globl sdiv_exact_even_even_fail_unknown
 sdiv_exact_even_even_fail_unknown:
-.p2align 4
 	uxtb r0, r0
 	uxtb r1, r1
 	bic r0, r0, #1
@@ -17,9 +17,9 @@ sdiv_exact_even_even_fail_unknown:
 	and r0, r0, #1
 	uxtb r0, r0
 	bx lr
+.p2align 4
 .globl sdiv_exact_odd_odd
 sdiv_exact_odd_odd:
-.p2align 4
 	uxtb r0, r0
 	uxtb r1, r1
 	orr r0, r0, #1
@@ -30,9 +30,9 @@ sdiv_exact_odd_odd:
 	and r0, r0, #1
 	uxtb r0, r0
 	bx lr
+.p2align 4
 .globl sdiv_neg_neg_high_bits
 sdiv_neg_neg_high_bits:
-.p2align 4
 	uxtb r0, r0
 	mvn r2, #127
 	uxtb r1, r1
@@ -45,9 +45,9 @@ sdiv_neg_neg_high_bits:
 	bic r0, r0, #127
 	uxtb r0, r0
 	bx lr
+.p2align 4
 .globl udiv_exact_even_even_fail_unknown
 udiv_exact_even_even_fail_unknown:
-.p2align 4
 	uxtb r0, r0
 	uxtb r1, r1
 	bic r0, r0, #1
@@ -56,9 +56,9 @@ udiv_exact_even_even_fail_unknown:
 	and r0, r0, #1
 	uxtb r0, r0
 	bx lr
+.p2align 4
 .globl udiv_exact_even_odd
 udiv_exact_even_odd:
-.p2align 4
 	uxtb r0, r0
 	uxtb r1, r1
 	bic r0, r0, #1

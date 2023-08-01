@@ -1,8 +1,8 @@
 .data
 .text
+.p2align 2
 .globl foo
 foo:
-.p2align 2
 	bne $a0, $zero, label9
 	nop
 	sltiu $t0, $a1, 1

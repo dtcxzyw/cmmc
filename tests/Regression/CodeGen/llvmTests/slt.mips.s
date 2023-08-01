@@ -1,8 +1,8 @@
 .data
 .text
+.p2align 2
 .globl sgt
 sgt:
-.p2align 2
 	li $t0, 32767
 	slt $t0, $t0, $a0
 	li $t1, 7
@@ -10,9 +10,9 @@ sgt:
 	movn $v0, $t1, $t0
 	jr $ra
 	nop
+.p2align 2
 .globl slt
 slt:
-.p2align 2
 	slti $t0, $a0, 7
 	li $t1, 4
 	subu $v0, $t1, $t0

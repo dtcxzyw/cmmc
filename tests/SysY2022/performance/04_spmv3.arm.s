@@ -20,9 +20,9 @@ b:
 .syntax unified
 .arm
 .fpu vfpv4
+.p2align 4
 .globl main
 main:
-.p2align 4
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
 	movw r1, #:lower16:x
 	sub sp, sp, #20
@@ -181,6 +181,7 @@ label31:
 	cmp r2, r1
 	bgt label31
 	b label33
+.p2align 4
 label194:
 	mov r1, #0
 	mov r2, #0
@@ -214,7 +215,7 @@ label21:
 	ldr r8, [r1, r3, lsl #2]
 	ldr r1, [r1, r2, lsl #2]
 	cmp r8, r1
-	bge label151
+	bge label148
 	mov r9, r8
 	ldr r7, [sp, #0]
 	ldr r7, [r7, r8, lsl #2]
@@ -275,16 +276,13 @@ label53:
 	cmp r1, r3
 	bgt label11
 	b label81
-label137:
-	add r0, r0, #1
-	cmp r0, #100
-	blt label2
-	b label29
 .p2align 4
-label215:
-	mov r3, #0
+label148:
+	cmp r8, r1
+	blt label23
+	mov r3, r2
 	ldr r1, [sp, #12]
-	cmp r1, r3
+	cmp r1, r2
 	bgt label21
 	b label137
 label81:
@@ -299,10 +297,16 @@ label110:
 	cmp r1, r2
 	bgt label11
 	b label81
-label151:
-	mov r3, r2
+label137:
+	add r0, r0, #1
+	cmp r0, #100
+	blt label2
+	b label29
+.p2align 4
+label215:
+	mov r3, #0
 	ldr r1, [sp, #12]
-	cmp r1, r2
+	cmp r1, r3
 	bgt label21
 	b label137
 .p2align 4
@@ -310,6 +314,7 @@ label267:
 	cmp r8, r1
 	blt label23
 	b label270
+.p2align 4
 label56:
 	mov r1, #0
 	mov r2, #0

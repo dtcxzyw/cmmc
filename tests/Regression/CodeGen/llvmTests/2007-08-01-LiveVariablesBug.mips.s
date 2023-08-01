@@ -1,8 +1,8 @@
 .data
 .text
+.p2align 2
 .globl t
 t:
-.p2align 2
 	andi $t0, $a0, 255
 	addiu $t0, $t0, 2
 	andi $t1, $a1, 255

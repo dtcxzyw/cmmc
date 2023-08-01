@@ -1,8 +1,8 @@
 .data
 .text
+.p2align 2
 .globl test_local_strategy
 test_local_strategy:
-.p2align 2
 	lw $t1, 16($sp)
 	lw $t0, 20($sp)
 	div $zero, $a0, $a1

@@ -37,9 +37,9 @@ z3:
 z4:
 	.4byte	0
 .text
+.p2align 2
 .globl calc_seleq
 calc_seleq:
-.p2align 2
 	lui $t0, %hi(a)
 	lw $t3, %lo(a)($t0)
 	lui $t0, %hi(b)

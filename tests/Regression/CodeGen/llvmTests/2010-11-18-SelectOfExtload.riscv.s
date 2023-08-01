@@ -10,9 +10,9 @@ u:
 s:
 	.zero	1
 .text
+.p2align 2
 .globl foo
 foo:
-.p2align 2
 	beq a0, zero, label8
 pcrel27:
 	auipc a1, %pcrel_hi(u)

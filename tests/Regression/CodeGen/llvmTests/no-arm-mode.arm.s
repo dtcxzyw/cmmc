@@ -4,11 +4,11 @@
 .syntax unified
 .arm
 .fpu vfpv4
+.p2align 4
 .globl foo
 foo:
-.p2align 4
 	bx lr
+.p2align 4
 .globl no_thumb_mode_feature
 no_thumb_mode_feature:
-.p2align 4
 	bx lr

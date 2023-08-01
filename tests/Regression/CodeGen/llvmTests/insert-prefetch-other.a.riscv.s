@@ -7,9 +7,9 @@ X:
 	.byte	0
 	.byte	0
 .text
+.p2align 2
 .globl foo
 foo:
-.p2align 2
 	mv a1, a0
 	ble a0, zero, label10
 pcrel33:

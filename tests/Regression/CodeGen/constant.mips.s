@@ -9,9 +9,9 @@ __cmmc_fp_constant_pool:
 x:
 	.zero	40
 .text
+.p2align 2
 .globl cse_imm
 cse_imm:
-.p2align 2
 	sll $t0, $a1, 2
 	addu $t0, $t0, $a1
 	sll $t0, $t0, 1
@@ -22,9 +22,9 @@ cse_imm:
 	addu $v0, $t0, $t1
 	jr $ra
 	nop
+.p2align 2
 .globl cse_global
 cse_global:
-.p2align 2
 	lui $t0, %hi(x)
 	addiu $t1, $t0, %lo(x)
 	lw $t0, %lo(x)($t0)
@@ -32,9 +32,9 @@ cse_global:
 	addu $v0, $t0, $t1
 	jr $ra
 	nop
+.p2align 2
 .globl cse_fp
 cse_fp:
-.p2align 2
 	lui $t0, %hi(__cmmc_fp_constant_pool)
 	addiu $t0, $t0, %lo(__cmmc_fp_constant_pool)
 	lwc1 $f4, 0($t0)
@@ -43,9 +43,9 @@ cse_fp:
 	add.s $f0, $f6, $f4
 	jr $ra
 	nop
+.p2align 2
 .globl imm_build_pattern1
 imm_build_pattern1:
-.p2align 2
 	li $t0, 1
 	sw $t0, 0($a0)
 	li $t0, 2
@@ -110,9 +110,9 @@ imm_build_pattern1:
 	sw $t0, 120($a0)
 	jr $ra
 	nop
+.p2align 2
 .globl imm_build_pattern2
 imm_build_pattern2:
-.p2align 2
 	li $t0, 1024000
 	sw $t0, 0($a0)
 	li $t0, 512000
@@ -133,9 +133,9 @@ imm_build_pattern2:
 	sw $t0, 32($a0)
 	jr $ra
 	nop
+.p2align 2
 .globl imm_build_pattern3
 imm_build_pattern3:
-.p2align 2
 	sw $zero, 0($a0)
 	li $t0, 400
 	sw $t0, 4($a0)

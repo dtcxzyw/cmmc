@@ -9,25 +9,25 @@ a:
 .syntax unified
 .arm
 .fpu vfpv4
+.p2align 4
 .globl ext
 ext:
-.p2align 4
 	movw r0, #:lower16:a
 	mov r1, #0
 	movt r0, #:upper16:a
 	str r1, [r0, #0]
 	bx lr
+.p2align 4
 .globl foo
 foo:
-.p2align 4
 	movw r0, #:lower16:a
 	mov r1, #0
 	movt r0, #:upper16:a
 	str r1, [r0, #0]
 	bx lr
+.p2align 4
 .globl main
 main:
-.p2align 4
 	movw r1, #:lower16:a
 	mov r0, #0
 	movt r1, #:upper16:a

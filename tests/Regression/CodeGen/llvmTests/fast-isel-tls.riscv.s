@@ -6,17 +6,17 @@
 v:
 	.4byte	0
 .text
+.p2align 2
 .globl f
 f:
-.p2align 2
 pcrel8:
 	auipc a1, %pcrel_hi(v)
 	lw a2, %pcrel_lo(pcrel8)(a1)
 	addiw a0, a2, 1
 	ret
+.p2align 2
 .globl f_alias
 f_alias:
-.p2align 2
 pcrel16:
 	auipc a1, %pcrel_hi(v)
 	lw a2, %pcrel_lo(pcrel16)(a1)

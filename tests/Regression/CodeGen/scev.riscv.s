@@ -1,16 +1,15 @@
 .attribute arch, "rv64i2p1_m2p0_a2p1_f2p2_d2p2_c2p0_zicsr2p0_zifencei2p0_zba1p0_zbb1p0"
 .data
 .text
+.p2align 2
 .globl foo4
 foo4:
-.p2align 2
 	ble a1, zero, label9
 	addiw a4, a1, -8
 	li a3, 8
 	ble a1, a3, label18
 	mv a3, zero
 	mv a2, zero
-.p2align 2
 label3:
 	sh2add a5, a3, a0
 	addiw t1, a2, 4

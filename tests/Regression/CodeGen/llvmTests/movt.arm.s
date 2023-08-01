@@ -4,16 +4,16 @@
 .syntax unified
 .arm
 .fpu vfpv4
+.p2align 4
 .globl t
 t:
-.p2align 4
 	movw r1, #0
 	movt r1, #65535
 	orr r0, r0, r1
 	bx lr
+.p2align 4
 .globl t2
 t2:
-.p2align 4
 	movw r1, #0
 	movt r1, #65534
 	orr r0, r0, r1

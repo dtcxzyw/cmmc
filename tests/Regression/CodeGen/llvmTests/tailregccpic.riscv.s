@@ -6,16 +6,16 @@
 a0:
 	.4byte	0
 .text
+.p2align 2
 .globl __regcall3__func
 __regcall3__func:
-.p2align 2
 pcrel7:
 	auipc a1, %pcrel_hi(a0)
 	sw a0, %pcrel_lo(pcrel7)(a1)
 	ret
+.p2align 2
 .globl tail_call_regcall
 tail_call_regcall:
-.p2align 2
 pcrel14:
 	auipc a1, %pcrel_hi(a0)
 	sw a0, %pcrel_lo(pcrel14)(a1)

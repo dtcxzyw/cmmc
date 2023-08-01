@@ -4,8 +4,8 @@
 .syntax unified
 .arm
 .fpu vfpv4
-fibFP:
 .p2align 4
+fibFP:
 	push { lr }
 	vpush { s16, s17, s18, s19, s20 }
 	mov r0, #1073741824
@@ -270,8 +270,8 @@ label259:
 	vadd.f32 s0, s17, s0
 	vadd.f32 s0, s16, s0
 	b label2
-takFP:
 .p2align 4
+takFP:
 	push { lr }
 	vpush { s16, s17, s18, s19, s20, s21, s22, s23, s24, s25 }
 	vmov.f32 s18, s0
@@ -402,9 +402,9 @@ label359:
 	vmov.f32 s20, s24
 	vmov.f32 s22, s0
 	b label299
+.p2align 4
 .globl main
 main:
-.p2align 4
 	push { r4, lr }
 	vpush { s16, s17 }
 	mov r0, #19

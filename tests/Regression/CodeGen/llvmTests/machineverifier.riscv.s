@@ -6,9 +6,9 @@
 g:
 	.zero	4
 .text
+.p2align 2
 .globl foo
 foo:
-.p2align 2
 pcrel18:
 	auipc a1, %pcrel_hi(g)
 	addi a0, a1, %pcrel_lo(pcrel18)

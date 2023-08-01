@@ -5,9 +5,9 @@
 A:
 	.zero	4
 .text
+.p2align 2
 .globl test5
 test5:
-.p2align 2
 	andi $t0, $a1, 255
 	li $t1, 32
 	subu $t1, $t1, $t0

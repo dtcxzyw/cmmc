@@ -21,7 +21,7 @@ CMMC_NAMESPACE_BEGIN
 constexpr double defaultIfThenProb = 0.5;
 constexpr double defaultShortCircuitProb = 0.5;
 constexpr double defaultSelectProb = 0.5;
-constexpr uint32_t estimatedLoopTripCount = 128U;
+constexpr uint32_t estimatedLoopTripCount = 64U;
 constexpr double defaultLoopProb =
     static_cast<double>(estimatedLoopTripCount) / (static_cast<double>(estimatedLoopTripCount) + 1.0);
 constexpr double coldBlockThreshold = 0.05;

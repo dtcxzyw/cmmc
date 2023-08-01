@@ -14,8 +14,8 @@ b:
 .syntax unified
 .arm
 .fpu vfpv4
-multiply:
 .p2align 4
+multiply:
 	push { r4, r5, r6, r7, r8, lr }
 	cmp r1, #0
 	mov r5, r1
@@ -203,8 +203,8 @@ label22:
 	movt r2, #15232
 	mls r0, r1, r2, r0
 	b label5
-power:
 .p2align 4
+power:
 	push { r4, r5, lr }
 	cmp r1, #0
 	mov r5, r1
@@ -228,21 +228,21 @@ label428:
 	mov r1, r4
 	bl multiply
 	b label426
-fft:
 .p2align 4
+fft:
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
+	cmp r2, #1
 	mov r5, r0
 	mov r6, r1
-	cmp r2, #1
-	mov r9, r2
+	mov r8, r2
 	sub sp, sp, #36
 	movw r5, #:lower16:temp
 	mov r1, r3
 	str r2, [sp, #12]
 	movt r5, #:upper16:temp
-	str r0, [sp, #20]
+	str r3, [sp, #20]
+	str r0, [sp, #24]
 	add r0, r2, r2, lsr #31
-	str r3, [sp, #24]
 	str r6, [sp, #28]
 	asr r4, r0, #1
 	str r4, [sp, #16]
@@ -261,35 +261,35 @@ label225:
 	add r0, r0, #1
 	beq label226
 	ldr r4, [sp, #16]
-	ldr r5, [sp, #20]
+	ldr r5, [sp, #24]
 	add r2, r4, r2
 	ldr r1, [r5, r1, lsl #2]
 	ldr r5, [sp, #8]
 	str r1, [r5, r2, lsl #2]
-	ldr r9, [sp, #12]
-	cmp r9, r0
+	ldr r8, [sp, #12]
+	cmp r8, r0
 	bgt label225
 	b label228
 .p2align 4
 label226:
-	ldr r5, [sp, #20]
+	ldr r5, [sp, #24]
 	ldr r1, [r5, r1, lsl #2]
 	ldr r5, [sp, #8]
 	str r1, [r5, r2, lsl #2]
-	ldr r9, [sp, #12]
-	cmp r9, r0
+	ldr r8, [sp, #12]
+	cmp r8, r0
 	bgt label225
 label228:
-	ldr r9, [sp, #12]
-	cmp r9, #0
+	ldr r8, [sp, #12]
+	cmp r8, #0
 	bgt label233
 label229:
-	ldr r1, [sp, #24]
+	ldr r1, [sp, #20]
 	mov r0, r1
 	bl multiply
 	ldr r6, [sp, #28]
 	mov r7, r0
-	ldr r5, [sp, #20]
+	ldr r5, [sp, #24]
 	ldr r4, [sp, #16]
 	mov r0, r5
 	mov r1, r6
@@ -306,27 +306,27 @@ label229:
 	bgt label281
 	b label222
 label233:
-	ldr r9, [sp, #12]
-	cmp r9, #8
+	ldr r8, [sp, #12]
+	cmp r8, #8
 	ble label304
 	ldr r6, [sp, #28]
 	mov r0, #0
 	add r10, r6, #7
-	add r8, r6, #6
+	add r9, r6, #6
 	add r7, r6, #5
 	add r4, r6, #4
 	str r10, [sp, #0]
 	add r3, r6, #3
 	add r2, r6, #2
 	add r1, r6, #1
-	sub r9, r9, #8
+	sub r8, r8, #8
 label235:
 	ldr r6, [sp, #28]
 	ldr r5, [sp, #8]
 	add r10, r6, r0
 	add r6, r5, r0, lsl #2
 	ldr r11, [r6, #0]
-	ldr r5, [sp, #20]
+	ldr r5, [sp, #24]
 	str r11, [r5, r10, lsl #2]
 	add r11, r1, r0
 	ldr r10, [r6, #4]
@@ -343,7 +343,7 @@ label235:
 	add r11, r7, r0
 	ldr r10, [r6, #20]
 	str r10, [r5, r11, lsl #2]
-	add r11, r8, r0
+	add r11, r9, r0
 	ldr r10, [r6, #24]
 	str r10, [r5, r11, lsl #2]
 	ldr r6, [r6, #28]
@@ -351,7 +351,7 @@ label235:
 	add r10, r10, r0
 	add r0, r0, #8
 	str r6, [r5, r10, lsl #2]
-	cmp r9, r0
+	cmp r8, r0
 	bgt label235
 label237:
 	ldr r6, [sp, #28]
@@ -359,19 +359,25 @@ label237:
 	add r1, r6, r0
 	ldr r2, [r5, r0, lsl #2]
 	add r0, r0, #1
-	ldr r5, [sp, #20]
+	ldr r5, [sp, #24]
 	str r2, [r5, r1, lsl #2]
-	ldr r9, [sp, #12]
-	cmp r9, r0
+	ldr r8, [sp, #12]
+	cmp r8, r0
 	bgt label237
 	b label229
+label222:
+	add sp, sp, #36
+	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
+label304:
+	mov r0, #0
+	b label237
 label281:
 	mov r3, #0
 	mov r4, #1
 .p2align 4
 label230:
 	ldr r6, [sp, #28]
-	ldr r5, [sp, #20]
+	ldr r5, [sp, #24]
 	add r0, r6, r3
 	add r6, r5, r0, lsl #2
 	ldr r7, [r6, #0]
@@ -381,25 +387,24 @@ label230:
 	ldr r1, [r5, #0]
 	mov r0, r4
 	bl multiply
-	mov r1, r0
+	movw r1, #51217
 	add r8, r7, r0
-	sub r1, r7, r0
-	movw r0, #51217
-	movt r0, #4405
-	smmul r2, r8, r0
+	movt r1, #4405
+	sub r0, r7, r0
+	smmul r2, r8, r1
 	asr r9, r2, #26
 	add r9, r9, r2, lsr #31
 	movw r2, #1
 	movt r2, #15232
-	add r1, r1, r2
+	add r0, r0, r2
 	mls r8, r9, r2, r8
-	smmul r0, r1, r0
+	smmul r1, r0, r1
 	str r8, [r6, #0]
-	asr r6, r0, #26
-	add r0, r6, r0, lsr #31
-	mls r0, r0, r2, r1
+	asr r6, r1, #26
+	add r1, r6, r1, lsr #31
+	mls r0, r1, r2, r0
 	str r0, [r5, #0]
-	ldr r1, [sp, #24]
+	ldr r1, [sp, #20]
 	mov r0, r4
 	bl multiply
 	ldr r4, [sp, #16]
@@ -408,15 +413,9 @@ label230:
 	ble label222
 	mov r4, r0
 	b label230
-label222:
-	add sp, sp, #36
-	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
-label304:
-	mov r0, #0
-	b label237
+.p2align 4
 .globl main
 main:
-.p2align 4
 	push { r4, r5, r6, r7, r8, r9, lr }
 	movw r4, #:lower16:a
 	sub sp, sp, #4

@@ -11,8 +11,8 @@ a:
 b:
 	.zero	8388608
 .text
-multiply:
 .p2align 2
+multiply:
 	addi sp, sp, -48
 	sd ra, 0(sp)
 	sd s0, 8(sp)
@@ -220,8 +220,8 @@ label22:
 	mulw a3, a1, a2
 	subw a0, a0, a3
 	j label5
-power:
 .p2align 2
+power:
 	addi sp, sp, -24
 	sd ra, 0(sp)
 	sd s0, 8(sp)
@@ -251,23 +251,23 @@ label465:
 	mv a1, s0
 	jal multiply
 	j label463
-fft:
 .p2align 2
+fft:
 	addi sp, sp, -56
 	sd ra, 0(sp)
-	sd s0, 8(sp)
-	mv s0, a0
-	sd s5, 16(sp)
-	sd s2, 24(sp)
+	sd s1, 8(sp)
+	mv s1, a0
+	sd s2, 16(sp)
 	mv s2, a1
-	sd s1, 32(sp)
+	sd s0, 24(sp)
 	srliw a1, a2, 31
-	mv s1, a3
+	mv s0, a3
 	add a0, a2, a1
-	sd s3, 40(sp)
+	sd s5, 32(sp)
 	li a3, 1
 pcrel461:
 	auipc a1, %pcrel_hi(temp)
+	sd s3, 40(sp)
 	sraiw s3, a0, 1
 	sd s4, 48(sp)
 	addi a0, a1, %pcrel_lo(pcrel461)
@@ -284,7 +284,7 @@ label256:
 	sraiw a5, t0, 1
 	beq a4, zero, label257
 	addw a5, s3, a5
-	sh2add t0, a3, s0
+	sh2add t0, a3, s1
 	sh2add a4, a5, a0
 	lw a3, 0(t0)
 	sw a3, 0(a4)
@@ -293,23 +293,23 @@ label256:
 .p2align 2
 label257:
 	sh2add a4, a5, a0
-	sh2add a5, a3, s0
+	sh2add a5, a3, s1
 	lw a3, 0(a5)
 	sw a3, 0(a4)
 	bgt a2, a1, label256
 label259:
 	bgt a2, zero, label264
 label260:
-	mv a0, s1
-	mv a1, s1
+	mv a0, s0
+	mv a1, s0
 	jal multiply
 	mv s5, a0
-	mv a0, s0
+	mv a0, s1
 	mv a1, s2
 	mv a2, s3
 	mv a3, s5
 	jal fft
-	mv a0, s0
+	mv a0, s1
 	addw s4, s2, s3
 	mv a1, s4
 	mv a2, s3
@@ -333,72 +333,85 @@ label266:
 	addw a6, s2, a1
 	sh2add t5, a1, a0
 	addw a7, a3, a1
-	sh2add t6, a6, s0
+	sh2add t6, a6, s1
 	lw a6, 0(t5)
 	sw a6, 0(t6)
-	sh2add a6, a7, s0
+	sh2add a6, a7, s1
 	lw t6, 4(t5)
 	sw t6, 0(a6)
 	addw a6, a4, a1
 	lw t6, 8(t5)
-	sh2add a7, a6, s0
+	sh2add a7, a6, s1
 	addw a6, a5, a1
 	sw t6, 0(a7)
-	sh2add a7, a6, s0
+	sh2add a7, a6, s1
 	lw t6, 12(t5)
 	sw t6, 0(a7)
 	addw a7, t0, a1
 	lw t6, 16(t5)
-	sh2add a6, a7, s0
+	sh2add a6, a7, s1
 	addw a7, t1, a1
 	sw t6, 0(a6)
-	sh2add a6, a7, s0
+	sh2add a6, a7, s1
 	lw t6, 20(t5)
 	addw a7, t2, a1
 	sw t6, 0(a6)
-	sh2add a6, a7, s0
+	sh2add a6, a7, s1
 	lw t6, 24(t5)
 	sw t6, 0(a6)
 	addw t6, t3, a1
 	lw t5, 28(t5)
 	addiw a1, a1, 8
-	sh2add a6, t6, s0
+	sh2add a6, t6, s1
 	sw t5, 0(a6)
 	bgt t4, a1, label266
 label268:
 	addw a5, s2, a1
 	sh2add a4, a1, a0
-	sh2add a3, a5, s0
+	sh2add a3, a5, s1
 	addiw a1, a1, 1
 	lw a5, 0(a4)
 	sw a5, 0(a3)
 	bgt a2, a1, label268
 	j label260
+label253:
+	ld ra, 0(sp)
+	ld s1, 8(sp)
+	ld s2, 16(sp)
+	ld s0, 24(sp)
+	ld s5, 32(sp)
+	ld s3, 40(sp)
+	ld s4, 48(sp)
+	addi sp, sp, 56
+	ret
+label335:
+	mv a1, zero
+	j label268
 label312:
 	mv a5, zero
 	li t0, 1
 .p2align 2
 label261:
 	addw a0, s2, a5
-	sh2add t2, a0, s0
+	sh2add t3, a0, s1
 	addw a0, s4, a5
-	lw t3, 0(t2)
-	sh2add t1, a0, s0
+	lw t2, 0(t3)
+	sh2add t1, a0, s1
 	lw a1, 0(t1)
 	mv a0, t0
 	jal multiply
-	addw a3, t3, a0
+	addw a3, t2, a0
 	li a1, 288737297
 	mul a2, a3, a1
 	srli t5, a2, 63
 	srai a4, a2, 58
 	li a2, 998244353
 	add t4, t5, a4
-	mulw a4, t4, a2
-	subw a3, a3, a4
-	subw a4, t3, a0
-	addw a0, a4, a2
-	sw a3, 0(t2)
+	mulw t5, t4, a2
+	subw a4, a3, t5
+	subw a3, t2, a0
+	addw a0, a3, a2
+	sw a4, 0(t3)
 	mul a1, a0, a1
 	srli a4, a1, 63
 	srai a3, a1, 58
@@ -407,28 +420,15 @@ label261:
 	subw a2, a0, a1
 	sw a2, 0(t1)
 	mv a0, t0
-	mv a1, s1
+	mv a1, s0
 	jal multiply
 	addiw a5, a5, 1
 	ble s3, a5, label253
 	mv t0, a0
 	j label261
-label253:
-	ld ra, 0(sp)
-	ld s0, 8(sp)
-	ld s5, 16(sp)
-	ld s2, 24(sp)
-	ld s1, 32(sp)
-	ld s3, 40(sp)
-	ld s4, 48(sp)
-	addi sp, sp, 56
-	ret
-label335:
-	mv a1, zero
-	j label268
+.p2align 2
 .globl main
 main:
-.p2align 2
 	addi sp, sp, -56
 pcrel573:
 	auipc a1, %pcrel_hi(a)

@@ -10,9 +10,9 @@ x:
 y:
 	.zero	4
 .text
+.p2align 2
 .globl t
 t:
-.p2align 2
 pcrel13:
 	auipc a1, %pcrel_hi(y)
 pcrel14:

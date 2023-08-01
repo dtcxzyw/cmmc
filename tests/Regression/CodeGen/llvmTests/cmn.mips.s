@@ -1,8 +1,8 @@
 .data
 .text
+.p2align 2
 .globl compare_i_gt
 compare_i_gt:
-.p2align 2
 	li $t0, -78
 	slt $t0, $t0, $a0
 	li $t1, 42
@@ -10,9 +10,9 @@ compare_i_gt:
 	movn $v0, $t1, $t0
 	jr $ra
 	nop
+.p2align 2
 .globl compare_r_eq
 compare_r_eq:
-.p2align 2
 	subu $t0, $zero, $a1
 	xor $t0, $a0, $t0
 	sltiu $t0, $t0, 1

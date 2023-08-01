@@ -18,9 +18,9 @@ r2:
 r3:
 	.4byte	0
 .text
+.p2align 2
 .globl test
 test:
-.p2align 2
 pcrel17:
 	auipc a1, %pcrel_hi(k)
 	li a2, -32769

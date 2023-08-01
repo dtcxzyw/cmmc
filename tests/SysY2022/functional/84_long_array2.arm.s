@@ -11,9 +11,9 @@ c:
 .syntax unified
 .arm
 .fpu vfpv4
+.p2align 4
 .globl main
 main:
-.p2align 4
 	push { r4, lr }
 	movw r4, #:lower16:c
 	mov r2, #0

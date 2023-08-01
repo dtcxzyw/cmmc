@@ -9,7 +9,7 @@ handler_installed_6144_b:
 .syntax unified
 .arm
 .fpu vfpv4
+.p2align 4
 .globl __mf_sigusr1_respond
 __mf_sigusr1_respond:
-.p2align 4
 	bx lr

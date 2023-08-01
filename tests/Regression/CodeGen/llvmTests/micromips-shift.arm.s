@@ -37,9 +37,9 @@ n:
 .syntax unified
 .arm
 .fpu vfpv4
+.p2align 4
 .globl shift_left
 shift_left:
-.p2align 4
 	movw r0, #:lower16:a
 	movw r1, #:lower16:b
 	movt r0, #:upper16:a
@@ -56,9 +56,9 @@ shift_left:
 	str r0, [r1, #0]
 	mov r0, #0
 	bx lr
+.p2align 4
 .globl shift_right
 shift_right:
-.p2align 4
 	movw r0, #:lower16:i
 	movw r1, #:lower16:j
 	movt r0, #:upper16:i

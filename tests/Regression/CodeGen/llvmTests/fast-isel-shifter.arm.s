@@ -4,33 +4,33 @@
 .syntax unified
 .arm
 .fpu vfpv4
+.p2align 4
 .globl ashr
 ashr:
-.p2align 4
 	mvn r0, #0
 	bx lr
+.p2align 4
 .globl ashr_reg
 ashr_reg:
-.p2align 4
 	lsr r0, r0, r1
 	bx lr
+.p2align 4
 .globl lshr
 lshr:
-.p2align 4
 	mvn r0, #0
 	bx lr
+.p2align 4
 .globl lshr_reg
 lshr_reg:
-.p2align 4
 	lsr r0, r0, r1
 	bx lr
+.p2align 4
 .globl shl
 shl:
-.p2align 4
 	mvn r0, #3
 	bx lr
+.p2align 4
 .globl shl_reg
 shl_reg:
-.p2align 4
 	lsl r0, r0, r1
 	bx lr

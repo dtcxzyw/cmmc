@@ -1,7 +1,7 @@
 .data
 .text
+.p2align 2
 .globl fn1
 fn1:
-.p2align 2
 	jr $ra
 	nop

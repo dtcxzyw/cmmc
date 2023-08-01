@@ -8,7 +8,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     call (i32) -> void @starttime(i32 324);
     i32 %0 = call () -> i32 @getint();
     i1 %1 = icmp sgt i32 %0, i32 0;
-    cbr i1 %1(prob = 0.992248), ^prebody, ^b;
+    cbr i1 %1(prob = 0.984615), ^prebody, ^b;
   ^prebody:
     i32 %2 = srem i32 %0, i32 65535;
     i32 %3 = shl i32 %2, i32 1;

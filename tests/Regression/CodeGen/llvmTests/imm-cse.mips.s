@@ -9,9 +9,9 @@ src:
 dst:
 	.4byte	0
 .text
+.p2align 2
 .globl imm32_cse
 imm32_cse:
-.p2align 2
 	lui $t0, %hi(src)
 	lw $t0, %lo(src)($t0)
 	addiu $t0, $t0, 4099

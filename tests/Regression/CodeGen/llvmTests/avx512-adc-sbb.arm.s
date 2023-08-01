@@ -4,9 +4,9 @@
 .syntax unified
 .arm
 .fpu vfpv4
+.p2align 4
 .globl PR32316
 PR32316:
-.p2align 4
 	uxtb r0, r0
 	clz r0, r0
 	lsr r0, r0, #5

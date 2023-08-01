@@ -5,9 +5,9 @@
 p:
 	.zero	1024
 .text
+.p2align 2
 .globl main
 main:
-.p2align 2
 	addi sp, sp, -144
 	li a0, 8
 	li a3, 7
@@ -102,8 +102,12 @@ label2:
 	add a0, a3, a5
 	li a5, 16
 	addi a2, a0, -64
-	blt a4, a5, label121
-	j label12
+	bge a4, a5, label12
+.p2align 2
+label121:
+	li a5, 1
+	li t0, 14
+	bge a5, t0, label124
 .p2align 2
 label8:
 	addiw t0, a5, -1
@@ -152,12 +156,6 @@ label12:
 	ld s1, 16(sp)
 	addi sp, sp, 144
 	ret
-.p2align 2
-label121:
-	li a5, 1
-	li t0, 14
-	blt a5, t0, label8
-	j label124
 .p2align 2
 label202:
 	addiw a4, a4, 1

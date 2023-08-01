@@ -4,8 +4,8 @@
 .syntax unified
 .arm
 .fpu vfpv4
-my_sin_impl:
 .p2align 4
+my_sin_impl:
 	push { lr }
 	vpush { s16 }
 	movw r0, #14269
@@ -58,9 +58,9 @@ label7:
 	vmul.f32 s0, s0, s16
 	vsub.f32 s0, s0, s1
 	b label5
+.p2align 4
 .globl main
 main:
-.p2align 4
 	push { r4, r5, r6, lr }
 	vpush { s16 }
 	mov r0, #80
@@ -210,16 +210,6 @@ label72:
 	blt label81
 	b label52
 .p2align 4
-label60:
-	movw r0, #4059
-	movt r0, #16585
-	vmov s1, r0
-	vdiv.f32 s2, s0, s1
-	vcvt.s32.f32 s2, s2
-	vcvt.f32.s32 s2, s2
-	vmul.f32 s1, s2, s1
-	vsub.f32 s0, s0, s1
-.p2align 4
 label61:
 	movw r0, #4059
 	movt r0, #16457
@@ -252,15 +242,7 @@ label61:
 	vmrs APSR_nzcv, FPSCR
 	movwmi r2, #1
 	orrs r0, r0, r2
-	beq label63
-	movw r0, #4059
-	movt r0, #16585
-	vmov s0, r0
-	vdiv.f32 s1, s6, s0
-	vcvt.s32.f32 s1, s1
-	vcvt.f32.s32 s1, s1
-	vmul.f32 s0, s1, s0
-	vsub.f32 s6, s6, s0
+	bne label74
 .p2align 4
 label63:
 	movw r0, #4059
@@ -424,6 +406,17 @@ label65:
 	add r0, r0, #1
 	b label65
 .p2align 4
+label74:
+	movw r0, #4059
+	movt r0, #16585
+	vmov s0, r0
+	vdiv.f32 s1, s6, s0
+	vcvt.s32.f32 s1, s1
+	vcvt.f32.s32 s1, s1
+	vmul.f32 s0, s1, s0
+	vsub.f32 s6, s6, s0
+	b label63
+.p2align 4
 label166:
 	mov r0, #0
 	vmov s7, r0
@@ -432,3 +425,14 @@ label166:
 	cmp r1, #24
 	blt label56
 	b label72
+.p2align 4
+label60:
+	movw r0, #4059
+	movt r0, #16585
+	vmov s1, r0
+	vdiv.f32 s2, s0, s1
+	vcvt.s32.f32 s2, s2
+	vcvt.f32.s32 s2, s2
+	vmul.f32 s1, s2, s1
+	vsub.f32 s0, s0, s1
+	b label61
