@@ -3,6 +3,6 @@
 .p2align 2
 .globl test
 test:
-	move $v0, $a0
+	lw $v0, 16($sp)
 	jr $ra
 	nop

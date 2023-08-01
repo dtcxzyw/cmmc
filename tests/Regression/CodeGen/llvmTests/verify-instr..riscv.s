@@ -6,10 +6,10 @@
 mulw:
 	mv a2, a0
 	mv a3, a1
-	bge a0, a1, label15
+	bge a0, a1, label16
 	addiw a1, a0, 1
 	bgt a3, a1, label3
-label20:
+label21:
 	li a1, 4294967295
 	and a0, a0, a1
 	j label8
@@ -17,8 +17,8 @@ label3:
 	mulw a0, a1, a0
 	addiw a1, a1, 1
 	bgt a3, a1, label3
-	j label20
-label15:
+	j label21
+label16:
 	li a0, 1
 label8:
 	ret

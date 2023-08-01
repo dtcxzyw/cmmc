@@ -110,6 +110,12 @@ class InstReorder final : public TransformPass<Function> {
             w += 1.0;
             if(inst.getInstID() == InstructionID::Call) {
                 w += 1000.0;
+                const auto callee = inst.lastOperand()->as<Function>();
+                if(callee->getSymbol().prefix() == "starttime") {
+                    w = std::numeric_limits<double>::infinity();  // earliest
+                } else if(callee->getSymbol().prefix() == "stoptime") {
+                    w = -std::numeric_limits<double>::infinity();  // latest
+                }
             }
             for(auto use : uses[&inst]) {
                 weight[use] += w;

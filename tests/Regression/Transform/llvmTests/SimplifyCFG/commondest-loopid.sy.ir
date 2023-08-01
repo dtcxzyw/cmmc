@@ -1,4 +1,4 @@
-func @commondest_loopid() -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoReturn NoRecurse } {
+func @commondest_loopid(i32 %var0) -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoReturn NoRecurse } {
   ^entry:
     unreachable;
 }

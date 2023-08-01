@@ -233,9 +233,9 @@ func @main() -> i32 { NoRecurse Entry } {
     i1 %128 = icmp eq i32 %127, i32 62;
     cbr i1 %128(prob = 0.5), ^if.then, ^if.else;
   ^entry4:
-    call (i32) -> void @stoptime(i32 118);
     i1 %129 = icmp sgt i32 %120, i32 0;
     [65536 * i32]* %130 = ptrcast [65536 * i32]* @output to [65536 * i32]*;
+    call (i32) -> void @stoptime(i32 118);
     cbr i1 %129(prob = 0.984615), ^while.body6, ^entry5;
   ^if.then:
     i32 %131 = add i32 %123, i32 1;

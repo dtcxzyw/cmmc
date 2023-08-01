@@ -12,7 +12,7 @@ func @and_implied(i8 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSid
     i32 %9 = ztrunc i32 %8 to i32;
     ret i32 %9;
 }
-func @and_implied_comm1(i8 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @and_implied_comm1(i8 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = zext i8 %var0 to i32;
     i1 %1 = icmp eq i32 %0, i32 1;

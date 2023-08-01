@@ -5,16 +5,13 @@
 .globl test
 test:
 	li a2, 1431655766
-	bgt a1, zero, label3
-label2:
-	ret
-label3:
+	ble a1, zero, label7
 	addiw a4, a1, -4
 	li a5, 4
 	ble a1, a5, label16
 	mv a3, zero
 .p2align 2
-label4:
+label3:
 	sh2add a5, a3, a0
 	addiw a3, a3, 4
 	lw t2, 0(a5)
@@ -41,8 +38,8 @@ label4:
 	srli t1, t0, 32
 	add t0, t2, t1
 	sw t0, 12(a5)
-	bgt a4, a3, label4
-label6:
+	bgt a4, a3, label3
+label5:
 	sh2add a4, a3, a0
 	addiw a3, a3, 1
 	lw t1, 0(a4)
@@ -51,8 +48,9 @@ label6:
 	srli t0, a5, 32
 	add a5, t1, t0
 	sw a5, 0(a4)
-	bgt a1, a3, label6
-	j label2
+	bgt a1, a3, label5
+label7:
+	ret
 label16:
 	mv a3, zero
-	j label6
+	j label5

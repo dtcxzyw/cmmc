@@ -1,4 +1,4 @@
-func @llvm_sadd_sat_i8() -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @llvm_sadd_sat_i8(i8 %var0, i8 %var1) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     ret i8 0;
 }

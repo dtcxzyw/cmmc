@@ -1,4 +1,4 @@
-func @sink_preheader() -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @sink_preheader(i32 %var0) -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     ret;
 }

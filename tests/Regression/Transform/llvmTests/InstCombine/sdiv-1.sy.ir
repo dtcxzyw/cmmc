@@ -6,11 +6,11 @@ func @a(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless No
     i32 %3 = ztrunc i32 %2 to i32;
     ret i32 %3;
 }
-func @b() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @b(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     ret i32 715827882;
 }
-func @c() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @c(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     ret i32 715827882;
 }

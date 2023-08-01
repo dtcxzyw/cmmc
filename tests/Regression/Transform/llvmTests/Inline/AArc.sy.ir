@@ -9,7 +9,7 @@ func @alwaysInlineFunction(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSide
     i32 %0 = mul i32 %var0, i32 %var0;
     ret i32 %0;
 }
-func @bar() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @bar(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     ret i32 47;
 }

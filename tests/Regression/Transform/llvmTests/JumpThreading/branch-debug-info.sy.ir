@@ -1,8 +1,8 @@
-func @test0() -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @test0(i32 %var0) -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     ret;
 }
-func @test1() -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @test1(i32 %var0, i32 %var1) -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     ret;
 }

@@ -131,7 +131,7 @@ func @idempotent(i8 %var0) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect State
     i8 %1 = ztrunc i32 %0 to i8;
     ret i8 %1;
 }
-func @nilpotent() -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @nilpotent(i8 %var0) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     ret i8 0;
 }

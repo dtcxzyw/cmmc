@@ -4,4 +4,5 @@
 .p2align 2
 .globl test
 test:
+	mv a0, a2
 	ret

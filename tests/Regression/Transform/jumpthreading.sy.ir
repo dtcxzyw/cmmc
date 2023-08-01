@@ -18,3 +18,23 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
   ^b:
     ret i32 0;
 }
+func @test(i32* %x, i32 %n, i32 %z) -> void { NoMemoryRead NoRecurse } {
+  ^entry:
+    i1 %0 = icmp neq i32 %z, i32 0;
+    ubr ^for.header;
+  ^for.header:
+    i32 %1 = phi [^entry, i32 0] [^for.iteration, i32 %4];
+    i1 %2 = icmp sgt i32 %n, i32 %1;
+    cbr i1 %2(prob = 0.984615), ^for.body, ^b;
+  ^for.body:
+    cbr i1 %0(prob = 0.5), ^if.then, ^for.iteration;
+  ^b:
+    ret;
+  ^if.then:
+    i32* %3 = getelementptr &(i32* %x)[i32 %1];
+    store i32* %3 with i32 %z;
+    ubr ^for.iteration;
+  ^for.iteration:
+    i32 %4 = add i32 %1, i32 1;
+    ubr ^for.header;
+}

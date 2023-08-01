@@ -2,7 +2,7 @@ func @main() -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecur
   ^entry:
     ret;
 }
-func @patatino() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @patatino(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     ret i32 0;
 }

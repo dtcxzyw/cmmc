@@ -11,3 +11,8 @@ int main() {
     }
     return 0;
 }
+void test(int x[], int n, int z) {
+    for(int i = 0; i < n; ++i)
+        if(z)
+            x[i] = z;
+}

@@ -7,4 +7,5 @@
 .p2align 4
 .globl test
 test:
+	mov r0, r1
 	bx lr

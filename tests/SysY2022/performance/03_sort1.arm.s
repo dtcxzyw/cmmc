@@ -327,15 +327,13 @@ main:
 	mov r0, #8
 	mov r3, r5
 	bl radixSort
-	cmp r5, #0
-	ble label378
-	sub r0, r5, #4
 	cmp r5, #4
-	ble label383
+	sub r0, r5, #4
+	ble label377
 	mov r2, #0
 	mov r1, r2
 .p2align 4
-label366:
+label365:
 	add r6, r4, r2, lsl #2
 	add r3, r2, #3
 	ldr r7, [r6, #0]
@@ -359,10 +357,11 @@ label366:
 	mls r2, r9, r2, r6
 	mla r2, r3, r2, r8
 	add r1, r1, r2
-	ble label369
+	ble label368
 	mov r2, r7
-	b label366
-label369:
+	b label365
+.p2align 4
+label368:
 	ldr r0, [r4, r7, lsl #2]
 	add r2, r7, #2
 	sdiv r3, r0, r2
@@ -370,23 +369,20 @@ label369:
 	mla r1, r7, r0, r1
 	add r7, r7, #1
 	cmp r5, r7
-	bgt label369
+	bgt label368
+	cmp r1, #0
 	mov r4, r1
-label372:
 	mov r0, #102
+	rsbmi r4, r1, #0
 	bl _sysy_stoptime
-	movs r0, r4
-	rsbmi r0, r4, #0
+	mov r0, r4
 	bl putint
 	mov r0, #10
 	bl putch
 	add sp, sp, #4
 	mov r0, #0
 	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
-label383:
+label377:
 	mov r1, #0
 	mov r7, r1
-	b label369
-label378:
-	mov r4, #0
-	b label372
+	b label368

@@ -11,17 +11,13 @@ test:
 	movw r2, #21846
 	movt r2, #21845
 	cmp r1, #0
-	bgt label3
-label2:
-	pop { r4, r5, r6 }
-	bx lr
-label3:
+	ble label7
 	sub r3, r1, #4
 	cmp r1, #4
 	ble label16
 	mov r4, #0
 .p2align 4
-label4:
+label3:
 	add r5, r0, r4, lsl #2
 	add r4, r4, #4
 	ldr r6, [r5, #0]
@@ -41,8 +37,8 @@ label4:
 	smmul r6, r6, r2
 	add r6, r6, r6, lsr #31
 	str r6, [r5, #12]
-	bgt label4
-label6:
+	bgt label3
+label5:
 	add r3, r0, r4, lsl #2
 	add r4, r4, #1
 	ldr r5, [r3, #0]
@@ -50,8 +46,10 @@ label6:
 	smmul r5, r5, r2
 	add r5, r5, r5, lsr #31
 	str r5, [r3, #0]
-	bgt label6
-	b label2
+	bgt label5
+label7:
+	pop { r4, r5, r6 }
+	bx lr
 label16:
 	mov r4, #0
-	b label6
+	b label5

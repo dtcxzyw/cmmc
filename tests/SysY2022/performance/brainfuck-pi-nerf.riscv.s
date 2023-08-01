@@ -167,11 +167,10 @@ label221:
 	addiw a5, a5, 1
 	j label11
 label17:
-	li a0, 118
-	jal _sysy_stoptime
-pcrel417:
 	auipc a1, %pcrel_hi(output)
-	addi s0, a1, %pcrel_lo(pcrel417)
+	li a0, 118
+	addi s0, a1, %pcrel_lo(label17)
+	jal _sysy_stoptime
 	ble s9, zero, label18
 	mv s1, zero
 	j label19
@@ -257,10 +256,10 @@ label35:
 	li t1, 46
 	bne t0, t1, label37
 	sh2add t1, a4, a1
-pcrel418:
+pcrel417:
 	auipc t3, %pcrel_hi(output)
 	lw t0, 0(t1)
-	addi t1, t3, %pcrel_lo(pcrel418)
+	addi t1, t3, %pcrel_lo(pcrel417)
 	sh2add t2, s9, t1
 	addiw s9, s9, 1
 	sw t0, 0(t2)

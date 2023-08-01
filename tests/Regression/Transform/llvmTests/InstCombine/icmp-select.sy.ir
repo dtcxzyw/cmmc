@@ -15,7 +15,7 @@ func @icmp_select_var_pred_uge() -> i32;
 func @icmp_select_var_pred_uge_commuted() -> i32;
 func @icmp_select_var_pred_ult() -> i32;
 func @icmp_select_var_select() -> i32;
-func @llvm_umin_i8() -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @llvm_umin_i8(i8 %var0, i8 %var1) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     ret i8 0;
 }

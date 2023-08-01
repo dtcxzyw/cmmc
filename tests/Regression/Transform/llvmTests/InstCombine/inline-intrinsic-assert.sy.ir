@@ -1,8 +1,8 @@
-func @bar() -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @bar(f32 %var0) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     ret f32 0;
 }
-func @foo() -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @foo(f32 %var0) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     ret f32 0;
 }
@@ -11,7 +11,7 @@ func @sqr(f32 %var0) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless 
     f32 %0 = fmul f32 %var0, f32 %var0;
     ret f32 %0;
 }
-func @sqrtf() -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @sqrtf(f32 %var0) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     ret f32 0;
 }

@@ -5,10 +5,10 @@ internal func @stoptime() -> void { NoMemoryRead NoMemoryWrite };
 func @main() -> i32 { NoMemoryWrite NoRecurse Entry } {
   ^entry:
     i32 %0 = call () -> i32 @getint();
+    call (i32) -> void @starttime(i32 22);
     i1 %1 = icmp sgt i32 %0, i32 0;
     i32 %2 = add i32 %0, i32 -4;
     i1 %3 = icmp sgt i32 %0, i32 4;
-    call (i32) -> void @starttime(i32 22);
     [8192 * f32]* %4 = ptrcast [8192 * f32]* @x to [8192 * f32]*;
     f32* %5 = getelementptr &([8192 * f32]* %4)[i64 0][i64 0];
     [8192 * f32]* %6 = ptrcast [8192 * f32]* @y to [8192 * f32]*;
@@ -32,11 +32,11 @@ func @main() -> i32 { NoMemoryWrite NoRecurse Entry } {
     i1 %20 = icmp sgt i32 %0, i32 %8;
     cbr i1 %20(prob = 0.984615), ^super.header, ^b1;
   ^b:
-    call (i32) -> void @stoptime(i32 39);
     f32 %21 = fsub f32 %11, f32 1.8338e+16;
     i1 %22 = fcmp ole f32 %21, f32 1e-06;
     i1 %23 = fcmp oge f32 %21, f32 -1e-06;
     i1 %24 = or i1 %22, i1 %23;
+    call (i32) -> void @stoptime(i32 39);
     cbr i1 %24(prob = 0.5), ^if.then, ^if.else;
   ^if.then:
     call (i32) -> void @putint(i32 0);

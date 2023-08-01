@@ -3,7 +3,7 @@
 .p2align 2
 .globl tailcallee
 tailcallee:
-	move $v0, $a0
+	move $v0, $a2
 	jr $ra
 	nop
 .p2align 2

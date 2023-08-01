@@ -6,7 +6,7 @@ func @foo() -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurs
   ^entry:
     ret;
 }
-func @unswitch_trivial_select() -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @unswitch_trivial_select(i32 %var0, i32 %var1, i8 %var2) -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     ret;
 }

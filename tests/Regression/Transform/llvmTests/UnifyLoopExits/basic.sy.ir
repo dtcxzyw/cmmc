@@ -1,8 +1,8 @@
-func @loop_1() -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @loop_1(i32 %var0, i32 %var1, i32 %var2, i32 %var3) -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     ret;
 }
-func @loop_2() -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @loop_2(i32 %var0, i32 %var1, i32 %var2) -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     ret;
 }

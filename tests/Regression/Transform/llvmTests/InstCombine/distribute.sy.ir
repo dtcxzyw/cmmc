@@ -5,7 +5,7 @@ func @expand(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Statele
     i32 %2 = and i32 %1, i32 1;
     ret i32 %2;
 }
-func @factorize(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @factorize(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = or i32 %var0, i32 1;
     i32 %1 = or i32 %var0, i32 2;

@@ -4,4 +4,5 @@
 .p2align 2
 .globl test_f32
 test_f32:
+	fmv.s f10, f11
 	ret

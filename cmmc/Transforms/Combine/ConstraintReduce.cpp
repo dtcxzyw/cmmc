@@ -17,6 +17,7 @@
 #include <bitset>
 #include <cmmc/Analysis/CFGAnalysis.hpp>
 #include <cmmc/Analysis/DominateAnalysis.hpp>
+#include <cmmc/Analysis/IntegerRangeAnalysis.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/IRBuilder.hpp>
@@ -28,6 +29,7 @@
 #include <cmmc/Transforms/Util/PatternMatch.hpp>
 #include <cstdint>
 #include <iostream>
+#include <limits>
 #include <optional>
 #include <ostream>
 #include <queue>
@@ -354,6 +356,8 @@ public:
     bool run(Function& func, AnalysisPassManager& analysis) const override {
         auto& cfg = analysis.get<CFGAnalysis>(func);
         auto& dom = analysis.get<DominateAnalysis>(func);
+        auto& range = analysis.get<IntegerRangeAnalysis>(func);
+        const auto i32 = IntegerType::get(32);
 
         std::unordered_map<Block*, std::unordered_map<Block*, std::unordered_map<Value*, bool>>> edges;
         std::unordered_map<Block*, CondSet> conditions;
@@ -370,9 +374,31 @@ public:
             return modified;
         };
 
+        constexpr uint32_t maxAdditionalFacts = 32;
+        uint32_t additionalFact = 0;
         for(auto block : func.blocks()) {
             auto& condSet = conditions[block];
             for(auto& inst : block->instructions()) {
+                if(inst.getType()->isSame(i32) && additionalFact < maxAdditionalFacts) {
+                    const auto r = range.query(&inst, dom, &inst, 5);
+
+                    // inst.dumpInst(std::cerr);
+                    // std::cerr << '\n';
+                    // r.print(std::cerr);
+                    // std::cerr << '\n';
+
+                    if(r.minSignedValue() != std::numeric_limits<int32_t>::min()) {
+                        if(++additionalFact <= maxAdditionalFacts)
+                            addToSet(condSet, &inst, ConstantInteger::get(i32, r.minSignedValue()),
+                                     KnownRelations{ KnownRelation::Unknown, KnownRelation::False, KnownRelation::Unknown });
+                    }
+                    if(r.maxSignedValue() != std::numeric_limits<int32_t>::max()) {
+                        if(++additionalFact <= maxAdditionalFacts)
+                            addToSet(condSet, &inst, ConstantInteger::get(i32, r.maxSignedValue()),
+                                     KnownRelations{ KnownRelation::Unknown, KnownRelation::Unknown, KnownRelation::False });
+                    }
+                }
+
                 switch(inst.getInstID()) {
                     case InstructionID::ConditionalBranch: {
                         const auto branch = inst.as<BranchInst>();

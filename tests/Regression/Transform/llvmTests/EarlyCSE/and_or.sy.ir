@@ -6,7 +6,7 @@ func @test_01(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEf
     i32 %3 = select i1 %2 ? i32 %var0 : i32 %var1;
     ret i32 %3;
 }
-func @test_02(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @test_02(i32 %var0, i32 %var1, i32 %var2) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = strunc i32 %var0 to i32;
     i32 %1 = strunc i32 %var1 to i32;
@@ -14,7 +14,7 @@ func @test_02(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEf
     i32 %3 = select i1 %2 ? i32 %var0 : i32 %var1;
     ret i32 %3;
 }
-func @test_02_select(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @test_02_select(i32 %var0, i32 %var1, i32 %var2) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = strunc i32 %var0 to i32;
     i32 %1 = strunc i32 %var1 to i32;
@@ -22,7 +22,7 @@ func @test_02_select(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite N
     i32 %3 = select i1 %2 ? i32 %var0 : i32 %var1;
     ret i32 %3;
 }
-func @test_03(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @test_03(i32 %var0, i32 %var1, i32 %var2) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = strunc i32 %var0 to i32;
     i32 %1 = strunc i32 %var1 to i32;
@@ -30,7 +30,7 @@ func @test_03(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEf
     i32 %3 = select i1 %2 ? i32 %var0 : i32 %var1;
     ret i32 %3;
 }
-func @test_03_select(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @test_03_select(i32 %var0, i32 %var1, i32 %var2) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = strunc i32 %var0 to i32;
     i32 %1 = strunc i32 %var1 to i32;
@@ -38,7 +38,7 @@ func @test_03_select(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite N
     i32 %3 = select i1 %2 ? i32 %var0 : i32 %var1;
     ret i32 %3;
 }
-func @test_04(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @test_04(i32 %var0, i32 %var1, i32 %var2, i32 %var3) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = strunc i32 %var0 to i32;
     i32 %1 = strunc i32 %var1 to i32;
@@ -46,7 +46,7 @@ func @test_04(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEf
     i32 %3 = select i1 %2 ? i32 %var0 : i32 %var1;
     ret i32 %3;
 }
-func @test_04_select(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @test_04_select(i32 %var0, i32 %var1, i32 %var2, i32 %var3) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = strunc i32 %var0 to i32;
     i32 %1 = strunc i32 %var1 to i32;
@@ -54,7 +54,7 @@ func @test_04_select(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite N
     i32 %3 = select i1 %2 ? i32 %var0 : i32 %var1;
     ret i32 %3;
 }
-func @test_05(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @test_05(i32 %var0, i32 %var1, i32 %var2, i32 %var3) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = strunc i32 %var0 to i32;
     i32 %1 = strunc i32 %var1 to i32;
@@ -62,7 +62,7 @@ func @test_05(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEf
     i32 %3 = select i1 %2 ? i32 %var0 : i32 %var1;
     ret i32 %3;
 }
-func @test_05_select(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @test_05_select(i32 %var0, i32 %var1, i32 %var2, i32 %var3) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = strunc i32 %var0 to i32;
     i32 %1 = strunc i32 %var1 to i32;

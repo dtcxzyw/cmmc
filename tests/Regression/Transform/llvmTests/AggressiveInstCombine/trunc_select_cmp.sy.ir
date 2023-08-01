@@ -16,15 +16,15 @@ func @cmp_select_sext_const(i8 %var0) -> i16 { NoMemoryRead NoMemoryWrite NoSide
     i16 %3 = ztrunc i32 %2 to i16;
     ret i16 %3;
 }
-func @cmp_select_signed_const_i16Const_noTransformation() -> i16 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @cmp_select_signed_const_i16Const_noTransformation(i8 %var0) -> i16 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     ret i16 -32768;
 }
-func @cmp_select_unsigned_const_i16Const() -> i16 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @cmp_select_unsigned_const_i16Const(i8 %var0) -> i16 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     ret i16 -32768;
 }
-func @cmp_select_unsigned_const_i16Const_noTransformation() -> i16 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @cmp_select_unsigned_const_i16Const_noTransformation(i8 %var0) -> i16 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     ret i16 0;
 }

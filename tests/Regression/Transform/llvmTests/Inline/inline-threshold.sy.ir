@@ -1,4 +1,4 @@
-func @bar() -> i32 { NoMemoryWrite NoSideEffect NoRecurse } {
+func @bar(i32 %var0) -> i32 { NoMemoryWrite NoSideEffect NoRecurse } {
   ^entry:
     i32* %0 = ptrcast i32* @a to i32*;
     i32 %1 = load i32* %0;

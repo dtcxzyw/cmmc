@@ -147,7 +147,7 @@ func @simplify_exit_test(i32 %var0) -> void { NoMemoryRead NoRecurse } {
   ^if.else:
     ret;
 }
-func @simplify_exit_test2() -> void { NoRecurse } {
+func @simplify_exit_test2(i32 %var0) -> void { NoRecurse } {
   ^entry:
     i32* %0 = ptrcast i32* @A to i32*;
     i32 %1 = load i32* %0;

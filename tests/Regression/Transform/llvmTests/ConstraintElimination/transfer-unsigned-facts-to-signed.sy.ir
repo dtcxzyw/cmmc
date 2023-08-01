@@ -118,7 +118,7 @@ func @idx_not_known_positive_via_len_uge(i8 %var0, i8 %var1) -> i32 { NoMemoryRe
     i32 %18 = phi [^if.then, i32 %16] [^if.else, i32 %17];
     ret i32 %18;
 }
-func @ult_signed_neg_constant() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @ult_signed_neg_constant(i8 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     ret i32 0;
 }

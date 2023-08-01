@@ -330,10 +330,10 @@ func @main() -> i32 { NoRecurse Entry } {
     i32* %206 = getelementptr &([10005 * i32]* %7)[i64 0][i32 %203];
     i32 %207 = load i32* %206;
     i1 %208 = icmp sle i32 %199, i32 %207;
+    i32 %209 = select i1 %208 ? i32 %203 : i32 %196;
     ubr ^b10;
   ^b10:
-    i1 %209 = phi [^while.body15, i1 false] [^b9, i1 %208];
-    i32 %210 = select i1 %209 ? i32 %203 : i32 %196;
+    i32 %210 = phi [^while.body15, i32 %196] [^b9, i32 %209];
     i32 %211 = add i32 %195, i32 -1;
     ubr ^while.header;
   ^while.header1:

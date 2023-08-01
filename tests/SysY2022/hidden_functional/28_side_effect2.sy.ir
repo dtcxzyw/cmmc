@@ -180,12 +180,12 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i32 %87 = load i32* %9;
     i1 %88 = icmp neq i32 %87, i32 0;
     i32 %89 = add i32 %86, i32 3;
-    cbr i1 %88(prob = 0.5), ^entry14, ^entry16;
+    cbr i1 %88(prob = 0.5), ^entry14, ^entry17;
   ^entry12:
     i32 %90 = load i32* %5;
     i1 %91 = icmp neq i32 %90, i32 0;
     i32 %92 = add i32 %75, i32 6;
-    cbr i1 %91(prob = 0.5), ^entry17, ^entry15;
+    cbr i1 %91(prob = 0.5), ^entry16, ^entry15;
   ^entry13:
     i32 %93 = add i32 %20, i32 4;
     i1 %94 = icmp slt i32 %21, i32 4;
@@ -205,22 +205,22 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i32 %99 = load i32* %10;
     i1 %100 = icmp eq i32 %99, i32 0;
     i32 %101 = add i32 %86, i32 6;
-    cbr i1 %100(prob = 0.5), ^entry18, ^entry16;
+    cbr i1 %100(prob = 0.5), ^entry18, ^entry17;
   ^entry15:
-    i32 %102 = phi [^entry12, i32 %92] [^entry17, i32 %110] [^entry20, i32 %120];
+    i32 %102 = phi [^entry12, i32 %92] [^entry16, i32 %106] [^entry20, i32 %120];
     i32 %103 = add i32 %102, i32 3;
     ubr ^entry11;
   ^entry16:
-    i32 %104 = phi [^entry11, i32 %89] [^entry14, i32 %101];
-    i32 %105 = load i32* %11;
-    i1 %106 = icmp eq i32 %105, i32 0;
-    i32 %107 = add i32 %104, i32 3;
-    cbr i1 %106(prob = 0.5), ^entry18, ^entry21;
+    i32 %104 = load i32* %6;
+    i1 %105 = icmp eq i32 %104, i32 0;
+    i32 %106 = add i32 %75, i32 9;
+    cbr i1 %105(prob = 0.5), ^entry20, ^entry15;
   ^entry17:
-    i32 %108 = load i32* %6;
+    i32 %107 = phi [^entry11, i32 %89] [^entry14, i32 %101];
+    i32 %108 = load i32* %11;
     i1 %109 = icmp eq i32 %108, i32 0;
-    i32 %110 = add i32 %75, i32 9;
-    cbr i1 %109(prob = 0.5), ^entry20, ^entry15;
+    i32 %110 = add i32 %107, i32 3;
+    cbr i1 %109(prob = 0.5), ^entry18, ^entry21;
   ^b17:
     store i32* %3 with i32 1;
     i32 %111 = load i32* %2;
@@ -230,7 +230,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i1 %113 = icmp neq i32 %112, i32 0;
     cbr i1 %113(prob = 0.5), ^entry22, ^b2;
   ^entry18:
-    i32 %114 = phi [^entry14, i32 %101] [^entry16, i32 %107] [^entry21, i32 %123] [^entry25, i32 %138] [^entry29, i32 %153];
+    i32 %114 = phi [^entry14, i32 %101] [^entry17, i32 %110] [^entry21, i32 %123] [^entry25, i32 %138] [^entry29, i32 %153];
     i32 %115 = add i32 %114, i32 3;
     cbr i1 %46(prob = 0.5), ^entry23, ^entry24;
   ^entry19:
@@ -245,7 +245,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
   ^entry21:
     i32 %121 = load i32* %12;
     i1 %122 = icmp eq i32 %121, i32 0;
-    i32 %123 = add i32 %104, i32 6;
+    i32 %123 = add i32 %107, i32 6;
     cbr i1 %122(prob = 0.5), ^entry18, ^entry25;
   ^entry22:
     i32 %124 = add i32 %20, i32 5;
@@ -273,7 +273,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
   ^entry25:
     i32 %136 = load i32* %13;
     i1 %137 = icmp eq i32 %136, i32 0;
-    i32 %138 = add i32 %104, i32 9;
+    i32 %138 = add i32 %107, i32 9;
     cbr i1 %137(prob = 0.5), ^entry18, ^entry29;
   ^b21:
     store i32* %4 with i32 1;
@@ -297,8 +297,8 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
   ^entry29:
     i32 %149 = load i32* %14;
     i1 %150 = icmp neq i32 %149, i32 0;
-    i32 %151 = add i32 %104, i32 12;
-    i32 %152 = add i32 %104, i32 15;
+    i32 %151 = add i32 %107, i32 12;
+    i32 %152 = add i32 %107, i32 15;
     i32 %153 = select i1 %150 ? i32 %152 : i32 %151;
     ubr ^entry18;
   ^b22:

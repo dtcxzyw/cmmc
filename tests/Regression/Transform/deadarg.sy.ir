@@ -1,10 +1,10 @@
-func @callee_cmmc_noinline(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @callee_cmmc_noinline(i32 %x, i32 %y) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     ret i32 %x;
 }
 func @caller(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i32 %0 = call (i32) -> i32 @callee_cmmc_noinline(i32 %x);
+    i32 %0 = call (i32, i32) -> i32 @callee_cmmc_noinline(i32 %x, i32 0);
     ret i32 %0;
 }
 func @callee_fibx_cmmc_noinline(i32 %x, i32 %y) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {

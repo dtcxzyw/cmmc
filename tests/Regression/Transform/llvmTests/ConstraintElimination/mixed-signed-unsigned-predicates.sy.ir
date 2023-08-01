@@ -1,4 +1,4 @@
-func @test_add_nsw(i8 %var0, i8 %var2) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @test_add_nsw(i8 %var0, i8 %var1, i8 %var2) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = zext i8 %var0 to i32;
     i32 %1 = add i32 %0, i32 1;
@@ -80,7 +80,7 @@ func @test_add_nsw(i8 %var0, i8 %var2) -> i32 { NoMemoryRead NoMemoryWrite NoSid
     i32 %71 = phi [^if.then, i32 %35] [^if.else, i32 %70];
     ret i32 %71;
 }
-func @test_add_nuw(i8 %var0, i8 %var2) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @test_add_nuw(i8 %var0, i8 %var1, i8 %var2) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = zext i8 %var0 to i32;
     i32 %1 = add i32 %0, i32 1;
@@ -193,7 +193,7 @@ func @test_and_ule_sge(i32 %var0, i32 %var1, i32 %var2, i32 %var3) -> i32 { NoMe
     i32 %27 = ztrunc i32 %26 to i32;
     ret i32 %27;
 }
-func @test_sub_nuw(i8 %var0, i8 %var2) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @test_sub_nuw(i8 %var0, i8 %var1, i8 %var2) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = zext i8 %var0 to i32;
     i32 %1 = add i32 %0, i32 -1;

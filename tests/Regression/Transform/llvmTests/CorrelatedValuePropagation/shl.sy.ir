@@ -174,7 +174,7 @@ func @test4(i8 %var0, i8 %var1) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect 
     i8 %5 = select i1 %4 ? i8 %3 : i8 0;
     ret i8 %5;
 }
-func @test5() -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @test5(i8 %var0) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     ret i8 0;
 }

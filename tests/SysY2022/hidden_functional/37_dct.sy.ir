@@ -94,13 +94,13 @@ func @main() -> i32 { NoRecurse Entry } {
     i32 %29 = add i32 %15, i32 1;
     ubr ^while.header2;
   ^while.header4:
-    i32 %30 = phi [^b2, i32 0] [^b6, i32 %50];
+    i32 %30 = phi [^b2, i32 0] [^b6, i32 %59];
     i1 %31 = icmp sgt i32 %0, i32 %30;
     cbr i1 %31(prob = 0.984615), ^while.body2, ^b4;
   ^while.header5:
-    i32 %32 = phi [^while.body1, i32 0] [^b7, i32 %62];
+    i32 %32 = phi [^while.body1, i32 0] [^b12, i32 %135];
     i1 %33 = icmp sgt i32 %0, i32 %32;
-    cbr i1 %33(prob = 0.984615), ^while.header6, ^b5;
+    cbr i1 %33(prob = 0.984615), ^prebody1, ^b5;
   ^b4:
     call (i32) -> void @putch(i32 10);
     i32 %34 = add i32 %0, i32 -4;
@@ -115,7 +115,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i1 %43 = icmp sgt i32 %1, i32 5;
     i32 %44 = add i32 %0, i32 -20;
     i32 %45 = add i32 %1, i32 -20;
-    ubr ^while.header7;
+    ubr ^while.header6;
   ^while.body2:
     [8 * f32]* %46 = getelementptr &([8 * f32]* %11)[i32 %30];
     f32* %47 = getelementptr &([8 * f32]* %46)[i64 0][i64 0];
@@ -125,162 +125,160 @@ func @main() -> i32 { NoRecurse Entry } {
   ^b5:
     i32 %49 = add i32 %25, i32 1;
     ubr ^while.header3;
-  ^while.header6:
-    cbr i1 %2(prob = 0.984615), ^prebody1, ^b7;
+  ^prebody1:
+    f32 %50 = s2f i32 %32 to f32;
+    f32 %51 = fadd f32 %50, f32 0.5;
+    f32 %52 = fmul f32 %7, f32 %51;
+    f32 %53 = fmul f32 %52, f32 %18;
+    f32 %54 = fadd f32 %53, f32 1.5708;
+    i1 %55 = fcmp ogt f32 %54, f32 6.28319;
+    i1 %56 = fcmp olt f32 %54, f32 -6.28319;
+    i1 %57 = or i1 %55, i1 %56;
+    [8 * f32]* %58 = getelementptr &([8 * f32]* %12)[i32 %32];
+    cbr i1 %57(prob = 0.5), ^if.then, ^b7;
   ^b6:
     call (i32) -> void @putch(i32 10);
-    i32 %50 = add i32 %30, i32 1;
+    i32 %59 = add i32 %30, i32 1;
     ubr ^while.header4;
   ^while.body3:
-    i32 %51 = phi [^while.body2, i32 1] [^while.body3, i32 %54];
+    i32 %60 = phi [^while.body2, i32 1] [^while.body3, i32 %63];
     call (i32) -> void @putch(i32 32);
-    f32* %52 = getelementptr &([8 * f32]* %46)[i64 0][i32 %51];
-    f32 %53 = load f32* %52;
-    call (f32) -> void @putfloat(f32 %53);
-    i32 %54 = add i32 %51, i32 1;
-    i1 %55 = icmp sgt i32 %1, i32 %54;
-    cbr i1 %55(prob = 0.984615), ^while.body3, ^b6;
-  ^while.header7:
-    i32 %56 = phi [^b4, i32 0] [^b9, i32 %90];
-    f32 %57 = s2f i32 %56 to f32;
-    f32 %58 = fadd f32 %57, f32 0.5;
-    f32 %59 = fmul f32 %7, f32 %58;
-    i1 %60 = icmp sgt i32 %0, i32 %56;
-    [8 * f32]* %61 = getelementptr &([8 * f32]* %39)[i32 %56];
-    cbr i1 %60(prob = 0.984615), ^while.header8, ^while.header9;
-  ^b7:
-    i32 %62 = add i32 %32, i32 1;
-    ubr ^while.header5;
-  ^prebody1:
-    f32 %63 = s2f i32 %32 to f32;
-    f32 %64 = fadd f32 %63, f32 0.5;
-    f32 %65 = fmul f32 %7, f32 %64;
-    f32 %66 = fmul f32 %65, f32 %18;
-    f32 %67 = fadd f32 %66, f32 1.5708;
-    i1 %68 = fcmp ogt f32 %67, f32 6.28319;
-    i1 %69 = fcmp olt f32 %67, f32 -6.28319;
-    i1 %70 = or i1 %68, i1 %69;
-    [8 * f32]* %71 = getelementptr &([8 * f32]* %12)[i32 %32];
-    cbr i1 %70(prob = 0.5), ^if.then, ^b8;
-  ^while.header8:
-    i32 %72 = phi [^while.header7, i32 0] [^b13, i32 %225];
-    i1 %73 = icmp sgt i32 %1, i32 %72;
-    cbr i1 %73(prob = 0.984615), ^while.body4, ^b9;
-  ^while.header9:
-    i32 %74 = phi [^while.header7, i32 0] [^b11, i32 %113];
-    i1 %75 = icmp sgt i32 %0, i32 %74;
-    cbr i1 %75(prob = 0.984615), ^while.body5, ^b10;
+    f32* %61 = getelementptr &([8 * f32]* %46)[i64 0][i32 %60];
+    f32 %62 = load f32* %61;
+    call (f32) -> void @putfloat(f32 %62);
+    i32 %63 = add i32 %60, i32 1;
+    i1 %64 = icmp sgt i32 %1, i32 %63;
+    cbr i1 %64(prob = 0.984615), ^while.body3, ^b6;
+  ^while.header6:
+    i32 %65 = phi [^b4, i32 0] [^b8, i32 %102];
+    f32 %66 = s2f i32 %65 to f32;
+    f32 %67 = fadd f32 %66, f32 0.5;
+    f32 %68 = fmul f32 %7, f32 %67;
+    i1 %69 = icmp sgt i32 %0, i32 %65;
+    [8 * f32]* %70 = getelementptr &([8 * f32]* %39)[i32 %65];
+    cbr i1 %69(prob = 0.984615), ^while.header7, ^while.header8;
   ^if.then:
-    f32 %76 = fdiv f32 %67, f32 6.28319;
-    i32 %77 = f2s f32 %76 to i32;
-    f32 %78 = s2f i32 %77 to f32;
-    f32 %79 = fmul f32 %78, f32 6.28319;
-    f32 %80 = fsub f32 %67, f32 %79;
-    ubr ^b8;
-  ^b8:
-    f32 %81 = phi [^prebody1, f32 %67] [^if.then, f32 %80];
-    i1 %82 = fcmp ogt f32 %81, f32 3.14159;
-    f32 %83 = fsub f32 %81, f32 6.28319;
-    f32 %84 = select i1 %82 ? f32 %83 : f32 %81;
-    i1 %85 = fcmp olt f32 %84, f32 -3.14159;
-    f32 %86 = fadd f32 %84, f32 6.28319;
-    f32 %87 = select i1 %85 ? f32 %86 : f32 %84;
-    f32 %88 = call (f32) -> f32 @my_sin_impl(f32 %87);
-    f32 %89 = load f32* %27;
-    ubr ^while.body6;
-  ^b9:
-    i32 %90 = add i32 %56, i32 1;
-    ubr ^while.header7;
+    f32 %71 = fdiv f32 %54, f32 6.28319;
+    i32 %72 = f2s f32 %71 to i32;
+    f32 %73 = s2f i32 %72 to f32;
+    f32 %74 = fmul f32 %73, f32 6.28319;
+    f32 %75 = fsub f32 %54, f32 %74;
+    ubr ^b7;
+  ^b7:
+    f32 %76 = phi [^prebody1, f32 %54] [^if.then, f32 %75];
+    i1 %77 = fcmp ogt f32 %76, f32 3.14159;
+    f32 %78 = fsub f32 %76, f32 6.28319;
+    f32 %79 = select i1 %77 ? f32 %78 : f32 %76;
+    i1 %80 = fcmp olt f32 %79, f32 -3.14159;
+    f32 %81 = fadd f32 %79, f32 6.28319;
+    f32 %82 = select i1 %80 ? f32 %81 : f32 %79;
+    f32 %83 = call (f32) -> f32 @my_sin_impl(f32 %82);
+    f32 %84 = load f32* %27;
+    ubr ^while.body4;
+  ^while.header7:
+    i32 %85 = phi [^while.header6, i32 0] [^b13, i32 %225];
+    i1 %86 = icmp sgt i32 %1, i32 %85;
+    cbr i1 %86(prob = 0.984615), ^while.body5, ^b8;
+  ^while.header8:
+    i32 %87 = phi [^while.header6, i32 0] [^b11, i32 %129];
+    i1 %88 = icmp sgt i32 %0, i32 %87;
+    cbr i1 %88(prob = 0.984615), ^while.body6, ^b9;
   ^while.body4:
-    f32* %91 = getelementptr &([8 * f32]* %61)[i64 0][i32 %72];
-    f32 %92 = load f32* %40;
-    f32 %93 = fmul f32 %92, f32 0.25;
-    store f32* %91 with f32 %93;
-    f32 %94 = s2f i32 %72 to f32;
-    f32 %95 = fadd f32 %94, f32 0.5;
-    f32 %96 = fmul f32 %9, f32 %95;
-    cbr i1 %41(prob = 0.984615), ^super.header, ^while.header10;
+    f32 %89 = phi [^b7, f32 %84] [^b10, f32 %126];
+    i32 %90 = phi [^b7, i32 0] [^b10, i32 %127];
+    f32 %91 = s2f i32 %90 to f32;
+    f32 %92 = fadd f32 %91, f32 0.5;
+    f32 %93 = fmul f32 %9, f32 %92;
+    f32 %94 = fmul f32 %93, f32 %28;
+    f32 %95 = fadd f32 %94, f32 1.5708;
+    i1 %96 = fcmp ogt f32 %95, f32 6.28319;
+    i1 %97 = fcmp olt f32 %95, f32 -6.28319;
+    i1 %98 = or i1 %96, i1 %97;
+    f32* %99 = getelementptr &([8 * f32]* %58)[i64 0][i32 %90];
+    f32 %100 = load f32* %99;
+    f32 %101 = fmul f32 %100, f32 %83;
+    cbr i1 %98(prob = 0.5), ^if.then1, ^b10;
+  ^b8:
+    i32 %102 = add i32 %65, i32 1;
+    ubr ^while.header6;
   ^while.body5:
-    [8 * f32]* %97 = getelementptr &([8 * f32]* %39)[i32 %74];
-    f32* %98 = getelementptr &([8 * f32]* %97)[i64 0][i64 0];
-    f32 %99 = load f32* %98;
-    call (f32) -> void @putfloat(f32 %99);
+    f32* %103 = getelementptr &([8 * f32]* %70)[i64 0][i32 %85];
+    f32 %104 = load f32* %40;
+    f32 %105 = fmul f32 %104, f32 0.25;
+    store f32* %103 with f32 %105;
+    f32 %106 = s2f i32 %85 to f32;
+    f32 %107 = fadd f32 %106, f32 0.5;
+    f32 %108 = fmul f32 %9, f32 %107;
+    cbr i1 %41(prob = 0.984615), ^super.header, ^while.header9;
+  ^while.body6:
+    [8 * f32]* %109 = getelementptr &([8 * f32]* %39)[i32 %87];
+    f32* %110 = getelementptr &([8 * f32]* %109)[i64 0][i64 0];
+    f32 %111 = load f32* %110;
+    call (f32) -> void @putfloat(f32 %111);
     cbr i1 %24(prob = 0.984615), ^while.body7, ^b11;
-  ^b10:
+  ^b9:
     call (i32) -> void @putch(i32 10);
     ret i32 0;
-  ^while.body6:
-    f32 %100 = phi [^b8, f32 %89] [^b12, f32 %135];
-    i32 %101 = phi [^b8, i32 0] [^b12, i32 %136];
-    f32 %102 = s2f i32 %101 to f32;
-    f32 %103 = fadd f32 %102, f32 0.5;
-    f32 %104 = fmul f32 %9, f32 %103;
-    f32 %105 = fmul f32 %104, f32 %28;
-    f32 %106 = fadd f32 %105, f32 1.5708;
-    i1 %107 = fcmp ogt f32 %106, f32 6.28319;
-    i1 %108 = fcmp olt f32 %106, f32 -6.28319;
-    i1 %109 = or i1 %107, i1 %108;
-    f32* %110 = getelementptr &([8 * f32]* %71)[i64 0][i32 %101];
-    f32 %111 = load f32* %110;
-    f32 %112 = fmul f32 %111, f32 %88;
-    cbr i1 %109(prob = 0.5), ^if.then1, ^b12;
+  ^if.then1:
+    f32 %112 = fdiv f32 %95, f32 6.28319;
+    i32 %113 = f2s f32 %112 to i32;
+    f32 %114 = s2f i32 %113 to f32;
+    f32 %115 = fmul f32 %114, f32 6.28319;
+    f32 %116 = fsub f32 %95, f32 %115;
+    ubr ^b10;
+  ^b10:
+    f32 %117 = phi [^while.body4, f32 %95] [^if.then1, f32 %116];
+    i1 %118 = fcmp ogt f32 %117, f32 3.14159;
+    f32 %119 = fsub f32 %117, f32 6.28319;
+    f32 %120 = select i1 %118 ? f32 %119 : f32 %117;
+    i1 %121 = fcmp olt f32 %120, f32 -3.14159;
+    f32 %122 = fadd f32 %120, f32 6.28319;
+    f32 %123 = select i1 %121 ? f32 %122 : f32 %120;
+    f32 %124 = call (f32) -> f32 @my_sin_impl(f32 %123);
+    f32 %125 = fmul f32 %101, f32 %124;
+    f32 %126 = fadd f32 %89, f32 %125;
+    store f32* %27 with f32 %126;
+    i32 %127 = add i32 %90, i32 1;
+    i1 %128 = icmp sgt i32 %1, i32 %127;
+    cbr i1 %128(prob = 0.984615), ^while.body4, ^b12;
   ^super.header:
     cbr i1 %42(prob = 0.941176), ^prebody2, ^indirect;
   ^b11:
     call (i32) -> void @putch(i32 10);
-    i32 %113 = add i32 %74, i32 1;
-    ubr ^while.header9;
-  ^while.header10:
-    cbr i1 %24(prob = 0.984615), ^super.header1, ^while.header11;
+    i32 %129 = add i32 %87, i32 1;
+    ubr ^while.header8;
+  ^while.header9:
+    cbr i1 %24(prob = 0.984615), ^super.header1, ^while.header10;
   ^while.body7:
-    i32 %114 = phi [^while.body5, i32 1] [^while.body7, i32 %117];
+    i32 %130 = phi [^while.body6, i32 1] [^while.body7, i32 %133];
     call (i32) -> void @putch(i32 32);
-    f32* %115 = getelementptr &([8 * f32]* %97)[i64 0][i32 %114];
-    f32 %116 = load f32* %115;
-    call (f32) -> void @putfloat(f32 %116);
-    i32 %117 = add i32 %114, i32 1;
-    i1 %118 = icmp sgt i32 %1, i32 %117;
-    cbr i1 %118(prob = 0.984615), ^while.body7, ^b11;
-  ^if.then1:
-    f32 %119 = fdiv f32 %106, f32 6.28319;
-    i32 %120 = f2s f32 %119 to i32;
-    f32 %121 = s2f i32 %120 to f32;
-    f32 %122 = fmul f32 %121, f32 6.28319;
-    f32 %123 = fsub f32 %106, f32 %122;
-    ubr ^b12;
+    f32* %131 = getelementptr &([8 * f32]* %109)[i64 0][i32 %130];
+    f32 %132 = load f32* %131;
+    call (f32) -> void @putfloat(f32 %132);
+    i32 %133 = add i32 %130, i32 1;
+    i1 %134 = icmp sgt i32 %1, i32 %133;
+    cbr i1 %134(prob = 0.984615), ^while.body7, ^b11;
+  ^b12:
+    i32 %135 = add i32 %32, i32 1;
+    ubr ^while.header5;
   ^indirect:
-    f32 %124 = load f32* %91;
+    f32 %136 = load f32* %103;
     ubr ^while.body9;
   ^prebody2:
-    f32 %125 = load f32* %91;
+    f32 %137 = load f32* %103;
     cbr i1 %35(prob = 0.941176), ^while.body8, ^while.body10;
-  ^b12:
-    f32 %126 = phi [^while.body6, f32 %106] [^if.then1, f32 %123];
-    i1 %127 = fcmp ogt f32 %126, f32 3.14159;
-    f32 %128 = fsub f32 %126, f32 6.28319;
-    f32 %129 = select i1 %127 ? f32 %128 : f32 %126;
-    i1 %130 = fcmp olt f32 %129, f32 -3.14159;
-    f32 %131 = fadd f32 %129, f32 6.28319;
-    f32 %132 = select i1 %130 ? f32 %131 : f32 %129;
-    f32 %133 = call (f32) -> f32 @my_sin_impl(f32 %132);
-    f32 %134 = fmul f32 %112, f32 %133;
-    f32 %135 = fadd f32 %100, f32 %134;
-    store f32* %27 with f32 %135;
-    i32 %136 = add i32 %101, i32 1;
-    i1 %137 = icmp sgt i32 %1, i32 %136;
-    cbr i1 %137(prob = 0.984615), ^while.body6, ^b7;
   ^super.header1:
     cbr i1 %43(prob = 0.941176), ^prebody3, ^indirect1;
-  ^while.header11:
-    i32 %138 = phi [^while.header10, i32 1] [^b14, i32 %247] [^while.body12, i32 1];
+  ^while.header10:
+    i32 %138 = phi [^while.header9, i32 1] [^b14, i32 %247] [^while.body12, i32 1];
     i1 %139 = icmp sgt i32 %0, i32 %138;
-    cbr i1 %139(prob = 0.984615), ^while.header12, ^b13;
+    cbr i1 %139(prob = 0.984615), ^while.header11, ^b13;
   ^indirect1:
-    f32 %140 = load f32* %91;
+    f32 %140 = load f32* %103;
     ubr ^while.body12;
   ^while.body8:
     i32 %141 = phi [^prebody2, i32 1] [^while.body8, i32 %208];
-    f32 %142 = phi [^prebody2, f32 %125] [^while.body8, f32 %207];
+    f32 %142 = phi [^prebody2, f32 %137] [^while.body8, f32 %207];
     [8 * f32]* %143 = getelementptr &([8 * f32]* %11)[i32 %141];
     f32* %144 = getelementptr &([8 * f32]* %143)[i64 0][i64 0];
     f32 %145 = load f32* %144;
@@ -350,31 +348,31 @@ func @main() -> i32 { NoRecurse Entry } {
     i1 %209 = icmp sgt i32 %44, i32 %208;
     cbr i1 %209(prob = 0.941176), ^while.body8, ^while.body10;
   ^prebody3:
-    f32 %210 = load f32* %91;
+    f32 %210 = load f32* %103;
     cbr i1 %37(prob = 0.941176), ^while.body11, ^while.body13;
   ^while.body9 {scalar}:
-    f32 %211 = phi [^indirect, f32 %124] [^while.body9, f32 %217] [^while.body10, f32 %244];
+    f32 %211 = phi [^indirect, f32 %136] [^while.body9, f32 %217] [^while.body10, f32 %244];
     i32 %212 = phi [^indirect, i32 1] [^while.body9, i32 %218] [^while.body10, i32 %245];
     [8 * f32]* %213 = getelementptr &([8 * f32]* %11)[i32 %212];
     f32* %214 = getelementptr &([8 * f32]* %213)[i64 0][i64 0];
     f32 %215 = load f32* %214;
     f32 %216 = fmul f32 %215, f32 0.5;
     f32 %217 = fadd f32 %211, f32 %216;
-    store f32* %91 with f32 %217;
+    store f32* %103 with f32 %217;
     i32 %218 = add i32 %212, i32 1;
     i1 %219 = icmp sgt i32 %0, i32 %218;
-    cbr i1 %219(prob = 0.75), ^while.body9, ^while.header10;
+    cbr i1 %219(prob = 0.75), ^while.body9, ^while.header9;
   ^b13:
-    f32 %220 = load f32* %91;
+    f32 %220 = load f32* %103;
     f32 %221 = fadd f32 %220, f32 %220;
     f32 %222 = fdiv f32 %221, f32 %6;
     f32 %223 = fadd f32 %222, f32 %222;
     f32 %224 = fdiv f32 %223, f32 %8;
-    store f32* %91 with f32 %224;
-    i32 %225 = add i32 %72, i32 1;
-    ubr ^while.header8;
+    store f32* %103 with f32 %224;
+    i32 %225 = add i32 %85, i32 1;
+    ubr ^while.header7;
   ^while.body10 {scalar}:
-    f32 %226 = phi [^prebody2, f32 %125] [^while.body8, f32 %207] [^while.body10, f32 %244];
+    f32 %226 = phi [^prebody2, f32 %137] [^while.body8, f32 %207] [^while.body10, f32 %244];
     i32 %227 = phi [^prebody2, i32 1] [^while.body8, i32 %208] [^while.body10, i32 %245];
     [8 * f32]* %228 = getelementptr &([8 * f32]* %11)[i32 %227];
     f32* %229 = getelementptr &([8 * f32]* %228)[i64 0][i64 0];
@@ -396,11 +394,11 @@ func @main() -> i32 { NoRecurse Entry } {
     i32 %245 = add i32 %227, i32 4;
     i1 %246 = icmp sgt i32 %34, i32 %245;
     cbr i1 %246(prob = 0.75), ^while.body10, ^while.body9;
-  ^while.header12:
+  ^while.header11:
     cbr i1 %24(prob = 0.984615), ^prebody4, ^b14;
   ^b14:
     i32 %247 = add i32 %138, i32 1;
-    ubr ^while.header11;
+    ubr ^while.header10;
   ^while.body11:
     i32 %248 = phi [^prebody3, i32 1] [^while.body11, i32 %314];
     f32 %249 = phi [^prebody3, f32 %210] [^while.body11, f32 %313];
@@ -478,13 +476,13 @@ func @main() -> i32 { NoRecurse Entry } {
     f32 %319 = load f32* %318;
     f32 %320 = fmul f32 %319, f32 0.5;
     f32 %321 = fadd f32 %316, f32 %320;
-    store f32* %91 with f32 %321;
+    store f32* %103 with f32 %321;
     i32 %322 = add i32 %317, i32 1;
     i1 %323 = icmp sgt i32 %1, i32 %322;
-    cbr i1 %323(prob = 0.75), ^while.body12, ^while.header11;
+    cbr i1 %323(prob = 0.75), ^while.body12, ^while.header10;
   ^prebody4:
     f32 %324 = s2f i32 %138 to f32;
-    f32 %325 = fmul f32 %59, f32 %324;
+    f32 %325 = fmul f32 %68, f32 %324;
     f32 %326 = fadd f32 %325, f32 1.5708;
     i1 %327 = fcmp ogt f32 %326, f32 6.28319;
     i1 %328 = fcmp olt f32 %326, f32 -6.28319;
@@ -529,13 +527,13 @@ func @main() -> i32 { NoRecurse Entry } {
     f32 %361 = fadd f32 %359, f32 6.28319;
     f32 %362 = select i1 %360 ? f32 %361 : f32 %359;
     f32 %363 = call (f32) -> f32 @my_sin_impl(f32 %362);
-    f32 %364 = load f32* %91;
+    f32 %364 = load f32* %103;
     ubr ^while.body14;
   ^while.body14:
     f32 %365 = phi [^b15, f32 %364] [^b16, f32 %390];
     i32 %366 = phi [^b15, i32 1] [^b16, i32 %391];
     f32 %367 = s2f i32 %366 to f32;
-    f32 %368 = fmul f32 %96, f32 %367;
+    f32 %368 = fmul f32 %108, f32 %367;
     f32 %369 = fadd f32 %368, f32 1.5708;
     i1 %370 = fcmp ogt f32 %369, f32 6.28319;
     i1 %371 = fcmp olt f32 %369, f32 -6.28319;
@@ -562,7 +560,7 @@ func @main() -> i32 { NoRecurse Entry } {
     f32 %388 = call (f32) -> f32 @my_sin_impl(f32 %387);
     f32 %389 = fmul f32 %375, f32 %388;
     f32 %390 = fadd f32 %365, f32 %389;
-    store f32* %91 with f32 %390;
+    store f32* %103 with f32 %390;
     i32 %391 = add i32 %366, i32 1;
     i1 %392 = icmp sgt i32 %1, i32 %391;
     cbr i1 %392(prob = 0.984615), ^while.body14, ^b14;

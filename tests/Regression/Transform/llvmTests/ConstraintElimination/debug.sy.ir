@@ -1,4 +1,4 @@
-func @test_and_ugt(i8 %var0, i8 %var2) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @test_and_ugt(i8 %var0, i8 %var1, i8 %var2) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = zext i8 %var0 to i32;
     i32 %1 = zext i8 %var2 to i32;
@@ -7,7 +7,7 @@ func @test_and_ugt(i8 %var0, i8 %var2) -> i32 { NoMemoryRead NoMemoryWrite NoSid
     i32 %4 = ztrunc i32 %3 to i32;
     ret i32 %4;
 }
-func @test_and_ule(i8 %var0, i8 %var2) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @test_and_ule(i8 %var0, i8 %var1, i8 %var2) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = zext i8 %var0 to i32;
     i32 %1 = zext i8 %var2 to i32;

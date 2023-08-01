@@ -1,4 +1,4 @@
-func @n() -> i16 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoReturn NoRecurse } {
+func @n(i32 %var0) -> i16 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoReturn NoRecurse } {
   ^entry:
     unreachable;
 }

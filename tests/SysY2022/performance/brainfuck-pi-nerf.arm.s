@@ -189,11 +189,11 @@ label11:
 	cmp r2, r8
 	bgt label21
 label17:
+	movw r4, #:lower16:output
+	movt r4, #:upper16:output
 	mov r0, #118
 	bl _sysy_stoptime
 	cmp r5, #0
-	movw r4, #:lower16:output
-	movt r4, #:upper16:output
 	ble label18
 	mov r2, #0
 	mov r6, r2

@@ -318,11 +318,11 @@ label219:
 .globl main
 main:
 	addi sp, sp, -24
-pcrel423:
+pcrel416:
 	auipc a1, %pcrel_hi(a)
 	sd ra, 0(sp)
 	sd s0, 8(sp)
-	addi s0, a1, %pcrel_lo(pcrel423)
+	addi s0, a1, %pcrel_lo(pcrel416)
 	sd s1, 16(sp)
 	mv a0, s0
 	jal getarray
@@ -334,14 +334,13 @@ pcrel423:
 	li a0, 8
 	mv a3, s1
 	jal radixSort
-	ble s1, zero, label360
-	addiw a1, s1, -4
 	li a2, 4
-	ble s1, a2, label365
+	addiw a1, s1, -4
+	ble s1, a2, label359
 	mv a2, zero
 	mv a0, zero
 .p2align 2
-label348:
+label347:
 	sh2add a3, a2, s0
 	addiw a4, a2, 3
 	addiw t3, a2, 1
@@ -349,13 +348,13 @@ label348:
 	lw t0, 4(a3)
 	remw t2, t0, a4
 	addiw t0, a2, 2
-	remw a5, a5, t0
 	mulw t1, t2, t3
+	remw t2, a5, t0
+	mulw a5, a2, t2
 	lw t2, 8(a3)
+	addw t1, t1, a5
 	lw a3, 12(a3)
-	mulw t3, a2, a5
 	addiw a5, a2, 4
-	addw t1, t1, t3
 	addiw a2, a2, 5
 	remw t3, t2, a5
 	mulw t2, t0, t3
@@ -364,10 +363,11 @@ label348:
 	mulw a3, a4, t1
 	addw a2, t0, a3
 	addw a0, a0, a2
-	ble a1, a5, label351
+	ble a1, a5, label350
 	mv a2, a5
-	j label348
-label351:
+	j label347
+.p2align 2
+label350:
 	sh2add a2, a5, s0
 	addiw a3, a5, 2
 	lw a1, 0(a2)
@@ -375,13 +375,12 @@ label351:
 	mulw a1, a5, a2
 	addiw a5, a5, 1
 	addw a0, a0, a1
-	bgt s1, a5, label351
-	mv s0, a0
-label354:
+	bgt s1, a5, label350
+	subw a1, zero, a0
+	max s0, a1, a0
 	li a0, 102
 	jal _sysy_stoptime
-	subw a1, zero, s0
-	max a0, a1, s0
+	mv a0, s0
 	jal putint
 	li a0, 10
 	jal putch
@@ -391,10 +390,7 @@ label354:
 	ld s1, 16(sp)
 	addi sp, sp, 24
 	ret
-label365:
+label359:
 	mv a0, zero
 	mv a5, zero
-	j label351
-label360:
-	mv s0, zero
-	j label354
+	j label350

@@ -17,17 +17,18 @@ main:
 	sub sp, sp, #12
 	mov r0, r4
 	bl getarray
-	sub r6, r0, #1
 	str r0, [sp, #0]
-	add r0, r0, r0, lsr #31
-	asr r5, r0, #1
 	mov r0, #59
 	bl _sysy_starttime
-	mov r1, r4
 	mov r2, #0
-	mov r0, r6
+	ldr r0, [sp, #0]
+	sub r1, r0, #1
+	add r0, r0, r0, lsr #31
+	asr r5, r0, #1
+	mov r0, r1
+	mov r1, r4
 	ldr r3, [r4, #0]
-	add r6, r6, #1
+	add r6, r0, #1
 	mov r7, r2
 label8:
 	cmp r6, r7

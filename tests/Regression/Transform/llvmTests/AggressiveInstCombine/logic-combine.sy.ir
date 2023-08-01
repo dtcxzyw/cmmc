@@ -1,4 +1,4 @@
-func @leaf1_and_a_false() -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @leaf1_and_a_false(i8 %var0) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     ret i8 0;
 }
@@ -24,7 +24,7 @@ func @leaf1_or_not(i8 %var0) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Sta
     i8 %3 = ztrunc i32 %2 to i8;
     ret i8 %3;
 }
-func @leaf1_xor_aa() -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @leaf1_xor_aa(i8 %var0) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     ret i8 0;
 }
@@ -61,13 +61,13 @@ func @leaf2_type_is_i1(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite
     i32 %5 = or i32 %3, i32 %4;
     ret i32 %5;
 }
-func @leaf2_xor(i8 %var1) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @leaf2_xor(i8 %var0, i8 %var1) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = zext i8 %var1 to i32;
     i8 %1 = ztrunc i32 %0 to i8;
     ret i8 %1;
 }
-func @leaf2_xor_ret_const_false() -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @leaf2_xor_ret_const_false(i8 %var0, i8 %var1) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     ret i8 0;
 }

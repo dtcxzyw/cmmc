@@ -46,11 +46,11 @@ func @smax_constprop() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateles
   ^b:
     ret i32 2;
 }
-func @smin_int_min() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @smin_int_min(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     ret i32 -2147483648;
 }
-func @smax_int_max() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @smax_int_max(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     ret i32 2147483647;
 }

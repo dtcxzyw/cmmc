@@ -2,7 +2,7 @@ func @caller1() -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRe
   ^entry:
     ret;
 }
-func @caller2() -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @caller2(i32 %var0) -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     ret;
 }

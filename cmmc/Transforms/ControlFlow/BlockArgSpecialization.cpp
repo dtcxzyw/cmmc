@@ -103,19 +103,11 @@ public:
 
                 // TODO: remove this limitation by creating new phi nodes
                 if([&] {
-                       std::unordered_set<Value*> instructions;
                        for(auto& inst : targetBlock->instructions()) {
-                           instructions.insert(&inst);
-                       }
-                       for(auto otherBlock : blocks) {
-                           if(otherBlock == targetBlock)
-                               continue;
-                           for(auto& inst : otherBlock->instructions()) {
-                               for(auto operand : inst.operands()) {
-                                   if(operand->isInstruction() && instructions.count(operand)) {
-                                       return true;
-                                   }
-                               }
+                           for(auto user : inst.users()) {
+                               if(user->getBlock() == targetBlock)
+                                   continue;
+                               return true;
                            }
                        }
                        return false;

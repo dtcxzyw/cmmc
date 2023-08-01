@@ -107,11 +107,7 @@ memset_impl:
 	cmp r0, #0
 	mov r1, r0
 	mov r0, #0
-	bgt label102
-label101:
-	pop { r4, r5, r6 }
-	bx lr
-label102:
+	ble label109
 	movw r2, #:lower16:arr
 	movt r2, #:upper16:arr
 	cmp r1, #4
@@ -122,7 +118,7 @@ label102:
 	ble label124
 	mov r4, r0
 .p2align 4
-label104:
+label103:
 	add r6, r2, r4, lsl #2
 	add r4, r4, #16
 	str r0, [r6, #0]
@@ -142,8 +138,8 @@ label104:
 	str r0, [r6, #52]
 	str r0, [r6, #56]
 	str r0, [r6, #60]
-	bgt label104
-label106:
+	bgt label103
+label105:
 	add r5, r2, r4, lsl #2
 	add r4, r4, #4
 	str r0, [r5, #0]
@@ -151,20 +147,22 @@ label106:
 	str r0, [r5, #4]
 	str r0, [r5, #8]
 	str r0, [r5, #12]
-	bgt label106
+	bgt label105
 	mov r3, r4
-label108:
+label107:
 	str r0, [r2, r3, lsl #2]
 	add r3, r3, #1
 	cmp r1, r3
-	bgt label108
-	b label101
+	bgt label107
+label109:
+	pop { r4, r5, r6 }
+	bx lr
 label118:
 	mov r3, r0
-	b label108
+	b label107
 label124:
 	mov r4, r0
-	b label106
+	b label105
 .p2align 4
 .globl fused_store
 fused_store:

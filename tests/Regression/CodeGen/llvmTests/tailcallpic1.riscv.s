@@ -4,6 +4,7 @@
 .p2align 2
 .globl tailcallee
 tailcallee:
+	mv a0, a2
 	ret
 .p2align 2
 .globl tailcaller

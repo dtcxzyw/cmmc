@@ -416,26 +416,29 @@ label309:
 .p2align 2
 .globl main
 main:
-	addi sp, sp, -32
-pcrel547:
+	addi sp, sp, -40
+pcrel548:
 	auipc a1, %pcrel_hi(a)
 	sd ra, 0(sp)
 	sd s0, 8(sp)
-	addi s0, a1, %pcrel_lo(pcrel547)
+	addi s0, a1, %pcrel_lo(pcrel548)
 	sd s1, 16(sp)
 	sd s2, 24(sp)
+	sd s3, 32(sp)
 	mv a0, s0
 	jal getarray
-pcrel548:
+pcrel549:
 	auipc a1, %pcrel_hi(b)
-	addiw s1, a0, -1
-	addi s2, a1, %pcrel_lo(pcrel548)
+	mv s1, a0
+	addi s2, a1, %pcrel_lo(pcrel549)
 	mv a0, s2
 	jal getarray
-	addw s1, s1, a0
+	mv s3, a0
 	li a0, 60
 	jal _sysy_starttime
 	li t5, 1
+	addiw a1, s1, -1
+	addw s1, s3, a1
 	bgt s1, t5, label479
 label470:
 	lui a1, 243712
@@ -510,5 +513,6 @@ label478:
 	ld s0, 8(sp)
 	ld s1, 16(sp)
 	ld s2, 24(sp)
-	addi sp, sp, 32
+	ld s3, 32(sp)
+	addi sp, sp, 40
 	ret

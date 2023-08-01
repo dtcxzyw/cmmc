@@ -93,8 +93,8 @@ func @main() -> i32 { NoRecurse Entry } {
   ^b:
     ret i32 0;
   ^while.header1:
-    i32 %22 = phi [^while.body, i32 0] [^while.body1, i32 %22] [^b15, i32 %22] [^if.then11, i32 1];
-    i32 %23 = phi [^while.body, i32 0] [^while.body1, i32 %28] [^b15, i32 %28] [^if.then11, i32 %28];
+    i32 %22 = phi [^while.body, i32 0] [^while.body1, i32 %22] [^b11, i32 %22] [^b12, i32 %22] [^b13, i32 %22] [^if.then11, i32 1];
+    i32 %23 = phi [^while.body, i32 0] [^while.body1, i32 %28] [^b11, i32 %28] [^b12, i32 %28] [^b13, i32 %28] [^if.then11, i32 %28];
     i1 %24 = icmp slt i32 %23, i32 10;
     i1 %25 = icmp eq i32 %22, i32 0;
     cbr i1 %24(prob = 0.984615), ^while.body1, ^b1;
@@ -202,35 +202,29 @@ func @main() -> i32 { NoRecurse Entry } {
   ^b11:
     i32 %74 = load i32* %1;
     i1 %75 = icmp neq i32 %74, i32 -1;
-    cbr i1 %75(prob = 0.5), ^b12, ^b13;
+    cbr i1 %75(prob = 0.5), ^b12, ^while.header1;
   ^if.then9:
     i32* %76 = getelementptr &([110 * i32]* %0)[i64 0][i32 %67];
     store i32* %76 with i32 %68;
     ubr ^b9;
-  ^b12:
-    i32 %77 = load i32* %18;
-    i1 %78 = icmp neq i32 %77, i32 -1;
-    ubr ^b13;
   ^entry3:
-    i32 %79 = call (i32) -> i32 @findfa(i32 %31);
-    i32 %80 = call (i32) -> i32 @findfa(i32 %70);
-    i1 %81 = icmp neq i32 %79, i32 %80;
-    cbr i1 %81(prob = 0.5), ^if.then10, ^b11;
-  ^b13:
-    i1 %82 = phi [^b11, i1 false] [^b12, i1 %78];
-    cbr i1 %82(prob = 0.5), ^b14, ^b15;
+    i32 %77 = call (i32) -> i32 @findfa(i32 %31);
+    i32 %78 = call (i32) -> i32 @findfa(i32 %70);
+    i1 %79 = icmp neq i32 %77, i32 %78;
+    cbr i1 %79(prob = 0.5), ^if.then10, ^b11;
+  ^b12:
+    i32 %80 = load i32* %18;
+    i1 %81 = icmp neq i32 %80, i32 -1;
+    cbr i1 %81(prob = 0.5), ^b13, ^while.header1;
   ^if.then10:
-    i32* %83 = getelementptr &([110 * i32]* %0)[i64 0][i32 %79];
-    store i32* %83 with i32 %80;
+    i32* %82 = getelementptr &([110 * i32]* %0)[i64 0][i32 %77];
+    store i32* %82 with i32 %78;
     ubr ^b11;
-  ^b14:
-    i32 %84 = call (i32) -> i32 @findfa(i32 0);
-    i32 %85 = call (i32) -> i32 @findfa(i32 17);
-    i1 %86 = icmp eq i32 %84, i32 %85;
-    ubr ^b15;
-  ^b15:
-    i1 %87 = phi [^b13, i1 false] [^b14, i1 %86];
-    cbr i1 %87(prob = 0.5), ^if.then11, ^while.header1;
+  ^b13:
+    i32 %83 = call (i32) -> i32 @findfa(i32 0);
+    i32 %84 = call (i32) -> i32 @findfa(i32 17);
+    i1 %85 = icmp eq i32 %83, i32 %84;
+    cbr i1 %85(prob = 0.5), ^if.then11, ^while.header1;
   ^if.then11:
     call (i32) -> void @putint(i32 %28);
     call (i32) -> void @putch(i32 10);

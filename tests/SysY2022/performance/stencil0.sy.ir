@@ -567,8 +567,8 @@ func @main() -> i32 { NoRecurse Entry } {
     i32 %475 = add i32 %4, i32 1;
     ubr ^while.header;
   ^b:
-    call (i32) -> void @stoptime(i32 59);
     i32* %476 = getelementptr &([524288 * i32]* %3)[i64 0][i64 0];
+    call (i32) -> void @stoptime(i32 59);
     call (i32, i32*) -> void @putarray(i32 524288, i32* %476);
     ret i32 %2;
 }

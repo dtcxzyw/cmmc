@@ -1,12 +1,12 @@
-func @and_min_7_7() -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @and_min_7_7(i8 %var0) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     ret i8 -8;
 }
-func @and_min_7_8() -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @and_min_7_8(i8 %var0) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     ret i8 -8;
 }
-func @and_min_7_9() -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @and_min_7_9(i8 %var0) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     ret i8 -16;
 }
@@ -31,7 +31,7 @@ func @and_umax_muchless(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEff
     i32 %2 = and i32 %1, i32 -32;
     ret i32 %2;
 }
-func @and_umin() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @and_umin(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     ret i32 0;
 }
@@ -66,11 +66,11 @@ func @f_32_32(i8 %var0) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateles
     i8 %3 = ztrunc i32 %2 to i8;
     ret i8 %3;
 }
-func @or_min_31_30() -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @or_min_31_30(i8 %var0) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     ret i8 -1;
 }
-func @or_umin() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @or_umin(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     ret i32 31;
 }

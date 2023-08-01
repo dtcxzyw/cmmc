@@ -1,4 +1,4 @@
-func @oss_fuzz_32759(i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @oss_fuzz_32759(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i1 %0 = icmp neq i32 %var1, i32 0;
     i32 %1 = zext i1 %0 to i32;

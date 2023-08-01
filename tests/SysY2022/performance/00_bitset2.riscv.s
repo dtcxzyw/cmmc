@@ -82,12 +82,12 @@ label143:
 	add t6, s2, a6
 	slliw s2, t6, 4
 	sh2add s3, t6, s0
-	subw s4, s2, t6
 	lw a6, 0(s3)
-	slli s3, s4, 1
-	subw s2, a7, s3
-	subw s5, a1, s2
+	subw s3, s2, t6
+	slli s4, s3, 1
 	slli s3, a6, 1
+	subw s2, a7, s4
+	subw s5, a1, s2
 	sllw a7, a5, s2
 	srl s4, s3, s5
 	add s3, a6, s4

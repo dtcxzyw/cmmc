@@ -1,4 +1,4 @@
-func @zero_branch_weights() -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @zero_branch_weights(i32 %var0, i32 %var1) -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     ret;
 }

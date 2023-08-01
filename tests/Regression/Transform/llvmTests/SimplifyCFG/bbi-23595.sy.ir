@@ -1,4 +1,4 @@
-func @_Z7test_itv() -> i16 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @_Z7test_itv(i32 %var0) -> i16 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     ret i16 0;
 }

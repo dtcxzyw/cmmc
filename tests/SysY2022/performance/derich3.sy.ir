@@ -1620,8 +1620,8 @@ func @main() -> i32 { NoRecurse Entry } {
     i1 %1412 = icmp slt i32 %1411, i32 512;
     cbr i1 %1412(prob = 0.75), ^while.body13, ^b3;
   ^entry1:
-    call (i32) -> void @stoptime(i32 158);
     f32* %1413 = getelementptr &([512 * [270 * f32]]* %4)[i64 0][i64 0][i64 0];
+    call (i32) -> void @stoptime(i32 158);
     call (i32, f32*) -> void @putfarray(i32 138240, f32* %1413);
     ret i32 0;
   ^b2:

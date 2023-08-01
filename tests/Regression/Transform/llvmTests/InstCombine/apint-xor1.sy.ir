@@ -11,11 +11,11 @@ func @test2(i16 %var0) -> i16 { NoMemoryRead NoMemoryWrite NoSideEffect Stateles
     i16 %1 = ztrunc i32 %0 to i16;
     ret i16 %1;
 }
-func @test3() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @test3(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     ret i32 0;
 }
-func @test4() -> i64 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @test4(i64 %var0) -> i64 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     ret i64 -1;
 }

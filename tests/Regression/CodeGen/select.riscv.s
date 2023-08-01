@@ -261,17 +261,17 @@ label304:
 .p2align 2
 .globl select_round
 select_round:
-pcrel340:
+pcrel341:
 	auipc a0, %pcrel_hi(__cmmc_fp_constant_pool)
-	addi a1, a0, %pcrel_lo(pcrel340)
+	addi a1, a0, %pcrel_lo(pcrel341)
 	flw f11, 0(a1)
 	flw f12, 4(a1)
 	flt.s a0, f10, f11
 	fadd.s f13, f10, f12
 	fmv.s f11, f13
-	bne a0, zero, label338
+	bne a0, zero, label339
 	fmv.s f11, f10
-label338:
+label339:
 	fmv.s f10, f11
 	ret
 .p2align 2
@@ -280,9 +280,9 @@ select_bitset:
 	xori a3, a1, 1
 	or a1, a0, a3
 	mv a0, a2
-	beq a1, zero, label350
+	beq a1, zero, label351
 	mv a0, zero
-label350:
+label351:
 	ret
 .p2align 2
 .globl select_imax
@@ -297,17 +297,17 @@ select_imin:
 .p2align 2
 .globl select_zero
 select_zero:
-	beq a0, zero, label366
+	beq a0, zero, label367
 	mv a1, zero
-label366:
+label367:
 	mv a0, a1
 	ret
 .p2align 2
 .globl select_sgt_zero
 select_sgt_zero:
-	bgt a0, zero, label374
+	bgt a0, zero, label375
 	mv a1, zero
-label374:
+label375:
 	mv a0, a1
 	ret
 .p2align 2
@@ -326,9 +326,9 @@ select_imm:
 .globl select_one
 select_one:
 	li a3, 1
-	beq a0, a3, label396
+	beq a0, a3, label397
 	mv a1, a2
-label396:
+label397:
 	mv a0, a1
 	ret
 .p2align 2
@@ -336,7 +336,7 @@ label396:
 select_constant:
 	mv a1, a0
 	li a0, -1894007588
-	bne a1, zero, label403
+	bne a1, zero, label404
 	li a0, -899497722
-label403:
+label404:
 	ret

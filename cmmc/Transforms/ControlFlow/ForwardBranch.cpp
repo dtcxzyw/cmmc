@@ -73,9 +73,17 @@ class ForwardBranch final : public TransformPass<Function> {
         // target -> direct target
         if(target == directTarget)
             return false;
-        // FIXME
-        if(directTarget->instructions().front()->getInstID() == InstructionID::Phi)
-            return false;
+
+        for(auto& inst : directTarget->instructions()) {
+            if(inst.getInstID() == InstructionID::Phi) {
+                auto phiInst = inst.as<PhiInst>();
+                auto val = phiInst->incomings().at(target)->value;
+                if(val->getBlock() == target)
+                    val = val->as<PhiInst>()->incomings().at(block)->value;
+                phiInst->addIncoming(block, val);
+            } else
+                break;
+        }
 
         target = directTarget;
         if(phi)

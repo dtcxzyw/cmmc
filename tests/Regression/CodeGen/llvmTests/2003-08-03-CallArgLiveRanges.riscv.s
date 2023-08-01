@@ -9,5 +9,7 @@ main:
 .p2align 2
 .globl test
 test:
+	ld a1, 0(sp)
 	mv a0, zero
+	ld a2, 8(sp)
 	ret

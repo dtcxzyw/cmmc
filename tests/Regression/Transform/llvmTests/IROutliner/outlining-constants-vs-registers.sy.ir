@@ -1,8 +1,8 @@
-func @function_registers_first() -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @function_registers_first(i32 %var0, i32 %var1, i32 %var2) -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     ret;
 }
-func @function_with_constants_first() -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @function_with_constants_first(i32 %var0, i32 %var1, i32 %var2) -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     ret;
 }

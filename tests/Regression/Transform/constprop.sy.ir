@@ -206,11 +206,11 @@ func @foo51() -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecur
   ^b:
     ret f32 1;
 }
-func @foo52() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @foo52(i32 %z) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     ret i32 1;
 }
-func @foo53() -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @foo53(i32 %z) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     ret f32 1;
 }

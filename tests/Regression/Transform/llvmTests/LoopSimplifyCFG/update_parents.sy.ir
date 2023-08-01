@@ -2,7 +2,7 @@ func @test() -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRetur
   ^entry:
     unreachable;
 }
-func @test_many_subloops() -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoReturn NoRecurse } {
+func @test_many_subloops(i32 %var0) -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoReturn NoRecurse } {
   ^entry:
     unreachable;
 }

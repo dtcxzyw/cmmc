@@ -390,12 +390,14 @@ main:
 	bl getarray
 	movw r7, #:lower16:b
 	movt r7, #:upper16:b
-	sub r5, r0, #1
+	mov r5, r0
 	mov r0, r7
 	bl getarray
-	add r5, r5, r0
+	mov r6, r0
 	mov r0, #60
 	bl _sysy_starttime
+	sub r0, r5, #1
+	add r5, r6, r0
 	cmp r5, #1
 	ble label441
 	mov r6, #1

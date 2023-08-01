@@ -5,25 +5,25 @@
 .globl binomial
 binomial:
 	mv a2, a1
-	bgeu a0, a1, label4
+	bgeu a0, a1, label2
 	mv a0, zero
-label2:
+label7:
 	ret
-label4:
-	bne a2, zero, label5
+label2:
+	bne a2, zero, label3
 	li a0, 1
-	j label2
-label5:
+	j label7
+label3:
 	li a3, 2
-	bltu a2, a3, label2
+	bltu a2, a3, label7
 	mv a1, a0
 	li a3, 1
-label6:
+label4:
 	subw a5, a0, a3
 	addiw a3, a3, 1
 	mulw a4, a1, a5
 	divuw a1, a4, a3
 	addiw a4, a2, -1
-	bleu a3, a4, label6
+	bleu a3, a4, label4
 	mv a0, a1
-	j label2
+	j label7

@@ -493,7 +493,7 @@ IntegerRangeAnalysisResult IntegerRangeAnalysis::run(Function& func, AnalysisPas
                             auto& dataLayout = analysis.module().getTarget().getDataLayout();
                             const auto arraySize = base->getType()->as<PointerType>()->getPointee()->getSize(dataLayout);
                             IntegerRange r;
-                            r.setSignedRange(0, static_cast<intmax_t>(arraySize) / static_cast<intmax_t>(sizeof(int32_t)));
+                            r.setSignedRange(1, static_cast<intmax_t>(arraySize) / static_cast<intmax_t>(sizeof(int32_t)));
                             r.sync();
                             return r;
                         }

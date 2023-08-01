@@ -6,8 +6,8 @@ internal func @stoptime() -> void { NoMemoryRead NoMemoryWrite };
 func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
   ^entry:
     i32 %0 = call () -> i32 @getint();
-    i1 %1 = icmp sgt i32 %0, i32 0;
     call (i32) -> void @starttime(i32 10015);
+    i1 %1 = icmp sgt i32 %0, i32 0;
     cbr i1 %1(prob = 0.984615), ^super.header, ^b;
   ^super.header:
     i1 %2 = icmp sgt i32 %0, i32 4;

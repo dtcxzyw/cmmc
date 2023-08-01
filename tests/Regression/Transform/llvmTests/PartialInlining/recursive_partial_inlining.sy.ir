@@ -1,4 +1,4 @@
-func @_Z26recursive_partial_inliningi() -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @_Z26recursive_partial_inliningi(i32 %var0) -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     ret;
 }
