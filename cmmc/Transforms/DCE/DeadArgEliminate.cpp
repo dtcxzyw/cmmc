@@ -54,7 +54,7 @@ public:
                     continue;
                 if(func->getLinkage() == Linkage::Global)
                     continue;
-                    
+
                 auto& args = func->args();
                 uint32_t idx = 0;
                 std::vector<uint32_t> removedIdx;
