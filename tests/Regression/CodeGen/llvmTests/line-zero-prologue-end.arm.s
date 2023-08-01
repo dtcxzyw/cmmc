@@ -13,7 +13,7 @@ x:
 .globl test
 test:
 	movw r0, #:lower16:x
-	mov r1, #1
 	movt r0, #:upper16:x
+	mov r1, #1
 	str r1, [r0, #0]
 	bx lr

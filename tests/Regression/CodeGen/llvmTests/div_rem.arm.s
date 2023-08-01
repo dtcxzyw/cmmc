@@ -25,10 +25,10 @@ llll:
 .globl test
 test:
 	movw r0, #:lower16:iiii
-	movw r1, #:lower16:jjjj
-	movw r3, #:lower16:kkkk
 	movt r0, #:upper16:iiii
+	movw r1, #:lower16:jjjj
 	movt r1, #:upper16:jjjj
+	movw r3, #:lower16:kkkk
 	movt r3, #:upper16:kkkk
 	ldr r0, [r0, #0]
 	ldr r1, [r1, #0]

@@ -338,15 +338,15 @@ InstInfo:
     Format: ssat $Rd:GPR[Def], $Shift:UImm32[Metadata], $Rm:GPR[Use]
 
   MOVT_MOVW_PAIR:
-    Format: movt_movw_pair $Rd:GPR[Def], $Imm:UImm32[Metadata]
-    Flag: [LegalizePreRA, LoadConstant]
+    Format: movt_movw_pair $Rd:GPR[Def], $Imm:UImm32OrReloc[Metadata]
+    Flag: [LoadConstant]
 
   NZCVFlag2GPR:
     Format: nzcvflag2gpr $Rd:GPR[Def], $CC:CC[Use], $CF:CondField[Metadata]
     Flag: [LegalizePreRA]
 
   Select_GPR:
-    Format: select_gpr $Rd:GPR[Def], $Rn:GPR[Use], $Rm:Op2[Use], $CC:CC[Use], $CF:CondField[Metadata]
+    Format: select_gpr $Rd:GPR[Def], $Rn:Op2[Use], $Rm:Op2[Use], $CC:CC[Use], $CF:CondField[Metadata]
     Flag: [LegalizePreRA]
 
   # if hold: $Rd = $Rn op $Rm
@@ -358,10 +358,6 @@ InstInfo:
   Select_FPR:
     Format: select_fpr $Rd:FPR[Def], $Rn:FPR[Use], $Rm:FPR[Use], $CC:CC[Use], $CF:CondField[Metadata]
     Flag: [LegalizePreRA]
-
-  LoadGlobalAddr:
-    Format: load_global_address $Rd:GPR[Def], $Reloc:Reloc[Metadata]
-    Flag: [LoadConstant, LegalizePreRA]
 
   PseudoIntOpWithOp2_Cond:
     Format: pseudo_int_op_with_op2$CF:CondField[Metadata] $Rd:GPR[Def], $Rn:GPR[Use], $Op2:Op2[Use], $Rm:GPR[Use], $Op:Imm[Metadata], $CC:CC[Use]
@@ -1005,9 +1001,9 @@ InstSelection:
         Dst: $Dst
         Addr: $Addr
     Replace:
-      LoadGlobalAddr:
+      MOVT_MOVW_PAIR:
         Rd: $Dst
-        Reloc: $Addr
+        Imm: $Addr
 
   - Pattern:
       InstJump:
@@ -1069,7 +1065,7 @@ InstSelection:
             $Predicate: isOperandIReg($Lhs) && ctx.isSafeToUse($Lhs, $Cond) && (!isOperandIReg($Rhs) || ctx.isSafeToUse($Rhs, $Cond)) && selectCompareOp2($Rhs, [$Out], [$IsOpposite])
         Lhs: $LVal
         Rhs: $RVal
-        $Predicate: isOperandIReg($Dst) && isOperandIReg($LVal) && isOperandOp2($RVal)
+        $Predicate: isOperandIReg($Dst) && isOperandOp2($LVal) && isOperandOp2($RVal)
     Replace:
       Select_GPR:
         Rd: $Dst
@@ -1122,7 +1118,7 @@ InstSelection:
             $Predicate: ctx.isSafeToUse($CC, $Cond)
         Lhs: $Lhs
         Rhs: $Rhs
-        $Predicate: isOperandIReg($Dst) && isOperandIReg($Lhs) && isOperandOp2($Rhs)
+        $Predicate: isOperandIReg($Dst) && isOperandOp2($Lhs) && isOperandOp2($Rhs)
     Replace:
       Select_GPR:
         Rd: $Dst
@@ -1270,7 +1266,7 @@ InstSelection:
         Cond: $Cond
         Lhs: $Lhs
         Rhs: $Rhs
-        $Predicate: isOperandIReg($Dst) && isOperandIReg($Lhs) && isOperandOp2($Rhs) && isNotCmp(ctx, $Cond)
+        $Predicate: isOperandIReg($Dst) && isOperandOp2($Lhs) && isOperandOp2($Rhs) && isNotCmp(ctx, $Cond)
     Replace:
       Select_GPR:
         Rd: $Dst
@@ -1726,6 +1722,7 @@ ScheduleModel:
         - MVN
         - MOVW
         - MOVT
+        - MOVT_MOVW_PAIR # Fused
         - MoveGPR
         - ASR
         - LSL

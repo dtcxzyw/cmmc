@@ -9,6 +9,5 @@
 x:
 	ands r1, r0, #256
 	mvn r0, #25
-	mov r1, #0
-	moveq r0, r1
+	moveq r0, #0
 	bx lr

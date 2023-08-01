@@ -16,11 +16,11 @@ c:
 main:
 	push { r4, r5, lr }
 	sub sp, sp, #4
-	mov r3, #3
-	mov r0, #1
-	mov r1, #4
 	movw r4, #:lower16:c
 	movt r4, #:upper16:c
+	mov r0, #1
+	mov r1, #4
+	mov r3, #3
 	add r5, r4, #24
 	str r0, [r4, #0]
 	mov r0, #2
@@ -170,8 +170,8 @@ label5:
 	cmp r1, r2
 	blt label5
 	movw r0, #:lower16:a
-	mov r1, #4000
 	movt r0, #:upper16:a
+	mov r1, #4000
 	str r1, [r0, #20]
 	add r1, r0, #16000
 	str r3, [r1, #0]

@@ -15,8 +15,8 @@ test1:
 .globl test10
 test10:
 	movw r1, #7
-	movw r2, #248
 	movt r1, #7
+	movw r2, #248
 	movt r2, #248
 	and r1, r1, r0, lsr #12
 	and r0, r2, r0, lsr #7

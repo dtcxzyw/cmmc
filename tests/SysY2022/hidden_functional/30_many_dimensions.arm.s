@@ -13,20 +13,18 @@ array:
 main:
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
 	mov r1, #0
-	movw r8, #:lower16:array
-	sub sp, sp, #36
+	sub sp, sp, #28
 	mov r10, r1
-	str r8, [sp, #20]
-	movt r8, #:upper16:array
-	str r8, [sp, #20]
-	str r1, [sp, #24]
+	str r1, [sp, #20]
+.p2align 4
 label2:
-	ldr r8, [sp, #20]
-	ldr r10, [sp, #24]
+	movw r8, #:lower16:array
+	movt r8, #:upper16:array
+	ldr r10, [sp, #20]
 	add r0, r8, r1, lsl #2
 	add r1, r1, #64
-	str r10, [r0, #0]
 	cmp r1, #524288
+	str r10, [r0, #0]
 	str r10, [r0, #4]
 	str r10, [r0, #8]
 	str r10, [r0, #12]
@@ -97,26 +95,12 @@ label4:
 	ldr r10, [sp, #16]
 	cmp r10, #2
 	bge label56
-	ldr r10, [sp, #24]
+	ldr r10, [sp, #20]
 	str r10, [sp, #12]
-label7:
-	ldr r10, [sp, #12]
-	cmp r10, #2
-	bge label134
-	ldr r10, [sp, #24]
-	str r10, [sp, #8]
-label10:
-	ldr r10, [sp, #8]
-	cmp r10, #2
-	blt label139
-	b label138
-label142:
-	ldr r10, [sp, #8]
-	add r10, r10, #1
-	str r10, [sp, #8]
-	b label10
+	b label7
 label56:
-	ldr r8, [sp, #20]
+	movw r8, #:lower16:array
+	movt r8, #:upper16:array
 	ldr r0, [r8, #0]
 	ldr r1, [r8, #8]
 	add r0, r0, r1
@@ -168,104 +152,119 @@ label56:
 	ldr r1, [r1, #0]
 	add r0, r0, r1
 	bl putint
-	ldr r10, [sp, #24]
-	add sp, sp, #36
+	ldr r10, [sp, #20]
+	add sp, sp, #28
 	mov r0, r10
 	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
-label139:
-	ldr r10, [sp, #24]
-	str r10, [sp, #4]
-label13:
-	ldr r10, [sp, #4]
+label7:
+	ldr r10, [sp, #12]
 	cmp r10, #2
-	blt label143
-	b label142
-label146:
-	ldr r10, [sp, #4]
-	add r10, r10, #1
-	str r10, [sp, #4]
-	b label13
-label143:
-	ldr r10, [sp, #24]
-	str r10, [sp, #0]
-label16:
-	ldr r10, [sp, #0]
-	cmp r10, #2
-	bge label146
-	ldr r10, [sp, #24]
-	mov r1, r10
-label19:
-	cmp r1, #2
-	blt label151
-	b label150
-label154:
-	add r1, r1, #1
-	b label19
+	blt label135
+	b label134
 label138:
 	ldr r10, [sp, #12]
 	add r10, r10, #1
 	str r10, [sp, #12]
 	b label7
+label135:
+	ldr r10, [sp, #20]
+	str r10, [sp, #8]
+label10:
+	ldr r10, [sp, #8]
+	cmp r10, #2
+	bge label138
+	ldr r10, [sp, #20]
+	str r10, [sp, #4]
+.p2align 4
+label13:
+	ldr r10, [sp, #4]
+	cmp r10, #2
+	blt label143
+	b label142
+.p2align 4
+label146:
+	ldr r10, [sp, #4]
+	add r10, r10, #1
+	str r10, [sp, #4]
+	b label13
+.p2align 4
+label143:
+	ldr r10, [sp, #20]
+	str r10, [sp, #0]
+.p2align 4
+label16:
+	ldr r10, [sp, #0]
+	cmp r10, #2
+	bge label146
+	ldr r10, [sp, #20]
+	mov r1, r10
+.p2align 4
+label19:
+	cmp r1, #2
+	blt label151
+	b label150
+.p2align 4
+label154:
+	add r1, r1, #1
+	b label19
+.p2align 4
 label151:
-	ldr r10, [sp, #24]
+	ldr r10, [sp, #20]
 	mov r2, r10
+.p2align 4
 label22:
 	cmp r2, #2
-	blt label155
-	b label154
-label158:
-	add r2, r2, #1
-	b label22
-label150:
-	ldr r10, [sp, #0]
-	add r10, r10, #1
-	str r10, [sp, #0]
-	b label16
-label134:
-	ldr r10, [sp, #16]
-	add r10, r10, #1
-	str r10, [sp, #16]
-	b label4
-label155:
-	ldr r10, [sp, #24]
+	bge label154
+	ldr r10, [sp, #20]
 	mov r3, r10
+.p2align 4
 label25:
 	cmp r3, #2
 	blt label159
 	b label158
+.p2align 4
 label162:
 	add r3, r3, #1
 	b label25
+.p2align 4
 label159:
-	ldr r10, [sp, #24]
+	ldr r10, [sp, #20]
 	mov r4, r10
+.p2align 4
 label28:
 	cmp r4, #2
 	bge label162
-	ldr r10, [sp, #24]
+	ldr r10, [sp, #20]
 	mov r5, r10
+.p2align 4
 label31:
 	cmp r5, #2
 	blt label167
 	b label166
+.p2align 4
 label170:
 	add r5, r5, #1
 	b label31
+.p2align 4
 label167:
-	ldr r10, [sp, #24]
+	ldr r10, [sp, #20]
 	mov r6, r10
+.p2align 4
 label34:
 	cmp r6, #2
 	bge label170
-	ldr r10, [sp, #24]
+	ldr r10, [sp, #20]
 	mov r7, r10
 	cmp r10, #2
 	blt label40
+.p2align 4
 label174:
 	add r6, r6, #1
 	b label34
+.p2align 4
 label40:
-	ldr r8, [sp, #20]
+	movw r8, #:lower16:array
+	movt r8, #:upper16:array
 	ldr r10, [sp, #16]
 	add r8, r8, r10, lsl #20
 	ldr r10, [sp, #12]
@@ -276,7 +275,7 @@ label40:
 	add r8, r8, r10, lsl #17
 	ldr r10, [sp, #0]
 	add r8, r8, r10, lsl #16
-	ldr r10, [sp, #24]
+	ldr r10, [sp, #20]
 	add r8, r8, r1, lsl #15
 	add r8, r8, r2, lsl #14
 	add r8, r8, r3, lsl #13
@@ -284,6 +283,7 @@ label40:
 	add r8, r8, r5, lsl #11
 	add r8, r8, r6, lsl #10
 	add r9, r8, r7, lsl #9
+.p2align 4
 label41:
 	add r8, r9, r10, lsl #8
 	add r11, r0, #1
@@ -421,6 +421,27 @@ label41:
 	cmp r7, #2
 	blt label40
 	b label174
+.p2align 4
+label150:
+	ldr r10, [sp, #0]
+	add r10, r10, #1
+	str r10, [sp, #0]
+	b label16
+.p2align 4
 label166:
 	add r4, r4, #1
 	b label28
+label134:
+	ldr r10, [sp, #16]
+	add r10, r10, #1
+	str r10, [sp, #16]
+	b label4
+.p2align 4
+label158:
+	add r2, r2, #1
+	b label22
+label142:
+	ldr r10, [sp, #8]
+	add r10, r10, #1
+	str r10, [sp, #8]
+	b label10

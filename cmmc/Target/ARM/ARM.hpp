@@ -77,6 +77,9 @@ constexpr bool isOperandImm32(const MIROperand& operand) {
 constexpr bool isOperandUImm32(const MIROperand& operand) {
     return operand.isImm() && isUnsignedImm<32>(operand.imm());
 }
+constexpr bool isOperandUImm32OrReloc(const MIROperand& operand) {
+    return operand.isReloc() || isOperandUImm32(operand);
+}
 
 constexpr bool isOperandUImm16(const MIROperand& operand) {
     if(operand.isReloc() && operand.type() != OperandType::Special)

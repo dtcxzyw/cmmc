@@ -11,17 +11,17 @@ main:
 	sub sp, sp, #56
 	mov r4, #0
 	movw r0, #0
+	movt r0, #16448
 	mov r8, sp
 	vmov s0, r4
 	add r6, sp, #24
 	add r5, sp, #40
-	mov r7, r4
-	movt r0, #16448
 	vmov s1, r0
+	mov r7, r4
 	movw r0, #0
-	vstr s0, [sp, #0]
 	movt r0, #16576
 	vmov s2, r0
+	vstr s0, [sp, #0]
 	vstr s1, [sp, #4]
 	vstr s2, [sp, #8]
 	vstr s0, [sp, #24]

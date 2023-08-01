@@ -19,12 +19,12 @@ mean:
 main:
 	push { r4, r5, r6, r7, lr }
 	vpush { s16 }
-	movw r6, #:lower16:var
-	movw r5, #:lower16:mean
 	mov r7, #0
-	movw r4, #:lower16:a
+	movw r6, #:lower16:var
 	movt r6, #:upper16:var
+	movw r5, #:lower16:mean
 	movt r5, #:upper16:mean
+	movw r4, #:lower16:a
 	movt r4, #:upper16:a
 label2:
 	cmp r7, #1000

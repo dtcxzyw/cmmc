@@ -47,8 +47,8 @@ unsigned_i16:
 	movt r0, #:upper16:b
 	ldrsh r1, [r0, #0]
 	movw r1, #:lower16:a
-	ldrh r0, [r0, #0]
 	movt r1, #:upper16:a
+	ldrh r0, [r0, #0]
 	ldrsh r2, [r1, #0]
 	ldrh r1, [r1, #0]
 	add r0, r0, r1
@@ -82,8 +82,8 @@ use_i16:
 	movt r0, #:upper16:b
 	ldrsh r1, [r0, #0]
 	movw r1, #:lower16:a
-	ldrh r0, [r0, #0]
 	movt r1, #:upper16:a
+	ldrh r0, [r0, #0]
 	ldrsh r2, [r1, #0]
 	ldrh r1, [r1, #0]
 	add r0, r0, r1

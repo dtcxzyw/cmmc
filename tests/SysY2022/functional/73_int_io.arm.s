@@ -9,8 +9,8 @@
 main:
 	push { r4, r5, r6, r7, lr }
 	movw r5, #26215
-	sub sp, sp, #68
 	movt r5, #26214
+	sub sp, sp, #68
 	mov r4, sp
 label2:
 	bl getch

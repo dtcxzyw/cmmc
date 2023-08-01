@@ -51,8 +51,8 @@ t3:
 t4:
 	sxtb r0, r0
 	movw r1, #:lower16:a
-	add r0, r0, #1
 	movt r1, #:upper16:a
+	add r0, r0, #1
 	uxtb r0, r0
 	strb r0, [r1, #0]
 	bx lr
@@ -61,8 +61,8 @@ t4:
 t5:
 	sxth r0, r0
 	movw r1, #:lower16:b
-	add r0, r0, #1
 	movt r1, #:upper16:b
+	add r0, r0, #1
 	uxth r0, r0
 	strh r0, [r1, #0]
 	bx lr

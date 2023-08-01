@@ -806,10 +806,10 @@ static bool legalizeInst(MIRInst& inst, ISelContext& ctx) {
         }
         case InstSelect: {
             auto& cond = inst.getOperand(1);
-            imm2reg(cond);
             auto& lhs = inst.getOperand(2);
-            imm2reg(lhs);
             auto& rhs = inst.getOperand(3);
+            imm2reg(cond);
+            nonOp2Imm2reg(lhs);
             nonOp2Imm2reg(rhs);
             break;
         }
@@ -892,19 +892,6 @@ void ARMISelInfo::postLegalizeInst(const InstLegalizeContext& ctx) const {
 void ARMISelInfo::preRALegalizeInst(const InstLegalizeContext& ctx) const {
     auto& inst = ctx.inst;
     switch(inst.opcode()) {
-        case MOVT_MOVW_PAIR: {
-            auto dst = inst.getOperand(0);
-            auto imm = static_cast<uint32_t>(inst.getOperand(1).imm());
-            auto hi = MIROperand::asImm(imm >> 16, OperandType::Int32);
-            auto lo = MIROperand::asImm(imm & 0xffff, OperandType::Int32);
-            if(hi.imm() != 0) {
-                ctx.instructions.insert(ctx.iter, MIRInst{ MOVW }.setOperand<0>(dst).setOperand<1>(lo));
-                *ctx.iter = MIRInst{ MOVT }.setOperand<0>(dst).setOperand<1>(hi).setOperand<2>(dst);
-            } else {
-                *ctx.iter = MIRInst{ MOVW }.setOperand<0>(dst).setOperand<1>(lo);
-            }
-            break;
-        }
         case NZCVFlag2GPR: {
             auto dst = inst.getOperand(0);
             auto cc = inst.getOperand(1);
@@ -956,13 +943,6 @@ void ARMISelInfo::preRALegalizeInst(const InstLegalizeContext& ctx) const {
                             .setOperand<3>(rhs)
                             .setOperand<4>(cc)
                             .setOperand<5>(dst);
-            break;
-        }
-        case LoadGlobalAddr: {
-            auto dst = inst.getOperand(0);
-            auto reloc = inst.getOperand(1);
-            ctx.instructions.insert(ctx.iter, MIRInst{ MOVW }.setOperand<0>(dst).setOperand<1>(getLowBits(reloc)));
-            *ctx.iter = MIRInst{ MOVT }.setOperand<0>(dst).setOperand<1>(getHighBits(reloc)).setOperand<2>(dst);
             break;
         }
         case PseudoIntOpWithOp2_Cond: {
@@ -1120,7 +1100,28 @@ void adjustReg(MIRInstList& instructions, MIRInstList::iterator iter, const MIRO
 }
 void ARMISelInfo::postLegalizeInstSeq(const CodeGenContext& ctx, MIRInstList& instructions) const {
     CMMC_UNUSED(ctx);
-    CMMC_UNUSED(instructions);
+    // expand MOVT_MOVW_PAIR
+    for(auto iter = instructions.begin(); iter != instructions.end(); ++iter) {
+        auto& inst = *iter;
+        if(inst.opcode() == MOVT_MOVW_PAIR) {
+            auto dst = inst.getOperand(0);
+            auto val = inst.getOperand(1);
+            if(isOperandUImm32(val)) {
+                auto imm = static_cast<uint32_t>(inst.getOperand(1).imm());
+                auto hi = MIROperand::asImm(imm >> 16, OperandType::Int32);
+                auto lo = MIROperand::asImm(imm & 0xffff, OperandType::Int32);
+                if(hi.imm() != 0) {
+                    instructions.insert(iter, MIRInst{ MOVW }.setOperand<0>(dst).setOperand<1>(lo));
+                    *iter = MIRInst{ MOVT }.setOperand<0>(dst).setOperand<1>(hi).setOperand<2>(dst);
+                } else {
+                    *iter = MIRInst{ MOVW }.setOperand<0>(dst).setOperand<1>(lo);
+                }
+            } else {
+                instructions.insert(iter, MIRInst{ MOVW }.setOperand<0>(dst).setOperand<1>(getLowBits(val)));
+                *iter = MIRInst{ MOVT }.setOperand<0>(dst).setOperand<1>(getHighBits(val)).setOperand<2>(dst);
+            }
+        }
+    }
 }
 // fpconst (8bit fp) = +/- m * 2^-n where m is a 4-bit mantissa and n is a 3-bit exponent.
 static bool isLegalFPConst(uint32_t rep) {

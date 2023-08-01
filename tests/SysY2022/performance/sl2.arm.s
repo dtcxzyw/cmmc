@@ -15,7 +15,7 @@ main:
 	sub sp, sp, #28
 	bl getint
 	sub r9, r0, #1
-	str r0, [sp, #20]
+	str r0, [sp, #16]
 	sub r5, r0, #4
 	mov r6, r0
 	str r9, [sp, #8]
@@ -25,15 +25,12 @@ main:
 	mov r0, #13
 	bl _sysy_starttime
 	mov r1, #0
-	movw r4, #:lower16:x
-	str r4, [sp, #16]
-	movt r4, #:upper16:x
-	str r4, [sp, #16]
 label2:
 	movw r0, #63744
-	ldr r4, [sp, #16]
 	movt r0, #21
-	ldr r6, [sp, #20]
+	movw r4, #:lower16:x
+	movt r4, #:upper16:x
+	ldr r6, [sp, #16]
 	mla r0, r1, r0, r4
 	cmp r6, r1
 	bgt label36
@@ -44,12 +41,12 @@ label35:
 .p2align 4
 label36:
 	mov r2, #0
-	ldr r6, [sp, #20]
+	ldr r6, [sp, #16]
 	cmp r6, r2
-	ble label170
+	ble label169
 .p2align 4
 label15:
-	ldr r6, [sp, #20]
+	ldr r6, [sp, #16]
 	cmp r6, #0
 	ble label16
 	mov r4, #2400
@@ -72,7 +69,7 @@ label18:
 label20:
 	mov r8, #1
 	str r8, [r3, r4, lsl #2]
-	ldr r6, [sp, #20]
+	ldr r6, [sp, #16]
 	add r4, r4, #1
 	cmp r6, r4
 	bgt label20
@@ -80,12 +77,13 @@ label20:
 	cmp r6, r2
 	bgt label15
 .p2align 4
-label175:
+label174:
 	add r1, r1, #1
 	movw r0, #63744
-	ldr r4, [sp, #16]
 	movt r0, #21
-	ldr r6, [sp, #20]
+	movw r4, #:lower16:x
+	movt r4, #:upper16:x
+	ldr r6, [sp, #16]
 	mla r0, r1, r0, r4
 	cmp r6, r1
 	bgt label36
@@ -93,11 +91,12 @@ label175:
 .p2align 4
 label4:
 	movw r0, #63744
-	ldr r4, [sp, #16]
-	movw r1, #1792
-	add r6, r8, #1
 	movt r0, #21
+	movw r4, #:lower16:x
+	movt r4, #:upper16:x
+	movw r1, #1792
 	movt r1, #65514
+	add r6, r8, #1
 	mla r9, r8, r0, r4
 	add r5, r9, r0
 	add r3, r9, r1
@@ -157,9 +156,10 @@ label10:
 label102:
 	add r1, r1, #1
 	movw r0, #63744
-	ldr r4, [sp, #16]
 	movt r0, #21
-	ldr r6, [sp, #20]
+	movw r4, #:lower16:x
+	movt r4, #:upper16:x
+	ldr r6, [sp, #16]
 	mla r0, r1, r0, r4
 	cmp r6, r1
 	bgt label36
@@ -167,7 +167,7 @@ label102:
 .p2align 4
 label16:
 	add r2, r2, #1
-	ldr r6, [sp, #20]
+	ldr r6, [sp, #16]
 	cmp r6, r2
 	bgt label15
 	b label102
@@ -176,25 +176,26 @@ label111:
 	mov r4, #0
 	mov r8, #1
 	str r8, [r3, r4, lsl #2]
-	ldr r6, [sp, #20]
+	ldr r6, [sp, #16]
 	add r4, r4, #1
 	cmp r6, r4
 	bgt label20
 	add r2, r2, #1
 	cmp r6, r2
 	bgt label15
-	b label175
+	b label174
 label12:
 	mov r0, #53
 	bl _sysy_stoptime
-	ldr r6, [sp, #20]
-	ldr r4, [sp, #16]
+	movw r4, #:lower16:x
+	movt r4, #:upper16:x
+	ldr r6, [sp, #16]
 	mov r0, r6
 	mov r1, r4
 	bl putarray
 	movw r1, #63744
-	add r0, r6, r6, lsr #31
 	movt r1, #21
+	add r0, r6, r6, lsr #31
 	asr r0, r0, #1
 	mla r1, r0, r1, r4
 	mov r4, #2400
@@ -216,6 +217,6 @@ label61:
 	cmp r9, r7
 	bgt label9
 	b label48
-label170:
+label169:
 	add r1, r1, #1
 	b label2

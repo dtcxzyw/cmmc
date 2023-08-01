@@ -12,15 +12,15 @@ dp:
 dfs:
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
 	sub sp, sp, #12
+	mov r7, r2
 	mov r5, r0
 	mov r6, r1
-	mov r7, r2
 	ldr r10, [sp, #48]
-	movw r0, #:lower16:dp
 	mov r8, r3
+	movw r0, #:lower16:dp
+	movt r0, #:upper16:dp
 	ldr r9, [sp, #52]
 	movw r1, #55744
-	movt r0, #:upper16:dp
 	movt r1, #44
 	mla r0, r5, r1, r0
 	movw r1, #32224
@@ -170,8 +170,8 @@ label15:
 	mov r2, r7
 	bl dfs
 	movw r1, #12185
-	mla r0, r10, r0, r4
 	movt r1, #17592
+	mla r0, r10, r0, r4
 	smmul r1, r0, r1
 	asr r2, r1, #28
 	add r1, r2, r1, lsr #31
@@ -183,8 +183,8 @@ label15:
 .globl main
 main:
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
-	mov r8, #0
 	sub sp, sp, #92
+	mov r8, #0
 	add r6, sp, #8
 	str r8, [sp, #8]
 	str r8, [sp, #12]
@@ -209,12 +209,12 @@ main:
 	bl getint
 	mov r7, r8
 	movw r9, #:lower16:dp
-	mov r5, r0
 	movt r9, #:upper16:dp
+	mov r5, r0
 	mvn r0, #0
 	movw r1, #55744
-	cmp r8, #18
 	movt r1, #44
+	cmp r8, #18
 	mla r4, r8, r1, r9
 	bge label214
 .p2align 4
@@ -222,15 +222,15 @@ label246:
 	mov r8, #0
 	mov r10, r8
 	movw r1, #32224
-	cmp r8, #18
 	movt r1, #2
+	cmp r8, #18
 	mla r3, r8, r1, r4
 	blt label252
 label251:
 	add r7, r7, #1
 	movw r1, #55744
-	cmp r7, #18
 	movt r1, #44
+	cmp r7, #18
 	mla r4, r7, r1, r9
 	blt label246
 	b label214
@@ -244,8 +244,8 @@ label252:
 	blt label258
 	add r10, r10, #1
 	movw r1, #32224
-	cmp r10, #18
 	movt r1, #2
+	cmp r10, #18
 	mla r3, r10, r1, r4
 	blt label252
 	b label251
@@ -392,14 +392,14 @@ label209:
 	blt label258
 	add r10, r10, #1
 	movw r1, #32224
-	cmp r10, #18
 	movt r1, #2
+	cmp r10, #18
 	mla r3, r10, r1, r4
 	blt label252
 	add r7, r7, #1
 	movw r1, #55744
-	cmp r7, #18
 	movt r1, #44
+	cmp r7, #18
 	mla r4, r7, r1, r9
 	blt label246
 label214:

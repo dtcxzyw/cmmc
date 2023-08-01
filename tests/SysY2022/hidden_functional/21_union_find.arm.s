@@ -12,8 +12,8 @@ parent:
 find:
 	push { r4, r5, r6, r7, r8, lr }
 	movw r7, #:lower16:parent
-	mov r4, r0
 	movt r7, #:upper16:parent
+	mov r4, r0
 	ldr r5, [r7, r0, lsl #2]
 	cmp r0, r5
 	beq label22
@@ -60,8 +60,8 @@ main:
 	bl getint
 	cmp r4, #0
 	movw r5, #:lower16:parent
-	mov r6, r0
 	movt r5, #:upper16:parent
+	mov r6, r0
 	ble label78
 	sub r1, r4, #4
 	cmp r4, #4

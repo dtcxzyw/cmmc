@@ -315,8 +315,8 @@ label23:
 main:
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
 	movw r4, #:lower16:a
-	sub sp, sp, #4
 	movt r4, #:upper16:a
+	sub sp, sp, #4
 	mov r0, r4
 	bl getarray
 	mov r5, r0

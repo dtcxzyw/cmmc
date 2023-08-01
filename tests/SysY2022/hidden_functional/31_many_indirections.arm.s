@@ -16,8 +16,8 @@ main:
 	mov r2, #400
 	mov r3, #0
 	movw r1, #:lower16:array
-	mov r4, r3
 	movt r1, #:upper16:array
+	mov r4, r3
 .p2align 4
 label2:
 	mla r0, r3, r2, r1

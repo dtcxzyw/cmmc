@@ -33,8 +33,7 @@ test3:
 test4:
 	add r0, r0, #10
 	cmp r1, #0
-	mov r1, #0
-	movne r0, r1
+	movne r0, #0
 	bx lr
 .p2align 4
 .globl test5

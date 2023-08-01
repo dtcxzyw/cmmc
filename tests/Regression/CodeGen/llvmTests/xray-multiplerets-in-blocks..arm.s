@@ -8,8 +8,8 @@
 .globl bswap_ror_commuted
 bswap_ror_commuted:
 	movw r1, #255
-	movw r2, #65280
 	movt r1, #255
+	movw r2, #65280
 	movt r2, #65280
 	and r1, r1, r0, lsr #8
 	and r0, r2, r0, lsl #8
@@ -26,8 +26,8 @@ different_constant:
 .globl different_op
 different_op:
 	movw r1, #256
-	movw r2, #255
 	movt r1, #255
+	movw r2, #255
 	movt r2, #255
 	add r1, r1, r0, lsl #8
 	and r0, r2, r0, lsr #8
@@ -37,8 +37,8 @@ different_op:
 .globl different_shift_amount
 different_shift_amount:
 	movw r1, #65280
-	movw r2, #255
 	movt r1, #65280
+	movw r2, #255
 	movt r2, #255
 	and r1, r1, r0, lsl #9
 	and r0, r2, r0, lsr #8
@@ -59,8 +59,8 @@ different_vars:
 .globl extra_maskop_uses2
 extra_maskop_uses2:
 	movw r1, #65280
-	movw r2, #255
 	movt r1, #65280
+	movw r2, #255
 	movt r2, #255
 	and r1, r1, r0, lsl #8
 	and r0, r2, r0, lsr #8
@@ -85,8 +85,8 @@ f2:
 .globl not_rev16
 not_rev16:
 	movw r1, #65280
-	movw r2, #255
 	movt r1, #65280
+	movw r2, #255
 	movt r2, #255
 	and r1, r1, r0, lsr #8
 	and r0, r2, r0, lsl #8
@@ -96,8 +96,8 @@ not_rev16:
 .globl rev16
 rev16:
 	movw r1, #65280
-	movw r2, #255
 	movt r1, #65280
+	movw r2, #255
 	movt r2, #255
 	and r1, r1, r0, lsl #8
 	and r0, r2, r0, lsr #8

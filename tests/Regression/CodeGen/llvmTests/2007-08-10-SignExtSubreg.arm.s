@@ -14,8 +14,8 @@ X:
 _Z3fooi:
 	uxtb r1, r0
 	movw r2, #:lower16:X
-	sxtb r1, r1
 	movt r2, #:upper16:X
+	sxtb r1, r1
 	str r0, [r2, #0]
 	mov r0, r1
 	bx lr

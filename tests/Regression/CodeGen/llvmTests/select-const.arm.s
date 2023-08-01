@@ -27,9 +27,8 @@ select_const_int_easy:
 .globl select_const_int_harder
 select_const_int_harder:
 	cmp r0, #0
-	mov r1, #6
 	mov r0, #38
-	movne r0, r1
+	movne r0, #6
 	bx lr
 .p2align 4
 .globl select_const_int_one_away
@@ -43,9 +42,8 @@ select_const_int_one_away:
 .globl select_const_int_pow2_zero
 select_const_int_pow2_zero:
 	cmp r0, #0
-	mov r1, #4
 	mov r0, #0
-	movne r0, r1
+	movne r0, #4
 	bx lr
 .p2align 4
 .globl select_eq_10000_10001
@@ -106,11 +104,10 @@ select_sge_zero_negone:
 .p2align 4
 .globl select_sgt_negative_one_constant1_constant2
 select_sgt_negative_one_constant1_constant2:
-	mov r1, #7
-	mvn r2, #2
+	mvn r1, #2
 	cmn r0, #1
-	mov r0, r2
-	movgt r0, r1
+	mov r0, r1
+	movgt r0, #7
 	bx lr
 .p2align 4
 .globl select_sgt_zero_negone
@@ -132,9 +129,8 @@ select_sle_zero_negone:
 .globl select_slt_zero_constant1_constant2
 select_slt_zero_constant1_constant2:
 	cmp r0, #0
-	mov r1, #7
 	mvn r0, #2
-	movlt r0, r1
+	movlt r0, #7
 	bx lr
 .p2align 4
 .globl select_slt_zero_negone

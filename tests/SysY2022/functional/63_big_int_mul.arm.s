@@ -10,9 +10,9 @@ main:
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
 	mov r11, #9
 	mov r9, #8
-	mov r3, #2
-	sub sp, sp, #372
 	mov r10, #5
+	sub sp, sp, #372
+	mov r3, #2
 	mov r1, #0
 	mov r5, #3
 	mov r7, #6
@@ -147,12 +147,12 @@ label14:
 label16:
 	add r9, sp, #208
 	movw r10, #26215
-	str r8, [r9, r5, lsl #2]
 	movt r10, #26214
-	add r5, r9, r6, lsl #2
+	str r8, [r9, r5, lsl #2]
 	smmul r8, r8, r10
-	ldr r9, [r5, #0]
+	add r5, r9, r6, lsl #2
 	asr r10, r8, #2
+	ldr r9, [r5, #0]
 	add r8, r10, r8, lsr #31
 	add r8, r9, r8
 	str r8, [r5, #0]

@@ -16,20 +16,14 @@ image_out:
 main:
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
 	movw r5, #:lower16:image_in
-	sub sp, sp, #44
-	str r5, [sp, #32]
 	movt r5, #:upper16:image_in
-	str r5, [sp, #32]
+	sub sp, sp, #36
 	mov r0, r5
 	bl getarray
-	str r0, [sp, #36]
+	str r0, [sp, #28]
 	mov r0, #23
 	bl _sysy_starttime
 	mov r9, #1
-	movw r7, #:lower16:image_out
-	str r7, [sp, #28]
-	movt r7, #:upper16:image_out
-	str r7, [sp, #28]
 	str r9, [sp, #24]
 	movw r0, #511
 	cmp r9, r0
@@ -48,8 +42,8 @@ label4:
 	mov r6, #1024
 	mov r11, #512
 	mov r4, #1
-	add r8, r9, #512
 	add r2, r9, #1536
+	add r8, r9, #512
 	sub r10, r9, #1
 	add r0, r9, r0
 	add r1, r9, r1
@@ -65,9 +59,10 @@ label4:
 .p2align 4
 label5:
 	ldr r9, [sp, #24]
+	movw r5, #:lower16:image_in
+	movt r5, #:upper16:image_in
 	add r4, r4, #4
 	ldr r11, [sp, #12]
-	ldr r5, [sp, #32]
 	add r8, r9, r11
 	ldr r6, [r5, r8, lsl #2]
 	ldr r10, [sp, #20]
@@ -99,7 +94,8 @@ label5:
 	sub r7, r7, r10
 	sub r7, r7, r9
 	usat r9, #8, r7
-	ldr r7, [sp, #28]
+	movw r7, #:lower16:image_out
+	movt r7, #:upper16:image_out
 	str r9, [r7, r8, lsl #2]
 	ldr r11, [sp, #12]
 	ldr r8, [sp, #4]
@@ -216,7 +212,8 @@ label5:
 .p2align 4
 label10:
 	ldr r9, [sp, #24]
-	ldr r5, [sp, #32]
+	movw r5, #:lower16:image_in
+	movt r5, #:upper16:image_in
 	add r0, r9, r11
 	ldr r1, [r5, r0, lsl #2]
 	ldr r10, [sp, #20]
@@ -224,6 +221,8 @@ label10:
 	ldr r2, [r5, r2, lsl #2]
 	rsb r1, r2, r1, lsl #3
 	add r2, r9, r7
+	movw r7, #:lower16:image_out
+	movt r7, #:upper16:image_out
 	add r2, r5, r2, lsl #2
 	ldr r3, [r2, #0]
 	ldr r2, [r2, #4]
@@ -242,7 +241,6 @@ label10:
 	add r2, r5, r2, lsl #2
 	ldr r3, [r2, #0]
 	ldr r2, [r2, #4]
-	ldr r7, [sp, #28]
 	sub r1, r1, r3
 	sub r1, r1, r2
 	usat r1, #8, r1
@@ -291,11 +289,13 @@ label10:
 	b label24
 .p2align 4
 label11:
-	ldr r5, [sp, #32]
+	movw r5, #:lower16:image_in
+	movt r5, #:upper16:image_in
+	movw r7, #:lower16:image_out
+	movt r7, #:upper16:image_out
 	add r2, r2, #16
-	cmp r2, #1024
 	ldr r3, [r5, r1, lsl #2]
-	ldr r7, [sp, #28]
+	cmp r2, #1024
 	str r3, [r7, r1, lsl #2]
 	sub r3, r0, #1
 	ldr r4, [r5, r3, lsl #2]
@@ -411,14 +411,16 @@ label11:
 	mov r0, #0
 .p2align 4
 label15:
-	ldr r5, [sp, #32]
+	movw r5, #:lower16:image_in
+	movt r5, #:upper16:image_in
+	movw r7, #:lower16:image_out
+	movt r7, #:upper16:image_out
 	add r1, r5, r0, lsl #2
-	ldr r3, [r1, #0]
-	ldr r7, [sp, #28]
 	add r2, r7, r0, lsl #2
+	ldr r3, [r1, #0]
 	add r0, r0, #16
-	str r3, [r2, #0]
 	cmp r0, #512
+	str r3, [r2, #0]
 	movw r3, #63488
 	movt r3, #31
 	add r4, r1, r3
@@ -549,9 +551,10 @@ label15:
 	mov r0, #59
 	bl _sysy_stoptime
 	mov r0, #524288
-	ldr r7, [sp, #28]
+	movw r7, #:lower16:image_out
+	movt r7, #:upper16:image_out
 	mov r1, r7
 	bl putarray
-	ldr r0, [sp, #36]
-	add sp, sp, #44
+	ldr r0, [sp, #28]
+	add sp, sp, #36
 	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }

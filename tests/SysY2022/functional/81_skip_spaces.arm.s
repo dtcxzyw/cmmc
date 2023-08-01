@@ -33,8 +33,8 @@ label6:
 	bne label6
 label9:
 	movw r0, #14933
-	add sp, sp, #404
 	movt r0, #26546
+	add sp, sp, #404
 	smmul r0, r1, r0
 	asr r2, r0, #5
 	add r0, r2, r0, lsr #31

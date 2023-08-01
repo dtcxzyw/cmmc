@@ -8,9 +8,8 @@
 .globl t1
 t1:
 	cmp r0, #0
-	mov r1, #10
 	mov r0, #20
-	movne r0, r1
+	movne r0, #10
 	bx lr
 .p2align 4
 .globl t2

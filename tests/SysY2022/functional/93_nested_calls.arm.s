@@ -16,7 +16,7 @@ main:
 	bl getint
 	str r0, [sp, #20]
 	bl getint
-	str r0, [sp, #4]
+	str r0, [sp, #0]
 	mov r8, r0
 	bl getint
 	mov r5, #0
@@ -38,17 +38,16 @@ label2:
 	mov r0, #0
 	movwne r0, #1
 	and r0, r8, r0
-	ldr r8, [sp, #4]
+	ldr r8, [sp, #0]
 	cmp r8, #0
 	bne label22
 label5:
 	ldr r1, [sp, #40]
 	mov r4, #0
-	mov r5, #0
 	ldr r2, [sp, #44]
 	ldr r7, [sp, #48]
 	cmp r7, #0
-	str r7, [sp, #8]
+	str r7, [sp, #4]
 	movwne r4, #1
 	ldr r3, [sp, #52]
 	str r3, [sp, #24]
@@ -56,13 +55,12 @@ label5:
 	clz r3, r3
 	lsr r3, r3, #5
 	and r4, r3, r4
-	mov r6, r7
-	str r7, [sp, #12]
+	mov r5, r7
+	str r7, [sp, #8]
 	ldr r3, [sp, #60]
 	cmp r3, #0
-	moveq r6, r5
+	moveq r5, #0
 	cmp r2, #0
-	mov r5, r6
 	movne r5, r4
 	ldr r4, [sp, #64]
 	ldr r8, [sp, #16]
@@ -77,12 +75,12 @@ label5:
 	ldr r8, [sp, #68]
 	moveq r6, r0
 	add r9, r6, #1
-	str r8, [sp, #0]
+	str r8, [sp, #12]
 	cmp r8, #0
 	bne label21
 	b label77
 label22:
-	ldr r8, [sp, #4]
+	ldr r8, [sp, #0]
 	sdiv r1, r0, r8
 	mls r0, r1, r8, r0
 	b label5
@@ -103,7 +101,7 @@ label7:
 	movne r8, r10
 	cmp r9, #0
 	mul r0, r0, r8
-	ldr r8, [sp, #4]
+	ldr r8, [sp, #0]
 	mov r9, r0
 	movne r9, r1
 	cmp r7, #0
@@ -117,7 +115,7 @@ label7:
 	bne label20
 	b label101
 label21:
-	ldr r8, [sp, #0]
+	ldr r8, [sp, #12]
 	sdiv r0, r5, r8
 	mls r0, r0, r8, r5
 	b label7
@@ -130,7 +128,7 @@ label9:
 	sub r7, r1, r2
 	mov r2, r7
 	moveq r2, r1
-	ldr r7, [sp, #8]
+	ldr r7, [sp, #4]
 	mla r0, r2, r0, r2
 	cmp r7, #0
 	bne label19
@@ -141,7 +139,7 @@ label20:
 	mls r0, r8, r7, r0
 	b label9
 label11:
-	ldr r7, [sp, #12]
+	ldr r7, [sp, #8]
 	cmp r3, #0
 	sub r1, r7, r3
 	moveq r1, r7
@@ -150,7 +148,7 @@ label11:
 	bne label13
 	b label14
 label19:
-	ldr r7, [sp, #8]
+	ldr r7, [sp, #4]
 	sdiv r1, r0, r7
 	mls r0, r1, r7, r0
 	b label11
@@ -160,7 +158,7 @@ label13:
 	mls r1, r3, r2, r1
 label14:
 	clz r2, r6
-	ldr r8, [sp, #0]
+	ldr r8, [sp, #12]
 	cmp r6, #0
 	lsr r2, r2, #5
 	sub r2, r8, r2

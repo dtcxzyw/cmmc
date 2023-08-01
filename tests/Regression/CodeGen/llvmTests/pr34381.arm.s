@@ -29,8 +29,8 @@ var_370:
 .globl _Z3foov
 _Z3foov:
 	movw r0, #:lower16:var_21
-	movw r1, #:lower16:var_29
 	movt r0, #:upper16:var_21
+	movw r1, #:lower16:var_29
 	movt r1, #:upper16:var_29
 	ldr r0, [r0, #0]
 	ldrsb r1, [r1, #0]
@@ -38,8 +38,8 @@ _Z3foov:
 	rsb r1, r1, #0
 	cmp r0, r1
 	movw r1, #:lower16:var_390
-	mov r0, #0
 	movt r1, #:upper16:var_390
+	mov r0, #0
 	movwlo r0, #1
 	sub r0, r0, #1
 	and r0, r0, #255
@@ -47,8 +47,8 @@ _Z3foov:
 	lsr r0, r0, #5
 	str r0, [r1, #0]
 	movw r1, #:lower16:var_370
-	movw r0, #:lower16:var_11
 	movt r1, #:upper16:var_370
+	movw r0, #:lower16:var_11
 	movt r0, #:upper16:var_11
 	ldrsb r0, [r0, #0]
 	sxtb r0, r0

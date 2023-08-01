@@ -34,8 +34,8 @@ ret_forwarding:
 .globl callee1_cmmc_noinline
 callee1_cmmc_noinline:
 	movw r0, #:lower16:touch
-	mov r1, #1
 	movt r0, #:upper16:touch
+	mov r1, #1
 	str r1, [r0, #0]
 	bx lr
 .p2align 4
@@ -120,8 +120,8 @@ callee9_cmmc_noinline:
 callee10_cmmc_noinline:
 	vadd.f32 s0, s0, s1
 	movw r1, #:lower16:touch
-	vmov s1, r0
 	movt r1, #:upper16:touch
+	vmov s1, r0
 	vcvt.f32.s32 s1, s1
 	vadd.f32 s0, s0, s1
 	vcvt.s32.f32 s0, s0
@@ -146,8 +146,8 @@ callee11_cmmc_noinline:
 callee12_cmmc_noinline:
 	add r0, r0, r1
 	movw r1, #:lower16:touch
-	add r0, r2, r0
 	movt r1, #:upper16:touch
+	add r0, r2, r0
 	str r0, [r1, #0]
 	bx lr
 .p2align 4

@@ -18,22 +18,18 @@ dst:
 .globl main
 main:
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
-	sub sp, sp, #12
+	sub sp, sp, #4
 	bl getint
 	movw r5, #:lower16:w
-	mov r4, r0
 	movt r5, #:upper16:w
+	mov r4, r0
 	mov r0, r5
 	bl getarray
 	mov r0, #62
 	bl _sysy_starttime
 	mov r1, #0
 	movw r0, #:lower16:temp
-	movw r6, #:lower16:dst
 	movt r0, #:upper16:temp
-	str r6, [sp, #0]
-	movt r6, #:upper16:dst
-	str r6, [sp, #0]
 label2:
 	cmp r4, r1
 	bgt label4
@@ -55,7 +51,7 @@ label5:
 	str r6, [r0, r3, lsl #2]
 	cmp r4, r2
 	bgt label5
-	b label172
+	b label171
 .p2align 4
 label52:
 	mvn r6, #0
@@ -85,7 +81,7 @@ label74:
 	bgt label18
 	b label17
 .p2align 4
-label176:
+label175:
 	add r6, r6, #1
 	mul r3, r4, r6
 	cmp r4, r6
@@ -102,11 +98,12 @@ label25:
 label26:
 	mov r0, #64
 	bl _sysy_stoptime
-	ldr r6, [sp, #0]
 	mov r0, r5
-	mov r1, r6
+	movw r4, #:lower16:dst
+	movt r4, #:upper16:dst
+	mov r1, r4
 	bl putarray
-	add sp, sp, #12
+	add sp, sp, #4
 	mov r0, #0
 	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
 label27:
@@ -117,8 +114,9 @@ label27:
 	b label30
 label28:
 	ldr r1, [r0, r2, lsl #2]
-	ldr r6, [sp, #0]
-	str r1, [r6, r2, lsl #2]
+	movw r4, #:lower16:dst
+	movt r4, #:upper16:dst
+	str r1, [r4, r2, lsl #2]
 	add r2, r2, #1
 	cmp r5, r2
 	bgt label28
@@ -126,12 +124,13 @@ label28:
 .p2align 4
 label30:
 	add r3, r0, r2, lsl #2
-	ldr r7, [r3, #0]
-	ldr r6, [sp, #0]
-	add r4, r6, r2, lsl #2
+	movw r4, #:lower16:dst
+	movt r4, #:upper16:dst
+	add r4, r4, r2, lsl #2
+	ldr r6, [r3, #0]
 	add r2, r2, #4
-	str r7, [r4, #0]
 	cmp r1, r2
+	str r6, [r4, #0]
 	ldr r6, [r3, #4]
 	str r6, [r4, #4]
 	ldr r6, [r3, #8]
@@ -148,7 +147,7 @@ label18:
 	add r7, r7, #1
 	cmp r4, r7
 	bgt label18
-	b label176
+	b label175
 .p2align 4
 label19:
 	add r9, r2, r7
@@ -222,7 +221,7 @@ label17:
 	bgt label68
 	b label25
 .p2align 4
-label172:
+label171:
 	add r1, r1, #1
 	cmp r4, r1
 	bgt label4

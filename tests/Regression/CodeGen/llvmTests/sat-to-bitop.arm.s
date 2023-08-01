@@ -15,9 +15,8 @@ no_sat0_incorrect_constant:
 .globl no_sat0_incorrect_variable
 no_sat0_incorrect_variable:
 	cmp r0, #0
-	mov r2, #0
 	mov r0, r1
-	movlt r0, r2
+	movlt r0, #0
 	bx lr
 .p2align 4
 .globl sat0_base_16bit
@@ -25,16 +24,14 @@ sat0_base_16bit:
 	sxth r1, r0
 	uxth r0, r0
 	cmp r1, #0
-	mov r1, #0
-	movlt r0, r1
+	movlt r0, #0
 	uxth r0, r0
 	bx lr
 .p2align 4
 .globl sat0_base_32bit
 sat0_base_32bit:
 	cmp r0, #0
-	mov r1, #0
-	movlt r0, r1
+	movlt r0, #0
 	bx lr
 .p2align 4
 .globl sat0_base_8bit
@@ -42,8 +39,7 @@ sat0_base_8bit:
 	sxtb r1, r0
 	uxtb r0, r0
 	cmp r1, #0
-	mov r1, #0
-	movlt r0, r1
+	movlt r0, #0
 	uxtb r0, r0
 	bx lr
 .p2align 4

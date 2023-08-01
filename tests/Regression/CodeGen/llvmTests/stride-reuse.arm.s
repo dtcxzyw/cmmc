@@ -24,14 +24,14 @@ foo:
 	cmp r0, #0
 	ble label5
 	movw r2, #:lower16:B
-	movw r3, #:lower16:A
-	movw r4, #:lower16:P
-	mov r1, #64
-	cmp r0, #1
 	movt r2, #:upper16:B
+	movw r3, #:lower16:A
 	movt r3, #:upper16:A
+	movw r4, #:lower16:P
 	movt r4, #:upper16:P
+	mov r1, #64
 	vldr s0, [r2, #0]
+	cmp r0, #1
 	vadd.f32 s0, s0, s0
 	vstr s0, [r3, #0]
 	str r1, [r4, #0]

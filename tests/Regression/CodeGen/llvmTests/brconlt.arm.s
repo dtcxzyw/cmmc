@@ -25,8 +25,8 @@ result:
 .globl test
 test:
 	movw r0, #:lower16:j
-	movw r1, #:lower16:i
 	movt r0, #:upper16:j
+	movw r1, #:lower16:i
 	movt r1, #:upper16:i
 	ldr r0, [r0, #0]
 	ldr r1, [r1, #0]
@@ -36,7 +36,7 @@ label2:
 	bx lr
 label13:
 	movw r0, #:lower16:result
-	mov r1, #1
 	movt r0, #:upper16:result
+	mov r1, #1
 	str r1, [r0, #0]
 	b label2

@@ -13,8 +13,8 @@ my_sin_impl:
 	push { lr }
 	vpush { s16 }
 	movw r0, #14269
-	vabs.f32 s1, s0
 	movt r0, #13702
+	vabs.f32 s1, s0
 	vmov s2, r0
 	vcmp.f32 s1, s2
 	vmrs APSR_nzcv, FPSCR
@@ -24,15 +24,14 @@ label2:
 	pop { pc }
 label4:
 	movw r1, #0
-	vmov s2, r0
 	movt r1, #16448
+	vmov s2, r0
 	vmov s1, r1
 	vdiv.f32 s0, s0, s1
 	vabs.f32 s1, s0
 	vcmp.f32 s1, s2
 	vmrs APSR_nzcv, FPSCR
 	bhi label7
-label5:
 	movw r0, #0
 	movt r0, #16512
 	vmov s1, r0
@@ -59,7 +58,16 @@ label7:
 	vmul.f32 s1, s1, s0
 	vmul.f32 s0, s0, s16
 	vsub.f32 s0, s0, s1
-	b label5
+	vmov s1, r0
+	movw r0, #0
+	movt r0, #16448
+	vmov s2, r0
+	vmul.f32 s1, s0, s1
+	vmul.f32 s1, s1, s0
+	vmul.f32 s1, s1, s0
+	vmul.f32 s0, s0, s2
+	vsub.f32 s0, s0, s1
+	b label2
 .p2align 4
 .globl main
 main:
@@ -97,8 +105,8 @@ label51:
 	bl getint
 	cmp r0, #255
 	movw r5, #:lower16:image
-	add r1, r7, r7, lsr #31
 	movt r5, #:upper16:image
+	add r1, r7, r7, lsr #31
 	asr r8, r1, #1
 	add r1, r4, r4, lsr #31
 	vmov s0, r8
@@ -112,14 +120,14 @@ label51:
 	bgt label67
 label56:
 	movw r0, #4059
-	movw r1, #4059
 	movt r0, #16329
+	movw r1, #4059
 	movt r1, #49353
 	vmov s0, r0
 	vmov s4, r1
 	movw r0, #4059
-	mov r1, #0
 	movt r0, #16585
+	mov r1, #0
 	vmov s3, r0
 	mov r0, #0
 	vadd.f32 s0, s19, s0
@@ -135,9 +143,9 @@ label56:
 	movw r0, #4059
 	movt r0, #16457
 	vmov s5, r0
-	vcvt.f32.s32 s1, s1
 	movw r0, #4059
 	movt r0, #49225
+	vcvt.f32.s32 s1, s1
 	vmov s6, r0
 	vmul.f32 s1, s1, s3
 	vsub.f32 s1, s0, s1
@@ -151,13 +159,13 @@ label56:
 	vmrs APSR_nzcv, FPSCR
 	vmovmi.f32 s0, s1
 	bl my_sin_impl
-	mov r0, #0
 	mov r1, #0
-	vmov.f32 s1, s19
 	vcmp.f32 s19, s3
+	mov r0, #0
+	vmov.f32 s1, s19
 	vmov.f32 s18, s0
-	vdiv.f32 s0, s19, s3
 	vmrs APSR_nzcv, FPSCR
+	vdiv.f32 s0, s19, s3
 	movwgt r0, #1
 	vcmp.f32 s19, s4
 	vmrs APSR_nzcv, FPSCR

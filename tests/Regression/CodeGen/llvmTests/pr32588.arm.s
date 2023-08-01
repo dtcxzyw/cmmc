@@ -21,8 +21,8 @@ d:
 .globl fn1
 fn1:
 	movw r0, #:lower16:c
-	movw r1, #:lower16:d
 	movt r0, #:upper16:c
+	movw r1, #:lower16:d
 	movt r1, #:upper16:d
 	ldr r0, [r0, #0]
 	clz r0, r0

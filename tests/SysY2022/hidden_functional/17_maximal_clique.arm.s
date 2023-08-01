@@ -21,9 +21,9 @@ maxCliques:
 	str r2, [sp, #0]
 	add r5, r0, #2
 	movw r6, #:lower16:graph
+	movt r6, #:upper16:graph
 	str r0, [sp, #12]
 	mov r8, #0
-	movt r6, #:upper16:graph
 	add r0, r1, r0, lsl #2
 	add r1, r3, #1
 	str r0, [sp, #8]
@@ -194,11 +194,11 @@ label34:
 .globl main
 main:
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
-	sub sp, sp, #132
 	mov r0, #0
-	add r4, sp, #120
+	sub sp, sp, #132
 	mov r5, sp
 	str r0, [sp, #0]
+	add r4, sp, #120
 	str r0, [sp, #4]
 	str r0, [sp, #8]
 	str r0, [sp, #12]
@@ -233,10 +233,10 @@ main:
 	bl getint
 	cmp r0, #0
 	movw r8, #:lower16:edges
-	movw r7, #:lower16:graph
-	mov r6, r0
 	movt r8, #:upper16:edges
+	movw r7, #:lower16:graph
 	movt r7, #:upper16:graph
+	mov r6, r0
 	ble label173
 	mov r0, #0
 	mov r9, r0

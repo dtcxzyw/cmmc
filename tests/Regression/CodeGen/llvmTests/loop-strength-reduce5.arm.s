@@ -22,11 +22,11 @@ foo:
 	cmp r0, #0
 	ble label5
 	movw r2, #:lower16:X
+	movt r2, #:upper16:X
 	mov r1, #0
 	movw r3, #:lower16:Y
-	cmp r0, #1
-	movt r2, #:upper16:X
 	movt r3, #:upper16:Y
+	cmp r0, #1
 	strh r1, [r2, #0]
 	strh r1, [r3, #0]
 	beq label5

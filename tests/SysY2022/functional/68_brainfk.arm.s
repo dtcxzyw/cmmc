@@ -18,9 +18,9 @@ main:
 	sub sp, sp, #4
 	bl getint
 	movw r4, #:lower16:program
+	movt r4, #:upper16:program
 	cmp r0, #0
 	mov r5, r0
-	movt r4, #:upper16:program
 	ble label37
 	mov r6, #0
 	b label31

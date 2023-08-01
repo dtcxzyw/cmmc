@@ -14,10 +14,10 @@ main:
 	mov r0, #1016
 	bl _sysy_starttime
 	movw r1, #32771
-	movw r0, #49153
-	cmp r4, #0
 	movt r1, #32766
+	movw r0, #49153
 	movt r0, #16384
+	cmp r4, #0
 	ble label17
 	sub r2, r4, #4
 	cmp r4, #4

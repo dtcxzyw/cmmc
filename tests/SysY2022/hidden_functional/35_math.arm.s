@@ -8,8 +8,8 @@
 my_sqrt:
 	push { lr }
 	movw r0, #0
-	sub sp, sp, #4
 	movt r0, #17096
+	sub sp, sp, #4
 	vmov s1, r0
 	vcmp.f32 s0, s1
 	vmrs APSR_nzcv, FPSCR
@@ -127,36 +127,36 @@ asr5:
 	push { r4, r5, r6, r7, r8, lr }
 	vpush { s16, s17, s18, s19, s20, s21, s22, s23, s24, s25, s26, s27, s28 }
 	movw r8, #0
-	mov r5, #1065353216
-	vmov.f32 s19, s0
-	vmov.f32 s18, s1
-	movw r6, #0
-	movw r7, #0
-	sub sp, sp, #4
-	mov r4, #1056964608
-	vsub.f32 s1, s1, s0
-	movt r6, #16512
-	movt r7, #16576
-	vmov s0, r4
 	movt r8, #16752
-	vmov s4, r6
+	vmov.f32 s19, s0
+	movw r7, #0
+	movt r7, #16576
+	mov r5, #1065353216
+	movw r6, #0
+	movt r6, #16512
+	vmov.f32 s18, s1
+	sub sp, sp, #4
 	vmov s7, r8
-	vmul.f32 s1, s1, s0
+	mov r4, #1056964608
+	vmov s4, r6
+	vsub.f32 s1, s1, s0
+	vmov s0, r4
 	vmul.f32 s7, s2, s7
+	vmul.f32 s1, s1, s0
 	vadd.f32 s16, s19, s1
 	vsub.f32 s5, s18, s16
 	vmul.f32 s1, s5, s0
 	vadd.f32 s17, s16, s1
 	vmov s1, r5
 	vdiv.f32 s22, s1, s18
-	vdiv.f32 s23, s1, s16
+	vdiv.f32 s24, s1, s16
 	vdiv.f32 s21, s1, s17
 	vmul.f32 s6, s21, s4
-	vadd.f32 s6, s23, s6
+	vadd.f32 s6, s24, s6
 	vadd.f32 s6, s6, s22
 	vmul.f32 s6, s6, s5
 	vmov s5, r7
-	vdiv.f32 s24, s6, s5
+	vdiv.f32 s23, s6, s5
 	vsub.f32 s6, s16, s19
 	vmul.f32 s0, s6, s0
 	vadd.f32 s20, s19, s0
@@ -164,10 +164,10 @@ asr5:
 	vdiv.f32 s1, s1, s19
 	vmul.f32 s4, s0, s4
 	vadd.f32 s4, s1, s4
-	vadd.f32 s4, s4, s23
+	vadd.f32 s4, s4, s24
 	vmul.f32 s4, s4, s6
 	vdiv.f32 s4, s4, s5
-	vadd.f32 s5, s4, s24
+	vadd.f32 s5, s4, s23
 	vsub.f32 s3, s5, s3
 	vabs.f32 s6, s3
 	vcmp.f32 s6, s7
@@ -197,7 +197,7 @@ label123:
 	vmul.f32 s8, s8, s7
 	vadd.f32 s8, s0, s8
 	vmul.f32 s6, s6, s7
-	vadd.f32 s8, s8, s23
+	vadd.f32 s8, s8, s24
 	vadd.f32 s1, s1, s6
 	vmov s6, r8
 	vmul.f32 s3, s8, s3
@@ -232,7 +232,7 @@ label125:
 	vadd.f32 s0, s21, s0
 	vmul.f32 s4, s4, s2
 	vadd.f32 s0, s0, s22
-	vadd.f32 s4, s23, s4
+	vadd.f32 s4, s24, s4
 	vmul.f32 s0, s0, s5
 	vadd.f32 s4, s4, s21
 	vmul.f32 s3, s4, s3
@@ -240,7 +240,7 @@ label125:
 	vdiv.f32 s20, s0, s4
 	vdiv.f32 s3, s3, s4
 	vadd.f32 s0, s3, s20
-	vsub.f32 s1, s0, s24
+	vsub.f32 s1, s0, s23
 	vabs.f32 s2, s1
 	vcmp.f32 s2, s27
 	vmrs APSR_nzcv, FPSCR
@@ -285,8 +285,8 @@ label128:
 eee:
 	push { lr }
 	movw r0, #4719
-	sub sp, sp, #4
 	movt r0, #14979
+	sub sp, sp, #4
 	vmov s1, r0
 	vcmp.f32 s0, s1
 	vmrs APSR_nzcv, FPSCR
@@ -515,12 +515,12 @@ main:
 	vpush { s16, s17, s18 }
 	bl getint
 	movw r8, #0
+	movt r8, #16576
 	movw r7, #0
+	movt r7, #16512
 	mov r6, #1056964608
 	mov r4, #1065353216
 	movs r5, r0
-	movt r8, #16576
-	movt r7, #16512
 	bne label523
 label522:
 	mov r0, #0
@@ -631,8 +631,8 @@ label531:
 label535:
 	vmov s11, r4
 	movw r0, #52343
-	vmov s1, r6
 	movt r0, #12843
+	vmov s1, r6
 	vmov s2, r7
 	vmov s12, r0
 	mov r0, #1
@@ -665,10 +665,10 @@ label535:
 label536:
 	vmov s0, r4
 	movw r0, #52343
-	vmov.f32 s1, s16
 	movt r0, #12843
-	vmov.f32 s3, s18
+	vmov.f32 s1, s16
 	vmov s2, r0
+	vmov.f32 s3, s18
 	mov r0, #1
 	bl asr5
 	bl putfloat
@@ -677,10 +677,10 @@ label536:
 label532:
 	vmov s0, r4
 	movw r0, #52343
-	vmov.f32 s1, s16
 	movt r0, #12843
-	vmov.f32 s3, s18
+	vmov.f32 s1, s16
 	vmov s2, r0
+	vmov.f32 s3, s18
 	mov r0, #1
 	bl asr5
 	vmul.f32 s0, s17, s0

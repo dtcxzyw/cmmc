@@ -114,8 +114,8 @@ label101:
 label102:
 	sub r4, r1, #4
 	movw r2, #:lower16:arr
-	cmp r1, #4
 	movt r2, #:upper16:arr
+	cmp r1, #4
 	ble label116
 	mov r3, r0
 .p2align 4
@@ -141,8 +141,8 @@ label116:
 .globl fused_store
 fused_store:
 	movw r0, #:lower16:arr
-	mov r1, #0
 	movt r0, #:upper16:arr
+	mov r1, #0
 	str r1, [r0, #0]
 	mov r1, #1
 	str r1, [r0, #4]

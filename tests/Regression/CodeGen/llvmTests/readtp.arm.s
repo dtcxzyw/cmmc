@@ -13,7 +13,7 @@ counter:
 .globl foo
 foo:
 	movw r0, #:lower16:counter
-	mov r1, #5
 	movt r0, #:upper16:counter
+	mov r1, #5
 	str r1, [r0, #0]
 	bx lr

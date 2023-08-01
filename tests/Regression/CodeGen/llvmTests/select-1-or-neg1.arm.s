@@ -7,9 +7,8 @@
 .p2align 4
 .globl PR28968
 PR28968:
-	mov r1, #1
-	mvn r2, #0
+	mvn r1, #0
 	cmp r0, #1
-	mov r0, r2
-	moveq r0, r1
+	mov r0, r1
+	moveq r0, #1
 	bx lr

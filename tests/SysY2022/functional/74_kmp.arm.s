@@ -20,10 +20,10 @@ main:
 	push { r4, r5, r6, r7, lr }
 	mov r6, #0
 	movw r5, #:lower16:next
-	movw r4, #:lower16:dst
-	sub sp, sp, #4
 	movt r5, #:upper16:next
+	movw r4, #:lower16:dst
 	movt r4, #:upper16:dst
+	sub sp, sp, #4
 label2:
 	bl getch
 	cmp r0, #10
@@ -83,10 +83,9 @@ label13:
 	cmp r2, r3
 	beq label20
 	ldr r1, [r5, r1, lsl #2]
-	mov r3, #0
 	cmn r1, #1
 	add r2, r1, #1
-	moveq r1, r3
+	moveq r1, #0
 	clz r2, r2
 	lsr r2, r2, #5
 	add r0, r0, r2

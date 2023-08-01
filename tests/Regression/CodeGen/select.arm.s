@@ -215,16 +215,13 @@ select_fge_fpr_fpr:
 .p2align 4
 .globl select_cross
 select_cross:
-	push { r4 }
-	mov r3, #10
-	mov r4, #1
 	cmp r0, r1
-	movlt r3, r4
+	mov r3, #10
 	mov r0, #0
+	movlt r3, #1
 	movwlt r0, #1
 	cmp r1, r2
 	movlt r0, r3
-	pop { r4 }
 	bx lr
 .p2align 4
 .globl select_cross_fpr
@@ -234,7 +231,7 @@ select_cross_fpr:
 	movwlt r0, #1
 	cmp r1, r2
 	mov r3, r0
-	bge label220
+	bge label219
 	mov r1, #1065353216
 	cmp r0, #0
 	vmov s1, r1
@@ -242,11 +239,11 @@ select_cross_fpr:
 	movt r1, #16672
 	vmov s0, r1
 	vmovne.f32 s0, s1
-	b label211
-label220:
+	b label210
+label219:
 	vmov s0, r3
 	vcvt.f32.s32 s0, s0
-label211:
+label210:
 	bx lr
 .p2align 4
 .globl select_round
@@ -321,8 +318,8 @@ select_one:
 select_constant:
 	cmp r0, #0
 	movw r1, #48348
-	movw r0, #49414
 	movt r1, #36635
+	movw r0, #49414
 	movt r0, #51810
 	movne r0, r1
 	bx lr

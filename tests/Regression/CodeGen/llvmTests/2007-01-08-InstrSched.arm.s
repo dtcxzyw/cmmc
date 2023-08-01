@@ -14,8 +14,8 @@ foo:
 	movt r0, #16544
 	vmov s2, r0
 	movw r0, #0
-	vmul.f32 s1, s0, s1
 	movt r0, #16608
+	vmul.f32 s1, s0, s1
 	vmul.f32 s2, s0, s2
 	vadd.f32 s1, s1, s2
 	vmov s2, r0

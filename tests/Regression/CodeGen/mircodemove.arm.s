@@ -9,8 +9,8 @@
 test:
 	push { r4, r5, r6 }
 	movw r2, #21846
-	cmp r1, #0
 	movt r2, #21845
+	cmp r1, #0
 	bgt label3
 label2:
 	pop { r4, r5, r6 }

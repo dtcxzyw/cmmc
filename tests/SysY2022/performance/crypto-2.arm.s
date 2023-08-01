@@ -19,18 +19,14 @@ main:
 	mov r5, r0
 	mov r0, #161
 	bl _sysy_starttime
-	mov r8, #0
-	movs r0, r5
-	movw r6, #:lower16:buffer
 	mov r3, r4
+	movs r0, r5
+	mov r8, #0
 	str r8, [sp, #32]
 	str r8, [sp, #36]
 	str r8, [sp, #40]
 	str r8, [sp, #44]
 	str r8, [sp, #48]
-	str r6, [sp, #28]
-	movt r6, #:upper16:buffer
-	str r6, [sp, #28]
 	str r5, [sp, #24]
 	ble label5
 .p2align 4
@@ -52,8 +48,8 @@ label5:
 label6:
 	add r1, r3, r3, lsl #13
 	movw r3, #8225
-	asr r2, r1, #31
 	movt r3, #4
+	asr r2, r1, #31
 	add r2, r1, r2, lsr #15
 	asr r2, r2, #17
 	add r1, r1, r2
@@ -72,6 +68,8 @@ label6:
 	mul r5, r4, r3
 	asr r6, r5, #31
 	add r5, r5, r6, lsr #15
+	movw r6, #:lower16:buffer
+	movt r6, #:upper16:buffer
 	asr r5, r5, #17
 	mla r3, r4, r3, r5
 	add r4, r4, r4, lsl #5
@@ -79,7 +77,6 @@ label6:
 	asr r5, r3, #31
 	str r3, [sp, #20]
 	add r5, r3, r5, lsr #24
-	ldr r6, [sp, #28]
 	asr r5, r5, #8
 	sub r3, r3, r5, lsl #8
 	asr r5, r4, #31
@@ -138,26 +135,28 @@ label39:
 	b label5
 .p2align 4
 label83:
-	ldr r6, [sp, #28]
+	movw r6, #:lower16:buffer
+	movt r6, #:upper16:buffer
 	mov r1, #128
 	add r0, r6, #128000
 	str r1, [r0, #0]
 	movw r0, #32001
 	mov r8, #0
 	add r1, r0, #1
+	str r8, [r6, r0, lsl #2]
 	and r2, r1, #63
 	cmp r2, #60
-	str r8, [r6, r0, lsl #2]
 	bne label93
 	b label12
 .p2align 4
 label10:
 	mov r8, #0
-	ldr r6, [sp, #28]
+	movw r6, #:lower16:buffer
+	movt r6, #:upper16:buffer
 	add r1, r0, #1
+	str r8, [r6, r0, lsl #2]
 	and r2, r1, #63
 	cmp r2, #60
-	str r8, [r6, r0, lsl #2]
 	beq label12
 .p2align 4
 label93:
@@ -165,13 +164,17 @@ label93:
 	b label10
 .p2align 4
 label12:
-	ldr r6, [sp, #28]
+	movw r6, #:lower16:buffer
+	movt r6, #:upper16:buffer
 	mov r8, #0
 	mov r2, #125
 	movw r5, #57840
-	movw r4, #21622
-	movw r3, #43913
+	movt r5, #50130
 	add r1, r6, r1, lsl #2
+	movw r4, #21622
+	movt r4, #4146
+	movw r3, #43913
+	movt r3, #61389
 	str r8, [r1, #0]
 	str r8, [r1, #4]
 	str r2, [r1, #8]
@@ -179,8 +182,8 @@ label12:
 	str r8, [r1, #12]
 	mov r0, r8
 	movw r1, #8961
-	str r2, [sp, #0]
 	movt r1, #26437
+	str r2, [sp, #0]
 	str r8, [sp, #56]
 	str r8, [sp, #60]
 	str r8, [sp, #64]
@@ -262,17 +265,10 @@ label12:
 	str r8, [sp, #368]
 	str r8, [sp, #372]
 	str r5, [sp, #16]
-	movt r5, #50130
-	str r5, [sp, #16]
-	str r4, [sp, #12]
-	movt r4, #4146
 	str r4, [sp, #12]
 	movw r4, #56574
-	str r4, [sp, #8]
 	movt r4, #39098
 	str r4, [sp, #8]
-	str r3, [sp, #4]
-	movt r3, #61389
 	str r3, [sp, #4]
 	cmp r2, r8
 	ble label39
@@ -287,7 +283,8 @@ label20:
 .p2align 4
 label21:
 	add r8, r0, r5
-	ldr r6, [sp, #28]
+	movw r6, #:lower16:buffer
+	movt r6, #:upper16:buffer
 	add r8, r6, r8, lsl #2
 	ldr r9, [r8, #0]
 	ldr r10, [r8, #4]
@@ -430,24 +427,21 @@ label34:
 	blt label334
 	add r8, r2, r5
 	cmp r3, #60
+	movw r10, #48348
+	movt r10, #36635
 	sub r9, r8, r6
-	mov r8, #0
-	mov r10, r9
-	movlt r10, r8
+	mov r8, r9
+	movlt r8, #0
 	cmp r3, #40
-	mov r8, r10
 	movlt r8, r9
 	cmp r3, #60
-	movw r10, #49414
-	movw r9, #48348
-	movt r10, #51810
-	movt r9, #36635
-	movlt r10, r9
+	movw r9, #49414
+	movt r9, #51810
+	movlt r9, r10
 	cmp r3, #40
-	movw r9, #60289
-	movt r9, #28377
-	movlt r10, r9
-	mov r9, r10
+	movw r10, #60289
+	movt r10, #28377
+	movlt r9, r10
 .p2align 4
 label36:
 	add r7, r7, r4, lsl #5
@@ -478,6 +472,6 @@ label36:
 .p2align 4
 label334:
 	movw r9, #31129
-	mov r8, #0
 	movt r9, #23170
+	mov r8, #0
 	b label36

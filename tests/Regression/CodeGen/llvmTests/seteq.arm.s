@@ -29,15 +29,15 @@ r2:
 .globl test
 test:
 	movw r0, #:lower16:i
-	movw r1, #:lower16:k
 	movt r0, #:upper16:i
+	movw r1, #:lower16:k
 	movt r1, #:upper16:k
 	ldr r0, [r0, #0]
 	ldr r1, [r1, #0]
 	sub r0, r0, r1
 	movw r1, #:lower16:r1
-	clz r0, r0
 	movt r1, #:upper16:r1
+	clz r0, r0
 	lsr r0, r0, #5
 	str r0, [r1, #0]
 	bx lr

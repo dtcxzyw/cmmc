@@ -82,8 +82,8 @@ main:
 .p2align 4
 label2:
 	bl getfloat
-	movw r1, #4059
 	vcvt.s32.f32 s1, s0
+	movw r1, #4059
 	movt r1, #16457
 	vcvt.f32.s32 s2, s1
 	vmov r0, s1
@@ -116,8 +116,8 @@ label2:
 	bl putch
 	add r7, r7, #1
 	movw r0, #0
-	vmov s0, r8
 	movt r0, #16672
+	vmov s0, r8
 	vmov s1, r0
 	movw r0, #51712
 	movt r0, #15258

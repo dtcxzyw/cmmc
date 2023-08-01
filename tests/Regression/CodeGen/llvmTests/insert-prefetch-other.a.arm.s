@@ -16,9 +16,9 @@ foo:
 	movs r1, r0
 	ble label10
 	movw r2, #:lower16:X
+	movt r2, #:upper16:X
 	mov r0, #0
 	cmp r1, #1
-	movt r2, #:upper16:X
 	strh r0, [r2, #0]
 	bne label16
 	mov r0, #1

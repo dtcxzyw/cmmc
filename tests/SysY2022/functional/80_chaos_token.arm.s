@@ -128,13 +128,13 @@ saY_HeI10_To:
 .globl main
 main:
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
-	sub sp, sp, #28
-	mov r4, #0
-	mov r0, #10
 	movw r6, #:lower16:__HELLO
-	mov r5, sp
-	str r0, [sp, #0]
 	movt r6, #:upper16:__HELLO
+	mov r0, #10
+	mov r4, #0
+	sub sp, sp, #28
+	str r0, [sp, #0]
+	mov r5, sp
 	str r4, [sp, #4]
 	str r4, [sp, #8]
 	str r4, [sp, #12]
@@ -178,8 +178,8 @@ label18:
 	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
 label6:
 	movw r8, #:lower16:N4__mE___
-	mov r1, #200
 	movt r8, #:upper16:N4__mE___
+	mov r1, #200
 	mla r9, r0, r1, r8
 	ldr r0, [r9, #0]
 	cmp r0, #0

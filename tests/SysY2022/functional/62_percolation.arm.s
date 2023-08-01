@@ -12,8 +12,8 @@ array:
 findfa:
 	push { r4, r5, r6, r7, r8, lr }
 	movw r7, #:lower16:array
-	mov r4, r0
 	movt r7, #:upper16:array
+	mov r4, r0
 	ldr r5, [r7, r0, lsl #2]
 	cmp r0, r5
 	beq label22
@@ -59,8 +59,8 @@ main:
 	mov r5, #0
 	mov r7, #1
 	movw r4, #:lower16:array
-	sub sp, sp, #4
 	movt r4, #:upper16:array
+	sub sp, sp, #4
 	cmp r7, #0
 	beq label112
 .p2align 4

@@ -37,8 +37,8 @@ r3:
 .globl test
 test:
 	movw r0, #:lower16:j
-	movw r1, #:lower16:r1
 	movt r0, #:upper16:j
+	movw r1, #:lower16:r1
 	movt r1, #:upper16:r1
 	ldr r0, [r0, #0]
 	cmp r0, #10

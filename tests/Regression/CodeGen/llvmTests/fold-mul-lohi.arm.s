@@ -24,12 +24,12 @@ foo:
 	cmp r0, #0
 	ble label5
 	movw r2, #:lower16:B
-	movw r3, #:lower16:A
-	movw r4, #:lower16:P
-	cmp r0, #1
 	movt r2, #:upper16:B
+	movw r3, #:lower16:A
 	movt r3, #:upper16:A
+	movw r4, #:lower16:P
 	movt r4, #:upper16:P
+	cmp r0, #1
 	ldrsb r1, [r2, #0]
 	ldrb r1, [r2, #0]
 	lsl r1, r1, #1

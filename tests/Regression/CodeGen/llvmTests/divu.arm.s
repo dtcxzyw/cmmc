@@ -21,8 +21,8 @@ kkkk:
 .globl test
 test:
 	movw r0, #:lower16:iiii
-	movw r1, #:lower16:jjjj
 	movt r0, #:upper16:iiii
+	movw r1, #:lower16:jjjj
 	movt r1, #:upper16:jjjj
 	ldr r0, [r0, #0]
 	ldr r1, [r1, #0]

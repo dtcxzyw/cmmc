@@ -25,7 +25,7 @@ label2:
 	bx lr
 label8:
 	movw r0, #:lower16:result
-	mov r1, #1
 	movt r0, #:upper16:result
+	mov r1, #1
 	str r1, [r0, #0]
 	b label2

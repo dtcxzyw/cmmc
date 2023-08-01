@@ -17,8 +17,8 @@ y:
 .globl t
 t:
 	movw r0, #:lower16:y
-	movw r1, #:lower16:x
 	movt r0, #:upper16:y
+	movw r1, #:lower16:x
 	movt r1, #:upper16:x
 	ldr r0, [r0, #0]
 	ldr r1, [r1, #0]

@@ -25,13 +25,13 @@ main:
 	mov r6, #0
 	mov r2, #1065353216
 	movw r1, #:lower16:y
+	movt r1, #:upper16:y
 	movw r0, #:lower16:x
+	movt r0, #:upper16:x
 	vmov s1, r6
 	vmov s0, r2
 	mov r3, r6
 	mov r7, r6
-	movt r1, #:upper16:y
-	movt r0, #:upper16:x
 	vmov.f32 s16, s1
 	movw r8, #41248
 	movt r8, #7
@@ -213,8 +213,8 @@ label25:
 	mov r0, #39
 	bl _sysy_stoptime
 	movw r0, #39872
-	movw r1, #14269
 	movt r0, #22690
+	movw r1, #14269
 	movt r1, #46470
 	vmov s0, r0
 	movw r0, #14269

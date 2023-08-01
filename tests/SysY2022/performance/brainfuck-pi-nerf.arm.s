@@ -25,8 +25,8 @@ return_a:
 main:
 	push { r4, r5, r6, r7, r8, r9, r10, lr }
 	movw r4, #3841
-	sub sp, sp, #16
 	movt r4, #2560
+	sub sp, sp, #8
 .p2align 4
 label2:
 	bl getch
@@ -49,20 +49,13 @@ label2:
 	movwgt r2, #1
 	orrs r1, r1, r2
 	bne label2
-	movw r2, #:lower16:input
 	cmp r0, #35
-	str r2, [sp, #8]
-	movt r2, #:upper16:input
-	str r2, [sp, #8]
-	movw r2, #:lower16:program
-	str r2, [sp, #4]
-	movt r2, #:upper16:program
-	str r2, [sp, #4]
 	beq label81
 	mov r2, #0
 	mov r5, r2
-	ldr r2, [sp, #4]
-	str r0, [r2, r5, lsl #2]
+	movw r9, #:lower16:program
+	movt r9, #:upper16:program
+	str r0, [r9, r2, lsl #2]
 	b label56
 label4:
 	bl getch
@@ -71,8 +64,9 @@ label4:
 	b label50
 .p2align 4
 label53:
-	ldr r2, [sp, #4]
-	str r0, [r2, r5, lsl #2]
+	movw r9, #:lower16:program
+	movt r9, #:upper16:program
+	str r0, [r9, r5, lsl #2]
 .p2align 4
 label56:
 	bl getch
@@ -109,8 +103,8 @@ label6:
 	bl _sysy_starttime
 	mov r2, #0
 	movw r0, #:lower16:return_a
-	mov r3, r2
 	movt r0, #:upper16:return_a
+	mov r3, r2
 .p2align 4
 label8:
 	add r1, r0, r3, lsl #2
@@ -194,28 +188,6 @@ label11:
 	ldr r2, [sp, #0]
 	cmp r2, r8
 	bgt label21
-	b label17
-label232:
-	add r8, r8, #1
-	b label11
-label251:
-	mov r2, #1
-	mov r9, r2
-.p2align 4
-label37:
-	add r8, r8, #1
-	ldr r2, [sp, #4]
-	ldr r2, [r2, r8, lsl #2]
-	sub r10, r2, #93
-	sub r2, r2, #91
-	clz r10, r10
-	clz r2, r2
-	lsr r10, r10, #5
-	lsr r2, r2, #5
-	sub r9, r9, r10
-	adds r9, r9, r2
-	bgt label37
-	b label232
 label17:
 	mov r0, #118
 	bl _sysy_stoptime
@@ -228,7 +200,7 @@ label17:
 	b label19
 label18:
 	mov r2, #0
-	add sp, sp, #16
+	add sp, sp, #8
 	mov r0, r2
 	pop { r4, r5, r6, r7, r8, r9, r10, pc }
 .p2align 4
@@ -241,8 +213,9 @@ label19:
 	b label18
 .p2align 4
 label21:
-	ldr r2, [sp, #4]
-	ldr r2, [r2, r8, lsl #2]
+	movw r9, #:lower16:program
+	movt r9, #:upper16:program
+	ldr r2, [r9, r8, lsl #2]
 	cmp r2, #62
 	beq label49
 	cmp r2, #60
@@ -287,21 +260,31 @@ label25:
 	bne label26
 	ldr r2, [r1, r7, lsl #2]
 	cmp r2, #0
-	beq label251
-	str r8, [r0, r6, lsl #2]
-	add r6, r6, #1
-	add r8, r8, #1
+	bne label36
+	mov r2, #1
+	mov r10, r2
+	mov r2, r8
+.p2align 4
+label37:
+	add r2, r2, #1
+	movw r9, #:lower16:program
+	movt r9, #:upper16:program
+	ldr r8, [r9, r2, lsl #2]
+	sub r9, r8, #93
+	sub r8, r8, #91
+	clz r9, r9
+	clz r8, r8
+	lsr r9, r9, #5
+	lsr r8, r8, #5
+	sub r9, r10, r9
+	adds r10, r9, r8
+	bgt label37
+	mov r8, r2
+	add r8, r2, #1
 	b label11
 label26:
 	cmp r2, #93
-	bne label29
-	ldr r9, [r1, r7, lsl #2]
-	sub r2, r6, #1
-	cmp r9, #0
-	beq label214
-	ldr r8, [r0, r2, lsl #2]
-	b label43
-label29:
+	beq label27
 	cmp r2, #46
 	beq label30
 	cmp r2, #44
@@ -323,12 +306,20 @@ label50:
 .p2align 4
 label51:
 	bl getch
-	ldr r2, [sp, #8]
+	movw r2, #:lower16:input
+	movt r2, #:upper16:input
 	str r0, [r2, r5, lsl #2]
 	add r5, r5, #1
 	cmp r4, r5
 	bgt label51
 	b label6
+label27:
+	ldr r9, [r1, r7, lsl #2]
+	sub r2, r6, #1
+	cmp r9, #0
+	beq label214
+	ldr r8, [r0, r2, lsl #2]
+	b label43
 .p2align 4
 label41:
 	add r2, r1, r7, lsl #2
@@ -349,13 +340,22 @@ label30:
 	add r8, r8, #1
 	b label11
 label236:
-	ldr r2, [sp, #8]
+	movw r2, #:lower16:input
+	movt r2, #:upper16:input
 	ldr r2, [r2, r3, lsl #2]
 	add r3, r3, #1
 	str r2, [r1, r7, lsl #2]
 	b label43
 label214:
 	mov r6, r2
+	add r8, r8, #1
+	b label11
+label232:
+	add r8, r8, #1
+	b label11
+label36:
+	str r8, [r0, r6, lsl #2]
+	add r6, r6, #1
 	add r8, r8, #1
 	b label11
 label81:

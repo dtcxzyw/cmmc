@@ -9,10 +9,9 @@
 foo:
 	cmp r0, #0
 	bne label9
-	mov r2, #0
 	cmp r1, #0
 	mov r0, #5
-	moveq r0, r2
+	moveq r0, #0
 	b label3
 label9:
 	add r0, r0, #2

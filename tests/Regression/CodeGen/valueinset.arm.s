@@ -40,8 +40,8 @@ cross_64_with_9:
 	subs r2, r0, #35
 	mov r1, #1
 	movw r3, #3841
-	lsl r2, r1, r2
 	movt r3, #2560
+	lsl r2, r1, r2
 	and r2, r3, r2
 	sub r3, r0, #67
 	clz r2, r2

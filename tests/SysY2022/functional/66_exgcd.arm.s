@@ -73,8 +73,8 @@ main:
 	mov r0, #7
 	bl exgcd
 	movw r1, #34953
-	ldr r0, [sp, #4]
 	movt r1, #34952
+	ldr r0, [sp, #4]
 	smmla r1, r0, r1, r0
 	asr r2, r1, #3
 	add r1, r2, r1, lsr #31

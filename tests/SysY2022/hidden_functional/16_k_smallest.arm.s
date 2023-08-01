@@ -18,8 +18,8 @@ main:
 	bl getint
 	cmp r6, #0
 	movw r4, #:lower16:array
-	mov r5, r0
 	movt r4, #:upper16:array
+	mov r5, r0
 	bgt label32
 label31:
 	sub r1, r6, #1

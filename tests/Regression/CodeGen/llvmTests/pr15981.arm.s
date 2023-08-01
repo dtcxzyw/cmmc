@@ -38,7 +38,7 @@ fn2:
 	str r3, [r0, #0]
 	mov r2, #0
 	movw r0, #:lower16:c
-	movne r2, r1
 	movt r0, #:upper16:c
+	movne r2, r1
 	str r2, [r0, #0]
 	bx lr

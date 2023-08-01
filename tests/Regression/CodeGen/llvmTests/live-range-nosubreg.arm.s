@@ -26,8 +26,8 @@ b:
 .globl main
 main:
 	movw r0, #:lower16:a
-	movw r3, #:lower16:c
 	movt r0, #:upper16:a
+	movw r3, #:lower16:c
 	movt r3, #:upper16:c
 	ldrsh r1, [r0, #0]
 	ldrh r2, [r0, #0]

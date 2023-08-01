@@ -401,10 +401,10 @@ main:
 	vmov.f32 s1, s16
 	bl takFP
 	movw r0, #0
-	vmov.f32 s16, s0
 	movt r0, #16864
-	vmov s0, r4
+	vmov.f32 s16, s0
 	vmov s1, r0
+	vmov s0, r4
 	vcvt.f32.s32 s0, s0
 	vadd.f32 s0, s0, s1
 	bl fibFP

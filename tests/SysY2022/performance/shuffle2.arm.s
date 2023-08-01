@@ -36,71 +36,58 @@ ans:
 .globl main
 main:
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
-	sub sp, sp, #36
+	sub sp, sp, #12
 	bl getint
 	movw r4, #:lower16:keys
-	str r0, [sp, #16]
-	mov r7, r0
 	movt r4, #:upper16:keys
+	str r0, [sp, #0]
+	mov r7, r0
 	mov r0, r4
 	bl getarray
 	movw r6, #:lower16:values
-	mov r5, r0
 	movt r6, #:upper16:values
+	mov r5, r0
 	mov r0, r6
 	bl getarray
 	movw r2, #:lower16:requests
-	str r2, [sp, #20]
 	movt r2, #:upper16:requests
-	str r2, [sp, #20]
 	mov r0, r2
 	bl getarray
-	str r0, [sp, #24]
+	str r0, [sp, #4]
 	mov r1, r0
 	mov r0, #78
 	bl _sysy_starttime
-	movw r0, #:lower16:nextvalue
-	movw r9, #:lower16:head
-	movw r11, #:lower16:key
-	movw r8, #:lower16:value
-	str r9, [sp, #8]
 	cmp r5, #0
+	movw r0, #:lower16:nextvalue
 	movt r0, #:upper16:nextvalue
-	movt r9, #:upper16:head
-	str r9, [sp, #8]
-	str r11, [sp, #4]
-	movt r11, #:upper16:key
-	str r11, [sp, #4]
-	movw r11, #:lower16:next
-	str r8, [sp, #0]
-	movt r8, #:upper16:value
-	str r8, [sp, #0]
-	str r11, [sp, #12]
-	movt r11, #:upper16:next
-	str r11, [sp, #12]
 	ble label13
 	mov r2, #0
 	mov r1, r2
 .p2align 4
 label2:
 	ldr r3, [r4, r1, lsl #2]
+	movw r9, #:lower16:head
+	movt r9, #:upper16:head
 	add r2, r2, #1
-	ldr r7, [sp, #16]
+	ldr r7, [sp, #0]
 	sdiv r8, r3, r7
 	mls r8, r8, r7, r3
 	ldr r7, [r6, r1, lsl #2]
-	ldr r9, [sp, #8]
 	ldr r9, [r9, r8, lsl #2]
 	cmp r9, #0
 	bne label62
-	ldr r9, [sp, #8]
+	movw r9, #:lower16:head
+	movt r9, #:upper16:head
+	movw r11, #:lower16:key
+	movt r11, #:upper16:key
 	str r2, [r9, r8, lsl #2]
-	ldr r11, [sp, #4]
+	movw r8, #:lower16:value
+	movt r8, #:upper16:value
 	str r3, [r11, r2, lsl #2]
+	movw r11, #:lower16:next
+	movt r11, #:upper16:next
 	mov r3, #0
-	ldr r8, [sp, #0]
 	str r7, [r8, r2, lsl #2]
-	ldr r11, [sp, #12]
 	str r3, [r11, r2, lsl #2]
 	str r3, [r0, r2, lsl #2]
 .p2align 4
@@ -110,15 +97,17 @@ label6:
 	bgt label2
 label13:
 	movw r4, #:lower16:ans
-	ldr r1, [sp, #24]
 	movt r4, #:upper16:ans
+	ldr r1, [sp, #4]
 	cmp r1, #0
 	ble label14
 	mov r1, #0
-	ldr r2, [sp, #20]
+	movw r2, #:lower16:requests
+	movt r2, #:upper16:requests
+	movw r9, #:lower16:head
+	movt r9, #:upper16:head
 	ldr r2, [r2, r1, lsl #2]
-	ldr r7, [sp, #16]
-	ldr r9, [sp, #8]
+	ldr r7, [sp, #0]
 	sdiv r3, r2, r7
 	mls r3, r3, r7, r2
 	ldr r3, [r9, r3, lsl #2]
@@ -129,13 +118,15 @@ label125:
 	b label24
 .p2align 4
 label19:
-	ldr r11, [sp, #4]
+	movw r11, #:lower16:key
+	movt r11, #:upper16:key
 	ldr r5, [r11, r3, lsl #2]
 	cmp r2, r5
 	bne label132
 	mov r2, r3
 	mov r3, #0
-	ldr r8, [sp, #0]
+	movw r8, #:lower16:value
+	movt r8, #:upper16:value
 	ldr r5, [r8, r2, lsl #2]
 	ldr r2, [r0, r2, lsl #2]
 	add r3, r3, r5
@@ -143,7 +134,8 @@ label19:
 	beq label24
 .p2align 4
 label21:
-	ldr r8, [sp, #0]
+	movw r8, #:lower16:value
+	movt r8, #:upper16:value
 	ldr r5, [r8, r2, lsl #2]
 	ldr r2, [r0, r2, lsl #2]
 	add r3, r3, r5
@@ -153,14 +145,16 @@ label21:
 label24:
 	add r2, r1, #1
 	str r3, [r4, r1, lsl #2]
-	ldr r1, [sp, #24]
+	ldr r1, [sp, #4]
 	cmp r1, r2
 	ble label14
 	mov r1, r2
-	ldr r2, [sp, #20]
+	movw r2, #:lower16:requests
+	movt r2, #:upper16:requests
+	movw r9, #:lower16:head
+	movt r9, #:upper16:head
 	ldr r2, [r2, r1, lsl #2]
-	ldr r7, [sp, #16]
-	ldr r9, [sp, #8]
+	ldr r7, [sp, #0]
 	sdiv r3, r2, r7
 	mls r3, r3, r7, r2
 	ldr r3, [r9, r3, lsl #2]
@@ -173,15 +167,17 @@ label62:
 	beq label9
 .p2align 4
 label10:
-	ldr r11, [sp, #4]
+	movw r11, #:lower16:key
+	movt r11, #:upper16:key
 	ldr r11, [r11, r10, lsl #2]
 	cmp r3, r11
 	bne label98
 	add r3, r0, r10, lsl #2
 	ldr r8, [r3, #0]
 	str r8, [r0, r2, lsl #2]
+	movw r8, #:lower16:value
+	movt r8, #:upper16:value
 	str r2, [r3, #0]
-	ldr r8, [sp, #0]
 	str r7, [r8, r2, lsl #2]
 	add r1, r1, #1
 	cmp r5, r1
@@ -190,35 +186,41 @@ label10:
 label14:
 	mov r0, #90
 	bl _sysy_stoptime
-	ldr r1, [sp, #24]
+	ldr r1, [sp, #4]
 	mov r0, r1
 	mov r1, r4
 	bl putarray
-	add sp, sp, #36
+	add sp, sp, #12
 	mov r0, #0
 	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
 .p2align 4
 label132:
-	ldr r11, [sp, #12]
+	movw r11, #:lower16:next
+	movt r11, #:upper16:next
 	ldr r3, [r11, r3, lsl #2]
 	cmp r3, #0
 	bne label19
 	b label125
 label9:
-	ldr r11, [sp, #12]
+	movw r11, #:lower16:next
+	movt r11, #:upper16:next
 	str r9, [r11, r2, lsl #2]
-	ldr r9, [sp, #8]
+	movw r11, #:lower16:key
+	movt r11, #:upper16:key
+	movw r9, #:lower16:head
+	movt r9, #:upper16:head
 	str r2, [r9, r8, lsl #2]
-	ldr r11, [sp, #4]
+	movw r8, #:lower16:value
+	movt r8, #:upper16:value
 	str r3, [r11, r2, lsl #2]
 	mov r3, #0
-	ldr r8, [sp, #0]
 	str r7, [r8, r2, lsl #2]
 	str r3, [r0, r2, lsl #2]
 	b label6
 .p2align 4
 label98:
-	ldr r11, [sp, #12]
+	movw r11, #:lower16:next
+	movt r11, #:upper16:next
 	ldr r10, [r11, r10, lsl #2]
 	cmp r10, #0
 	bne label10

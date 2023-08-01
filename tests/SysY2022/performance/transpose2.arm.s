@@ -18,19 +18,15 @@ main:
 	sub sp, sp, #12
 	bl getint
 	movw r6, #:lower16:a
-	mov r5, r0
 	movt r6, #:upper16:a
+	mov r5, r0
 	mov r0, r6
 	bl getarray
 	sub r4, r0, #4
-	str r0, [sp, #4]
+	str r0, [sp, #0]
 	mov r0, #28
 	bl _sysy_starttime
 	cmp r5, #0
-	movw r8, #:lower16:matrix
-	str r8, [sp, #0]
-	movt r8, #:upper16:matrix
-	str r8, [sp, #0]
 	ble label7
 	sub r1, r5, #4
 	cmp r5, #4
@@ -38,7 +34,8 @@ main:
 	mov r0, #0
 .p2align 4
 label3:
-	ldr r8, [sp, #0]
+	movw r8, #:lower16:matrix
+	movt r8, #:upper16:matrix
 	add r3, r0, #1
 	add r2, r8, r0, lsl #2
 	str r0, [r2, #0]
@@ -51,13 +48,14 @@ label3:
 	cmp r1, r0
 	bgt label3
 label5:
-	ldr r8, [sp, #0]
+	movw r8, #:lower16:matrix
+	movt r8, #:upper16:matrix
 	str r0, [r8, r0, lsl #2]
 	add r0, r0, #1
 	cmp r5, r0
 	bgt label5
 label7:
-	ldr r0, [sp, #4]
+	ldr r0, [sp, #0]
 	cmp r0, #0
 	ble label19
 	mov r7, #0
@@ -73,7 +71,7 @@ label9:
 label83:
 	mov r8, #0
 	cmp r1, r8
-	ble label170
+	ble label169
 .p2align 4
 label17:
 	add r9, r8, #1
@@ -81,13 +79,14 @@ label17:
 	blt label98
 	mla r10, r2, r8, r0
 	add r11, r3, r8
-	ldr r8, [sp, #0]
+	movw r8, #:lower16:matrix
+	movt r8, #:upper16:matrix
 	ldr r11, [r8, r11, lsl #2]
 	str r11, [r8, r10, lsl #2]
 	mov r8, r9
 	cmp r1, r9
 	bgt label17
-	b label176
+	b label175
 .p2align 4
 label98:
 	mov r8, r9
@@ -98,11 +97,11 @@ label98:
 	cmp r2, r0
 	bgt label83
 	add r7, r7, #1
-	ldr r0, [sp, #4]
+	ldr r0, [sp, #0]
 	cmp r0, r7
 	bgt label9
 label19:
-	ldr r0, [sp, #4]
+	ldr r0, [sp, #0]
 	cmp r0, #0
 	bgt label22
 	b label108
@@ -118,7 +117,7 @@ label20:
 	mov r0, #0
 	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
 label22:
-	ldr r0, [sp, #4]
+	ldr r0, [sp, #0]
 	cmp r0, #4
 	ble label113
 	mov r0, #4
@@ -130,10 +129,11 @@ label22:
 	mov r3, r6
 .p2align 4
 label23:
-	ldr r8, [sp, #0]
+	movw r8, #:lower16:matrix
+	movt r8, #:upper16:matrix
 	add r11, r5, r7
-	add r5, r5, #8
 	add r8, r8, r3, lsl #2
+	add r5, r5, #8
 	add r3, r3, #4
 	ldr r9, [r8, #0]
 	cmp r4, r3
@@ -155,41 +155,42 @@ label23:
 	add r7, r7, r8
 	bgt label23
 label31:
-	ldr r8, [sp, #0]
+	movw r8, #:lower16:matrix
+	movt r8, #:upper16:matrix
 	ldr r0, [r8, r3, lsl #2]
 	add r3, r3, #1
 	mla r6, r7, r0, r6
-	ldr r0, [sp, #4]
+	ldr r0, [sp, #0]
 	add r7, r7, r5
 	add r5, r5, #2
 	cmp r0, r3
 	bgt label31
 	b label20
 .p2align 4
-label176:
+label175:
 	add r0, r0, #1
 	mul r3, r1, r0
 	cmp r2, r0
 	bgt label83
 	add r7, r7, #1
-	ldr r0, [sp, #4]
+	ldr r0, [sp, #0]
 	cmp r0, r7
 	bgt label9
 	b label19
 .p2align 4
-label170:
+label169:
 	add r0, r0, #1
 	mul r3, r1, r0
 	cmp r2, r0
 	bgt label83
 	add r7, r7, #1
-	ldr r0, [sp, #4]
+	ldr r0, [sp, #0]
 	cmp r0, r7
 	bgt label9
 	b label19
 label82:
 	add r7, r7, #1
-	ldr r0, [sp, #4]
+	ldr r0, [sp, #0]
 	cmp r0, r7
 	bgt label9
 	b label19

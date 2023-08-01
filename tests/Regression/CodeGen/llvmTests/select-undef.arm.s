@@ -8,7 +8,6 @@
 .globl func
 func:
 	cmp r0, #10
-	mov r2, #0
 	mov r0, r1
-	movlt r0, r2
+	movlt r0, #0
 	bx lr

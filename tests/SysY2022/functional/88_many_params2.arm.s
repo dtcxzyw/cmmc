@@ -15,22 +15,18 @@ a:
 .globl main
 main:
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
-	movw r1, #18373
 	movw r4, #63339
+	movt r4, #1
 	mov r2, #0
 	movw r5, #:lower16:a
-	sub sp, sp, #12
-	movt r4, #1
-	mov r0, r2
 	movt r5, #:upper16:a
-	str r2, [sp, #4]
-	str r1, [sp, #0]
-	movt r1, #36041
-	str r1, [sp, #0]
+	sub sp, sp, #12
+	mov r0, r2
+	str r2, [sp, #0]
 .p2align 4
 label2:
 	add r1, r5, r2, lsl #2
-	ldr r0, [sp, #4]
+	ldr r0, [sp, #0]
 	str r0, [r1, #0]
 	str r0, [r1, #4]
 	str r0, [r1, #8]
@@ -102,7 +98,7 @@ label2:
 	b label2
 label4:
 	add r1, r5, r0, lsl #2
-	ldr r0, [sp, #4]
+	ldr r0, [sp, #0]
 	str r0, [r1, #0]
 	str r0, [r1, #4]
 	str r0, [r1, #8]
@@ -158,20 +154,20 @@ label4:
 	add r1, r2, #116
 .p2align 4
 label5:
-	ldr r0, [sp, #4]
+	ldr r0, [sp, #0]
 	str r0, [r5, r1, lsl #2]
 	movw r0, #4087
 	add r1, r1, #1
 	cmp r1, r0
 	blt label5
 	movw r3, #:lower16:b
-	ldr r0, [sp, #4]
 	movt r3, #:upper16:b
+	ldr r0, [sp, #0]
 	mov r2, r0
 .p2align 4
 label8:
 	add r1, r3, r2, lsl #2
-	ldr r0, [sp, #4]
+	ldr r0, [sp, #0]
 	str r0, [r1, #0]
 	str r0, [r1, #4]
 	str r0, [r1, #8]
@@ -243,7 +239,7 @@ label8:
 	b label8
 label10:
 	add r1, r3, r0, lsl #2
-	ldr r0, [sp, #4]
+	ldr r0, [sp, #0]
 	str r0, [r1, #0]
 	str r0, [r1, #4]
 	str r0, [r1, #8]
@@ -299,7 +295,7 @@ label10:
 	add r1, r2, #116
 .p2align 4
 label11:
-	ldr r0, [sp, #4]
+	ldr r0, [sp, #0]
 	str r0, [r3, r1, lsl #2]
 	movw r0, #3127
 	add r1, r1, #1
@@ -326,7 +322,7 @@ label11:
 	movw r0, #12108
 	add r0, r3, r0
 	ldr r10, [r0, #0]
-	ldr r0, [sp, #4]
+	ldr r0, [sp, #0]
 	mov r11, r0
 .p2align 4
 label14:
@@ -357,7 +353,8 @@ label21:
 	blt label25
 label22:
 	mul r0, r9, r4
-	ldr r1, [sp, #0]
+	movw r1, #18373
+	movt r1, #36041
 	add r9, r9, #7
 	smmla r1, r0, r1, r0
 	asr r2, r1, #11
@@ -372,7 +369,8 @@ label22:
 .p2align 4
 label25:
 	add r0, r7, r10, lsl #2
-	ldr r1, [sp, #0]
+	movw r1, #18373
+	movt r1, #36041
 	mul r3, r9, r4
 	add r10, r10, #4
 	cmp r10, #6
@@ -409,7 +407,7 @@ label25:
 label18:
 	mov r0, #10
 	bl putch
-	ldr r0, [sp, #4]
+	ldr r0, [sp, #0]
 	add sp, sp, #12
 	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
 .p2align 4

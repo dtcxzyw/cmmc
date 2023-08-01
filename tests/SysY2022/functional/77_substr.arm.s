@@ -12,9 +12,9 @@ p:
 .globl main
 main:
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
-	mov r6, #2
 	mov r2, #4
 	mov r3, #7
+	mov r6, #2
 	sub sp, sp, #124
 	mov r1, #1
 	mov r7, #0
