@@ -464,6 +464,28 @@
         "task-clock": 5595.08
       }
     ],
+    "6d44124a80e777712e32d41c7e9e197da7e0edd5": [
+      {
+        "sysy_time": 5.260262,
+        "task-clock:u": 5249.69
+      },
+      {
+        "sysy_time": 5.259217,
+        "task-clock:u": 5258.33
+      },
+      {
+        "sysy_time": 5.260172,
+        "task-clock:u": 5248.86
+      },
+      {
+        "sysy_time": 5.259043,
+        "task-clock:u": 5258.11
+      },
+      {
+        "sysy_time": 5.259789,
+        "task-clock:u": 5248.91
+      }
+    ],
     "7501d07d092337845cfebf755d1c0414e9cc3318": [
       {
         "branch-instructions": 209861960,
