@@ -270,6 +270,11 @@
       "parent": "bce500a6d9c5c2d0e588d8368e4d74f5161a274c",
       "time": "2023-07-29 15:57:40 +0800"
     },
+    "3f15a8e12be3f0a9f2da522670f88d019a19ffec": {
+      "message": "feat(transform): handle scev phi",
+      "parent": "d52bedd212f655f50fa633157a04c7baff395853",
+      "time": "2023-08-02 22:59:25 +0800"
+    },
     "43be4d9f3b3a4ab02e68f04af9d41f3b417f4758": {
       "message": "feat(transform): handle N-sat",
       "parent": "e87901f1931b3bbb5175bd3035309c5db03280ad",
@@ -580,6 +585,11 @@
       "parent": "881628785826c53f9f768396459a25913a196c7d",
       "time": "2023-07-06 19:29:20 +0800"
     },
+    "81ce6ea2c3ca9f2730467fde3d465a6cfad79136": {
+      "message": "feat(codegen): gep scev",
+      "parent": "ef576f2eb05f90cf3110c6e42127e43c77f11818",
+      "time": "2023-08-03 02:20:25 +0800"
+    },
     "84648e12b6bda57ce06277c9d225d6f6c00a1481": {
       "message": "misc: update ref",
       "parent": "bc4999d1ddd872bad964ca1fd4720bc9dfb4b700",
@@ -634,6 +644,11 @@
       "message": "fix: fix headers",
       "parent": "738794d0b3a8c5c37e6ab70bf25aa1eb8a98af42",
       "time": "2023-07-08 04:39:36 +0800"
+    },
+    "94f8356dfee136d4257a21bba074d2aa79f29134": {
+      "message": "misc: fix header",
+      "parent": "81ce6ea2c3ca9f2730467fde3d465a6cfad79136",
+      "time": "2023-08-03 02:23:02 +0800"
     },
     "97cc72f856cc319dc4b12d569da66b09a1abf5ea": {
       "message": "fix(codegen): fix call eliminate on same block",
@@ -890,6 +905,11 @@
       "parent": "d857c0af64ca4a9b0dab6ca3480388b7e87711ff",
       "time": "2023-07-16 08:14:01 +0800"
     },
+    "d52bedd212f655f50fa633157a04c7baff395853": {
+      "message": "feat(codegen): more large-imm materialization for riscv",
+      "parent": "3871ff9cf9c1c34fb6ed0dfec1f715110c5c9fd6",
+      "time": "2023-08-02 21:05:31 +0800"
+    },
     "d59c49feebe67bdca8b7a92cca1d865c892253fb": {
       "message": "test: remove flaky tests",
       "parent": "c48895059df4199823303f514c98f3560d46218b",
@@ -995,6 +1015,11 @@
       "parent": "fa954375b25c648c0d9469b2f5ce25015248317f",
       "time": "2023-07-03 01:44:34 +0800"
     },
+    "ef576f2eb05f90cf3110c6e42127e43c77f11818": {
+      "message": "feat(transform): handle scev with loop invariant",
+      "parent": "3f15a8e12be3f0a9f2da522670f88d019a19ffec",
+      "time": "2023-08-03 00:06:27 +0800"
+    },
     "f2fd2172264d8a6e368c350464502093c909c048": {
       "message": "feat(transform): optimize transform pipeline",
       "parent": "980aab119d0f34261e3300838ff5aade4d070ba0",
@@ -1046,5 +1071,5 @@
       "time": "2023-07-06 01:05:50 +0800"
     }
   },
-  "head": "3871ff9cf9c1c34fb6ed0dfec1f715110c5c9fd6"
+  "head": "94f8356dfee136d4257a21bba074d2aa79f29134"
 }
