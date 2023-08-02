@@ -205,6 +205,11 @@
       "parent": "584e11c9f78ddd8d7ca394b03f2341f4203a5677",
       "time": "2023-07-01 21:30:30 +0800"
     },
+    "3871ff9cf9c1c34fb6ed0dfec1f715110c5c9fd6": {
+      "message": "feat(codegen): tune gcb ra",
+      "parent": "80d8243770e3263bf30e74e809d27a007231d80d",
+      "time": "2023-08-02 20:22:12 +0800"
+    },
     "3975bb1ca684ff43afb5ece896f5c4c9d6e6857a": {
       "message": "fix: fix header",
       "parent": "a503ddcee8ddaf70ac35a73a90bb1ab414dced46",
@@ -564,6 +569,11 @@
       "message": "feat(transform): merge blocks with phi insts",
       "parent": "075cfde698d64f95d0c80923a0ad7cf5e03dd6d4",
       "time": "2023-07-04 20:02:55 +0800"
+    },
+    "80d8243770e3263bf30e74e809d27a007231d80d": {
+      "message": "feat(codegen): expand riscv imm",
+      "parent": "8c4b091b59989c8090e2a0cab60f20ed9007ef26",
+      "time": "2023-08-02 19:19:36 +0800"
     },
     "816f822888acbcef7ed3f4fb74188f7b6c856ce0": {
       "message": "refactor(ir): refactor compare insts",
@@ -1036,5 +1046,5 @@
       "time": "2023-07-06 01:05:50 +0800"
     }
   },
-  "head": "8c4b091b59989c8090e2a0cab60f20ed9007ef26"
+  "head": "3871ff9cf9c1c34fb6ed0dfec1f715110c5c9fd6"
 }
