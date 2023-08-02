@@ -12,12 +12,12 @@ main:
 	sd s0, 8(sp)
 	lui a0, 264192
 	addi s0, sp, 80
-	sd s1, 16(sp)
-	addi s1, sp, 64
-	sd s3, 24(sp)
-	addi s3, sp, 40
-	sd s2, 32(sp)
-	mv s2, zero
+	sd s2, 16(sp)
+	addi s2, sp, 64
+	sd s1, 24(sp)
+	addi s1, sp, 40
+	sd s3, 32(sp)
+	mv s3, zero
 	fsw f11, 40(sp)
 	fsw f11, 64(sp)
 	fsw f11, 80(sp)
@@ -29,42 +29,49 @@ main:
 	fsw f11, 72(sp)
 	fsw f11, 88(sp)
 label2:
-	sh2add a1, s2, s3
-	flw f10, 0(a1)
+	flw f10, 0(s1)
 	fcvt.w.s a0, f10, rtz
 	jal putint
 	li a0, 3
-	addiw s2, s2, 1
-	blt s2, a0, label2
+	addiw s3, s3, 1
+	bge s3, a0, label6
+	addi s1, s1, 4
+	j label2
+label6:
 	li a0, 10
 	jal putch
+	mv s1, s2
 	mv s2, zero
-label5:
-	sh2add a1, s2, s1
-	flw f10, 0(a1)
+label7:
+	flw f10, 0(s1)
 	fcvt.w.s a0, f10, rtz
 	jal putint
 	li a0, 3
 	addiw s2, s2, 1
-	blt s2, a0, label5
+	bge s2, a0, label11
+	addi s1, s1, 4
+	j label7
+label11:
 	li a0, 10
 	jal putch
 	mv s1, zero
-label8:
-	sh2add a1, s1, s0
-	flw f10, 0(a1)
+label12:
+	flw f10, 0(s0)
 	fcvt.w.s a0, f10, rtz
 	jal putint
 	li a0, 3
 	addiw s1, s1, 1
-	blt s1, a0, label8
+	bge s1, a0, label16
+	addi s0, s0, 4
+	j label12
+label16:
 	li a0, 10
 	jal putch
 	ld ra, 0(sp)
 	mv a0, zero
 	ld s0, 8(sp)
-	ld s1, 16(sp)
-	ld s3, 24(sp)
-	ld s2, 32(sp)
+	ld s2, 16(sp)
+	ld s1, 24(sp)
+	ld s3, 32(sp)
 	addi sp, sp, 96
 	ret

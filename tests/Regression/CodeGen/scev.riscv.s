@@ -4,78 +4,88 @@
 .p2align 2
 .globl foo4
 foo4:
-	ble a1, zero, label13
-	li a4, 4
-	ble a1, a4, label21
+	ble a1, zero, label24
+	li a2, 4
+	ble a1, a2, label3
 	addiw a3, a1, -4
-	addiw a4, a1, -20
-	li t0, 16
-	ble a3, t0, label27
-	mv a2, zero
-	mv a5, zero
+	addiw a5, a1, -20
+	li a2, 16
+	ble a3, a2, label45
+	mv a2, a0
+	mv a4, zero
+	mv t0, zero
 .p2align 2
-label4:
-	sh2add t0, a5, a0
-	addiw t1, a2, 4
-	addiw t2, a2, 8
-	addiw a5, a5, 16
-	sw a2, 0(t0)
-	sw t1, 4(t0)
-	addiw t1, a2, 12
-	sw t2, 8(t0)
-	addiw t2, a2, 16
-	sw t1, 12(t0)
-	addiw t1, a2, 20
-	sw t2, 16(t0)
-	addiw t2, a2, 24
-	sw t1, 20(t0)
-	addiw t1, a2, 28
-	sw t2, 24(t0)
-	addiw t2, a2, 32
-	sw t1, 28(t0)
-	addiw t1, a2, 36
-	sw t2, 32(t0)
-	addiw t2, a2, 40
-	sw t1, 36(t0)
-	addiw t1, a2, 44
-	sw t2, 40(t0)
-	addiw t2, a2, 48
-	sw t1, 44(t0)
-	addiw t1, a2, 52
-	sw t2, 48(t0)
-	addiw t2, a2, 56
-	sw t1, 52(t0)
-	addiw t1, a2, 60
-	sw t2, 56(t0)
-	addiw a2, a2, 64
-	sw t1, 60(t0)
-	bgt a4, a5, label4
-label7:
-	sh2add a4, a5, a0
-	addiw t0, a2, 4
-	addiw t1, a2, 8
-	addiw a5, a5, 4
-	sw a2, 0(a4)
-	sw t0, 4(a4)
-	addiw t0, a2, 12
-	sw t1, 8(a4)
-	addiw a2, a2, 16
-	sw t0, 12(a4)
-	bgt a3, a5, label7
-	mv a3, a5
+label18:
+	sw a4, 0(a2)
+	addiw t1, a4, 4
+	addiw t2, a4, 8
+	addiw t3, a4, 40
+	addiw t0, t0, 16
+	sw t1, 4(a2)
+	addiw t1, a4, 12
+	sw t2, 8(a2)
+	addiw t2, a4, 16
+	sw t1, 12(a2)
+	addiw t1, a4, 20
+	sw t2, 16(a2)
+	addiw t2, a4, 24
+	sw t1, 20(a2)
+	addiw t1, a4, 28
+	sw t2, 24(a2)
+	addiw t2, a4, 32
+	sw t1, 28(a2)
+	addiw t1, a4, 36
+	sw t2, 32(a2)
+	addiw t2, a4, 44
+	sw t1, 36(a2)
+	addiw t1, a4, 48
+	sw t3, 40(a2)
+	sw t2, 44(a2)
+	addiw t2, a4, 52
+	sw t1, 48(a2)
+	addiw t1, a4, 56
+	sw t2, 52(a2)
+	addiw t2, a4, 60
+	sw t1, 56(a2)
+	addiw a4, a4, 64
+	sw t2, 60(a2)
+	ble a5, t0, label22
+	addi a2, a2, 64
+	j label18
+label22:
+	sh2add a2, t0, a0
 label10:
-	sh2add a4, a3, a0
-	addiw a3, a3, 1
-	sw a2, 0(a4)
-	addiw a2, a2, 4
-	bgt a1, a3, label10
-label13:
-	ret
-label21:
-	mv a2, zero
-	mv a3, zero
+	sw a4, 0(a2)
+	addiw a5, a4, 4
+	addiw t1, a4, 8
+	addiw t0, t0, 4
+	sw a5, 4(a2)
+	addiw a5, a4, 12
+	sw t1, 8(a2)
+	addiw a4, a4, 16
+	sw a5, 12(a2)
+	ble a3, t0, label14
+	addi a2, a2, 16
 	j label10
-label27:
-	mv a5, zero
+label4:
+	sw a2, 0(a0)
+	addiw t0, t0, 1
+	addiw a2, a2, 4
+	ble a1, t0, label24
+	addi a0, a0, 4
+	j label4
+label14:
+	sh2add a0, t0, a0
+	mv a2, a4
+	j label4
+label24:
+	ret
+label3:
 	mv a2, zero
-	j label7
+	mv t0, zero
+	j label4
+label45:
+	mv a2, a0
+	mv t0, zero
+	mv a4, zero
+	j label10

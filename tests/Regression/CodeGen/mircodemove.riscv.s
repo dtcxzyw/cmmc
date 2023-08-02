@@ -4,55 +4,60 @@
 .p2align 2
 .globl test
 test:
-	lui a3, 349525
-	addiw a2, a3, 1366
-	ble a1, zero, label7
+	lui a2, 349525
+	addiw a3, a2, 1366
+	ble a1, zero, label14
 	addiw a4, a1, -4
-	li a3, 4
-	ble a1, a3, label16
-	mv a3, zero
+	li a2, 4
+	ble a1, a2, label23
+	mv a2, a0
+	mv a5, zero
 .p2align 2
-label3:
-	sh2add a5, a3, a0
-	addiw a3, a3, 4
-	lw t2, 0(a5)
-	mul t0, t2, a2
-	srli t4, t0, 63
-	srli t1, t0, 32
-	add t2, t4, t1
-	sw t2, 0(a5)
-	lw t3, 4(a5)
-	mul t0, t3, a2
+label8:
+	lw t3, 0(a2)
+	addiw a5, a5, 4
+	mul t0, t3, a3
 	srli t2, t0, 63
 	srli t1, t0, 32
 	add t4, t2, t1
-	sw t4, 4(a5)
-	lw t3, 8(a5)
-	mul t0, t3, a2
-	srli t2, t0, 63
-	srli t1, t0, 32
-	add t4, t2, t1
-	sw t4, 8(a5)
-	lw t3, 12(a5)
-	mul t0, t3, a2
+	sw t4, 0(a2)
+	lw t3, 4(a2)
+	mul t0, t3, a3
 	srli t2, t0, 63
 	srli t1, t0, 32
 	add t3, t2, t1
-	sw t3, 12(a5)
-	bgt a4, a3, label3
-	mv a4, a3
-label5:
-	sh2add a5, a4, a0
-	addiw a4, a4, 1
-	lw t1, 0(a5)
-	mul a3, t1, a2
-	srli t2, a3, 63
-	srli t0, a3, 32
-	add t1, t2, t0
-	sw t1, 0(a5)
-	bgt a1, a4, label5
-label7:
+	sw t3, 4(a2)
+	lw t5, 8(a2)
+	mul t0, t5, a3
+	srli t4, t0, 63
+	srli t1, t0, 32
+	add t3, t4, t1
+	sw t3, 8(a2)
+	lw t2, 12(a2)
+	mul t0, t2, a3
+	srli t3, t0, 63
+	srli t1, t0, 32
+	add t2, t3, t1
+	sw t2, 12(a2)
+	ble a4, a5, label47
+	addi a2, a2, 16
+	j label8
+label3:
+	lw t0, 0(a0)
+	addiw a5, a5, 1
+	mul a2, t0, a3
+	srli t1, a2, 63
+	srli a4, a2, 32
+	add t0, t1, a4
+	sw t0, 0(a0)
+	ble a1, a5, label14
+	addi a0, a0, 4
+	j label3
+label47:
+	sh2add a0, a5, a0
+	j label3
+label14:
 	ret
-label16:
-	mv a4, zero
-	j label5
+label23:
+	mv a5, zero
+	j label3

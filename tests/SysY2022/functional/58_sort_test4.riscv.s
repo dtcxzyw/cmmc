@@ -5,86 +5,210 @@
 .globl main
 main:
 	addi sp, sp, -72
-	li a2, 3
-	li a4, 1
-	li a5, 8
+	li a3, 3
+	li a5, 2
+	li t0, 8
+	addi a0, sp, 32
+	slli a1, a3, 32
 	sd ra, 0(sp)
-	slli a1, a2, 32
+	li a3, 9
+	addi a2, a1, 4
 	sd s0, 8(sp)
-	li a2, 9
-	addi a0, a1, 4
-	addi s0, sp, 32
+	slli a1, a5, 32
+	li s0, 10
+	li a5, 1
+	addi a4, a1, 9
 	sd s1, 16(sp)
-	li a1, 2
-	li s1, 10
+	li a1, 6
 	sd s2, 24(sp)
-	sd a0, 32(sp)
-	slli a0, a1, 32
-	slli a1, a4, 32
-	addi a3, a0, 9
-	li a4, 5
-	li a0, 6
-	sd a3, 40(sp)
-	sd a1, 48(sp)
-	slli a1, a4, 32
+	sd a2, 32(sp)
+	slli a2, a5, 32
+	sd a4, 40(sp)
+	li a5, 5
+	sd a2, 48(sp)
 	slli a4, a5, 32
-	addi a3, a1, 6
-	mv a1, zero
-	sd a3, 56(sp)
-	addi a3, a4, 7
-	sd a3, 64(sp)
-	blt zero, a2, label4
-label28:
+	slli a5, t0, 32
+	addi a2, a4, 6
+	addi a4, a5, 7
+	sd a2, 56(sp)
+	mv a5, zero
+	mv a2, a0
+	sd a4, 64(sp)
+	blt zero, a3, label5
+label40:
+	mv s1, a0
 	mv s2, zero
-	j label13
+	j label23
 .p2align 2
-label4:
-	addiw a5, a1, 5
-	addiw a3, a1, 1
-	bge a5, s1, label34
-	mv t0, a1
-	mv a4, a3
-	sh2add a5, a1, s0
-	sh2add t3, a3, s0
-	lw t1, 0(a5)
-	mv a5, a3
-	lw t2, 0(t3)
-	bgt t1, t2, label158
-	j label157
+label5:
+	addiw t0, a5, 5
+	addiw a4, a5, 1
+	bge t0, s0, label46
+	sh2add t0, a4, a0
+	mv t3, a5
+	mv t1, a4
+	sh2add t6, a5, a0
+	mv t2, a4
+	lw t4, 0(t6)
+	lw t5, 0(t0)
+	bgt t4, t5, label172
+	j label171
 .p2align 2
-label74:
-	sh2add a5, t1, s0
-	sh2add t3, a4, s0
+label19:
+	sh2add a5, t2, a0
 	lw t0, 0(a5)
+	lw t1, 0(a2)
+	sw t1, 0(a5)
 	mv a5, a4
-	lw t2, 0(t3)
-	bgt t0, t2, label166
+	sw t0, 0(a2)
+	addi a2, a2, 4
+	blt a4, a3, label5
+	j label40
 .p2align 2
-label172:
-	mv a5, t1
-	addiw a4, a4, 1
-	blt a4, s1, label88
-	beq a1, t1, label182
-.p2align 2
-label12:
-	sh2add a4, a5, s0
-	sh2add t1, a1, s0
-	lw t0, 0(a4)
-	mv a1, a3
-	lw a5, 0(t1)
-	sw a5, 0(a4)
-	sw t0, 0(t1)
-	blt a3, a2, label4
-	j label28
-.p2align 2
-label13:
-	sh2add a2, s2, s0
-	lw a0, 0(a2)
+label23:
+	lw a0, 0(s1)
 	jal putint
-	mv a0, s1
+	mv a0, s0
 	jal putch
 	addiw s2, s2, 1
-	blt s2, s1, label13
+	bge s2, s0, label26
+	addi s1, s1, 4
+	j label23
+.p2align 2
+label171:
+	mv t2, t3
+.p2align 2
+label172:
+	sh2add t6, t2, a0
+	addiw t5, t1, 1
+	lw t4, 0(t6)
+	mv t3, t5
+	sh2add a6, t5, a0
+	lw t6, 0(a6)
+	bgt t4, t6, label174
+	mv t3, t2
+.p2align 2
+label174:
+	sh2add t6, t3, a0
+	addiw t5, t1, 2
+	lw t4, 0(t6)
+	mv t2, t5
+	sh2add a6, t5, a0
+	lw t6, 0(a6)
+	bgt t4, t6, label176
+	mv t2, t3
+.p2align 2
+label176:
+	sh2add t6, t2, a0
+	addiw t5, t1, 3
+	lw t4, 0(t6)
+	mv t3, t5
+	sh2add a6, t5, a0
+	lw t6, 0(a6)
+	bgt t4, t6, label178
+	mv t3, t2
+.p2align 2
+label178:
+	addiw t1, t1, 4
+	bge t1, a1, label11
+.p2align 2
+label12:
+	addi t0, t0, 16
+	sh2add t6, t3, a0
+	mv t2, t1
+	lw t4, 0(t6)
+	lw t5, 0(t0)
+	bgt t4, t5, label172
+	mv t2, t3
+	addiw t5, t1, 1
+	lw t4, 0(t6)
+	mv t3, t5
+	sh2add a6, t5, a0
+	lw t6, 0(a6)
+	bgt t4, t6, label174
+	mv t3, t2
+	sh2add t6, t2, a0
+	addiw t5, t1, 2
+	lw t4, 0(t6)
+	mv t2, t5
+	sh2add a6, t5, a0
+	lw t6, 0(a6)
+	bgt t4, t6, label176
+	mv t2, t3
+	sh2add t6, t3, a0
+	addiw t5, t1, 3
+	lw t4, 0(t6)
+	mv t3, t5
+	sh2add a6, t5, a0
+	lw t6, 0(a6)
+	bgt t4, t6, label178
+	mv t3, t2
+	addiw t1, t1, 4
+	blt t1, a1, label12
+	sh2add t0, t1, a0
+	sh2add t6, t2, a0
+	mv t2, t1
+	lw t4, 0(t6)
+	lw t5, 0(t0)
+	bgt t4, t5, label180
+	j label185
+label46:
+	sh2add t0, a4, a0
+	mv t1, a4
+	mv t3, a5
+	sh2add t6, a5, a0
+	mv t2, a4
+	lw t4, 0(t6)
+	lw t5, 0(t0)
+	bgt t4, t5, label180
+	mv t2, a5
+.p2align 2
+label180:
+	addiw t1, t1, 1
+	bge t1, s0, label18
+.p2align 2
+label21:
+	addi t0, t0, 4
+	mv t3, t2
+	sh2add t6, t2, a0
+	mv t2, t1
+	lw t4, 0(t6)
+	lw t5, 0(t0)
+	bgt t4, t5, label180
+	mv t2, t3
+	addiw t1, t1, 1
+	blt t1, s0, label21
+	bne a5, t3, label19
+	addi a2, a2, 4
+	mv a5, a4
+	blt a4, a3, label5
+	j label40
+.p2align 2
+label11:
+	sh2add t0, t1, a0
+	sh2add t6, t3, a0
+	mv t2, t1
+	lw t4, 0(t6)
+	lw t5, 0(t0)
+	bgt t4, t5, label180
+.p2align 2
+label185:
+	mv t2, t3
+	addiw t1, t1, 1
+	blt t1, s0, label21
+	bne a5, t3, label19
+	addi a2, a2, 4
+	mv a5, a4
+	blt a4, a3, label5
+	j label40
+.p2align 2
+label18:
+	bne a5, t2, label19
+	addi a2, a2, 4
+	mv a5, a4
+	blt a4, a3, label5
+	j label40
+label26:
 	mv a0, zero
 	ld ra, 0(sp)
 	ld s0, 8(sp)
@@ -92,123 +216,3 @@ label13:
 	ld s2, 24(sp)
 	addi sp, sp, 72
 	ret
-.p2align 2
-label157:
-	mv a5, t0
-.p2align 2
-label158:
-	sh2add t3, a5, s0
-	addiw t2, a4, 1
-	lw t1, 0(t3)
-	mv t0, t2
-	sh2add t4, t2, s0
-	lw t3, 0(t4)
-	bgt t1, t3, label160
-	mv t0, a5
-.p2align 2
-label160:
-	sh2add t3, t0, s0
-	addiw t2, a4, 2
-	lw t1, 0(t3)
-	mv a5, t2
-	sh2add t4, t2, s0
-	lw t3, 0(t4)
-	bgt t1, t3, label162
-	mv a5, t0
-.p2align 2
-label162:
-	sh2add t1, a5, s0
-	addiw t2, a4, 3
-	lw t0, 0(t1)
-	sh2add t4, t2, s0
-	mv t1, t2
-	lw t3, 0(t4)
-	bgt t0, t3, label164
-	mv t1, a5
-.p2align 2
-label164:
-	addiw a4, a4, 4
-	bge a4, a0, label74
-.p2align 2
-label75:
-	mv t0, t1
-	sh2add a5, t1, s0
-	sh2add t3, a4, s0
-	lw t1, 0(a5)
-	mv a5, a4
-	lw t2, 0(t3)
-	bgt t1, t2, label158
-	mv a5, t0
-	sh2add t3, t0, s0
-	addiw t2, a4, 1
-	lw t1, 0(t3)
-	mv t0, t2
-	sh2add t4, t2, s0
-	lw t3, 0(t4)
-	bgt t1, t3, label160
-	mv t0, a5
-	sh2add t3, a5, s0
-	addiw t2, a4, 2
-	lw t1, 0(t3)
-	mv a5, t2
-	sh2add t4, t2, s0
-	lw t3, 0(t4)
-	bgt t1, t3, label162
-	mv a5, t0
-	sh2add t1, t0, s0
-	addiw t2, a4, 3
-	lw t0, 0(t1)
-	sh2add t4, t2, s0
-	mv t1, t2
-	lw t3, 0(t4)
-	bgt t0, t3, label164
-	mv t1, a5
-	addiw a4, a4, 4
-	blt a4, a0, label75
-	sh2add a5, a5, s0
-	sh2add t3, a4, s0
-	lw t0, 0(a5)
-	mv a5, a4
-	lw t2, 0(t3)
-	bgt t0, t2, label166
-	j label172
-label34:
-	mv a4, a3
-	mv t1, a1
-	sh2add a5, a1, s0
-	sh2add t3, a3, s0
-	lw t0, 0(a5)
-	mv a5, a3
-	lw t2, 0(t3)
-	bgt t0, t2, label166
-	mv a5, a1
-.p2align 2
-label166:
-	addiw a4, a4, 1
-	bge a4, s1, label87
-.p2align 2
-label88:
-	mv t1, a5
-	sh2add a5, a5, s0
-	sh2add t3, a4, s0
-	lw t0, 0(a5)
-	mv a5, a4
-	lw t2, 0(t3)
-	bgt t0, t2, label166
-	mv a5, t1
-	addiw a4, a4, 1
-	blt a4, s1, label88
-	bne a1, t1, label12
-	mv a1, a3
-	blt a3, a2, label4
-	j label28
-.p2align 2
-label87:
-	bne a1, a5, label12
-	mv a1, a3
-	blt a3, a2, label4
-	j label28
-label182:
-	mv a1, a3
-	blt a3, a2, label4
-	j label28

@@ -8,13 +8,14 @@
 .globl main
 main:
 	push { r4, r5, r6, r7, r8, r9, lr }
-	mov r0, #1
 	sub sp, sp, #84
+	mov r1, #1
 	mov r6, #0
 	mov r5, #2
-	str r0, [sp, #0]
-	mov r4, sp
+	str r1, [sp, #0]
+	mov r0, sp
 	str r5, [sp, #4]
+	add r4, r0, #8
 	str r6, [sp, #8]
 	str r6, [sp, #12]
 	str r6, [sp, #16]
@@ -35,23 +36,24 @@ main:
 	str r6, [sp, #76]
 .p2align 4
 label2:
-	add r0, r4, r5, lsl #2
-	ldr r8, [r0, #0]
-	ldr r7, [r0, #-4]
-	ldr r9, [r0, #-8]
-	add r1, r8, r7
-	add r1, r1, r9
-	str r1, [r0, #0]
-	mov r0, r1
+	ldr r7, [r4, #0]
+	ldr r8, [r4, #-4]
+	ldr r9, [r4, #-8]
+	add r0, r7, r8
+	add r0, r0, r9
+	str r0, [r4, #0]
 	bl putint
 	mov r0, #10
 	bl putch
 	add r5, r5, #1
-	add r0, r6, r8
+	add r0, r6, r7
 	cmp r5, #20
-	add r0, r7, r0
+	add r0, r8, r0
 	add r6, r9, r0
-	blt label2
+	bge label7
+	add r4, r4, #4
+	b label2
+label7:
 	mov r0, r6
 	add sp, sp, #84
 	pop { r4, r5, r6, r7, r8, r9, pc }

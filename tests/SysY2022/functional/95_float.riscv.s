@@ -14,10 +14,10 @@ main:
 	sd s0, 8(sp)
 	addi s0, sp, 80
 	sd s5, 16(sp)
-	sd s1, 24(sp)
-	sd s6, 32(sp)
-	sd s7, 40(sp)
-	sd s2, 48(sp)
+	sd s2, 24(sp)
+	sd s1, 32(sp)
+	sd s6, 40(sp)
+	sd s7, 48(sp)
 	sd s3, 56(sp)
 	sd s4, 64(sp)
 	sd s8, 72(sp)
@@ -85,37 +85,36 @@ main:
 	fsw f10, 116(sp)
 	mv a0, s0
 	jal getfarray
-	lui s4, 266752
-	lui s3, 258048
-	mv s6, zero
+	lui s5, 266752
+	lui s4, 258048
 	li s7, 1
-	mv s1, a0
-pcrel74:
+	mv s1, s0
+	mv s2, a0
+pcrel73:
 	auipc a0, %pcrel_hi(__cmmc_fp_constant_pool)
-	addi s2, a0, %pcrel_lo(pcrel74)
+	addi s3, a0, %pcrel_lo(pcrel73)
 	lui a0, 244141
-	addiw s5, a0, -1536
+	addiw s6, a0, -1536
 .p2align 2
 label2:
 	jal getfloat
 	fcvt.w.s a0, f10, rtz
-	flw f11, 0(s2)
+	flw f11, 0(s3)
 	mulw a1, a0, a0
 	fcvt.s.w f13, a0
-	sh2add a0, s6, s0
-	fmul.s f15, f13, f11
 	fcvt.s.w f14, a1
+	fmul.s f15, f13, f11
 	fmul.s f0, f14, f11
+	fmul.s f14, f10, f11
 	fmul.s f12, f15, f13
-	fmv.w.x f15, s3
+	fmv.w.x f15, s4
 	fadd.s f13, f12, f0
-	fmul.s f0, f10, f11
-	fmul.s f14, f13, f15
-	fmul.s f12, f0, f10
-	flw f13, 0(a0)
+	fmul.s f12, f14, f10
+	fmul.s f1, f13, f15
+	flw f13, 0(s1)
 	fadd.s f11, f13, f10
-	fcvt.w.s s8, f14, rtz
-	fsw f11, 0(a0)
+	fcvt.w.s s8, f1, rtz
+	fsw f11, 0(s1)
 	fmv.s f10, f12
 	jal putfloat
 	li a0, 32
@@ -124,23 +123,25 @@ label2:
 	jal putint
 	li a0, 10
 	jal putch
-	addiw s6, s6, 1
-	fmv.w.x f11, s4
+	fmv.w.x f11, s5
 	fcvt.s.w f10, s7
 	fmul.s f12, f10, f11
 	fcvt.w.s s7, f12, rtz
-	blt s7, s5, label2
-	mv a0, s1
+	bge s7, s6, label6
+	addi s1, s1, 4
+	j label2
+label6:
+	mv a0, s2
 	mv a1, s0
 	jal putfarray
 	ld ra, 0(sp)
 	mv a0, zero
 	ld s0, 8(sp)
 	ld s5, 16(sp)
-	ld s1, 24(sp)
-	ld s6, 32(sp)
-	ld s7, 40(sp)
-	ld s2, 48(sp)
+	ld s2, 24(sp)
+	ld s1, 32(sp)
+	ld s6, 40(sp)
+	ld s7, 48(sp)
 	ld s3, 56(sp)
 	ld s4, 64(sp)
 	ld s8, 72(sp)

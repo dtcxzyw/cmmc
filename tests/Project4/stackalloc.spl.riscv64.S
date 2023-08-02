@@ -24,67 +24,65 @@ write:
 .globl main
 main:
 	addi sp, sp, -408
-	addi a1, sp, 8
+	addi a2, sp, 8
 	sd ra, 0(sp)
 	jal read
-	mv a2, a0
-	bgt a0, zero, label21
-label20:
-	li a0, 1
-	j label2
-label21:
-	mv a3, zero
-	j label14
-label2:
-	bgt a2, a0, label4
-	j label10
-label14:
+	mv a1, a0
+	ble a0, zero, label30
+	mv a3, a2
+	mv a4, zero
+label3:
 	jal read
-	sh2add a4, a3, a1
-	addiw a3, a3, 1
-	sw a0, 0(a4)
-	bgt a2, a3, label14
-	j label20
-label4:
-	sh2add a5, a0, a1
-	addiw a4, a0, -1
-	lw a3, 0(a5)
-	addiw a5, a4, 1
-	bge a4, zero, label7
-	sh2add t0, a5, a1
-	addiw a0, a0, 1
-	sw a3, 0(t0)
-	bgt a2, a0, label4
-	j label10
-label7:
-	sh2add t1, a4, a1
-	lw t0, 0(t1)
-	bge a3, t0, label40
-	sh2add t1, a5, a1
-	addiw a4, a4, -1
-	sw t0, 0(t1)
-	addiw a5, a4, 1
-	bge a4, zero, label7
-	sh2add t0, a5, a1
-	addiw a0, a0, 1
-	sw a3, 0(t0)
-	bgt a2, a0, label4
-label10:
-	ble a2, zero, label13
-	mv a3, zero
+	addiw a4, a4, 1
+	sw a0, 0(a3)
+	ble a1, a4, label30
+	addi a3, a3, 4
+	j label3
+label30:
+	addi a3, a2, 4
+	li a0, 1
+	bgt a1, a0, label18
 label11:
-	sh2add a4, a3, a1
-	lw a0, 0(a4)
+	ble a1, zero, label17
+	mv a3, zero
+	j label13
+label18:
+	lw a4, 0(a3)
+	addiw t0, a0, -1
+	sh2add a5, t0, a2
+	addiw t1, t0, 1
+	bge t0, zero, label23
+label22:
+	sh2add a5, t1, a2
+	addiw a0, a0, 1
+	addi a3, a3, 4
+	sw a4, 0(a5)
+	bgt a1, a0, label18
+	j label11
+label13:
+	lw a0, 0(a2)
 	jal write
 	addiw a3, a3, 1
-	bgt a2, a3, label11
-label13:
+	ble a1, a3, label17
+	addi a2, a2, 4
+	j label13
+label23:
+	lw t2, 0(a5)
+	bge a4, t2, label22
+	sh2add t3, t1, a2
+	addiw t0, t0, -1
+	addi a5, a5, -4
+	sw t2, 0(t3)
+	addiw t1, t0, 1
+	bge t0, zero, label23
+	sh2add a5, t1, a2
+	addiw a0, a0, 1
+	addi a3, a3, 4
+	sw a4, 0(a5)
+	bgt a1, a0, label18
+	j label11
+label17:
 	mv a0, zero
 	ld ra, 0(sp)
 	addi sp, sp, 408
 	ret
-label40:
-	sh2add t0, a5, a1
-	addiw a0, a0, 1
-	sw a3, 0(t0)
-	j label2

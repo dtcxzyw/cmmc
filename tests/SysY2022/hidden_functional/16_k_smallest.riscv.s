@@ -8,94 +8,94 @@ array:
 .p2align 2
 .globl main
 main:
-	addi sp, sp, -40
+	addi sp, sp, -48
 	sd ra, 0(sp)
 	sd s2, 8(sp)
 	sd s1, 16(sp)
 	sd s0, 24(sp)
 	sd s3, 32(sp)
+	sd s4, 40(sp)
 	jal getint
 	mv s2, a0
 	jal getint
-pcrel119:
+pcrel123:
 	auipc a1, %pcrel_hi(array)
 	mv s1, a0
-	addi s0, a1, %pcrel_lo(pcrel119)
-	bgt s2, zero, label32
-label31:
+	addi s0, a1, %pcrel_lo(pcrel123)
+	ble s2, zero, label38
+	mv s3, s0
+	mv s4, zero
+.p2align 2
+label3:
+	jal getint
+	addiw s4, s4, 1
+	sw a0, 0(s3)
+	ble s2, s4, label38
+	addi s3, s3, 4
+	j label3
+label38:
 	addiw a1, s2, -1
 	mv a0, zero
-	j label6
-label32:
-	mv s3, zero
-	j label24
-label6:
-	beq a0, a1, label23
-	j label8
-.p2align 2
-label24:
-	jal getint
-	sh2add a1, s3, s0
-	addiw s3, s3, 1
-	sw a0, 0(a1)
-	bgt s2, s3, label24
-	j label31
-label8:
+label11:
+	beq a0, a1, label13
 	sh2add a4, a1, s0
 	mv s2, a0
-	mv a2, a0
+	sh2add a2, a0, s0
 	lw a3, 0(a4)
-	ble a1, a0, label16
+	mv a4, a0
+	ble a1, a0, label23
 .p2align 2
-label12:
-	sh2add a5, a2, s0
-	lw a4, 0(a5)
-	bge a3, a4, label13
-	addiw a2, a2, 1
-	bgt a1, a2, label12
-	j label16
+label19:
+	lw a5, 0(a2)
+	bge a3, a5, label20
+	addiw a4, a4, 1
+	addi a2, a2, 4
+	bgt a1, a4, label19
+	j label23
 .p2align 2
-label13:
-	sh2add a5, s2, s0
-	sh2add t1, a2, s0
-	addiw s2, s2, 1
-	lw t0, 0(a5)
-	sw t0, 0(t1)
-	sw a4, 0(a5)
-	addiw a2, a2, 1
-	bgt a1, a2, label12
-label16:
-	sh2add a3, s2, s0
-	sh2add a4, a1, s0
-	lw a2, 0(a3)
-	lw a5, 0(a4)
-	sw a5, 0(a3)
-	sw a2, 0(a4)
-	beq s1, s2, label20
-	bge s1, s2, label18
-	addiw a1, s2, -1
-	j label6
 label20:
-	ble s2, zero, label23
+	sh2add t0, s2, s0
+	addiw s2, s2, 1
+	lw t1, 0(t0)
+	sw t1, 0(a2)
+	sw a5, 0(t0)
+	addiw a4, a4, 1
+	addi a2, a2, 4
+	bgt a1, a4, label19
+label23:
+	sh2add a2, s2, s0
+	sh2add a4, a1, s0
+	lw a3, 0(a2)
+	lw a5, 0(a4)
+	sw a5, 0(a2)
+	sw a3, 0(a4)
+	bne s1, s2, label24
+	ble s2, zero, label13
 	mv s1, zero
 .p2align 2
-label21:
-	sh2add a1, s1, s0
-	lw a0, 0(a1)
+label29:
+	lw a0, 0(s0)
 	jal putint
 	li a0, 32
 	jal putch
 	addiw s1, s1, 1
-	bgt s2, s1, label21
-label23:
+	ble s2, s1, label13
+	addi s0, s0, 4
+	j label29
+label24:
+	blt s1, s2, label26
+	addiw a0, s2, 1
+	j label11
+label13:
 	mv a0, zero
 	ld ra, 0(sp)
 	ld s2, 8(sp)
 	ld s1, 16(sp)
 	ld s0, 24(sp)
 	ld s3, 32(sp)
-	addi sp, sp, 40
+	ld s4, 40(sp)
+	addi sp, sp, 48
 	ret
-label18:
-	addiw a0, s2, 1
-	j label6
+label26:
+	addiw a1, s2, -1
+	j label11

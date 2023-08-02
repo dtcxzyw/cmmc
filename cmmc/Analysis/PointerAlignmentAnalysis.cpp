@@ -26,6 +26,7 @@
 #include <cstdint>
 #include <queue>
 #include <unordered_map>
+#include <vector>
 
 CMMC_NAMESPACE_BEGIN
 
@@ -93,8 +94,36 @@ PointerAlignmentAnalysisResult PointerAlignmentAnalysis::run(Function& func, Ana
             case InstructionID::Phi: {
                 uint32_t minVal = 16U;
 
-                for(auto [k, v] : u->as<PhiInst>()->incomings())
-                    minVal = std::min(minVal, result.lookup(v->value, dataLayout));
+                std::vector<std::pair<Value*, uint32_t> > incs;
+                for(auto [k, v] : u->as<PhiInst>()->incomings()) {
+                    if(v->value == u)
+                        continue;
+                    const auto align = result.lookup(v->value, dataLayout);
+                    if(v->value->is<GetElementPtrInst>()) {
+                        const auto gep = v->value->as<GetElementPtrInst>();
+                        if(gep->lastOperand() == u) {
+                            incs.emplace_back(gep->getOperand(0), align);
+                            continue;
+                        }
+                    }
+                    minVal = std::min(minVal, align);
+                }
+
+                for(auto [inc, align] : incs) {
+                    assert(inc->getType()->isInteger());
+                    // TODO: use range info
+                    if(inc->is<ConstantInteger>()) {
+                        const auto increament = inc->as<ConstantInteger>()->getSignExtended() *
+                            static_cast<intmax_t>(u->getType()->as<PointerType>()->getPointee()->getSize(dataLayout));
+                        if(increament) {
+                            const auto realAlign = increament & -increament;
+                            minVal = std::min(minVal, static_cast<uint32_t>(realAlign));
+                        }
+                    } else {
+                        minVal = std::min(minVal, align);
+                    }
+                }
+
                 update(u, minVal);
                 break;
             }
@@ -117,8 +146,8 @@ PointerAlignmentAnalysisResult PointerAlignmentAnalysis::run(Function& func, Ana
                        scevExpr->operands[1]->instID == SCEVInstID::Constant) {
                         times *= scevExpr->operands[1]->constant;
                     }
-
-                    alignment = std::min(alignment, static_cast<uint32_t>(times & -times));
+                    if(times)
+                        alignment = std::min(alignment, static_cast<uint32_t>(times & -times));
                 }
                 update(u, alignment);
                 break;

@@ -7,13 +7,13 @@
 .p2align 4
 .globl main
 main:
-	push { r4, r5, r6, r7, lr }
-	sub sp, sp, #44
+	push { r4, r5, r6, r7, r8, lr }
+	sub sp, sp, #40
 	mov r0, #4
-	mov r5, #0
-	mov r4, sp
+	mov r4, #0
+	mov r2, sp
 	str r0, [sp, #0]
-	mov r1, r5
+	mov r3, r4
 	mov r0, #3
 	str r0, [sp, #4]
 	mov r0, #9
@@ -21,7 +21,7 @@ main:
 	mov r0, #2
 	str r0, [sp, #12]
 	mov r0, #1
-	str r5, [sp, #16]
+	str r4, [sp, #16]
 	str r0, [sp, #20]
 	mov r0, #6
 	str r0, [sp, #24]
@@ -31,63 +31,72 @@ main:
 	str r0, [sp, #32]
 	mov r0, #8
 	str r0, [sp, #36]
-label2:
-	rsb r0, r1, #10
-	cmp r1, #9
+	rsb r0, r4, #10
+	cmp r4, #9
 	sub r0, r0, #1
-	bge label26
-.p2align 4
-label27:
-	mov r2, r5
-	cmp r0, r5
-	ble label68
-.p2align 4
-label9:
-	add r6, r4, r2, lsl #2
-	add r7, r2, #1
-	ldr r3, [r6, #0]
-	ldr r6, [r6, #4]
-	cmp r3, r6
-	bgt label10
-	mov r2, r7
-	cmp r0, r7
-	bgt label9
-	b label69
+	blt label10
+label4:
+	mov r5, r2
+	mov r6, r4
+	b label5
 .p2align 4
 label10:
-	add r2, r4, r2, lsl #2
-	str r3, [r2, #4]
-	str r6, [r2, #0]
-	mov r2, r7
-	cmp r0, r7
-	bgt label9
-	add r1, r1, #1
-	rsb r0, r1, #10
-	cmp r1, #9
-	sub r0, r0, #1
-	blt label27
-label26:
-	mov r6, r5
+	mov r1, r2
+	mov r5, r4
+	cmp r0, r4
+	ble label43
 .p2align 4
-label4:
-	ldr r0, [r4, r6, lsl #2]
+label14:
+	ldr r6, [r1, #0]
+	add r5, r5, #1
+	ldr r7, [r1, #4]
+	cmp r6, r7
+	bgt label15
+	add r1, r1, #4
+	cmp r0, r5
+	bgt label14
+	b label72
+.p2align 4
+label15:
+	add r8, r1, #4
+	str r6, [r1, #4]
+	str r7, [r1, #0]
+	mov r1, r8
+	cmp r0, r5
+	bgt label14
+	add r3, r3, #1
+	rsb r0, r3, #10
+	cmp r3, #9
+	sub r0, r0, #1
+	blt label10
+	b label4
+.p2align 4
+label5:
+	ldr r0, [r5, #0]
 	bl putint
 	mov r0, #10
 	bl putch
 	add r6, r6, #1
 	cmp r6, #10
-	blt label4
-	mov r0, r5
-	add sp, sp, #44
-	pop { r4, r5, r6, r7, pc }
+	bge label9
+	add r5, r5, #4
+	b label5
+label9:
+	mov r0, r4
+	add sp, sp, #40
+	pop { r4, r5, r6, r7, r8, pc }
 .p2align 4
-label69:
-	add r1, r1, #1
-	rsb r0, r1, #10
-	cmp r1, #9
+label72:
+	add r3, r3, #1
+	rsb r0, r3, #10
+	cmp r3, #9
 	sub r0, r0, #1
-	blt label27
-	b label26
-label68:
-	add r1, r1, #1
-	b label2
+	blt label10
+	b label4
+label43:
+	add r3, r3, #1
+	rsb r0, r3, #10
+	cmp r3, #9
+	sub r0, r0, #1
+	blt label10
+	b label4

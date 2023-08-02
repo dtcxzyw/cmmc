@@ -7,72 +7,81 @@
 .p2align 4
 .globl main
 main:
-	push { r4, r5, r6, lr }
-	mov r1, #6
-	mov r0, #4
+	push { r4, r5, r6, r7, r8, lr }
+	mov r3, #6
 	sub sp, sp, #40
-	mov r5, #0
-	str r0, [sp, #0]
-	mov r4, sp
-	mov r0, #3
-	str r0, [sp, #4]
-	mov r0, #9
-	str r0, [sp, #8]
-	mov r0, #2
-	str r0, [sp, #12]
-	mov r0, #1
-	str r5, [sp, #16]
-	str r0, [sp, #20]
-	str r1, [sp, #24]
-	mov r1, #5
-	str r1, [sp, #28]
-	mov r1, #7
-	str r1, [sp, #32]
-	mov r1, #8
-	str r1, [sp, #36]
-	cmp r0, #10
-	blt label4
-label25:
-	mov r6, r5
-	b label10
+	mov r2, #3
+	mov r4, #0
+	mov r1, #4
+	mov r0, sp
+	str r1, [sp, #0]
+	str r2, [sp, #4]
+	add r1, r0, #4
+	mov r2, #9
+	str r2, [sp, #8]
+	mov r2, #2
+	str r2, [sp, #12]
+	mov r2, #1
+	str r4, [sp, #16]
+	str r2, [sp, #20]
+	str r3, [sp, #24]
+	mov r3, #5
+	str r3, [sp, #28]
+	mov r3, #7
+	str r3, [sp, #32]
+	mov r3, #8
+	str r3, [sp, #36]
+	cmp r2, #10
+	blt label5
+label31:
+	mov r5, r0
+	mov r6, r4
+	b label13
 .p2align 4
-label4:
-	ldr r1, [r4, r0, lsl #2]
-	sub r2, r0, #1
-	add r3, r2, #1
-	cmn r2, #1
-	bgt label8
+label5:
+	ldr r3, [r1, #0]
+	sub r6, r2, #1
+	add r5, r0, r6, lsl #2
+	add r7, r6, #1
+	cmn r6, #1
+	bgt label10
 .p2align 4
-label7:
-	str r1, [r4, r3, lsl #2]
-	add r0, r0, #1
-	cmp r0, #10
-	blt label4
-	b label25
+label9:
+	str r3, [r0, r7, lsl #2]
+	add r2, r2, #1
+	add r1, r1, #4
+	cmp r2, #10
+	blt label5
+	b label31
 .p2align 4
 label10:
-	ldr r0, [r4, r6, lsl #2]
+	ldr r8, [r5, #0]
+	cmp r3, r8
+	bge label9
+	str r8, [r0, r7, lsl #2]
+	sub r6, r6, #1
+	sub r5, r5, #4
+	add r7, r6, #1
+	cmn r6, #1
+	bgt label10
+	str r3, [r0, r7, lsl #2]
+	add r2, r2, #1
+	add r1, r1, #4
+	cmp r2, #10
+	blt label5
+	b label31
+.p2align 4
+label13:
+	ldr r0, [r5, #0]
 	bl putint
 	mov r0, #10
 	bl putch
 	add r6, r6, #1
 	cmp r6, #10
-	blt label10
-	mov r0, r5
+	bge label17
+	add r5, r5, #4
+	b label13
+label17:
+	mov r0, r4
 	add sp, sp, #40
-	pop { r4, r5, r6, pc }
-.p2align 4
-label8:
-	ldr r6, [r4, r2, lsl #2]
-	cmp r1, r6
-	bge label7
-	str r6, [r4, r3, lsl #2]
-	sub r2, r2, #1
-	add r3, r2, #1
-	cmn r2, #1
-	bgt label8
-	str r1, [r4, r3, lsl #2]
-	add r0, r0, #1
-	cmp r0, #10
-	blt label4
-	b label25
+	pop { r4, r5, r6, r7, r8, pc }

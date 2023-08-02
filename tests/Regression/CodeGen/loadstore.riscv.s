@@ -111,63 +111,73 @@ pcrel104:
 .p2align 2
 .globl memset_impl
 memset_impl:
-	ble a0, zero, label114
-pcrel198:
+	mv a1, a0
+	ble a0, zero, label125
+pcrel212:
 	auipc a2, %pcrel_hi(arr)
 	li a3, 4
-	addi a1, a2, %pcrel_lo(pcrel198)
-	ble a0, a3, label123
-	addiw a2, a0, -4
-	addiw a4, a0, -20
-	li a5, 16
-	ble a2, a5, label129
-	mv a3, zero
+	addi a0, a2, %pcrel_lo(pcrel212)
+	ble a1, a3, label134
+	addiw a3, a1, -4
+	addiw a4, a1, -20
+	li a2, 16
+	ble a3, a2, label113
+	mv a2, a0
+	mv a5, zero
 .p2align 2
-label108:
-	sh2add a5, a3, a1
-	addiw a3, a3, 16
-	sd zero, 0(a5)
-	sd zero, 8(a5)
-	sd zero, 16(a5)
-	sd zero, 24(a5)
-	sd zero, 32(a5)
-	sd zero, 40(a5)
-	sd zero, 48(a5)
-	sd zero, 56(a5)
-	bgt a4, a3, label108
-label110:
-	sh2add a4, a3, a1
-	addiw a3, a3, 4
-	sw zero, 0(a4)
-	sw zero, 4(a4)
-	sw zero, 8(a4)
-	sw zero, 12(a4)
-	bgt a2, a3, label110
-	mv a2, a3
-label112:
-	sh2add a4, a2, a1
-	addiw a2, a2, 1
-	sw zero, 0(a4)
-	bgt a0, a2, label112
-label114:
-	ret
+label120:
+	sd zero, 0(a2)
+	addiw a5, a5, 16
+	sd zero, 8(a2)
+	sd zero, 16(a2)
+	sd zero, 24(a2)
+	sd zero, 32(a2)
+	sd zero, 40(a2)
+	sd zero, 48(a2)
+	sd zero, 56(a2)
+	ble a4, a5, label123
+	addi a2, a2, 64
+	j label120
 label123:
-	mv a2, zero
-	j label112
-label129:
-	mv a3, zero
-	j label110
+	sh2add a2, a5, a0
+label114:
+	sw zero, 0(a2)
+	addiw a5, a5, 4
+	sw zero, 4(a2)
+	sw zero, 8(a2)
+	sw zero, 12(a2)
+	ble a3, a5, label154
+	addi a2, a2, 16
+	j label114
+label107:
+	sw zero, 0(a0)
+	addiw a5, a5, 1
+	ble a1, a5, label125
+	addi a0, a0, 4
+	j label107
+label154:
+	sh2add a0, a5, a0
+	j label107
+label125:
+	ret
+label113:
+	mv a2, a0
+	mv a5, zero
+	j label114
+label134:
+	mv a5, zero
+	j label107
 .p2align 2
 .globl fused_store
 fused_store:
-pcrel265:
+pcrel279:
 	auipc a1, %pcrel_hi(arr)
 	li a2, 1
 	li a4, 3
-	addi a0, a1, %pcrel_lo(pcrel265)
+	addi a0, a1, %pcrel_lo(pcrel279)
 	slli a3, a2, 32
 	slli a2, a4, 32
-	sd a3, %pcrel_lo(pcrel265)(a1)
+	sd a3, %pcrel_lo(pcrel279)(a1)
 	li a4, 5
 	addi a3, a2, 2
 	slli a1, a4, 32
@@ -198,9 +208,9 @@ pcrel265:
 .p2align 2
 .globl merge_store
 merge_store:
-pcrel276:
+pcrel290:
 	auipc a2, %pcrel_hi(x)
 	slli a3, a1, 32
 	add.uw a4, a0, a3
-	sd a4, %pcrel_lo(pcrel276)(a2)
+	sd a4, %pcrel_lo(pcrel290)(a2)
 	ret

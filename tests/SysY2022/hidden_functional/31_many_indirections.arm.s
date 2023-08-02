@@ -12,22 +12,21 @@ array:
 .globl main
 main:
 	push { r4, r5, r6, lr }
-	mov r5, #1
-	mov r2, #400
-	mov r3, #0
+	mov r3, #2
+	mov r2, #1
+	mov r5, #0
 	movw r1, #:lower16:array
 	movt r1, #:upper16:array
-	mov r4, r3
+	mov r4, r5
+	mov r0, r1
 .p2align 4
 label2:
-	mla r0, r3, r2, r1
-	mov r6, #2
-	add r3, r3, #1
-	cmp r3, #20
 	str r4, [r0, #0]
-	str r5, [r0, #4]
-	str r6, [r0, #8]
 	mov r6, #3
+	add r5, r5, #1
+	str r2, [r0, #4]
+	cmp r5, #20
+	str r3, [r0, #8]
 	str r6, [r0, #12]
 	mov r6, #4
 	str r6, [r0, #16]
@@ -221,56 +220,60 @@ label2:
 	str r6, [r0, #392]
 	mov r6, #99
 	str r6, [r0, #396]
-	blt label2
+	bge label6
+	add r0, r0, #400
+	b label2
+label6:
 	movw r0, #7692
-	movw r3, #7200
+	movw r2, #7200
 	add r0, r1, r0
-	add r3, r1, r3
+	add r2, r1, r2
 	ldr r0, [r0, #0]
-	ldr r0, [r3, r0, lsl #2]
-	movw r3, #6800
-	add r3, r1, r3
-	ldr r0, [r3, r0, lsl #2]
-	add r3, r1, #6400
-	ldr r0, [r3, r0, lsl #2]
-	movw r3, #6000
-	add r3, r1, r3
-	ldr r0, [r3, r0, lsl #2]
-	movw r3, #5600
-	add r3, r1, r3
-	ldr r0, [r3, r0, lsl #2]
-	movw r3, #5200
-	add r3, r1, r3
-	ldr r0, [r3, r0, lsl #2]
-	add r3, r1, #4800
-	ldr r0, [r3, r0, lsl #2]
-	movw r3, #4400
-	add r3, r1, r3
-	ldr r0, [r3, r0, lsl #2]
-	add r3, r1, #4000
-	ldr r0, [r3, r0, lsl #2]
-	add r3, r1, #3600
-	ldr r0, [r3, r0, lsl #2]
-	add r3, r1, #3200
-	ldr r0, [r3, r0, lsl #2]
-	add r3, r1, #2800
-	ldr r0, [r3, r0, lsl #2]
-	add r3, r1, #2400
-	ldr r0, [r3, r0, lsl #2]
-	add r3, r1, #2000
-	ldr r0, [r3, r0, lsl #2]
-	add r3, r1, #1600
-	ldr r0, [r3, r0, lsl #2]
-	add r3, r1, #1200
-	ldr r0, [r3, r0, lsl #2]
-	add r3, r1, #800
-	ldr r0, [r3, r0, lsl #2]
-	add r3, r1, #400
-	ldr r0, [r3, r0, lsl #2]
-	movw r3, #7672
-	add r3, r1, r3
+	ldr r0, [r2, r0, lsl #2]
+	movw r2, #6800
+	add r2, r1, r2
+	ldr r0, [r2, r0, lsl #2]
+	add r2, r1, #6400
+	ldr r0, [r2, r0, lsl #2]
+	movw r2, #6000
+	add r2, r1, r2
+	ldr r0, [r2, r0, lsl #2]
+	movw r2, #5600
+	add r2, r1, r2
+	ldr r0, [r2, r0, lsl #2]
+	movw r2, #5200
+	add r2, r1, r2
+	ldr r0, [r2, r0, lsl #2]
+	add r2, r1, #4800
+	ldr r0, [r2, r0, lsl #2]
+	movw r2, #4400
+	add r2, r1, r2
+	ldr r0, [r2, r0, lsl #2]
+	add r2, r1, #4000
+	ldr r0, [r2, r0, lsl #2]
+	add r2, r1, #3600
+	ldr r0, [r2, r0, lsl #2]
+	add r2, r1, #3200
+	ldr r0, [r2, r0, lsl #2]
+	add r2, r1, #2800
+	ldr r0, [r2, r0, lsl #2]
+	add r2, r1, #2400
+	ldr r0, [r2, r0, lsl #2]
+	add r2, r1, #2000
+	ldr r0, [r2, r0, lsl #2]
+	add r2, r1, #1600
+	ldr r0, [r2, r0, lsl #2]
+	add r2, r1, #1200
+	ldr r0, [r2, r0, lsl #2]
+	add r2, r1, #800
+	ldr r0, [r2, r0, lsl #2]
+	add r2, r1, #400
+	ldr r0, [r2, r0, lsl #2]
+	movw r2, #7672
+	add r2, r1, r2
 	ldr r0, [r1, r0, lsl #2]
-	ldr r3, [r3, #0]
+	ldr r3, [r2, #0]
+	mov r2, #400
 	mla r3, r3, r2, r1
 	ldr r3, [r3, #68]
 	mla r3, r3, r2, r1

@@ -1119,49 +1119,55 @@ main:
 	sub sp, sp, r12
 	bl getint
 	mov r5, #0
-	str r0, [sp, #488]
+	add r4, sp, #816
+	str r0, [sp, #504]
 .p2align 4
 label1183:
-	add r0, r5, r5, lsl #1
-	add r4, sp, #800
-	add r0, r4, r0, lsl #2
+	mov r0, r4
 	bl getfarray
-	add r5, r5, #1
-	cmp r5, #40
-	blt label1183
+	add r0, r5, #1
+	cmp r0, #40
+	bge label1203
+	add r4, r4, #12
+	mov r5, r0
+	b label1183
+label1203:
+	add r5, sp, #520
 	mov r4, #0
 .p2align 4
-label1185:
-	add r0, r4, r4, lsl #1
-	add r5, sp, #504
-	add r0, r5, r0, lsl #2
+label1188:
+	mov r0, r5
 	bl getarray
-	add r4, r4, #1
-	cmp r4, #24
-	blt label1185
-	ldr r10, [sp, #488]
-	add r4, sp, #800
-	add r6, sp, #488
+	add r0, r4, #1
+	cmp r0, #24
+	bge label1192
+	add r5, r5, #12
+	mov r4, r0
+	b label1188
+label1192:
+	ldr r10, [sp, #504]
+	add r4, sp, #816
+	add r6, sp, #504
 	add r0, r4, r10, lsl #2
 	vldr s0, [r0, #0]
 	add r0, r4, #12
 	add r0, r0, r10, lsl #2
-	vstr s0, [sp, #224]
+	vstr s0, [sp, #244]
 	vldr s22, [r0, #0]
 	add r0, r4, #24
 	add r0, r0, r10, lsl #2
 	vldr s2, [r0, #0]
 	add r0, r4, #36
 	add r0, r0, r10, lsl #2
-	vstr s2, [sp, #216]
+	vstr s2, [sp, #264]
 	vldr s5, [r0, #0]
 	add r0, r4, #48
 	add r0, r0, r10, lsl #2
-	vstr s5, [sp, #300]
+	vstr s5, [sp, #208]
 	vldr s4, [r0, #0]
 	add r0, r4, #60
 	add r0, r0, r10, lsl #2
-	vstr s4, [sp, #296]
+	vstr s4, [sp, #212]
 	vldr s6, [r0, #0]
 	add r0, r4, #72
 	add r0, r0, r10, lsl #2
@@ -1178,15 +1184,15 @@ label1185:
 	vldr s9, [r0, #0]
 	add r0, r4, #120
 	add r0, r0, r10, lsl #2
-	vstr s9, [sp, #220]
+	vstr s9, [sp, #248]
 	vldr s10, [r0, #0]
 	add r0, r4, #132
 	add r0, r0, r10, lsl #2
-	vstr s10, [sp, #228]
+	vstr s10, [sp, #236]
 	vldr s11, [r0, #0]
 	add r0, r4, #144
 	add r0, r0, r10, lsl #2
-	vstr s11, [sp, #292]
+	vstr s11, [sp, #272]
 	vldr s12, [r0, #0]
 	add r0, r4, #156
 	add r0, r0, r10, lsl #2
@@ -1194,27 +1200,27 @@ label1185:
 	vldr s13, [r0, #0]
 	add r0, r4, #168
 	add r0, r0, r10, lsl #2
-	vstr s13, [sp, #288]
+	vstr s13, [sp, #228]
 	vldr s14, [r0, #0]
 	add r0, r4, #180
 	add r0, r0, r10, lsl #2
-	vstr s14, [sp, #284]
+	vstr s14, [sp, #240]
 	vldr s15, [r0, #0]
 	add r0, r4, #192
 	add r0, r0, r10, lsl #2
-	vstr s15, [sp, #236]
+	vstr s15, [sp, #256]
 	vldr s0, [r0, #0]
 	add r0, r4, #204
 	add r0, r0, r10, lsl #2
-	vstr s0, [sp, #324]
+	vstr s0, [sp, #288]
 	vldr s0, [r0, #0]
 	add r0, r4, #216
 	add r0, r0, r10, lsl #2
-	vstr s0, [sp, #204]
+	vstr s0, [sp, #304]
 	vldr s29, [r0, #0]
 	add r0, r4, #228
 	add r0, r0, r10, lsl #2
-	vstr s29, [sp, #280]
+	vstr s29, [sp, #220]
 	vldr s28, [r0, #0]
 	add r0, r4, #240
 	add r0, r0, r10, lsl #2
@@ -1226,7 +1232,7 @@ label1185:
 	vldr s0, [r0, #0]
 	add r0, r4, #264
 	add r0, r0, r10, lsl #2
-	vstr s0, [sp, #320]
+	vstr s0, [sp, #284]
 	vldr s12, [r0, #0]
 	add r0, r4, #276
 	add r0, r0, r10, lsl #2
@@ -1238,14 +1244,14 @@ label1185:
 	vldr s26, [r0, #0]
 	add r0, r4, #300
 	add r0, r0, r10, lsl #2
-	vstr s26, [sp, #248]
+	vstr s26, [sp, #252]
 	vldr s16, [r0, #0]
 	add r0, r4, #312
 	add r0, r0, r10, lsl #2
 	vldr s0, [r0, #0]
 	add r0, r4, #324
 	add r0, r0, r10, lsl #2
-	vstr s0, [sp, #328]
+	vstr s0, [sp, #292]
 	vldr s21, [r0, #0]
 	add r0, r4, #336
 	add r0, r0, r10, lsl #2
@@ -1255,7 +1261,7 @@ label1185:
 	vldr s0, [r0, #0]
 	add r0, r4, #360
 	add r0, r0, r10, lsl #2
-	vstr s0, [sp, #316]
+	vstr s0, [sp, #280]
 	vldr s7, [r0, #0]
 	add r0, r4, #372
 	add r0, r0, r10, lsl #2
@@ -1269,65 +1275,65 @@ label1185:
 	vldr s26, [r0, #0]
 	add r0, r4, #408
 	add r0, r0, r10, lsl #2
-	vstr s26, [sp, #200]
+	vstr s26, [sp, #308]
 	vldr s0, [r0, #0]
 	add r0, r4, #420
 	add r0, r0, r10, lsl #2
-	vstr s0, [sp, #308]
+	vstr s0, [sp, #216]
 	vldr s20, [r0, #0]
 	add r0, r4, #432
 	add r0, r0, r10, lsl #2
 	vldr s0, [r0, #0]
 	add r0, r4, #444
 	add r0, r0, r10, lsl #2
-	vstr s0, [sp, #312]
+	vstr s0, [sp, #200]
 	vldr s6, [r0, #0]
 	add r0, r4, #456
 	add r0, r0, r10, lsl #2
-	vstr s6, [sp, #212]
+	vstr s6, [sp, #296]
 	vldr s13, [r0, #0]
 	add r0, r4, #468
 	add r0, r0, r10, lsl #2
-	vstr s13, [sp, #208]
+	vstr s13, [sp, #300]
 	vldr s0, [r0, #0]
-	vstr s0, [sp, #304]
-	vldr s0, [sp, #324]
+	vstr s0, [sp, #204]
+	vldr s0, [sp, #288]
 	vstr s0, [sp, #0]
-	vldr s0, [sp, #204]
+	vldr s0, [sp, #304]
 	vstr s0, [sp, #4]
 	vstr s29, [sp, #8]
 	vstr s28, [sp, #12]
 	vstr s14, [sp, #16]
-	vldr s0, [sp, #320]
+	vldr s0, [sp, #284]
 	vstr s0, [sp, #20]
 	vstr s12, [sp, #24]
 	vstr s27, [sp, #28]
-	vldr s26, [sp, #248]
+	vldr s26, [sp, #252]
 	vstr s26, [sp, #32]
 	vstr s16, [sp, #36]
-	vldr s0, [sp, #328]
+	vldr s0, [sp, #292]
 	vstr s0, [sp, #40]
 	vstr s21, [sp, #44]
 	vstr s18, [sp, #48]
-	vldr s0, [sp, #316]
+	vldr s0, [sp, #280]
 	vstr s0, [sp, #52]
 	vstr s7, [sp, #56]
 	vstr s19, [sp, #60]
 	vstr s17, [sp, #64]
-	vldr s26, [sp, #200]
+	vldr s26, [sp, #308]
 	vstr s26, [sp, #68]
-	vldr s0, [sp, #308]
+	vldr s0, [sp, #216]
 	vstr s0, [sp, #72]
 	vstr s20, [sp, #76]
-	vldr s0, [sp, #312]
+	vldr s0, [sp, #200]
 	vstr s0, [sp, #80]
 	vstr s6, [sp, #84]
 	vstr s13, [sp, #88]
-	vldr s0, [sp, #304]
+	vldr s0, [sp, #204]
 	vstr s0, [sp, #92]
-	vldr s14, [sp, #284]
-	vldr s13, [sp, #288]
-	vldr s0, [sp, #224]
+	vldr s14, [sp, #240]
+	vldr s13, [sp, #228]
+	vldr s0, [sp, #244]
 	vldr s6, [sp, #192]
 	vldr s12, [sp, #184]
 	vmov.f32 s1, s22
@@ -1338,11 +1344,13 @@ label1185:
 	vmov.f32 s8, s25
 	mov r0, r6
 	bl params_f40
-	add r5, sp, #504
-	vstr s0, [sp, #272]
+	add r5, sp, #520
+	movw r12, #1336
+	add r12, sp, r12
+	vstr s0, [r12, #0]
 	add r0, r5, #276
 	ldr r0, [r0, r10, lsl #2]
-	str r0, [sp, #420]
+	str r0, [sp, #412]
 	add r0, r5, #24
 	ldr r7, [r0, r10, lsl #2]
 	add r0, r5, #72
@@ -1354,149 +1362,149 @@ label1185:
 	add r0, r5, #60
 	ldr r3, [r0, r10, lsl #2]
 	add r0, r5, #264
-	str r3, [sp, #332]
+	str r3, [sp, #312]
 	ldr r1, [r0, r10, lsl #2]
 	add r0, r5, #228
-	str r1, [sp, #1292]
+	str r1, [sp, #500]
 	ldr r1, [r5, r10, lsl #2]
-	str r1, [sp, #336]
+	str r1, [sp, #316]
 	ldr r1, [r0, r10, lsl #2]
 	add r0, r5, #84
-	str r1, [sp, #1296]
+	str r1, [sp, #508]
 	ldr r1, [r0, r10, lsl #2]
 	add r0, r5, #120
-	str r1, [sp, #1300]
+	str r1, [sp, #512]
 	ldr r1, [r0, r10, lsl #2]
 	add r0, r5, #156
-	str r1, [sp, #1308]
+	str r1, [sp, #812]
 	ldr r1, [r0, r10, lsl #2]
 	add r0, r5, #96
-	str r1, [sp, #1312]
+	str r1, [sp, #1296]
 	ldr r3, [r0, r10, lsl #2]
 	add r0, r5, #204
-	str r3, [sp, #340]
+	str r3, [sp, #320]
 	ldr r1, [r0, r10, lsl #2]
 	add r0, r5, #216
-	str r1, [sp, #344]
+	str r1, [sp, #324]
 	ldr r1, [r0, r10, lsl #2]
 	add r0, r5, #108
-	str r1, [sp, #348]
+	str r1, [sp, #328]
 	ldr r3, [r0, r10, lsl #2]
 	add r0, r5, #144
-	str r3, [sp, #352]
+	str r3, [sp, #332]
 	ldr r1, [r0, r10, lsl #2]
 	add r0, r5, #132
-	str r1, [sp, #1336]
+	str r1, [sp, #1320]
 	ldr r1, [r0, r10, lsl #2]
 	add r0, r5, #192
-	str r1, [sp, #256]
+	str r1, [sp, #1324]
 	ldr r1, [r0, r10, lsl #2]
 	add r0, r5, #36
-	str r1, [sp, #252]
+	str r1, [sp, #1328]
 	ldr r1, [r0, r10, lsl #2]
 	add r0, r5, #252
-	str r1, [sp, #356]
+	str r1, [sp, #336]
 	ldr r1, [r0, r10, lsl #2]
 	add r0, r5, #240
-	str r1, [sp, #360]
+	str r1, [sp, #340]
 	ldr r1, [r0, r10, lsl #2]
 	add r0, r5, #180
-	str r1, [sp, #364]
-	ldr r0, [r0, r10, lsl #2]
+	str r1, [sp, #344]
 	add r1, r5, #168
+	ldr r0, [r0, r10, lsl #2]
 	ldr r1, [r1, r10, lsl #2]
-	str r1, [sp, #368]
+	str r1, [sp, #348]
 	str r9, [sp, #0]
-	ldr r3, [sp, #332]
+	ldr r3, [sp, #312]
 	str r3, [sp, #4]
-	ldr r1, [sp, #1292]
+	ldr r1, [sp, #500]
 	str r1, [sp, #8]
-	ldr r1, [sp, #336]
+	ldr r1, [sp, #316]
 	str r1, [sp, #12]
-	ldr r1, [sp, #1296]
+	ldr r1, [sp, #508]
 	str r1, [sp, #16]
-	ldr r1, [sp, #1300]
+	ldr r1, [sp, #512]
 	str r1, [sp, #20]
-	ldr r1, [sp, #1308]
+	ldr r1, [sp, #812]
 	str r1, [sp, #24]
-	ldr r1, [sp, #1312]
+	ldr r1, [sp, #1296]
 	str r1, [sp, #28]
 	vldr s27, [sp, #260]
 	vstr s27, [sp, #32]
-	vldr s9, [sp, #220]
+	vldr s9, [sp, #248]
 	vstr s9, [sp, #36]
 	vstr s16, [sp, #40]
-	ldr r3, [sp, #340]
+	ldr r3, [sp, #320]
 	str r3, [sp, #44]
-	vldr s0, [sp, #304]
+	vldr s0, [sp, #204]
 	vstr s0, [sp, #48]
-	ldr r1, [sp, #344]
+	ldr r1, [sp, #324]
 	str r1, [sp, #52]
-	vldr s0, [sp, #320]
+	vldr s0, [sp, #284]
 	vstr s0, [sp, #56]
-	vldr s0, [sp, #324]
+	vldr s0, [sp, #288]
 	vstr s0, [sp, #60]
 	vldr s6, [sp, #192]
 	vstr s6, [sp, #64]
-	vldr s0, [sp, #308]
+	vldr s0, [sp, #216]
 	vstr s0, [sp, #68]
-	ldr r1, [sp, #348]
+	ldr r1, [sp, #328]
 	str r1, [sp, #72]
-	ldr r3, [sp, #352]
+	ldr r3, [sp, #332]
 	str r3, [sp, #76]
-	vldr s14, [sp, #284]
+	vldr s14, [sp, #240]
 	vstr s14, [sp, #80]
-	vldr s10, [sp, #228]
+	vldr s10, [sp, #236]
 	vstr s10, [sp, #84]
-	vldr s0, [sp, #224]
+	vldr s0, [sp, #244]
 	vstr s0, [sp, #88]
-	ldr r1, [sp, #1336]
+	ldr r1, [sp, #1320]
 	str r1, [sp, #92]
 	vstr s19, [sp, #96]
-	ldr r1, [sp, #256]
+	ldr r1, [sp, #1324]
 	str r1, [sp, #100]
-	ldr r1, [sp, #252]
+	ldr r1, [sp, #1328]
 	str r1, [sp, #104]
 	vstr s21, [sp, #108]
-	vldr s26, [sp, #248]
+	vldr s26, [sp, #252]
 	vstr s26, [sp, #112]
-	vldr s13, [sp, #288]
+	vldr s13, [sp, #228]
 	vstr s13, [sp, #116]
-	vldr s0, [sp, #316]
+	vldr s0, [sp, #280]
 	vstr s0, [sp, #120]
-	ldr r1, [sp, #356]
+	ldr r1, [sp, #336]
 	str r1, [sp, #124]
-	ldr r1, [sp, #360]
+	ldr r1, [sp, #340]
 	str r1, [sp, #128]
-	ldr r1, [sp, #364]
+	ldr r1, [sp, #344]
 	str r1, [sp, #132]
-	vldr s29, [sp, #280]
+	vldr s29, [sp, #220]
 	vstr s29, [sp, #136]
 	vldr s28, [sp, #276]
 	vstr s28, [sp, #140]
 	vldr s12, [sp, #268]
 	vstr s12, [sp, #144]
-	vldr s0, [sp, #328]
+	vldr s0, [sp, #292]
 	vstr s0, [sp, #148]
-	vldr s0, [sp, #312]
+	vldr s0, [sp, #200]
 	vstr s0, [sp, #152]
-	vldr s0, [sp, #204]
+	vldr s0, [sp, #304]
 	vstr s0, [sp, #156]
 	str r0, [sp, #160]
-	vldr s2, [sp, #216]
+	vldr s2, [sp, #264]
 	vstr s2, [sp, #164]
-	ldr r1, [sp, #368]
+	ldr r1, [sp, #348]
 	str r1, [sp, #168]
 	vstr s20, [sp, #172]
 	str r6, [sp, #176]
-	ldr r0, [sp, #420]
-	vldr s15, [sp, #236]
-	vldr s11, [sp, #292]
-	vldr s4, [sp, #296]
-	vldr s5, [sp, #300]
-	vldr s6, [sp, #212]
-	vldr s13, [sp, #208]
-	vldr s26, [sp, #200]
+	ldr r0, [sp, #412]
+	vldr s15, [sp, #256]
+	vldr s11, [sp, #272]
+	vldr s4, [sp, #212]
+	vldr s5, [sp, #208]
+	vldr s6, [sp, #296]
+	vldr s13, [sp, #300]
+	vldr s26, [sp, #308]
 	vldr s7, [sp, #196]
 	vldr s14, [sp, #188]
 	vldr s12, [sp, #184]
@@ -1516,275 +1524,275 @@ label1185:
 	vmov.f32 s13, s17
 	vmov.f32 s15, s26
 	bl params_f40_i24
-	add r3, r4, #36
-	add r10, r4, #24
+	add r0, r4, #48
 	vmov.f32 s22, s0
 	add r2, r4, #12
-	add r0, r4, #48
-	str r2, [sp, #372]
+	add r10, r4, #24
+	add r3, r4, #36
+	str r2, [sp, #352]
+	str r3, [sp, #224]
 	add r2, r4, #192
-	str r3, [sp, #424]
-	str r0, [sp, #792]
 	add r3, r4, #60
-	add r0, r4, #108
-	str r3, [sp, #416]
-	add r3, r4, #72
-	str r3, [sp, #412]
-	add r3, r4, #84
-	str r3, [sp, #244]
-	add r3, r4, #96
-	str r3, [sp, #408]
-	str r0, [sp, #472]
-	add r3, r4, #144
-	add r0, r4, #120
-	str r0, [sp, #496]
-	add r0, r4, #132
-	str r0, [sp, #468]
-	str r3, [sp, #404]
-	add r0, r4, #156
-	str r0, [sp, #464]
-	add r0, r4, #168
-	str r0, [sp, #492]
-	add r0, r4, #180
-	str r0, [sp, #460]
-	str r2, [sp, #400]
-	add r0, r4, #204
-	str r0, [sp, #240]
-	add r0, r4, #216
-	str r0, [sp, #484]
-	add r0, r4, #228
-	str r0, [sp, #456]
-	add r0, r4, #240
-	str r0, [sp, #232]
-	add r0, r4, #252
-	str r0, [sp, #396]
-	add r0, r4, #264
 	str r0, [sp, #480]
-	add r0, r4, #276
-	str r0, [sp, #452]
-	add r0, r4, #288
+	str r3, [sp, #408]
+	add r0, r4, #108
+	add r3, r4, #72
+	str r3, [sp, #404]
+	add r3, r4, #84
+	str r3, [sp, #396]
+	add r3, r4, #96
+	str r3, [sp, #400]
+	add r3, r4, #144
+	str r0, [sp, #456]
+	add r0, r4, #120
 	str r0, [sp, #476]
-	add r0, r4, #300
+	add r0, r4, #132
+	str r0, [sp, #452]
+	str r3, [sp, #392]
+	add r0, r4, #156
 	str r0, [sp, #448]
-	add r0, r4, #312
-	str r0, [sp, #392]
-	add r0, r4, #324
+	add r0, r4, #168
+	str r0, [sp, #472]
+	add r0, r4, #180
 	str r0, [sp, #444]
-	add r0, r4, #336
-	str r0, [sp, #1280]
-	add r0, r4, #348
+	str r2, [sp, #384]
+	add r0, r4, #204
 	str r0, [sp, #388]
-	add r0, r4, #360
-	str r0, [sp, #376]
-	add r0, r4, #372
+	add r0, r4, #216
+	str r0, [sp, #468]
+	add r0, r4, #228
 	str r0, [sp, #440]
-	add r0, r4, #384
-	str r0, [sp, #796]
-	add r0, r4, #396
+	add r0, r4, #240
 	str r0, [sp, #380]
-	add r0, r4, #408
-	str r0, [sp, #384]
-	add r0, r4, #420
+	add r0, r4, #252
+	str r0, [sp, #376]
+	add r0, r4, #264
+	str r0, [sp, #464]
+	add r0, r4, #276
 	str r0, [sp, #436]
-	add r0, r4, #432
-	str r0, [sp, #1284]
-	add r0, r4, #444
+	add r0, r4, #288
+	str r0, [sp, #460]
+	add r0, r4, #300
 	str r0, [sp, #432]
-	add r0, r4, #456
-	str r0, [sp, #1288]
-	add r0, r4, #468
+	add r0, r4, #312
+	str r0, [sp, #372]
+	add r0, r4, #324
 	str r0, [sp, #428]
-	ldr r0, [sp, #792]
+	add r0, r4, #336
+	str r0, [sp, #484]
+	add r0, r4, #348
+	str r0, [sp, #368]
+	add r0, r4, #360
+	str r0, [sp, #356]
+	add r0, r4, #372
+	str r0, [sp, #424]
+	add r0, r4, #384
+	str r0, [sp, #488]
+	add r0, r4, #396
+	str r0, [sp, #360]
+	add r0, r4, #408
+	str r0, [sp, #364]
+	add r0, r4, #420
+	str r0, [sp, #420]
+	add r0, r4, #432
+	str r0, [sp, #492]
+	add r0, r4, #444
+	str r0, [sp, #416]
+	add r0, r4, #456
+	str r0, [sp, #496]
+	add r0, r4, #468
+	str r0, [sp, #232]
+	ldr r0, [sp, #480]
 	str r0, [sp, #0]
-	ldr r3, [sp, #416]
-	str r3, [sp, #4]
-	ldr r3, [sp, #412]
-	str r3, [sp, #8]
-	ldr r3, [sp, #244]
-	str r3, [sp, #12]
 	ldr r3, [sp, #408]
-	str r3, [sp, #16]
-	ldr r0, [sp, #472]
-	str r0, [sp, #20]
-	ldr r0, [sp, #496]
-	str r0, [sp, #24]
-	ldr r0, [sp, #468]
-	str r0, [sp, #28]
+	str r3, [sp, #4]
 	ldr r3, [sp, #404]
+	str r3, [sp, #8]
+	ldr r3, [sp, #396]
+	str r3, [sp, #12]
+	ldr r3, [sp, #400]
+	str r3, [sp, #16]
+	ldr r0, [sp, #456]
+	str r0, [sp, #20]
+	ldr r0, [sp, #476]
+	str r0, [sp, #24]
+	ldr r0, [sp, #452]
+	str r0, [sp, #28]
+	ldr r3, [sp, #392]
 	str r3, [sp, #32]
-	ldr r0, [sp, #464]
+	ldr r0, [sp, #448]
 	str r0, [sp, #36]
-	ldr r0, [sp, #492]
+	ldr r0, [sp, #472]
 	str r0, [sp, #40]
-	ldr r0, [sp, #460]
+	ldr r0, [sp, #444]
 	str r0, [sp, #44]
 	str r2, [sp, #48]
-	ldr r0, [sp, #240]
-	str r0, [sp, #52]
-	ldr r0, [sp, #484]
-	str r0, [sp, #56]
-	ldr r0, [sp, #456]
-	str r0, [sp, #60]
-	ldr r0, [sp, #232]
-	str r0, [sp, #64]
-	ldr r0, [sp, #396]
-	str r0, [sp, #68]
-	ldr r0, [sp, #480]
-	str r0, [sp, #72]
-	ldr r0, [sp, #452]
-	str r0, [sp, #76]
-	ldr r0, [sp, #476]
-	str r0, [sp, #80]
-	ldr r0, [sp, #448]
-	str r0, [sp, #84]
-	ldr r0, [sp, #392]
-	str r0, [sp, #88]
-	ldr r0, [sp, #444]
-	str r0, [sp, #92]
-	ldr r0, [sp, #1280]
-	str r0, [sp, #96]
 	ldr r0, [sp, #388]
-	str r0, [sp, #100]
-	ldr r0, [sp, #376]
-	str r0, [sp, #104]
+	str r0, [sp, #52]
+	ldr r0, [sp, #468]
+	str r0, [sp, #56]
 	ldr r0, [sp, #440]
-	str r0, [sp, #108]
-	ldr r0, [sp, #796]
-	str r0, [sp, #112]
+	str r0, [sp, #60]
 	ldr r0, [sp, #380]
-	str r0, [sp, #116]
-	ldr r0, [sp, #384]
-	str r0, [sp, #120]
+	str r0, [sp, #64]
+	ldr r0, [sp, #376]
+	str r0, [sp, #68]
+	ldr r0, [sp, #464]
+	str r0, [sp, #72]
 	ldr r0, [sp, #436]
-	str r0, [sp, #124]
-	ldr r0, [sp, #1284]
-	str r0, [sp, #128]
+	str r0, [sp, #76]
+	ldr r0, [sp, #460]
+	str r0, [sp, #80]
 	ldr r0, [sp, #432]
-	str r0, [sp, #132]
-	ldr r0, [sp, #1288]
-	str r0, [sp, #136]
+	str r0, [sp, #84]
+	ldr r0, [sp, #372]
+	str r0, [sp, #88]
 	ldr r0, [sp, #428]
+	str r0, [sp, #92]
+	ldr r0, [sp, #484]
+	str r0, [sp, #96]
+	ldr r0, [sp, #368]
+	str r0, [sp, #100]
+	ldr r0, [sp, #356]
+	str r0, [sp, #104]
+	ldr r0, [sp, #424]
+	str r0, [sp, #108]
+	ldr r0, [sp, #488]
+	str r0, [sp, #112]
+	ldr r0, [sp, #360]
+	str r0, [sp, #116]
+	ldr r0, [sp, #364]
+	str r0, [sp, #120]
+	ldr r0, [sp, #420]
+	str r0, [sp, #124]
+	ldr r0, [sp, #492]
+	str r0, [sp, #128]
+	ldr r0, [sp, #416]
+	str r0, [sp, #132]
+	ldr r0, [sp, #496]
+	str r0, [sp, #136]
+	ldr r0, [sp, #232]
 	str r0, [sp, #140]
 	str r6, [sp, #144]
-	ldr r2, [sp, #372]
-	ldr r3, [sp, #424]
+	ldr r2, [sp, #352]
+	ldr r3, [sp, #224]
 	mov r0, r4
 	mov r1, r2
 	mov r2, r10
 	bl params_fa40
-	add r1, r5, #132
 	add r3, r5, #156
+	add r1, r5, #132
 	vmov.f32 s23, s0
-	add r2, r5, #120
-	add r4, r5, #84
-	str r3, [sp, #264]
-	add r11, r5, #36
-	add r10, r5, #72
 	add r0, r5, #144
-	add r3, r5, #180
-	str r3, [sp, #1328]
-	add r3, r5, #192
+	add r2, r5, #120
 	str r3, [sp, #1332]
-	add r3, r5, #228
-	str r3, [sp, #1324]
-	add r3, r5, #264
-	str r3, [sp, #1320]
-	add r3, r5, #276
+	add r4, r5, #84
+	add r10, r5, #72
+	add r11, r5, #36
+	add r3, r5, #180
+	str r3, [sp, #1312]
+	add r3, r5, #192
 	str r3, [sp, #1316]
-	add r3, r5, #12
+	add r3, r5, #228
+	str r3, [sp, #1308]
+	add r3, r5, #264
 	str r3, [sp, #1304]
-	ldr r3, [sp, #416]
+	add r3, r5, #276
+	str r3, [sp, #1300]
+	add r3, r5, #12
+	str r3, [sp, #808]
+	ldr r3, [sp, #408]
 	str r3, [sp, #0]
 	str r11, [sp, #4]
 	str r9, [sp, #8]
-	ldr r3, [sp, #332]
+	ldr r3, [sp, #312]
 	str r3, [sp, #12]
-	ldr r3, [sp, #412]
+	ldr r3, [sp, #404]
 	str r3, [sp, #16]
 	str r10, [sp, #20]
 	str r4, [sp, #24]
-	ldr r3, [sp, #340]
+	ldr r3, [sp, #320]
 	str r3, [sp, #28]
-	ldr r3, [sp, #244]
+	ldr r3, [sp, #396]
 	str r3, [sp, #32]
-	ldr r3, [sp, #408]
+	ldr r3, [sp, #400]
 	str r3, [sp, #36]
-	ldr r3, [sp, #404]
+	ldr r3, [sp, #392]
 	str r3, [sp, #40]
-	ldr r3, [sp, #352]
+	ldr r3, [sp, #332]
 	str r3, [sp, #44]
 	str r2, [sp, #48]
-	ldr r2, [sp, #400]
+	ldr r2, [sp, #384]
 	str r2, [sp, #52]
 	str r1, [sp, #56]
 	str r0, [sp, #60]
-	ldr r0, [sp, #240]
+	ldr r0, [sp, #388]
 	str r0, [sp, #64]
-	ldr r3, [sp, #264]
-	str r3, [sp, #68]
-	ldr r1, [sp, #368]
-	str r1, [sp, #72]
-	ldr r0, [sp, #232]
-	str r0, [sp, #76]
-	ldr r0, [sp, #396]
-	str r0, [sp, #80]
-	ldr r3, [sp, #1328]
-	str r3, [sp, #84]
 	ldr r3, [sp, #1332]
-	str r3, [sp, #88]
-	ldr r1, [sp, #344]
-	str r1, [sp, #92]
+	str r3, [sp, #68]
 	ldr r1, [sp, #348]
-	str r1, [sp, #96]
-	ldr r3, [sp, #1324]
-	str r3, [sp, #100]
-	ldr r1, [sp, #364]
-	str r1, [sp, #104]
-	ldr r0, [sp, #392]
-	str r0, [sp, #108]
-	ldr r1, [sp, #360]
-	str r1, [sp, #112]
-	ldr r3, [sp, #1320]
-	str r3, [sp, #116]
+	str r1, [sp, #72]
+	ldr r0, [sp, #380]
+	str r0, [sp, #76]
+	ldr r0, [sp, #376]
+	str r0, [sp, #80]
+	ldr r3, [sp, #1312]
+	str r3, [sp, #84]
 	ldr r3, [sp, #1316]
+	str r3, [sp, #88]
+	ldr r1, [sp, #324]
+	str r1, [sp, #92]
+	ldr r1, [sp, #328]
+	str r1, [sp, #96]
+	ldr r3, [sp, #1308]
+	str r3, [sp, #100]
+	ldr r1, [sp, #344]
+	str r1, [sp, #104]
+	ldr r0, [sp, #372]
+	str r0, [sp, #108]
+	ldr r1, [sp, #340]
+	str r1, [sp, #112]
+	ldr r3, [sp, #1304]
+	str r3, [sp, #116]
+	ldr r3, [sp, #1300]
 	str r3, [sp, #120]
 	vstr s21, [sp, #124]
 	vstr s18, [sp, #128]
-	ldr r0, [sp, #388]
+	ldr r0, [sp, #368]
 	str r0, [sp, #132]
-	ldr r1, [sp, #336]
+	ldr r1, [sp, #316]
 	str r1, [sp, #136]
-	ldr r3, [sp, #1304]
+	ldr r3, [sp, #808]
 	str r3, [sp, #140]
-	ldr r0, [sp, #376]
+	ldr r0, [sp, #356]
 	str r0, [sp, #144]
 	vstr s19, [sp, #148]
 	str r7, [sp, #152]
 	vstr s17, [sp, #156]
-	ldr r0, [sp, #380]
+	ldr r0, [sp, #360]
 	str r0, [sp, #160]
-	ldr r0, [sp, #384]
+	ldr r0, [sp, #364]
 	str r0, [sp, #164]
 	vstr s20, [sp, #168]
-	ldr r1, [sp, #356]
+	ldr r1, [sp, #336]
 	str r1, [sp, #172]
 	str r6, [sp, #176]
-	ldr r2, [sp, #372]
-	vldr s26, [sp, #248]
+	ldr r2, [sp, #352]
+	vldr s26, [sp, #252]
 	vldr s27, [sp, #260]
 	vldr s12, [sp, #268]
 	vldr s28, [sp, #276]
-	vldr s29, [sp, #280]
-	vldr s14, [sp, #284]
-	vldr s13, [sp, #288]
-	vldr s0, [sp, #224]
-	vldr s10, [sp, #228]
-	vldr s9, [sp, #220]
-	vldr s15, [sp, #236]
-	vldr s2, [sp, #216]
-	vldr s11, [sp, #292]
-	vldr s4, [sp, #296]
-	vldr s5, [sp, #300]
+	vldr s29, [sp, #220]
+	vldr s14, [sp, #240]
+	vldr s13, [sp, #228]
+	vldr s0, [sp, #244]
+	vldr s10, [sp, #236]
+	vldr s9, [sp, #248]
+	vldr s15, [sp, #256]
+	vldr s2, [sp, #264]
+	vldr s11, [sp, #272]
+	vldr s4, [sp, #212]
+	vldr s5, [sp, #208]
 	mov r0, r5
 	mov r1, r8
 	vmov.f32 s1, s2
@@ -1803,7 +1811,9 @@ label1185:
 	vmov.f32 s14, s26
 	vmov.f32 s15, s16
 	bl params_mix
-	vldr s0, [sp, #272]
+	movw r12, #1336
+	add r12, sp, r12
+	vldr s0, [r12, #0]
 	mov r4, r0
 	bl putfloat
 	mov r0, #10

@@ -186,82 +186,109 @@ label17:
 main:
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
 	sub sp, sp, #92
-	mov r8, #0
+	mov r4, #0
 	add r6, sp, #8
-	str r8, [sp, #8]
-	str r8, [sp, #12]
-	str r8, [sp, #16]
-	str r8, [sp, #20]
-	str r8, [sp, #24]
-	str r8, [sp, #28]
-	str r8, [sp, #32]
-	str r8, [sp, #36]
-	str r8, [sp, #40]
-	str r8, [sp, #44]
-	str r8, [sp, #48]
-	str r8, [sp, #52]
-	str r8, [sp, #56]
-	str r8, [sp, #60]
-	str r8, [sp, #64]
-	str r8, [sp, #68]
-	str r8, [sp, #72]
-	str r8, [sp, #76]
-	str r8, [sp, #80]
-	str r8, [sp, #84]
+	str r4, [sp, #8]
+	str r4, [sp, #12]
+	str r4, [sp, #16]
+	str r4, [sp, #20]
+	str r4, [sp, #24]
+	str r4, [sp, #28]
+	str r4, [sp, #32]
+	str r4, [sp, #36]
+	str r4, [sp, #40]
+	str r4, [sp, #44]
+	str r4, [sp, #48]
+	str r4, [sp, #52]
+	str r4, [sp, #56]
+	str r4, [sp, #60]
+	str r4, [sp, #64]
+	str r4, [sp, #68]
+	str r4, [sp, #72]
+	str r4, [sp, #76]
+	str r4, [sp, #80]
+	str r4, [sp, #84]
 	bl getint
-	mov r7, r8
-	movw r9, #:lower16:dp
-	movt r9, #:upper16:dp
+	mov r3, r4
+	movw r2, #:lower16:dp
+	movt r2, #:upper16:dp
 	mov r5, r0
 	mvn r0, #0
-	movw r1, #55744
-	movt r1, #44
-	cmp r8, #18
-	mla r4, r8, r1, r9
+	cmp r4, #18
+	blt label210
+label206:
+	cmp r5, #0
+	ble label207
+	mov r7, r4
+	b label208
+label207:
+	ldr r0, [sp, #12]
+	ldr r1, [sp, #16]
+	ldr r2, [sp, #20]
+	ldr r3, [sp, #24]
+	ldr r5, [sp, #28]
+	str r5, [sp, #0]
+	str r4, [sp, #4]
+	bl dfs
+	mov r4, r0
+	bl putint
+	add sp, sp, #92
+	mov r0, r4
+	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
+.p2align 4
+label208:
+	bl getint
+	add r7, r7, #1
+	add r0, r6, r0, lsl #2
+	cmp r5, r7
+	ldr r1, [r0, #0]
+	add r1, r1, #1
+	str r1, [r0, #0]
+	bgt label208
+	b label207
+.p2align 4
+label210:
+	mov r7, r2
+	mov r8, r4
+	cmp r4, #18
 	bge label214
 .p2align 4
-label246:
-	mov r8, #0
-	mov r10, r8
+label215:
+	mov r9, r7
+	mov r10, r4
+	cmp r4, #18
+	bge label219
+.p2align 4
+label220:
+	mov r1, r9
+	mov r11, r4
+	b label221
+.p2align 4
+label224:
+	add r10, r10, #1
+	movw r1, #9072
+	add r9, r9, r1
+	cmp r10, #18
+	blt label220
+	add r8, r8, #1
 	movw r1, #32224
 	movt r1, #2
+	add r7, r7, r1
 	cmp r8, #18
-	mla r3, r8, r1, r4
-	blt label252
-label251:
-	add r7, r7, #1
+	blt label215
+	add r3, r3, #1
 	movw r1, #55744
 	movt r1, #44
-	cmp r7, #18
-	mla r4, r7, r1, r9
-	blt label246
-	b label214
+	add r2, r2, r1
+	cmp r3, #18
+	blt label210
+	b label206
 .p2align 4
-label252:
-	mov r8, #0
-	mov r11, r8
-	movw r1, #9072
-	cmp r8, #18
-	mla r2, r8, r1, r3
-	blt label258
-	add r10, r10, #1
-	movw r1, #32224
-	movt r1, #2
-	cmp r10, #18
-	mla r3, r10, r1, r4
-	blt label252
-	b label251
-.p2align 4
-label258:
-	mov r8, #0
-.p2align 4
-label209:
-	rsb r1, r8, r8, lsl #6
-	add r8, r8, #1
-	add r1, r2, r1, lsl #3
-	cmp r8, #18
+label221:
 	str r0, [r1, #0]
+	add r11, r11, #1
 	str r0, [r1, #4]
+	cmp r11, #18
 	str r0, [r1, #8]
 	str r0, [r1, #12]
 	str r0, [r1, #16]
@@ -386,50 +413,29 @@ label209:
 	str r0, [r1, #492]
 	str r0, [r1, #496]
 	str r0, [r1, #500]
-	blt label209
-	add r11, r11, #1
-	movw r1, #9072
-	cmp r11, #18
-	mla r2, r11, r1, r3
-	blt label258
-	add r10, r10, #1
+	bge label224
+	add r1, r1, #504
+	b label221
+.p2align 4
+label219:
+	add r8, r8, #1
 	movw r1, #32224
 	movt r1, #2
-	cmp r10, #18
-	mla r3, r10, r1, r4
-	blt label252
-	add r7, r7, #1
+	add r7, r7, r1
+	cmp r8, #18
+	blt label215
+	add r3, r3, #1
 	movw r1, #55744
 	movt r1, #44
-	cmp r7, #18
-	mla r4, r7, r1, r9
-	blt label246
+	add r2, r2, r1
+	cmp r3, #18
+	blt label210
+	b label206
 label214:
-	cmp r5, #0
-	ble label217
-	mov r8, #0
-.p2align 4
-label215:
-	bl getint
-	add r8, r8, #1
-	add r0, r6, r0, lsl #2
-	cmp r5, r8
-	ldr r1, [r0, #0]
-	add r1, r1, #1
-	str r1, [r0, #0]
-	bgt label215
-label217:
-	ldr r0, [sp, #12]
-	mov r8, #0
-	ldr r1, [sp, #16]
-	ldr r2, [sp, #20]
-	ldr r3, [sp, #24]
-	ldr r4, [sp, #28]
-	str r4, [sp, #0]
-	str r8, [sp, #4]
-	bl dfs
-	mov r4, r0
-	bl putint
-	add sp, sp, #92
-	mov r0, r4
-	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
+	add r3, r3, #1
+	movw r1, #55744
+	movt r1, #44
+	add r2, r2, r1
+	cmp r3, #18
+	blt label210
+	b label206

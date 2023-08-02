@@ -14,6 +14,9 @@
 
 // Utils before lowering
 
+#include "cmmc/Analysis/DominateAnalysis.hpp"
+#include "cmmc/Analysis/SCEVAnalysis.hpp"
+#include "cmmc/IR/IRBuilder.hpp"
 #include <cmmc/Analysis/AnalysisPass.hpp>
 #include <cmmc/CodeGen/MultiplyByConstant.hpp>
 #include <cmmc/CodeGen/Target.hpp>
@@ -25,8 +28,10 @@
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
 #include <cmmc/Transforms/Util/PatternMatch.hpp>
 #include <cstdint>
+#include <iterator>
 #include <limits>
 #include <unordered_map>
+#include <unordered_set>
 
 CMMC_NAMESPACE_BEGIN
 
@@ -154,5 +159,108 @@ public:
 };
 
 CMMC_TRANSFORM_PASS(SDivWithPowerOf2);
+
+class SCEVGEP2Phi final : public TransformPass<Function> {
+public:
+    bool run(Function& func, AnalysisPassManager& analysis) const override {
+        auto& dom = analysis.get<DominateAnalysis>(func);
+
+        bool modified = false;
+        std::vector<Block*> newBlocks;
+        std::unordered_set<Instruction*> newGEPs;
+        for(auto block : func.blocks()) {
+            for(auto& inst : block->instructions()) {
+                if(inst.getInstID() == InstructionID::GetElementPtr) {
+                    if(newGEPs.count(&inst))
+                        continue;
+
+                    const auto idx = inst.arguments().back();
+                    if(!idx->getType()->isInteger())
+                        continue;
+                    if(!idx->is<PhiInst>())
+                        continue;
+
+                    const auto idxPhi = idx->as<PhiInst>();
+                    bool allInvariant = true;
+                    for(auto operand : inst.operands()) {
+                        if(operand == idxPhi)
+                            continue;
+                        if(operand->getBlock() &&
+                           (operand->getBlock() == idxPhi->getBlock() ||
+                            !dom.dominate(operand->getBlock(), idxPhi->getBlock()))) {
+                            allInvariant = false;
+                            break;
+                        }
+                    }
+                    if(!allInvariant)
+                        continue;
+
+                    bool backedge = false;
+                    for(auto& [pred, val] : idxPhi->incomings()) {
+                        if(dom.dominate(idxPhi->getBlock(), pred)) {
+                            Value *idxPhiVal = idxPhi, *inc;
+                            if(add(exactly(idxPhiVal), any(inc))(MatchContext<Value>{ val->value })) {
+                                backedge = true;
+                                break;
+                            }
+                        }
+                    }
+                    if(!backedge)
+                        continue;
+
+                    const auto phi = make<PhiInst>(inst.getType());
+                    std::vector<std::pair<Block*, Block*>> retargetWorkList;
+                    for(auto& [pred, val] : idxPhi->incomings()) {
+                        if(val->value == idxPhi) {
+                            phi->addIncoming(pred, phi);
+                            continue;
+                        }
+
+                        Value *inc, *idxPhiVal = idxPhi;
+                        Instruction* newGep;
+                        if(add(exactly(idxPhiVal), any(inc))(MatchContext<Value>{ val->value })) {
+                            newGep = make<GetElementPtrInst>(phi, std::vector<Value*>{ inc });
+                        } else {
+                            newGep = inst.clone();
+                            (*std::prev(newGep->mutableOperands().end(), 2))->resetValue(val->value);
+                        }
+                        newGEPs.insert(newGep);
+
+                        phi->addIncoming(pred, newGep);
+                        if(pred->getTerminator()->getInstID() == InstructionID::Branch) {
+                            newGep->insertBefore(pred, std::prev(pred->instructions().end()));
+                        } else {
+                            const auto prebody = make<Block>(&func);
+                            newGep->insertBefore(prebody, prebody->instructions().begin());
+                            const auto terminator = make<BranchInst>(idxPhi->getBlock());
+                            terminator->insertBefore(prebody, prebody->instructions().end());
+                            newBlocks.push_back(prebody);
+                            phi->addIncoming(prebody, newGep);
+
+                            retargetWorkList.emplace_back(pred, prebody);
+                            resetTarget(pred->getTerminator()->as<BranchInst>(), idxPhi->getBlock(), prebody);
+                        }
+                    }
+                    phi->insertBefore(idxPhi->getBlock(), idxPhi->getBlock()->instructions().begin());
+                    for(auto [pred, prebody] : retargetWorkList)
+                        retargetBlock(idxPhi->getBlock(), pred, prebody);
+                    inst.replaceWith(phi);
+
+                    modified = true;
+                }
+            }
+        }
+        for(auto block : newBlocks)
+            func.blocks().push_back(block);
+
+        return modified;
+    }
+
+    [[nodiscard]] std::string_view name() const noexcept override {
+        return "SCEVGEP2Phi"sv;
+    }
+};
+
+CMMC_TRANSFORM_PASS(SCEVGEP2Phi);
 
 CMMC_NAMESPACE_END
