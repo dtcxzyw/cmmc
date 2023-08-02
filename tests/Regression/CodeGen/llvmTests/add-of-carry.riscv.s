@@ -6,13 +6,13 @@
 test1:
 	addw a2, a0, a1
 	sltu a3, a2, a1
-	zext.w a1, a3
-	addw a0, a2, a1
+	zext.w a4, a3
+	addw a0, a2, a4
 	ret
 .p2align 2
 .globl test2
 test2:
 	sltu a3, a1, a0
-	addw a1, a3, a2
-	zext.w a0, a1
+	addw a4, a3, a2
+	zext.w a0, a4
 	ret

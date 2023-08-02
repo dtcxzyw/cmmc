@@ -5,10 +5,12 @@
 .globl main
 main:
 	addi sp, sp, -96
-	fmv.w.x f10, zero
+	fmv.w.x f11, zero
 	lui a0, 262144
 	sd ra, 0(sp)
+	fmv.w.x f10, a0
 	sd s0, 8(sp)
+	lui a0, 264192
 	addi s0, sp, 80
 	sd s1, 16(sp)
 	addi s1, sp, 64
@@ -16,18 +18,16 @@ main:
 	addi s3, sp, 40
 	sd s2, 32(sp)
 	mv s2, zero
-	fsw f10, 40(sp)
-	fsw f10, 64(sp)
-	fsw f10, 80(sp)
-	fmv.w.x f10, a0
-	lui a0, 264192
+	fsw f11, 40(sp)
+	fsw f11, 64(sp)
+	fsw f11, 80(sp)
+	fmv.w.x f11, a0
 	fsw f10, 44(sp)
 	fsw f10, 68(sp)
 	fsw f10, 84(sp)
-	fmv.w.x f10, a0
-	fsw f10, 48(sp)
-	fsw f10, 72(sp)
-	fsw f10, 88(sp)
+	fsw f11, 48(sp)
+	fsw f11, 72(sp)
+	fsw f11, 88(sp)
 label2:
 	sh2add a1, s2, s3
 	flw f10, 0(a1)

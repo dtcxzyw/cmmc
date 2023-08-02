@@ -17,10 +17,10 @@ pcrel19:
 	auipc a1, %pcrel_hi(i)
 	lw a0, %pcrel_lo(pcrel19)(a1)
 	bne a0, zero, label3
-	li a0, 10
+	li a1, 10
 pcrel20:
-	auipc a1, %pcrel_hi(j)
-	sw a0, %pcrel_lo(pcrel20)(a1)
+	auipc a2, %pcrel_hi(j)
+	sw a1, %pcrel_lo(pcrel20)(a2)
 label3:
 	mv a0, zero
 	ret

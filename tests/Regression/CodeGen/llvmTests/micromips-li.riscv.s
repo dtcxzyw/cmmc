@@ -17,19 +17,19 @@ z:
 .p2align 2
 .globl main
 main:
-	li a0, 1
+	li a1, 1
 pcrel19:
-	auipc a1, %pcrel_hi(x)
-	li a2, 537
-	sw a0, %pcrel_lo(pcrel19)(a1)
+	auipc a2, %pcrel_hi(x)
+	li a3, 537
+	sw a1, %pcrel_lo(pcrel19)(a2)
+	slli a0, a3, 2
 pcrel20:
-	auipc a1, %pcrel_hi(y)
-	slli a0, a2, 2
-	lui a2, 8
-	sw a0, %pcrel_lo(pcrel20)(a1)
-pcrel21:
-	auipc a1, %pcrel_hi(z)
-	addiw a0, a2, 564
-	sw a0, %pcrel_lo(pcrel21)(a1)
+	auipc a2, %pcrel_hi(y)
+	lui a3, 8
+	sw a0, %pcrel_lo(pcrel20)(a2)
+	addiw a1, a3, 564
 	mv a0, zero
+pcrel21:
+	auipc a2, %pcrel_hi(z)
+	sw a1, %pcrel_lo(pcrel21)(a2)
 	ret

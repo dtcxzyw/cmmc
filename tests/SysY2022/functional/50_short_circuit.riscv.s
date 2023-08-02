@@ -9,10 +9,9 @@ main:
 	sd s0, 8(sp)
 	sd s1, 16(sp)
 	jal getint
+	li a1, 10
 	mv s0, a0
-	li a0, 10
-	ble s0, a0, label18
-	mv a0, s0
+	ble a0, a1, label18
 	jal putint
 label3:
 	jal getint

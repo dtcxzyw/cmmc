@@ -4,10 +4,11 @@
 .p2align 2
 .globl bare_select
 bare_select:
+	mv a3, a1
 	bne a0, zero, label8
-	mv a1, a2
+	mv a3, a2
 label8:
-	mv a0, a1
+	mv a0, a3
 	ret
 .p2align 2
 .globl bare_select_float

@@ -5,17 +5,17 @@
 .globl bar
 bar:
 	zext.h a2, a0
-	zext.h a0, a1
-	divw a1, a2, a0
-	zext.w a2, a1
-	andi a0, a2, 1
+	zext.h a3, a1
+	divw a4, a2, a3
+	zext.w a5, a4
+	andi a0, a5, 1
 	ret
 .p2align 2
 .globl foo
 foo:
 	andi a2, a0, 255
-	andi a0, a1, 255
-	divw a1, a2, a0
-	zext.w a2, a1
-	andi a0, a2, 1
+	andi a3, a1, 255
+	divw a4, a2, a3
+	zext.w a5, a4
+	andi a0, a5, 1
 	ret

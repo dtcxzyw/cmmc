@@ -289,10 +289,10 @@ test_mul_by_neg36:
 .p2align 2
 .globl test_mul_spec
 test_mul_spec:
-	sh3add a2, a0, a0
-	sh2add a0, a0, a0
-	addiw a1, a2, 42
-	addiw a2, a0, 2
-	mulw a1, a1, a2
-	zext.w a0, a1
+	sh3add a3, a0, a0
+	sh2add a2, a0, a0
+	addiw a1, a3, 42
+	addiw a4, a2, 2
+	mulw a3, a1, a4
+	zext.w a0, a3
 	ret

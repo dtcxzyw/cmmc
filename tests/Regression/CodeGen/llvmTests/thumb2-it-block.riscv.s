@@ -10,12 +10,12 @@ test:
 	blt a0, zero, label19
 	mv a2, a0
 label19:
-	subw a3, zero, a1
-	zext.w a4, a3
-	mv a0, a4
+	subw a4, zero, a1
+	zext.w a0, a4
+	mv a3, a0
 	blt a1, zero, label21
-	mv a0, a1
+	mv a3, a1
 label21:
-	addw a1, a2, a0
-	zext.w a0, a1
+	addw a4, a2, a3
+	zext.w a0, a4
 	ret

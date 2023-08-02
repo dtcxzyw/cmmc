@@ -7,6 +7,6 @@ extend2bit_v2:
 	andi a1, a0, 255
 	sext.b a2, a1
 	xori a3, a2, 3
-	sltiu a1, a3, 1
-	zext.w a0, a1
+	sltiu a4, a3, 1
+	zext.w a0, a4
 	ret

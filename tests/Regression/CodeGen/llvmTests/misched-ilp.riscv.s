@@ -4,9 +4,9 @@
 .p2align 2
 .globl ilpsched
 ilpsched:
-	fadd.s f12, f12, f13
-	fadd.s f14, f14, f15
-	fadd.s f11, f10, f11
-	fsub.s f13, f12, f14
-	fadd.s f10, f11, f13
+	fadd.s f0, f12, f13
+	fadd.s f2, f14, f15
+	fadd.s f12, f10, f11
+	fsub.s f1, f0, f2
+	fadd.s f10, f12, f1
 	ret

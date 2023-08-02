@@ -18,10 +18,10 @@ graphColoring:
 	li s3, 1
 label15:
 	bge s3, s4, label53
-	sh2add a0, s2, s1
+	sh2add a1, s2, s1
 	addiw a2, s2, 1
+	sw s3, 0(a1)
 	li a1, 3
-	sw s3, 0(a0)
 	mv a0, s0
 	mv a3, s1
 	jal graphColoring
@@ -32,9 +32,9 @@ label25:
 	mv a2, zero
 label2:
 	bge a2, s4, label28
-	slliw a1, a2, 4
+	slliw a4, a2, 4
 	addiw a0, a2, 1
-	add a3, s0, a1
+	add a3, s0, a4
 	mv a1, a0
 label5:
 	bge a1, s4, label35
@@ -45,9 +45,9 @@ label42:
 	addiw a1, a1, 1
 	j label5
 label8:
-	sh2add a5, a1, s1
+	sh2add t1, a1, s1
 	sh2add t0, a2, s1
-	lw a4, 0(a5)
+	lw a4, 0(t1)
 	lw a5, 0(t0)
 	bne a4, a5, label42
 label53:
@@ -87,19 +87,19 @@ label35:
 .globl main
 main:
 	addi sp, sp, -88
-	li a2, 1
 	li a4, 1
+	li a2, 1
 	addi a3, sp, 72
 	sd ra, 0(sp)
 	addi a0, sp, 8
-	zext.w a2, a2
-	slli a1, a4, 32
-	ori a4, a1, 1
+	slli a1, a2, 32
+	zext.w a2, a4
+	ori a5, a1, 1
 	sd a1, 8(sp)
-	sd a4, 16(sp)
+	sd a5, 16(sp)
 	sd a2, 24(sp)
 	sd a2, 32(sp)
-	sd a4, 40(sp)
+	sd a5, 40(sp)
 	sd a1, 48(sp)
 	li a1, 3
 	sd a2, 56(sp)

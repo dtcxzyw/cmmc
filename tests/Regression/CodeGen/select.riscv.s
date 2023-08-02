@@ -9,18 +9,20 @@ __cmmc_fp_constant_pool:
 .p2align 2
 .globl select_gpr_gpr_gpr
 select_gpr_gpr_gpr:
+	mv a3, a1
 	bne a0, zero, label8
-	mv a1, a2
+	mv a3, a2
 label8:
-	mv a0, a1
+	mv a0, a3
 	ret
 .p2align 2
 .globl select_not_gpr_gpr_gpr
 select_not_gpr_gpr_gpr:
+	mv a3, a1
 	beq a0, zero, label17
-	mv a1, a2
+	mv a3, a2
 label17:
-	mv a0, a1
+	mv a0, a3
 	ret
 .p2align 2
 .globl select_gpr_fpr_fpr
@@ -39,10 +41,11 @@ label35:
 .p2align 2
 .globl select_slt_gpr_gpr
 select_slt_gpr_gpr:
+	mv a4, a2
 	blt a0, a1, label45
-	mv a2, a3
+	mv a4, a3
 label45:
-	mv a0, a2
+	mv a0, a4
 	ret
 .p2align 2
 .globl select_slt_fpr_fpr
@@ -54,10 +57,11 @@ label55:
 .p2align 2
 .globl select_sle_gpr_gpr
 select_sle_gpr_gpr:
+	mv a4, a2
 	ble a0, a1, label66
-	mv a2, a3
+	mv a4, a3
 label66:
-	mv a0, a2
+	mv a0, a4
 	ret
 .p2align 2
 .globl select_sle_fpr_fpr
@@ -69,10 +73,11 @@ label77:
 .p2align 2
 .globl select_sgt_gpr_gpr
 select_sgt_gpr_gpr:
+	mv a4, a2
 	bgt a0, a1, label87
-	mv a2, a3
+	mv a4, a3
 label87:
-	mv a0, a2
+	mv a0, a4
 	ret
 .p2align 2
 .globl select_sgt_fpr_fpr
@@ -84,10 +89,11 @@ label97:
 .p2align 2
 .globl select_sge_gpr_gpr
 select_sge_gpr_gpr:
+	mv a4, a2
 	bge a0, a1, label108
-	mv a2, a3
+	mv a4, a3
 label108:
-	mv a0, a2
+	mv a0, a4
 	ret
 .p2align 2
 .globl select_sge_fpr_fpr
@@ -99,10 +105,11 @@ label119:
 .p2align 2
 .globl select_eq_gpr_gpr
 select_eq_gpr_gpr:
+	mv a4, a2
 	beq a0, a1, label130
-	mv a2, a3
+	mv a4, a3
 label130:
-	mv a0, a2
+	mv a0, a4
 	ret
 .p2align 2
 .globl select_eq_fpr_fpr
@@ -114,10 +121,11 @@ label141:
 .p2align 2
 .globl select_ne_gpr_gpr
 select_ne_gpr_gpr:
+	mv a4, a2
 	bne a0, a1, label152
-	mv a2, a3
+	mv a4, a3
 label152:
-	mv a0, a2
+	mv a0, a4
 	ret
 .p2align 2
 .globl select_ne_fpr_fpr
@@ -146,11 +154,12 @@ label183:
 .p2align 2
 .globl select_fne_gpr_gpr
 select_fne_gpr_gpr:
-	feq.s a2, f10, f11
-	bne a2, zero, label194
-	mv a1, a0
+	feq.s a3, f10, f11
+	mv a2, a1
+	bne a3, zero, label194
+	mv a2, a0
 label194:
-	mv a0, a1
+	mv a0, a2
 	ret
 .p2align 2
 .globl select_fne_fpr_fpr
@@ -233,10 +242,11 @@ label285:
 .globl select_cross
 select_cross:
 	slt a3, a0, a1
-	li a0, 1
+	li a4, 1
 	bne a3, zero, label297
-	li a0, 10
+	li a4, 10
 label297:
+	mv a0, a4
 	blt a1, a2, label299
 	mv a0, a3
 label299:
@@ -249,10 +259,11 @@ select_cross_fpr:
 	bge a1, a2, label313
 	lui a1, 260096
 	lui a2, 266752
-	fmv.w.x f10, a1
-	fmv.w.x f11, a2
-	bne a0, zero, label304
+	fmv.w.x f11, a1
+	fmv.w.x f12, a2
 	fmv.s f10, f11
+	bne a0, zero, label304
+	fmv.s f10, f12
 	j label304
 label313:
 	fcvt.s.w f10, a3
@@ -262,8 +273,8 @@ label304:
 .globl select_round
 select_round:
 pcrel341:
-	auipc a0, %pcrel_hi(__cmmc_fp_constant_pool)
-	addi a1, a0, %pcrel_lo(pcrel341)
+	auipc a2, %pcrel_hi(__cmmc_fp_constant_pool)
+	addi a1, a2, %pcrel_lo(pcrel341)
 	flw f11, 0(a1)
 	flw f12, 4(a1)
 	flt.s a0, f10, f11
@@ -277,10 +288,10 @@ label339:
 .p2align 2
 .globl select_bitset
 select_bitset:
-	xori a3, a1, 1
-	or a1, a0, a3
+	xori a4, a1, 1
+	or a3, a0, a4
 	mv a0, a2
-	beq a1, zero, label351
+	beq a3, zero, label351
 	mv a0, zero
 label351:
 	ret
@@ -297,18 +308,20 @@ select_imin:
 .p2align 2
 .globl select_zero
 select_zero:
+	mv a2, a1
 	beq a0, zero, label367
-	mv a1, zero
+	mv a2, zero
 label367:
-	mv a0, a1
+	mv a0, a2
 	ret
 .p2align 2
 .globl select_sgt_zero
 select_sgt_zero:
+	mv a2, a1
 	bgt a0, zero, label375
-	mv a1, zero
+	mv a2, zero
 label375:
-	mv a0, a1
+	mv a0, a2
 	ret
 .p2align 2
 .globl select_slt_zero
@@ -325,11 +338,12 @@ select_imm:
 .p2align 2
 .globl select_one
 select_one:
-	li a3, 1
-	beq a0, a3, label397
-	mv a1, a2
+	li a4, 1
+	mv a3, a1
+	beq a0, a4, label397
+	mv a3, a2
 label397:
-	mv a0, a1
+	mv a0, a3
 	ret
 .p2align 2
 .globl select_constant
@@ -341,6 +355,6 @@ label404:
 	mv a0, a1
 	ret
 label403:
-	lui a0, 828972
-	addiw a1, a0, 262
+	lui a3, 828972
+	addiw a1, a3, 262
 	j label404

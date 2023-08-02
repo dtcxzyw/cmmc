@@ -4,8 +4,8 @@
 .p2align 2
 .globl foo
 foo:
-	addw a0, a0, a1
-	addw a1, a0, a2
-	addw a2, a1, a3
-	zext.w a0, a2
+	addw a4, a0, a1
+	addw a5, a4, a2
+	addw t0, a5, a3
+	zext.w a0, t0
 	ret

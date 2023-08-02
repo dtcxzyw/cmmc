@@ -8,8 +8,8 @@ test:
 	addiw a2, a3, 1366
 	ble a1, zero, label7
 	addiw a4, a1, -4
-	li a5, 4
-	ble a1, a5, label16
+	li a3, 4
+	ble a1, a3, label16
 	mv a3, zero
 .p2align 2
 label3:
@@ -17,41 +17,42 @@ label3:
 	addiw a3, a3, 4
 	lw t2, 0(a5)
 	mul t0, t2, a2
+	srli t4, t0, 63
+	srli t1, t0, 32
+	add t2, t4, t1
+	sw t2, 0(a5)
+	lw t3, 4(a5)
+	mul t0, t3, a2
 	srli t2, t0, 63
 	srli t1, t0, 32
-	add t0, t2, t1
-	sw t0, 0(a5)
-	lw t2, 4(a5)
-	mul t0, t2, a2
+	add t4, t2, t1
+	sw t4, 4(a5)
+	lw t3, 8(a5)
+	mul t0, t3, a2
 	srli t2, t0, 63
 	srli t1, t0, 32
-	add t0, t2, t1
-	sw t0, 4(a5)
-	lw t2, 8(a5)
-	mul t0, t2, a2
+	add t4, t2, t1
+	sw t4, 8(a5)
+	lw t3, 12(a5)
+	mul t0, t3, a2
 	srli t2, t0, 63
 	srli t1, t0, 32
-	add t0, t2, t1
-	sw t0, 8(a5)
-	lw t2, 12(a5)
-	mul t0, t2, a2
-	srli t2, t0, 63
-	srli t1, t0, 32
-	add t0, t2, t1
-	sw t0, 12(a5)
+	add t3, t2, t1
+	sw t3, 12(a5)
 	bgt a4, a3, label3
+	mv a4, a3
 label5:
-	sh2add a4, a3, a0
-	addiw a3, a3, 1
-	lw t1, 0(a4)
-	mul a5, t1, a2
-	srli t1, a5, 63
-	srli t0, a5, 32
-	add a5, t1, t0
-	sw a5, 0(a4)
-	bgt a1, a3, label5
+	sh2add a5, a4, a0
+	addiw a4, a4, 1
+	lw t1, 0(a5)
+	mul a3, t1, a2
+	srli t2, a3, 63
+	srli t0, a3, 32
+	add t1, t2, t0
+	sw t1, 0(a5)
+	bgt a1, a4, label5
 label7:
 	ret
 label16:
-	mv a3, zero
+	mv a4, zero
 	j label5

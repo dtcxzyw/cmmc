@@ -45,8 +45,8 @@ test_mul_by_14:
 	andi a1, a0, 255
 	slliw a2, a1, 3
 	subw a3, a2, a1
-	slliw a1, a3, 1
-	andi a0, a1, 255
+	slliw a4, a3, 1
+	andi a0, a4, 255
 	ret
 .p2align 2
 .globl test_mul_by_15
@@ -164,8 +164,8 @@ test_mul_by_28:
 	andi a1, a0, 255
 	slliw a2, a1, 3
 	subw a3, a2, a1
-	slliw a1, a3, 2
-	andi a0, a1, 255
+	slliw a4, a3, 2
+	andi a0, a4, 255
 	ret
 .p2align 2
 .globl test_mul_by_29
@@ -188,8 +188,8 @@ test_mul_by_30:
 	andi a1, a0, 255
 	slliw a2, a1, 4
 	subw a3, a2, a1
-	slliw a1, a3, 1
-	andi a0, a1, 255
+	slliw a4, a3, 1
+	andi a0, a4, 255
 	ret
 .p2align 2
 .globl test_mul_by_31
@@ -257,8 +257,8 @@ test_mul_by_62:
 	andi a1, a0, 255
 	slliw a2, a1, 5
 	subw a3, a2, a1
-	slliw a1, a3, 1
-	andi a0, a1, 255
+	slliw a4, a3, 1
+	andi a0, a4, 255
 	ret
 .p2align 2
 .globl test_mul_by_66
@@ -266,8 +266,8 @@ test_mul_by_66:
 	andi a1, a0, 255
 	slliw a2, a1, 5
 	addw a3, a2, a1
-	slliw a1, a3, 1
-	andi a0, a1, 255
+	slliw a4, a3, 1
+	andi a0, a4, 255
 	ret
 .p2align 2
 .globl test_mul_by_7
@@ -305,8 +305,8 @@ test_mul_by_neg10:
 	andi a1, a0, 255
 	sh2add a2, a1, a1
 	slliw a3, a2, 1
-	subw a1, zero, a3
-	andi a0, a1, 255
+	subw a4, zero, a3
+	andi a0, a4, 255
 	ret
 .p2align 2
 .globl test_mul_by_neg36
@@ -314,6 +314,6 @@ test_mul_by_neg36:
 	andi a1, a0, 255
 	sh3add a2, a1, a1
 	slliw a3, a2, 2
-	subw a1, zero, a3
-	andi a0, a1, 255
+	subw a4, zero, a3
+	andi a0, a4, 255
 	ret

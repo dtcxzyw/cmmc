@@ -32,14 +32,13 @@ main:
 	sd zero, 136(sp)
 .p2align 2
 label2:
-	sh2add a0, s0, s1
-	lw s5, 0(a0)
-	lw s4, -4(a0)
-	lw s6, -8(a0)
+	sh2add a1, s0, s1
+	lw s5, 0(a1)
+	lw s4, -4(a1)
+	lw s6, -8(a1)
 	addw a2, s5, s4
-	addw a1, a2, s6
-	sw a1, 0(a0)
-	mv a0, a1
+	addw a0, a2, s6
+	sw a0, 0(a1)
 	jal putint
 	li a0, 10
 	jal putch

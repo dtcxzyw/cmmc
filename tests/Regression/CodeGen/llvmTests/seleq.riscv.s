@@ -67,11 +67,11 @@ label35:
 	auipc a2, %pcrel_hi(t)
 	lw a0, %pcrel_lo(label35)(a2)
 label5:
-	auipc a2, %pcrel_hi(z2)
-	sw a0, %pcrel_lo(label5)(a2)
+	auipc a3, %pcrel_hi(z2)
 pcrel99:
-	auipc a0, %pcrel_hi(c)
-	lw a2, %pcrel_lo(pcrel99)(a0)
+	auipc a4, %pcrel_hi(c)
+	sw a0, %pcrel_lo(label5)(a3)
+	lw a2, %pcrel_lo(pcrel99)(a4)
 	bne a1, a2, label45
 pcrel100:
 	auipc a3, %pcrel_hi(t)
@@ -89,8 +89,8 @@ pcrel101:
 	lw a0, %pcrel_lo(pcrel101)(a1)
 	j label11
 label52:
-	auipc a1, %pcrel_hi(f)
-	lw a0, %pcrel_lo(label52)(a1)
+	auipc a2, %pcrel_hi(f)
+	lw a0, %pcrel_lo(label52)(a2)
 label11:
 	auipc a1, %pcrel_hi(z4)
 	sw a0, %pcrel_lo(label11)(a1)

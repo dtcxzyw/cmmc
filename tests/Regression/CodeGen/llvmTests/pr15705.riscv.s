@@ -8,8 +8,9 @@ PR15705:
 	beq a0, a2, label13
 	mv a4, a1
 label13:
+	mv a3, a2
 	beq a0, a1, label15
-	mv a2, a4
+	mv a3, a4
 label15:
-	mv a0, a2
+	mv a0, a3
 	ret

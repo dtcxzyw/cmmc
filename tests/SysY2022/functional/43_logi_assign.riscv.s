@@ -13,9 +13,9 @@ main:
 	ld ra, 0(sp)
 	xori a3, s0, 3
 	xor a2, s0, a0
+	sltu a4, zero, a3
 	ld s0, 8(sp)
 	sltiu a1, a2, 1
 	addi sp, sp, 16
-	sltu a2, zero, a3
-	and a0, a1, a2
+	and a0, a1, a4
 	ret

@@ -22,20 +22,20 @@ r2:
 .globl test
 test:
 pcrel27:
-	auipc a0, %pcrel_hi(i)
+	auipc a3, %pcrel_hi(i)
 pcrel28:
-	auipc a3, %pcrel_hi(j)
-	lw a2, %pcrel_lo(pcrel27)(a0)
-	sltiu a1, a2, 1
+	auipc a4, %pcrel_hi(j)
+	lw a2, %pcrel_lo(pcrel27)(a3)
 pcrel29:
-	auipc a2, %pcrel_hi(r1)
+	auipc a3, %pcrel_hi(r1)
+	sltiu a1, a2, 1
 	zext.w a0, a1
-	sw a0, %pcrel_lo(pcrel29)(a2)
-	lw a0, %pcrel_lo(pcrel28)(a3)
-	xori a1, a0, 99
-	sltiu a2, a1, 1
+	sw a0, %pcrel_lo(pcrel29)(a3)
+	lw a1, %pcrel_lo(pcrel28)(a4)
+	xori a2, a1, 99
 pcrel30:
 	auipc a1, %pcrel_hi(r2)
-	zext.w a0, a2
+	sltiu a3, a2, 1
+	zext.w a0, a3
 	sw a0, %pcrel_lo(pcrel30)(a1)
 	ret

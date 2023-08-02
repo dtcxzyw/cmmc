@@ -18,8 +18,8 @@ icmp_eq_constant:
 .p2align 2
 .globl icmp_eq_constant_2048
 icmp_eq_constant_2048:
-	li a2, 1
-	slli a1, a2, 11
+	li a4, 1
+	slli a1, a4, 11
 	xor a3, a0, a1
 	sltiu a2, a3, 1
 	zext.w a0, a2
@@ -27,8 +27,8 @@ icmp_eq_constant_2048:
 .p2align 2
 .globl icmp_eq_constant_2049
 icmp_eq_constant_2049:
-	lui a2, 1
-	addiw a1, a2, -2047
+	lui a4, 1
+	addiw a1, a4, -2047
 	xor a3, a0, a1
 	sltiu a2, a3, 1
 	zext.w a0, a2
@@ -70,8 +70,8 @@ icmp_ne_constant:
 .p2align 2
 .globl icmp_ne_constant_2048
 icmp_ne_constant_2048:
-	li a2, 1
-	slli a1, a2, 11
+	li a4, 1
+	slli a1, a4, 11
 	xor a3, a0, a1
 	sltu a2, zero, a3
 	zext.w a0, a2
@@ -79,8 +79,8 @@ icmp_ne_constant_2048:
 .p2align 2
 .globl icmp_ne_constant_2049
 icmp_ne_constant_2049:
-	lui a2, 1
-	addiw a1, a2, -2047
+	lui a4, 1
+	addiw a1, a4, -2047
 	xor a3, a0, a1
 	sltu a2, zero, a3
 	zext.w a0, a2

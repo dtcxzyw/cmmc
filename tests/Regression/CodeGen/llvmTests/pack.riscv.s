@@ -11,19 +11,19 @@ test1:
 .p2align 2
 .globl test10
 test10:
-	lui a3, 1048560
-	srliw a1, a1, 17
-	and a2, a0, a3
-	or a0, a2, a1
+	lui a4, 1048560
+	srliw a3, a1, 17
+	and a2, a0, a4
+	or a0, a2, a3
 	ret
 .p2align 2
 .globl test2
 test2:
 	slliw a2, a1, 12
-	lui a3, 1048560
-	and a1, a2, a3
-	zext.h a2, a0
-	or a0, a1, a2
+	lui a4, 1048560
+	zext.h a1, a0
+	and a3, a2, a4
+	or a0, a3, a1
 	ret
 .p2align 2
 .globl test3
@@ -36,25 +36,25 @@ test3:
 .globl test4
 test4:
 	zext.h a2, a0
-	lui a3, 1048560
-	and a1, a1, a3
-	or a0, a2, a1
+	lui a4, 1048560
+	and a3, a1, a4
+	or a0, a2, a3
 	ret
 .p2align 2
 .globl test5
 test5:
-	lui a3, 1048560
-	srliw a1, a1, 16
-	and a2, a0, a3
-	or a0, a2, a1
+	lui a4, 1048560
+	srliw a3, a1, 16
+	and a2, a0, a4
+	or a0, a2, a3
 	ret
 .p2align 2
 .globl test5a
 test5a:
-	lui a3, 1048560
-	srliw a1, a1, 16
-	and a2, a0, a3
-	or a0, a2, a1
+	lui a4, 1048560
+	srliw a3, a1, 16
+	and a2, a0, a4
+	or a0, a2, a3
 	ret
 .p2align 2
 .globl test6
@@ -77,16 +77,16 @@ test7:
 .p2align 2
 .globl test8
 test8:
-	lui a3, 1048560
-	srliw a1, a1, 22
-	and a2, a0, a3
-	or a0, a2, a1
+	lui a4, 1048560
+	srliw a3, a1, 22
+	and a2, a0, a4
+	or a0, a2, a3
 	ret
 .p2align 2
 .globl test9
 test9:
-	lui a3, 1048560
-	srliw a1, a1, 16
-	and a2, a0, a3
-	or a0, a2, a1
+	lui a4, 1048560
+	srliw a3, a1, 16
+	and a2, a0, a4
+	or a0, a2, a3
 	ret

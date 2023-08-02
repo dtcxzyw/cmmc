@@ -4,11 +4,11 @@
 .p2align 2
 .globl and_1
 and_1:
-	andi a0, a0, 255
-	andi a3, a1, 255
-	and a1, a0, a3
+	andi a3, a0, 255
+	andi a5, a1, 255
 	mv a0, a2
-	bne a1, zero, label11
+	and a4, a3, a5
+	bne a4, zero, label11
 	mv a0, zero
 label11:
 	ret
@@ -16,19 +16,19 @@ label11:
 .globl and_2
 and_2:
 	andi a2, a0, 255
-	andi a0, a1, 255
-	and a1, a2, a0
-	sltu a2, zero, a1
-	zext.w a0, a2
+	andi a3, a1, 255
+	and a4, a2, a3
+	sltu a5, zero, a4
+	zext.w a0, a5
 	ret
 .p2align 2
 .globl xor_1
 xor_1:
-	andi a0, a0, 255
-	andi a3, a1, 255
-	xor a1, a0, a3
+	andi a3, a0, 255
+	andi a5, a1, 255
 	mv a0, a2
-	bne a1, zero, label32
+	xor a4, a3, a5
+	bne a4, zero, label32
 	mv a0, zero
 label32:
 	ret
@@ -36,8 +36,8 @@ label32:
 .globl xor_2
 xor_2:
 	andi a2, a0, 255
-	andi a0, a1, 255
-	xor a1, a2, a0
-	sltu a2, zero, a1
-	zext.w a0, a2
+	andi a3, a1, 255
+	xor a4, a2, a3
+	sltu a5, zero, a4
+	zext.w a0, a5
 	ret

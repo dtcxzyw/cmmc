@@ -18,11 +18,11 @@ d:
 .globl fn1
 fn1:
 pcrel14:
-	auipc a0, %pcrel_hi(c)
-	lw a1, %pcrel_lo(pcrel14)(a0)
-	sltiu a2, a1, 1
+	auipc a3, %pcrel_hi(c)
+	lw a1, %pcrel_lo(pcrel14)(a3)
 pcrel15:
-	auipc a1, %pcrel_hi(d)
+	auipc a3, %pcrel_hi(d)
+	sltiu a2, a1, 1
 	zext.w a0, a2
-	sw a0, %pcrel_lo(pcrel15)(a1)
+	sw a0, %pcrel_lo(pcrel15)(a3)
 	ret

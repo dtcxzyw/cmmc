@@ -6,36 +6,36 @@
 unfold1:
 	slliw a2, a0, 1
 	ori a3, a2, 510
-	addw a1, a3, a1
-	zext.w a0, a1
+	addw a4, a3, a1
+	zext.w a0, a4
 	ret
 .p2align 2
 .globl unfold10
 unfold10:
 	slliw a2, a0, 10
-	lui a0, 1020
-	or a3, a2, a0
-	slt a1, a1, a3
-	zext.w a0, a1
+	lui a5, 1020
+	or a4, a2, a5
+	slt a3, a1, a4
+	zext.w a0, a3
 	ret
 .p2align 2
 .globl unfold11
 unfold11:
 	slliw a2, a0, 11
-	lui a0, 3968
-	addw a3, a2, a0
-	slt a1, a1, a3
-	zext.w a0, a1
+	lui a5, 3968
+	addw a4, a2, a5
+	slt a3, a1, a4
+	zext.w a0, a3
 	ret
 .p2align 2
 .globl unfold2
 unfold2:
 	slliw a2, a0, 2
-	li a3, 255
-	slli a0, a3, 6
-	or a2, a2, a0
-	subw a1, a1, a2
-	zext.w a0, a1
+	li t0, 255
+	slli a3, t0, 6
+	or a5, a2, a3
+	subw a4, a1, a5
+	zext.w a0, a4
 	ret
 .p2align 2
 .globl unfold3
@@ -57,10 +57,10 @@ unfold4:
 .globl unfold5
 unfold5:
 	slliw a2, a0, 6
-	li a0, 31
-	slli a3, a0, 10
-	addw a2, a2, a3
-	or a0, a1, a2
+	li a5, 31
+	slli a4, a5, 10
+	addw a3, a2, a4
+	or a0, a1, a3
 	ret
 .p2align 2
 .globl unfold6
@@ -75,8 +75,8 @@ unfold6:
 unfold7:
 	slliw a2, a0, 1
 	andi a3, a2, 512
-	addw a1, a3, a1
-	zext.w a0, a1
+	addw a4, a3, a1
+	zext.w a0, a4
 	ret
 .p2align 2
 .globl unfold8
@@ -91,6 +91,6 @@ unfold8:
 unfold9:
 	slliw a2, a0, 1
 	xori a3, a2, 510
-	addw a1, a3, a1
-	zext.w a0, a1
+	addw a4, a3, a1
+	zext.w a0, a4
 	ret

@@ -5,11 +5,11 @@
 .globl hoge
 hoge:
 	li a1, -1
-	sllw a3, a1, a0
-	xori a2, a3, -1
-	zext.w a1, a2
-	li a2, 15
-	slliw a0, a1, 8
-	slli a1, a2, 8
-	and a0, a0, a1
+	sllw a4, a1, a0
+	xori a3, a4, -1
+	li a4, 15
+	zext.w a2, a3
+	slli a3, a4, 8
+	slliw a1, a2, 8
+	and a0, a1, a3
 	ret

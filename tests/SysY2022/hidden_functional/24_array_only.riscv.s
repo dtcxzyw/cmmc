@@ -5,22 +5,22 @@
 .globl main
 main:
 	addi sp, sp, -64
-	li a1, -1
+	li a0, -1
 	sd ra, 0(sp)
-	zext.w a0, a1
-	sd s2, 8(sp)
-	addi s2, sp, 56
+	zext.w a1, a0
+	sd s3, 8(sp)
+	addi s3, sp, 56
 	sd s0, 16(sp)
 	sd s5, 24(sp)
 	sd s1, 32(sp)
-	sd s3, 40(sp)
+	sd s2, 40(sp)
 	sd s4, 48(sp)
-	sd a0, 56(sp)
+	sd a1, 56(sp)
 	jal getint
 	mv s0, a0
 	jal getint
 	mv s1, a0
-	mv a0, s2
+	mv a0, s3
 	jal getarray
 	li s3, 5
 	mv s2, zero
@@ -38,10 +38,10 @@ label9:
 	mv a1, s0
 	j label13
 label11:
-	lw a1, 56(sp)
-	addw s2, a0, a1
-	lw a0, 60(sp)
-	beq s2, a0, label38
+	lw a2, 56(sp)
+	lw a1, 60(sp)
+	addw s2, a0, a2
+	beq s2, a1, label38
 	j label2
 label13:
 	addiw a1, a1, -1
@@ -60,8 +60,8 @@ label16:
 	jal putint
 	bne s0, zero, label82
 	lw a1, 56(sp)
-	addw a1, s1, a1
-	sw a1, 56(sp)
+	addw a2, s1, a1
+	sw a2, 56(sp)
 	beq s0, zero, label29
 	mv a0, s0
 	addiw a0, s0, -1
@@ -80,11 +80,11 @@ label38:
 	jal putch
 	ld ra, 0(sp)
 	mv a0, zero
-	ld s2, 8(sp)
+	ld s3, 8(sp)
 	ld s0, 16(sp)
 	ld s5, 24(sp)
 	ld s1, 32(sp)
-	ld s3, 40(sp)
+	ld s2, 40(sp)
 	ld s4, 48(sp)
 	addi sp, sp, 64
 	ret
@@ -100,8 +100,8 @@ label21:
 	addiw a0, a0, -1
 	slliw a1, a1, 1
 	bne a0, zero, label21
-	addw a1, s1, a1
-	sw a1, 56(sp)
+	addw a2, s1, a1
+	sw a2, 56(sp)
 	beq s0, zero, label29
 	mv a0, s0
 .p2align 2
@@ -128,8 +128,8 @@ label35:
 	j label5
 .p2align 2
 label141:
-	addw a1, s1, a1
-	sw a1, 56(sp)
+	addw a2, s1, a1
+	sw a2, 56(sp)
 	beq s0, zero, label29
 	mv a0, s0
 	addiw a0, s0, -1

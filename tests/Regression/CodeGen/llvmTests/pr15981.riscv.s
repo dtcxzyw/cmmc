@@ -25,20 +25,21 @@ label7:
 .globl fn2
 fn2:
 pcrel33:
-	auipc a2, %pcrel_hi(b)
+	auipc a1, %pcrel_hi(b)
 pcrel34:
 	auipc a0, %pcrel_hi(a)
-	lw a1, %pcrel_lo(pcrel33)(a2)
-	lw a3, %pcrel_lo(pcrel34)(a0)
-	addiw a2, a3, -1
-	bne a2, zero, label31
+	lw a2, %pcrel_lo(pcrel33)(a1)
+	mv a1, a2
+	lw a4, %pcrel_lo(pcrel34)(a0)
+	addiw a3, a4, -1
+	bne a3, zero, label31
 	mv a1, zero
 label31:
-	zext.w a2, a2
+	zext.w a2, a3
 pcrel35:
-	auipc a0, %pcrel_hi(a)
-	sw a2, %pcrel_lo(pcrel35)(a0)
+	auipc a4, %pcrel_hi(c)
 pcrel36:
-	auipc a0, %pcrel_hi(c)
-	sw a1, %pcrel_lo(pcrel36)(a0)
+	auipc a0, %pcrel_hi(a)
+	sw a2, %pcrel_lo(pcrel36)(a0)
+	sw a1, %pcrel_lo(pcrel35)(a4)
 	ret

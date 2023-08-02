@@ -266,11 +266,11 @@ label100:
 	beq a0, s1, label231
 	mv a0, a2
 	jal findfa
-	mv a2, a0
+	mv a4, a0
 	mv a0, a3
 	jal findfa
-	beq a2, a0, label237
-	sh2add a1, a2, s0
+	beq a4, a0, label237
+	sh2add a1, a4, s0
 	sw a0, 0(a1)
 pcrel490:
 	auipc s5, %pcrel_hi(array)

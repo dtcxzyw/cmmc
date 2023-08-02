@@ -17,10 +17,10 @@ main:
 	jal getint
 	mv s2, a0
 	jal getint
-	mv s1, a0
 pcrel119:
-	auipc a0, %pcrel_hi(array)
-	addi s0, a0, %pcrel_lo(pcrel119)
+	auipc a1, %pcrel_hi(array)
+	mv s1, a0
+	addi s0, a1, %pcrel_lo(pcrel119)
 	bgt s2, zero, label32
 label31:
 	addiw a1, s2, -1
@@ -41,10 +41,10 @@ label24:
 	bgt s2, s3, label24
 	j label31
 label8:
-	sh2add a2, a1, s0
+	sh2add a4, a1, s0
 	mv s2, a0
-	lw a3, 0(a2)
 	mv a2, a0
+	lw a3, 0(a4)
 	ble a1, a0, label16
 .p2align 2
 label12:

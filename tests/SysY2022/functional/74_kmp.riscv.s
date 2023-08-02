@@ -51,10 +51,10 @@ label6:
 	addiw s5, s5, 1
 	j label6
 label9:
-	sh2add a0, s5, s3
-	mv a1, zero
-	sw zero, 0(a0)
+	sh2add a1, s5, s3
 	mv a0, s0
+	sw zero, 0(a1)
+	mv a1, zero
 pcrel152:
 	auipc s4, %pcrel_hi(next)
 	sw s0, %pcrel_lo(pcrel152)(s4)
@@ -96,9 +96,9 @@ label13:
 	sh2add a3, a1, s1
 	lw a4, 0(a3)
 	beq a2, a4, label20
-	sh2add a1, a1, s2
-	lw a2, 0(a1)
+	sh2add a5, a1, s2
 	mv a1, zero
+	lw a2, 0(a5)
 	xori a4, a2, -1
 	sltiu a3, a4, 1
 	bne a3, zero, label134

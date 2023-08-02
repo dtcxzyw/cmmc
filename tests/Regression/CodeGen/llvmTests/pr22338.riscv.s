@@ -4,17 +4,17 @@
 .p2align 2
 .globl fn
 fn:
-	xori a3, a1, 1
-	li a1, 2
-	sltiu a4, a3, 1
-	zext.w a2, a4
-	bne a2, zero, label18
-	mv a1, zero
+	xori a4, a1, 1
+	li a2, 2
+	sltiu a5, a4, 1
+	zext.w a3, a5
+	bne a3, zero, label18
+	mv a2, zero
 label18:
-	zext.w a1, a1
-	xori a0, a0, 1
-	sltu a2, zero, a0
-	zext.w a3, a2
-	sllw a1, a3, a1
-	zext.w a0, a1
+	zext.w a1, a2
+	xori a3, a0, 1
+	sltu a4, zero, a3
+	zext.w a2, a4
+	sllw a5, a2, a1
+	zext.w a0, a5
 	ret

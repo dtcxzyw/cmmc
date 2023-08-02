@@ -65,28 +65,28 @@ pcrel33:
 callee5_cmmc_noinline:
 	fcvt.s.w f11, a0
 pcrel44:
-	auipc a1, %pcrel_hi(touch)
+	auipc a0, %pcrel_hi(touch)
 	fadd.s f12, f11, f10
-	fcvt.w.s a0, f12, rtz
-	sw a0, %pcrel_lo(pcrel44)(a1)
+	fcvt.w.s a1, f12, rtz
+	sw a1, %pcrel_lo(pcrel44)(a0)
 	ret
 .p2align 2
 .globl callee6_cmmc_noinline
 callee6_cmmc_noinline:
 	fcvt.s.w f11, a0
 pcrel55:
-	auipc a1, %pcrel_hi(touch)
-	fadd.s f10, f10, f11
-	fcvt.w.s a0, f10, rtz
-	sw a0, %pcrel_lo(pcrel55)(a1)
+	auipc a0, %pcrel_hi(touch)
+	fadd.s f12, f10, f11
+	fcvt.w.s a1, f12, rtz
+	sw a1, %pcrel_lo(pcrel55)(a0)
 	ret
 .p2align 2
 .globl callee7_cmmc_noinline
 callee7_cmmc_noinline:
 	addw a2, a0, a1
 pcrel64:
-	auipc a0, %pcrel_hi(touch)
-	sw a2, %pcrel_lo(pcrel64)(a0)
+	auipc a3, %pcrel_hi(touch)
+	sw a2, %pcrel_lo(pcrel64)(a3)
 	ret
 .p2align 2
 .globl callee8_cmmc_noinline
@@ -100,43 +100,43 @@ pcrel74:
 .p2align 2
 .globl callee9_cmmc_noinline
 callee9_cmmc_noinline:
-	fadd.s f10, f10, f11
+	fadd.s f13, f10, f11
 pcrel86:
 	auipc a1, %pcrel_hi(touch)
-	fadd.s f11, f10, f12
-	fcvt.w.s a0, f11, rtz
+	fadd.s f14, f13, f12
+	fcvt.w.s a0, f14, rtz
 	sw a0, %pcrel_lo(pcrel86)(a1)
 	ret
 .p2align 2
 .globl callee10_cmmc_noinline
 callee10_cmmc_noinline:
-	fadd.s f10, f10, f11
-pcrel99:
-	auipc a1, %pcrel_hi(touch)
-	fcvt.s.w f11, a0
 	fadd.s f12, f10, f11
-	fcvt.w.s a0, f12, rtz
-	sw a0, %pcrel_lo(pcrel99)(a1)
+	fcvt.s.w f13, a0
+pcrel99:
+	auipc a0, %pcrel_hi(touch)
+	fadd.s f14, f12, f13
+	fcvt.w.s a1, f14, rtz
+	sw a1, %pcrel_lo(pcrel99)(a0)
 	ret
 .p2align 2
 .globl callee11_cmmc_noinline
 callee11_cmmc_noinline:
-	fcvt.s.w f12, a0
+	fcvt.s.w f13, a0
 pcrel112:
 	auipc a1, %pcrel_hi(touch)
-	fadd.s f10, f12, f10
-	fadd.s f11, f10, f11
-	fcvt.w.s a0, f11, rtz
+	fadd.s f12, f13, f10
+	fadd.s f14, f12, f11
+	fcvt.w.s a0, f14, rtz
 	sw a0, %pcrel_lo(pcrel112)(a1)
 	ret
 .p2align 2
 .globl callee12_cmmc_noinline
 callee12_cmmc_noinline:
-	addw a3, a0, a1
+	addw a4, a0, a1
 pcrel123:
-	auipc a1, %pcrel_hi(touch)
-	addw a0, a2, a3
-	sw a0, %pcrel_lo(pcrel123)(a1)
+	auipc a5, %pcrel_hi(touch)
+	addw a3, a2, a4
+	sw a3, %pcrel_lo(pcrel123)(a5)
 	ret
 .p2align 2
 .globl callee15_cmmc_noinline

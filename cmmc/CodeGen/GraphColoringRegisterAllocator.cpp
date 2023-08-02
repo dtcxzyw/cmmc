@@ -172,7 +172,7 @@ static void graphColoringAllocateImpl(MIRFunction& mfunc, CodeGenContext& ctx, I
     const auto& list = ctx.registerInfo->getAllocationList(allocationClass);
     const std::unordered_set<uint32_t> allocableISARegs{ list.cbegin(), list.cend() };
     std::unordered_set<uint32_t> blockList;
-    bool fixWAWHazard = ctx.scheduleModel.getInfo().enablePostRAScheduling && !ctx.scheduleModel.getInfo().hasRegRenaming;
+    bool fixHazard = ctx.scheduleModel.getInfo().enablePostRAScheduling && !ctx.scheduleModel.getInfo().hasRegRenaming;
     constexpr auto debugRA = false;
 
     if(debugRA) {
@@ -250,13 +250,13 @@ static void graphColoringAllocateImpl(MIRFunction& mfunc, CodeGenContext& ctx, I
             }
         }
 
-        std::unordered_map<RegNum, std::set<InstNum>> defTime;
-        auto colorDef = [&](RegNum src, RegNum dst) {
+        std::unordered_map<RegNum, std::set<InstNum>> defUseTime;
+        auto colorDefUse = [&](RegNum src, RegNum dst) {
             assert(isVirtualReg(src) && isISAReg(dst));
-            if(!fixWAWHazard || !defTime.count(src))
+            if(!fixHazard || !defUseTime.count(src))
                 return;
-            auto& dstInfo = defTime[dst];
-            auto& srcInfo = defTime[src];
+            auto& dstInfo = defUseTime[dst];
+            auto& srcInfo = defUseTime[src];
             dstInfo.insert(srcInfo.begin(), srcInfo.end());
         };
 
@@ -328,6 +328,9 @@ static void graphColoringAllocateImpl(MIRFunction& mfunc, CodeGenContext& ctx, I
                         auto& op = inst.getOperand(idx);
                         if(!isAllocatableType(op.type()))
                             continue;
+                        if(!isOperandVRegOrISAReg(op))
+                            continue;
+                        defUseTime[op.reg()].insert(liveInterval.instNum.at(&inst));
                         if(isOperandISAReg(op) && !ctx.registerInfo->isZeroRegister(op.reg())) {
                             underRenamedISAReg.erase(op.reg());
                         } else if(isOperandVReg(op)) {
@@ -365,7 +368,7 @@ static void graphColoringAllocateImpl(MIRFunction& mfunc, CodeGenContext& ctx, I
                         auto& op = inst.getOperand(idx);
                         if(!isAllocatableType(op.type()))
                             continue;
-                        defTime[op.reg()].insert(liveInterval.instNum.at(&inst));
+                        defUseTime[op.reg()].insert(liveInterval.instNum.at(&inst));
                         if(isOperandISAReg(op) && !ctx.registerInfo->isZeroRegister(op.reg())) {
                             lockedISAReg.insert(op.reg());
                             for(auto vreg : liveVRegs)
@@ -525,10 +528,10 @@ static void graphColoringAllocateImpl(MIRFunction& mfunc, CodeGenContext& ctx, I
                 if(auto isaReg = calcCopyFreeProposal(u, exclude)) {
                     assert(allocableISARegs.count(*isaReg));
                     regMap[u] = *isaReg;
-                    colorDef(u, *isaReg);
+                    colorDefUse(u, *isaReg);
                     assigned = true;
                 } else {
-                    if(!fixWAWHazard) {
+                    if(!fixHazard) {
                         for(auto reg : list) {
                             if(!exclude.count(reg)) {
                                 regMap[u] = reg;
@@ -547,7 +550,7 @@ static void graphColoringAllocateImpl(MIRFunction& mfunc, CodeGenContext& ctx, I
                             constexpr InstNum infDist = 10;
                             InstNum minDist = infDist;
 
-                            auto& defTimeOfColored = defTime[reg];
+                            auto& defTimeOfColored = defUseTime[reg];
                             auto evalDist = [&](InstNum curDefTime) {
                                 if(defTimeOfColored.empty())
                                     return infDist;
@@ -559,7 +562,7 @@ static void graphColoringAllocateImpl(MIRFunction& mfunc, CodeGenContext& ctx, I
                                 return std::min(infDist, std::min(curDefTime - *std::prev(it), *it - curDefTime));
                             };
 
-                            for(auto instNum : defTime[u]) {
+                            for(auto instNum : defUseTime[u]) {
                                 const auto f = getBlockFreq(instNum);
                                 if(f > maxFreq) {
                                     minDist = evalDist(instNum);
@@ -589,7 +592,7 @@ static void graphColoringAllocateImpl(MIRFunction& mfunc, CodeGenContext& ctx, I
                         }
 
                         regMap[u] = bestReg;
-                        colorDef(u, bestReg);
+                        colorDefUse(u, bestReg);
                         assigned = true;
                     }
                 }

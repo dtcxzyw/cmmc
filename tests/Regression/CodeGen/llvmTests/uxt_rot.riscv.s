@@ -10,10 +10,10 @@ test1:
 .globl test10
 test10:
 	srliw a2, a0, 24
-	slliw a0, a0, 8
-	or a3, a2, a0
-	zext.h a2, a3
-	addw a0, a1, a2
+	slliw a3, a0, 8
+	or a4, a2, a3
+	zext.h a5, a4
+	addw a0, a1, a5
 	ret
 .p2align 2
 .globl test11
@@ -52,10 +52,10 @@ test15:
 .globl test16
 test16:
 	srliw a2, a0, 24
-	slliw a0, a0, 8
-	or a3, a2, a0
-	zext.h a2, a3
-	addw a0, a1, a2
+	slliw a3, a0, 8
+	or a4, a2, a3
+	zext.h a5, a4
+	addw a0, a1, a5
 	ret
 .p2align 2
 .globl test2
@@ -94,26 +94,26 @@ test6:
 .globl test7
 test7:
 	srliw a2, a0, 8
-	slliw a0, a0, 24
-	or a3, a2, a0
-	andi a2, a3, 255
-	addw a0, a1, a2
+	slliw a3, a0, 24
+	or a4, a2, a3
+	andi a5, a4, 255
+	addw a0, a1, a5
 	ret
 .p2align 2
 .globl test8
 test8:
 	srliw a2, a0, 16
-	slliw a0, a0, 16
-	or a3, a2, a0
-	andi a2, a3, 255
-	addw a0, a1, a2
+	slliw a3, a0, 16
+	or a4, a2, a3
+	andi a5, a4, 255
+	addw a0, a1, a5
 	ret
 .p2align 2
 .globl test9
 test9:
 	srliw a2, a0, 8
-	slliw a0, a0, 24
-	or a3, a2, a0
-	zext.h a2, a3
-	addw a0, a1, a2
+	slliw a3, a0, 24
+	or a4, a2, a3
+	zext.h a5, a4
+	addw a0, a1, a5
 	ret

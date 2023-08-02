@@ -34,24 +34,24 @@ r3:
 .globl test
 test:
 pcrel33:
-	auipc a1, %pcrel_hi(k)
+	auipc a2, %pcrel_hi(k)
 pcrel34:
-	auipc a3, %pcrel_hi(j)
+	auipc a1, %pcrel_hi(j)
 pcrel35:
-	auipc a4, %pcrel_hi(r1)
-	lw a0, %pcrel_lo(pcrel33)(a1)
-	lw a1, %pcrel_lo(pcrel34)(a3)
-	sltu a2, a0, a1
-	xori a3, a2, 1
+	auipc a5, %pcrel_hi(m)
+	lw a0, %pcrel_lo(pcrel33)(a2)
+	lw a4, %pcrel_lo(pcrel34)(a1)
+	sltu a2, a0, a4
 pcrel36:
-	auipc a2, %pcrel_hi(m)
+	auipc a4, %pcrel_hi(r1)
+	xori a3, a2, 1
 	zext.w a1, a3
-	sw a1, %pcrel_lo(pcrel35)(a4)
-	lw a1, %pcrel_lo(pcrel36)(a2)
-	sltu a3, a0, a1
+	sw a1, %pcrel_lo(pcrel36)(a4)
+	lw a2, %pcrel_lo(pcrel35)(a5)
+	sltu a4, a0, a2
 pcrel37:
-	auipc a1, %pcrel_hi(r2)
-	xori a2, a3, 1
-	zext.w a0, a2
-	sw a0, %pcrel_lo(pcrel37)(a1)
+	auipc a0, %pcrel_hi(r2)
+	xori a3, a4, 1
+	zext.w a1, a3
+	sw a1, %pcrel_lo(pcrel37)(a0)
 	ret

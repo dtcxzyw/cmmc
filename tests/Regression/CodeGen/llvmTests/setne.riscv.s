@@ -28,13 +28,13 @@ test:
 pcrel20:
 	auipc a1, %pcrel_hi(i)
 pcrel21:
-	auipc a3, %pcrel_hi(k)
+	auipc a5, %pcrel_hi(k)
 	lw a0, %pcrel_lo(pcrel20)(a1)
-	lw a2, %pcrel_lo(pcrel21)(a3)
-	xor a1, a0, a2
-	sltu a3, zero, a1
+	lw a3, %pcrel_lo(pcrel21)(a5)
+	xor a2, a0, a3
 pcrel22:
-	auipc a1, %pcrel_hi(r1)
-	zext.w a0, a3
-	sw a0, %pcrel_lo(pcrel22)(a1)
+	auipc a0, %pcrel_hi(r1)
+	sltu a4, zero, a2
+	zext.w a1, a4
+	sw a1, %pcrel_lo(pcrel22)(a0)
 	ret

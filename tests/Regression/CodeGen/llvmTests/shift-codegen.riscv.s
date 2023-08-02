@@ -14,14 +14,14 @@ X:
 .globl fn1
 fn1:
 pcrel15:
-	auipc a0, %pcrel_hi(Y)
-	lw a2, %pcrel_lo(pcrel15)(a0)
+	auipc a3, %pcrel_hi(Y)
 pcrel16:
 	auipc a0, %pcrel_hi(X)
+	lw a2, %pcrel_lo(pcrel15)(a3)
+	lw a3, %pcrel_lo(pcrel16)(a0)
 	slliw a1, a2, 3
-	lw a2, %pcrel_lo(pcrel16)(a0)
-	or a1, a1, a2
-	sw a1, %pcrel_lo(pcrel16)(a0)
+	or a2, a1, a3
+	sw a2, %pcrel_lo(pcrel16)(a0)
 	ret
 .p2align 2
 .globl fn2

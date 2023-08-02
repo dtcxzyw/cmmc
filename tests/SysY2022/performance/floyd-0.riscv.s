@@ -88,37 +88,38 @@ label25:
 	addi sp, sp, 32
 	ret
 label26:
-	li a1, 4
-	bgt s2, a1, label29
+	li a2, 4
+	bgt s2, a2, label29
 	j label120
 label27:
-	sh2add a4, a2, a0
-	sh2add a3, a2, s1
-	lw a1, 0(a4)
-	addiw a2, a2, 1
-	sw a1, 0(a3)
-	bgt s2, a2, label27
+	sh2add a4, a1, a0
+	sh2add a3, a1, s1
+	lw a2, 0(a4)
+	addiw a1, a1, 1
+	sw a2, 0(a3)
+	bgt s2, a1, label27
 	j label25
 label29:
 	addiw a1, s2, -4
 	addiw a3, s2, -20
-	li a4, 16
-	ble a1, a4, label136
+	li a2, 16
+	ble a1, a2, label136
 	mv a2, zero
 	j label32
 label30:
-	sh2add a3, a2, a0
-	sh2add a4, a2, s1
-	lw a5, 0(a3)
-	addiw a2, a2, 4
-	sw a5, 0(a4)
-	lw t0, 4(a3)
-	sw t0, 4(a4)
-	lw a5, 8(a3)
-	sw a5, 8(a4)
-	lw a3, 12(a3)
-	sw a3, 12(a4)
-	bgt a1, a2, label30
+	sh2add a4, a3, a0
+	sh2add a2, a3, s1
+	lw a5, 0(a4)
+	addiw a3, a3, 4
+	sw a5, 0(a2)
+	lw t1, 4(a4)
+	sw t1, 4(a2)
+	lw t0, 8(a4)
+	sw t0, 8(a2)
+	lw a5, 12(a4)
+	sw a5, 12(a2)
+	bgt a1, a3, label30
+	mv a1, a3
 	j label27
 .p2align 2
 label32:
@@ -127,8 +128,8 @@ label32:
 	lw t0, 0(a4)
 	addiw a2, a2, 16
 	sw t0, 0(a5)
-	lw t0, 4(a4)
-	sw t0, 4(a5)
+	lw t2, 4(a4)
+	sw t2, 4(a5)
 	lw t1, 8(a4)
 	sw t1, 8(a5)
 	lw t0, 12(a4)
@@ -155,9 +156,10 @@ label32:
 	sw t1, 52(a5)
 	lw t0, 56(a4)
 	sw t0, 56(a5)
-	lw a4, 60(a4)
-	sw a4, 60(a5)
+	lw t1, 60(a4)
+	sw t1, 60(a5)
 	bgt a3, a2, label32
+	mv a3, a2
 	j label30
 .p2align 2
 label17:
@@ -186,17 +188,17 @@ label18:
 .p2align 2
 label19:
 	addw t3, a3, t0
-	addw t1, t1, t2
-	sh2add t5, t3, a0
-	lw t4, 0(t5)
-	blt t4, zero, label20
-	sh2add t4, t3, a0
-	lw t2, 0(t4)
-	bge t1, t2, label240
+	addw t4, t1, t2
+	sh2add t6, t3, a0
+	lw t5, 0(t6)
+	blt t5, zero, label20
+	sh2add t2, t3, a0
+	lw t1, 0(t2)
+	bge t4, t1, label240
 .p2align 2
 label20:
-	sh2add t2, t3, a0
-	sw t1, 0(t2)
+	sh2add t1, t3, a0
+	sw t4, 0(t1)
 	addiw t0, t0, 1
 	bgt s0, t0, label17
 	addiw a5, a5, 1
@@ -215,16 +217,16 @@ label4:
 	sh2add a5, a3, s2
 	lw a4, 0(a5)
 	addiw a2, a2, 1
-	sh2add a3, a3, a0
-	sw a4, 0(a3)
+	sh2add a5, a3, a0
+	sw a4, 0(a5)
 	bgt s0, a2, label4
 	j label243
 .p2align 2
 label50:
 	li a4, -1
 	addiw a2, a2, 1
-	sh2add a3, a3, a0
-	sw a4, 0(a3)
+	sh2add a5, a3, a0
+	sw a4, 0(a5)
 	bgt s0, a2, label4
 	addiw a1, a1, 1
 	bgt s0, a1, label44
@@ -257,8 +259,8 @@ label71:
 	bgt s0, a4, label66
 	j label24
 label120:
-	mv a2, zero
+	mv a1, zero
 	j label27
 label136:
-	mv a2, zero
+	mv a3, zero
 	j label30

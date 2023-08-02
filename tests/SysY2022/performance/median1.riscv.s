@@ -21,12 +21,12 @@ pcrel115:
 	mv s1, a0
 	li a0, 59
 	jal _sysy_starttime
+	mv a2, zero
 	srliw a0, s1, 31
 	addiw a1, s1, -1
-	add a2, s1, a0
+	add a3, s1, a0
 	mv a0, s0
-	sraiw s2, a2, 1
-	mv a2, zero
+	sraiw s2, a3, 1
 	lw a3, 0(s0)
 	addiw a4, a1, 1
 	mv a5, zero
@@ -77,17 +77,17 @@ label20:
 	mv a1, s0
 	jal putarray
 	sh2add a3, s2, s0
-	lw a0, 0(a3)
+	lw a1, 0(a3)
 	ld ra, 0(sp)
-	slli a2, a0, 1
+	slli a0, a1, 1
 	ld s0, 8(sp)
-	srli a1, a2, 56
+	srli a2, a0, 56
 	ld s1, 16(sp)
-	add a3, a0, a1
+	add a4, a1, a2
 	ld s2, 24(sp)
-	andi a2, a3, -256
+	andi a3, a4, -256
 	addi sp, sp, 32
-	subw a0, a0, a2
+	subw a0, a1, a3
 	ret
 .p2align 2
 label47:

@@ -349,12 +349,12 @@ label97:
 	bge a0, a1, label493
 	li a1, 4
 	bge a0, a1, label497
-	slti a1, a0, 2
-	li a4, 2
-	li a3, 3
-	subw a2, a4, a1
-	mv a1, a2
-	blt a0, a3, label611
+	slti a2, a0, 2
+	li a5, 2
+	li a4, 3
+	subw a3, a5, a2
+	mv a1, a3
+	blt a0, a4, label611
 	li a1, 3
 label611:
 	mv a0, a1

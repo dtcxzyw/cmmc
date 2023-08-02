@@ -10,9 +10,9 @@ foo:
 .globl main
 main:
 pcrel14:
-	auipc a0, %pcrel_hi(foo)
-	lb a1, %pcrel_lo(pcrel14)(a0)
-	andi a2, a1, 255
+	auipc a1, %pcrel_hi(foo)
+	lb a3, %pcrel_lo(pcrel14)(a1)
+	andi a2, a3, 255
 	sraiw a0, a2, 5
 	andi a1, a0, 7
 	slliw a3, a1, 5

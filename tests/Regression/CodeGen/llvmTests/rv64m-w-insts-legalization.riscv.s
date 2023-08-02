@@ -7,17 +7,22 @@ mulw:
 	mv a2, a0
 	mv a3, a1
 	bge a0, a1, label16
-	addiw a1, a0, 1
-	bgt a3, a1, label3
-label21:
-	zext.w a0, a0
-	j label8
+	addiw a0, a0, 1
+	ble a1, a0, label21
 label3:
-	mulw a0, a1, a0
-	addiw a1, a1, 1
-	bgt a3, a1, label3
-	j label21
+	mulw a1, a0, a2
+	addiw a0, a0, 1
+	ble a3, a0, label29
+	mv a2, a1
+	j label3
 label16:
 	li a0, 1
 label8:
 	ret
+label21:
+	zext.w a0, a2
+	j label8
+label29:
+	mv a2, a1
+	zext.w a0, a1
+	j label8

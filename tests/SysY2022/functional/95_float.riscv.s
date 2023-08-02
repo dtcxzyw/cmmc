@@ -100,23 +100,23 @@ label2:
 	jal getfloat
 	fcvt.w.s a0, f10, rtz
 	flw f11, 0(s2)
-	fmv.w.x f14, s3
-	fcvt.s.w f12, a0
-	mulw a0, a0, a0
-	fmul.s f13, f12, f11
-	fmul.s f12, f13, f12
+	mulw a1, a0, a0
 	fcvt.s.w f13, a0
 	sh2add a0, s6, s0
 	fmul.s f15, f13, f11
-	fadd.s f12, f12, f15
-	fmul.s f13, f12, f14
-	fmul.s f12, f10, f11
-	fcvt.w.s s8, f13, rtz
-	fmul.s f11, f12, f10
+	fcvt.s.w f14, a1
+	fmul.s f0, f14, f11
+	fmul.s f12, f15, f13
+	fmv.w.x f15, s3
+	fadd.s f13, f12, f0
+	fmul.s f0, f10, f11
+	fmul.s f14, f13, f15
+	fmul.s f12, f0, f10
 	flw f13, 0(a0)
-	fadd.s f12, f13, f10
-	fsw f12, 0(a0)
-	fmv.s f10, f11
+	fadd.s f11, f13, f10
+	fcvt.w.s s8, f14, rtz
+	fsw f11, 0(a0)
+	fmv.s f10, f12
 	jal putfloat
 	li a0, 32
 	jal putch

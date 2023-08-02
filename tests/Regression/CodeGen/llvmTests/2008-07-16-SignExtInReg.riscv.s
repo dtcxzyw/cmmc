@@ -6,14 +6,14 @@
 A:
 	andi a2, a0, 255
 	andi a3, a1, 255
-	addw a1, a2, a3
-	andi a0, a1, 255
+	addw a4, a2, a3
+	andi a0, a4, 255
 	ret
 .p2align 2
 .globl B
 B:
 	zext.h a2, a0
 	zext.h a3, a1
-	addw a1, a2, a3
-	zext.h a0, a1
+	addw a4, a2, a3
+	zext.h a0, a4
 	ret

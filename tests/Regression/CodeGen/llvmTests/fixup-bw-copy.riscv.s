@@ -16,13 +16,13 @@ test_movb_Oz:
 .p2align 2
 .globl test_movb_hreg
 test_movb_hreg:
-	zext.h a3, a0
-	andi a0, a0, 255
-	sraiw a2, a3, 8
-	andi a1, a2, 255
+	zext.h a4, a0
 	andi a2, a0, 255
-	addw a1, a1, a2
-	andi a0, a1, 255
+	sraiw a3, a4, 8
+	andi a4, a2, 255
+	andi a1, a3, 255
+	addw a3, a1, a4
+	andi a0, a3, 255
 	ret
 .p2align 2
 .globl test_movw

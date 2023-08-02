@@ -5,10 +5,10 @@
 .globl fastisel_select
 fastisel_select:
 	subw a2, a0, a1
-	lui a3, 294062
-	addiw a0, a3, -1065
+	lui a4, 294062
+	addiw a3, a4, -1065
 	bne a2, zero, label9
-	mv a0, zero
+	mv a3, zero
 label9:
-	zext.w a0, a0
+	zext.w a0, a3
 	ret

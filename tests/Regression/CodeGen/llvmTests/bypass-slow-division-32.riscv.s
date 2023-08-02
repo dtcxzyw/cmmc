@@ -11,10 +11,10 @@ Test_get_quotient:
 .globl Test_get_quotient_and_remainder
 Test_get_quotient_and_remainder:
 	divw a3, a0, a1
-	remw a1, a0, a1
+	remw a4, a0, a1
 	zext.w a2, a3
-	zext.w a3, a1
-	addw a0, a2, a3
+	zext.w a5, a4
+	addw a0, a2, a5
 	ret
 .p2align 2
 .globl Test_get_remainder
@@ -26,9 +26,9 @@ Test_get_remainder:
 .globl Test_use_div_and_idiv
 Test_use_div_and_idiv:
 	divw a3, a0, a1
-	divuw a1, a0, a1
+	divuw a4, a0, a1
 	zext.w a2, a3
-	addw a0, a2, a1
+	addw a0, a2, a4
 	ret
 .p2align 2
 .globl Test_use_div_imm_imm
@@ -45,29 +45,29 @@ Test_use_div_imm_reg:
 .p2align 2
 .globl Test_use_div_reg_imm
 Test_use_div_reg_imm:
-	lui a1, 254200
-	addiw a2, a1, 993
-	mul a0, a0, a2
-	srli a2, a0, 63
-	srai a1, a0, 35
-	add a3, a2, a1
+	lui a4, 254200
+	addiw a3, a4, 993
+	mul a1, a0, a3
+	srli a4, a1, 63
+	srai a2, a1, 35
+	add a3, a4, a2
 	zext.w a0, a3
 	ret
 .p2align 2
 .globl Test_use_divrem_reg_imm
 Test_use_divrem_reg_imm:
-	lui a3, 254200
-	addiw a2, a3, 993
-	mul a1, a0, a2
-	srli a4, a1, 63
-	srai a3, a1, 35
-	add a2, a4, a3
-	slliw a3, a2, 5
+	lui a2, 254200
+	addiw a1, a2, 993
+	mul a3, a0, a1
+	srli t0, a3, 63
+	srai a4, a3, 35
+	add a2, t0, a4
+	slliw a5, a2, 5
 	zext.w a1, a2
-	addw a4, a3, a2
-	subw a2, a0, a4
-	zext.w a3, a2
-	addw a0, a1, a3
+	addw t0, a5, a2
+	subw a3, a0, t0
+	zext.w a4, a3
+	addw a0, a1, a4
 	ret
 .p2align 2
 .globl Test_use_rem_imm_reg
@@ -79,14 +79,14 @@ Test_use_rem_imm_reg:
 .p2align 2
 .globl Test_use_rem_reg_imm
 Test_use_rem_reg_imm:
-	lui a2, 254200
-	addiw a3, a2, 993
-	mul a1, a0, a3
-	srli a3, a1, 63
-	srai a2, a1, 35
-	add a1, a3, a2
-	slliw a2, a1, 5
-	addw a3, a2, a1
-	subw a1, a0, a3
-	zext.w a0, a1
+	lui a4, 254200
+	addiw a1, a4, 993
+	mul a2, a0, a1
+	srli a5, a2, 63
+	srai a3, a2, 35
+	add a1, a5, a3
+	slliw a4, a1, 5
+	addw t0, a4, a1
+	subw a2, a0, t0
+	zext.w a0, a2
 	ret

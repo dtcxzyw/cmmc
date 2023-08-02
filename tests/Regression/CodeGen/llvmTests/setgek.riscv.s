@@ -23,12 +23,12 @@ r3:
 test:
 pcrel17:
 	auipc a1, %pcrel_hi(k)
-	lui a3, 1048568
+	lui a4, 1048568
 	lw a0, %pcrel_lo(pcrel17)(a1)
-	addiw a1, a3, -1
-	slt a2, a1, a0
+	addiw a2, a4, -1
 pcrel18:
-	auipc a1, %pcrel_hi(r1)
-	zext.w a0, a2
-	sw a0, %pcrel_lo(pcrel18)(a1)
+	auipc a4, %pcrel_hi(r1)
+	slt a3, a2, a0
+	zext.w a1, a3
+	sw a1, %pcrel_lo(pcrel18)(a4)
 	ret

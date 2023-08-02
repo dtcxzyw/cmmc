@@ -13,10 +13,11 @@ label7:
 .p2align 2
 .globl t2
 t2:
+	mv a2, a1
 	bne a0, zero, label15
-	li a1, 20
+	li a2, 20
 label15:
-	mv a0, a1
+	mv a0, a2
 	ret
 .p2align 2
 .globl t3
@@ -39,19 +40,21 @@ label33:
 .p2align 2
 .globl t5
 t5:
+	mv a2, a1
 	bne a0, zero, label41
-	li a1, -2
+	li a2, -2
 label41:
-	mv a0, a1
+	mv a0, a2
 	ret
 .p2align 2
 .globl t6
 t6:
+	mv a2, a1
 	beq a0, zero, label48
 label49:
-	mv a0, a1
+	mv a0, a2
 	ret
 label48:
-	lui a0, 1048337
-	addiw a1, a0, -1
+	lui a3, 1048337
+	addiw a2, a3, -1
 	j label49

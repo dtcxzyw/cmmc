@@ -18,10 +18,10 @@ result:
 .globl test
 test:
 pcrel25:
-	auipc a1, %pcrel_hi(i)
+	auipc a3, %pcrel_hi(i)
 pcrel26:
 	auipc a2, %pcrel_hi(j)
-	lw a0, %pcrel_lo(pcrel25)(a1)
+	lw a0, %pcrel_lo(pcrel25)(a3)
 	lw a1, %pcrel_lo(pcrel26)(a2)
 	bne a0, a1, label11
 label2:

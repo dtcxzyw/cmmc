@@ -32,11 +32,12 @@ label46:
 .p2align 2
 .globl select_icmp_sgt_zero
 select_icmp_sgt_zero:
-	fmv.w.x f10, zero
+	fmv.w.x f11, zero
 	lui a1, 260096
-	fmv.w.x f11, a1
-	bgt a0, zero, label57
+	fmv.w.x f12, a1
 	fmv.s f10, f11
+	bgt a0, zero, label57
+	fmv.s f10, f12
 label57:
 	ret
 .p2align 2
@@ -56,10 +57,11 @@ label82:
 .p2align 2
 .globl select_icmp_slt_one
 select_icmp_slt_one:
-	lui a1, 260096
+	lui a2, 260096
 	fmv.w.x f11, zero
-	fmv.w.x f10, a1
 	li a1, 1
+	fmv.w.x f12, a2
+	fmv.s f10, f12
 	blt a0, a1, label94
 	fmv.s f10, f11
 label94:

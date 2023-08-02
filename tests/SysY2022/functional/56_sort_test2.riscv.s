@@ -6,29 +6,29 @@
 main:
 	addi sp, sp, -72
 	li a2, 3
-	li a3, 5
-	slli a0, a2, 32
+	li a3, 2
+	li a4, 5
 	sd ra, 0(sp)
-	li a2, 2
-	addi a1, a0, 4
-	sd s0, 8(sp)
 	slli a0, a2, 32
+	sd s0, 8(sp)
+	slli a2, a3, 32
+	addi a1, a0, 4
 	addi s0, sp, 32
-	li a2, 1
 	sd s1, 16(sp)
+	li a3, 1
+	li a0, 1
 	li s1, 10
 	sd s2, 24(sp)
 	sd a1, 32(sp)
-	addi a1, a0, 9
-	li a0, 1
-	sd a1, 40(sp)
-	slli a1, a2, 32
-	sd a1, 48(sp)
-	slli a1, a3, 32
-	li a3, 8
-	addi a2, a1, 6
-	sd a2, 56(sp)
+	addi a1, a2, 9
 	slli a2, a3, 32
+	sd a1, 40(sp)
+	slli a1, a4, 32
+	sd a2, 48(sp)
+	li a4, 8
+	addi a3, a1, 6
+	slli a2, a4, 32
+	sd a3, 56(sp)
 	addi a1, a2, 7
 	sd a1, 64(sp)
 	blt a0, s1, label4
@@ -70,9 +70,9 @@ label8:
 	sh2add a5, a2, s0
 	lw a4, 0(a5)
 	bge a1, a4, label7
-	sh2add a3, a3, s0
+	sh2add a5, a3, s0
 	addiw a2, a2, -1
-	sw a4, 0(a3)
+	sw a4, 0(a5)
 	addiw a3, a2, 1
 	bge a2, zero, label8
 	sh2add a2, a3, s0

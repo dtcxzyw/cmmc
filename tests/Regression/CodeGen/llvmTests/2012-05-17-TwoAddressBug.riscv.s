@@ -4,10 +4,10 @@
 .p2align 2
 .globl t
 t:
-	lui a1, 1048560
-	addiw a2, a1, 1
+	lui a4, 1048560
+	addiw a2, a4, 1
+	andi a4, a0, 1
 	addw a3, a0, a2
-	andi a2, a0, 1
 	srli a1, a3, 23
-	addw a0, a1, a2
+	addw a0, a1, a4
 	ret

@@ -35,21 +35,21 @@ load_float:
 .p2align 2
 .globl store
 store:
-	sh2add a0, a1, a0
-	sw a2, 0(a0)
+	sh2add a3, a1, a0
+	sw a2, 0(a3)
 	ret
 .p2align 2
 .globl store_float
 store_float:
-	sh2add a0, a1, a0
-	fsw f10, 0(a0)
+	sh2add a2, a1, a0
+	fsw f10, 0(a2)
 	ret
 .p2align 2
 .globl store_float_constant
 store_float_constant:
 	sh2add a2, a1, a0
-	lui a0, 260096
-	fmv.w.x f10, a0
+	lui a3, 260096
+	fmv.w.x f10, a3
 	fsw f10, 0(a2)
 	ret
 .p2align 2
@@ -74,13 +74,13 @@ gep2:
 .globl gepseq
 gepseq:
 	sh2add a2, a1, a0
-	lw a3, 0(a2)
-	lw a1, 4(a2)
-	addw a0, a3, a1
-	lw a3, 8(a2)
-	lw a2, 12(a2)
-	addw a1, a0, a3
-	addw a0, a1, a2
+	lw a4, 0(a2)
+	lw a5, 4(a2)
+	lw t0, 8(a2)
+	addw a1, a4, a5
+	lw a4, 12(a2)
+	addw a3, a1, t0
+	addw a0, a3, a4
 	ret
 .p2align 2
 .globl lb
@@ -162,36 +162,36 @@ label129:
 fused_store:
 pcrel265:
 	auipc a1, %pcrel_hi(arr)
-	li a3, 1
+	li a2, 1
+	li a4, 3
 	addi a0, a1, %pcrel_lo(pcrel265)
-	slli a2, a3, 32
-	li a3, 3
-	sd a2, %pcrel_lo(pcrel265)(a1)
-	slli a1, a3, 32
-	li a3, 5
-	addi a2, a1, 2
-	slli a1, a3, 32
-	sd a2, 8(a0)
-	li a3, 7
+	slli a3, a2, 32
+	slli a2, a4, 32
+	sd a3, %pcrel_lo(pcrel265)(a1)
+	li a4, 5
+	addi a3, a2, 2
+	slli a1, a4, 32
+	sd a3, 8(a0)
+	li a4, 7
 	addi a2, a1, 4
+	slli a3, a4, 32
 	sd a2, 16(a0)
-	slli a2, a3, 32
-	li a3, 9
-	addi a1, a2, 6
-	sd a1, 24(a0)
-	slli a1, a3, 32
+	li a4, 9
+	addi a1, a3, 6
+	slli a2, a4, 32
 	li a3, 11
-	addi a2, a1, 8
-	sd a2, 32(a0)
+	li a4, 13
+	sd a1, 24(a0)
+	addi a1, a2, 8
 	slli a2, a3, 32
-	li a3, 13
+	sd a1, 32(a0)
 	addi a1, a2, 10
+	slli a2, a4, 32
 	sd a1, 40(a0)
-	slli a1, a3, 32
-	li a3, 15
-	addi a2, a1, 12
-	slli a1, a3, 32
-	sd a2, 48(a0)
+	li a4, 15
+	addi a3, a2, 12
+	slli a1, a4, 32
+	sd a3, 48(a0)
 	addi a2, a1, 14
 	sd a2, 56(a0)
 	ret
@@ -201,6 +201,6 @@ merge_store:
 pcrel276:
 	auipc a2, %pcrel_hi(x)
 	slli a3, a1, 32
-	add.uw a0, a0, a3
-	sd a0, %pcrel_lo(pcrel276)(a2)
+	add.uw a4, a0, a3
+	sd a4, %pcrel_lo(pcrel276)(a2)
 	ret

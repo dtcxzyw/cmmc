@@ -18,19 +18,19 @@ z:
 .globl PR35761
 PR35761:
 pcrel24:
-	auipc a2, %pcrel_hi(x)
+	auipc a4, %pcrel_hi(x)
 pcrel25:
 	auipc a3, %pcrel_hi(y)
 	lui a5, 8
-	lb a1, %pcrel_lo(pcrel24)(a2)
-	andi a1, a1, 255
+	lb a1, %pcrel_lo(pcrel24)(a4)
+	addiw a4, a5, -1
 	lw a2, %pcrel_lo(pcrel25)(a3)
-	addiw a3, a5, -1
-	or a4, a0, a3
-	xor a0, a2, a4
-	or a2, a0, a1
+	andi a5, a1, 255
+	or t0, a0, a4
 pcrel26:
 	auipc a1, %pcrel_hi(z)
-	andi a0, a2, 255
+	xor a3, a2, t0
+	or a4, a3, a5
+	andi a0, a4, 255
 	sw a0, %pcrel_lo(pcrel26)(a1)
 	ret

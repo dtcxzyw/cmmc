@@ -12,11 +12,11 @@ test1:
 test2:
 	li a1, 4
 	ble a0, a1, label7
-	addiw a1, a0, -5
-	srliw a2, a1, 2
+	addiw a4, a0, -5
+	srliw a2, a4, 2
+	addiw a4, a0, -4
 	slli a3, a2, 2
-	addiw a2, a0, -4
 	subw a1, zero, a3
-	addw a0, a1, a2
+	addw a0, a1, a4
 label7:
 	ret

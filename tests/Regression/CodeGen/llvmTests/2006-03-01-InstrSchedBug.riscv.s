@@ -5,9 +5,9 @@
 .globl f
 f:
 	mulw a3, a0, a0
+	slliw a5, a0, 1
 	mulw a4, a1, a1
+	mulw t0, a1, a5
 	addw a2, a3, a4
-	slliw a3, a0, 1
-	mulw a1, a1, a3
-	addw a0, a2, a1
+	addw a0, a2, t0
 	ret

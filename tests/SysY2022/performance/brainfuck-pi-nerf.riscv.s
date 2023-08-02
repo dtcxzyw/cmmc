@@ -47,14 +47,14 @@ main:
 label2:
 	jal getch
 	addiw a1, a0, -35
-	sll a4, s0, a1
-	and a3, a4, s8
-	slti a4, a1, 0
-	sltiu a2, a3, 1
-	slt a3, s1, a0
+	slti a5, a1, 0
+	sll a2, s0, a1
+	and a4, a2, s8
+	sltiu a3, a4, 1
+	slt a4, s1, a0
+	or a2, a3, a5
 	or a1, a2, a4
-	or a2, a1, a3
-	bne a2, zero, label2
+	bne a1, zero, label2
 pcrel478:
 	auipc a1, %pcrel_hi(input)
 pcrel479:
@@ -71,14 +71,14 @@ label4:
 label7:
 	jal getch
 	addiw a1, a0, -35
-	sll a3, s0, a1
-	and a4, a3, s8
-	slti a3, a1, 0
-	sltiu a2, a4, 1
+	slti a5, a1, 0
+	sll a2, s0, a1
+	and a4, a2, s8
+	sltiu a3, a4, 1
 	slt a4, s1, a0
-	or a1, a2, a3
-	or a2, a1, a4
-	bne a2, zero, label7
+	or a2, a3, a5
+	or a1, a2, a4
+	bne a1, zero, label7
 	addiw s11, s11, 1
 	bne a0, s10, label4
 	mv s8, s11
@@ -158,21 +158,22 @@ label19:
 	bgt s8, a5, label29
 	j label25
 label238:
-	mv t0, s0
+	mv t1, s0
+	mv t0, a5
 .p2align 2
 label37:
-	addiw a5, a5, 1
-	sh2add t2, a5, s6
-	lw t1, 0(t2)
-	xori t3, t1, 93
-	xori t1, t1, 91
-	sltiu t2, t3, 1
-	subw t0, t0, t2
-	sltiu t2, t1, 1
-	addw t0, t0, t2
-	bgt t0, zero, label37
-label255:
-	addiw a5, a5, 1
+	addiw t0, t0, 1
+	sh2add t2, t0, s6
+	lw a5, 0(t2)
+	xori t3, a5, 91
+	xori t4, a5, 93
+	sltiu t5, t4, 1
+	sltiu t4, t3, 1
+	subw t2, t1, t5
+	addw t1, t2, t4
+	bgt t1, zero, label37
+	mv a5, t0
+	addiw a5, t0, 1
 	j label19
 label25:
 	auipc a1, %pcrel_hi(output)
@@ -253,8 +254,8 @@ label462:
 	li t1, 91
 	bne t0, t1, label463
 	sh2add t0, a4, a1
-	lw t1, 0(t0)
-	beq t1, zero, label238
+	lw t2, 0(t0)
+	beq t2, zero, label238
 	sh2add t0, a3, a0
 	addiw a3, a3, 1
 	sw a5, 0(t0)
@@ -266,8 +267,8 @@ label463:
 	addiw t0, a3, -1
 	lw t1, 0(t2)
 	beq t1, zero, label268
-	sh2add t0, t0, a0
-	lw a5, 0(t0)
+	sh2add t1, t0, a0
+	lw a5, 0(t1)
 	j label52
 label43:
 	li t1, 46
@@ -284,7 +285,7 @@ pcrel482:
 	j label19
 label45:
 	li t1, 44
-	bne t0, t1, label255
+	bne t0, t1, label286
 	bgt s10, a2, label290
 	sh2add t0, a4, a1
 	sw zero, 0(t0)
@@ -295,6 +296,9 @@ label76:
 	j label9
 label268:
 	mv a3, t0
+	addiw a5, a5, 1
+	j label19
+label286:
 	addiw a5, a5, 1
 	j label19
 label290:

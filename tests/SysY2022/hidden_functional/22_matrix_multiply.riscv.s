@@ -92,10 +92,10 @@ label13:
 	bgt s9, s10, label11
 	j label69
 label15:
-	mul a0, a3, s0
-	add a1, s7, a0
-	add a2, s1, a0
+	mul a4, a3, s0
 	ld a0, 104(sp)
+	add a1, s7, a4
+	add a2, s1, a4
 	bgt a0, a3, label92
 label91:
 	mv s3, zero
@@ -118,10 +118,10 @@ label232:
 .p2align 2
 label233:
 	addiw a3, a3, 1
-	mul a0, a3, s0
-	add a1, s7, a0
-	add a2, s1, a0
+	mul a4, a3, s0
 	ld a0, 104(sp)
+	add a1, s7, a4
+	add a2, s1, a4
 	bgt a0, a3, label92
 	j label91
 .p2align 2
@@ -137,9 +137,9 @@ label27:
 	li a4, 1
 	sh2add t0, a0, s2
 	lw t1, 0(a1)
-	lw t3, 0(t0)
-	mulw t0, t1, t3
-	addw a5, a5, t0
+	lw t4, 0(t0)
+	mulw t3, t1, t4
+	addw a5, a5, t3
 	bgt s5, a4, label30
 	j label232
 .p2align 2
@@ -154,9 +154,9 @@ label30:
 	addiw a4, a4, 1
 	sh2add t0, a0, t3
 	lw t1, 0(t2)
-	lw t3, 0(t0)
-	mulw t0, t1, t3
-	addw a5, a5, t0
+	lw t4, 0(t0)
+	mulw t3, t1, t4
+	addw a5, a5, t3
 	bgt s5, a4, label30
 	sh2add t0, a0, a2
 	sw a5, 0(t0)
@@ -165,31 +165,31 @@ label30:
 	j label233
 .p2align 2
 label34:
-	mul t0, a4, s0
-	add t1, s2, t0
-	addi t6, t1, 400
+	mul t2, a4, s0
 	sh2add t0, a4, a1
-	sh2add t3, a0, t1
+	add t1, s2, t2
 	addiw a4, a4, 4
+	addi t6, t1, 400
 	lw t2, 0(t0)
-	sh2add t5, a0, t6
-	lw t3, 0(t3)
-	lw t4, 4(t0)
-	lw t6, 0(t5)
-	mulw t3, t2, t3
-	mulw t5, t4, t6
-	lw t4, 8(t0)
-	addw t2, t5, t3
-	addi t5, t1, 800
-	sh2add t3, a0, t5
-	lw t5, 0(t3)
-	lw t0, 12(t0)
-	addi t3, t1, 1200
-	sh2add t1, a0, t3
-	mulw t6, t4, t5
-	lw t3, 0(t1)
-	addw t2, t2, t6
-	mulw t1, t0, t3
+	sh2add t3, a0, t1
+	sh2add a6, a0, t6
+	lw t4, 0(t3)
+	lw t5, 4(t0)
+	lw t3, 0(a6)
+	mulw a7, t2, t4
+	addi a6, t1, 800
+	sh2add t4, a0, a6
+	mulw t6, t5, t3
+	addi a6, t1, 1200
+	lw t5, 8(t0)
+	addw t3, t6, a7
+	lw t6, 0(t4)
+	sh2add t4, a0, a6
+	mulw a7, t5, t6
+	addw t2, t3, a7
+	lw t3, 12(t0)
+	lw t5, 0(t4)
+	mulw t1, t3, t5
 	addw t0, t2, t1
 	addw a5, a5, t0
 	bgt s3, a4, label34
@@ -199,19 +199,19 @@ label34:
 	addiw a4, a4, 1
 	sh2add t0, a0, t3
 	lw t1, 0(t2)
-	lw t3, 0(t0)
-	mulw t0, t1, t3
-	addw a5, a5, t0
+	lw t4, 0(t0)
+	mulw t3, t1, t4
+	addw a5, a5, t3
 	bgt s5, a4, label30
 	sh2add t0, a0, a2
 	sw a5, 0(t0)
 	addiw a0, a0, 1
 	bgt s4, a0, label27
 	addiw a3, a3, 1
-	mul a0, a3, s0
-	add a1, s7, a0
-	add a2, s1, a0
+	mul a4, a3, s0
 	ld a0, 104(sp)
+	add a1, s7, a4
+	add a2, s1, a4
 	bgt a0, a3, label92
 	j label91
 .p2align 2
@@ -246,10 +246,10 @@ label21:
 	j label20
 label26:
 	addiw a3, a3, 1
-	mul a0, a3, s0
-	add a1, s7, a0
-	add a2, s1, a0
+	mul a4, a3, s0
 	ld a0, 104(sp)
+	add a1, s7, a4
+	add a2, s1, a4
 	bgt a0, a3, label92
 	j label91
 label23:

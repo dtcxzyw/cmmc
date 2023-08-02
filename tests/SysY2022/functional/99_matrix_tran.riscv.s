@@ -5,15 +5,15 @@
 .globl main
 main:
 	addi sp, sp, -96
-	lui a0, 260096
+	lui a1, 260096
+	lui a0, 262144
 	fmv.w.x f12, zero
 	sd ra, 0(sp)
-	fmv.w.x f10, a0
+	fmv.w.x f10, a1
+	fmv.w.x f11, a0
 	sd s0, 8(sp)
-	lui a0, 262144
 	addi s0, sp, 80
 	sd s1, 16(sp)
-	fmv.w.x f11, a0
 	addi s1, sp, 64
 	sd s3, 24(sp)
 	addi s3, sp, 40

@@ -35,8 +35,8 @@ pcrel42:
 	bge a1, a2, label3
 	li a1, 1
 pcrel43:
-	auipc a2, %pcrel_hi(result1)
-	sw a1, %pcrel_lo(pcrel43)(a2)
+	auipc a3, %pcrel_hi(result1)
+	sw a1, %pcrel_lo(pcrel43)(a3)
 label3:
 	auipc a2, %pcrel_hi(k)
 	lw a1, %pcrel_lo(label3)(a2)

@@ -15,8 +15,8 @@ y:
 f1:
 pcrel12:
 	auipc a2, %pcrel_hi(x)
-	sw a0, %pcrel_lo(pcrel12)(a2)
 pcrel13:
-	auipc a0, %pcrel_hi(y)
-	sw a1, %pcrel_lo(pcrel13)(a0)
+	auipc a3, %pcrel_hi(y)
+	sw a0, %pcrel_lo(pcrel12)(a2)
+	sw a1, %pcrel_lo(pcrel13)(a3)
 	ret

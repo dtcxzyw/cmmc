@@ -9,9 +9,9 @@ main:
 	sd s0, 8(sp)
 	sd s5, 16(sp)
 	addi s0, sp, 144
-	sd s1, 24(sp)
-	sd s6, 32(sp)
-	sd s2, 40(sp)
+	sd s2, 24(sp)
+	sd s1, 32(sp)
+	sd s6, 40(sp)
 	sd s3, 48(sp)
 	sd s4, 56(sp)
 	sd s7, 64(sp)
@@ -42,7 +42,7 @@ main:
 	mv a7, a0
 	jal getint
 	sd a0, 128(sp)
-	mv s1, a0
+	mv s2, a0
 	jal getint
 	sd a0, 208(sp)
 	mv s1, a0
@@ -83,9 +83,9 @@ main:
 	slli a0, a6, 32
 	add.uw a1, t6, a0
 	sd a1, 160(sp)
-	ld s1, 128(sp)
+	ld s2, 128(sp)
 	ld a7, 120(sp)
-	slli a0, s1, 32
+	slli a0, s2, 32
 	add.uw a1, a7, a0
 	sd a1, 168(sp)
 	ld s2, 216(sp)
@@ -98,17 +98,17 @@ main:
 	slli a0, s4, 32
 	add.uw a1, s3, a0
 	sd a1, 184(sp)
+	slli a1, s10, 32
 	ld s6, 240(sp)
 	ld s5, 256(sp)
 	slli a0, s6, 32
-	add.uw a1, s5, a0
-	slli a0, s10, 32
-	sd a1, 192(sp)
-	ld s7, 248(sp)
-	add.uw a1, s7, a0
+	add.uw a2, s5, a0
 	mv a0, zero
-	sd a1, 200(sp)
+	sd a2, 192(sp)
+	ld s7, 248(sp)
+	add.uw a2, s7, a1
 	li a1, 16
+	sd a2, 200(sp)
 	bge zero, a3, label10
 .p2align 2
 label4:
@@ -118,19 +118,19 @@ label4:
 .p2align 2
 label7:
 	sh2add t0, a2, s0
-	sh2add t1, a0, s0
-	lw a5, 0(t1)
-	lw t0, 0(t0)
-	blt a5, t0, label8
+	sh2add t2, a0, s0
+	lw a5, 0(t2)
+	lw t1, 0(t0)
+	blt a5, t1, label8
 	addiw a2, a2, 1
 	blt a2, a1, label7
 	j label250
 .p2align 2
 label8:
-	sh2add t1, a0, s0
-	sw t0, 0(t1)
-	sh2add t0, a2, s0
-	sw a5, 0(t0)
+	sh2add t0, a0, s0
+	sh2add t2, a2, s0
+	sw t1, 0(t0)
+	sw a5, 0(t2)
 	addiw a2, a2, 1
 	blt a2, a1, label7
 	mv a0, a4
@@ -179,9 +179,9 @@ label10:
 	ld t6, 136(sp)
 	ld a6, 112(sp)
 	ld a7, 120(sp)
-	ld s1, 128(sp)
-	mv s0, s1
+	ld s2, 128(sp)
 	ld s1, 208(sp)
+	mv s0, s2
 	ld s2, 216(sp)
 	ld s3, 224(sp)
 	ld s4, 232(sp)
@@ -190,18 +190,18 @@ label10:
 	ld s7, 248(sp)
 	ld s10, 280(sp)
 label13:
-	addw s8, s8, s9
-	lui s9, 70493
-	addiw s11, s9, -2031
-	mul s9, s8, s11
-	srai s11, s9, 58
-	srli s9, s9, 63
-	add s9, s9, s11
-	lui s11, 243712
-	addiw s11, s11, 1
-	mulw s11, s9, s11
+	addw s11, s8, s9
+	lui s8, 70493
+	addiw s9, s8, -2031
+	mul s8, s11, s9
+	srai s9, s8, 58
+	srli s8, s8, 63
+	add s9, s8, s9
+	lui s8, 243712
+	addiw s8, s8, 1
+	mulw s8, s9, s8
 	ld s9, 296(sp)
-	subw s8, s8, s11
+	subw s8, s11, s8
 	addiw s9, s9, -1
 	beq s9, zero, label11
 	sd s9, 296(sp)
@@ -243,10 +243,10 @@ label13:
 	mv s10, zero
 	j label13
 label11:
-	slliw a0, s8, 5
-	lui a2, 69
-	addiw a1, a2, -976
-	addw a0, a0, a1
+	slliw a1, s8, 5
+	lui a3, 69
+	addiw a2, a3, -976
+	addw a0, a1, a2
 	jal putint
 	li a0, 10
 	jal putch
@@ -254,9 +254,9 @@ label11:
 	mv a0, zero
 	ld s0, 8(sp)
 	ld s5, 16(sp)
-	ld s1, 24(sp)
-	ld s6, 32(sp)
-	ld s2, 40(sp)
+	ld s2, 24(sp)
+	ld s1, 32(sp)
+	ld s6, 40(sp)
 	ld s3, 48(sp)
 	ld s4, 56(sp)
 	ld s7, 64(sp)

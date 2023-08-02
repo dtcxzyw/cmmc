@@ -40,18 +40,18 @@ shift_left:
 pcrel22:
 	auipc a2, %pcrel_hi(a)
 pcrel23:
-	auipc a3, %pcrel_hi(c)
-	lw a1, %pcrel_lo(pcrel22)(a2)
+	auipc a3, %pcrel_hi(b)
 pcrel24:
-	auipc a2, %pcrel_hi(b)
+	auipc a4, %pcrel_hi(c)
+	lw a1, %pcrel_lo(pcrel22)(a2)
 	slli a0, a1, 4
-	sw a0, %pcrel_lo(pcrel24)(a2)
-pcrel25:
-	auipc a2, %pcrel_hi(d)
-	lw a1, %pcrel_lo(pcrel23)(a3)
-	slli a0, a1, 10
-	sw a0, %pcrel_lo(pcrel25)(a2)
+	sw a0, %pcrel_lo(pcrel23)(a3)
 	mv a0, zero
+pcrel25:
+	auipc a3, %pcrel_hi(d)
+	lw a2, %pcrel_lo(pcrel24)(a4)
+	slli a1, a2, 10
+	sw a1, %pcrel_lo(pcrel25)(a3)
 	ret
 .p2align 2
 .globl shift_right
@@ -59,16 +59,16 @@ shift_right:
 pcrel47:
 	auipc a2, %pcrel_hi(i)
 pcrel48:
-	auipc a3, %pcrel_hi(m)
-	lw a1, %pcrel_lo(pcrel47)(a2)
+	auipc a3, %pcrel_hi(j)
 pcrel49:
-	auipc a2, %pcrel_hi(j)
+	auipc a4, %pcrel_hi(m)
+	lw a1, %pcrel_lo(pcrel47)(a2)
 	srli a0, a1, 4
-	sw a0, %pcrel_lo(pcrel49)(a2)
-pcrel50:
-	auipc a2, %pcrel_hi(n)
-	lw a1, %pcrel_lo(pcrel48)(a3)
-	srli a0, a1, 10
-	sw a0, %pcrel_lo(pcrel50)(a2)
+	sw a0, %pcrel_lo(pcrel48)(a3)
 	mv a0, zero
+pcrel50:
+	auipc a3, %pcrel_hi(n)
+	lw a2, %pcrel_lo(pcrel49)(a4)
+	srli a1, a2, 10
+	sw a1, %pcrel_lo(pcrel50)(a3)
 	ret

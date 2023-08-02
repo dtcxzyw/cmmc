@@ -10,10 +10,10 @@ X:
 .globl _Z3fooi
 _Z3fooi:
 	andi a2, a0, 255
-	sext.b a3, a2
 pcrel11:
-	auipc a2, %pcrel_hi(X)
+	auipc a4, %pcrel_hi(X)
+	sext.b a3, a2
+	sw a0, %pcrel_lo(pcrel11)(a4)
 	zext.w a1, a3
-	sw a0, %pcrel_lo(pcrel11)(a2)
 	mv a0, a1
 	ret

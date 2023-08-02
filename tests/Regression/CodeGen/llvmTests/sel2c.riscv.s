@@ -29,6 +29,6 @@ pcrel24:
 label21:
 	zext.w a0, a1
 pcrel25:
-	auipc a1, %pcrel_hi(k)
-	sw a0, %pcrel_lo(pcrel25)(a1)
+	auipc a2, %pcrel_hi(k)
+	sw a0, %pcrel_lo(pcrel25)(a2)
 	ret

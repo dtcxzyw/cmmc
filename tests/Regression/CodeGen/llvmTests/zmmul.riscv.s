@@ -4,11 +4,11 @@
 .p2align 2
 .globl foo
 foo:
-	divuw a3, a0, a1
-	divw a4, a0, a3
+	divuw a5, a0, a1
+	divw a4, a0, a5
 	zext.w a2, a4
 	mulw a3, a1, a2
-	remuw a1, a3, a1
-	remw a2, a1, a0
-	zext.w a0, a2
+	remuw a5, a3, a1
+	remw a4, a5, a0
+	zext.w a0, a4
 	ret

@@ -40,10 +40,10 @@ label290:
 	addi sp, sp, 88
 	ret
 label6:
-	sh2add a3, a0, s0
-	mv s3, a0
-	lw a1, 0(a3)
+	sh2add a4, a0, s0
 	mv a3, s1
+	mv s3, a0
+	lw a1, 0(a4)
 	addi a2, a1, -1
 label7:
 	bgt a3, s3, label10
@@ -67,12 +67,12 @@ label17:
 label21:
 	ble s4, a0, label126
 	sh2add a3, a0, s0
+	mv a4, s4
 	mv s5, a0
 	lw a1, 0(a3)
-	mv a3, s4
 	addi a2, a1, -1
 label24:
-	bgt a3, s5, label64
+	bgt a4, s5, label64
 	j label27
 .p2align 2
 label12:
@@ -94,30 +94,30 @@ label28:
 	j label21
 .p2align 2
 label64:
-	blt s5, a3, label66
-	bgt a3, s5, label71
+	blt s5, a4, label66
+	bgt a4, s5, label71
 	j label313
 .p2align 2
 label66:
-	sh2add a5, a3, s0
-	lw a4, 0(a5)
-	bge a2, a4, label67
-	addiw a3, a3, -1
-	blt s5, a3, label66
-	ble a3, s5, label326
+	sh2add a5, a4, s0
+	lw a3, 0(a5)
+	bge a2, a3, label67
+	addiw a4, a4, -1
+	blt s5, a4, label66
+	ble a4, s5, label326
 .p2align 2
 label71:
 	sh2add a5, s5, s0
-	lw a4, 0(a5)
-	ble a1, a4, label257
+	lw a3, 0(a5)
+	ble a1, a3, label257
 	addiw s5, s5, 1
-	bgt a3, s5, label71
+	bgt a4, s5, label71
 	j label27
 label31:
-	sh2add a3, a1, s0
-	mv s7, a1
-	lw a0, 0(a3)
+	sh2add a4, a1, s0
 	mv a3, s6
+	mv s7, a1
+	lw a0, 0(a4)
 	addi a2, a0, -1
 label32:
 	bgt a3, s7, label54
@@ -184,10 +184,10 @@ label38:
 	addiw a1, s7, 1
 	j label28
 label39:
-	sh2add a3, a1, s0
-	mv s9, a1
-	lw a0, 0(a3)
+	sh2add a4, a1, s0
 	mv a3, s8
+	mv s9, a1
+	lw a0, 0(a4)
 	addi a2, a0, -1
 label40:
 	bgt a3, s9, label43
@@ -217,8 +217,8 @@ label46:
 label67:
 	sh2add a5, s5, s0
 	addiw s5, s5, 1
-	sw a4, 0(a5)
-	bgt a3, s5, label71
+	sw a3, 0(a5)
+	bgt a4, s5, label71
 	j label27
 label59:
 	sh2add a5, a3, s0
@@ -244,7 +244,7 @@ label306:
 	j label53
 .p2align 2
 label313:
-	bgt a3, s5, label64
+	bgt a4, s5, label64
 	j label27
 .p2align 2
 label321:
@@ -252,12 +252,12 @@ label321:
 	j label53
 .p2align 2
 label326:
-	bgt a3, s5, label64
+	bgt a4, s5, label64
 	j label27
 label257:
-	sh2add a5, a3, s0
-	addiw a3, a3, -1
-	sw a4, 0(a5)
+	sh2add a5, a4, s0
+	addiw a4, a4, -1
+	sw a3, 0(a5)
 	j label24
 label126:
 	addiw a0, s3, 1
@@ -269,30 +269,30 @@ main:
 	addi sp, sp, -72
 	li a2, 3
 	li a3, 2
-	slli a0, a2, 32
+	li a4, 5
 	sd ra, 0(sp)
+	slli a0, a2, 32
+	sd s0, 8(sp)
 	li a2, 9
 	addi a1, a0, 4
-	sd s0, 8(sp)
 	addi s0, sp, 32
 	sd s1, 16(sp)
 	sd s2, 24(sp)
 	sd a1, 32(sp)
 	slli a1, a3, 32
-	li a3, 5
+	li a3, 1
 	addi a0, a1, 9
-	li a1, 1
+	slli a1, a3, 32
 	sd a0, 40(sp)
-	slli a0, a1, 32
-	sd a0, 48(sp)
-	slli a0, a3, 32
-	li a3, 8
-	addi a1, a0, 6
-	slli a0, a3, 32
-	sd a1, 56(sp)
-	addi a1, a0, 7
-	sd a1, 64(sp)
+	slli a0, a4, 32
+	sd a1, 48(sp)
+	li a4, 8
+	addi a3, a0, 6
+	slli a1, a4, 32
+	sd a3, 56(sp)
+	addi a3, a1, 7
 	mv a1, zero
+	sd a3, 64(sp)
 	mv a0, s0
 	jal QuickSort
 	li s1, 10

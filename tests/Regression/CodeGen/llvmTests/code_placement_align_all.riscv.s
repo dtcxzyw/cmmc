@@ -5,11 +5,11 @@
 .globl foo
 foo:
 	bne a0, zero, label9
-	mv a0, zero
+	mv a2, zero
 	beq a1, zero, label19
-	li a0, 5
+	li a2, 5
 label19:
-	zext.w a0, a0
+	zext.w a0, a2
 	j label3
 label9:
 	addiw a1, a0, 2

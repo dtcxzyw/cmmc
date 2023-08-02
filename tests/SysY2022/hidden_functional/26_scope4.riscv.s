@@ -16,40 +16,40 @@ main:
 .p2align 2
 label7:
 	addiw a5, a3, 10
-	addiw t2, a2, 3
-	addiw t4, a2, 6
-	addw t0, t1, a5
-	addiw t1, a2, 1
-	sh1add t3, t1, t0
-	sh1add t0, a2, t3
-	sh1add t3, t2, t2
+	addiw t4, a2, 1
+	addiw t3, a2, 3
+	addw t2, t1, a5
+	sh1add t5, t4, t2
 	addiw t2, a2, 7
-	addw t1, t0, t3
-	addiw t0, a2, 13
+	sh1add t4, t3, t3
+	sh1add t0, a2, t5
 	slliw t3, t2, 1
+	addw t1, t0, t4
+	addiw t0, a2, 13
+	addiw t4, a2, 6
 	beq a4, a1, label8
-	addw t1, a5, t1
-	addiw a2, a2, 9
+	addw t5, a5, t1
 	addiw a4, a4, 1
-	addw a5, t3, t1
-	sh1add a3, t4, a5
-	sh1add a5, a2, a2
+	addiw a5, a2, 9
+	addw t2, t3, t5
 	mv a2, t0
-	addw t1, a3, a5
+	sh1add t3, a5, a5
+	sh1add a3, t4, t2
+	addw t1, a3, t3
 	mv a3, t0
 	blt a4, a0, label7
 	j label10
 .p2align 2
 label8:
-	addiw t1, t1, 10
-	addw a4, t2, t1
+	addiw a4, t1, 10
 	addiw t1, a2, 8
-	addw a5, t3, a4
-	addiw a2, a2, 10
-	sh1add a4, t1, a5
-	sh1add a5, a2, a2
+	addw t4, t2, a4
+	addiw t2, a2, 10
+	addw a5, t3, t4
 	mv a2, t0
-	addw t1, a4, a5
+	sh1add t3, t2, t2
+	sh1add a4, t1, a5
+	addw t1, a4, t3
 	li a4, 2
 	blt a4, a0, label7
 label10:

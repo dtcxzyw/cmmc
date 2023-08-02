@@ -14,11 +14,11 @@ label10:
 .p2align 2
 .globl compare_r_eq
 compare_r_eq:
-	subw a3, zero, a1
-	li a1, 42
-	zext.w a2, a3
-	beq a0, a2, label23
-	li a1, 24
+	subw a4, zero, a1
+	li a2, 42
+	zext.w a3, a4
+	beq a0, a3, label23
+	li a2, 24
 label23:
-	zext.w a0, a1
+	zext.w a0, a2
 	ret

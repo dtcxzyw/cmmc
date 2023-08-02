@@ -324,16 +324,16 @@ sext_divw_sext_sext:
 sext_divw_sext_sext_i16:
 	sext.h a2, a0
 	sext.h a3, a1
-	divw a1, a2, a3
-	zext.h a0, a1
+	divw a4, a2, a3
+	zext.h a0, a4
 	ret
 .p2align 2
 .globl sext_divw_sext_sext_i8
 sext_divw_sext_sext_i8:
 	sext.b a2, a0
 	sext.b a3, a1
-	divw a1, a2, a3
-	andi a0, a1, 255
+	divw a4, a2, a3
+	andi a0, a4, 255
 	ret
 .p2align 2
 .globl sext_divw_sext_zext
@@ -364,16 +364,16 @@ sext_divw_zext_zext:
 sext_i32_remw_sext_zext_i16:
 	sext.h a2, a0
 	zext.h a3, a1
-	remw a1, a2, a3
-	zext.w a0, a1
+	remw a4, a2, a3
+	zext.w a0, a4
 	ret
 .p2align 2
 .globl sext_i32_remw_zext_sext_i16
 sext_i32_remw_zext_sext_i16:
 	zext.h a2, a0
 	sext.h a3, a1
-	remw a1, a2, a3
-	zext.w a0, a1
+	remw a4, a2, a3
+	zext.w a0, a4
 	ret
 .p2align 2
 .globl sext_mulw_aext_aext
@@ -500,16 +500,16 @@ sext_remw_sext_sext:
 sext_remw_sext_sext_i16:
 	sext.h a2, a0
 	sext.h a3, a1
-	remw a1, a2, a3
-	zext.h a0, a1
+	remw a4, a2, a3
+	zext.h a0, a4
 	ret
 .p2align 2
 .globl sext_remw_sext_sext_i8
 sext_remw_sext_sext_i8:
 	sext.b a2, a0
 	sext.b a3, a1
-	remw a1, a2, a3
-	andi a0, a1, 255
+	remw a4, a2, a3
+	andi a0, a4, 255
 	ret
 .p2align 2
 .globl sext_remw_sext_zext
@@ -585,16 +585,16 @@ zext_divuw_zext_zext:
 zext_divuw_zext_zext_i16:
 	zext.h a2, a0
 	zext.h a3, a1
-	divw a1, a2, a3
-	zext.h a0, a1
+	divw a4, a2, a3
+	zext.h a0, a4
 	ret
 .p2align 2
 .globl zext_divuw_zext_zext_i8
 zext_divuw_zext_zext_i8:
 	andi a2, a0, 255
 	andi a3, a1, 255
-	divw a1, a2, a3
-	andi a0, a1, 255
+	divw a4, a2, a3
+	andi a0, a4, 255
 	ret
 .p2align 2
 .globl zext_divw_aext_aext
@@ -745,16 +745,16 @@ zext_remuw_zext_zext:
 zext_remuw_zext_zext_i16:
 	zext.h a2, a0
 	zext.h a3, a1
-	remw a1, a2, a3
-	zext.h a0, a1
+	remw a4, a2, a3
+	zext.h a0, a4
 	ret
 .p2align 2
 .globl zext_remuw_zext_zext_i8
 zext_remuw_zext_zext_i8:
 	andi a2, a0, 255
 	andi a3, a1, 255
-	remw a1, a2, a3
-	andi a0, a1, 255
+	remw a4, a2, a3
+	andi a0, a4, 255
 	ret
 .p2align 2
 .globl zext_remw_aext_aext

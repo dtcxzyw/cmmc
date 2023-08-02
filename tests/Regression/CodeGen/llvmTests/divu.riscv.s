@@ -20,11 +20,11 @@ test:
 pcrel17:
 	auipc a1, %pcrel_hi(iiii)
 pcrel18:
-	auipc a2, %pcrel_hi(jjjj)
-	lw a0, %pcrel_lo(pcrel17)(a1)
-	lw a1, %pcrel_lo(pcrel18)(a2)
+	auipc a3, %pcrel_hi(jjjj)
 pcrel19:
-	auipc a2, %pcrel_hi(kkkk)
-	divuw a0, a0, a1
-	sw a0, %pcrel_lo(pcrel19)(a2)
+	auipc a4, %pcrel_hi(kkkk)
+	lw a0, %pcrel_lo(pcrel17)(a1)
+	lw a2, %pcrel_lo(pcrel18)(a3)
+	divuw a1, a0, a2
+	sw a1, %pcrel_lo(pcrel19)(a4)
 	ret

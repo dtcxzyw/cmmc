@@ -30,11 +30,11 @@ main:
 	li s2, 60
 	li s1, 62
 	li s3, 91
-	mv s7, a0
 pcrel199:
-	auipc a0, %pcrel_hi(program)
-	addi s0, a0, %pcrel_lo(pcrel199)
-	ble s7, zero, label37
+	auipc a1, %pcrel_hi(program)
+	mv s7, a0
+	addi s0, a1, %pcrel_lo(pcrel199)
+	ble a0, zero, label37
 	mv s8, zero
 .p2align 2
 label2:
@@ -131,9 +131,9 @@ label26:
 	sh2add a2, s9, s0
 	lw a1, 0(a2)
 	beq a1, s3, label28
-	xori a1, a1, 93
-	sltiu a2, a1, 1
-	addw a0, a0, a2
+	xori a2, a1, 93
+	sltiu a3, a2, 1
+	addw a0, a0, a3
 	bgt a0, zero, label26
 	j label11
 .p2align 2

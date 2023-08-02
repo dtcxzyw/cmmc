@@ -32,23 +32,23 @@ func:
 pcrel38:
 	auipc a1, %pcrel_hi(b)
 pcrel39:
-	auipc a3, %pcrel_hi(c)
+	auipc a4, %pcrel_hi(c)
 	lw a0, %pcrel_lo(pcrel38)(a1)
-	lw a1, %pcrel_lo(pcrel39)(a3)
+	lw a2, %pcrel_lo(pcrel39)(a4)
 pcrel40:
-	auipc a3, %pcrel_hi(f)
-	mulw a2, a0, a1
+	auipc a4, %pcrel_hi(a)
+	mulw a3, a0, a2
+	zext.w a1, a3
 pcrel41:
-	auipc a1, %pcrel_hi(a)
-	zext.w a0, a2
+	auipc a3, %pcrel_hi(e)
+	sw a1, %pcrel_lo(pcrel40)(a4)
 pcrel42:
-	auipc a2, %pcrel_hi(e)
-	sw a0, %pcrel_lo(pcrel41)(a1)
-	lw a0, %pcrel_lo(pcrel42)(a2)
-	lw a1, %pcrel_lo(pcrel40)(a3)
-	mulw a2, a0, a1
+	auipc a4, %pcrel_hi(f)
+	lw a0, %pcrel_lo(pcrel41)(a3)
+	lw a2, %pcrel_lo(pcrel42)(a4)
 pcrel43:
-	auipc a1, %pcrel_hi(d)
-	zext.w a0, a2
-	sw a0, %pcrel_lo(pcrel43)(a1)
+	auipc a4, %pcrel_hi(d)
+	mulw a3, a0, a2
+	zext.w a1, a3
+	sw a1, %pcrel_lo(pcrel43)(a4)
 	ret

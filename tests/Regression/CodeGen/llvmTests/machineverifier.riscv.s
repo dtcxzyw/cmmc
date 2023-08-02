@@ -16,9 +16,9 @@ pcrel18:
 label2:
 	ret
 label8:
-	addiw a1, a1, 10
-	zext.w a2, a1
+	addiw a2, a1, 10
+	zext.w a3, a2
 pcrel19:
 	auipc a0, %pcrel_hi(g)
-	sw a2, %pcrel_lo(pcrel19)(a0)
+	sw a3, %pcrel_lo(pcrel19)(a0)
 	j label2

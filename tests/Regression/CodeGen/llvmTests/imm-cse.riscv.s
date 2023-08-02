@@ -15,11 +15,11 @@ dst:
 imm32_cse:
 pcrel14:
 	auipc a1, %pcrel_hi(src)
-	lui a2, 1
-	lw a0, %pcrel_lo(pcrel14)(a1)
-	addiw a1, a2, 3
+	lui a3, 1
 pcrel15:
-	auipc a2, %pcrel_hi(dst)
-	addw a0, a0, a1
-	sw a0, %pcrel_lo(pcrel15)(a2)
+	auipc a4, %pcrel_hi(dst)
+	addiw a2, a3, 3
+	lw a0, %pcrel_lo(pcrel14)(a1)
+	addw a1, a0, a2
+	sw a1, %pcrel_lo(pcrel15)(a4)
 	ret

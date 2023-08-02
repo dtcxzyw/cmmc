@@ -5,12 +5,12 @@
 .globl foo4
 foo4:
 	ble a1, zero, label13
-	li a3, 4
-	ble a1, a3, label21
+	li a4, 4
+	ble a1, a4, label21
 	addiw a3, a1, -4
 	addiw a4, a1, -20
-	li a2, 16
-	ble a3, a2, label27
+	li t0, 16
+	ble a3, t0, label27
 	mv a2, zero
 	mv a5, zero
 .p2align 2

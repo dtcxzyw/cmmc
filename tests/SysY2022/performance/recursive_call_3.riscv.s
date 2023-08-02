@@ -25,9 +25,9 @@ func:
 	addiw s0, a0, -4
 	blt s3, zero, label62
 	bge s2, zero, label17
-	fmv.w.x f11, zero
+	fmv.w.x f10, zero
 label6:
-	fadd.s f9, f8, f11
+	fadd.s f9, f8, f10
 	bge s2, zero, label10
 	fmv.w.x f11, zero
 	fsub.s f10, f9, f11
@@ -49,47 +49,47 @@ label2:
 label62:
 	fmv.w.x f10, zero
 label24:
-	fadd.s f8, f8, f10
+	fadd.s f9, f8, f10
 	bge s3, zero, label28
-	fmv.w.x f10, zero
-	fsub.s f10, f8, f10
+	fmv.w.x f11, zero
+	fsub.s f10, f9, f11
 	j label2
 label28:
 	blt s2, zero, label118
 	bge s1, zero, label41
-	fmv.w.x f11, zero
+	fmv.w.x f10, zero
 label42:
-	fadd.s f9, f8, f11
+	fadd.s f8, f9, f10
 	blt s1, zero, label155
-	fmv.s f10, f9
+	fmv.s f10, f8
 	mv a0, s0
 	jal func
-	fadd.s f18, f9, f10
-	fmv.s f10, f18
-	mv a0, s0
-	jal func
-	fsub.s f10, f18, f10
-	fsub.s f11, f9, f10
-	j label29
-label118:
-	fmv.w.x f11, zero
-label29:
-	fadd.s f9, f8, f11
-	blt s2, zero, label123
-	blt s1, zero, label128
-	fmv.s f10, f9
-	mv a0, s0
-	jal func
-	fadd.s f18, f9, f10
+	fadd.s f18, f8, f10
 	fmv.s f10, f18
 	mv a0, s0
 	jal func
 	fsub.s f11, f18, f10
+	fsub.s f10, f8, f11
+	j label29
+label118:
+	fmv.w.x f10, zero
+label29:
+	fadd.s f8, f9, f10
+	blt s2, zero, label123
+	blt s1, zero, label128
+	fmv.s f10, f8
+	mv a0, s0
+	jal func
+	fadd.s f18, f8, f10
+	fmv.s f10, f18
+	mv a0, s0
+	jal func
+	fsub.s f10, f18, f10
 	j label35
 label123:
-	fmv.w.x f11, zero
+	fmv.w.x f10, zero
+	fsub.s f11, f8, f10
 	fsub.s f10, f9, f11
-	fsub.s f10, f8, f10
 	j label2
 label17:
 	bge s1, zero, label23
@@ -100,18 +100,18 @@ label10:
 	fmv.w.x f10, zero
 	j label11
 label155:
-	fmv.w.x f10, zero
-	fsub.s f11, f9, f10
+	fmv.w.x f11, zero
+	fsub.s f10, f8, f11
 	j label29
 label128:
-	fmv.w.x f11, zero
-label35:
-	fadd.s f18, f9, f11
-	bge s1, zero, label39
 	fmv.w.x f10, zero
-	fsub.s f11, f18, f10
+label35:
+	fadd.s f18, f8, f10
+	bge s1, zero, label39
+	fmv.w.x f11, zero
+	fsub.s f10, f18, f11
+	fsub.s f11, f8, f10
 	fsub.s f10, f9, f11
-	fsub.s f10, f8, f10
 	j label2
 label39:
 	fmv.s f10, f18
@@ -121,20 +121,20 @@ label39:
 	fmv.s f10, f19
 	mv a0, s0
 	jal func
-	fsub.s f10, f19, f10
-	fsub.s f11, f18, f10
+	fsub.s f11, f19, f10
+	fsub.s f10, f18, f11
+	fsub.s f11, f8, f10
 	fsub.s f10, f9, f11
-	fsub.s f10, f8, f10
 	j label2
 label41:
-	fmv.s f10, f8
-	mv a0, s0
-	jal func
-	fadd.s f9, f8, f10
 	fmv.s f10, f9
 	mv a0, s0
 	jal func
-	fsub.s f11, f9, f10
+	fadd.s f8, f9, f10
+	fmv.s f10, f8
+	mv a0, s0
+	jal func
+	fsub.s f10, f8, f10
 	j label42
 label11:
 	fadd.s f18, f9, f10
@@ -158,13 +158,13 @@ label15:
 	fmv.s f10, f19
 	mv a0, s0
 	jal func
-	fsub.s f11, f19, f10
-	fsub.s f11, f18, f11
+	fsub.s f10, f19, f10
+	fsub.s f11, f18, f10
 	fsub.s f10, f9, f11
 	j label24
 label81:
-	fmv.w.x f11, zero
-	fsub.s f11, f18, f11
+	fmv.w.x f10, zero
+	fsub.s f11, f18, f10
 	fsub.s f10, f9, f11
 	j label24
 label18:
@@ -190,11 +190,11 @@ label20:
 	mv a0, s0
 	jal func
 	fsub.s f11, f18, f10
-	fsub.s f11, f9, f11
+	fsub.s f10, f9, f11
 	j label6
 label99:
 	fmv.w.x f11, zero
-	fsub.s f11, f9, f11
+	fsub.s f10, f9, f11
 	j label6
 .p2align 2
 .globl main
@@ -210,9 +210,9 @@ pcrel198:
 	flw f12, 0(a1)
 	fmv.s f10, f12
 	jal func
+	fmv.w.x f13, zero
 	fsub.s f11, f10, f12
-	fmv.w.x f12, zero
-	feq.s a0, f11, f12
+	feq.s a0, f11, f13
 	beq a0, zero, label183
 	li a0, 112
 	jal putch

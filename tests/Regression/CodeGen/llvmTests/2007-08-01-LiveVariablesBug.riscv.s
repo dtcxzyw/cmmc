@@ -4,10 +4,10 @@
 .p2align 2
 .globl t
 t:
-	andi a2, a0, 255
-	andi a1, a1, 255
-	addiw a0, a2, 2
-	addiw a2, a1, -2
-	mulw a3, a0, a2
-	andi a0, a3, 255
+	andi a4, a0, 255
+	andi a3, a1, 255
+	addiw a2, a4, 2
+	addiw a5, a3, -2
+	mulw a4, a2, a5
+	andi a0, a4, 255
 	ret

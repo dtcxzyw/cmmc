@@ -20,12 +20,12 @@ test:
 pcrel20:
 	auipc a1, %pcrel_hi(iiii)
 pcrel21:
-	auipc a3, %pcrel_hi(jjjj)
+	auipc a4, %pcrel_hi(jjjj)
 	lw a0, %pcrel_lo(pcrel20)(a1)
-	lw a1, %pcrel_lo(pcrel21)(a3)
-	divw a2, a0, a1
+	lw a2, %pcrel_lo(pcrel21)(a4)
 pcrel22:
-	auipc a1, %pcrel_hi(kkkk)
-	zext.w a0, a2
-	sw a0, %pcrel_lo(pcrel22)(a1)
+	auipc a4, %pcrel_hi(kkkk)
+	divw a3, a0, a2
+	zext.w a1, a3
+	sw a1, %pcrel_lo(pcrel22)(a4)
 	ret

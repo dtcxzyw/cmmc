@@ -118,56 +118,56 @@ div4:
 .p2align 2
 .globl div3
 div3:
-	lui a1, 349525
-	addiw a2, a1, 1366
-	mul a0, a0, a2
-	srli a2, a0, 63
-	srli a1, a0, 32
-	add a0, a2, a1
+	lui a4, 349525
+	addiw a3, a4, 1366
+	mul a1, a0, a3
+	srli a4, a1, 63
+	srli a2, a1, 32
+	add a0, a4, a2
 	ret
 .p2align 2
 .globl div11
 div11:
-	lui a1, 190650
-	addiw a2, a1, 745
-	mul a0, a0, a2
-	srli a2, a0, 63
-	srai a1, a0, 33
-	add a0, a2, a1
+	lui a4, 190650
+	addiw a3, a4, 745
+	mul a1, a0, a3
+	srli a4, a1, 63
+	srai a2, a1, 33
+	add a0, a4, a2
 	ret
 .p2align 2
 .globl div30
 div30:
-	lui a2, 559241
-	addiw a1, a2, -1911
-	mul a3, a0, a1
-	srli a2, a3, 32
-	add a0, a2, a0
-	srliw a2, a0, 31
-	sraiw a1, a0, 4
-	add a0, a2, a1
+	lui a1, 559241
+	addiw a2, a1, -1911
+	mul a4, a0, a2
+	srli a3, a4, 32
+	add a1, a3, a0
+	srliw a4, a1, 31
+	sraiw a2, a1, 4
+	add a0, a4, a2
 	ret
 .p2align 2
 .globl divNeg30
 divNeg30:
-	lui a2, 489335
-	addiw a1, a2, 1911
-	mul a3, a0, a1
-	srli a2, a3, 32
-	sub a0, a2, a0
-	srliw a2, a0, 31
-	sraiw a1, a0, 4
-	add a0, a2, a1
+	lui a1, 489335
+	addiw a2, a1, 1911
+	mul a4, a0, a2
+	srli a3, a4, 32
+	sub a1, a3, a0
+	srliw a4, a1, 31
+	sraiw a2, a1, 4
+	add a0, a4, a2
 	ret
 .p2align 2
 .globl div_shl
 div_shl:
 	slli a2, a0, 1
-	li a5, 64
-	subw a3, a5, a1
-	srl a4, a2, a3
-	add a2, a0, a4
-	sraw a0, a2, a1
+	li t0, 64
+	subw a3, t0, a1
+	srl a5, a2, a3
+	add a4, a0, a5
+	sraw a0, a4, a1
 	ret
 .p2align 2
 .globl div_reg
@@ -177,14 +177,14 @@ div_reg:
 .p2align 2
 .globl mod_imm
 mod_imm:
-	lui a2, 349525
-	addiw a3, a2, 1366
+	lui a4, 349525
+	addiw a3, a4, 1366
 	mul a1, a0, a3
-	srli a3, a1, 63
+	srli a4, a1, 63
 	srli a2, a1, 32
-	add a1, a3, a2
-	sh1add a2, a1, a1
-	subw a0, a0, a2
+	add a3, a4, a2
+	sh1add a5, a3, a3
+	subw a0, a0, a5
 	ret
 .p2align 2
 .globl mod_reg
@@ -202,46 +202,46 @@ mod2:
 .p2align 2
 .globl mod30
 mod30:
-	lui a3, 559241
-	addiw a1, a3, -1911
-	mul a2, a0, a1
-	srli a3, a2, 32
-	add a1, a3, a0
-	srliw a3, a1, 31
-	sraiw a2, a1, 4
-	add a1, a3, a2
-	slliw a2, a1, 4
-	subw a3, a2, a1
-	slli a1, a3, 1
-	subw a0, a0, a1
+	lui a2, 559241
+	addiw a3, a2, -1911
+	mul a4, a0, a3
+	srli a1, a4, 32
+	add a2, a1, a0
+	srliw a5, a2, 31
+	sraiw a3, a2, 4
+	add a1, a5, a3
+	slliw a4, a1, 4
+	subw a2, a4, a1
+	slli a3, a2, 1
+	subw a0, a0, a3
 	ret
 .p2align 2
 .globl mod_large1
 mod_large1:
-	lui a2, 281475
-	lui a4, 244141
-	addiw a3, a2, -103
-	mul a1, a0, a3
-	srli a3, a1, 63
-	srai a2, a1, 60
-	add a1, a3, a2
-	addiw a2, a4, -1529
-	mulw a1, a1, a2
-	subw a0, a0, a1
+	lui a4, 281475
+	lui t0, 244141
+	addiw a1, a4, -103
+	addiw a5, t0, -1529
+	mul a2, a0, a1
+	srli a4, a2, 63
+	srai a3, a2, 60
+	add a1, a4, a3
+	mulw a2, a1, a5
+	subw a0, a0, a2
 	ret
 .p2align 2
 .globl mod_large2
 mod_large2:
-	lui a2, 458130
-	lui a4, 73
-	addiw a3, a2, -635
-	mul a1, a0, a3
-	srli a3, a1, 63
-	srai a2, a1, 49
-	add a1, a3, a2
-	addiw a2, a4, 992
-	mulw a1, a1, a2
-	subw a0, a0, a1
+	lui a4, 458130
+	lui t0, 73
+	addiw a1, a4, -635
+	addiw a5, t0, 992
+	mul a2, a0, a1
+	srli a4, a2, 63
+	srai a3, a2, 49
+	add a1, a4, a3
+	mulw a2, a1, a5
+	subw a0, a0, a2
 	ret
 .p2align 2
 .globl shl_imm

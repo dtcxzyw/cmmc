@@ -4,18 +4,18 @@
 .p2align 2
 .globl test1
 test1:
-	lui a3, 526344
-	addiw a1, a3, 129
-	mul a2, a0, a1
-	srli a3, a2, 32
-	add a1, a3, a0
-	srliw a3, a1, 31
-	sraiw a2, a1, 7
-	add a1, a3, a2
-	addw a3, a0, a1
-	slliw a2, a1, 8
-	subw a1, a3, a2
-	zext.w a0, a1
+	lui a2, 526344
+	addiw a3, a2, 129
+	mul a1, a0, a3
+	srli a4, a1, 32
+	add a2, a4, a0
+	srliw a5, a2, 31
+	sraiw a3, a2, 7
+	add a1, a5, a3
+	addw t0, a0, a1
+	slliw a4, a1, 8
+	subw a2, t0, a4
+	zext.w a0, a2
 	ret
 .p2align 2
 .globl test2
@@ -23,9 +23,9 @@ test2:
 	slli a3, a0, 1
 	srli a1, a3, 56
 	add a2, a0, a1
-	andi a3, a2, -256
-	subw a1, a0, a3
-	zext.w a0, a1
+	andi a4, a2, -256
+	subw a3, a0, a4
+	zext.w a0, a3
 	ret
 .p2align 2
 .globl test3

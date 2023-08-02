@@ -16,8 +16,8 @@ add_after_lsl_imm:
 .globl add_after_lsr
 add_after_lsr:
 	zext.w a3, a2
-	srlw a1, a1, a3
-	addw a0, a0, a1
+	srlw a4, a1, a3
+	addw a0, a0, a4
 	ret
 .p2align 2
 .globl add_after_lsr_imm
@@ -59,8 +59,8 @@ rsb_after_lsl_imm:
 .globl sub_after_lsr
 sub_after_lsr:
 	zext.w a3, a2
-	srlw a1, a1, a3
-	subw a0, a0, a1
+	srlw a4, a1, a3
+	subw a0, a0, a4
 	ret
 .p2align 2
 .globl sub_after_lsr_imm
@@ -96,8 +96,8 @@ and_after_lsl_imm:
 .globl and_after_lsr
 and_after_lsr:
 	zext.w a3, a2
-	srlw a1, a1, a3
-	and a0, a0, a1
+	srlw a4, a1, a3
+	and a0, a0, a4
 	ret
 .p2align 2
 .globl and_after_lsr_imm
@@ -165,15 +165,15 @@ fused_div_rem:
 .p2align 2
 .globl fused_div_rem_constant
 fused_div_rem_constant:
-	lui a2, 349525
-	addiw a3, a2, 1366
-	mul a1, a0, a3
-	srli a3, a1, 63
-	srli a2, a1, 32
-	add a1, a3, a2
-	sh1add a2, a1, a1
-	subw a3, a0, a2
-	addw a0, a1, a3
+	lui a4, 349525
+	addiw a1, a4, 1366
+	mul a2, a0, a1
+	srli a5, a2, 63
+	srli a3, a2, 32
+	add a1, a5, a3
+	sh1add a4, a1, a1
+	subw a2, a0, a4
+	addw a0, a1, a2
 	ret
 .p2align 2
 .globl fused_mvn_and

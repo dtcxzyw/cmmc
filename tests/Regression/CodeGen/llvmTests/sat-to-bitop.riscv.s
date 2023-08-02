@@ -24,11 +24,11 @@ label16:
 sat0_base_16bit:
 	sext.h a1, a0
 	zext.h a2, a0
-	mv a0, zero
+	mv a3, zero
 	blt a1, zero, label27
-	mv a0, a2
+	mv a3, a2
 label27:
-	zext.h a0, a0
+	zext.h a0, a3
 	ret
 .p2align 2
 .globl sat0_base_32bit
@@ -44,11 +44,11 @@ label35:
 sat0_base_8bit:
 	sext.b a1, a0
 	andi a2, a0, 255
-	mv a0, zero
+	mv a3, zero
 	blt a1, zero, label46
-	mv a0, a2
+	mv a3, a2
 label46:
-	andi a0, a0, 255
+	andi a0, a3, 255
 	ret
 .p2align 2
 .globl sat0_lower_1
@@ -64,12 +64,12 @@ label54:
 sat1_base_16bit:
 	sext.h a1, a0
 	zext.h a2, a0
+	li a4, -1
 	li a3, -1
-	li a0, -1
-	blt a1, a3, label66
-	mv a0, a2
+	blt a1, a4, label66
+	mv a3, a2
 label66:
-	zext.h a0, a0
+	zext.h a0, a3
 	ret
 .p2align 2
 .globl sat1_base_32bit
@@ -86,12 +86,12 @@ label75:
 sat1_base_8bit:
 	sext.b a1, a0
 	andi a2, a0, 255
+	li a4, -1
 	li a3, -1
-	li a0, -1
-	blt a1, a3, label87
-	mv a0, a2
+	blt a1, a4, label87
+	mv a3, a2
 label87:
-	andi a0, a0, 255
+	andi a0, a3, 255
 	ret
 .p2align 2
 .globl sat1_lower_1

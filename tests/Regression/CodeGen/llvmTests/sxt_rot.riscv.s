@@ -19,45 +19,45 @@ test1:
 .globl test2
 test2:
 	srliw a2, a0, 8
-	slliw a3, a0, 24
-	or a0, a2, a3
-	andi a2, a0, 255
-	sext.b a3, a2
-	zext.w a4, a3
-	addw a0, a1, a4
+	slliw a5, a0, 24
+	or a3, a2, a5
+	andi a4, a3, 255
+	sext.b t0, a4
+	zext.w a2, t0
+	addw a0, a1, a2
 	ret
 .p2align 2
 .globl test3
 test3:
 	srliw a2, a0, 16
-	slliw a3, a0, 16
-	or a0, a2, a3
-	andi a2, a0, 255
-	sext.b a3, a2
-	zext.w a4, a3
-	addw a0, a1, a4
+	slliw a5, a0, 16
+	or a3, a2, a5
+	andi a4, a3, 255
+	sext.b t0, a4
+	zext.w a2, t0
+	addw a0, a1, a2
 	ret
 .p2align 2
 .globl test4
 test4:
 	srliw a2, a0, 8
-	slliw a3, a0, 24
-	or a0, a2, a3
-	zext.h a2, a0
-	sext.h a3, a2
-	zext.w a4, a3
-	addw a0, a1, a4
+	slliw a5, a0, 24
+	or a3, a2, a5
+	zext.h a4, a3
+	sext.h t0, a4
+	zext.w a2, t0
+	addw a0, a1, a2
 	ret
 .p2align 2
 .globl test5
 test5:
 	srliw a2, a0, 24
-	slliw a3, a0, 8
-	or a0, a2, a3
-	zext.h a2, a0
-	sext.h a3, a2
-	zext.w a4, a3
-	addw a0, a1, a4
+	slliw a5, a0, 8
+	or a3, a2, a5
+	zext.h a4, a3
+	sext.h t0, a4
+	zext.w a2, t0
+	addw a0, a1, a2
 	ret
 .p2align 2
 .globl test6

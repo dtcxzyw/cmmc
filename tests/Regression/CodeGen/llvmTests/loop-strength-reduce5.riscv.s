@@ -28,15 +28,15 @@ pcrel40:
 label3:
 	zext.h a2, a1
 pcrel41:
-	auipc a4, %pcrel_hi(X)
+	auipc a5, %pcrel_hi(X)
 	zext.h a3, a1
-	sh a2, %pcrel_lo(pcrel41)(a4)
+	sh a2, %pcrel_lo(pcrel41)(a5)
 	addiw a1, a1, 1
 	slliw a4, a3, 2
 pcrel42:
-	auipc a3, %pcrel_hi(Y)
+	auipc a5, %pcrel_hi(Y)
 	zext.h a2, a4
-	sh a2, %pcrel_lo(pcrel42)(a3)
+	sh a2, %pcrel_lo(pcrel42)(a5)
 	bne a0, a1, label3
 label5:
 	ret

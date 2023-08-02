@@ -6,13 +6,13 @@
 main:
 	addi sp, sp, -96
 	fmv.w.x f10, zero
-	lui a0, 263168
-	sd ra, 0(sp)
-	fmv.w.x f11, a0
-	sd s0, 8(sp)
+	lui a1, 263168
 	lui a0, 265216
-	addi s0, sp, 80
+	sd ra, 0(sp)
+	fmv.w.x f11, a1
 	fmv.w.x f12, a0
+	sd s0, 8(sp)
+	addi s0, sp, 80
 	sd s1, 16(sp)
 	addi s1, sp, 64
 	sd s3, 24(sp)

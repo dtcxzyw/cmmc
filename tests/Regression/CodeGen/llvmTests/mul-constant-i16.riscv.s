@@ -45,8 +45,8 @@ test_mul_by_14:
 	sext.h a1, a0
 	slliw a2, a1, 3
 	subw a3, a2, a1
-	slliw a1, a3, 1
-	zext.h a0, a1
+	slliw a4, a3, 1
+	zext.h a0, a4
 	ret
 .p2align 2
 .globl test_mul_by_15
@@ -164,8 +164,8 @@ test_mul_by_28:
 	sext.h a1, a0
 	slliw a2, a1, 3
 	subw a3, a2, a1
-	slliw a1, a3, 2
-	zext.h a0, a1
+	slliw a4, a3, 2
+	zext.h a0, a4
 	ret
 .p2align 2
 .globl test_mul_by_29
@@ -188,8 +188,8 @@ test_mul_by_30:
 	sext.h a1, a0
 	slliw a2, a1, 4
 	subw a3, a2, a1
-	slliw a1, a3, 1
-	zext.h a0, a1
+	slliw a4, a3, 1
+	zext.h a0, a4
 	ret
 .p2align 2
 .globl test_mul_by_31
@@ -242,8 +242,8 @@ test_mul_by_520:
 	sext.h a1, a0
 	slliw a2, a1, 6
 	addw a3, a2, a1
-	slliw a1, a3, 3
-	zext.h a0, a1
+	slliw a4, a3, 3
+	zext.h a0, a4
 	ret
 .p2align 2
 .globl test_mul_by_6
@@ -259,8 +259,8 @@ test_mul_by_62:
 	sext.h a1, a0
 	slliw a2, a1, 5
 	subw a3, a2, a1
-	slliw a1, a3, 1
-	zext.h a0, a1
+	slliw a4, a3, 1
+	zext.h a0, a4
 	ret
 .p2align 2
 .globl test_mul_by_66
@@ -268,8 +268,8 @@ test_mul_by_66:
 	sext.h a1, a0
 	slliw a2, a1, 5
 	addw a3, a2, a1
-	slliw a1, a3, 1
-	zext.h a0, a1
+	slliw a4, a3, 1
+	zext.h a0, a4
 	ret
 .p2align 2
 .globl test_mul_by_7
@@ -307,8 +307,8 @@ test_mul_by_neg10:
 	sext.h a1, a0
 	sh2add a2, a1, a1
 	slliw a3, a2, 1
-	subw a1, zero, a3
-	zext.h a0, a1
+	subw a4, zero, a3
+	zext.h a0, a4
 	ret
 .p2align 2
 .globl test_mul_by_neg36
@@ -316,21 +316,21 @@ test_mul_by_neg36:
 	sext.h a1, a0
 	sh3add a2, a1, a1
 	slliw a3, a2, 2
-	subw a1, zero, a3
-	zext.h a0, a1
+	subw a4, zero, a3
+	zext.h a0, a4
 	ret
 .p2align 2
 .globl test_mul_spec
 test_mul_spec:
 	sext.h a1, a0
-	sh3add a3, a1, a1
-	sh2add a1, a1, a1
-	sext.h a2, a3
-	addiw a4, a2, 42
-	sext.h a2, a1
-	sext.h a0, a4
-	addiw a3, a2, 2
-	sext.h a1, a3
-	mulw a2, a0, a1
-	zext.h a0, a2
+	sh2add a0, a1, a1
+	sh3add a4, a1, a1
+	sext.h a3, a4
+	addiw a5, a3, 42
+	sext.h a3, a0
+	sext.h a2, a5
+	addiw a4, a3, 2
+	sext.h a1, a4
+	mulw a5, a2, a1
+	zext.h a0, a5
 	ret

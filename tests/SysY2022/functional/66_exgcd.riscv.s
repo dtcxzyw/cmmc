@@ -15,9 +15,8 @@ exgcd:
 	mv s2, a3
 	sd s4, 40(sp)
 	bne a1, zero, label3
-	li a0, 1
-	sw a0, 0(a2)
-	mv a0, s0
+	li a1, 1
+	sw a1, 0(a2)
 	sw zero, 0(a3)
 label8:
 	ld ra, 0(sp)
@@ -31,19 +30,18 @@ label8:
 label3:
 	remw s4, s0, s1
 	bne s4, zero, label7
-	li a0, 1
-	mv a1, s1
-	sw a0, 0(s3)
+	li a1, 1
+	mv a0, s1
+	sw a1, 0(s3)
 	sw zero, 0(s2)
-	lw a0, 0(s3)
+	lw a1, 0(s3)
 	divw a2, s0, s1
 	lw a3, 0(s2)
 	sw a3, 0(s3)
-	lw a4, 0(s2)
-	mulw a3, a2, a4
-	subw a2, a0, a3
-	mv a0, s1
-	sw a2, 0(s2)
+	lw a5, 0(s2)
+	mulw a4, a2, a5
+	subw a3, a1, a4
+	sw a3, 0(s2)
 	j label8
 label7:
 	remw a1, s1, s4
@@ -57,47 +55,45 @@ label7:
 	lw a4, 0(s2)
 	divw a2, s1, s4
 	mulw a3, a2, a4
-	subw a2, a1, a3
-	mv a1, a0
-	sw a2, 0(s2)
-	lw a0, 0(s3)
+	subw a5, a1, a3
+	sw a5, 0(s2)
+	lw a1, 0(s3)
 	divw a2, s0, s1
 	lw a3, 0(s2)
 	sw a3, 0(s3)
-	lw a4, 0(s2)
-	mulw a3, a2, a4
-	subw a2, a0, a3
-	mv a0, a1
-	sw a2, 0(s2)
+	lw a5, 0(s2)
+	mulw a4, a2, a5
+	subw a3, a1, a4
+	sw a3, 0(s2)
 	j label8
 .p2align 2
 .globl main
 main:
 	addi sp, sp, -16
-	li a0, 1
+	li a4, 1
+	li a0, 7
 	li a1, 15
 	addi a3, sp, 8
 	addi a2, sp, 12
 	sd ra, 0(sp)
-	sw a0, 12(sp)
-	sw a0, 8(sp)
-	li a0, 7
+	sw a4, 12(sp)
+	sw a4, 8(sp)
 	jal exgcd
-	lw a0, 12(sp)
-	lui a3, 559241
-	addiw a1, a3, -1911
-	mul a2, a0, a1
-	srli a3, a2, 32
-	add a1, a3, a0
-	srliw a3, a1, 31
-	sraiw a2, a1, 3
-	add a1, a3, a2
-	addw a3, a0, a1
-	slliw a2, a1, 4
-	subw a1, a3, a2
-	mv a0, a1
-	bge a1, zero, label73
-	addiw a0, a1, 15
+	lui a0, 559241
+	lw a1, 12(sp)
+	addiw a3, a0, -1911
+	mul a5, a1, a3
+	srli a2, a5, 32
+	add a0, a2, a1
+	srliw a5, a0, 31
+	sraiw a4, a0, 3
+	add a2, a5, a4
+	addw t0, a1, a2
+	slliw a3, a2, 4
+	subw a4, t0, a3
+	mv a0, a4
+	bge a4, zero, label73
+	addiw a0, a4, 15
 label73:
 	jal putint
 	ld ra, 0(sp)

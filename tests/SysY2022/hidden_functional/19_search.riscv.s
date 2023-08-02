@@ -46,17 +46,17 @@ label4:
 	mv a2, zero
 	mv a1, s0
 	ld s2, 152(sp)
-	slli a4, s0, 4
-	sub a5, a4, s0
-	sh3add s5, a5, s4
+	slli a5, s0, 4
+	sub t0, a5, s0
+	sh3add s5, t0, s4
 	sh2add a4, s2, s5
 	lw a5, 0(a4)
 	bne a5, s1, label11
 	j label14
 label16:
 	addiw s6, a0, 1
-	li a0, 2
-	bge a2, a0, label17
+	li a4, 2
+	bge a2, a4, label17
 label100:
 	mv a0, s6
 	j label4
@@ -70,9 +70,9 @@ label11:
 	lw a5, 4(a3)
 	addw a1, a1, a4
 	addw s2, s2, a5
-	slli a4, a1, 4
-	sub a5, a4, a1
-	sh3add s5, a5, s4
+	slli a5, a1, 4
+	sub t0, a5, a1
+	sh3add s5, t0, s4
 	sh2add a4, s2, s5
 	lw a5, 0(a4)
 	bne a5, s1, label11
@@ -86,9 +86,9 @@ label12:
 	lw a5, 4(a3)
 	addw a1, a1, a4
 	addw s2, s2, a5
-	slli a4, a1, 4
-	sub a5, a4, a1
-	sh3add s5, a5, s4
+	slli a5, a1, 4
+	sub t0, a5, a1
+	sh3add s5, t0, s4
 	sh2add a4, s2, s5
 	lw a5, 0(a4)
 	bne a5, s1, label11
@@ -104,53 +104,53 @@ label14:
 label17:
 	beq a1, zero, label100
 	ld a5, 112(sp)
-	lw a0, 0(a5)
-	addiw a2, a0, 1
-	xor a4, a1, a2
+	lw a2, 0(a5)
+	addiw t0, a2, 1
 	sltiu a2, s2, 1
+	xor a4, a1, t0
 	sltiu a0, a4, 1
-	or a4, a0, a2
-	bne a4, zero, label100
+	or a5, a0, a2
+	bne a5, zero, label100
 	ld a4, 120(sp)
-	lw a2, 0(a4)
-	addiw a0, a2, 1
-	beq s2, a0, label100
+	lw a0, 0(a4)
+	addiw a2, a0, 1
+	beq s2, a2, label100
 	sh2add a2, s2, s5
 	sw zero, 0(a2)
 	lw a0, 0(a3)
+	lw a4, 4(a3)
 	subw s7, a1, a0
-	lw a1, 4(a3)
 	ld a2, 144(sp)
-	subw s8, s2, a1
-	addiw a0, a2, 1
+	subw s8, s2, a4
 	li a1, 10
+	addiw a0, a2, 1
 	bgt a0, a1, label130
 	lui s9, 262144
 	mv s10, zero
 label23:
 	ld a3, 136(sp)
 	li a0, 4
-	sh3add t0, s10, a3
+	sh3add a3, s10, a3
 	bge s10, a0, label26
 	mv a2, zero
 	mv a0, s8
 	mv a1, s7
 label27:
-	slli a5, a1, 4
-	sub a4, a5, a1
-	sh3add a3, a4, s4
-	sh2add a5, a0, a3
+	slli a4, a1, 4
+	sub t1, a4, a1
+	sh3add t0, t1, s4
+	sh2add a5, a0, t0
 	lw a4, 0(a5)
 	beq a4, s1, label34
 	ld a6, 128(sp)
 	lw a4, 0(a6)
 	beq a1, a4, label33
 label32:
-	lw a3, 0(t0)
+	lw a4, 0(a3)
 	addiw a2, a2, 1
-	lw a4, 4(t0)
-	addw a1, a1, a3
-	addw a0, a0, a4
+	lw a5, 4(a3)
+	addw a1, a1, a4
+	addw a0, a0, a5
 	j label27
 label54:
 	lui a0, 262144
@@ -187,31 +187,31 @@ label35:
 	blt a2, a4, label23
 	beq a1, zero, label23
 	ld a5, 112(sp)
-	lw a2, 0(a5)
-	sltiu a5, a0, 1
-	addiw t1, a2, 1
+	lw t2, 0(a5)
+	addiw t1, t2, 1
+	sltiu t2, a0, 1
 	xor a4, a1, t1
 	sltiu a2, a4, 1
-	or a4, a2, a5
-	bne a4, zero, label23
+	or a5, a2, t2
+	bne a5, zero, label23
 	ld a4, 120(sp)
 	lw a2, 0(a4)
 	addiw a5, a2, 1
 	beq a0, a5, label23
-	sh2add s11, a0, a3
+	sh2add s11, a0, t0
 	sw zero, 0(s11)
-	lw a2, 0(t0)
-	lw a3, 4(t0)
-	subw a1, a1, a2
-	subw t0, a0, a3
+	lw a2, 0(a3)
+	lw a4, 4(a3)
+	subw t0, a1, a2
 	ld a2, 144(sp)
+	subw a1, a0, a4
 	ld a7, 104(sp)
 	addiw a2, a2, 2
 	ld a5, 112(sp)
+	ld a4, 120(sp)
 	ld a6, 128(sp)
 	ld a3, 136(sp)
-	mv a0, a1
-	mv a1, t0
+	mv a0, t0
 	jal search
 	sw s1, 0(s11)
 	addiw a1, a0, 1
@@ -221,10 +221,10 @@ label130:
 	lui a0, 262144
 label21:
 	addiw a1, a0, 1
-	sh2add a0, s2, s5
-	min s3, s3, a1
-	sw s1, 0(a0)
+	sh2add a2, s2, s5
 	mv a0, s6
+	min s3, s3, a1
+	sw s1, 0(a2)
 	j label4
 label41:
 	lui a0, 262144
@@ -238,29 +238,32 @@ label26:
 	bgt s9, a1, label21
 	mv a0, s9
 	addiw a1, s9, 1
-	sh2add a0, s2, s5
-	min s3, s3, a1
-	sw s1, 0(a0)
+	sh2add a2, s2, s5
 	mv a0, s6
+	min s3, s3, a1
+	sw s1, 0(a2)
 	j label4
 label211:
 	mv a0, s1
 	addiw a1, s1, 1
-	sh2add a0, s2, s5
-	min s3, s3, a1
-	sw s1, 0(a0)
+	sh2add a2, s2, s5
 	mv a0, s6
+	min s3, s3, a1
+	sw s1, 0(a2)
 	j label4
 .p2align 2
 .globl main
 main:
 	addi sp, sp, -152
-	li a1, -1
+	li a3, -1
+	li a2, 1
+	zext.w a1, a3
 	sd ra, 0(sp)
 	sd s4, 8(sp)
 	li s4, 1
 	sd s5, 16(sp)
 	zext.w a0, s4
+	slli s5, a2, 32
 	sd s0, 24(sp)
 	li s0, 2
 	sd s3, 32(sp)
@@ -278,11 +281,8 @@ main:
 	sd s8, 88(sp)
 	sd s11, 96(sp)
 	sd a0, 104(sp)
-	zext.w a0, a1
-	li a1, 1
-	sd a0, 112(sp)
-	slli s5, a1, 32
 	sub a0, zero, s5
+	sd a1, 112(sp)
 	sd s5, 120(sp)
 	sd a0, 128(sp)
 pcrel987:
@@ -381,11 +381,11 @@ label344:
 	mv a2, zero
 .p2align 2
 label301:
-	slli a1, a2, 4
-	sub a3, a1, a2
+	slli a3, a2, 4
 	ori a1, s5, 1
+	sub a4, a3, a2
 	addiw a2, a2, 4
-	sh3add a0, a3, s3
+	sh3add a0, a4, s3
 	sd a1, 0(a0)
 	sd a1, 8(a0)
 	sd a1, 16(a0)
@@ -447,11 +447,10 @@ label301:
 	sd a1, 464(a0)
 	sd a1, 472(a0)
 	blt a2, s6, label301
-	slli a1, a2, 4
+	slli a4, a2, 4
 	mv s2, s4
-	sub a2, a1, a2
-	ori a1, s5, 1
-	sh3add a0, a2, s3
+	sub a3, a4, a2
+	sh3add a0, a3, s3
 	sd a1, 0(a0)
 	sd a1, 8(a0)
 	sd a1, 16(a0)

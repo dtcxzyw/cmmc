@@ -10,9 +10,9 @@ t:
 .p2align 2
 .globl t2
 t2:
-	lui a2, 1048544
-	lui a3, 1048560
-	or a1, a0, a2
-	addiw a2, a3, -1
+	lui a3, 1048544
+	lui a4, 1048560
+	or a1, a0, a3
+	addiw a2, a4, -1
 	and a0, a1, a2
 	ret

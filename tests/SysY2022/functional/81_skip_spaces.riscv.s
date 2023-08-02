@@ -31,19 +31,19 @@ label6:
 	addw a1, a1, a2
 	bne a0, zero, label6
 label9:
-	lui a2, 424740
-	li a4, 79
+	lui a4, 424740
+	li t0, 79
 	ld ra, 0(sp)
-	addiw a3, a2, -1451
+	addiw a2, a4, -1451
 	ld s0, 8(sp)
-	mul a0, a1, a3
+	mul a0, a1, a2
 	ld s1, 16(sp)
-	srli a3, a0, 63
-	srai a2, a0, 37
+	srli a4, a0, 63
+	srai a3, a0, 37
 	addi sp, sp, 424
-	add a0, a3, a2
-	mulw a2, a0, a4
-	subw a0, a1, a2
+	add a2, a4, a3
+	mulw a5, a2, t0
+	subw a0, a1, a5
 	ret
 label23:
 	mv a1, zero
