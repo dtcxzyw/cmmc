@@ -23,6 +23,7 @@
 #include <cmmc/IR/Function.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/IR/Type.hpp>
+#include <cmmc/Support/Bits.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
@@ -1202,9 +1203,21 @@ class ArithmeticReduce final : public TransformPass<Function> {
 
             // TODO: check overflow
             if(icmp(cmp, sub(any(v1), zext(boolean(v2))), exactly(v1))(matchCtx)) {
-                if(cmp == CompareOp::ICmpSignedLessThan)
-                    return v2;
-                reportNotImplemented(CMMC_LOCATION());
+                switch(cmp) {
+                    case CompareOp::ICmpEqual:
+                        return makeNot(v2);
+                    case CompareOp::ICmpNotEqual:
+                    case CompareOp::ICmpSignedLessThan:
+                        return v2;
+                    default:
+                        break;
+                }
+            }
+
+            if(select(icmp(cmp, capture(srem(any(v2), int_(i1)), v1), cint_(0)), add(exactly(v1), int_(i2)),
+                      exactly(v1))(matchCtx) &&
+               i1 == i2 && isPowerOf2(static_cast<size_t>(i1)) && cmp == CompareOp::ICmpSignedLessThan) {
+                return builder.makeOp<BinaryInst>(InstructionID::And, v2, makeIntLike(i1 - 1, v2));
             }
 
             return nullptr;

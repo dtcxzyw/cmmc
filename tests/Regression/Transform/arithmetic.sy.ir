@@ -920,3 +920,8 @@ func @getNumPos(i32 %num, i32 %pos) -> i32 { NoMemoryRead NoMemoryWrite NoSideEf
     i32 %9 = srem i32 %8, i32 16;
     ubr ^b;
 }
+func @srem_power_of_two(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = and i32 %x, i32 15;
+    ret i32 %0;
+}

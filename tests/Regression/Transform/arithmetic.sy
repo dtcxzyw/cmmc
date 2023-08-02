@@ -527,3 +527,7 @@ int getNumPos(int num, int pos){
     }
     return 0;
 }
+int srem_power_of_two(int x) {
+    x %= 16;
+    return x < 0 ? x + 16 : x;
+}
