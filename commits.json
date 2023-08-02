@@ -605,6 +605,11 @@
       "parent": "442bec9754bf5747015dacc32916e1a0c96dabe5",
       "time": "2023-07-30 00:30:42 +0800"
     },
+    "8c4b091b59989c8090e2a0cab60f20ed9007ef26": {
+      "message": "feat(codegen): combine sw on riscv",
+      "parent": "2dec3aadf64ca2c11c5a9ec8c596b14ea4083756",
+      "time": "2023-08-02 17:20:34 +0800"
+    },
     "924ac36d895ccd7dc7befd4da99cde0ea6427c1c": {
       "message": "feat(codegen): remove dead branches",
       "parent": "373fa4f01d49fa3afbaa2d45c39a7a77b9c561b3",
@@ -1031,5 +1036,5 @@
       "time": "2023-07-06 01:05:50 +0800"
     }
   },
-  "head": "2dec3aadf64ca2c11c5a9ec8c596b14ea4083756"
+  "head": "8c4b091b59989c8090e2a0cab60f20ed9007ef26"
 }
