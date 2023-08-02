@@ -31,9 +31,10 @@ unfold11:
 .globl unfold2
 unfold2:
 	slliw a2, a0, 2
-	li a0, 16320
-	or a3, a2, a0
-	subw a1, a1, a3
+	li a3, 255
+	slli a0, a3, 6
+	or a2, a2, a0
+	subw a1, a1, a2
 	zext.w a0, a1
 	ret
 .p2align 2
@@ -56,9 +57,10 @@ unfold4:
 .globl unfold5
 unfold5:
 	slliw a2, a0, 6
-	li a4, 31744
-	addw a3, a2, a4
-	or a0, a1, a3
+	li a0, 31
+	slli a3, a0, 10
+	addw a2, a2, a3
+	or a0, a1, a2
 	ret
 .p2align 2
 .globl unfold6

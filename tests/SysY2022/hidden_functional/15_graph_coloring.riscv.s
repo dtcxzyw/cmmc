@@ -88,11 +88,12 @@ label35:
 main:
 	addi sp, sp, -88
 	li a2, 1
-	li a1, 4294967296
-	sd ra, 0(sp)
+	li a4, 1
 	addi a3, sp, 72
+	sd ra, 0(sp)
 	addi a0, sp, 8
-	add.uw a2, a2, zero
+	zext.w a2, a2
+	slli a1, a4, 32
 	ori a4, a1, 1
 	sd a1, 8(sp)
 	sd a4, 16(sp)

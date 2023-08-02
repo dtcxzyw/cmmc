@@ -4,10 +4,11 @@
 .p2align 2
 .globl bswap_ror_commuted
 bswap_ror_commuted:
-	srliw a3, a0, 8
-	li a2, 16711935
+	srliw a1, a0, 8
+	lui a3, 4080
 	slliw a0, a0, 8
-	and a1, a3, a2
+	addiw a2, a3, 255
+	and a1, a1, a2
 	xori a2, a2, -1
 	and a3, a0, a2
 	or a0, a1, a3
@@ -16,16 +17,18 @@ bswap_ror_commuted:
 .globl different_constant
 different_constant:
 	srliw a1, a0, 8
-	li a2, 16711935
+	lui a3, 4080
+	addiw a2, a3, 255
 	and a0, a1, a2
 	ret
 .p2align 2
 .globl different_op
 different_op:
-	slliw a3, a0, 8
-	li a2, 16711936
+	slliw a1, a0, 8
+	lui a3, 4080
 	srliw a0, a0, 8
-	addw a1, a3, a2
+	addiw a2, a3, 256
+	addw a1, a1, a2
 	addi a2, a2, -1
 	and a3, a0, a2
 	or a0, a1, a3
@@ -33,10 +36,11 @@ different_op:
 .p2align 2
 .globl different_shift_amount
 different_shift_amount:
-	slliw a3, a0, 9
-	li a2, -16711936
+	slliw a1, a0, 9
+	lui a3, 1044496
 	srliw a0, a0, 8
-	and a1, a3, a2
+	addiw a2, a3, -256
+	and a1, a1, a2
 	xori a2, a2, -1
 	and a3, a0, a2
 	or a0, a1, a3
@@ -45,8 +49,9 @@ different_shift_amount:
 .globl different_vars
 different_vars:
 	slliw a3, a0, 8
-	li a2, -16711936
+	lui a4, 1044496
 	srliw a1, a1, 8
+	addiw a2, a4, -256
 	and a0, a3, a2
 	xori a2, a2, -1
 	and a3, a1, a2
@@ -55,11 +60,12 @@ different_vars:
 .p2align 2
 .globl extra_maskop_uses2
 extra_maskop_uses2:
-	slliw a3, a0, 8
-	li a2, -16711936
+	slliw a1, a0, 8
+	lui a3, 1044496
+	addiw a2, a3, -256
 	xori a4, a2, -1
-	and a1, a3, a2
 	srliw a3, a0, 8
+	and a1, a1, a2
 	and a0, a3, a4
 	or a2, a1, a0
 	mulw a1, a1, a0
@@ -69,9 +75,10 @@ extra_maskop_uses2:
 .globl f2
 f2:
 	slliw a1, a0, 8
-	li a3, 65280
-	lui a4, 1044480
+	li a4, 255
 	srliw a0, a0, 8
+	slli a3, a4, 8
+	lui a4, 1044480
 	and a2, a1, a3
 	andi a3, a0, 255
 	or a2, a2, a3
@@ -84,10 +91,11 @@ f2:
 .p2align 2
 .globl not_rev16
 not_rev16:
-	srliw a3, a0, 8
-	li a2, -16711936
+	srliw a1, a0, 8
+	lui a3, 1044496
 	slliw a0, a0, 8
-	and a1, a3, a2
+	addiw a2, a3, -256
+	and a1, a1, a2
 	xori a2, a2, -1
 	and a3, a0, a2
 	or a0, a1, a3
@@ -95,10 +103,11 @@ not_rev16:
 .p2align 2
 .globl rev16
 rev16:
-	slliw a3, a0, 8
-	li a2, -16711936
+	slliw a1, a0, 8
+	lui a3, 1044496
 	srliw a0, a0, 8
-	and a1, a3, a2
+	addiw a2, a3, -256
+	and a1, a1, a2
 	xori a2, a2, -1
 	and a3, a0, a2
 	or a0, a1, a3

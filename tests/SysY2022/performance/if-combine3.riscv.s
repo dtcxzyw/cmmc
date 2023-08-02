@@ -10,11 +10,13 @@ main:
 	jal _sysy_starttime
 	jal getint
 	ble a0, zero, label7
-	li a1, 4950
-	li a2, 65535
+	lui a2, 1
+	lui a3, 16
+	addiw a1, a2, 854
 	mul a0, a0, a1
-	rem a1, a0, a2
-	sext.w a0, a1
+	addiw a1, a3, -1
+	rem a2, a0, a1
+	sext.w a0, a2
 label3:
 	jal putint
 	li a0, 10

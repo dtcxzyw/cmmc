@@ -5,27 +5,36 @@
 .globl main
 main:
 	addi sp, sp, -72
-	li a0, 12884901892
-	li a2, 9
-	li a1, 8589934601
+	li a2, 3
+	li a3, 2
+	slli a1, a2, 32
 	sd ra, 0(sp)
+	addi a0, a1, 4
 	sd s0, 8(sp)
+	li a1, 9
 	addi s0, sp, 32
 	sd s1, 16(sp)
 	li s1, 10
 	sd s2, 24(sp)
 	sd a0, 32(sp)
-	li a0, 4294967296
-	sd a1, 40(sp)
-	li a1, 21474836486
+	slli a0, a3, 32
+	li a3, 1
+	addi a2, a0, 9
+	slli a0, a3, 32
+	sd a2, 40(sp)
+	li a3, 5
 	sd a0, 48(sp)
-	li a0, 34359738375
-	sd a1, 56(sp)
-	mv a1, zero
-	sd a0, 64(sp)
+	slli a2, a3, 32
+	addi a0, a2, 6
+	li a2, 8
+	sd a0, 56(sp)
+	slli a0, a2, 32
+	mv a2, zero
+	addi a3, a0, 7
+	sd a3, 64(sp)
 	mv a3, s1
 	addi a0, s1, -1
-	bge zero, a2, label26
+	bge zero, a1, label26
 .p2align 2
 label27:
 	mv a3, zero
@@ -39,7 +48,7 @@ label6:
 	bgt a4, a5, label7
 	mv a3, t0
 	bgt a0, t0, label6
-	j label86
+	j label95
 .p2align 2
 label7:
 	sh2add a3, a3, s0
@@ -47,24 +56,24 @@ label7:
 	sw a5, 0(a3)
 	mv a3, t0
 	bgt a0, t0, label6
-	addiw a1, a1, 1
-	subw a3, s1, a1
+	addiw a2, a2, 1
+	subw a3, s1, a2
 	addi a0, a3, -1
-	blt a1, a2, label27
+	blt a2, a1, label27
 label26:
 	mv s2, zero
 	j label9
 .p2align 2
-label86:
-	addiw a1, a1, 1
-	subw a3, s1, a1
+label95:
+	addiw a2, a2, 1
+	subw a3, s1, a2
 	addi a0, a3, -1
-	blt a1, a2, label27
+	blt a2, a1, label27
 	j label26
 .p2align 2
 label9:
-	sh2add a2, s2, s0
-	lw a0, 0(a2)
+	sh2add a1, s2, s0
+	lw a0, 0(a1)
 	jal putint
 	mv a0, s1
 	jal putch
@@ -78,8 +87,8 @@ label9:
 	addi sp, sp, 72
 	ret
 label30:
-	addiw a1, a1, 1
-	subw a3, s1, a1
+	addiw a2, a2, 1
+	subw a3, s1, a2
 	addi a0, a3, -1
-	blt a1, a2, label27
+	blt a2, a1, label27
 	j label26

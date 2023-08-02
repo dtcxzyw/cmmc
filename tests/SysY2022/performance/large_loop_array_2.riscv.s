@@ -26,52 +26,54 @@ main:
 	mv s0, a0
 	li a0, 22
 	jal _sysy_starttime
-	li t1, 1717986919
-	li a5, 500000
+	lui t4, 419430
+	lui t1, 122
 	addiw a2, s0, -4
-pcrel225:
+pcrel227:
 	auipc a1, %pcrel_hi(x)
 	lui a4, 260096
-pcrel226:
+pcrel228:
 	auipc a3, %pcrel_hi(y)
 	fmv.w.x f12, zero
+	li t0, 4
 	mv t3, zero
 	mv t2, zero
-pcrel227:
-	auipc t0, %pcrel_hi(__cmmc_fp_constant_pool)
-	addi a0, a1, %pcrel_lo(pcrel225)
+pcrel229:
+	auipc a5, %pcrel_hi(__cmmc_fp_constant_pool)
+	addi a0, a1, %pcrel_lo(pcrel227)
 	fmv.w.x f10, a4
 	fmv.s f11, f12
-	addi a1, a3, %pcrel_lo(pcrel226)
-	addi a3, t0, %pcrel_lo(pcrel227)
-	li t0, 4
+	addi a1, a3, %pcrel_lo(pcrel228)
+	addi a3, a5, %pcrel_lo(pcrel229)
+	addiw a5, t1, 288
+	addiw t1, t4, 1639
 	bge zero, a5, label25
 .p2align 2
 label8:
 	mul t4, t2, t1
 	flw f15, 0(a3)
 	fmv.w.x f14, a4
-	srli t6, t4, 63
+	srli a6, t4, 63
 	srai t5, t4, 34
 	fadd.s f13, f10, f15
-	add t4, t6, t5
+	add t4, a6, t5
 	fmv.s f10, f14
-	sh2add t5, t4, t4
-	slliw t6, t5, 1
-	subw a6, t2, t6
+	sh2add t6, t4, t4
+	slliw t5, t6, 1
+	subw a6, t2, t5
 	sltu t4, zero, a6
-	bne t4, zero, label208
+	bne t4, zero, label210
 	fmv.s f10, f13
 .p2align 2
-label208:
+label210:
 	flw f15, 4(a3)
 	fmv.w.x f14, zero
 	fadd.s f13, f11, f15
 	fmv.s f11, f14
-	bne t4, zero, label210
+	bne t4, zero, label212
 	fmv.s f11, f13
 .p2align 2
-label210:
+label212:
 	bgt s0, t3, label20
 	j label9
 .p2align 2

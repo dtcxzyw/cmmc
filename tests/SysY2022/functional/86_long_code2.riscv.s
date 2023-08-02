@@ -4,5 +4,6 @@
 .p2align 2
 .globl main
 main:
-	li a0, 4000
+	li a1, 125
+	slli a0, a1, 5
 	ret

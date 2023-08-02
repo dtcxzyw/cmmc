@@ -12,20 +12,25 @@ c:
 .globl main
 main:
 	addi sp, sp, -16
-pcrel258:
+pcrel266:
 	auipc a0, %pcrel_hi(c)
-	li a1, 8589934593
-	mv a3, zero
-	li a4, 4032
+	li a3, 2
 	sd ra, 0(sp)
+	slli a1, a3, 32
 	sd s0, 8(sp)
-	sd a1, %pcrel_lo(pcrel258)(a0)
-	addi s0, a0, %pcrel_lo(pcrel258)
+	addi a2, a1, 1
+	addi s0, a0, %pcrel_lo(pcrel266)
 	li a1, 3
-	addi a2, s0, 24
-	li a0, 17179869187
+	sd a2, %pcrel_lo(pcrel266)(a0)
+	li a2, 4
 	sd zero, 8(s0)
-	sd a0, 16(s0)
+	slli a0, a2, 32
+	addi a2, s0, 24
+	addi a3, a0, 3
+	li a0, 63
+	sd a3, 16(s0)
+	slli a4, a0, 6
+	mv a3, zero
 .p2align 2
 label2:
 	sh2add a0, a3, a2
@@ -119,30 +124,33 @@ label4:
 .p2align 2
 label5:
 	sh2add a3, a0, a2
+	li a4, 2043
 	addi a0, a0, 4
 	sw zero, 0(a3)
 	sw zero, 4(a3)
 	sw zero, 8(a3)
 	sw zero, 12(a3)
-	li a3, 4086
+	slli a3, a4, 1
 	blt a0, a3, label5
 .p2align 2
 label7:
 	sh2add a3, a0, a2
+	li a4, 2045
 	addi a0, a0, 1
 	sw zero, 0(a3)
-	li a3, 4090
+	slli a3, a4, 1
 	blt a0, a3, label7
-pcrel259:
+pcrel267:
 	auipc a2, %pcrel_hi(a)
-	li a3, 4000
-	addi a0, a2, %pcrel_lo(pcrel259)
+	li a4, 125
+	addi a0, a2, %pcrel_lo(pcrel267)
+	slli a3, a4, 5
 	slli a2, a3, 2
 	sw a3, 20(a0)
 	add a3, a0, a2
 	addi a2, a2, 380
-	add a0, a0, a2
 	sw a1, 0(a3)
+	add a0, a0, a2
 	li a3, 7
 	sw a3, 0(a0)
 	mv a0, a1

@@ -966,7 +966,7 @@ params_mix:
 	ld a6, 1064(sp)
 	addw a7, a6, a7
 	addw s8, t6, a7
-	add.uw t6, s8, zero
+	zext.w t6, s8
 	sd t6, 624(sp)
 	bne a6, zero, label4
 	j label5
@@ -1046,7 +1046,7 @@ label4:
 	ld t6, 632(sp)
 	fcvt.w.s a0, f10, rtz
 	sh2add a1, t6, s9
-	add.uw a2, a0, zero
+	zext.w a2, a0
 	sd a2, 624(sp)
 	lw a0, 0(a1)
 	fcvt.s.w f10, a0

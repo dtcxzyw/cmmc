@@ -4,11 +4,12 @@
 .p2align 2
 .globl hoge
 hoge:
-	li a2, -1
-	li a3, 3840
-	sllw a1, a2, a0
-	xori a0, a1, -1
-	zext.w a2, a0
-	slliw a1, a2, 8
-	and a0, a1, a3
+	li a1, -1
+	sllw a3, a1, a0
+	xori a2, a3, -1
+	zext.w a1, a2
+	li a2, 15
+	slliw a0, a1, 8
+	slli a1, a2, 8
+	and a0, a0, a1
 	ret

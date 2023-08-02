@@ -4,11 +4,12 @@
 .p2align 2
 .globl sgt
 sgt:
-	li a2, 32767
+	lui a3, 8
 	li a1, 7
-	bgt a0, a2, label10
+	addiw a2, a3, -1
+	bgt a0, a2, label11
 	li a1, 5
-label10:
+label11:
 	zext.w a0, a1
 	ret
 .p2align 2

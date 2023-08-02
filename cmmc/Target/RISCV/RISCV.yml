@@ -363,12 +363,15 @@ InstInfo:
     Format: "li $Rd:GPR[Def], $Imm:NonZeroImm12[Metadata]" # addiu
     Flag: [LoadConstant]
 
-  # TODO: expand to LUI+ADDI?
   LoadImm32:
     Format: "li $Rd:GPR[Def], $Imm:NonZeroImm32[Metadata]" # lui + addi
-    Flag: [LoadConstant]
+    Flag: [LegalizePreRA, LoadConstant]
 
   LoadImm64:
+    Format: "li $Rd:GPR[Def], $Imm:NonZeroImm64[Metadata]"
+    Flag: [LegalizePreRA, LoadConstant]
+
+  LoadImm64Complex:
     Format: "li $Rd:GPR[Def], $Imm:NonZeroImm64[Metadata]"
     Flag: [LoadConstant]
 
@@ -2081,7 +2084,7 @@ ScheduleModel:
           InstCopyFromReg,
           InstCopyToReg,
         ]
-      SlowLoadImm: [InstLoadImm, LoadImm32, LoadImm64]
+      SlowLoadImm: [InstLoadImm, LoadImm32, LoadImm64, LoadImm64Complex]
       IntegerArithmeticLateB:
         [ROL, ROLW, ROR, RORI, RORIW, RORW, CLZ, CLZW, CTZ, CTZW, ORC_B]
       IntegerArithmeticEarlyB: [CPOP, CPOPW]

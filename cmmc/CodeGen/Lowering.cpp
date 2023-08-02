@@ -462,6 +462,8 @@ static void lowerToMachineModule(MIRModule& machineModule, Module& module, Analy
             // Stage 6: Pre-RA legalization
             Stage stage{ "Pre-RA legalization"sv };
             ctx.flags.inSSAForm = false;
+            while(genericPeepholeOpt(mfunc, ctx))
+                ;
             preRALegalizeFunc(mfunc, ctx);
             // dumpFunc(mfunc);
             assert(mfunc.verify(std::cerr, ctx));
@@ -489,7 +491,7 @@ static void lowerToMachineModule(MIRModule& machineModule, Module& module, Analy
             // dumpFunc(mfunc);
             assert(mfunc.verify(std::cerr, ctx));
         }
-        // Stage 9: post-RA scheduling, minimize latency
+        // Stage 9: post-RA scheduling, minimize cycles
         // TODO: after post legalization?
         if(ctx.registerInfo && optLevel >= OptimizationLevel::O3 && !debugISel.get()) {
             Stage stage{ "Post-RA scheduling"sv };
@@ -525,7 +527,6 @@ static void lowerToMachineModule(MIRModule& machineModule, Module& module, Analy
             assert(mfunc.verify(std::cerr, ctx));
             // block freq is unused
         }
-        // TODO: basic block alignment
         // Stage 12: remove unreachable block/continuous goto/unused label/peephole
         {
             const auto cfg = calcCFG(mfunc, ctx);

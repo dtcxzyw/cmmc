@@ -104,20 +104,21 @@ imm_build_pattern1:
 .globl imm_build_pattern2
 imm_build_pattern2:
 	lui a1, 250
-	lui a3, 125
-	li a2, 256000
+	lui a2, 125
+	li a3, 125
 	sw a1, 0(a0)
-	srli a1, a2, 1
-	sw a3, 4(a0)
-	sw a2, 8(a0)
+	slli a1, a3, 11
+	sw a2, 4(a0)
 	srli a2, a1, 1
-	sw a1, 12(a0)
+	sw a1, 8(a0)
 	srli a1, a2, 1
-	sw a2, 16(a0)
+	sw a2, 12(a0)
 	srli a2, a1, 1
-	sw a1, 20(a0)
-	srli a1, a2, 1
-	sw a2, 24(a0)
+	sw a1, 16(a0)
+	srli a3, a2, 1
+	sw a2, 20(a0)
+	srli a1, a3, 1
+	sw a3, 24(a0)
 	srli a2, a1, 1
 	sw a1, 28(a0)
 	sw a2, 32(a0)

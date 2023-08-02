@@ -260,8 +260,7 @@ main:
 	sd s4, 8(sp)
 	li s4, 1
 	sd s5, 16(sp)
-	add.uw a0, s4, zero
-	li s5, 4294967296
+	zext.w a0, s4
 	sd s0, 24(sp)
 	li s0, 2
 	sd s3, 32(sp)
@@ -279,15 +278,17 @@ main:
 	sd s8, 88(sp)
 	sd s11, 96(sp)
 	sd a0, 104(sp)
-	add.uw a0, a1, zero
+	zext.w a0, a1
+	li a1, 1
 	sd a0, 112(sp)
+	slli s5, a1, 32
 	sub a0, zero, s5
 	sd s5, 120(sp)
 	sd a0, 128(sp)
-pcrel986:
+pcrel987:
 	auipc a0, %pcrel_hi(a)
 	sw zero, 140(sp)
-	addi s3, a0, %pcrel_lo(pcrel986)
+	addi s3, a0, %pcrel_lo(pcrel987)
 	sw zero, 136(sp)
 .p2align 2
 label298:
@@ -305,7 +306,7 @@ label538:
 	ble s4, a0, label312
 	j label542
 .p2align 2
-label972:
+label973:
 	addiw s2, s2, 1
 	lw a0, 144(sp)
 	slli a1, s2, 4
@@ -324,10 +325,10 @@ label319:
 	mv a2, s4
 	jal search
 	mv a1, a0
-	blt a0, s7, label957
+	blt a0, s7, label958
 	li a1, -1
 .p2align 2
-label957:
+label958:
 	mv a0, a1
 	jal putint
 	li a0, 10
@@ -340,7 +341,7 @@ label312:
 	sw a0, 0(a1)
 	beq a0, s0, label550
 	beq a0, s1, label317
-	j label971
+	j label972
 .p2align 2
 label550:
 	mv s9, s11
@@ -348,7 +349,7 @@ label550:
 	addiw s11, s11, 1
 	lw a0, 148(sp)
 	ble s11, a0, label312
-	j label972
+	j label973
 .p2align 2
 label317:
 	sw s2, 140(sp)
@@ -364,7 +365,7 @@ label317:
 	ble s2, a0, label538
 	j label319
 .p2align 2
-label971:
+label972:
 	addiw s11, s11, 1
 	lw a0, 148(sp)
 	ble s11, a0, label312

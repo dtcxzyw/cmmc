@@ -85,15 +85,16 @@ main:
 	fsw f10, 116(sp)
 	mv a0, s0
 	jal getfarray
-	li s5, 1000000000
 	lui s4, 266752
 	lui s3, 258048
 	mv s6, zero
 	li s7, 1
 	mv s1, a0
-pcrel73:
+pcrel74:
 	auipc a0, %pcrel_hi(__cmmc_fp_constant_pool)
-	addi s2, a0, %pcrel_lo(pcrel73)
+	addi s2, a0, %pcrel_lo(pcrel74)
+	lui a0, 244141
+	addiw s5, a0, -1536
 .p2align 2
 label2:
 	jal getfloat

@@ -4,5 +4,6 @@
 .p2align 2
 .globl f6
 f6:
-	li a0, 65537123
+	lui a1, 16000
+	addiw a0, a1, 1123
 	ret

@@ -5,8 +5,9 @@
 .globl X
 X:
 	addiw a1, a0, 14
-	li a3, 12345
-	xor a2, a1, a3
+	lui a3, 3
+	addiw a0, a3, 57
+	xor a2, a1, a0
 	sltu a1, zero, a2
 	zext.w a0, a1
 	ret

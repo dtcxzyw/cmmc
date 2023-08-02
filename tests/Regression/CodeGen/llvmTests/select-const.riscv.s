@@ -48,9 +48,10 @@ label38:
 .globl select_eq_10000_10001
 select_eq_10000_10001:
 	xor a2, a0, a1
-	li a3, 10002
+	lui a3, 2
 	sltiu a0, a2, 1
-	subw a1, a3, a0
+	addiw a2, a3, 1810
+	subw a1, a2, a0
 	zext.w a0, a1
 	ret
 .p2align 2
@@ -74,9 +75,10 @@ select_eq_zero_negone:
 .globl select_ne_10001_10002
 select_ne_10001_10002:
 	xor a2, a0, a1
-	li a3, 10002
+	lui a3, 2
 	sltu a0, zero, a2
-	subw a1, a3, a0
+	addiw a2, a3, 1810
+	subw a1, a2, a0
 	zext.w a0, a1
 	ret
 .p2align 2
@@ -109,9 +111,9 @@ select_sge_zero_negone:
 select_sgt_negative_one_constant1_constant2:
 	li a2, -1
 	li a1, 7
-	bgt a0, a2, label111
+	bgt a0, a2, label113
 	li a1, -3
-label111:
+label113:
 	zext.w a0, a1
 	ret
 .p2align 2
@@ -133,9 +135,9 @@ select_sle_zero_negone:
 .globl select_slt_zero_constant1_constant2
 select_slt_zero_constant1_constant2:
 	li a1, 7
-	blt a0, zero, label139
+	blt a0, zero, label141
 	li a1, -3
-label139:
+label141:
 	zext.w a0, a1
 	ret
 .p2align 2

@@ -873,6 +873,90 @@ void RISCVISelInfo::preRALegalizeInst(const InstLegalizeContext& ctx) const {
             *ctx.iter = MIRInst{ moveCode }.setOperand<0>(dst).setOperand<1>(dst);  // noop
             break;
         }
+        case LoadImm32:
+        case LoadImm64: {
+            auto& dst = ctx.inst.getOperand(0);
+            auto& imm = ctx.inst.getOperand(1);
+            const auto val = imm.imm();
+            // imm12
+            if(isOperandImm12(imm)) {
+                ctx.inst.setOpcode(LoadImm12);
+                break;
+            }
+            // imm12 << shift
+            if(const auto ctz = __builtin_ctzll(static_cast<uint64_t>(val)); isSignedImm<12>(val >> ctz)) {
+                const auto base = MIROperand::asVReg(ctx.ctx.nextId(), OperandType::Int32);
+                ctx.instructions.insert(
+                    ctx.iter,
+                    MIRInst{ LoadImm12 }.setOperand<0>(base).setOperand<1>(MIROperand::asImm(val >> ctz, OperandType::Int32)));
+                ctx.inst = MIRInst{ SLLI }.setOperand<0>(dst).setOperand<1>(base).setOperand<2>(
+                    MIROperand::asImm(ctz, OperandType::Int32));
+                break;
+            }
+            // lui + addiw
+            if(isSignedImm<32>(val)) {
+                const auto val32 = static_cast<int32_t>(val);
+                auto lo = static_cast<int32_t>(val32 & 0xfff);
+                if(lo > 2047)
+                    lo -= 4096;
+                assert(isSignedImm<12>(lo));
+                const auto hi = static_cast<uint32_t>(((val32 - lo) >> 12) & 0xfffff);
+                if(lo) {
+                    const auto base = MIROperand::asVReg(ctx.ctx.nextId(), OperandType::Int32);
+                    ctx.instructions.insert(
+                        ctx.iter, MIRInst{ LUI }.setOperand<0>(base).setOperand<1>(MIROperand::asImm(hi, OperandType::Int32)));
+                    ctx.inst = MIRInst{ ADDIW }.setOperand<0>(dst).setOperand<1>(base).setOperand<2>(
+                        MIROperand::asImm(lo, OperandType::Int32));
+                } else {
+                    ctx.inst = MIRInst{ LUI }.setOperand<0>(dst).setOperand<1>(MIROperand::asImm(hi, OperandType::Int32));
+                }
+                break;
+            }
+            // lui + addiw + zext.w
+            if(isUnsignedImm<32>(val)) {
+                const auto val32 = static_cast<int32_t>(val);
+                auto lo = static_cast<int32_t>(val32 & 0xfff);
+                if(lo > 2047)
+                    lo -= 4096;
+                assert(isSignedImm<12>(lo));
+                const auto hi = static_cast<uint32_t>(((val32 - lo) >> 12) & 0xfffff);
+                const auto signedVal = MIROperand::asVReg(ctx.ctx.nextId(), OperandType::Int32);
+                if(lo) {
+                    const auto base = MIROperand::asVReg(ctx.ctx.nextId(), OperandType::Int32);
+                    ctx.instructions.insert(
+                        ctx.iter, MIRInst{ LUI }.setOperand<0>(base).setOperand<1>(MIROperand::asImm(hi, OperandType::Int32)));
+                    ctx.instructions.insert(ctx.iter,
+                                            MIRInst{ ADDIW }.setOperand<0>(signedVal).setOperand<1>(base).setOperand<2>(
+                                                MIROperand::asImm(lo, OperandType::Int32)));
+                } else {
+                    ctx.instructions.insert(
+                        ctx.iter,
+                        MIRInst{ LUI }.setOperand<0>(signedVal).setOperand<1>(MIROperand::asImm(hi, OperandType::Int32)));
+                }
+
+                ctx.inst = MIRInst{ ZEXT_W }.setOperand<0>(dst).setOperand<1>(signedVal);
+                break;
+            }
+            // imm12 << 32 + imm12
+            const auto hi = val >> 32;
+            const auto lo = val - (hi << 32);
+            if(isSignedImm<12>(hi) && isSignedImm<12>(lo)) {
+                const auto base = MIROperand::asVReg(ctx.ctx.nextId(), OperandType::Int64);
+                const auto shifted = MIROperand::asVReg(ctx.ctx.nextId(), OperandType::Int64);
+                ctx.instructions.insert(
+                    ctx.iter, MIRInst{ LoadImm12 }.setOperand<0>(base).setOperand<1>(MIROperand::asImm(hi, OperandType::Int32)));
+                ctx.instructions.insert(ctx.iter,
+                                        MIRInst{ SLLI }.setOperand<0>(shifted).setOperand<1>(base).setOperand<2>(
+                                            MIROperand::asImm(32, OperandType::Int64)));
+                ctx.inst = MIRInst{ ADDI }.setOperand<0>(dst).setOperand<1>(shifted).setOperand<2>(
+                    MIROperand::asImm(lo, OperandType::Int32));
+                break;
+            }
+
+            // fallback to as
+            ctx.inst.setOpcode(LoadImm64Complex);
+            break;
+        }
         default:
             reportLegalizationFailure(ctx.inst, ctx.ctx, CMMC_LOCATION());
     }

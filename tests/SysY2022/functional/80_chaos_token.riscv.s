@@ -127,7 +127,7 @@ main:
 	addi sp, sp, -88
 	li a1, 10
 	sd ra, 0(sp)
-	add.uw a0, a1, zero
+	zext.w a0, a1
 	sd s0, 8(sp)
 	addi s0, sp, 64
 	sd s5, 16(sp)
@@ -137,12 +137,12 @@ main:
 	sd s3, 48(sp)
 	sd s4, 56(sp)
 	sd a0, 64(sp)
-pcrel169:
+pcrel170:
 	auipc a0, %pcrel_hi(__HELLO)
 	sd zero, 72(sp)
-	addi s1, a0, %pcrel_lo(pcrel169)
+	addi s1, a0, %pcrel_lo(pcrel170)
 	sw zero, 80(sp)
-	lw a1, %pcrel_lo(pcrel169)(a0)
+	lw a1, %pcrel_lo(pcrel170)(a0)
 	bne a1, zero, label31
 label30:
 	mv s1, zero
@@ -159,7 +159,8 @@ label2:
 	bne a1, zero, label2
 	j label30
 label4:
-	li a2, 715827883
+	lui a1, 174763
+	addiw a2, a1, -1365
 	mul a0, s1, a2
 	srli a2, a0, 63
 	srli a1, a0, 32
@@ -171,11 +172,11 @@ label18:
 	slliw a1, s1, 4
 	addw a2, a1, s1
 	addiw a0, a2, 23
-	slli a4, a0, 1
-	srli a1, a4, 59
-	add a3, a0, a1
-	andi a2, a3, -32
-	subw s1, a0, a2
+	slli a1, a0, 1
+	srli a2, a1, 59
+	add a3, a0, a2
+	andi a1, a3, -32
+	subw s1, a0, a1
 	bne s1, zero, label4
 	mv a0, zero
 	ld ra, 0(sp)

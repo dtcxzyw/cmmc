@@ -107,19 +107,23 @@ main:
 	li a0, 10
 	jal putch
 	mv s10, zero
-	mv a1, zero
 	lui s3, 258048
-pcrel410:
+	mv a1, zero
+	lui s4, 263168
+pcrel414:
 	auipc a0, %pcrel_hi(__cmmc_fp_constant_pool)
 	lui s1, 264192
-	li s5, 100000007
 	lui s2, 253952
-	li s7, 19980130
-	li s8, 23333
-	lui s4, 263168
 	lui s6, 269312
-	addi s0, a0, %pcrel_lo(pcrel410)
 	sd zero, 104(sp)
+	lui a1, 6
+	addi s0, a0, %pcrel_lo(pcrel414)
+	addiw s8, a1, -1243
+	lui a0, 4878
+	addiw s7, a0, -158
+	lui a0, 24414
+	addiw s5, a0, 263
+	mv a1, zero
 	lui a0, 275456
 	fmv.w.x f11, a0
 	li a0, 192
@@ -164,8 +168,9 @@ label59:
 .p2align 2
 label62:
 	mulw a1, s10, s7
-	li a4, 360287945
+	lui a3, 87961
 	addw a0, a1, s8
+	addiw a4, a3, -311
 	mul a1, a0, a4
 	srli a4, a1, 63
 	srai a3, a1, 55
@@ -173,8 +178,8 @@ label62:
 	mulw a3, a1, s5
 	subw a0, a0, a3
 	mv s10, a0
-	bge a0, zero, label369
-	j label368
+	bge a0, zero, label373
+	j label372
 .p2align 2
 label68:
 	flw f10, 20(s0)
@@ -182,20 +187,20 @@ label68:
 	flt.s a0, f10, f1
 	fsub.s f12, f1, f11
 	fmv.s f10, f12
-	bne a0, zero, label375
+	bne a0, zero, label379
 	fmv.s f10, f1
 .p2align 2
-label375:
+label379:
 	flw f12, 24(s0)
 	fadd.s f13, f10, f11
 	flt.s a0, f10, f12
 	fmv.s f11, f13
-	bne a0, zero, label377
+	bne a0, zero, label381
 .p2align 2
-label376:
+label380:
 	fmv.s f11, f10
 .p2align 2
-label377:
+label381:
 	fmv.s f10, f11
 	jal my_sin_impl
 	mv a0, zero
@@ -305,18 +310,18 @@ label73:
 	fsub.s f13, f12, f1
 	fmv.s f12, f4
 	flt.s a1, f4, f13
-	bne a1, zero, label379
+	bne a1, zero, label383
 	fmv.s f12, f13
 .p2align 2
-label379:
+label383:
 	flw f13, 0(s0)
 	fmv.w.x f3, s4
 	fmv.w.x f2, zero
 	fmv.s f1, f3
-	bne a1, zero, label381
+	bne a1, zero, label385
 	fmv.s f1, f2
 .p2align 2
-label381:
+label385:
 	flt.s a1, f12, f13
 	beq a1, zero, label74
 	fadd.s f15, f15, f1
@@ -368,10 +373,10 @@ label74:
 	blt a2, a0, label62
 	j label77
 .p2align 2
-label368:
+label372:
 	addw s10, s10, s5
 .p2align 2
-label369:
+label373:
 	fcvt.s.w f11, s10
 	flw f12, 4(s0)
 	fcvt.s.w f13, a2
@@ -393,20 +398,20 @@ label369:
 	flt.s a0, f11, f10
 	fsub.s f12, f10, f2
 	fmv.s f11, f12
-	bne a0, zero, label371
+	bne a0, zero, label375
 	fmv.s f11, f10
 .p2align 2
-label371:
+label375:
 	flw f10, 24(s0)
 	fadd.s f12, f11, f2
 	flt.s a0, f11, f10
 	fmv.s f10, f12
-	bne a0, zero, label373
+	bne a0, zero, label377
 .p2align 2
-label372:
+label376:
 	fmv.s f10, f11
 .p2align 2
-label373:
+label377:
 	jal my_sin_impl
 	flt.s a0, f2, f1
 	fmv.s f0, f10
@@ -425,14 +430,14 @@ label373:
 	flt.s a0, f10, f1
 	fsub.s f12, f1, f11
 	fmv.s f10, f12
-	bne a0, zero, label375
+	bne a0, zero, label379
 	fmv.s f10, f1
 	flw f12, 24(s0)
 	fadd.s f13, f1, f11
 	flt.s a0, f1, f12
 	fmv.s f11, f13
-	bne a0, zero, label377
-	j label376
+	bne a0, zero, label381
+	j label380
 .p2align 2
 label80:
 	flw f11, 8(s0)
@@ -446,14 +451,14 @@ label80:
 	flt.s a0, f11, f10
 	fsub.s f12, f10, f2
 	fmv.s f11, f12
-	bne a0, zero, label371
+	bne a0, zero, label375
 	fmv.s f11, f10
 	flw f10, 24(s0)
 	fadd.s f12, f11, f2
 	flt.s a0, f11, f10
 	fmv.s f10, f12
-	bne a0, zero, label373
-	j label372
+	bne a0, zero, label377
+	j label376
 .p2align 2
 label174:
 	fmv.w.x f1, zero

@@ -334,9 +334,13 @@ label397:
 .p2align 2
 .globl select_constant
 select_constant:
-	mv a1, a0
-	li a0, -1894007588
-	bne a1, zero, label404
-	li a0, -899497722
+	lui a2, 586172
+	addiw a1, a2, -804
+	beq a0, zero, label403
 label404:
+	mv a0, a1
 	ret
+label403:
+	lui a0, 828972
+	addiw a1, a0, 262
+	j label404

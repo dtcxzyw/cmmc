@@ -5,6 +5,7 @@
 .globl main
 main:
 	addi sp, sp, -120
+	lui a0, 419430
 	sd ra, 0(sp)
 	sd s0, 8(sp)
 	addi s0, sp, 56
@@ -14,7 +15,7 @@ main:
 	sd s2, 32(sp)
 	li s2, 10
 	sd s1, 40(sp)
-	li s1, 1717986919
+	addiw s1, a0, 1639
 	sd s4, 48(sp)
 label2:
 	jal getch
@@ -39,7 +40,7 @@ label10:
 	jal getch
 	addiw a0, a0, -48
 	bltu a0, s2, label12
-	ble s5, zero, label128
+	ble s5, zero, label129
 	mv a0, s5
 	mv a1, zero
 	j label19
@@ -87,7 +88,7 @@ label22:
 	ld s4, 48(sp)
 	addi sp, sp, 120
 	ret
-label128:
+label129:
 	mv s5, zero
 	j label16
 .p2align 2

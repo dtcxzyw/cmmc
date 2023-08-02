@@ -31,9 +31,10 @@ label6:
 	addw a1, a1, a2
 	bne a0, zero, label6
 label9:
-	li a3, 1739733589
+	lui a2, 424740
 	li a4, 79
 	ld ra, 0(sp)
+	addiw a3, a2, -1451
 	ld s0, 8(sp)
 	mul a0, a1, a3
 	ld s1, 16(sp)

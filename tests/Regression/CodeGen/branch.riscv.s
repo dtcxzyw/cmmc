@@ -212,16 +212,18 @@ label302:
 .p2align 2
 .globl normal_srem
 normal_srem:
-	li a2, 1152921497
+	lui a3, 281475
+	lui a5, 244141
+	addiw a2, a3, -103
 	mul a1, a0, a2
 	srli a4, a1, 63
 	srai a3, a1, 60
-	li a1, 1000000007
+	addiw a1, a5, -1529
 	add a2, a4, a3
 	mulw a3, a2, a1
 	subw a2, a0, a3
 	mv a0, a2
-	bge a2, zero, label327
+	bge a2, zero, label329
 	addw a0, a2, a1
-label327:
+label329:
 	ret

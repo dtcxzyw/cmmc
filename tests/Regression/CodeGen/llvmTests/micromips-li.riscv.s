@@ -18,16 +18,18 @@ z:
 .globl main
 main:
 	li a0, 1
-pcrel17:
-	auipc a1, %pcrel_hi(x)
-	sw a0, %pcrel_lo(pcrel17)(a1)
-pcrel18:
-	auipc a1, %pcrel_hi(y)
-	li a0, 2148
-	sw a0, %pcrel_lo(pcrel18)(a1)
 pcrel19:
-	auipc a1, %pcrel_hi(z)
-	li a0, 33332
+	auipc a1, %pcrel_hi(x)
+	li a2, 537
 	sw a0, %pcrel_lo(pcrel19)(a1)
+pcrel20:
+	auipc a1, %pcrel_hi(y)
+	slli a0, a2, 2
+	lui a2, 8
+	sw a0, %pcrel_lo(pcrel20)(a1)
+pcrel21:
+	auipc a1, %pcrel_hi(z)
+	addiw a0, a2, 564
+	sw a0, %pcrel_lo(pcrel21)(a1)
 	mv a0, zero
 	ret

@@ -5,6 +5,7 @@
 .globl test
 test:
 	ori a1, a0, 1
-	li a2, 7057
+	lui a3, 2
+	addiw a2, a3, -1135
 	and a0, a1, a2
 	ret

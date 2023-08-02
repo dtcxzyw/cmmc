@@ -13,10 +13,11 @@ main:
 	jal _sysy_starttime
 	ble s0, zero, label7
 	slli a1, s0, 4
-	li a2, 1500000001
+	lui a2, 366211
 	sub a0, a1, s0
-	rem a1, a0, a2
-	sext.w s0, a1
+	addiw a1, a2, -255
+	rem a0, a0, a1
+	sext.w s0, a0
 label3:
 	li a0, 123
 	jal _sysy_stoptime

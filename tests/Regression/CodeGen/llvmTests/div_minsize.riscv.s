@@ -13,12 +13,13 @@ testsize1:
 .p2align 2
 .globl testsize2
 testsize2:
-	li a2, 1041204193
-	mul a1, a0, a2
-	srli a2, a1, 63
-	srai a0, a1, 35
-	add a1, a2, a0
-	zext.w a0, a1
+	lui a1, 254200
+	addiw a2, a1, 993
+	mul a0, a0, a2
+	srli a2, a0, 63
+	srai a1, a0, 35
+	add a3, a2, a1
+	zext.w a0, a3
 	ret
 .p2align 2
 .globl testsize3

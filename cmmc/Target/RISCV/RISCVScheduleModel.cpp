@@ -738,6 +738,10 @@ static bool simplifyOpWithZero(MIRFunction& func, const CodeGenContext&) {
                         resetToZero();
                     else if(isZero(1))
                         resetToCopy(2);
+                    else if(isZero(2)) {
+                        inst = MIRInst{ ZEXT_W }.setOperand<0>(inst.getOperand(0)).setOperand<1>(inst.getOperand(1));
+                        modified = true;
+                    }
                     break;
                 }
                 default:

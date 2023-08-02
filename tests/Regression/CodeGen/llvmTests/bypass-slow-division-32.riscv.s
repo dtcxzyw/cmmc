@@ -45,17 +45,19 @@ Test_use_div_imm_reg:
 .p2align 2
 .globl Test_use_div_reg_imm
 Test_use_div_reg_imm:
-	li a2, 1041204193
-	mul a1, a0, a2
-	srli a2, a1, 63
-	srai a0, a1, 35
-	add a1, a2, a0
-	zext.w a0, a1
+	lui a1, 254200
+	addiw a2, a1, 993
+	mul a0, a0, a2
+	srli a2, a0, 63
+	srai a1, a0, 35
+	add a3, a2, a1
+	zext.w a0, a3
 	ret
 .p2align 2
 .globl Test_use_divrem_reg_imm
 Test_use_divrem_reg_imm:
-	li a2, 1041204193
+	lui a3, 254200
+	addiw a2, a3, 993
 	mul a1, a0, a2
 	srli a4, a1, 63
 	srai a3, a1, 35
@@ -77,7 +79,8 @@ Test_use_rem_imm_reg:
 .p2align 2
 .globl Test_use_rem_reg_imm
 Test_use_rem_reg_imm:
-	li a3, 1041204193
+	lui a2, 254200
+	addiw a3, a2, 993
 	mul a1, a0, a3
 	srli a3, a1, 63
 	srai a2, a1, 35

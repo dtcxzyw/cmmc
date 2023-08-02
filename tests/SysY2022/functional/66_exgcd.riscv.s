@@ -83,8 +83,9 @@ main:
 	sw a0, 8(sp)
 	li a0, 7
 	jal exgcd
-	li a1, -2004318071
 	lw a0, 12(sp)
+	lui a3, 559241
+	addiw a1, a3, -1911
 	mul a2, a0, a1
 	srli a3, a2, 32
 	add a1, a3, a0
@@ -95,9 +96,9 @@ main:
 	slliw a2, a1, 4
 	subw a1, a3, a2
 	mv a0, a1
-	bge a1, zero, label72
+	bge a1, zero, label73
 	addiw a0, a1, 15
-label72:
+label73:
 	jal putint
 	ld ra, 0(sp)
 	mv a0, zero

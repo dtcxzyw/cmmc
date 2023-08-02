@@ -30,20 +30,21 @@ main:
 	sd s0, 48(sp)
 	sd s2, 56(sp)
 	jal _sysy_starttime
-	li a2, 1000
-	lui s6, 258048
-	li a0, 99996
-	mv a4, zero
-	lui s3, 260096
-pcrel1088:
-	auipc a1, %pcrel_hi(vectorA)
-	addi s0, a0, 4
-	addi s4, a1, %pcrel_lo(pcrel1088)
-	addi s2, s0, -16
 pcrel1089:
-	auipc a1, %pcrel_hi(__cmmc_fp_constant_pool)
+	auipc a1, %pcrel_hi(vectorA)
+	lui s3, 260096
+	mv a4, zero
+	lui s6, 258048
+	li a2, 1000
+pcrel1090:
+	auipc a0, %pcrel_hi(__cmmc_fp_constant_pool)
+	addi s4, a1, %pcrel_lo(pcrel1089)
+	addi s5, a0, %pcrel_lo(pcrel1090)
+	lui a1, 24
+	addiw a0, a1, 1692
+	addi s0, a0, 4
+	addi s2, s0, -16
 	addi a3, s2, -16
-	addi s5, a1, %pcrel_lo(pcrel1089)
 .p2align 2
 label2:
 	sh2add a1, a4, s4
@@ -116,7 +117,7 @@ label2:
 	blt a4, a3, label2
 	sh2add a1, a4, s4
 	mv a3, zero
-pcrel1090:
+pcrel1091:
 	auipc a4, %pcrel_hi(Vectortm)
 	fsw f10, 0(a1)
 	fsw f10, 4(a1)
@@ -150,10 +151,10 @@ pcrel1090:
 	fsw f10, 116(a1)
 	fsw f10, 120(a1)
 	fsw f10, 124(a1)
-pcrel1091:
+pcrel1092:
 	auipc a1, %pcrel_hi(vectorB)
-	addi s1, a1, %pcrel_lo(pcrel1091)
-	addi a1, a4, %pcrel_lo(pcrel1090)
+	addi s1, a1, %pcrel_lo(pcrel1092)
+	addi a1, a4, %pcrel_lo(pcrel1091)
 .p2align 2
 label5:
 	fmv.w.x f10, zero
@@ -294,24 +295,24 @@ label68:
 	fdiv.s f11, f12, f11
 	mulw t5, t5, t6
 	flw f12, 4(t4)
-	srliw a7, t5, 31
-	add a6, t5, a7
+	srliw a6, t5, 31
+	add a7, t5, a6
+	sraiw t5, a7, 1
 	addiw a7, t3, 2
-	sraiw t5, a6, 1
 	addw a6, t5, a7
 	addw t5, t1, t3
 	mulw t6, t6, t5
+	srliw a7, t6, 31
 	fadd.s f10, f10, f11
 	fcvt.s.w f11, a6
-	srliw a6, t6, 31
+	add a6, t6, a7
 	fdiv.s f13, f12, f11
-	add a7, t6, a6
+	addiw a7, t3, 3
+	sraiw t6, a6, 1
 	flw f12, 8(t4)
-	addiw a6, t3, 3
-	sraiw t6, a7, 1
-	addw a7, t6, a6
+	addw a6, t6, a7
 	addw t6, t2, t3
-	fcvt.s.w f11, a7
+	fcvt.s.w f11, a6
 	addiw t3, t3, 4
 	mulw t5, t5, t6
 	srliw a6, t5, 31
@@ -342,10 +343,10 @@ label13:
 	addw t3, a4, t0
 	mulw t1, t2, t3
 	srliw t4, t1, 31
-	add t3, t1, t4
-	sraiw t2, t3, 1
-	addw t1, a4, t2
+	add t2, t1, t4
+	sraiw t3, t2, 1
 	sh2add t2, t0, s4
+	addw t1, a4, t3
 	addiw t0, t0, 1
 	flw f12, 0(t2)
 	fcvt.s.w f11, t1
@@ -357,7 +358,7 @@ label13:
 	fsw f10, 0(a5)
 	mv a5, a4
 	blt a4, s0, label11
-	j label1057
+	j label1058
 .p2align 2
 label16:
 	addiw t0, a5, 2
@@ -379,22 +380,22 @@ label17:
 	fdiv.s f11, f12, f11
 	mulw t5, t5, t6
 	flw f12, 4(t4)
-	srliw a7, t5, 31
-	add a6, t5, a7
-	sraiw t5, a6, 1
-	addw a7, a4, t5
+	srliw a6, t5, 31
+	add a7, t5, a6
+	sraiw t5, a7, 1
+	addw a6, a4, t5
 	addw t5, t1, t3
 	mulw t6, t6, t5
 	fadd.s f10, f10, f11
-	fcvt.s.w f11, a7
-	srliw a7, t6, 31
+	fcvt.s.w f11, a6
+	srliw a6, t6, 31
 	fdiv.s f13, f12, f11
-	add a6, t6, a7
+	add a7, t6, a6
 	flw f12, 8(t4)
-	sraiw t6, a6, 1
-	addw a7, a4, t6
+	sraiw t6, a7, 1
+	addw a6, a4, t6
 	addw t6, t2, t3
-	fcvt.s.w f11, a7
+	fcvt.s.w f11, a6
 	addiw t3, t3, 4
 	mulw t5, t5, t6
 	srliw a6, t5, 31
@@ -547,7 +548,7 @@ label214:
 	fmv.w.x f10, zero
 	mv t3, zero
 	mv a5, zero
-	bge zero, s0, label1045
+	bge zero, s0, label1046
 .p2align 2
 label27:
 	addiw a4, a5, 1
@@ -566,7 +567,7 @@ label363:
 	mv t3, zero
 	mv a5, zero
 	blt zero, s0, label43
-	j label1049
+	j label1050
 .p2align 2
 label29:
 	addiw t0, a5, 2
@@ -576,11 +577,11 @@ label29:
 label30:
 	addw t6, a5, t3
 	addw t5, a4, t3
-	addiw a6, t3, 1
 	mulw t4, t6, t5
-	srliw t6, t4, 31
-	add a7, t4, t6
-	sraiw t4, a7, 1
+	srliw a6, t4, 31
+	add t6, t4, a6
+	addiw a6, t3, 1
+	sraiw t4, t6, 1
 	addw t6, t4, a6
 	sh2add t4, t3, a1
 	flw f12, 0(t4)
@@ -729,7 +730,7 @@ label52:
 	addiw a3, a3, 1
 	blt a3, a2, label5
 	j label72
-label1049:
+label1050:
 	addiw a3, a3, 1
 	blt a3, a2, label5
 	j label72
@@ -743,13 +744,13 @@ label44:
 	mv t3, zero
 	mv a5, zero
 	blt zero, s0, label59
-	j label1049
-label1047:
+	j label1050
+label1048:
 	fmv.w.x f10, zero
 	mv t3, zero
 	mv a5, zero
 	blt zero, s0, label59
-	j label1049
+	j label1050
 .p2align 2
 label293:
 	sh2add a5, a5, s1
@@ -760,14 +761,14 @@ label293:
 	mv t3, zero
 	mv a5, zero
 	blt zero, s0, label43
-	j label1047
+	j label1048
 .p2align 2
-label1057:
+label1058:
 	fmv.w.x f10, zero
 	mv t3, zero
 	mv a5, zero
 	blt zero, s0, label27
-	j label1047
+	j label1048
 label83:
 	sh2add a1, a1, s1
 	addiw a0, a0, 28
@@ -867,12 +868,12 @@ label208:
 	mv t3, zero
 	mv a5, zero
 	blt zero, s0, label27
-label1045:
+label1046:
 	fmv.w.x f10, zero
 	mv t3, zero
 	mv a5, zero
 	blt zero, s0, label43
-	j label1047
+	j label1048
 label869:
 	fmv.w.x f11, s3
 	j label91

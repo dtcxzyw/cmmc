@@ -4,6 +4,7 @@
 .p2align 2
 .globl t
 t:
-	li a1, -65535
+	lui a2, 1048560
+	addiw a1, a2, 1
 	addw a0, a0, a1
 	ret

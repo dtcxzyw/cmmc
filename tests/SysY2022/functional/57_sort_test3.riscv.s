@@ -267,21 +267,30 @@ label126:
 .globl main
 main:
 	addi sp, sp, -72
-	li a0, 12884901892
-	li a2, 9
-	li a1, 4294967296
+	li a2, 3
+	li a3, 2
+	slli a0, a2, 32
 	sd ra, 0(sp)
+	li a2, 9
+	addi a1, a0, 4
 	sd s0, 8(sp)
 	addi s0, sp, 32
 	sd s1, 16(sp)
 	sd s2, 24(sp)
-	sd a0, 32(sp)
-	li a0, 8589934601
+	sd a1, 32(sp)
+	slli a1, a3, 32
+	li a3, 5
+	addi a0, a1, 9
+	li a1, 1
 	sd a0, 40(sp)
-	li a0, 21474836486
-	sd a1, 48(sp)
-	li a1, 34359738375
-	sd a0, 56(sp)
+	slli a0, a1, 32
+	sd a0, 48(sp)
+	slli a0, a3, 32
+	li a3, 8
+	addi a1, a0, 6
+	slli a0, a3, 32
+	sd a1, 56(sp)
+	addi a1, a0, 7
 	sd a1, 64(sp)
 	mv a1, zero
 	mv a0, s0

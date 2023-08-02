@@ -5,9 +5,11 @@
 .globl main
 main:
 	addi sp, sp, -144
-	li a0, 8589934593
+	li a2, 2
 	sd ra, 0(sp)
+	slli a1, a2, 32
 	sd s1, 8(sp)
+	addi a0, a1, 1
 	addi s1, sp, 64
 	sd s6, 16(sp)
 	sd s0, 24(sp)

@@ -11,7 +11,8 @@ t:
 .globl t2
 t2:
 	lui a2, 1048544
-	li a3, -65537
+	lui a3, 1048560
 	or a1, a0, a2
-	and a0, a1, a3
+	addiw a2, a3, -1
+	and a0, a1, a2
 	ret

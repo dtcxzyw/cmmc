@@ -7,7 +7,7 @@ main:
 	addi sp, sp, -64
 	li a1, -1
 	sd ra, 0(sp)
-	add.uw a0, a1, zero
+	zext.w a0, a1
 	sd s2, 8(sp)
 	addi s2, sp, 56
 	sd s0, 16(sp)

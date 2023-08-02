@@ -4,17 +4,20 @@
 .p2align 2
 .globl test1
 test1:
-	li a1, -268435441
+	lui a2, 983040
+	addiw a1, a2, 15
 	addw a0, a0, a1
 	ret
 .p2align 2
 .globl test2
 test2:
-	li a0, 65533
+	lui a1, 16
+	addiw a0, a1, -3
 	ret
 .p2align 2
 .globl test3
 test3:
-	li a1, 65533
+	lui a2, 16
+	addiw a1, a2, -3
 	or a0, a0, a1
 	ret

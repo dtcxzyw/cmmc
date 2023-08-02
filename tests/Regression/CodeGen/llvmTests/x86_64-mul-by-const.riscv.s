@@ -4,6 +4,7 @@
 .p2align 2
 .globl f9188_mul365384439_shift27
 f9188_mul365384439_shift27:
-	li a1, 1577682821
+	lui a2, 385176
+	addiw a1, a2, 1925
 	divuw a0, a0, a1
 	ret

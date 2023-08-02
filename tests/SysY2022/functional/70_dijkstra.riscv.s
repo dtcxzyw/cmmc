@@ -40,13 +40,14 @@ main:
 	jal getint
 	mv s0, a0
 	jal getint
-	li s2, 65535
-pcrel289:
+pcrel291:
 	auipc a1, %pcrel_hi(e)
 	mv s6, a0
-	addi s3, a1, %pcrel_lo(pcrel289)
+	addi s3, a1, %pcrel_lo(pcrel291)
 	li a0, 1
+	lui a1, 16
 	mv s5, a0
+	addiw s2, a1, -1
 	blt s0, a0, label8
 .p2align 2
 label4:
@@ -56,10 +57,11 @@ label4:
 .p2align 2
 label5:
 	mv a3, zero
-	beq a0, a2, label253
-	li a3, 65535
+	beq a0, a2, label254
+	lui a4, 16
+	addiw a3, a4, -1
 .p2align 2
-label253:
+label254:
 	sh2add a4, a2, a1
 	addiw a2, a2, 1
 	sw a3, 0(a4)
@@ -113,7 +115,7 @@ label117:
 	bge s0, s5, label27
 	j label19
 .p2align 2
-label273:
+label275:
 	addiw a1, a1, 1
 	bge a0, a1, label117
 label32:
@@ -154,21 +156,21 @@ label27:
 	bgt a4, a5, label31
 	addiw a3, a3, 1
 	bge s0, a3, label27
-	j label271
+	j label273
 .p2align 2
 label31:
-	sh2add t1, a3, s4
-	lw t2, 0(t1)
-	sltiu t0, t2, 1
-	bne t0, zero, label255
+	sh2add t2, a3, s4
+	lw t1, 0(t2)
+	sltiu t0, t1, 1
+	bne t0, zero, label257
 	mv a5, a4
 .p2align 2
-label255:
+label257:
 	mv t1, a3
-	bne t0, zero, label257
+	bne t0, zero, label259
 	mv t1, a2
 .p2align 2
-label257:
+label259:
 	mv a4, a5
 	mv a2, t1
 	addiw a3, a3, 1
@@ -186,14 +188,14 @@ label23:
 	blt a4, s2, label24
 	addiw a3, a3, 1
 	bge s0, a3, label23
-	j label273
+	j label275
 .p2align 2
 label24:
-	sh2add t1, a3, s1
-	sh2add t0, a2, s1
-	lw a5, 0(t1)
-	lw t1, 0(t0)
-	addw a4, a4, t1
+	sh2add t0, a3, s1
+	sh2add t1, a2, s1
+	lw a5, 0(t0)
+	lw t0, 0(t1)
+	addw a4, a4, t0
 	ble a5, a4, label147
 	sh2add a5, a3, s1
 	sw a4, 0(a5)
@@ -216,7 +218,7 @@ label19:
 	bge s0, s5, label23
 	j label22
 .p2align 2
-label271:
+label273:
 	sh2add a4, a2, s4
 	mv a3, s5
 	sw s5, 0(a4)

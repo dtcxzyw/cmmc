@@ -13,12 +13,13 @@ dst:
 .p2align 2
 .globl imm32_cse
 imm32_cse:
-pcrel13:
-	auipc a0, %pcrel_hi(src)
-	li a2, 4099
-	lw a1, %pcrel_lo(pcrel13)(a0)
-	addw a0, a1, a2
 pcrel14:
-	auipc a1, %pcrel_hi(dst)
-	sw a0, %pcrel_lo(pcrel14)(a1)
+	auipc a1, %pcrel_hi(src)
+	lui a2, 1
+	lw a0, %pcrel_lo(pcrel14)(a1)
+	addiw a1, a2, 3
+pcrel15:
+	auipc a2, %pcrel_hi(dst)
+	addw a0, a0, a1
+	sw a0, %pcrel_lo(pcrel15)(a2)
 	ret

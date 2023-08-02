@@ -25,21 +25,26 @@ main:
 	mv s0, a0
 	li a0, 13
 	jal _sysy_starttime
+	lui a4, 352
 	addiw a1, s1, -1
-pcrel265:
+pcrel270:
 	auipc a0, %pcrel_hi(x)
-	li a4, 4294967297
+	li t4, 1
 	addiw t0, s1, -4
 	addiw a5, s1, -20
 	li t3, 16
-	li s2, 2400
+	li a3, -75
+	li a2, 75
 	mv t5, zero
 	li t2, 4
-	li a2, -4800
-	li s4, 1440000
-	addi s3, a0, %pcrel_lo(pcrel265)
-	sub a3, zero, s4
+	addiw s4, a4, -1792
+	addi s3, a0, %pcrel_lo(pcrel270)
+	slli t1, t4, 32
+	slli s2, a2, 5
 	li a0, 1
+	addi a4, t1, 1
+	slli a2, a3, 6
+	sub a3, zero, s4
 	mv t1, zero
 	mv t4, s3
 	bgt s1, zero, label36
@@ -53,7 +58,7 @@ label36:
 	bgt s1, zero, label7
 	j label6
 .p2align 2
-label242:
+label247:
 	addiw t5, t5, 1
 	mul t1, t5, s4
 	add t4, s3, t1
@@ -127,17 +132,17 @@ label22:
 	mv t3, a0
 .p2align 2
 label23:
-	sh2add s6, t3, t1
-	sh2add s7, t3, t0
-	lw a7, 0(s6)
-	lw s6, 0(s7)
-	sh2add s7, t3, a5
-	addw a7, a7, s6
-	lw s6, 0(s7)
-	sh2add s7, t3, a4
-	addw a7, a7, s6
-	lw s8, 0(s7)
-	addw s6, a7, s8
+	sh2add s7, t3, t1
+	sh2add s6, t3, t0
+	lw a7, 0(s7)
+	sh2add s8, t3, a4
+	lw s7, 0(s6)
+	sh2add s6, t3, a5
+	addw a7, a7, s7
+	lw s7, 0(s6)
+	addw a7, a7, s7
+	lw s7, 0(s8)
+	addw s6, a7, s7
 	sh2add a7, t3, t2
 	addiw t3, t3, 1
 	lw s7, -4(a7)
@@ -171,7 +176,7 @@ label8:
 	bgt s1, a6, label8
 	addiw t6, t6, 1
 	bgt s1, t6, label7
-	j label242
+	j label247
 .p2align 2
 label11:
 	ble t0, t3, label58
@@ -190,7 +195,7 @@ label12:
 	addiw a6, a6, 1
 	sw a0, 0(a7)
 	bgt s1, a6, label8
-	j label244
+	j label249
 .p2align 2
 label14:
 	sh2add a7, a6, t1
@@ -238,13 +243,13 @@ label58:
 	bgt s1, a6, label8
 	addiw t6, t6, 1
 	bgt s1, t6, label7
-	j label252
+	j label257
 .p2align 2
-label244:
+label249:
 	addiw t6, t6, 1
 	bgt s1, t6, label7
 .p2align 2
-label252:
+label257:
 	addiw t5, t5, 1
 	mul t1, t5, s4
 	add t4, s3, t1

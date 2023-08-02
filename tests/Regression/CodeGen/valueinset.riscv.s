@@ -43,10 +43,11 @@ cross_64_with_9:
 cross_32_with_5:
 	addiw a1, a0, -35
 	li a3, 1
-	li a5, 3841
+	lui a5, 1
 	sll a2, a3, a1
+	addiw a3, a5, -255
+	and a4, a2, a3
 	slti a3, a1, 0
-	and a4, a2, a5
 	sltiu a2, a4, 1
 	li a4, 46
 	or a1, a2, a3
@@ -58,10 +59,11 @@ cross_32_with_5:
 negative_5:
 	addiw a1, a0, 7
 	li a3, 1
-	li a5, 5201
+	lui a5, 1
 	sll a2, a3, a1
+	addiw a3, a5, 1105
+	and a4, a2, a3
 	slti a3, a1, 0
-	and a4, a2, a5
 	sltiu a2, a4, 1
 	li a4, 5
 	or a1, a2, a3

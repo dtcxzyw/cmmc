@@ -8,7 +8,7 @@ main:
 	sd ra, 0(sp)
 	sd s0, 8(sp)
 	sd s5, 16(sp)
-	addi s0, sp, 208
+	addi s0, sp, 144
 	sd s1, 24(sp)
 	sd s6, 32(sp)
 	sd s2, 40(sp)
@@ -27,87 +27,87 @@ main:
 	sd a0, 272(sp)
 	jal getint
 	mv t4, a0
-	sd a0, 200(sp)
+	sd a0, 264(sp)
 	jal getint
 	mv t5, a0
 	sd a0, 104(sp)
 	jal getint
 	mv t6, a0
-	sd a0, 112(sp)
+	sd a0, 136(sp)
 	jal getint
-	sd a0, 120(sp)
+	sd a0, 112(sp)
 	mv a6, a0
 	jal getint
-	sd a0, 128(sp)
+	sd a0, 120(sp)
 	mv a7, a0
 	jal getint
-	sd a0, 136(sp)
+	sd a0, 128(sp)
 	mv s1, a0
 	jal getint
-	sd a0, 144(sp)
+	sd a0, 208(sp)
 	mv s1, a0
 	jal getint
-	sd a0, 192(sp)
+	sd a0, 216(sp)
 	mv s2, a0
 	jal getint
-	sd a0, 152(sp)
+	sd a0, 224(sp)
 	mv s3, a0
 	jal getint
-	sd a0, 160(sp)
+	sd a0, 232(sp)
 	mv s4, a0
 	jal getint
-	sd a0, 168(sp)
+	sd a0, 256(sp)
 	mv s5, a0
 	jal getint
-	sd a0, 176(sp)
+	sd a0, 240(sp)
 	mv s6, a0
 	jal getint
-	sd a0, 184(sp)
+	sd a0, 248(sp)
 	mv s7, a0
 	jal getint
-	li a3, 15
-	mv s10, a0
 	sd a0, 280(sp)
+	mv s10, a0
+	li a3, 15
 	ld t3, 272(sp)
 	ld t2, 288(sp)
 	slli a0, t3, 32
 	add.uw a1, t2, a0
-	sd a1, 208(sp)
+	sd a1, 144(sp)
 	ld t5, 104(sp)
-	ld t4, 200(sp)
+	ld t4, 264(sp)
 	slli a0, t5, 32
 	add.uw a1, t4, a0
-	sd a1, 216(sp)
-	ld a6, 120(sp)
-	ld t6, 112(sp)
+	sd a1, 152(sp)
+	ld a6, 112(sp)
+	ld t6, 136(sp)
 	slli a0, a6, 32
 	add.uw a1, t6, a0
-	sd a1, 224(sp)
-	ld s1, 136(sp)
-	ld a7, 128(sp)
+	sd a1, 160(sp)
+	ld s1, 128(sp)
+	ld a7, 120(sp)
 	slli a0, s1, 32
 	add.uw a1, a7, a0
-	sd a1, 232(sp)
-	ld s2, 192(sp)
-	ld s1, 144(sp)
+	sd a1, 168(sp)
+	ld s2, 216(sp)
+	ld s1, 208(sp)
 	slli a0, s2, 32
 	add.uw a1, s1, a0
-	sd a1, 240(sp)
-	ld s4, 160(sp)
-	ld s3, 152(sp)
+	sd a1, 176(sp)
+	ld s4, 232(sp)
+	ld s3, 224(sp)
 	slli a0, s4, 32
 	add.uw a1, s3, a0
-	sd a1, 248(sp)
-	ld s6, 176(sp)
-	ld s5, 168(sp)
+	sd a1, 184(sp)
+	ld s6, 240(sp)
+	ld s5, 256(sp)
 	slli a0, s6, 32
 	add.uw a1, s5, a0
 	slli a0, s10, 32
-	sd a1, 256(sp)
-	ld s7, 184(sp)
+	sd a1, 192(sp)
+	ld s7, 248(sp)
 	add.uw a1, s7, a0
 	mv a0, zero
-	sd a1, 264(sp)
+	sd a1, 200(sp)
 	li a1, 16
 	bge zero, a3, label10
 .p2align 2
@@ -124,7 +124,7 @@ label7:
 	blt a5, t0, label8
 	addiw a2, a2, 1
 	blt a2, a1, label7
-	j label247
+	j label250
 .p2align 2
 label8:
 	sh2add t1, a0, s0
@@ -136,22 +136,22 @@ label8:
 	mv a0, a4
 	blt a4, a3, label4
 label10:
-	lw s9, 208(sp)
-	lw s8, 212(sp)
-	lw a0, 216(sp)
-	lw s11, 220(sp)
-	lw a1, 224(sp)
-	lw a3, 228(sp)
-	lw a4, 232(sp)
-	lw a5, 236(sp)
-	lw a2, 240(sp)
-	lw t0, 244(sp)
-	lw t1, 248(sp)
-	lw t6, 252(sp)
-	lw t5, 256(sp)
-	lw t4, 260(sp)
-	lw t3, 264(sp)
-	lw t2, 268(sp)
+	lw s9, 144(sp)
+	lw s8, 148(sp)
+	lw a0, 152(sp)
+	lw s11, 156(sp)
+	lw a1, 160(sp)
+	lw a3, 164(sp)
+	lw a4, 168(sp)
+	lw a5, 172(sp)
+	lw a2, 176(sp)
+	lw t0, 180(sp)
+	lw t1, 184(sp)
+	lw t6, 188(sp)
+	lw t5, 192(sp)
+	lw t4, 196(sp)
+	lw t3, 200(sp)
+	lw t2, 204(sp)
 	beq s9, zero, label11
 	sd s9, 296(sp)
 	sd s11, 304(sp)
@@ -174,29 +174,31 @@ label10:
 	ld t2, 288(sp)
 	mv a5, t4
 	ld t3, 272(sp)
-	ld t4, 200(sp)
+	ld t4, 264(sp)
 	ld t5, 104(sp)
-	ld t6, 112(sp)
-	ld a6, 120(sp)
-	ld a7, 128(sp)
-	ld s1, 136(sp)
+	ld t6, 136(sp)
+	ld a6, 112(sp)
+	ld a7, 120(sp)
+	ld s1, 128(sp)
 	mv s0, s1
-	ld s1, 144(sp)
-	ld s2, 192(sp)
-	ld s3, 152(sp)
-	ld s4, 160(sp)
-	ld s5, 168(sp)
-	ld s6, 176(sp)
-	ld s7, 184(sp)
+	ld s1, 208(sp)
+	ld s2, 216(sp)
+	ld s3, 224(sp)
+	ld s4, 232(sp)
+	ld s5, 256(sp)
+	ld s6, 240(sp)
+	ld s7, 248(sp)
 	ld s10, 280(sp)
 label13:
 	addw s8, s8, s9
-	li s11, 288737297
+	lui s9, 70493
+	addiw s11, s9, -2031
 	mul s9, s8, s11
 	srai s11, s9, 58
 	srli s9, s9, 63
 	add s9, s9, s11
-	li s11, 998244353
+	lui s11, 243712
+	addiw s11, s11, 1
 	mulw s11, s9, s11
 	ld s9, 296(sp)
 	subw s8, s8, s11
@@ -241,9 +243,10 @@ label13:
 	mv s10, zero
 	j label13
 label11:
-	slliw a1, s8, 5
-	li a2, 281648
-	addw a0, a1, a2
+	slliw a0, s8, 5
+	lui a2, 69
+	addiw a1, a2, -976
+	addw a0, a0, a1
 	jal putint
 	li a0, 10
 	jal putch
@@ -264,7 +267,7 @@ label11:
 	addi sp, sp, 344
 	ret
 .p2align 2
-label247:
+label250:
 	mv a0, a4
 	blt a4, a3, label4
 	j label10

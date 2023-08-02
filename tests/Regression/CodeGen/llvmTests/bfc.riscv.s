@@ -4,7 +4,8 @@
 .p2align 2
 .globl f1
 f1:
-	li a1, -16777201
+	lui a2, 1044480
+	addiw a1, a2, 15
 	and a0, a0, a1
 	ret
 .p2align 2
@@ -16,6 +17,7 @@ f2:
 .p2align 2
 .globl f3
 f3:
-	li a1, 4095
+	lui a2, 1
+	addiw a1, a2, -1
 	and a0, a0, a1
 	ret

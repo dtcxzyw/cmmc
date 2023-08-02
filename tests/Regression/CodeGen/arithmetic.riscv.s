@@ -118,27 +118,30 @@ div4:
 .p2align 2
 .globl div3
 div3:
-	li a3, 1431655766
-	mul a1, a0, a3
-	srli a3, a1, 63
-	srli a2, a1, 32
-	add a0, a3, a2
+	lui a1, 349525
+	addiw a2, a1, 1366
+	mul a0, a0, a2
+	srli a2, a0, 63
+	srli a1, a0, 32
+	add a0, a2, a1
 	ret
 .p2align 2
 .globl div11
 div11:
-	li a3, 780903145
-	mul a1, a0, a3
-	srli a3, a1, 63
-	srai a2, a1, 33
-	add a0, a3, a2
+	lui a1, 190650
+	addiw a2, a1, 745
+	mul a0, a0, a2
+	srli a2, a0, 63
+	srai a1, a0, 33
+	add a0, a2, a1
 	ret
 .p2align 2
 .globl div30
 div30:
-	li a3, -2004318071
-	mul a1, a0, a3
-	srli a2, a1, 32
+	lui a2, 559241
+	addiw a1, a2, -1911
+	mul a3, a0, a1
+	srli a2, a3, 32
 	add a0, a2, a0
 	srliw a2, a0, 31
 	sraiw a1, a0, 4
@@ -147,9 +150,10 @@ div30:
 .p2align 2
 .globl divNeg30
 divNeg30:
-	li a3, 2004318071
-	mul a1, a0, a3
-	srli a2, a1, 32
+	lui a2, 489335
+	addiw a1, a2, 1911
+	mul a3, a0, a1
+	srli a2, a3, 32
 	sub a0, a2, a0
 	srliw a2, a0, 31
 	sraiw a1, a0, 4
@@ -173,7 +177,8 @@ div_reg:
 .p2align 2
 .globl mod_imm
 mod_imm:
-	li a3, 1431655766
+	lui a2, 349525
+	addiw a3, a2, 1366
 	mul a1, a0, a3
 	srli a3, a1, 63
 	srli a2, a1, 32
@@ -197,7 +202,8 @@ mod2:
 .p2align 2
 .globl mod30
 mod30:
-	li a1, -2004318071
+	lui a3, 559241
+	addiw a1, a3, -1911
 	mul a2, a0, a1
 	srli a3, a2, 32
 	add a1, a3, a0
@@ -212,26 +218,30 @@ mod30:
 .p2align 2
 .globl mod_large1
 mod_large1:
-	li a3, 1152921497
-	li a4, 1000000007
+	lui a2, 281475
+	lui a4, 244141
+	addiw a3, a2, -103
 	mul a1, a0, a3
 	srli a3, a1, 63
 	srai a2, a1, 60
 	add a1, a3, a2
-	mulw a2, a1, a4
-	subw a0, a0, a2
+	addiw a2, a4, -1529
+	mulw a1, a1, a2
+	subw a0, a0, a1
 	ret
 .p2align 2
 .globl mod_large2
 mod_large2:
-	li a3, 1876499845
-	li a4, 300000
+	lui a2, 458130
+	lui a4, 73
+	addiw a3, a2, -635
 	mul a1, a0, a3
 	srli a3, a1, 63
 	srai a2, a1, 49
 	add a1, a3, a2
-	mulw a2, a1, a4
-	subw a0, a0, a2
+	addiw a2, a4, 992
+	mulw a1, a1, a2
+	subw a0, a0, a1
 	ret
 .p2align 2
 .globl shl_imm
@@ -348,7 +358,8 @@ large_imm0:
 .p2align 2
 .globl large_imm1
 large_imm1:
-	li a0, 19260817
+	lui a1, 4702
+	addiw a0, a1, 1425
 	ret
 .p2align 2
 .globl fp_zero
@@ -364,9 +375,9 @@ fp_imm0:
 .p2align 2
 .globl fp_imm1
 fp_imm1:
-pcrel268:
+pcrel279:
 	auipc a1, %pcrel_hi(__cmmc_fp_constant_pool)
-	addi a0, a1, %pcrel_lo(pcrel268)
+	addi a0, a1, %pcrel_lo(pcrel279)
 	flw f10, 0(a0)
 	ret
 .p2align 2
@@ -446,7 +457,8 @@ mul_with_constant_400:
 .p2align 2
 .globl mul_with_constant_1000000
 mul_with_constant_1000000:
-	li a1, 1000000
+	lui a2, 244
+	addiw a1, a2, 576
 	mulw a0, a0, a1
 	ret
 .p2align 2
@@ -511,19 +523,22 @@ mul_with_constant_17:
 .p2align 2
 .globl mul_with_constant_128875
 mul_with_constant_128875:
-	li a1, 128875
+	lui a2, 31
+	addiw a1, a2, 1899
 	mulw a0, a0, a1
 	ret
 .p2align 2
 .globl mul_with_constant_19980130
 mul_with_constant_19980130:
-	li a1, 19980130
+	lui a2, 4878
+	addiw a1, a2, -158
 	mulw a0, a0, a1
 	ret
 .p2align 2
 .globl mul_with_constant_19971231
 mul_with_constant_19971231:
-	li a1, 19971231
+	lui a2, 4876
+	addiw a1, a2, -865
 	mulw a0, a0, a1
 	ret
 .p2align 2
@@ -535,7 +550,8 @@ mul_with_constant_8193:
 .p2align 2
 .globl mul_with_constant_270369
 mul_with_constant_270369:
-	li a1, 270369
+	lui a2, 66
+	addiw a1, a2, 33
 	mulw a0, a0, a1
 	ret
 .p2align 2
@@ -570,7 +586,8 @@ mul_with_constant_300:
 .p2align 2
 .globl mul_with_constant_10000
 mul_with_constant_10000:
-	li a1, 10000
+	li a2, 625
+	slli a1, a2, 4
 	mulw a0, a0, a1
 	ret
 .p2align 2

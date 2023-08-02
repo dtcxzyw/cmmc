@@ -160,32 +160,47 @@ label129:
 .p2align 2
 .globl fused_store
 fused_store:
-pcrel250:
+pcrel265:
 	auipc a1, %pcrel_hi(arr)
-	li a2, 4294967296
-	addi a0, a1, %pcrel_lo(pcrel250)
-	sd a2, %pcrel_lo(pcrel250)(a1)
-	li a2, 21474836484
-	li a1, 12884901890
-	sd a1, 8(a0)
-	li a1, 30064771078
+	li a3, 1
+	addi a0, a1, %pcrel_lo(pcrel265)
+	slli a2, a3, 32
+	li a3, 3
+	sd a2, %pcrel_lo(pcrel265)(a1)
+	slli a1, a3, 32
+	li a3, 5
+	addi a2, a1, 2
+	slli a1, a3, 32
+	sd a2, 8(a0)
+	li a3, 7
+	addi a2, a1, 4
 	sd a2, 16(a0)
-	li a2, 38654705672
+	slli a2, a3, 32
+	li a3, 9
+	addi a1, a2, 6
 	sd a1, 24(a0)
-	li a1, 47244640266
+	slli a1, a3, 32
+	li a3, 11
+	addi a2, a1, 8
 	sd a2, 32(a0)
-	li a2, 55834574860
+	slli a2, a3, 32
+	li a3, 13
+	addi a1, a2, 10
 	sd a1, 40(a0)
-	li a1, 64424509454
+	slli a1, a3, 32
+	li a3, 15
+	addi a2, a1, 12
+	slli a1, a3, 32
 	sd a2, 48(a0)
-	sd a1, 56(a0)
+	addi a2, a1, 14
+	sd a2, 56(a0)
 	ret
 .p2align 2
 .globl merge_store
 merge_store:
-pcrel261:
+pcrel276:
 	auipc a2, %pcrel_hi(x)
 	slli a3, a1, 32
 	add.uw a0, a0, a3
-	sd a0, %pcrel_lo(pcrel261)(a2)
+	sd a0, %pcrel_lo(pcrel276)(a2)
 	ret

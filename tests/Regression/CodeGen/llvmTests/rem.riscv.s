@@ -4,7 +4,8 @@
 .p2align 2
 .globl test1
 test1:
-	li a1, -2139062143
+	lui a3, 526344
+	addiw a1, a3, 129
 	mul a2, a0, a1
 	srli a3, a2, 32
 	add a1, a3, a0

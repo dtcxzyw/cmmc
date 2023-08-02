@@ -31,14 +31,15 @@ main:
 	li s8, 16
 	li s7, 4
 	li s9, 50
-	li s4, 8040
 	mv s2, zero
 	addiw s5, a0, -20
 	addiw s6, a0, -4
 	mv s0, a0
-pcrel360:
+pcrel361:
 	auipc a0, %pcrel_hi(A)
-	addi s3, a0, %pcrel_lo(pcrel360)
+	addi s3, a0, %pcrel_lo(pcrel361)
+	li a0, 1005
+	slli s4, a0, 3
 	ble s0, zero, label8
 .p2align 2
 label4:
@@ -64,9 +65,9 @@ label9:
 	li a0, 59
 	jal _sysy_starttime
 	mv a1, zero
-pcrel361:
+pcrel362:
 	auipc a2, %pcrel_hi(C)
-	addi s2, a2, %pcrel_lo(pcrel361)
+	addi s2, a2, %pcrel_lo(pcrel362)
 	j label10
 .p2align 2
 label47:
@@ -89,12 +90,12 @@ label33:
 	sh2add a5, a3, a0
 	lw a4, 0(a5)
 	beq a4, zero, label35
-	sh2add t1, a3, s2
+	sh2add t0, a3, s2
 	sh2add a5, a2, s1
-	lw t0, 0(a5)
-	lw t2, 0(t1)
-	mulw t1, a4, t2
-	addw a4, t0, t1
+	lw t1, 0(a5)
+	lw t2, 0(t0)
+	mulw t0, a4, t2
+	addw a4, t1, t0
 	sw a4, 0(a5)
 .p2align 2
 label35:
@@ -128,7 +129,7 @@ label202:
 	addiw a0, a0, 1
 	sw zero, 0(a2)
 	bgt s0, a0, label45
-	j label334
+	j label335
 .p2align 2
 label43:
 	sh2add a2, a0, s2
@@ -152,7 +153,7 @@ label43:
 	sh2add a2, a0, s2
 	addiw a0, a0, 1
 	sw zero, 0(a2)
-	ble s0, a0, label342
+	ble s0, a0, label343
 .p2align 2
 label45:
 	sh2add a2, a0, s2
@@ -167,7 +168,7 @@ label231:
 	bgt s0, zero, label86
 	j label85
 .p2align 2
-label324:
+label325:
 	mv a2, zero
 	j label29
 .p2align 2
@@ -194,7 +195,7 @@ label18:
 	mulw a3, a2, s4
 	add a0, s3, a3
 	bgt s0, a2, label86
-	ble s0, zero, label324
+	ble s0, zero, label325
 .p2align 2
 label21:
 	ble s0, s7, label112
@@ -228,7 +229,7 @@ label27:
 	addiw a0, a0, 1
 	sw zero, 0(a2)
 	bgt s0, a0, label27
-	j label324
+	j label325
 .p2align 2
 label29:
 	mulw a3, a2, s4
@@ -265,7 +266,7 @@ label79:
 	bgt s0, zero, label86
 label85:
 	bgt s0, zero, label21
-	j label324
+	j label325
 .p2align 2
 label89:
 	addiw a2, a2, 1
@@ -293,7 +294,7 @@ label112:
 	li a0, 1
 	sw zero, 0(s1)
 	bgt s0, a0, label27
-	j label324
+	j label325
 label192:
 	mv a0, zero
 	mv a2, s2
@@ -315,13 +316,13 @@ label115:
 	bgt s6, a0, label25
 	j label27
 .p2align 2
-label334:
+label335:
 	mv a2, zero
 	mv a3, zero
 	mv a0, s3
 	bgt s0, zero, label86
 	j label85
-label342:
+label343:
 	mv a2, zero
 	mv a3, zero
 	mv a0, s3

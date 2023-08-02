@@ -47,8 +47,11 @@ label41:
 .p2align 2
 .globl t6
 t6:
-	bne a0, zero, label49
-	li a1, -978945
+	beq a0, zero, label48
 label49:
 	mv a0, a1
 	ret
+label48:
+	lui a0, 1048337
+	addiw a1, a0, -1
+	j label49

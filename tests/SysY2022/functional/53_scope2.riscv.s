@@ -22,6 +22,7 @@ label19:
 	mv a0, a2
 	jal putint
 	ld ra, 0(sp)
-	li a0, 3390
+	li a1, 1695
 	addi sp, sp, 8
+	slli a0, a1, 1
 	ret

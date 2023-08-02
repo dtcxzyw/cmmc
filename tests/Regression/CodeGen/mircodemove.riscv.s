@@ -4,7 +4,8 @@
 .p2align 2
 .globl test
 test:
-	li a2, 1431655766
+	lui a3, 349525
+	addiw a2, a3, 1366
 	ble a1, zero, label7
 	addiw a4, a1, -4
 	li a5, 4

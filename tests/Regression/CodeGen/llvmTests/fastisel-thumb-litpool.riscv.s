@@ -4,5 +4,6 @@
 .p2align 2
 .globl test_thumb_ldrlit
 test_thumb_ldrlit:
-	li a0, 12345678
+	lui a1, 3014
+	addiw a0, a1, 334
 	ret

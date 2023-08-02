@@ -18,18 +18,20 @@ icmp_eq_constant:
 .p2align 2
 .globl icmp_eq_constant_2048
 icmp_eq_constant_2048:
-	li a3, 2048
-	xor a2, a0, a3
-	sltiu a1, a2, 1
-	zext.w a0, a1
+	li a2, 1
+	slli a1, a2, 11
+	xor a3, a0, a1
+	sltiu a2, a3, 1
+	zext.w a0, a2
 	ret
 .p2align 2
 .globl icmp_eq_constant_2049
 icmp_eq_constant_2049:
-	li a3, 2049
-	xor a2, a0, a3
-	sltiu a1, a2, 1
-	zext.w a0, a1
+	lui a2, 1
+	addiw a1, a2, -2047
+	xor a3, a0, a1
+	sltiu a2, a3, 1
+	zext.w a0, a2
 	ret
 .p2align 2
 .globl icmp_eq_constant_neg_2047
@@ -68,18 +70,20 @@ icmp_ne_constant:
 .p2align 2
 .globl icmp_ne_constant_2048
 icmp_ne_constant_2048:
-	li a3, 2048
-	xor a2, a0, a3
-	sltu a1, zero, a2
-	zext.w a0, a1
+	li a2, 1
+	slli a1, a2, 11
+	xor a3, a0, a1
+	sltu a2, zero, a3
+	zext.w a0, a2
 	ret
 .p2align 2
 .globl icmp_ne_constant_2049
 icmp_ne_constant_2049:
-	li a3, 2049
-	xor a2, a0, a3
-	sltu a1, zero, a2
-	zext.w a0, a1
+	lui a2, 1
+	addiw a1, a2, -2047
+	xor a3, a0, a1
+	sltu a2, zero, a3
+	zext.w a0, a2
 	ret
 .p2align 2
 .globl icmp_ne_constant_neg_2047
@@ -173,14 +177,16 @@ icmp_sgt_constant_2047:
 .p2align 2
 .globl icmp_sgt_constant_neg_2049
 icmp_sgt_constant_neg_2049:
-	li a2, -2049
+	lui a3, 1048575
+	addiw a2, a3, 2047
 	slt a1, a2, a0
 	zext.w a0, a1
 	ret
 .p2align 2
 .globl icmp_sgt_constant_neg_2050
 icmp_sgt_constant_neg_2050:
-	li a2, -2050
+	li a3, -1025
+	slli a2, a3, 1
 	slt a1, a2, a0
 	zext.w a0, a1
 	ret
@@ -206,7 +212,8 @@ icmp_sle_constant_2046:
 .p2align 2
 .globl icmp_sle_constant_2047
 icmp_sle_constant_2047:
-	li a2, 2048
+	li a3, 1
+	slli a2, a3, 11
 	slt a1, a0, a2
 	zext.w a0, a1
 	ret
@@ -219,7 +226,8 @@ icmp_sle_constant_neg_2049:
 .p2align 2
 .globl icmp_sle_constant_neg_2050
 icmp_sle_constant_neg_2050:
-	li a2, -2049
+	lui a3, 1048575
+	addiw a2, a3, 2047
 	slt a1, a0, a2
 	zext.w a0, a1
 	ret
@@ -244,7 +252,8 @@ icmp_slt_constant_2047:
 .p2align 2
 .globl icmp_slt_constant_2048
 icmp_slt_constant_2048:
-	li a2, 2048
+	li a3, 1
+	slli a2, a3, 11
 	slt a1, a0, a2
 	zext.w a0, a1
 	ret
@@ -257,7 +266,8 @@ icmp_slt_constant_neg_2048:
 .p2align 2
 .globl icmp_slt_constant_neg_2049
 icmp_slt_constant_neg_2049:
-	li a2, -2049
+	lui a3, 1048575
+	addiw a2, a3, 2047
 	slt a1, a0, a2
 	zext.w a0, a1
 	ret
@@ -291,14 +301,16 @@ icmp_uge_constant_2048:
 .p2align 2
 .globl icmp_uge_constant_neg_2048
 icmp_uge_constant_neg_2048:
-	li a2, -2049
+	lui a3, 1048575
+	addiw a2, a3, 2047
 	sltu a1, a2, a0
 	zext.w a0, a1
 	ret
 .p2align 2
 .globl icmp_uge_constant_neg_2049
 icmp_uge_constant_neg_2049:
-	li a2, -2050
+	li a3, -1025
+	slli a2, a3, 1
 	sltu a1, a2, a0
 	zext.w a0, a1
 	ret
@@ -330,14 +342,16 @@ icmp_ugt_constant_2047:
 .p2align 2
 .globl icmp_ugt_constant_neg_2049
 icmp_ugt_constant_neg_2049:
-	li a2, -2049
+	lui a3, 1048575
+	addiw a2, a3, 2047
 	sltu a1, a2, a0
 	zext.w a0, a1
 	ret
 .p2align 2
 .globl icmp_ugt_constant_neg_2050
 icmp_ugt_constant_neg_2050:
-	li a2, -2050
+	li a3, -1025
+	slli a2, a3, 1
 	sltu a1, a2, a0
 	zext.w a0, a1
 	ret
@@ -363,7 +377,8 @@ icmp_ule_constant_2046:
 .p2align 2
 .globl icmp_ule_constant_2047
 icmp_ule_constant_2047:
-	li a2, 2048
+	li a3, 1
+	slli a2, a3, 11
 	sltu a1, a0, a2
 	zext.w a0, a1
 	ret
@@ -376,7 +391,8 @@ icmp_ule_constant_neg_2049:
 .p2align 2
 .globl icmp_ule_constant_neg_2050
 icmp_ule_constant_neg_2050:
-	li a2, -2049
+	lui a3, 1048575
+	addiw a2, a3, 2047
 	sltu a1, a0, a2
 	zext.w a0, a1
 	ret
@@ -401,7 +417,8 @@ icmp_ult_constant_2047:
 .p2align 2
 .globl icmp_ult_constant_2048
 icmp_ult_constant_2048:
-	li a2, 2048
+	li a3, 1
+	slli a2, a3, 11
 	sltu a1, a0, a2
 	zext.w a0, a1
 	ret
@@ -414,7 +431,8 @@ icmp_ult_constant_neg_2048:
 .p2align 2
 .globl icmp_ult_constant_neg_2049
 icmp_ult_constant_neg_2049:
-	li a2, -2049
+	lui a3, 1048575
+	addiw a2, a3, 2047
 	sltu a1, a0, a2
 	zext.w a0, a1
 	ret

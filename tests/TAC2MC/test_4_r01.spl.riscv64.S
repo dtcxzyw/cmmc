@@ -23,18 +23,19 @@ write:
     ret
 hanoi:
 	addi sp, sp, -64
+	li a4, 625
 	sd ra, 0(sp)
 	sd s3, 8(sp)
 	mv s3, a3
 	sd s5, 16(sp)
-	li s5, 10000
+	slli s5, a4, 4
 	sd s0, 24(sp)
-	sd s2, 32(sp)
-	sd s6, 40(sp)
 	mulw a3, a1, s5
+	sd s2, 32(sp)
+	addw s2, s3, a3
+	sd s6, 40(sp)
 	li s6, 1
 	sd s1, 48(sp)
-	addw s2, s3, a3
 	sd s4, 56(sp)
 	bne a0, s6, label16
 	mv a0, s2

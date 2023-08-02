@@ -165,14 +165,15 @@ fused_div_rem:
 .p2align 2
 .globl fused_div_rem_constant
 fused_div_rem_constant:
-	li a3, 1431655766
+	lui a2, 349525
+	addiw a3, a2, 1366
 	mul a1, a0, a3
 	srli a3, a1, 63
 	srli a2, a1, 32
 	add a1, a3, a2
-	sh1add a4, a1, a1
-	subw a2, a0, a4
-	addw a0, a1, a2
+	sh1add a2, a1, a1
+	subw a3, a0, a2
+	addw a0, a1, a3
 	ret
 .p2align 2
 .globl fused_mvn_and

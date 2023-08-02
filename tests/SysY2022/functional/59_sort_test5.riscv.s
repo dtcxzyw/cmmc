@@ -6,24 +6,33 @@
 main:
 	addi sp, sp, -72
 	li a1, 4
-	li a0, 12884901892
-	li a2, 9
-	li a3, 8589934601
-	li a5, 21474836486
-	li a4, 8
+	li a3, 3
+	li a4, 2
+	li a5, 5
+	li t0, 8
 	sd ra, 0(sp)
+	slli a2, a3, 32
 	sd s0, 8(sp)
+	addi a0, a2, 4
 	addi s0, sp, 32
+	li a2, 9
 	sd s1, 16(sp)
 	li s1, 10
 	sd s2, 24(sp)
 	sd a0, 32(sp)
+	slli a0, a4, 32
+	li a4, 1
+	addi a3, a0, 9
 	li a0, 1
 	sd a3, 40(sp)
-	li a3, 4294967296
+	slli a3, a4, 32
+	slli a4, a5, 32
 	sd a3, 48(sp)
-	li a3, 34359738375
-	sd a5, 56(sp)
+	slli a5, t0, 32
+	addi a3, a4, 6
+	li a4, 8
+	sd a3, 56(sp)
+	addi a3, a5, 7
 	sd a3, 64(sp)
 	addiw a3, a4, -2
 	addiw a5, a4, 1
