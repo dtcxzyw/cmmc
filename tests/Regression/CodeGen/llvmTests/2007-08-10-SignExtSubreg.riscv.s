@@ -9,12 +9,11 @@ X:
 .p2align 2
 .globl _Z3fooi
 _Z3fooi:
-	andi a1, a0, 255
-	li a3, 4294967295
-	sext.b a2, a1
-	and a1, a2, a3
-pcrel12:
+	andi a2, a0, 255
+	sext.b a3, a2
+pcrel11:
 	auipc a2, %pcrel_hi(X)
-	sw a0, %pcrel_lo(pcrel12)(a2)
+	zext.w a1, a3
+	sw a0, %pcrel_lo(pcrel11)(a2)
 	mv a0, a1
 	ret

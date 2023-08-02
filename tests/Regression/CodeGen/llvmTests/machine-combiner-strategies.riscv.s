@@ -4,14 +4,13 @@
 .p2align 2
 .globl test_local_strategy
 test_local_strategy:
-	divw a1, a0, a1
+	divw a0, a0, a1
 	addw a3, a3, a4
-	li a0, 4294967295
-	and t0, a1, a0
+	zext.w t0, a0
 	subw a1, t0, a2
 	addw a2, a5, a3
-	and a0, a1, a0
-	bne a1, zero, label23
+	zext.w a0, a1
+	bne a1, zero, label21
 	addw a0, a0, a2
-label23:
+label21:
 	ret

@@ -6,9 +6,8 @@
 PR28968:
 	li a2, 1
 	li a1, 1
-	beq a0, a2, label10
+	beq a0, a2, label9
 	li a1, -1
-label10:
-	li a2, 4294967295
-	and a0, a1, a2
+label9:
+	zext.w a0, a1
 	ret

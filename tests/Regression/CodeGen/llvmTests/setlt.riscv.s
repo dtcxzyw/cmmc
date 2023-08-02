@@ -33,16 +33,15 @@ r3:
 .p2align 2
 .globl test
 test:
-pcrel22:
+pcrel21:
 	auipc a1, %pcrel_hi(j)
-pcrel23:
+pcrel22:
 	auipc a3, %pcrel_hi(k)
-	lw a0, %pcrel_lo(pcrel22)(a1)
-	lw a2, %pcrel_lo(pcrel23)(a3)
-	li a3, 4294967295
-	slt a1, a0, a2
-	and a0, a1, a3
-pcrel24:
+	lw a0, %pcrel_lo(pcrel21)(a1)
+	lw a1, %pcrel_lo(pcrel22)(a3)
+	slt a2, a0, a1
+pcrel23:
 	auipc a1, %pcrel_hi(r1)
-	sw a0, %pcrel_lo(pcrel24)(a1)
+	zext.w a0, a2
+	sw a0, %pcrel_lo(pcrel23)(a1)
 	ret

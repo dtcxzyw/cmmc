@@ -6,14 +6,15 @@
 main:
 	addi sp, sp, -88
 	mv t2, zero
+	mv t1, zero
 	li a1, 20
 	li a3, 2
 	li a0, 1
 	li a4, 3
 	li a5, 4
 	li t0, 5
-	sd ra, 0(sp)
 	addi a2, sp, 8
+	sd ra, 0(sp)
 	sd zero, 8(sp)
 	sd zero, 16(sp)
 	sd zero, 24(sp)
@@ -24,7 +25,6 @@ main:
 	sd zero, 64(sp)
 	sd zero, 72(sp)
 	sd zero, 80(sp)
-	mv t1, zero
 label2:
 	blt t1, a1, label5
 	j label202
@@ -32,7 +32,7 @@ label2:
 label234:
 	sw a0, 20(sp)
 	lw t4, 16(sp)
-	beq t4, zero, label925
+	beq t4, zero, label945
 	addiw t3, t2, 5
 	bge t1, t0, label19
 label247:
@@ -102,7 +102,7 @@ label14:
 label69:
 	blt t1, a1, label72
 	j label430
-label916:
+label936:
 	sw zero, 24(sp)
 	lw t4, 20(sp)
 	beq t4, zero, label89
@@ -195,7 +195,7 @@ label72:
 	mv t4, zero
 	addiw t3, t2, 4
 	blt t1, a3, label445
-	j label945
+	j label965
 .p2align 2
 label436:
 	mv t4, a0
@@ -204,7 +204,7 @@ label436:
 .p2align 2
 label445:
 	mv t4, a0
-	beq a0, zero, label911
+	beq a0, zero, label931
 .p2align 2
 label451:
 	mv t2, t3
@@ -235,7 +235,7 @@ label177:
 	mv a1, a4
 	j label148
 .p2align 2
-label945:
+label965:
 	sw zero, 12(sp)
 	lw t4, 8(sp)
 	bne t4, zero, label451
@@ -246,7 +246,7 @@ label945:
 	bne t4, zero, label463
 	addiw t4, t2, 8
 	blt t1, a5, label468
-	j label914
+	j label934
 .p2align 2
 label439:
 	addiw t3, t2, 4
@@ -261,9 +261,9 @@ label439:
 	bne t4, zero, label463
 	addiw t4, t2, 8
 	blt t1, a5, label468
-	j label914
+	j label934
 .p2align 2
-label911:
+label931:
 	addiw t3, t2, 6
 	blt t1, a4, label456
 	sw zero, 16(sp)
@@ -271,7 +271,7 @@ label911:
 	bne t4, zero, label463
 	addiw t4, t2, 8
 	blt t1, a5, label468
-label914:
+label934:
 	sw zero, 20(sp)
 	lw t3, 16(sp)
 	bne t3, zero, label475
@@ -279,7 +279,7 @@ label914:
 .p2align 2
 label456:
 	mv t4, a0
-	beq a0, zero, label913
+	beq a0, zero, label933
 .p2align 2
 label463:
 	mv t2, t3
@@ -287,35 +287,35 @@ label463:
 	blt t1, a1, label72
 	j label430
 .p2align 2
-label913:
+label933:
 	addiw t4, t2, 8
-	bge t1, a5, label933
+	bge t1, a5, label953
 .p2align 2
 label468:
 	mv t3, a0
-	beq a0, zero, label915
+	beq a0, zero, label935
 .p2align 2
 label475:
 	mv t2, t4
 	addiw t1, t1, 1
 	blt t1, a1, label72
 	j label430
-label915:
+label935:
 	addiw t3, t2, 10
-	bge t1, t0, label916
+	bge t1, t0, label936
 label480:
 	mv t2, t3
 	addiw t1, t1, 1
 	blt t1, a1, label72
 	j label430
-label933:
+label953:
 	sw zero, 20(sp)
 	lw t3, 16(sp)
 	bne t3, zero, label475
 label474:
 	addiw t3, t2, 10
 	blt t1, t0, label480
-	j label916
+	j label936
 label19:
 	sw a0, 24(sp)
 	lw t4, 20(sp)
@@ -474,7 +474,7 @@ label229:
 	addiw t1, t1, 1
 	blt t1, a1, label5
 	j label202
-label925:
+label945:
 	mv t2, t3
 	addiw t1, t1, 1
 	blt t1, a1, label5
@@ -552,7 +552,7 @@ label123:
 label126:
 	addiw t5, t2, 40
 	mv t2, t4
-	beq t3, zero, label898
+	beq t3, zero, label918
 	addiw t1, t1, 1
 	blt t1, a1, label72
 	j label430
@@ -611,7 +611,7 @@ label587:
 	sw zero, 60(sp)
 	lw t3, 56(sp)
 	j label111
-label898:
+label918:
 	mv t2, t5
 	addiw t1, t1, 1
 	j label69

@@ -5,18 +5,17 @@
 .globl test
 test:
 	subw a3, zero, a0
-	li a2, 4294967295
-	and a4, a3, a2
-	mv a3, a4
-	blt a0, zero, label22
-	mv a3, a0
-label22:
-	subw a4, zero, a1
-	and a5, a4, a2
-	mv a0, a5
-	blt a1, zero, label24
+	zext.w a4, a3
+	mv a2, a4
+	blt a0, zero, label19
+	mv a2, a0
+label19:
+	subw a3, zero, a1
+	zext.w a4, a3
+	mv a0, a4
+	blt a1, zero, label21
 	mv a0, a1
-label24:
-	addw a1, a3, a0
-	and a0, a1, a2
+label21:
+	addw a1, a2, a0
+	zext.w a0, a1
 	ret

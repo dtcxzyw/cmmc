@@ -16,28 +16,27 @@ Y:
 .globl foo
 foo:
 	ble a0, zero, label5
-pcrel42:
+pcrel39:
 	auipc a2, %pcrel_hi(X)
-pcrel43:
+pcrel40:
 	auipc a1, %pcrel_hi(Y)
-	sh zero, %pcrel_lo(pcrel42)(a2)
+	sh zero, %pcrel_lo(pcrel39)(a2)
 	li a2, 1
-	sh zero, %pcrel_lo(pcrel43)(a1)
+	sh zero, %pcrel_lo(pcrel40)(a1)
 	beq a0, a2, label5
 	li a1, 1
 label3:
-	li a2, 65535
-pcrel44:
-	auipc a5, %pcrel_hi(X)
-	and a4, a1, a2
-	and a3, a1, a2
+	zext.h a2, a1
+pcrel41:
+	auipc a4, %pcrel_hi(X)
+	zext.h a3, a1
+	sh a2, %pcrel_lo(pcrel41)(a4)
 	addiw a1, a1, 1
-	sh a3, %pcrel_lo(pcrel44)(a5)
-	slliw a3, a4, 2
-pcrel45:
-	auipc a4, %pcrel_hi(Y)
-	and a2, a3, a2
-	sh a2, %pcrel_lo(pcrel45)(a4)
+	slliw a4, a3, 2
+pcrel42:
+	auipc a3, %pcrel_hi(Y)
+	zext.h a2, a4
+	sh a2, %pcrel_lo(pcrel42)(a3)
 	bne a0, a1, label3
 label5:
 	ret

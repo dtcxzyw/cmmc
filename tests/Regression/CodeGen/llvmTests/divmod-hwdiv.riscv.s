@@ -5,8 +5,7 @@
 .globl test_i32_srem
 test_i32_srem:
 	remw a2, a0, a1
-	li a3, 4294967295
-	and a0, a2, a3
+	zext.w a0, a2
 	ret
 .p2align 2
 .globl test_i32_urem

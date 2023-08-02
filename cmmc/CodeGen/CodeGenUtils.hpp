@@ -39,6 +39,7 @@ void preRALegalizeFunc(MIRFunction& func, CodeGenContext& ctx);
 
 bool removeUnusedInsts(MIRFunction& func, const CodeGenContext& ctx);
 void forEachDefOperands(MIRBasicBlock& block, const CodeGenContext& ctx, const std::function<void(MIROperand& op)>& functor);
+std::unordered_map<MIROperand, uint32_t, MIROperandHasher> collectDefCount(MIRFunction& func, const CodeGenContext& ctx);
 bool redirectGoto(MIRFunction& func, const CodeGenContext& ctx);
 
 void dumpAssembly(std::ostream& out, const CodeGenContext& ctx, const MIRModule& module, const std::function<void()>& emitData,

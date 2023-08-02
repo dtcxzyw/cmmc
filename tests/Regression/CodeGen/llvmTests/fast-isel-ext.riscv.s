@@ -5,21 +5,18 @@
 .globl sext_16_32
 sext_16_32:
 	sext.h a1, a0
-	li a2, 4294967295
-	and a0, a1, a2
+	zext.w a0, a1
 	ret
 .p2align 2
 .globl sext_1_16
 sext_1_16:
 	sext.h a1, a0
-	li a2, 65535
-	and a0, a1, a2
+	zext.h a0, a1
 	ret
 .p2align 2
 .globl sext_1_32
 sext_1_32:
-	li a1, 4294967295
-	and a0, a0, a1
+	zext.w a0, a0
 	ret
 .p2align 2
 .globl sext_1_8
@@ -31,27 +28,23 @@ sext_1_8:
 .globl sext_8_16
 sext_8_16:
 	sext.b a1, a0
-	li a2, 65535
-	and a0, a1, a2
+	zext.h a0, a1
 	ret
 .p2align 2
 .globl sext_8_32
 sext_8_32:
 	sext.b a1, a0
-	li a2, 4294967295
-	and a0, a1, a2
+	zext.w a0, a1
 	ret
 .p2align 2
 .globl zext_16_32
 zext_16_32:
-	li a1, 65535
-	and a0, a0, a1
+	zext.h a0, a0
 	ret
 .p2align 2
 .globl zext_1_16
 zext_1_16:
-	li a1, 65535
-	and a0, a0, a1
+	zext.h a0, a0
 	ret
 .p2align 2
 .globl zext_1_32

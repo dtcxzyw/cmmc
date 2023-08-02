@@ -12,9 +12,8 @@ A:
 .p2align 2
 .globl B
 B:
-	li a2, 65535
-	and a1, a1, a2
-	and a0, a0, a2
-	addw a3, a0, a1
-	and a0, a3, a2
+	zext.h a2, a0
+	zext.h a3, a1
+	addw a1, a2, a3
+	zext.h a0, a1
 	ret

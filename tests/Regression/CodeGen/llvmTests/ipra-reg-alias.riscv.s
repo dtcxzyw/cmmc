@@ -4,8 +4,7 @@
 .p2align 2
 .globl main
 main:
-	li a3, 4294967295
-	and a2, a0, a3
+	zext.w a2, a0
 	addiw a1, a2, 1
 	sh2add a0, a1, a1
 	ret

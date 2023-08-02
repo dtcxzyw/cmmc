@@ -21,38 +21,37 @@ a:
 .p2align 2
 .globl PR37060
 PR37060:
-pcrel23:
+pcrel22:
 	auipc a1, %pcrel_hi(b)
-pcrel24:
-	auipc a2, %pcrel_hi(c)
-	li a4, -1
-	li a3, 4294967295
-	lw a0, %pcrel_lo(pcrel23)(a1)
-	lw a1, %pcrel_lo(pcrel24)(a2)
-	remw a2, a4, a1
-	and a1, a2, a3
+pcrel23:
+	auipc a3, %pcrel_hi(c)
+	li a2, -1
+	lw a0, %pcrel_lo(pcrel22)(a1)
+	lw a1, %pcrel_lo(pcrel23)(a3)
+	remw a3, a2, a1
+	zext.w a1, a3
 	xor a2, a0, a1
-pcrel25:
+pcrel24:
 	auipc a1, %pcrel_hi(a)
 	andi a0, a2, 255
-	sw a0, %pcrel_lo(pcrel25)(a1)
+	sw a0, %pcrel_lo(pcrel24)(a1)
 	ret
 .p2align 2
 .globl PR37667
 PR37667:
-pcrel49:
+pcrel48:
 	auipc a1, %pcrel_hi(b)
-pcrel50:
+pcrel49:
 	auipc a2, %pcrel_hi(d)
-pcrel51:
+pcrel50:
 	auipc a3, %pcrel_hi(c)
-	lw a0, %pcrel_lo(pcrel49)(a1)
-	lw a1, %pcrel_lo(pcrel50)(a2)
+	lw a0, %pcrel_lo(pcrel48)(a1)
+	lw a1, %pcrel_lo(pcrel49)(a2)
 	remuw a0, a0, a1
-	lw a1, %pcrel_lo(pcrel51)(a3)
+	lw a1, %pcrel_lo(pcrel50)(a3)
 	or a2, a0, a1
-pcrel52:
+pcrel51:
 	auipc a1, %pcrel_hi(a)
 	andi a0, a2, 255
-	sw a0, %pcrel_lo(pcrel52)(a1)
+	sw a0, %pcrel_lo(pcrel51)(a1)
 	ret

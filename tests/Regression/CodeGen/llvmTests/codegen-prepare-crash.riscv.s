@@ -10,11 +10,10 @@ g:
 .globl f
 f:
 	addiw a2, a0, 4
-	li a3, 4294967295
-pcrel12:
-	auipc a4, %pcrel_hi(g)
-	and a1, a2, a3
-	addi a2, a4, %pcrel_lo(pcrel12)
+pcrel11:
+	auipc a3, %pcrel_hi(g)
+	zext.w a1, a2
+	addi a2, a3, %pcrel_lo(pcrel11)
 	sh2add a1, a1, a2
 	sw a0, 0(a1)
 	ret

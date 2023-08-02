@@ -25,30 +25,29 @@ var_370:
 .p2align 2
 .globl _Z3foov
 _Z3foov:
+pcrel40:
+	auipc a2, %pcrel_hi(var_21)
+pcrel41:
+	auipc a1, %pcrel_hi(var_29)
+	lw a0, %pcrel_lo(pcrel40)(a2)
+	lb a2, %pcrel_lo(pcrel41)(a1)
+	sext.b a3, a2
+	subw a1, zero, a3
+	zext.w a2, a1
+	sltu a3, a0, a2
+	addiw a0, a3, -1
+	andi a2, a0, 255
+	sltiu a1, a2, 1
 pcrel42:
-	auipc a1, %pcrel_hi(var_21)
+	auipc a2, %pcrel_hi(var_390)
+	zext.w a0, a1
+	sw a0, %pcrel_lo(pcrel42)(a2)
 pcrel43:
-	auipc a2, %pcrel_hi(var_29)
-	lw a0, %pcrel_lo(pcrel42)(a1)
-	lb a1, %pcrel_lo(pcrel43)(a2)
-	sext.b a3, a1
-	li a1, 4294967295
-	subw a2, zero, a3
-	and a3, a2, a1
-	sltu a2, a0, a3
-	addiw a0, a2, -1
-	andi a3, a0, 255
-	sltiu a2, a3, 1
-	and a0, a2, a1
-pcrel44:
-	auipc a1, %pcrel_hi(var_390)
-	sw a0, %pcrel_lo(pcrel44)(a1)
-pcrel45:
 	auipc a0, %pcrel_hi(var_11)
-	lb a1, %pcrel_lo(pcrel45)(a0)
+	lb a1, %pcrel_lo(pcrel43)(a0)
 	sext.b a2, a1
-pcrel46:
+pcrel44:
 	auipc a1, %pcrel_hi(var_370)
 	andi a0, a2, 255
-	sb a0, %pcrel_lo(pcrel46)(a1)
+	sb a0, %pcrel_lo(pcrel44)(a1)
 	ret

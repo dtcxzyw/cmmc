@@ -4,14 +4,13 @@
 .p2align 2
 .globl f
 f:
-	mulw a3, a0, a1
-	li a0, 4294967295
-	and a1, a3, a0
-	srliw a4, a1, 2
-	srliw a1, a1, 5
-	andi a3, a4, 15
-	andi a4, a1, 127
-	mulw a3, a3, a4
-	and a1, a3, a0
+	mulw a4, a0, a1
+	zext.w a0, a4
+	srliw a3, a0, 2
+	srliw a0, a0, 5
+	andi a1, a3, 15
+	andi a4, a0, 127
+	mulw a3, a1, a4
+	zext.w a1, a3
 	addw a0, a2, a1
 	ret

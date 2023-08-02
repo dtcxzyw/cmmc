@@ -5,6 +5,5 @@
 .globl foo
 foo:
 	addiw a1, a0, 1
-	li a2, 4294967295
-	and a0, a1, a2
+	zext.w a0, a1
 	ret

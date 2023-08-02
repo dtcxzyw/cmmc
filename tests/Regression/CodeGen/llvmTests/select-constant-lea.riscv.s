@@ -6,9 +6,8 @@
 select_unsigned_lt_10_8_13:
 	li a2, 10
 	li a1, 8
-	bltu a0, a2, label9
+	bltu a0, a2, label8
 	li a1, 13
-label9:
-	li a2, 4294967295
-	and a0, a1, a2
+label8:
+	zext.w a0, a1
 	ret

@@ -7,8 +7,8 @@ main:
 	addi sp, sp, -344
 	sd ra, 0(sp)
 	sd s0, 8(sp)
-	addi s0, sp, 200
 	sd s5, 16(sp)
+	addi s0, sp, 208
 	sd s1, 24(sp)
 	sd s6, 32(sp)
 	sd s2, 40(sp)
@@ -27,7 +27,7 @@ main:
 	sd a0, 272(sp)
 	jal getint
 	mv t4, a0
-	sd a0, 264(sp)
+	sd a0, 200(sp)
 	jal getint
 	mv t5, a0
 	sd a0, 104(sp)
@@ -38,16 +38,16 @@ main:
 	sd a0, 120(sp)
 	mv a6, a0
 	jal getint
-	sd a0, 192(sp)
-	mv a7, a0
-	jal getint
 	sd a0, 128(sp)
-	mv s1, a0
+	mv a7, a0
 	jal getint
 	sd a0, 136(sp)
 	mv s1, a0
 	jal getint
 	sd a0, 144(sp)
+	mv s1, a0
+	jal getint
+	sd a0, 192(sp)
 	mv s2, a0
 	jal getint
 	sd a0, 152(sp)
@@ -67,40 +67,48 @@ main:
 	jal getint
 	li a3, 15
 	mv s10, a0
-	li a1, 16
 	sd a0, 280(sp)
-	ld t2, 288(sp)
-	sw t2, 200(sp)
 	ld t3, 272(sp)
-	sw t3, 204(sp)
-	ld t4, 264(sp)
-	sw t4, 208(sp)
+	ld t2, 288(sp)
+	slli a0, t3, 32
+	add.uw a1, t2, a0
+	sd a1, 208(sp)
 	ld t5, 104(sp)
-	sw t5, 212(sp)
-	ld t6, 112(sp)
-	sw t6, 216(sp)
+	ld t4, 200(sp)
+	slli a0, t5, 32
+	add.uw a1, t4, a0
+	sd a1, 216(sp)
 	ld a6, 120(sp)
-	sw a6, 220(sp)
-	ld a7, 192(sp)
-	sw a7, 224(sp)
-	ld s1, 128(sp)
-	sw s1, 228(sp)
+	ld t6, 112(sp)
+	slli a0, a6, 32
+	add.uw a1, t6, a0
+	sd a1, 224(sp)
 	ld s1, 136(sp)
-	sw s1, 232(sp)
-	ld s2, 144(sp)
-	sw s2, 236(sp)
-	ld s3, 152(sp)
-	sw s3, 240(sp)
+	ld a7, 128(sp)
+	slli a0, s1, 32
+	add.uw a1, a7, a0
+	sd a1, 232(sp)
+	ld s2, 192(sp)
+	ld s1, 144(sp)
+	slli a0, s2, 32
+	add.uw a1, s1, a0
+	sd a1, 240(sp)
 	ld s4, 160(sp)
-	sw s4, 244(sp)
-	ld s5, 168(sp)
-	sw s5, 248(sp)
+	ld s3, 152(sp)
+	slli a0, s4, 32
+	add.uw a1, s3, a0
+	sd a1, 248(sp)
 	ld s6, 176(sp)
-	sw s6, 252(sp)
+	ld s5, 168(sp)
+	slli a0, s6, 32
+	add.uw a1, s5, a0
+	slli a0, s10, 32
+	sd a1, 256(sp)
 	ld s7, 184(sp)
-	sw s7, 256(sp)
-	sw a0, 260(sp)
+	add.uw a1, s7, a0
 	mv a0, zero
+	sd a1, 264(sp)
+	li a1, 16
 	bge zero, a3, label10
 .p2align 2
 label4:
@@ -116,7 +124,7 @@ label7:
 	blt a5, t0, label8
 	addiw a2, a2, 1
 	blt a2, a1, label7
-	j label231
+	j label247
 .p2align 2
 label8:
 	sh2add t1, a0, s0
@@ -128,53 +136,53 @@ label8:
 	mv a0, a4
 	blt a4, a3, label4
 label10:
-	lw s9, 200(sp)
-	lw s8, 204(sp)
-	lw a0, 208(sp)
-	lw s11, 212(sp)
-	lw a1, 216(sp)
-	lw a2, 220(sp)
-	lw a4, 224(sp)
-	lw a5, 228(sp)
-	lw a3, 232(sp)
-	lw t0, 236(sp)
-	lw t1, 240(sp)
-	lw t6, 244(sp)
-	lw t5, 248(sp)
-	lw t4, 252(sp)
-	lw t3, 256(sp)
-	lw t2, 260(sp)
+	lw s9, 208(sp)
+	lw s8, 212(sp)
+	lw a0, 216(sp)
+	lw s11, 220(sp)
+	lw a1, 224(sp)
+	lw a3, 228(sp)
+	lw a4, 232(sp)
+	lw a5, 236(sp)
+	lw a2, 240(sp)
+	lw t0, 244(sp)
+	lw t1, 248(sp)
+	lw t6, 252(sp)
+	lw t5, 256(sp)
+	lw t4, 260(sp)
+	lw t3, 264(sp)
+	lw t2, 268(sp)
 	beq s9, zero, label11
 	sd s9, 296(sp)
 	sd s11, 304(sp)
 	mv s9, a0
 	sd a1, 312(sp)
 	mv s11, a1
-	mv a0, a3
+	mv a0, a2
 	mv a1, t0
-	mv s11, a2
-	mv a3, t6
+	mv s11, a3
+	mv a2, t1
 	mv t0, t3
 	mv s11, a4
-	sd a2, 320(sp)
-	mv s11, a5
-	mv a2, t1
-	sd a4, 328(sp)
 	mv t1, t2
+	mv s11, a5
+	sd a3, 320(sp)
+	mv a3, t6
+	sd a4, 328(sp)
 	mv a4, t5
 	sd a5, 336(sp)
 	ld t2, 288(sp)
 	mv a5, t4
 	ld t3, 272(sp)
-	ld t4, 264(sp)
+	ld t4, 200(sp)
 	ld t5, 104(sp)
 	ld t6, 112(sp)
 	ld a6, 120(sp)
-	ld a7, 192(sp)
-	ld s1, 128(sp)
-	mv s0, s1
+	ld a7, 128(sp)
 	ld s1, 136(sp)
-	ld s2, 144(sp)
+	mv s0, s1
+	ld s1, 144(sp)
+	ld s2, 192(sp)
 	ld s3, 152(sp)
 	ld s4, 160(sp)
 	ld s5, 168(sp)
@@ -239,8 +247,8 @@ label11:
 	jal putint
 	li a0, 10
 	jal putch
-	mv a0, zero
 	ld ra, 0(sp)
+	mv a0, zero
 	ld s0, 8(sp)
 	ld s5, 16(sp)
 	ld s1, 24(sp)
@@ -256,7 +264,7 @@ label11:
 	addi sp, sp, 344
 	ret
 .p2align 2
-label231:
+label247:
 	mv a0, a4
 	blt a4, a3, label4
 	j label10

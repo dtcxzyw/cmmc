@@ -175,7 +175,7 @@ static bool eliminateStackLoads(MIRFunction& func, const CodeGenContext& ctx) {
     return modified;
 }
 
-static auto collectDefCount(MIRFunction& func, const CodeGenContext& ctx) {
+std::unordered_map<MIROperand, uint32_t, MIROperandHasher> collectDefCount(MIRFunction& func, const CodeGenContext& ctx) {
     std::unordered_map<MIROperand, uint32_t, MIROperandHasher> defCount;
     for(auto& block : func.blocks()) {
         auto& instructions = block->instructions();
@@ -555,7 +555,9 @@ bool removeIndirectCopy(MIRFunction& func, const CodeGenContext& ctx) {
                 return;
             if(auto iter = regValue.find(reg.reg());
                iter != regValue.cend() && iter->second.second == getVersion(iter->second.first)) {
-                if(ctx.flags.preRA && !isVirtualReg(iter->second.first))
+                if(ctx.flags.preRA &&
+                   (!isVirtualReg(iter->second.first) &&
+                    !(ctx.registerInfo && ctx.registerInfo->isZeroRegister(iter->second.first))))
                     return;  // should be handled after RA
                 auto backup = reg;
                 // NOTICE: Don't modify the type

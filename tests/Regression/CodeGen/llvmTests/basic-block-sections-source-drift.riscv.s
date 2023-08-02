@@ -5,14 +5,13 @@
 .globl foo
 foo:
 	li a2, 2
-	bne a1, zero, label11
+	bne a1, zero, label10
 	mv a2, zero
-label11:
-	li a3, 4294967295
+label10:
+	zext.w a3, a2
 	li a1, 1
-	and a2, a2, a3
-	bne a0, zero, label13
-	mv a1, a2
-label13:
+	bne a0, zero, label12
+	mv a1, a3
+label12:
 	mv a0, a1
 	ret

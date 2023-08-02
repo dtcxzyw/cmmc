@@ -5,19 +5,17 @@
 .globl f1
 f1:
 	divuw a0, a1, a0
-	addiw a3, a2, 1
-	li a2, 4294967295
-	addw a1, a0, a3
-	and a0, a1, a2
+	addiw a1, a2, 1
+	addw a2, a0, a1
+	zext.w a0, a2
 	ret
 .p2align 2
 .globl f2
 f2:
 	remuw a0, a1, a0
-	subw a2, a2, a3
-	li a3, 4294967295
-	addw a1, a0, a2
-	and a0, a1, a3
+	subw a1, a2, a3
+	addw a2, a0, a1
+	zext.w a0, a2
 	ret
 .p2align 2
 .globl f3

@@ -153,8 +153,9 @@ label4:
 	mulw t0, t2, a1
 	subw a5, a5, t0
 	bgt a4, a3, label4
+	mv a4, a5
 label7:
-	addw a4, a5, a3
+	addw a4, a4, a3
 	mul a5, a4, a0
 	srli t1, a5, 63
 	srai t0, a5, 55
@@ -184,11 +185,11 @@ label7:
 	srli t1, a5, 63
 	srai t0, a5, 55
 	add t2, t1, t0
-	mulw t0, t2, a1
-	subw a5, a4, t0
+	mulw a5, t2, a1
+	subw a4, a4, a5
 	bgt a2, a3, label7
 	mv a2, a3
-	mv a3, a5
+	mv a3, a4
 label10:
 	addw a4, a2, a3
 	addiw a2, a2, 1
@@ -220,6 +221,6 @@ label21:
 	mv a3, zero
 	j label10
 label27:
-	mv a5, zero
+	mv a4, zero
 	mv a3, zero
 	j label7

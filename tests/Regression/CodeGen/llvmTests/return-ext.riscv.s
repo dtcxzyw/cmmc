@@ -29,35 +29,33 @@ pcrel11:
 .p2align 2
 .globl unsigned_i1
 unsigned_i1:
-pcrel23:
+pcrel22:
 	auipc a1, %pcrel_hi(x)
-	li a3, 4294967295
-	lw a0, %pcrel_lo(pcrel23)(a1)
+	lw a0, %pcrel_lo(pcrel22)(a1)
 	xori a2, a0, 42
 	sltiu a1, a2, 1
-	and a0, a1, a3
+	zext.w a0, a1
 	ret
 .p2align 2
 .globl unsigned_i16
 unsigned_i16:
-pcrel42:
-	auipc a1, %pcrel_hi(b)
-	lh a2, %pcrel_lo(pcrel42)(a1)
-	lhu a0, %pcrel_lo(pcrel42)(a1)
-pcrel43:
-	auipc a1, %pcrel_hi(a)
-	lh a3, %pcrel_lo(pcrel43)(a1)
-	li a3, 65535
-	lhu a2, %pcrel_lo(pcrel43)(a1)
-	addw a1, a0, a2
-	and a0, a1, a3
+pcrel38:
+	auipc a2, %pcrel_hi(b)
+pcrel39:
+	auipc a4, %pcrel_hi(a)
+	lh a1, %pcrel_lo(pcrel38)(a2)
+	lh a2, %pcrel_lo(pcrel39)(a4)
+	zext.h a0, a1
+	zext.h a3, a2
+	addw a1, a0, a3
+	zext.h a0, a1
 	ret
 .p2align 2
 .globl unsigned_i8
 unsigned_i8:
-pcrel54:
+pcrel50:
 	auipc a1, %pcrel_hi(x)
-	lw a0, %pcrel_lo(pcrel54)(a1)
+	lw a0, %pcrel_lo(pcrel50)(a1)
 	xori a2, a0, 42
 	sltiu a1, a2, 1
 	andi a0, a1, 255
@@ -65,35 +63,33 @@ pcrel54:
 .p2align 2
 .globl use_i1
 use_i1:
-pcrel66:
+pcrel61:
 	auipc a1, %pcrel_hi(x)
-	li a3, 4294967295
-	lw a0, %pcrel_lo(pcrel66)(a1)
+	lw a0, %pcrel_lo(pcrel61)(a1)
 	xori a2, a0, 42
 	sltiu a1, a2, 1
-	and a0, a1, a3
+	zext.w a0, a1
 	ret
 .p2align 2
 .globl use_i16
 use_i16:
-pcrel85:
-	auipc a1, %pcrel_hi(b)
-	lh a2, %pcrel_lo(pcrel85)(a1)
-	lhu a0, %pcrel_lo(pcrel85)(a1)
-pcrel86:
-	auipc a1, %pcrel_hi(a)
-	lh a3, %pcrel_lo(pcrel86)(a1)
-	li a3, 65535
-	lhu a2, %pcrel_lo(pcrel86)(a1)
-	addw a1, a0, a2
-	and a0, a1, a3
+pcrel77:
+	auipc a2, %pcrel_hi(b)
+pcrel78:
+	auipc a4, %pcrel_hi(a)
+	lh a1, %pcrel_lo(pcrel77)(a2)
+	lh a2, %pcrel_lo(pcrel78)(a4)
+	zext.h a0, a1
+	zext.h a3, a2
+	addw a1, a0, a3
+	zext.h a0, a1
 	ret
 .p2align 2
 .globl use_i8
 use_i8:
-pcrel97:
+pcrel89:
 	auipc a1, %pcrel_hi(x)
-	lw a0, %pcrel_lo(pcrel97)(a1)
+	lw a0, %pcrel_lo(pcrel89)(a1)
 	xori a2, a0, 42
 	sltiu a1, a2, 1
 	andi a0, a1, 255

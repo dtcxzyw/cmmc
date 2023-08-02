@@ -6,30 +6,25 @@
 main:
 	addi sp, sp, -72
 	li a1, 4
-	li a0, 3
+	li a0, 12884901892
 	li a2, 9
-	li a3, 6
-	li a4, 5
+	li a3, 8589934601
+	li a5, 21474836486
+	li a4, 8
 	sd ra, 0(sp)
 	sd s0, 8(sp)
 	addi s0, sp, 32
 	sd s1, 16(sp)
 	li s1, 10
 	sd s2, 24(sp)
-	sw a1, 32(sp)
-	sw a0, 36(sp)
-	li a0, 2
-	sw a2, 40(sp)
-	sw a0, 44(sp)
+	sd a0, 32(sp)
 	li a0, 1
-	sw zero, 48(sp)
-	sw a0, 52(sp)
-	sw a3, 56(sp)
-	li a3, 7
-	sw a4, 60(sp)
-	li a4, 8
-	sw a3, 64(sp)
-	sw a4, 68(sp)
+	sd a3, 40(sp)
+	li a3, 4294967296
+	sd a3, 48(sp)
+	li a3, 34359738375
+	sd a5, 56(sp)
+	sd a3, 64(sp)
 	addiw a3, a4, -2
 	addiw a5, a4, 1
 	mv a4, a1
@@ -48,12 +43,12 @@ label8:
 	lw t1, 0(t1)
 	bgt t0, t1, label13
 	sh2add a4, a4, s0
-	slliw t2, a5, 1
+	sh2add t2, a5, s0
 	sw t1, 0(a4)
 	mv a4, a5
-	sh2add t1, a5, s0
-	sw t0, 0(t1)
-	addiw t0, t2, 1
+	slliw t1, a5, 1
+	sw t0, 0(t2)
+	addiw t0, t1, 1
 	mv a5, t0
 	blt t0, s1, label8
 .p2align 2
@@ -76,12 +71,12 @@ label46:
 	lw t1, 0(t1)
 	bgt t0, t1, label13
 	sh2add a4, a4, s0
-	slliw t2, a5, 1
+	sh2add t2, a5, s0
 	sw t1, 0(a4)
 	mv a4, a5
-	sh2add t1, a5, s0
-	sw t0, 0(t1)
-	addiw t0, t2, 1
+	slliw t1, a5, 1
+	sw t0, 0(t2)
+	addiw t0, t1, 1
 	mv a5, t0
 	blt t0, s1, label8
 	j label13

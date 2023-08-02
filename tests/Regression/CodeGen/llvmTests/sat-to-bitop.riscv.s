@@ -22,22 +22,21 @@ label16:
 .p2align 2
 .globl sat0_base_16bit
 sat0_base_16bit:
-	sext.h a2, a0
-	li a1, 65535
-	mv a3, zero
-	and a0, a0, a1
-	blt a2, zero, label29
-	mv a3, a0
-label29:
-	and a0, a3, a1
+	sext.h a1, a0
+	zext.h a2, a0
+	mv a0, zero
+	blt a1, zero, label27
+	mv a0, a2
+label27:
+	zext.h a0, a0
 	ret
 .p2align 2
 .globl sat0_base_32bit
 sat0_base_32bit:
 	mv a1, zero
-	blt a0, zero, label37
+	blt a0, zero, label35
 	mv a1, a0
-label37:
+label35:
 	mv a0, a1
 	ret
 .p2align 2
@@ -46,41 +45,40 @@ sat0_base_8bit:
 	sext.b a1, a0
 	andi a2, a0, 255
 	mv a0, zero
-	blt a1, zero, label48
+	blt a1, zero, label46
 	mv a0, a2
-label48:
+label46:
 	andi a0, a0, 255
 	ret
 .p2align 2
 .globl sat0_lower_1
 sat0_lower_1:
 	mv a1, a0
-	bgt a0, zero, label56
+	bgt a0, zero, label54
 	mv a1, zero
-label56:
+label54:
 	mv a0, a1
 	ret
 .p2align 2
 .globl sat1_base_16bit
 sat1_base_16bit:
-	sext.h a2, a0
-	li a1, 65535
-	li a4, -1
+	sext.h a1, a0
+	zext.h a2, a0
 	li a3, -1
-	and a0, a0, a1
-	blt a2, a4, label70
-	mv a3, a0
-label70:
-	and a0, a3, a1
+	li a0, -1
+	blt a1, a3, label66
+	mv a0, a2
+label66:
+	zext.h a0, a0
 	ret
 .p2align 2
 .globl sat1_base_32bit
 sat1_base_32bit:
 	li a2, -1
 	li a1, -1
-	blt a0, a2, label79
+	blt a0, a2, label75
 	mv a1, a0
-label79:
+label75:
 	mv a0, a1
 	ret
 .p2align 2
@@ -90,9 +88,9 @@ sat1_base_8bit:
 	andi a2, a0, 255
 	li a3, -1
 	li a0, -1
-	blt a1, a3, label91
+	blt a1, a3, label87
 	mv a0, a2
-label91:
+label87:
 	andi a0, a0, 255
 	ret
 .p2align 2
@@ -100,8 +98,8 @@ label91:
 sat1_lower_1:
 	li a2, -1
 	mv a1, a0
-	bgt a0, a2, label101
+	bgt a0, a2, label97
 	li a1, -1
-label101:
+label97:
 	mv a0, a1
 	ret

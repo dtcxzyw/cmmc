@@ -9,10 +9,9 @@ f1:
 .p2align 2
 .globl f10
 f10:
-	xori a2, a0, -2
-	li a3, 4294967295
-	sltiu a1, a2, 1
-	and a0, a1, a3
+	xori a1, a0, -2
+	sltiu a2, a1, 1
+	zext.w a0, a2
 	ret
 .p2align 2
 .globl f2

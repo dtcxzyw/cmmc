@@ -86,9 +86,9 @@ main:
 	mv s0, a0
 	jal getint
 	mv s2, a0
-pcrel225:
+pcrel241:
 	auipc a0, %pcrel_hi(parent)
-	addi s1, a0, %pcrel_lo(pcrel225)
+	addi s1, a0, %pcrel_lo(pcrel241)
 	ble s0, zero, label85
 	li a1, 4
 	ble s0, a1, label104
@@ -100,49 +100,57 @@ pcrel225:
 .p2align 2
 label79:
 	sh2add a3, a0, s1
-	addiw a4, a0, 1
-	addiw t0, a0, 2
-	addiw a5, a0, 3
-	sw a0, 0(a3)
-	sw a4, 4(a3)
+	addiw a5, a0, 1
+	addiw t1, a0, 3
+	slli a4, a5, 32
+	add.uw t0, a0, a4
+	addiw a4, a0, 2
+	sd t0, 0(a3)
+	slli t0, t1, 32
+	add.uw a5, a4, t0
+	addiw t0, a0, 5
 	addiw a4, a0, 4
-	sw t0, 8(a3)
-	sw a5, 12(a3)
-	addiw a5, a0, 5
-	sw a4, 16(a3)
+	sd a5, 8(a3)
+	slli t1, t0, 32
+	add.uw a5, a4, t1
+	addiw t1, a0, 7
 	addiw a4, a0, 6
-	sw a5, 20(a3)
-	addiw a5, a0, 7
-	sw a4, 24(a3)
+	sd a5, 16(a3)
+	slli t0, t1, 32
+	addiw t1, a0, 9
+	add.uw a5, a4, t0
+	slli t0, t1, 32
 	addiw a4, a0, 8
-	sw a5, 28(a3)
-	addiw a5, a0, 9
-	sw a4, 32(a3)
+	sd a5, 24(a3)
+	add.uw a5, a4, t0
 	addiw a4, a0, 10
-	sw a5, 36(a3)
+	sd a5, 32(a3)
 	addiw a5, a0, 11
-	sw a4, 40(a3)
+	slli t1, a5, 32
+	add.uw t0, a4, t1
+	addiw t1, a0, 13
 	addiw a4, a0, 12
-	sw a5, 44(a3)
-	addiw a5, a0, 13
-	sw a4, 48(a3)
+	sd t0, 40(a3)
+	slli t0, t1, 32
+	add.uw a5, a4, t0
+	addiw t0, a0, 15
 	addiw a4, a0, 14
-	sw a5, 52(a3)
-	addiw a5, a0, 15
-	sw a4, 56(a3)
+	sd a5, 48(a3)
 	addiw a0, a0, 16
-	sw a5, 60(a3)
+	slli a5, t0, 32
+	add.uw a4, a4, a5
+	sd a4, 56(a3)
 	bgt a2, a0, label79
 label81:
 	sh2add a2, a0, s1
-	addiw a4, a0, 1
-	addiw a3, a0, 2
+	addiw a3, a0, 1
+	addiw a4, a0, 2
 	sw a0, 0(a2)
-	sw a4, 4(a2)
-	addiw a4, a0, 3
-	sw a3, 8(a2)
+	sw a3, 4(a2)
+	addiw a3, a0, 3
+	sw a4, 8(a2)
 	addiw a0, a0, 4
-	sw a4, 12(a2)
+	sw a3, 12(a2)
 	bgt a1, a0, label81
 label83:
 	sh2add a1, a0, s1
@@ -182,12 +190,12 @@ label88:
 .p2align 2
 label90:
 	ble s0, a1, label94
-	sh2add a2, a1, s1
-	lw a3, 0(a2)
-	xor a4, a1, a3
+	sh2add a3, a1, s1
+	lw a2, 0(a3)
+	xor a4, a1, a2
 	addiw a1, a1, 1
-	sltiu a2, a4, 1
-	addw a0, a0, a2
+	sltiu a3, a4, 1
+	addw a0, a0, a3
 	j label90
 label94:
 	jal putint

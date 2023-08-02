@@ -5,21 +5,19 @@
 .globl foo
 foo:
 	addiw a2, a0, 4
-	sh2add a3, a1, a2
 	sh1add a0, a1, a2
-	li a2, 4294967295
-	mulw a1, a0, a3
-	and a0, a1, a2
+	sh2add a1, a1, a2
+	mulw a2, a0, a1
+	zext.w a0, a2
 	ret
 .p2align 2
 .globl foo1
 foo1:
 	addiw a2, a0, 4
-	sh3add a3, a1, a2
 	sh2add a0, a1, a2
-	li a2, 4294967295
-	mulw a1, a0, a3
-	and a0, a1, a2
+	sh3add a1, a1, a2
+	mulw a2, a0, a1
+	zext.w a0, a2
 	ret
 .p2align 2
 .globl foo1_mult_basic_blocks
@@ -27,15 +25,14 @@ foo1_mult_basic_blocks:
 	addiw a2, a0, 4
 	li a3, 10
 	sh2add a0, a1, a2
-	beq a0, a3, label37
+	beq a0, a3, label35
 	sh3add a2, a1, a2
-	li a3, 4294967295
 	mulw a1, a2, a0
-	and a0, a1, a3
-	j label29
-label37:
+	zext.w a0, a1
+	j label27
+label35:
 	mv a0, zero
-label29:
+label27:
 	ret
 .p2align 2
 .globl foo1_mult_basic_blocks_illegal_scale
@@ -43,13 +40,12 @@ foo1_mult_basic_blocks_illegal_scale:
 	addiw a2, a0, 4
 	li a3, 10
 	sh1add a0, a1, a2
-	beq a0, a3, label60
+	beq a0, a3, label57
 	sh3add a2, a1, a2
-	li a3, 4294967295
 	mulw a1, a2, a0
-	and a0, a1, a3
-	j label52
-label60:
+	zext.w a0, a1
+	j label49
+label57:
 	mv a0, zero
-label52:
+label49:
 	ret

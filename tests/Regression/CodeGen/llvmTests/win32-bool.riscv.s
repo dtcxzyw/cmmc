@@ -5,21 +5,19 @@
 .globl pass_fast_bool
 pass_fast_bool:
 	li a1, 66
-	bne a0, zero, label8
+	bne a0, zero, label7
 	mv a1, zero
-label8:
-	li a2, 4294967295
-	and a0, a1, a2
+label7:
+	zext.w a0, a1
 	ret
 .p2align 2
 .globl pass_vector_bool
 pass_vector_bool:
 	li a1, 66
-	bne a0, zero, label17
+	bne a0, zero, label15
 	mv a1, zero
-label17:
-	li a2, 4294967295
-	and a0, a1, a2
+label15:
+	zext.w a0, a1
 	ret
 .p2align 2
 .globl ret_true

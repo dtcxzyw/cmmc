@@ -29,27 +29,26 @@ f:
 .p2align 2
 .globl func
 func:
-pcrel40:
+pcrel38:
 	auipc a1, %pcrel_hi(b)
-pcrel41:
+pcrel39:
 	auipc a3, %pcrel_hi(c)
-pcrel42:
-	auipc a4, %pcrel_hi(f)
-	lw a0, %pcrel_lo(pcrel40)(a1)
-	lw a1, %pcrel_lo(pcrel41)(a3)
-pcrel43:
-	auipc a3, %pcrel_hi(e)
+	lw a0, %pcrel_lo(pcrel38)(a1)
+	lw a1, %pcrel_lo(pcrel39)(a3)
+pcrel40:
+	auipc a3, %pcrel_hi(f)
 	mulw a2, a0, a1
-	li a0, 4294967295
-	and a1, a2, a0
-pcrel44:
-	auipc a2, %pcrel_hi(a)
-	sw a1, %pcrel_lo(pcrel44)(a2)
-	lw a1, %pcrel_lo(pcrel43)(a3)
-	lw a2, %pcrel_lo(pcrel42)(a4)
-	mulw a1, a1, a2
-pcrel45:
-	auipc a2, %pcrel_hi(d)
-	and a0, a1, a0
-	sw a0, %pcrel_lo(pcrel45)(a2)
+pcrel41:
+	auipc a1, %pcrel_hi(a)
+	zext.w a0, a2
+pcrel42:
+	auipc a2, %pcrel_hi(e)
+	sw a0, %pcrel_lo(pcrel41)(a1)
+	lw a0, %pcrel_lo(pcrel42)(a2)
+	lw a1, %pcrel_lo(pcrel40)(a3)
+	mulw a2, a0, a1
+pcrel43:
+	auipc a1, %pcrel_hi(d)
+	zext.w a0, a2
+	sw a0, %pcrel_lo(pcrel43)(a1)
 	ret

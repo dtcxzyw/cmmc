@@ -4,9 +4,8 @@
 .p2align 2
 .globl test5
 test5:
-	li a1, 65535
-	and a2, a0, a1
-	slliw a3, a2, 2
-	sraiw a4, a3, 8
-	and a0, a4, a1
+	zext.h a1, a0
+	slliw a2, a1, 2
+	sraiw a3, a2, 8
+	zext.h a0, a3
 	ret

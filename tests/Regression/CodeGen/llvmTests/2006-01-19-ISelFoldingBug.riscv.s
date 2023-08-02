@@ -10,15 +10,14 @@ A:
 .globl test5
 test5:
 	andi a2, a1, 255
-	li a3, 32
-	li a4, 4294967295
-	subw a1, a3, a2
-	and a3, a1, a4
-pcrel18:
+	li a4, 32
+	subw a1, a4, a2
+	zext.w a3, a1
+pcrel17:
 	auipc a1, %pcrel_hi(A)
 	srlw a0, a0, a3
-	lw a3, %pcrel_lo(pcrel18)(a1)
+	lw a3, %pcrel_lo(pcrel17)(a1)
 	sllw a2, a3, a2
 	or a0, a0, a2
-	sw a0, %pcrel_lo(pcrel18)(a1)
+	sw a0, %pcrel_lo(pcrel17)(a1)
 	ret

@@ -6,9 +6,8 @@
 fastisel_select:
 	subw a2, a0, a1
 	li a0, 1204476887
-	bne a2, zero, label10
+	bne a2, zero, label9
 	mv a0, zero
-label10:
-	li a1, 4294967295
-	and a0, a0, a1
+label9:
+	zext.w a0, a0
 	ret

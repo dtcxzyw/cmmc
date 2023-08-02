@@ -28,52 +28,48 @@ pcrel11:
 .p2align 2
 .globl t2
 t2:
-pcrel23:
+pcrel22:
 	auipc a1, %pcrel_hi(b)
-	li a3, 65535
-	lh a0, %pcrel_lo(pcrel23)(a1)
+	lh a0, %pcrel_lo(pcrel22)(a1)
 	sext.h a2, a0
 	addiw a1, a2, 1
-	and a0, a1, a3
+	zext.h a0, a1
 	ret
 .p2align 2
 .globl t3
 t3:
-pcrel34:
-	auipc a2, %pcrel_hi(c)
-	lw a0, %pcrel_lo(pcrel34)(a2)
-	li a2, 4294967295
-	addiw a1, a0, 1
-	and a0, a1, a2
+pcrel32:
+	auipc a0, %pcrel_hi(c)
+	lw a2, %pcrel_lo(pcrel32)(a0)
+	addiw a1, a2, 1
+	zext.w a0, a1
 	ret
 .p2align 2
 .globl t4
 t4:
 	sext.b a1, a0
 	addiw a2, a1, 1
-pcrel45:
+pcrel43:
 	auipc a1, %pcrel_hi(a)
 	andi a0, a2, 255
-	sb a0, %pcrel_lo(pcrel45)(a1)
+	sb a0, %pcrel_lo(pcrel43)(a1)
 	ret
 .p2align 2
 .globl t5
 t5:
-	sext.h a2, a0
-	li a3, 65535
-	addiw a1, a2, 1
-	and a0, a1, a3
-pcrel57:
+	sext.h a1, a0
+	addiw a2, a1, 1
+pcrel54:
 	auipc a1, %pcrel_hi(b)
-	sh a0, %pcrel_lo(pcrel57)(a1)
+	zext.h a0, a2
+	sh a0, %pcrel_lo(pcrel54)(a1)
 	ret
 .p2align 2
 .globl t6
 t6:
-	addiw a1, a0, 1
-	li a2, 4294967295
-	and a0, a1, a2
-pcrel68:
-	auipc a1, %pcrel_hi(c)
-	sw a0, %pcrel_lo(pcrel68)(a1)
+	addiw a2, a0, 1
+pcrel64:
+	auipc a0, %pcrel_hi(c)
+	zext.w a1, a2
+	sw a1, %pcrel_lo(pcrel64)(a0)
 	ret

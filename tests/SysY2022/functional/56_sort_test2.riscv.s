@@ -5,31 +5,23 @@
 .globl main
 main:
 	addi sp, sp, -72
-	li a0, 4
-	li a1, 3
-	li a2, 5
+	li a0, 12884901892
+	li a1, 8589934601
+	li a2, 21474836486
 	sd ra, 0(sp)
 	sd s0, 8(sp)
 	addi s0, sp, 32
 	sd s1, 16(sp)
 	li s1, 10
 	sd s2, 24(sp)
-	sw a0, 32(sp)
-	li a0, 9
-	sw a1, 36(sp)
-	li a1, 2
-	sw a0, 40(sp)
+	sd a0, 32(sp)
 	li a0, 1
-	sw a1, 44(sp)
-	li a1, 6
-	sw zero, 48(sp)
-	sw a0, 52(sp)
-	sw a1, 56(sp)
-	li a1, 7
-	sw a2, 60(sp)
-	li a2, 8
-	sw a1, 64(sp)
-	sw a2, 68(sp)
+	sd a1, 40(sp)
+	li a1, 4294967296
+	sd a1, 48(sp)
+	li a1, 34359738375
+	sd a2, 56(sp)
+	sd a1, 64(sp)
 	blt a0, s1, label4
 label25:
 	mv s2, zero

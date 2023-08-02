@@ -7,11 +7,10 @@ test_minsize:
 	li a2, 5
 	remuw a1, a0, a2
 	li a0, 42
-	beq a1, zero, label10
+	beq a1, zero, label9
 	li a0, -10
-label10:
-	li a1, 4294967295
-	and a0, a0, a1
+label9:
+	zext.w a0, a0
 	ret
 .p2align 2
 .globl test_optsize
@@ -19,9 +18,8 @@ test_optsize:
 	li a2, 5
 	remuw a1, a0, a2
 	li a0, 42
-	beq a1, zero, label21
+	beq a1, zero, label19
 	li a0, -10
-label21:
-	li a1, 4294967295
-	and a0, a0, a1
+label19:
+	zext.w a0, a0
 	ret

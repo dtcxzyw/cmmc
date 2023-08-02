@@ -27,8 +27,7 @@ u16_to_u16:
 .p2align 2
 .globl u16_to_u32
 u16_to_u32:
-	li a1, 65535
-	and a0, a0, a1
+	zext.h a0, a0
 	ret
 .p2align 2
 .globl u32_to_u8
@@ -38,8 +37,7 @@ u32_to_u8:
 .p2align 2
 .globl u32_to_u16
 u32_to_u16:
-	li a1, 65535
-	and a0, a0, a1
+	zext.h a0, a0
 	ret
 .p2align 2
 .globl u32_to_u32
@@ -66,8 +64,7 @@ i16_to_u8:
 .p2align 2
 .globl i16_to_u16
 i16_to_u16:
-	li a1, 65535
-	and a0, a0, a1
+	zext.h a0, a0
 	ret
 .p2align 2
 .globl i16_to_u32
@@ -81,14 +78,12 @@ i32_to_u8:
 .p2align 2
 .globl i32_to_u16
 i32_to_u16:
-	li a1, 65535
-	and a0, a0, a1
+	zext.h a0, a0
 	ret
 .p2align 2
 .globl i32_to_u32
 i32_to_u32:
-	li a1, 4294967295
-	and a0, a0, a1
+	zext.w a0, a0
 	ret
 .p2align 2
 .globl u8_to_i8
@@ -118,8 +113,7 @@ u16_to_i16:
 .p2align 2
 .globl u16_to_i32
 u16_to_i32:
-	li a1, 65535
-	and a0, a0, a1
+	zext.h a0, a0
 	ret
 .p2align 2
 .globl u32_to_i8

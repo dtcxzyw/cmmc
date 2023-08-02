@@ -15,8 +15,7 @@ add_after_lsl_imm:
 .p2align 2
 .globl add_after_lsr
 add_after_lsr:
-	li a4, 4294967295
-	and a3, a2, a4
+	zext.w a3, a2
 	srlw a1, a1, a3
 	addw a0, a0, a1
 	ret
@@ -59,8 +58,7 @@ rsb_after_lsl_imm:
 .p2align 2
 .globl sub_after_lsr
 sub_after_lsr:
-	li a4, 4294967295
-	and a3, a2, a4
+	zext.w a3, a2
 	srlw a1, a1, a3
 	subw a0, a0, a1
 	ret
@@ -97,8 +95,7 @@ and_after_lsl_imm:
 .p2align 2
 .globl and_after_lsr
 and_after_lsr:
-	li a4, 4294967295
-	and a3, a2, a4
+	zext.w a3, a2
 	srlw a1, a1, a3
 	and a0, a0, a1
 	ret

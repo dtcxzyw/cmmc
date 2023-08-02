@@ -5,71 +5,62 @@
 .globl test1
 test1:
 	sltu a2, zero, a0
-	li a4, 4294967295
-	and a3, a2, a4
+	zext.w a3, a2
 	addw a0, a1, a3
 	ret
 .p2align 2
 .globl test1_commute
 test1_commute:
 	sltu a2, zero, a0
-	li a4, 4294967295
-	and a3, a2, a4
+	zext.w a3, a2
 	addw a0, a1, a3
 	ret
 .p2align 2
 .globl test2
 test2:
 	sltiu a2, a0, 1
-	li a4, 4294967295
-	and a3, a2, a4
+	zext.w a3, a2
 	addw a0, a1, a3
 	ret
 .p2align 2
 .globl test3
 test3:
 	sltiu a2, a0, 1
-	li a4, 4294967295
-	and a3, a2, a4
+	zext.w a3, a2
 	addw a0, a1, a3
 	ret
 .p2align 2
 .globl test4
 test4:
 	sltu a2, zero, a0
-	li a4, 4294967295
-	and a3, a2, a4
+	zext.w a3, a2
 	addw a0, a1, a3
 	ret
 .p2align 2
 .globl test5
 test5:
 	sltu a2, zero, a0
-	li a4, 4294967295
-	and a3, a2, a4
+	zext.w a3, a2
 	subw a0, a1, a3
 	ret
 .p2align 2
 .globl test6
 test6:
 	sltiu a2, a0, 1
-	li a4, 4294967295
-	and a3, a2, a4
+	zext.w a3, a2
 	subw a0, a1, a3
 	ret
 .p2align 2
 .globl test7
 test7:
 	sltiu a2, a0, 1
-	li a4, 4294967295
-	and a3, a2, a4
+	zext.w a3, a2
 	subw a0, a1, a3
 	ret
 .p2align 2
 .globl test8
 test8:
 	sltu a2, zero, a0
-	li a4, 4294967295
-	and a3, a2, a4
+	zext.w a3, a2
 	subw a0, a1, a3
 	ret

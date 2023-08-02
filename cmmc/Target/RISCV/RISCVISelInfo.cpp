@@ -89,7 +89,7 @@ static bool selectAddrOffset(const MIROperand& addr, ISelContext& ctx, MIROperan
             offset = MIROperand::asImm(0, OperandType::Int64);
             return true;
         }
-        if(addrInst->opcode() == InstAdd) {
+        if(addrInst->opcode() == InstAdd || addrInst->opcode() == ADDI) {
             base = addrInst->getOperand(1);
             const auto off = addrInst->getOperand(2);
             if(isOperandIReg(base) && isOperandImm12(off)) {
@@ -103,9 +103,8 @@ static bool selectAddrOffset(const MIROperand& addr, ISelContext& ctx, MIROperan
                             base = baseInst->getOperand(1);
                         }
                     }
-
-                    return true;
                 }
+                return true;
             }
         }
         // TODO: move to emitLoadGlobalAddress?
@@ -412,6 +411,10 @@ static bool selectCompare(ISelContext& ctx, const MIROperand& cond, MIROperand& 
     return true;
 }
 
+static MIROperand getShiftedImm64(const MIROperand& imm, const MIROperand& shift) {
+    return MIROperand::asImm(imm.imm() << shift.imm(), OperandType::Int64);
+}
+
 static bool selectSFBArith(ISelContext& ctx, const MIROperand& trueV, const MIROperand& falseV, MIROperand& rs1, MIROperand& rs2,
                            MIROperand& op) {
     if(!ctx.hasOneUse(trueV))
@@ -543,6 +546,16 @@ static bool legalizeInst(MIRInst& inst, ISelContext& ctx) {
             }
 
             imm2reg(lhs);
+            if(inst.opcode() == InstAnd && rhs.isImm() && rhs.imm() == 0xffff) {
+                inst = MIRInst{ ZEXT_H }.setOperand<0>(inst.getOperand(0)).setOperand<1>(lhs);
+                modified = true;
+                break;
+            }
+            if(inst.opcode() == InstAnd && rhs.isImm() && rhs.imm() == 0xffffffff) {
+                inst = MIRInst{ ZEXT_W }.setOperand<0>(inst.getOperand(0)).setOperand<1>(lhs);
+                modified = true;
+                break;
+            }
             largeImm2reg(rhs);
             break;
         }

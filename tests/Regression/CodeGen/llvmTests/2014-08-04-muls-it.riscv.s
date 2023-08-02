@@ -4,12 +4,11 @@
 .p2align 2
 .globl function
 function:
-	mulw a2, a0, a0
-	li a4, 4294967295
-	and a3, a2, a4
-	mv a2, a3
-	beq a0, a1, label12
+	mulw a3, a0, a0
+	zext.w a4, a3
+	mv a2, a4
+	beq a0, a1, label11
 	mv a2, a0
-label12:
+label11:
 	mv a0, a2
 	ret

@@ -14,14 +14,12 @@ test2:
 .p2align 2
 .globl test3
 test3:
-	li a1, 65535
-	and a0, a0, a1
+	zext.h a0, a0
 	ret
 .p2align 2
 .globl test4
 test4:
-	li a1, 65535
-	and a0, a0, a1
+	zext.h a0, a0
 	ret
 .p2align 2
 .globl test5

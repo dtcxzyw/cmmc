@@ -372,17 +372,17 @@ main:
 	jal getint
 	mv s1, a0
 	jal getint
-pcrel518:
+pcrel538:
 	auipc a1, %pcrel_hi(to)
-pcrel519:
+pcrel539:
 	auipc a2, %pcrel_hi(cap)
-	addi s3, a1, %pcrel_lo(pcrel518)
 	sd zero, 88(sp)
-	addi s4, a2, %pcrel_lo(pcrel519)
-pcrel520:
+	addi s3, a1, %pcrel_lo(pcrel538)
+	addi s4, a2, %pcrel_lo(pcrel539)
+pcrel540:
 	auipc a1, %pcrel_hi(rev)
-	addi s5, a1, %pcrel_lo(pcrel520)
 	sd zero, 96(sp)
+	addi s5, a1, %pcrel_lo(pcrel540)
 	sd zero, 104(sp)
 	sd zero, 112(sp)
 	sd zero, 120(sp)
@@ -394,9 +394,9 @@ label435:
 	mv s6, a0
 	j label410
 label406:
+	sd zero, 128(sp)
 	li a0, 1
 	lui a2, 458752
-	sd zero, 128(sp)
 	sd zero, 136(sp)
 	sd zero, 144(sp)
 	sd zero, 152(sp)

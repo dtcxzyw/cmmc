@@ -6,21 +6,19 @@
 testsize1:
 	slli a1, a0, 1
 	srli a2, a1, 59
-	add a0, a0, a2
-	li a2, 4294967295
-	sraiw a1, a0, 5
-	and a0, a1, a2
+	add a3, a0, a2
+	sraiw a1, a3, 5
+	zext.w a0, a1
 	ret
 .p2align 2
 .globl testsize2
 testsize2:
 	li a2, 1041204193
-	li a3, 4294967295
 	mul a1, a0, a2
 	srli a2, a1, 63
 	srai a0, a1, 35
 	add a1, a2, a0
-	and a0, a1, a3
+	zext.w a0, a1
 	ret
 .p2align 2
 .globl testsize3

@@ -5,8 +5,7 @@
 .globl _Z2f1ii
 _Z2f1ii:
 	addw a2, a0, a1
-	li a3, 4294967295
-	and a0, a2, a3
+	zext.w a0, a2
 	ret
 .p2align 2
 .globl _Z2f2v

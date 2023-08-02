@@ -14,12 +14,12 @@ QuickSort:
 	sd s6, 32(sp)
 	mv a2, zero
 	sd s2, 40(sp)
+	mv s2, zero
 	sd s3, 48(sp)
 	sd s4, 56(sp)
 	sd s7, 64(sp)
 	sd s8, 72(sp)
 	sd s9, 80(sp)
-	mv s2, zero
 label2:
 	bne a2, zero, label290
 	mv s2, zero
@@ -267,30 +267,22 @@ label126:
 .globl main
 main:
 	addi sp, sp, -72
-	li a1, 4
-	li a0, 3
+	li a0, 12884901892
 	li a2, 9
+	li a1, 4294967296
 	sd ra, 0(sp)
 	sd s0, 8(sp)
 	addi s0, sp, 32
 	sd s1, 16(sp)
 	sd s2, 24(sp)
-	sw a1, 32(sp)
-	li a1, 1
-	sw a0, 36(sp)
-	li a0, 2
-	sw a2, 40(sp)
-	sw a0, 44(sp)
-	li a0, 6
-	sw zero, 48(sp)
-	sw a1, 52(sp)
-	li a1, 5
-	sw a0, 56(sp)
-	li a0, 7
-	sw a1, 60(sp)
-	li a1, 8
-	sw a0, 64(sp)
-	sw a1, 68(sp)
+	sd a0, 32(sp)
+	li a0, 8589934601
+	sd a0, 40(sp)
+	li a0, 21474836486
+	sd a1, 48(sp)
+	li a1, 34359738375
+	sd a0, 56(sp)
+	sd a1, 64(sp)
 	mv a1, zero
 	mv a0, s0
 	jal QuickSort

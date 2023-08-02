@@ -4,8 +4,7 @@
 .p2align 2
 .globl test
 test:
-	andi a2, a0, 255
-	li a3, 4294967295
-	sext.b a1, a2
-	and a0, a1, a3
+	andi a1, a0, 255
+	sext.b a2, a1
+	zext.w a0, a2
 	ret

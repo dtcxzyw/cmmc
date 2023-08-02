@@ -164,15 +164,15 @@ label93:
 main:
 	addi sp, sp, -200
 	sd ra, 0(sp)
-	sd s0, 8(sp)
-	addi s0, sp, 192
-	sd s5, 16(sp)
-	sd s1, 24(sp)
-	addi s1, sp, 72
-	sd s6, 32(sp)
-	sd s3, 40(sp)
-	sd s4, 48(sp)
-	sd s2, 56(sp)
+	sd s1, 8(sp)
+	addi s1, sp, 192
+	sd s6, 16(sp)
+	sd s2, 24(sp)
+	addi s2, sp, 72
+	sd s3, 32(sp)
+	sd s4, 40(sp)
+	sd s5, 48(sp)
+	sd s0, 56(sp)
 	sd s7, 64(sp)
 	sd zero, 72(sp)
 	sd zero, 80(sp)
@@ -192,14 +192,14 @@ main:
 	jal getint
 	sw a0, 192(sp)
 	jal getint
-	li s2, 1
-pcrel384:
+	li s0, 1
+pcrel414:
 	auipc a1, %pcrel_hi(graph)
 	mv s3, a0
-	addi s4, a1, %pcrel_lo(pcrel384)
-pcrel385:
+	addi s4, a1, %pcrel_lo(pcrel414)
+pcrel415:
 	auipc a0, %pcrel_hi(edges)
-	addi s5, a0, %pcrel_lo(pcrel385)
+	addi s5, a0, %pcrel_lo(pcrel415)
 	ble s3, zero, label183
 	mv s6, zero
 .p2align 2
@@ -226,11 +226,11 @@ label179:
 	sh3add a5, t0, s4
 	sh2add t0, a4, a5
 	slli a5, a4, 4
-	sw s2, 0(t0)
+	sw s0, 0(t0)
 	sub t0, a5, a4
 	sh3add a4, t0, s4
 	sh2add a5, a3, a4
-	sw s2, 0(a5)
+	sw s0, 0(a5)
 	lw a3, 8(a2)
 	slli a4, a3, 4
 	sub t0, a4, a3
@@ -238,11 +238,11 @@ label179:
 	sh3add a5, t0, s4
 	slli t1, a4, 4
 	sh2add t0, a4, a5
-	sw s2, 0(t0)
+	sw s0, 0(t0)
 	sub t0, t1, a4
 	sh3add a5, t0, s4
 	sh2add a4, a3, a5
-	sw s2, 0(a4)
+	sw s0, 0(a4)
 	lw a3, 16(a2)
 	slli a4, a3, 4
 	sub t0, a4, a3
@@ -251,10 +251,10 @@ label179:
 	sh2add t0, a4, a5
 	slli a5, a4, 4
 	sub t1, a5, a4
-	sw s2, 0(t0)
+	sw s0, 0(t0)
 	sh3add t0, t1, s4
 	sh2add a4, a3, t0
-	sw s2, 0(a4)
+	sw s0, 0(a4)
 	lw a3, 24(a2)
 	lw a2, 28(a2)
 	slli a5, a3, 4
@@ -263,10 +263,10 @@ label179:
 	sh2add a5, a2, a4
 	slli a4, a2, 4
 	sub t0, a4, a2
-	sw s2, 0(a5)
+	sw s0, 0(a5)
 	sh3add a5, t0, s4
 	sh2add a2, a3, a5
-	sw s2, 0(a2)
+	sw s0, 0(a2)
 	bgt a1, a0, label179
 	mv a1, a0
 label181:
@@ -279,27 +279,27 @@ label181:
 	sh3add a3, a5, s4
 	sh2add a4, a2, a3
 	slli a3, a2, 4
-	sw s2, 0(a4)
+	sw s0, 0(a4)
 	sub a4, a3, a2
 	sh3add a2, a4, s4
 	sh2add a0, a0, a2
-	sw s2, 0(a0)
+	sw s0, 0(a0)
 	bgt s3, a1, label181
 label183:
-	mv a0, s2
-	mv a1, s1
-	mv a2, s0
+	mv a0, s0
+	mv a1, s2
+	mv a2, s1
 	jal maxCliques
 	jal putint
 	ld ra, 0(sp)
 	mv a0, zero
-	ld s0, 8(sp)
-	ld s5, 16(sp)
-	ld s1, 24(sp)
-	ld s6, 32(sp)
-	ld s3, 40(sp)
-	ld s4, 48(sp)
-	ld s2, 56(sp)
+	ld s1, 8(sp)
+	ld s6, 16(sp)
+	ld s2, 24(sp)
+	ld s3, 32(sp)
+	ld s4, 40(sp)
+	ld s5, 48(sp)
+	ld s0, 56(sp)
 	ld s7, 64(sp)
 	addi sp, sp, 200
 	ret

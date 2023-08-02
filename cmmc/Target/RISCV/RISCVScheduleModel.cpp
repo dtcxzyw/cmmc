@@ -473,7 +473,7 @@ static bool largeImmMaterialize(MIRBasicBlock& block) {
     for(auto& inst : block.instructions()) {
         if(inst.opcode() == LoadImm12) {
             addImm(inst.getOperand(1).imm(), inst.getOperand(0));
-        } else if(inst.opcode() == LoadImm32) {
+        } else if(inst.opcode() == LoadImm32 || inst.opcode() == LoadImm64) {
             const auto val = inst.getOperand(1).imm();
             if(reuseImm(val, inst))
                 modified = true;
@@ -531,6 +531,81 @@ static bool foldStoreZero(MIRFunction& func, MIRBasicBlock& block, const CodeGen
             }
             inst.setOpcode(SD);
             inst.setOperand<1>(prevInst.getOperand(1));
+            inst.setOperand<3>(prevInst.getOperand(3));
+            block.instructions().erase(prevIter);
+            prevStore = block.instructions().end();
+            modified = true;
+        }
+    }
+    return modified;
+}
+
+static bool earlyFoldStore(MIRBasicBlock& block, CodeGenContext& ctx) {
+    bool modified = false;
+    auto prevStore = block.instructions().end();
+    std::unordered_map<MIROperand, MIROperand, MIROperandHasher> addressMap;
+    for(auto iter = block.instructions().begin(); iter != block.instructions().end(); ++iter) {
+        auto isStoreWord = [&](const MIRInst& inst, uint32_t alignmentReq) {
+            assert(inst.opcode() == SW);
+            const auto alignment = inst.getOperand(3).imm();
+            return alignment >= alignmentReq;
+        };
+
+        auto& inst = *iter;
+        if(inst.opcode() != SW) {
+            if(inst.opcode() == ADDI && inst.getOperand(2).isReloc())
+                addressMap.emplace(inst.getOperand(0), MIROperand::asReloc(inst.getOperand(2).reloc()));
+            auto& info = ctx.instInfo.getInstInfo(inst);
+            if(requireOneFlag(info.getInstFlag(), InstFlagSideEffect))
+                prevStore = block.instructions().end();
+            continue;
+        }
+
+        if(prevStore == block.instructions().end()) {
+            prevStore = iter;
+            continue;
+        }
+
+        auto prevIter = prevStore;
+        auto& prevInst = *prevStore;
+        prevStore = iter;
+
+        if(isStoreWord(prevInst, 8) && isStoreWord(inst, 4)) {
+            auto prevBase = prevInst.getOperand(2);
+            intmax_t prevOffset;
+            if(prevInst.getOperand(1).isImm()) {
+                prevOffset = prevInst.getOperand(1).imm();
+            } else {
+                prevBase = MIROperand::asReloc(prevInst.getOperand(1).reloc());
+                prevOffset = 0;
+            }
+
+            auto base = inst.getOperand(2);
+            if(prevBase != base) {
+                if(auto it = addressMap.find(base); it != addressMap.end())
+                    base = it->second;
+                if(prevBase != base)
+                    continue;
+            }
+            if(!inst.getOperand(1).isImm())
+                continue;
+            const auto offset = inst.getOperand(1).imm();
+            if(prevOffset + 4 != offset)
+                continue;
+
+            const auto shift = MIROperand::asVReg(ctx.nextId(), OperandType::Int64);
+            const auto val = MIROperand::asVReg(ctx.nextId(), OperandType::Int64);
+            block.instructions().insert(iter,
+                                        MIRInst{ SLLI }
+                                            .setOperand<0>(shift)
+                                            .setOperand<1>(inst.getOperand(0))
+                                            .setOperand<2>(MIROperand::asImm(32, OperandType::Int64)));
+            block.instructions().insert(
+                iter, MIRInst{ ADD_UW }.setOperand<0>(val).setOperand<1>(prevInst.getOperand(0)).setOperand<2>(shift));
+            inst.setOpcode(SD);
+            inst.setOperand<0>(val);
+            inst.setOperand<1>(prevInst.getOperand(1));
+            inst.setOperand<2>(prevInst.getOperand(2));
             inst.setOperand<3>(prevInst.getOperand(3));
             block.instructions().erase(prevIter);
             prevStore = block.instructions().end();
@@ -656,6 +731,13 @@ static bool simplifyOpWithZero(MIRFunction& func, const CodeGenContext&) {
                     if(isZero(1)) {
                         resetToZero();
                     }
+                    break;
+                }
+                case ADD_UW: {
+                    if(isZero(1) && isZero(2))
+                        resetToZero();
+                    else if(isZero(1))
+                        resetToCopy(2);
                     break;
                 }
                 default:
@@ -887,12 +969,16 @@ static bool removeSExtW(MIRFunction& func, const CodeGenContext& ctx) {
 bool RISCVScheduleModel_sifive_u74::peepholeOpt(MIRFunction& func, CodeGenContext& ctx) const {
     bool modified = false;
     if(ctx.flags.preRA) {
-        for(auto& block : func.blocks())
-            modified |= largeImmMaterialize(*block);
+        for(auto& block : func.blocks()) {
+            if(!ctx.flags.inSSAForm)
+                modified |= largeImmMaterialize(*block);
+            modified |= earlyFoldStore(*block, ctx);
+        }
     }
     if(ctx.flags.postSA) {
-        for(auto& block : func.blocks())
+        for(auto& block : func.blocks()) {
             modified |= foldStoreZero(func, *block, ctx);
+        }
     }
     modified |= branch2jump(func, ctx);
     modified |= removeDeadBranch(func, ctx);

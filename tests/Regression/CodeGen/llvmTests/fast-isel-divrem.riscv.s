@@ -5,17 +5,15 @@
 .globl test_sdiv16
 test_sdiv16:
 	sext.h a2, a0
-	sext.h a0, a1
-	divw a1, a2, a0
-	li a2, 65535
-	and a0, a1, a2
+	sext.h a3, a1
+	divw a1, a2, a3
+	zext.h a0, a1
 	ret
 .p2align 2
 .globl test_sdiv32
 test_sdiv32:
 	divw a2, a0, a1
-	li a3, 4294967295
-	and a0, a2, a3
+	zext.w a0, a2
 	ret
 .p2align 2
 .globl test_sdiv8
@@ -29,17 +27,15 @@ test_sdiv8:
 .globl test_srem16
 test_srem16:
 	sext.h a2, a0
-	sext.h a0, a1
-	remw a1, a2, a0
-	li a2, 65535
-	and a0, a1, a2
+	sext.h a3, a1
+	remw a1, a2, a3
+	zext.h a0, a1
 	ret
 .p2align 2
 .globl test_srem32
 test_srem32:
 	remw a2, a0, a1
-	li a3, 4294967295
-	and a0, a2, a3
+	zext.w a0, a2
 	ret
 .p2align 2
 .globl test_srem8
@@ -52,11 +48,10 @@ test_srem8:
 .p2align 2
 .globl test_udiv16
 test_udiv16:
-	li a2, 65535
-	and a1, a1, a2
-	and a0, a0, a2
-	divw a3, a0, a1
-	and a0, a3, a2
+	zext.h a2, a0
+	zext.h a3, a1
+	divw a1, a2, a3
+	zext.h a0, a1
 	ret
 .p2align 2
 .globl test_udiv32
@@ -74,11 +69,10 @@ test_udiv8:
 .p2align 2
 .globl test_urem16
 test_urem16:
-	li a2, 65535
-	and a1, a1, a2
-	and a0, a0, a2
-	remw a3, a0, a1
-	and a0, a3, a2
+	zext.h a2, a0
+	zext.h a3, a1
+	remw a1, a2, a3
+	zext.h a0, a1
 	ret
 .p2align 2
 .globl test_urem32

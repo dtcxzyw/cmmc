@@ -125,8 +125,9 @@ saY_HeI10_To:
 .globl main
 main:
 	addi sp, sp, -88
-	li a0, 10
+	li a1, 10
 	sd ra, 0(sp)
+	add.uw a0, a1, zero
 	sd s0, 8(sp)
 	addi s0, sp, 64
 	sd s5, 16(sp)
@@ -135,14 +136,13 @@ main:
 	sd s2, 40(sp)
 	sd s3, 48(sp)
 	sd s4, 56(sp)
-	sw a0, 64(sp)
-pcrel165:
+	sd a0, 64(sp)
+pcrel169:
 	auipc a0, %pcrel_hi(__HELLO)
-	sw zero, 68(sp)
-	addi s1, a0, %pcrel_lo(pcrel165)
 	sd zero, 72(sp)
+	addi s1, a0, %pcrel_lo(pcrel169)
 	sw zero, 80(sp)
-	lw a1, %pcrel_lo(pcrel165)(a0)
+	lw a1, %pcrel_lo(pcrel169)(a0)
 	bne a1, zero, label31
 label30:
 	mv s1, zero
@@ -171,11 +171,11 @@ label18:
 	slliw a1, s1, 4
 	addw a2, a1, s1
 	addiw a0, a2, 23
-	slli a1, a0, 1
-	srli a3, a1, 59
-	add a2, a0, a3
-	andi a1, a2, -32
-	subw s1, a0, a1
+	slli a4, a0, 1
+	srli a1, a4, 59
+	add a3, a0, a1
+	andi a2, a3, -32
+	subw s1, a0, a2
 	bne s1, zero, label4
 	mv a0, zero
 	ld ra, 0(sp)

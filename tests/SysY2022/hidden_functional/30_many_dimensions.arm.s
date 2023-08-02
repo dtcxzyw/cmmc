@@ -99,10 +99,13 @@ label4:
 label7:
 	ldr r10, [sp, #12]
 	cmp r10, #2
-	bge label134
-	ldr r10, [sp, #20]
-	str r10, [sp, #8]
-	b label10
+	blt label135
+	b label134
+label138:
+	ldr r10, [sp, #12]
+	add r10, r10, #1
+	str r10, [sp, #12]
+	b label7
 label56:
 	movw r8, #:lower16:array
 	movt r8, #:upper16:array
@@ -161,22 +164,13 @@ label56:
 	add sp, sp, #28
 	mov r0, r10
 	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
+label135:
+	ldr r10, [sp, #20]
+	str r10, [sp, #8]
 label10:
 	ldr r10, [sp, #8]
 	cmp r10, #2
-	blt label139
-	b label138
-label142:
-	ldr r10, [sp, #8]
-	add r10, r10, #1
-	str r10, [sp, #8]
-	b label10
-label134:
-	ldr r10, [sp, #16]
-	add r10, r10, #1
-	str r10, [sp, #16]
-	b label4
-label139:
+	bge label138
 	ldr r10, [sp, #20]
 	str r10, [sp, #4]
 label13:
@@ -200,32 +194,12 @@ label16:
 	mov r1, r10
 label19:
 	cmp r1, #2
-	blt label151
-	b label150
-label154:
-	add r1, r1, #1
-	b label19
-label138:
-	ldr r10, [sp, #12]
-	add r10, r10, #1
-	str r10, [sp, #12]
-	b label7
-label151:
+	bge label150
 	ldr r10, [sp, #20]
 	mov r2, r10
 label22:
 	cmp r2, #2
-	blt label155
-	b label154
-label158:
-	add r2, r2, #1
-	b label22
-label150:
-	ldr r10, [sp, #0]
-	add r10, r10, #1
-	str r10, [sp, #0]
-	b label16
-label155:
+	bge label154
 	ldr r10, [sp, #20]
 	mov r3, r10
 label25:
@@ -235,12 +209,30 @@ label25:
 label162:
 	add r3, r3, #1
 	b label25
+label150:
+	ldr r10, [sp, #0]
+	add r10, r10, #1
+	str r10, [sp, #0]
+	b label16
+label142:
+	ldr r10, [sp, #8]
+	add r10, r10, #1
+	str r10, [sp, #8]
+	b label10
+label158:
+	add r2, r2, #1
+	b label22
 label159:
 	ldr r10, [sp, #20]
 	mov r4, r10
 label28:
 	cmp r4, #2
-	bge label162
+	blt label163
+	b label162
+label166:
+	add r4, r4, #1
+	b label28
+label163:
 	ldr r10, [sp, #20]
 	mov r5, r10
 label31:
@@ -416,9 +408,14 @@ label41:
 	cmp r7, #2
 	blt label40
 	b label174
+label134:
+	ldr r10, [sp, #16]
+	add r10, r10, #1
+	str r10, [sp, #16]
+	b label4
+label154:
+	add r1, r1, #1
+	b label19
 label170:
 	add r5, r5, #1
 	b label31
-label166:
-	add r4, r4, #1
-	b label28

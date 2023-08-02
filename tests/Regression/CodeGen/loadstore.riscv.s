@@ -9,6 +9,10 @@ y:
 .globl arr
 arr:
 	.zero	400
+.align 8
+.globl x
+x:
+	.zero	8
 .text
 .p2align 2
 .globl load
@@ -108,10 +112,10 @@ pcrel104:
 .globl memset_impl
 memset_impl:
 	ble a0, zero, label114
-pcrel182:
+pcrel198:
 	auipc a2, %pcrel_hi(arr)
 	li a3, 4
-	addi a1, a2, %pcrel_lo(pcrel182)
+	addi a1, a2, %pcrel_lo(pcrel198)
 	ble a0, a3, label123
 	addiw a2, a0, -4
 	addiw a4, a0, -20
@@ -156,38 +160,32 @@ label129:
 .p2align 2
 .globl fused_store
 fused_store:
-pcrel218:
+pcrel250:
 	auipc a1, %pcrel_hi(arr)
-	li a2, 2
-	li a3, 9
-	addi a0, a1, %pcrel_lo(pcrel218)
-	sw zero, %pcrel_lo(pcrel218)(a1)
-	li a1, 1
-	sw a1, 4(a0)
-	li a1, 3
-	sw a2, 8(a0)
-	li a2, 4
-	sw a1, 12(a0)
-	li a1, 5
-	sw a2, 16(a0)
-	li a2, 6
-	sw a1, 20(a0)
-	li a1, 7
-	sw a2, 24(a0)
-	li a2, 8
-	sw a1, 28(a0)
-	li a1, 10
-	sw a2, 32(a0)
-	li a2, 11
-	sw a3, 36(a0)
-	sw a1, 40(a0)
-	li a1, 12
-	sw a2, 44(a0)
-	li a2, 13
-	sw a1, 48(a0)
-	li a1, 14
-	sw a2, 52(a0)
-	li a2, 15
-	sw a1, 56(a0)
-	sw a2, 60(a0)
+	li a2, 4294967296
+	addi a0, a1, %pcrel_lo(pcrel250)
+	sd a2, %pcrel_lo(pcrel250)(a1)
+	li a2, 21474836484
+	li a1, 12884901890
+	sd a1, 8(a0)
+	li a1, 30064771078
+	sd a2, 16(a0)
+	li a2, 38654705672
+	sd a1, 24(a0)
+	li a1, 47244640266
+	sd a2, 32(a0)
+	li a2, 55834574860
+	sd a1, 40(a0)
+	li a1, 64424509454
+	sd a2, 48(a0)
+	sd a1, 56(a0)
+	ret
+.p2align 2
+.globl merge_store
+merge_store:
+pcrel261:
+	auipc a2, %pcrel_hi(x)
+	slli a3, a1, 32
+	add.uw a0, a0, a3
+	sd a0, %pcrel_lo(pcrel261)(a2)
 	ret

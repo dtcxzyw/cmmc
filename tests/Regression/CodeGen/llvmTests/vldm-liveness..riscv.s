@@ -5,52 +5,50 @@
 .globl t1
 t1:
 	li a1, 10
-	bne a0, zero, label8
+	bne a0, zero, label7
 	li a1, 20
-label8:
-	li a2, 4294967295
-	and a0, a1, a2
+label7:
+	zext.w a0, a1
 	ret
 .p2align 2
 .globl t2
 t2:
-	bne a0, zero, label16
+	bne a0, zero, label15
 	li a1, 20
-label16:
+label15:
 	mv a0, a1
 	ret
 .p2align 2
 .globl t3
 t3:
 	mv a3, a1
-	bne a0, zero, label26
+	bne a0, zero, label25
 	mv a3, a2
-label26:
+label25:
 	addw a0, a1, a3
 	ret
 .p2align 2
 .globl t4
 t4:
 	li a1, -10
-	bne a0, zero, label35
+	bne a0, zero, label33
 	li a1, -1
-label35:
-	li a2, 4294967295
-	and a0, a1, a2
+label33:
+	zext.w a0, a1
 	ret
 .p2align 2
 .globl t5
 t5:
-	bne a0, zero, label43
+	bne a0, zero, label41
 	li a1, -2
-label43:
+label41:
 	mv a0, a1
 	ret
 .p2align 2
 .globl t6
 t6:
-	bne a0, zero, label51
+	bne a0, zero, label49
 	li a1, -978945
-label51:
+label49:
 	mv a0, a1
 	ret

@@ -4,10 +4,9 @@
 .p2align 2
 .globl test1
 test1:
-	li a3, 65535
-	slliw a1, a1, 16
-	and a2, a0, a3
-	or a0, a2, a1
+	zext.h a2, a0
+	slliw a3, a1, 16
+	or a0, a2, a3
 	ret
 .p2align 2
 .globl test10
@@ -22,27 +21,24 @@ test10:
 test2:
 	slliw a2, a1, 12
 	lui a3, 1048560
-	li a4, 65535
 	and a1, a2, a3
-	and a2, a0, a4
+	zext.h a2, a0
 	or a0, a1, a2
 	ret
 .p2align 2
 .globl test3
 test3:
-	li a3, 65535
-	slliw a1, a1, 18
-	and a2, a0, a3
-	or a0, a2, a1
+	zext.h a2, a0
+	slliw a3, a1, 18
+	or a0, a2, a3
 	ret
 .p2align 2
 .globl test4
 test4:
-	li a2, 65535
+	zext.h a2, a0
 	lui a3, 1048560
-	and a0, a0, a2
 	and a1, a1, a3
-	or a0, a0, a1
+	or a0, a2, a1
 	ret
 .p2align 2
 .globl test5
@@ -63,22 +59,20 @@ test5a:
 .p2align 2
 .globl test6
 test6:
-	srliw a2, a1, 12
-	li a3, 65535
+	srliw a3, a1, 12
 	lui a4, 1048560
-	and a1, a2, a3
-	and a2, a0, a4
-	or a0, a1, a2
+	zext.h a2, a3
+	and a1, a0, a4
+	or a0, a2, a1
 	ret
 .p2align 2
 .globl test7
 test7:
-	srliw a2, a1, 18
-	li a3, 65535
+	srliw a3, a1, 18
 	lui a4, 1048560
-	and a1, a2, a3
-	and a2, a0, a4
-	or a0, a1, a2
+	zext.h a2, a3
+	and a1, a0, a4
+	or a0, a2, a1
 	ret
 .p2align 2
 .globl test8

@@ -4,90 +4,80 @@
 .p2align 2
 .globl f1
 f1:
-	xor a3, a0, a1
-	li a1, 4294967295
-	sltu a2, zero, a3
-	and a0, a2, a1
+	xor a2, a0, a1
+	sltu a3, zero, a2
+	zext.w a0, a3
 	ret
 .p2align 2
 .globl f2
 f2:
-	xor a3, a0, a1
-	li a1, 4294967295
-	sltiu a2, a3, 1
-	and a0, a2, a1
+	xor a2, a0, a1
+	sltiu a3, a2, 1
+	zext.w a0, a3
 	ret
 .p2align 2
 .globl f6
 f6:
 	slliw a2, a1, 5
-	xor a0, a0, a2
-	li a2, 4294967295
-	sltiu a1, a0, 1
-	and a0, a1, a2
+	xor a3, a0, a2
+	sltiu a1, a3, 1
+	zext.w a0, a1
 	ret
 .p2align 2
 .globl f7
 f7:
 	srliw a2, a1, 6
-	xor a0, a0, a2
-	li a2, 4294967295
-	sltu a1, zero, a0
-	and a0, a1, a2
+	xor a3, a0, a2
+	sltu a1, zero, a3
+	zext.w a0, a1
 	ret
 .p2align 2
 .globl f8
 f8:
 	srliw a2, a1, 7
-	xor a0, a0, a2
-	li a2, 4294967295
-	sltiu a1, a0, 1
-	and a0, a1, a2
+	xor a3, a0, a2
+	sltiu a1, a3, 1
+	zext.w a0, a1
 	ret
 .p2align 2
 .globl f9
 f9:
 	slliw a1, a0, 24
-	srliw a3, a0, 8
-	or a2, a1, a3
-	xor a0, a0, a2
-	li a2, 4294967295
-	sltu a1, zero, a0
-	and a0, a1, a2
+	srliw a2, a0, 8
+	or a3, a1, a2
+	xor a1, a0, a3
+	sltu a2, zero, a1
+	zext.w a0, a2
 	ret
 .p2align 2
 .globl swap_cmp_ashr
 swap_cmp_ashr:
 	srliw a2, a0, 11
-	slt a0, a2, a1
-	li a2, 4294967295
-	xori a1, a0, 1
-	and a0, a1, a2
+	slt a3, a2, a1
+	xori a1, a3, 1
+	zext.w a0, a1
 	ret
 .p2align 2
 .globl swap_cmp_lshr
 swap_cmp_lshr:
-	srliw a3, a0, 11
-	sltu a2, a3, a1
-	li a1, 4294967295
-	and a0, a2, a1
+	srliw a2, a0, 11
+	sltu a3, a2, a1
+	zext.w a0, a3
 	ret
 .p2align 2
 .globl swap_cmp_rotr
 swap_cmp_rotr:
 	srliw a2, a0, 11
-	slliw a3, a0, 21
-	or a0, a2, a3
-	li a3, 4294967295
-	sltu a2, a0, a1
-	xori a1, a2, 1
-	and a0, a1, a3
+	slliw a0, a0, 21
+	or a3, a2, a0
+	sltu a1, a3, a1
+	xori a2, a1, 1
+	zext.w a0, a2
 	ret
 .p2align 2
 .globl swap_cmp_shl
 swap_cmp_shl:
-	slliw a3, a0, 11
-	slt a2, a1, a3
-	li a1, 4294967295
-	and a0, a2, a1
+	slliw a2, a0, 11
+	slt a3, a1, a2
+	zext.w a0, a3
 	ret

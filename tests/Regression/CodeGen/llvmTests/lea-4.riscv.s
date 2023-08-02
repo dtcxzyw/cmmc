@@ -4,17 +4,15 @@
 .p2align 2
 .globl t1
 t1:
-	addiw a3, a0, -1
-	li a2, 65535
-	slliw a1, a3, 1
-	and a3, a1, a2
-	and a0, a3, a2
+	addiw a1, a0, -1
+	slliw a2, a1, 1
+	zext.h a3, a2
+	zext.h a0, a3
 	ret
 .p2align 2
 .globl t2
 t2:
-	addiw a2, a0, -1
-	li a3, 65535
-	slliw a1, a2, 1
-	and a0, a1, a3
+	addiw a1, a0, -1
+	slliw a2, a1, 1
+	zext.h a0, a2
 	ret

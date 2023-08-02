@@ -17,10 +17,9 @@ label11:
 and_2:
 	andi a2, a0, 255
 	andi a0, a1, 255
-	and a3, a2, a0
-	li a2, 4294967295
-	sltu a1, zero, a3
-	and a0, a1, a2
+	and a1, a2, a0
+	sltu a2, zero, a1
+	zext.w a0, a2
 	ret
 .p2align 2
 .globl xor_1
@@ -29,17 +28,16 @@ xor_1:
 	andi a3, a1, 255
 	xor a1, a0, a3
 	mv a0, a2
-	bne a1, zero, label33
+	bne a1, zero, label32
 	mv a0, zero
-label33:
+label32:
 	ret
 .p2align 2
 .globl xor_2
 xor_2:
 	andi a2, a0, 255
 	andi a0, a1, 255
-	xor a3, a2, a0
-	li a2, 4294967295
-	sltu a1, zero, a3
-	and a0, a1, a2
+	xor a1, a2, a0
+	sltu a2, zero, a1
+	zext.w a0, a2
 	ret

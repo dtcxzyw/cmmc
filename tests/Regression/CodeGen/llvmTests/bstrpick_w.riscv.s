@@ -56,6 +56,5 @@ lshr10_and255:
 .p2align 2
 .globl zext_i16_to_i32
 zext_i16_to_i32:
-	li a1, 65535
-	and a0, a0, a1
+	zext.h a0, a0
 	ret

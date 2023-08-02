@@ -9,6 +9,10 @@ y:
 .globl arr
 arr:
 	.zero	400
+.align 8
+.globl x
+x:
+	.zero	8
 .text
 .syntax unified
 .arm
@@ -107,7 +111,11 @@ memset_impl:
 	cmp r0, #0
 	mov r1, r0
 	mov r0, #0
-	ble label109
+	bgt label102
+label101:
+	pop { r4, r5, r6 }
+	bx lr
+label102:
 	movw r2, #:lower16:arr
 	movt r2, #:upper16:arr
 	cmp r1, #4
@@ -118,7 +126,7 @@ memset_impl:
 	ble label124
 	mov r4, r0
 .p2align 4
-label103:
+label104:
 	add r6, r2, r4, lsl #2
 	add r4, r4, #16
 	str r0, [r6, #0]
@@ -138,8 +146,8 @@ label103:
 	str r0, [r6, #52]
 	str r0, [r6, #56]
 	str r0, [r6, #60]
-	bgt label103
-label105:
+	bgt label104
+label106:
 	add r5, r2, r4, lsl #2
 	add r4, r4, #4
 	str r0, [r5, #0]
@@ -147,22 +155,20 @@ label105:
 	str r0, [r5, #4]
 	str r0, [r5, #8]
 	str r0, [r5, #12]
-	bgt label105
+	bgt label106
 	mov r3, r4
-label107:
+label108:
 	str r0, [r2, r3, lsl #2]
 	add r3, r3, #1
 	cmp r1, r3
-	bgt label107
-label109:
-	pop { r4, r5, r6 }
-	bx lr
+	bgt label108
+	b label101
 label118:
 	mov r3, r0
-	b label107
+	b label108
 label124:
 	mov r4, r0
-	b label105
+	b label106
 .p2align 4
 .globl fused_store
 fused_store:
@@ -200,4 +206,12 @@ fused_store:
 	str r1, [r0, #56]
 	mov r1, #15
 	str r1, [r0, #60]
+	bx lr
+.p2align 4
+.globl merge_store
+merge_store:
+	movw r2, #:lower16:x
+	movt r2, #:upper16:x
+	str r0, [r2, #0]
+	str r1, [r2, #4]
 	bx lr

@@ -10,6 +10,5 @@ mul1:
 .globl mul2
 mul2:
 	mulw a2, a0, a1
-	li a3, 4294967295
-	and a0, a2, a3
+	zext.w a0, a2
 	ret

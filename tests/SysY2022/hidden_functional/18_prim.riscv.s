@@ -165,9 +165,9 @@ pcrel453:
 	j label95
 label174:
 	auipc a0, %pcrel_hi(fa)
-	mv a3, zero
+	mv a4, zero
 	mv a2, zero
-	addi a4, a0, %pcrel_lo(label174)
+	addi a3, a0, %pcrel_lo(label174)
 .p2align 2
 label89:
 	bge a2, zero, label92
@@ -187,9 +187,9 @@ label93:
 	lw a5, 0(a0)
 	lw a0, 0(a1)
 	jal find
-	addw a3, a3, a5
+	addw a4, a4, a5
 	sh2add t0, a2, s4
-	sh2add a0, a0, a4
+	sh2add a0, a0, a3
 	addiw a2, a2, 1
 	lw a1, 0(t0)
 	sw a1, 0(a0)
@@ -405,7 +405,7 @@ label237:
 	bltu a0, s0, label243
 	j label242
 label92:
-	mv a0, a3
+	mv a0, a4
 	ld ra, 0(sp)
 	ld s0, 8(sp)
 	ld s5, 16(sp)

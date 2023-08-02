@@ -10,8 +10,7 @@ mulw:
 	addiw a1, a0, 1
 	bgt a3, a1, label3
 label21:
-	li a1, 4294967295
-	and a0, a0, a1
+	zext.w a0, a0
 	j label8
 label3:
 	mulw a0, a1, a0

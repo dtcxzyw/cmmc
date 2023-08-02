@@ -55,12 +55,12 @@ label2:
 	or a1, a2, a4
 	or a2, a1, a3
 	bne a2, zero, label2
-pcrel414:
+pcrel478:
 	auipc a1, %pcrel_hi(input)
-pcrel415:
+pcrel479:
 	auipc a2, %pcrel_hi(program)
-	addi s7, a1, %pcrel_lo(pcrel414)
-	addi s6, a2, %pcrel_lo(pcrel415)
+	addi s7, a1, %pcrel_lo(pcrel478)
+	addi s6, a2, %pcrel_lo(pcrel479)
 	beq a0, s10, label76
 	mv s11, zero
 .p2align 2
@@ -105,9 +105,9 @@ label14:
 	li a0, 116
 	jal _sysy_starttime
 	mv a2, zero
-pcrel416:
+pcrel480:
 	auipc a1, %pcrel_hi(return_a)
-	addi a0, a1, %pcrel_lo(pcrel416)
+	addi a0, a1, %pcrel_lo(pcrel480)
 .p2align 2
 label16:
 	sh2add a1, a2, a0
@@ -145,14 +145,14 @@ label16:
 	sd zero, 240(a1)
 	sd zero, 248(a1)
 	blt a2, s9, label16
-pcrel417:
+pcrel481:
 	auipc a3, %pcrel_hi(tape)
 	mv s9, zero
 	mv a2, zero
-	addi a1, a3, %pcrel_lo(pcrel417)
-	mv a3, zero
 	mv a4, zero
 	mv a5, zero
+	addi a1, a3, %pcrel_lo(pcrel481)
+	mv a3, zero
 .p2align 2
 label19:
 	bgt s8, a5, label29
@@ -213,7 +213,7 @@ label29:
 	lw t0, 0(t1)
 	beq t0, s2, label30
 	beq t0, s3, label51
-	j label391
+	j label455
 .p2align 2
 label30:
 	addiw a4, a4, 1
@@ -229,8 +229,8 @@ label52:
 	bgt s8, a5, label29
 	j label25
 .p2align 2
-label391:
-	bne t0, s4, label393
+label455:
+	bne t0, s4, label457
 	sh2add t0, a4, a1
 	lw t2, 0(t0)
 	addi t1, t2, 1
@@ -239,8 +239,8 @@ label391:
 	bgt s8, a5, label29
 	j label25
 .p2align 2
-label393:
-	bne t0, s5, label398
+label457:
+	bne t0, s5, label462
 	sh2add t0, a4, a1
 	lw t1, 0(t0)
 	addi t2, t1, -1
@@ -249,9 +249,9 @@ label393:
 	bgt s8, a5, label29
 	j label25
 .p2align 2
-label398:
+label462:
 	li t1, 91
-	bne t0, t1, label399
+	bne t0, t1, label463
 	sh2add t0, a4, a1
 	lw t1, 0(t0)
 	beq t1, zero, label238
@@ -260,7 +260,7 @@ label398:
 	sw a5, 0(t0)
 	addiw a5, a5, 1
 	j label19
-label399:
+label463:
 	bne t0, s1, label43
 	sh2add t2, a4, a1
 	addiw t0, a3, -1
@@ -273,10 +273,10 @@ label43:
 	li t1, 46
 	bne t0, t1, label45
 	sh2add t1, a4, a1
-pcrel418:
+pcrel482:
 	auipc t3, %pcrel_hi(output)
 	lw t0, 0(t1)
-	addi t2, t3, %pcrel_lo(pcrel418)
+	addi t2, t3, %pcrel_lo(pcrel482)
 	sh2add t1, s9, t2
 	addiw s9, s9, 1
 	sw t0, 0(t1)

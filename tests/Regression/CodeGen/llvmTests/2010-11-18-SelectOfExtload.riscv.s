@@ -14,16 +14,15 @@ s:
 .globl foo
 foo:
 	beq a0, zero, label8
-pcrel27:
+pcrel26:
 	auipc a2, %pcrel_hi(u)
-	lb a1, %pcrel_lo(pcrel27)(a2)
+	lb a1, %pcrel_lo(pcrel26)(a2)
 	andi a0, a1, 255
 	j label3
 label8:
-	auipc a2, %pcrel_hi(s)
-	lb a0, %pcrel_lo(label8)(a2)
-	li a2, 4294967295
-	sext.b a1, a0
-	and a0, a1, a2
+	auipc a3, %pcrel_hi(s)
+	lb a1, %pcrel_lo(label8)(a3)
+	sext.b a2, a1
+	zext.w a0, a2
 label3:
 	ret

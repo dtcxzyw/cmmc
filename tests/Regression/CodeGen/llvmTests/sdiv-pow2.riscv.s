@@ -6,28 +6,25 @@
 test1:
 	slli a1, a0, 1
 	srli a2, a1, 60
-	add a0, a0, a2
-	li a2, 4294967295
-	sraiw a1, a0, 4
-	and a0, a1, a2
+	add a3, a0, a2
+	sraiw a1, a3, 4
+	zext.w a0, a1
 	ret
 .p2align 2
 .globl test2
 test2:
 	slli a1, a0, 1
 	srli a2, a1, 60
-	add a0, a0, a2
-	li a2, 4294967295
-	sraiw a1, a0, 4
-	and a0, a1, a2
+	add a3, a0, a2
+	sraiw a1, a3, 4
+	zext.w a0, a1
 	ret
 .p2align 2
 .globl test3
 test3:
 	slli a1, a0, 1
 	srli a2, a1, 60
-	add a0, a0, a2
-	li a2, 4294967295
-	sraiw a1, a0, 4
-	and a0, a1, a2
+	add a3, a0, a2
+	sraiw a1, a3, 4
+	zext.w a0, a1
 	ret

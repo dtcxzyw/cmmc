@@ -4,10 +4,9 @@
 .p2align 2
 .globl foo16
 foo16:
-	li a1, 65535
-	and a2, a0, a1
-	andi a3, a2, -4
-	and a0, a3, a1
+	zext.h a1, a0
+	andi a2, a1, -4
+	zext.h a0, a2
 	ret
 .p2align 2
 .globl foo32

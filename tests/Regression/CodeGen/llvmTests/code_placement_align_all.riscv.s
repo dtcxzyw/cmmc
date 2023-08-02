@@ -6,15 +6,13 @@
 foo:
 	bne a0, zero, label9
 	mv a0, zero
-	beq a1, zero, label21
+	beq a1, zero, label19
 	li a0, 5
-label21:
-	li a1, 4294967295
-	and a0, a0, a1
+label19:
+	zext.w a0, a0
 	j label3
 label9:
 	addiw a1, a0, 2
-	li a2, 4294967295
-	and a0, a1, a2
+	zext.w a0, a1
 label3:
 	ret

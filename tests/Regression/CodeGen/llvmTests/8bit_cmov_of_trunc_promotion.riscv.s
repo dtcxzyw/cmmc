@@ -23,10 +23,9 @@ label3:
 .p2align 2
 .globl neg_type_mismatch
 neg_type_mismatch:
-	li a4, 65535
+	zext.h a3, a1
+	zext.h a5, a2
 	addw a0, a0, a2
-	and a5, a2, a4
-	and a3, a1, a4
 	addw a1, a3, a5
 	andi a4, a1, 255
 	sext.b a3, a4
@@ -48,12 +47,12 @@ negative_CopyFromReg:
 	andi a4, a3, 255
 	sext.b a1, a4
 	sext.b a4, a2
-	bge a1, a4, label71
+	bge a1, a4, label69
 	andi a0, a0, 255
-	j label57
-label71:
+	j label55
+label69:
 	andi a0, a3, 255
-label57:
+label55:
 	andi a0, a0, 255
 	ret
 .p2align 2
@@ -63,12 +62,12 @@ negative_CopyFromRegs:
 	andi a3, a1, 255
 	sext.b a2, a4
 	sext.b a4, a3
-	ble a2, a4, label92
+	ble a2, a4, label90
 	andi a0, a0, 255
-	j label80
-label92:
+	j label78
+label90:
 	andi a0, a1, 255
-label80:
+label78:
 	andi a0, a0, 255
 	ret
 .p2align 2
@@ -80,11 +79,11 @@ t0:
 	andi a2, a1, 255
 	sext.b a3, a4
 	sext.b a4, a2
-	ble a3, a4, label116
+	ble a3, a4, label114
 	andi a0, a0, 255
-	j label101
-label116:
+	j label99
+label114:
 	andi a0, a1, 255
-label101:
+label99:
 	andi a0, a0, 255
 	ret

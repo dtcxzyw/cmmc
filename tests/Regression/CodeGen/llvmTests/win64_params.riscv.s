@@ -5,20 +5,17 @@
 .globl f6
 f6:
 	addw a1, a4, a5
-	li a2, 4294967295
-	and a0, a1, a2
+	zext.w a0, a1
 	ret
 .p2align 2
 .globl f7
 f7:
 	addw a1, a4, a5
-	li a2, 4294967295
-	and a0, a1, a2
+	zext.w a0, a1
 	ret
 .p2align 2
 .globl f8
 f8:
 	addw a1, a4, a5
-	li a2, 4294967295
-	and a0, a1, a2
+	zext.w a0, a1
 	ret

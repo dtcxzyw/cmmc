@@ -5,19 +5,21 @@
 .globl main
 main:
 	addi sp, sp, -392
-	li a2, 2
-	li a4, 3
-	li a5, 4
-	li t3, 5
-	li t0, 6
-	li t1, 7
-	li t2, 8
+	li a2, 8589934592
+	li t1, 17179869187
+	li a4, 25769803776
 	li a1, 9
-	addi a3, sp, 128
-	sd ra, 0(sp)
 	addi a0, sp, 24
+	sd ra, 0(sp)
+	addi a3, sp, 128
+	slli a5, a2, 2
+	ori t0, a2, 1
+	ori t2, a4, 5
+	add.uw t4, a1, zero
 	sd s0, 8(sp)
+	ori t3, a5, 7
 	addi s0, sp, 232
+	ori a5, a5, 9
 	sd s1, 16(sp)
 	li s1, 1
 	sd zero, 232(sp)
@@ -40,48 +42,38 @@ main:
 	sd zero, 368(sp)
 	sd zero, 376(sp)
 	sd zero, 384(sp)
-	sw s1, 24(sp)
-	sw a2, 28(sp)
-	sw a4, 32(sp)
-	sw a5, 36(sp)
-	sw t3, 40(sp)
-	sw t0, 44(sp)
-	sw t1, 48(sp)
-	sw t2, 52(sp)
-	sw a1, 56(sp)
-	sw zero, 60(sp)
-	sw s1, 64(sp)
-	sw a2, 68(sp)
-	sw a4, 72(sp)
-	sw a5, 76(sp)
-	sw t3, 80(sp)
-	sw t0, 84(sp)
-	sw t1, 88(sp)
-	sw t2, 92(sp)
-	sw a1, 96(sp)
-	sw zero, 100(sp)
-	sw a2, 128(sp)
-	sw a4, 132(sp)
-	sw a5, 136(sp)
-	sw a2, 140(sp)
-	sw t3, 144(sp)
-	sw t1, 148(sp)
-	sw a1, 152(sp)
-	sw a1, 156(sp)
-	sw zero, 160(sp)
-	sw s1, 164(sp)
-	sw a1, 168(sp)
-	sw t2, 172(sp)
-	sw t1, 176(sp)
-	sw t0, 180(sp)
-	sw a5, 184(sp)
+	sd t0, 24(sp)
+	sd t1, 32(sp)
+	sd t2, 40(sp)
+	sd t3, 48(sp)
+	sd t4, 56(sp)
+	sd t0, 64(sp)
+	srli t0, a4, 1
+	sd t1, 72(sp)
+	ori a4, a4, 7
+	ori t1, t0, 2
+	sd t2, 80(sp)
+	ori t2, a2, 4
+	sd t3, 88(sp)
+	ori a2, a2, 2
+	sd t4, 96(sp)
+	sd t1, 128(sp)
+	li t1, 30064771077
+	sd t2, 136(sp)
+	li t2, 38654705673
+	sd t1, 144(sp)
+	li t1, 4294967296
+	sd t2, 152(sp)
+	sd t1, 160(sp)
+	sd a5, 168(sp)
+	ori a5, t0, 4
+	sd a4, 176(sp)
+	ori a4, t1, 2
+	sd a5, 184(sp)
 	li a5, 39
-	sw a4, 188(sp)
+	sd a4, 192(sp)
 	li a4, 19
-	sw a2, 192(sp)
-	sw s1, 196(sp)
-	sw a2, 200(sp)
-	sw a2, 204(sp)
+	sd a2, 200(sp)
 	bge a4, zero, label10
 label5:
 	lw a0, 232(sp)
@@ -110,19 +102,19 @@ label10:
 .p2align 2
 label14:
 	sh2add t2, a5, s0
-	sh2add t3, t0, a0
+	sh2add t5, t0, a0
 	lw t1, 0(t2)
 	addiw t0, t0, -1
-	lw t5, 0(t3)
-	mulw t4, a2, t5
-	addw t2, t1, t4
+	lw t4, 0(t5)
+	mulw t3, a2, t4
+	addw t2, t1, t3
 	addiw t1, a5, -1
 	bgt t2, a1, label16
 	sh2add t3, a5, s0
 	mv a5, t1
 	sw t2, 0(t3)
 	bge t0, zero, label14
-	j label207
+	j label287
 .p2align 2
 label16:
 	sh2add t3, a5, s0
@@ -131,11 +123,11 @@ label16:
 	sw t2, 0(t3)
 	lw t3, 0(a5)
 	mul t2, t2, t5
-	srli t5, t2, 63
+	srli t6, t2, 63
 	srai t4, t2, 34
-	add t2, t5, t4
-	addw t3, t3, t2
-	sw t3, 0(a5)
+	add t5, t6, t4
+	addw t2, t3, t5
+	sw t2, 0(a5)
 	mv a5, t1
 	bge t0, zero, label14
 	addiw a5, t1, 19
@@ -143,7 +135,7 @@ label16:
 	bge a4, zero, label10
 	j label5
 .p2align 2
-label207:
+label287:
 	addiw a5, a5, 19
 	addiw a4, a4, -1
 	bge a4, zero, label10

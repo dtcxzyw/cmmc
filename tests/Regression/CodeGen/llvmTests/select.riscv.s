@@ -281,29 +281,27 @@ label303:
 .globl select_xor_1
 select_xor_1:
 	andi a3, a1, 255
-	li a1, 65535
+	zext.h a0, a0
 	andi a2, a3, 1
-	and a0, a0, a1
-	mv a4, a0
-	xori a3, a0, 43
-	beq a2, zero, label328
-	mv a4, a3
-label328:
-	and a0, a4, a1
+	xori a1, a0, 43
+	mv a3, a0
+	beq a2, zero, label326
+	mv a3, a1
+label326:
+	zext.h a0, a3
 	ret
 .p2align 2
 .globl select_xor_1b
 select_xor_1b:
 	andi a3, a1, 255
-	li a4, 1
-	li a1, 65535
+	zext.h a0, a0
 	andi a2, a3, 1
-	and a3, a0, a1
-	xori a0, a3, 43
-	bne a2, a4, label345
-	mv a3, a0
-label345:
-	and a0, a3, a1
+	xori a1, a0, 43
+	li a3, 1
+	bne a2, a3, label341
+	mv a0, a1
+label341:
+	zext.h a0, a0
 	ret
 .p2align 2
 .globl select_xor_2
@@ -311,9 +309,9 @@ select_xor_2:
 	andi a4, a2, 255
 	xor a1, a0, a1
 	andi a3, a4, 1
-	beq a3, zero, label357
+	beq a3, zero, label353
 	mv a0, a1
-label357:
+label353:
 	ret
 .p2align 2
 .globl select_xor_2b
@@ -322,45 +320,43 @@ select_xor_2b:
 	xor a1, a0, a1
 	li a2, 1
 	andi a3, a4, 1
-	bne a3, a2, label371
+	bne a3, a2, label367
 	mv a0, a1
-label371:
+label367:
 	ret
 .p2align 2
 .globl select_xor_3
 select_xor_3:
 	andi a3, a1, 255
-	li a1, 65535
+	zext.h a1, a0
 	andi a2, a3, 1
-	and a3, a0, a1
-	mv a0, a3
-	bne a2, zero, label386
-	xori a0, a3, 43
-label386:
-	and a0, a0, a1
+	mv a0, a1
+	bne a2, zero, label380
+	xori a0, a1, 43
+label380:
+	zext.h a0, a0
 	ret
 .p2align 2
 .globl select_xor_3b
 select_xor_3b:
 	andi a3, a1, 255
-	li a4, 1
-	li a1, 65535
+	zext.h a1, a0
 	andi a2, a3, 1
-	and a3, a0, a1
-	mv a0, a3
-	beq a2, a4, label403
-	xori a0, a3, 43
-label403:
-	and a0, a0, a1
+	mv a0, a1
+	li a3, 1
+	beq a2, a3, label395
+	xori a0, a1, 43
+label395:
+	zext.h a0, a0
 	ret
 .p2align 2
 .globl select_xor_4
 select_xor_4:
 	andi a4, a2, 255
 	andi a3, a4, 1
-	bne a3, zero, label415
+	bne a3, zero, label407
 	xor a0, a0, a1
-label415:
+label407:
 	ret
 .p2align 2
 .globl select_xor_4b
@@ -368,7 +364,7 @@ select_xor_4b:
 	andi a4, a2, 255
 	li a2, 1
 	andi a3, a4, 1
-	beq a3, a2, label429
+	beq a3, a2, label421
 	xor a0, a0, a1
-label429:
+label421:
 	ret

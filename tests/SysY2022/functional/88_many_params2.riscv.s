@@ -12,13 +12,13 @@ a:
 .globl main
 main:
 	addi sp, sp, -104
-pcrel506:
+pcrel636:
 	auipc a0, %pcrel_hi(a)
 	mv a2, zero
 	li a3, 4032
 	sd ra, 0(sp)
 	sd s5, 8(sp)
-	addi s5, a0, %pcrel_lo(pcrel506)
+	addi s5, a0, %pcrel_lo(pcrel636)
 	sd s0, 16(sp)
 	addi a0, a3, -960
 	li s0, 10
@@ -28,7 +28,7 @@ pcrel506:
 	sd s4, 40(sp)
 	li s4, 6
 	sd s2, 48(sp)
-	addi s2, a3, -308
+	addi s2, a0, 652
 	sd s3, 56(sp)
 	li s3, -1932965947
 	sd s7, 64(sp)
@@ -143,10 +143,10 @@ label7:
 	sw zero, 0(a2)
 	li a2, 4087
 	blt a1, a2, label7
-pcrel507:
+pcrel637:
 	auipc a4, %pcrel_hi(b)
 	mv a3, zero
-	addi a2, a4, %pcrel_lo(pcrel507)
+	addi a2, a4, %pcrel_lo(pcrel637)
 .p2align 2
 label10:
 	sh2add a1, a3, a2
@@ -262,12 +262,10 @@ label15:
 	mv s6, s7
 	li a3, 1
 	sw a0, 0(a1)
-	li a1, 2
+	li a1, 12884901890
 	sw a3, 1420(a2)
-	li a3, 3
-	sw a1, 1424(a2)
+	sd a1, 1424(a2)
 	li a1, 8040
-	sw a3, 1428(a2)
 	sw a0, 1452(a2)
 	add a0, a2, a1
 	lw s8, 1416(a2)
@@ -322,10 +320,10 @@ label25:
 	add a4, t0, a3
 	srliw t0, a4, 31
 	sraiw a5, a4, 11
-	add t1, t0, a5
-	mulw a4, t1, s2
-	subw a3, a3, a4
+	add a4, t0, a5
+	mulw a5, a4, s2
 	addiw a4, a0, 7
+	subw a3, a3, a5
 	sw a3, 0(a2)
 	mulw a3, a4, s1
 	mul a5, a3, s3
@@ -342,23 +340,23 @@ label25:
 	mul a5, a3, s3
 	srli t0, a5, 32
 	add a4, t0, a3
-	srliw t1, a4, 31
+	srliw t0, a4, 31
 	sraiw a5, a4, 11
-	add t0, t1, a5
-	mulw a4, t0, s2
-	subw a3, a3, a4
+	add a4, t0, a5
+	mulw a5, a4, s2
 	addiw a4, a0, 21
+	subw a3, a3, a5
 	addiw a0, a0, 28
 	sw a3, 8(a2)
 	mulw a3, a4, s1
 	mul a5, a3, s3
 	srli t0, a5, 32
 	add a4, t0, a3
-	srliw t0, a4, 31
+	srliw t1, a4, 31
 	sraiw a5, a4, 11
-	add a4, t0, a5
-	mulw a5, a4, s2
-	subw a3, a3, a5
+	add t0, t1, a5
+	mulw a4, t0, s2
+	subw a3, a3, a4
 	sw a3, 12(a2)
 	blt a1, s4, label25
 	mv s10, a1
@@ -381,8 +379,8 @@ label29:
 label31:
 	mv a0, s0
 	jal putch
-	mv a0, zero
 	ld ra, 0(sp)
+	mv a0, zero
 	ld s5, 8(sp)
 	ld s0, 16(sp)
 	ld s1, 24(sp)

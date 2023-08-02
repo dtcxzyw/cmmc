@@ -17,13 +17,12 @@ d:
 .p2align 2
 .globl fn1
 fn1:
+pcrel14:
+	auipc a0, %pcrel_hi(c)
+	lw a1, %pcrel_lo(pcrel14)(a0)
+	sltiu a2, a1, 1
 pcrel15:
-	auipc a2, %pcrel_hi(c)
-	lw a0, %pcrel_lo(pcrel15)(a2)
-	li a2, 4294967295
-	sltiu a1, a0, 1
-	and a0, a1, a2
-pcrel16:
 	auipc a1, %pcrel_hi(d)
-	sw a0, %pcrel_lo(pcrel16)(a1)
+	zext.w a0, a2
+	sw a0, %pcrel_lo(pcrel15)(a1)
 	ret

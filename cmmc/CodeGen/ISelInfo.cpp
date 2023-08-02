@@ -62,15 +62,13 @@ void ISelContext::runISel(MIRFunction& func) {
         mConstantMapping.clear();
         mUseCount.clear();
         {
-            std::vector<MIROperand> removeList;
+            auto defCount = collectDefCount(func, mCodeGenCtx);
             for(auto& block : func.blocks()) {
                 for(auto& inst : block->instructions()) {
                     auto& instInfo = mCodeGenCtx.instInfo.getInstInfo(inst);
                     if(requireFlag(instInfo.getInstFlag(), InstFlagLoadConstant)) {
                         auto& def = getInstDef(inst);
-                        if(mConstantMapping.count(def)) {
-                            removeList.push_back(def);
-                        } else
+                        if(isOperandVReg(def) && defCount[def] <= 1)
                             mConstantMapping.emplace(def, &inst);
                     }
 
@@ -84,8 +82,6 @@ void ISelContext::runISel(MIRFunction& func) {
                     }
                 }
             }
-            for(auto& op : removeList)
-                mConstantMapping.erase(op);
         }
 
         for(auto& block : func.blocks()) {

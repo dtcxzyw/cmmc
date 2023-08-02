@@ -6,20 +6,18 @@
 f:
 	andi a2, a0, 255
 	li a1, 20
-	beq a2, zero, label9
+	beq a2, zero, label8
 	li a1, 10
-label9:
-	li a2, 4294967295
-	and a0, a1, a2
+label8:
+	zext.w a0, a1
 	ret
 .p2align 2
 .globl g
 g:
 	xori a2, a0, 255
 	li a1, 20
-	beq a2, zero, label19
+	beq a2, zero, label17
 	li a1, 10
-label19:
-	li a2, 4294967295
-	and a0, a1, a2
+label17:
+	zext.w a0, a1
 	ret

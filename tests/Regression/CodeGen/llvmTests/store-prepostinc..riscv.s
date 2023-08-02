@@ -26,9 +26,8 @@ test11:
 	sllw a2, a3, a1
 	li a3, 458759
 	sraiw a0, a2, 1
-	li a2, 4294967295
 	and a1, a0, a3
-	and a0, a1, a2
+	zext.w a0, a1
 	ret
 .p2align 2
 .globl test2

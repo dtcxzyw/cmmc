@@ -335,6 +335,8 @@ InstInfo:
       Mnemonic: sext.w
     ZEXT_H:
       Mnemonic: zext.h
+    ZEXT_W:
+      Mnemonic: zext.w
   InstanceBR:
     Template: R2Type
     # Zba
@@ -1400,6 +1402,26 @@ InstSelection:
         Imm: getZExtMask(($Dst).type(), ($Src).type())
 
   - Pattern:
+      InstZExt:
+        Dst: $Dst
+        Src: $Src
+        $Predicate: isOperandIReg($Src) && ($Src).type() == OperandType::Int32
+    Replace:
+      ZEXT_W:
+        Rd: $Dst
+        Rs1: $Src
+
+  - Pattern:
+      InstZExt:
+        Dst: $Dst
+        Src: $Src
+        $Predicate: isOperandIReg($Src) && ($Src).type() == OperandType::Int16
+    Replace:
+      ZEXT_H:
+        Rd: $Dst
+        Rs1: $Src
+
+  - Pattern:
       InstSExt:
         Dst: $Dst
         Src: $Src
@@ -1943,6 +1965,65 @@ InstSelection:
         Rd: $Dst
         Rs1: $Src
 
+  - Pattern:
+      SLLI:
+        Rd: $Dst
+        Rs1:
+          LoadImm12:
+            Rd: $Val
+            Imm: $Imm
+        Imm: $Shift
+    Replace:
+      LoadImm64:
+        Rd: $Dst
+        Imm: getShiftedImm64($Imm, $Shift)
+
+  - Pattern:
+      SLLI:
+        Rd: $Dst
+        Rs1:
+          LoadImm32:
+            Rd: $Val
+            Imm: $Imm
+            $Predicate: ctx.hasOneUse($Val)
+        Imm: $Shift
+    Replace:
+      LoadImm64:
+        Rd: $Dst
+        Imm: getShiftedImm64($Imm, $Shift)
+
+  - Pattern:
+      ORI:
+        Rd: $Dst
+        Rs1:
+          LoadImm64:
+            Rd: $Val
+            Imm: $Imm1
+            $Predicate: ctx.hasOneUse($Val)
+        Imm: $Imm2
+    Replace:
+      LoadImm64:
+        Rd: $Dst
+        Imm: MIROperand::asImm(($Imm1).imm() | ($Imm2).imm(), OperandType::Int64)
+
+  - Pattern:
+      ADD_UW:
+        Rd: $Dst
+        Rs1:
+          LoadImm12:
+            Imm: $Imm
+            $Predicate: ($Imm).imm() > 0
+        Rs2:
+          SLLI:
+            Rd: $Base
+            Imm: $Shift
+            $Predicate: ($Shift).imm() == 32
+    Replace:
+      ORI:
+        Rd: $Dst
+        Rs1: $Base
+        Imm: $Imm
+
 ScheduleModel:
   sifive-u74:
     CustomPeepholeOpt: true
@@ -1992,6 +2073,7 @@ ScheduleModel:
           SEXT_H,
           SEXT_W,
           ZEXT_H,
+          ZEXT_W,
           LoadImm12,
           MoveGPR,
           InstLoadStackObjectAddr,

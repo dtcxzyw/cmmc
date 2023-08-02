@@ -30,14 +30,14 @@ gcd:
 	mv a0, a4
 	mv a3, a2
 	beq a2, zero, label3
-	divw a4, a4, a2
-	mulw a5, a2, a4
-	li a4, 4294967295
-	subw a3, a0, a5
-	and a2, a2, a4
-	and a0, a3, a4
-	sw a2, 8(sp)
-	sw a0, 12(sp)
+	divw t0, a4, a2
+	mulw a4, a2, t0
+	subw a5, a0, a4
+	zext.w a0, a2
+	zext.w a3, a5
+	slli a2, a3, 32
+	add.uw a3, a0, a2
+	sd a3, 8(sp)
 	mv a0, a1
 	jal gcd
 label3:
@@ -50,11 +50,10 @@ main:
 	addi a1, sp, 8
 	sd ra, 0(sp)
 	jal read
-	li a2, 4294967295
-	and a3, a0, a2
-	sw a3, 8(sp)
+	zext.w a2, a0
+	sw a2, 8(sp)
 	jal read
-	and a2, a0, a2
+	zext.w a2, a0
 	sw a2, 12(sp)
 	mv a0, a1
 	jal gcd

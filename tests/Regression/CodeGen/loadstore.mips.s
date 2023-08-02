@@ -12,6 +12,10 @@ y:
 .globl arr
 arr:
 	.zero	400
+.align 8
+.globl x
+x:
+	.zero	8
 .text
 .p2align 2
 .globl load
@@ -133,8 +137,12 @@ global_addressing_array:
 .p2align 2
 .globl memset_impl
 memset_impl:
-	blez $a0, label115
+	bgtz $a0, label108
 	nop
+label107:
+	jr $ra
+	nop
+label108:
 	lui $t0, %hi(arr)
 	addiu $t0, $t0, %lo(arr)
 	addiu $t1, $a0, -4
@@ -146,7 +154,7 @@ memset_impl:
 	nop
 	move $t3, $zero
 .p2align 2
-label109:
+label110:
 	sll $t4, $t3, 2
 	addu $t4, $t0, $t4
 	sw $zero, 0($t4)
@@ -167,9 +175,9 @@ label109:
 	sw $zero, 60($t4)
 	addiu $t3, $t3, 16
 	subu $t4, $t2, $t3
-	bgtz $t4, label109
+	bgtz $t4, label110
 	nop
-label111:
+label112:
 	sll $t2, $t3, 2
 	addu $t2, $t0, $t2
 	sw $zero, 0($t2)
@@ -178,27 +186,26 @@ label111:
 	sw $zero, 12($t2)
 	addiu $t3, $t3, 4
 	subu $t2, $t1, $t3
-	bgtz $t2, label111
+	bgtz $t2, label112
 	nop
 	move $t1, $t3
-label113:
+label114:
 	sll $t2, $t1, 2
 	addu $t2, $t0, $t2
 	sw $zero, 0($t2)
 	addiu $t1, $t1, 1
 	subu $t2, $a0, $t1
-	bgtz $t2, label113
+	bgtz $t2, label114
 	nop
-label115:
-	jr $ra
+	b label107
 	nop
 label124:
 	move $t1, $zero
-	b label113
+	b label114
 	nop
 label130:
 	move $t3, $zero
-	b label111
+	b label112
 	nop
 .p2align 2
 .globl fused_store
@@ -236,5 +243,14 @@ fused_store:
 	sw $t1, 56($t0)
 	li $t1, 15
 	sw $t1, 60($t0)
+	jr $ra
+	nop
+.p2align 2
+.globl merge_store
+merge_store:
+	lui $t0, %hi(x)
+	addiu $t1, $t0, %lo(x)
+	sw $a0, %lo(x)($t0)
+	sw $a1, 4($t1)
 	jr $ra
 	nop

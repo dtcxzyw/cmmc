@@ -47,7 +47,7 @@ label61:
 	addw a3, a1, a2
 label63:
 	addw a1, a0, a3
-	sub a2, zero, a2
+	li a2, -65535
 	addw a0, a0, a2
 	xori a2, a2, -1
 	addw a3, a3, a0

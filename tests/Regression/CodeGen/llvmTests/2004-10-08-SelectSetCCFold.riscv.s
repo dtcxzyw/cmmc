@@ -9,7 +9,6 @@ test:
 	j label2
 label10:
 	slt a1, a2, a3
-	li a2, 4294967295
-	and a0, a1, a2
+	zext.w a0, a1
 label2:
 	ret

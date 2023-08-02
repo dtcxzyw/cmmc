@@ -5,16 +5,14 @@
 .globl test1
 test1:
 	addw a2, a0, a1
-	li a3, 4294967295
-	sltu a0, a2, a1
-	and a1, a0, a3
+	sltu a3, a2, a1
+	zext.w a1, a3
 	addw a0, a2, a1
 	ret
 .p2align 2
 .globl test2
 test2:
-	sltu a0, a1, a0
-	addw a1, a0, a2
-	li a2, 4294967295
-	and a0, a1, a2
+	sltu a3, a1, a0
+	addw a1, a3, a2
+	zext.w a0, a1
 	ret

@@ -10,93 +10,91 @@ g1:
 .globl seteq0
 seteq0:
 	sltiu a1, a0, 1
-	li a2, 4294967295
-	and a0, a1, a2
+	zext.w a0, a1
 	ret
 .p2align 2
 .globl setne0
 setne0:
 	sltu a1, zero, a0
-	li a2, 4294967295
-	and a0, a1, a2
+	zext.w a0, a1
 	ret
 .p2align 2
 .globl slti_beq0
 slti_beq0:
 	lui a1, 1048568
-	bge a0, a1, label15
-pcrel29:
+	bge a0, a1, label13
+pcrel27:
 	auipc a1, %pcrel_hi(g1)
-	sw a0, %pcrel_lo(pcrel29)(a1)
-label15:
+	sw a0, %pcrel_lo(pcrel27)(a1)
+label13:
 	ret
 .p2align 2
 .globl slti_beq1
 slti_beq1:
 	li a1, -32769
-	bge a0, a1, label32
-pcrel46:
+	bge a0, a1, label30
+pcrel44:
 	auipc a1, %pcrel_hi(g1)
-	sw a0, %pcrel_lo(pcrel46)(a1)
-label32:
+	sw a0, %pcrel_lo(pcrel44)(a1)
+label30:
 	ret
 .p2align 2
 .globl slti_beq2
 slti_beq2:
 	li a1, 32767
-	bge a0, a1, label49
-pcrel63:
+	bge a0, a1, label47
+pcrel61:
 	auipc a1, %pcrel_hi(g1)
-	sw a0, %pcrel_lo(pcrel63)(a1)
-label49:
+	sw a0, %pcrel_lo(pcrel61)(a1)
+label47:
 	ret
 .p2align 2
 .globl slti_beq3
 slti_beq3:
 	lui a1, 8
-	bge a0, a1, label66
-pcrel80:
+	bge a0, a1, label64
+pcrel78:
 	auipc a1, %pcrel_hi(g1)
-	sw a0, %pcrel_lo(pcrel80)(a1)
-label66:
+	sw a0, %pcrel_lo(pcrel78)(a1)
+label64:
 	ret
 .p2align 2
 .globl sltiu_beq0
 sltiu_beq0:
 	li a1, 32767
-	bgeu a0, a1, label83
-pcrel96:
+	bgeu a0, a1, label81
+pcrel94:
 	auipc a1, %pcrel_hi(g1)
-	sw a0, %pcrel_lo(pcrel96)(a1)
-label83:
+	sw a0, %pcrel_lo(pcrel94)(a1)
+label81:
 	ret
 .p2align 2
 .globl sltiu_beq1
 sltiu_beq1:
 	lui a1, 8
-	bgeu a0, a1, label99
-pcrel112:
+	bgeu a0, a1, label97
+pcrel110:
 	auipc a1, %pcrel_hi(g1)
-	sw a0, %pcrel_lo(pcrel112)(a1)
-label99:
+	sw a0, %pcrel_lo(pcrel110)(a1)
+label97:
 	ret
 .p2align 2
 .globl sltiu_beq2
 sltiu_beq2:
 	lui a1, 1048568
-	bgeu a0, a1, label115
-pcrel128:
+	bgeu a0, a1, label113
+pcrel126:
 	auipc a1, %pcrel_hi(g1)
-	sw a0, %pcrel_lo(pcrel128)(a1)
-label115:
+	sw a0, %pcrel_lo(pcrel126)(a1)
+label113:
 	ret
 .p2align 2
 .globl sltiu_beq3
 sltiu_beq3:
 	li a1, -32769
-	bgeu a0, a1, label131
-pcrel144:
+	bgeu a0, a1, label129
+pcrel142:
 	auipc a1, %pcrel_hi(g1)
-	sw a0, %pcrel_lo(pcrel144)(a1)
-label131:
+	sw a0, %pcrel_lo(pcrel142)(a1)
+label129:
 	ret

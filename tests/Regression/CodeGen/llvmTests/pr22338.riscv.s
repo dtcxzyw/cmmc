@@ -5,17 +5,16 @@
 .globl fn
 fn:
 	xori a3, a1, 1
-	li a1, 4294967295
-	sltiu a2, a3, 1
-	and a3, a2, a1
-	li a2, 2
-	bne a3, zero, label22
-	mv a2, zero
-label22:
-	and a2, a2, a1
+	li a1, 2
+	sltiu a4, a3, 1
+	zext.w a2, a4
+	bne a2, zero, label18
+	mv a1, zero
+label18:
+	zext.w a1, a1
 	xori a0, a0, 1
-	sltu a3, zero, a0
-	and a4, a3, a1
-	sllw a2, a4, a2
-	and a0, a2, a1
+	sltu a2, zero, a0
+	zext.w a3, a2
+	sllw a1, a3, a1
+	zext.w a0, a1
 	ret

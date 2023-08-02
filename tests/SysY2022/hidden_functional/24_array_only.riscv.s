@@ -5,8 +5,9 @@
 .globl main
 main:
 	addi sp, sp, -64
-	li a0, -1
+	li a1, -1
 	sd ra, 0(sp)
+	add.uw a0, a1, zero
 	sd s2, 8(sp)
 	addi s2, sp, 56
 	sd s0, 16(sp)
@@ -14,8 +15,7 @@ main:
 	sd s1, 32(sp)
 	sd s3, 40(sp)
 	sd s4, 48(sp)
-	sw a0, 56(sp)
-	sw zero, 60(sp)
+	sd a0, 56(sp)
 	jal getint
 	mv s0, a0
 	jal getint
@@ -94,7 +94,7 @@ label82:
 	mv a0, s0
 	addiw a0, s0, -1
 	slliw a1, a1, 1
-	beq a0, zero, label139
+	beq a0, zero, label141
 .p2align 2
 label21:
 	addiw a0, a0, -1
@@ -127,7 +127,7 @@ label35:
 	blt s4, s3, label16
 	j label5
 .p2align 2
-label139:
+label141:
 	addw a1, s1, a1
 	sw a1, 56(sp)
 	beq s0, zero, label29

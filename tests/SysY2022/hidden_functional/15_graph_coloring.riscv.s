@@ -87,28 +87,23 @@ label35:
 .globl main
 main:
 	addi sp, sp, -88
-	li a1, 1
-	mv a2, zero
-	addi a3, sp, 72
+	li a2, 1
+	li a1, 4294967296
 	sd ra, 0(sp)
+	addi a3, sp, 72
 	addi a0, sp, 8
-	sw zero, 8(sp)
-	sw a1, 12(sp)
-	sw a1, 16(sp)
-	sw a1, 20(sp)
-	sw a1, 24(sp)
-	sw zero, 28(sp)
-	sw a1, 32(sp)
-	sw zero, 36(sp)
-	sw a1, 40(sp)
-	sw a1, 44(sp)
-	sw zero, 48(sp)
-	sw a1, 52(sp)
-	sw a1, 56(sp)
-	sw zero, 60(sp)
-	sw a1, 64(sp)
+	add.uw a2, a2, zero
+	ori a4, a1, 1
+	sd a1, 8(sp)
+	sd a4, 16(sp)
+	sd a2, 24(sp)
+	sd a2, 32(sp)
+	sd a4, 40(sp)
+	sd a1, 48(sp)
 	li a1, 3
-	sw zero, 68(sp)
+	sd a2, 56(sp)
+	sd a2, 64(sp)
+	mv a2, zero
 	sd zero, 72(sp)
 	sd zero, 80(sp)
 	jal graphColoring

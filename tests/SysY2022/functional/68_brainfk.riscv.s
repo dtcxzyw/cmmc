@@ -47,9 +47,9 @@ label2:
 pcrel200:
 	auipc a1, %pcrel_hi(tape)
 	mv s8, zero
-	addi s7, a1, %pcrel_lo(pcrel200)
-	sw zero, 0(a0)
 	mv s9, zero
+	sw zero, 0(a0)
+	addi s7, a1, %pcrel_lo(pcrel200)
 label6:
 	sh2add a1, s9, s0
 	lw a0, 0(a1)
@@ -160,7 +160,7 @@ label37:
 pcrel201:
 	auipc a1, %pcrel_hi(tape)
 	mv s8, zero
-	addi s7, a1, %pcrel_lo(pcrel201)
-	sw zero, 0(s0)
 	mv s9, zero
+	sw zero, 0(s0)
+	addi s7, a1, %pcrel_lo(pcrel201)
 	j label6

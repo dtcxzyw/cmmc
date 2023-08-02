@@ -6,21 +6,19 @@
 compare_i_gt:
 	li a2, -78
 	li a1, 42
-	bgt a0, a2, label11
+	bgt a0, a2, label10
 	li a1, 24
-label11:
-	li a2, 4294967295
-	and a0, a1, a2
+label10:
+	zext.w a0, a1
 	ret
 .p2align 2
 .globl compare_r_eq
 compare_r_eq:
 	subw a3, zero, a1
-	li a2, 4294967295
 	li a1, 42
-	and a4, a3, a2
-	beq a0, a4, label26
+	zext.w a2, a3
+	beq a0, a2, label23
 	li a1, 24
-label26:
-	and a0, a1, a2
+label23:
+	zext.w a0, a1
 	ret

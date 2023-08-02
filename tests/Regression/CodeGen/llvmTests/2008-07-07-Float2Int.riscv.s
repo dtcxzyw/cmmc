@@ -5,13 +5,11 @@
 .globl fptoint
 fptoint:
 	fcvt.w.s a1, f10, rtz
-	li a2, 4294967295
-	and a0, a1, a2
+	zext.w a0, a1
 	ret
 .p2align 2
 .globl fptouint
 fptouint:
 	fcvt.w.s a1, f10, rtz
-	li a2, 4294967295
-	and a0, a1, a2
+	zext.w a0, a1
 	ret
