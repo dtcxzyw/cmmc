@@ -14,13 +14,13 @@
 
 // Utils before lowering
 
-#include "cmmc/Analysis/DominateAnalysis.hpp"
-#include "cmmc/Analysis/SCEVAnalysis.hpp"
-#include "cmmc/IR/IRBuilder.hpp"
 #include <cmmc/Analysis/AnalysisPass.hpp>
+#include <cmmc/Analysis/DominateAnalysis.hpp>
+#include <cmmc/Analysis/SCEVAnalysis.hpp>
 #include <cmmc/CodeGen/MultiplyByConstant.hpp>
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/IR/Function.hpp>
+#include <cmmc/IR/IRBuilder.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/IR/Type.hpp>
 #include <cmmc/IR/Value.hpp>
