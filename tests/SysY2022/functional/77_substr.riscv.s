@@ -10,12 +10,10 @@ p:
 main:
 	addi sp, sp, -152
 	li a1, 7
-	li a3, 1
-	li a5, 3
-	li t0, 2
-	slli a2, a1, 32
+	li a2, 1
+	slli a3, a1, 32
 	sd ra, 0(sp)
-	ori a0, a2, 8
+	ori a0, a3, 8
 	sd s0, 8(sp)
 	addi s0, sp, 96
 	sd s1, 16(sp)
@@ -23,35 +21,36 @@ main:
 	sd s2, 24(sp)
 	li s2, 1
 	sd a0, 32(sp)
-	slli a0, a3, 32
-	ori a3, a2, 2
+	slli a0, a2, 32
+	ori a2, a3, 2
 	ori a1, a0, 4
 	sd a1, 40(sp)
-	slli a1, a5, 32
-	sd a3, 48(sp)
-	ori a4, a1, 9
-	slli a3, a0, 3
+	sh1add a1, a0, a0
+	sd a2, 48(sp)
+	ori a5, a1, 9
+	slli a2, a0, 3
 	sd a0, 56(sp)
-	ori a5, a3, 4
-	sd a4, 64(sp)
-	ori a4, a2, 3
-	sd a5, 72(sp)
-	li a5, 9
-	sd a4, 80(sp)
-	slli a2, a5, 32
+	ori a4, a2, 4
+	sd a5, 64(sp)
+	ori a5, a3, 3
+	sd a4, 72(sp)
+	li a4, 9
+	sd a5, 80(sp)
+	slli a5, a4, 32
 	sw zero, 88(sp)
-	ori a5, a0, 7
-	addi a4, a2, 3
-	slli a2, t0, 32
-	sd a4, 96(sp)
-	addi a4, a2, 4
-	sd a5, 104(sp)
-	ori a2, a3, 6
+	ori a4, a0, 7
+	addi a3, a5, 3
+	li a5, 2
+	sd a3, 96(sp)
+	slli a3, a5, 32
+	sd a4, 104(sp)
 	ori a5, a1, 4
-	sd a4, 112(sp)
+	addi a4, a3, 4
 	li a1, 5
+	ori a3, a2, 6
+	sd a4, 112(sp)
 	sd a5, 120(sp)
-	sd a2, 128(sp)
+	sd a3, 128(sp)
 	sd a0, 136(sp)
 	li a0, 43
 	sw a1, 144(sp)
@@ -60,9 +59,9 @@ main:
 	jal putch
 	li a1, 14
 	mv a0, zero
-pcrel306:
+pcrel305:
 	auipc a2, %pcrel_hi(p)
-	addi a4, a2, %pcrel_lo(pcrel306)
+	addi a4, a2, %pcrel_lo(pcrel305)
 .p2align 2
 label2:
 	sh2add a2, a0, a4
@@ -130,7 +129,7 @@ label8:
 	max t4, t3, t5
 	sw t4, 0(t1)
 	blt t2, a1, label8
-	j label301
+	j label300
 .p2align 2
 label9:
 	sh2add t4, t1, a3
@@ -160,7 +159,7 @@ label12:
 	addi sp, sp, 152
 	ret
 .p2align 2
-label301:
+label300:
 	addiw a5, a5, 1
 	addiw a2, a5, -1
 	slli t0, a5, 6

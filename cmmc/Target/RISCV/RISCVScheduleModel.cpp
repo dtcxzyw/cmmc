@@ -465,6 +465,21 @@ static bool largeImmMaterialize(MIRBasicBlock& block) {
                 inst.setOpcode(XORI).setOperand<1>(rhsOp).setOperand<2>(MIROperand::asImm(-1, OperandType::Int64));
                 return true;
             }
+            // * 3 -> sh1add
+            if(rhs * 3 == val) {
+                inst.setOpcode(SH1ADD).setOperand<1>(rhsOp).setOperand<2>(rhsOp);
+                return true;
+            }
+            // * 5 -> sh2add
+            if(rhs * 5 == val) {
+                inst.setOpcode(SH2ADD).setOperand<1>(rhsOp).setOperand<2>(rhsOp);
+                return true;
+            }
+            // * 9 -> sh3add
+            if(rhs * 9 == val) {
+                inst.setOpcode(SH3ADD).setOperand<1>(rhsOp).setOperand<2>(rhsOp);
+                return true;
+            }
         }
 
         return false;
