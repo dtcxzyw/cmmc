@@ -1,6 +1,8 @@
 FUNCTION main :
 v3 := #1
-IF v3 >= #31 GOTO label16
+IF v3 < #31 GOTO label17
+LABEL label16 :
+RETURN #0
 LABEL label17 :
 v5 := #0
 v6 := #1
@@ -12,32 +14,33 @@ IF v3 == v24 GOTO label8
 v30 := v6 + #1
 v6 := v30
 IF v3 >= v30 GOTO label7
-IF v5 == #2 GOTO label12
-v35 := v3 + #1
-v3 := v35
-IF v35 < #31 GOTO label17
-LABEL label16 :
-RETURN #0
-LABEL label20 :
-IF v5 != #2 GOTO label36
-LABEL label12 :
-WRITE v3
-v35 := v3 + #1
-v3 := v35
-IF v35 < #31 GOTO label17
-GOTO label16
+GOTO label39
 LABEL label8 :
 v29 := v5 + #1
 v30 := v6 + #1
 v5 := v29
 v6 := v30
 IF v3 >= v30 GOTO label7
-IF v29 == #2 GOTO label12
+IF v29 != #2 GOTO label40
+LABEL label12 :
+WRITE v3
 v35 := v3 + #1
 v3 := v35
 IF v35 < #31 GOTO label17
 GOTO label16
-LABEL label36 :
+LABEL label39 :
+IF v5 == #2 GOTO label12
+v35 := v3 + #1
+v3 := v35
+IF v35 < #31 GOTO label17
+GOTO label16
+LABEL label20 :
+IF v5 == #2 GOTO label12
+v35 := v3 + #1
+v3 := v35
+IF v35 < #31 GOTO label17
+GOTO label16
+LABEL label40 :
 v35 := v3 + #1
 v3 := v35
 IF v35 < #31 GOTO label17

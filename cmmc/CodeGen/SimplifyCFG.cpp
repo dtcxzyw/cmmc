@@ -283,7 +283,12 @@ static bool reorderBranch(MIRFunction& func, const CodeGenContext& ctx) {
     return modified;
 }
 
-bool sfbOpt(MIRFunction& func, CodeGenContext& ctx) {
+// cbr b1
+// next:
+// b1:
+//   xxx
+//   j next
+static bool sfbOpt(MIRFunction& func, CodeGenContext& ctx) {
     if(ctx.flags.endsWithTerminator)
         return false;
     bool modified = false;

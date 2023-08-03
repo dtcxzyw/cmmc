@@ -699,6 +699,8 @@ bool createIndirectCopy(MIRFunction& func, const CodeGenContext& ctx) {
 static bool removeInvisibleInsts(MIRFunction& func, const CodeGenContext& ctx) {
     if(ctx.flags.preRA)
         return false;
+    if(!ctx.registerInfo)
+        return false;
 
     // func.dump(std::cerr, ctx);
 

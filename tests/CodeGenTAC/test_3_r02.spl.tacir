@@ -11,6 +11,18 @@ IF v16 == #2 GOTO label10
 v26 := v16 / #2
 v27 := v26 * #2
 IF v16 == v27 GOTO label5
+GOTO label6
+LABEL label2 :
+v20 := v12 / #400
+v21 := v20 * #400
+IF v12 == v21 GOTO label7
+IF v16 != #2 GOTO label47
+LABEL label10 :
+WRITE #28
+RETURN #0
+LABEL label5 :
+WRITE #30
+RETURN #0
 LABEL label6 :
 WRITE #31
 RETURN #0
@@ -20,20 +32,11 @@ v26 := v16 / #2
 v27 := v26 * #2
 IF v16 == v27 GOTO label5
 GOTO label6
-LABEL label2 :
-v20 := v12 / #400
-v21 := v20 * #400
-IF v12 == v21 GOTO label7
-IF v16 == #2 GOTO label10
+LABEL label47 :
 v26 := v16 / #2
 v27 := v26 * #2
-IF v16 != v27 GOTO label6
-LABEL label5 :
-WRITE #30
-RETURN #0
-LABEL label10 :
-WRITE #28
-RETURN #0
+IF v16 == v27 GOTO label5
+GOTO label6
 LABEL label8 :
 WRITE #29
 RETURN #0

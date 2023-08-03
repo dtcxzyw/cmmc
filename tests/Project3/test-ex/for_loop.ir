@@ -13,15 +13,12 @@ IF v13 == #5 GOTO label16
 GOTO label22
 LABEL label4 :
 v13 := v5 + #1
-IF v13 == #5 GOTO label16
-IF v13 > #9 GOTO label7
-GOTO label23
+IF v13 != #5 GOTO label15
 LABEL label16 :
 v5 := v13
 GOTO label4
-LABEL label7 :
-RETURN v13
-LABEL label23 :
+LABEL label15 :
+IF v13 > #9 GOTO label7
 v5 := v13
 v13 := v13 + #1
 IF v13 == #5 GOTO label16
@@ -49,7 +46,10 @@ IF v13 > #9 GOTO label7
 v5 := v13
 v13 := v13 + #1
 IF v13 == #5 GOTO label16
-IF v13 > #9 GOTO label7
+IF v13 <= #9 GOTO label31
+LABEL label7 :
+RETURN v13
+LABEL label31 :
 v5 := v13
 v13 := v13 + #1
 IF v13 == #5 GOTO label16

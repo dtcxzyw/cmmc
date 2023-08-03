@@ -27,6 +27,7 @@
 #include <iostream>
 #include <iterator>
 #include <limits>
+#include <optional>
 #include <ostream>
 #include <queue>
 #include <set>
@@ -495,16 +496,16 @@ static void graphColoringAllocateImpl(MIRFunction& mfunc, CodeGenContext& ctx, I
                 }
                 if(map.empty())
                     return std::nullopt;
-                double maxWeight = 0.0;
+                double maxWeight = -1e10;
                 RegNum best = invalidReg;
                 for(auto [reg, v] : map) {
-                    assert(v > 0.0);
                     if(v > maxWeight) {
                         maxWeight = v;
                         best = reg;
                     }
                 }
-                assert(best != invalidReg);
+                if(best == invalidReg)
+                    reportUnreachable(CMMC_LOCATION());
                 return best;
             };
 

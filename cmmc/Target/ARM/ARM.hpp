@@ -68,7 +68,7 @@ constexpr bool isOperandAddrImmVFP(const MIROperand& operand) {
     if(!operand.isImm())
         return false;
     const auto imm = operand.imm();
-    return 0 <= imm && imm <= 1020 && imm % 4 == 0;
+    return -1020 <= imm && imm <= 1020 && imm % 4 == 0;
 }
 
 constexpr bool isOperandImm32(const MIROperand& operand) {

@@ -45,6 +45,7 @@
 #include <cmmc/Transforms/Util/PatternMatch.hpp>
 #include <cstddef>
 #include <cstdint>
+#include <cstdlib>
 #include <cstring>
 #include <deque>
 #include <iostream>
@@ -559,6 +560,10 @@ static void lowerToMachineModule(MIRModule& machineModule, Module& module, Analy
         // add to IPRA cache
         if(ctx.registerInfo)
             infoIPRA.add(ctx, symbol->reloc.get(), mfunc);
+
+        if(!mfunc.verify(std::cerr, ctx)) {
+            DiagnosticsContext::get().attach<Reason>("codegen fatal").reportFatal();
+        }
     }
     assert(machineModule.verify(std::cerr, ctx));
 }
