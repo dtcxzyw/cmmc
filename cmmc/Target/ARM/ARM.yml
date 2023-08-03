@@ -272,8 +272,22 @@ InstInfo:
         Mnemonic: vsub.f32
       VMUL_F32:
         Mnemonic: vmul.f32
+      VNMUL_F32:
+        Mnemonic: vnmul.f32
       VDIV_F32:
         Mnemonic: vdiv.f32
+
+  FMAInsts:
+    Format: "$Mnemonic:Template $Fd:FPR[Def], $Fn:FPR[Use], $Fm:FPR[Use] @ Implicit Def: $Def:FPR[Use]"
+    Instances:
+      VMLA_F32:
+        Mnemonic: vmla.f32
+      VMLS_F32:
+        Mnemonic: vmls.f32
+      VNMLA_F32:
+        Mnemonic: vnmla.f32
+      VNMLS_F32:
+        Mnemonic: vnmls.f32
 
   FloatingUnary:
     Format: $Mnemonic:Template $Fd:FPR[Def], $Fm:FPR[Use]
@@ -1832,6 +1846,7 @@ ScheduleModel:
         - VADD_F32
         - VSUB_F32
         - VMUL_F32
+        - VNMUL_F32
         # 3.11 FP Miscellaneous Instructions
         - VMOV
         - VMOV_Cond
@@ -1852,6 +1867,12 @@ ScheduleModel:
         # 3.11 FP Miscellaneous Instructions
         - VMOV_GPR2FPR
         - VMOV_FPR2GPR
+      FPFma: # latency: 7(3), throughput: 2, pipeline: F0/F1
+        # 3.10 FP Data Processing Instructions
+        - VMLA_F32
+        - VMLS_F32
+        - VNMLA_F32
+        - VNMLS_F32
       Misc: # unknown
         - TRANSFER_FPSCR_FLAG
         - UNIMP

@@ -278,6 +278,17 @@ InstInfo:
       Mnemonic: fcvt.s.wu
     FMV_X_W:
       Mnemonic: fmv.x.w
+  Fma:
+    Format: $Mnemonic:Template $Rd:FPR[Def], $Rs1:FPR[Use], $Rs2:FPR[Use], $Rs3:FPR[Use]
+    Instances:
+      FMADD_S:
+        Mnemonic: fmadd.s
+      FMSUB_S:
+        Mnemonic: fmsub.s
+      FNMADD_S:
+        Mnemonic: fnmadd.s
+      FNMSUB_S:
+        Mnemonic: fnmsub.s
   # Bitmanip Extension
   InstanceBRR:
     Template: RType
@@ -2127,7 +2138,7 @@ ScheduleModel:
           FABS_S,
         ]
       FPCycle4: [FEQ_S, FLT_S, FLE_S, FCVT_W_S, FCVT_WU_S]
-      FPCycle5: [FADD_S, FSUB_S, FMUL_S]
+      FPCycle5: [FADD_S, FSUB_S, FMUL_S, FMADD_S, FMSUB_S, FNMADD_S, FNMSUB_S]
       FPDiv: [FDIV_S]
       FPLoadStore: [FLW, FSW]
       GeneralLoad: [InstLoadRegFromStack]

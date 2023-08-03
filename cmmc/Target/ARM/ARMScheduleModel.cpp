@@ -137,7 +137,27 @@ public:
         if(state.queryRegisterLatency(inst, 3) > 3)
             return false;
 
+        state.resetPipeline(ARMPipelineMultiCycle, 1);
         state.makeRegisterReady(inst, 0, 4);
+        return true;
+    }
+};
+
+class ARMScheduleClassFPFma final : public ScheduleClass {
+public:
+    bool schedule(ScheduleState& state, const MIRInst& inst, const InstInfo& instInfo) const override {
+        CMMC_UNUSED(instInfo);
+
+        if(!state.isPipelineReady(ARMPipelineFP0) && !state.isPipelineReady(ARMPipelineFP1))
+            return false;
+
+        if(state.queryRegisterLatency(inst, 1) > 0 || state.queryRegisterLatency(inst, 2) > 0)
+            return false;
+        if(state.queryRegisterLatency(inst, 3) > 3)
+            return false;
+
+        state.resetPipeline(state.isPipelineReady(ARMPipelineFP0) ? ARMPipelineFP0 : ARMPipelineFP1, 3);
+        state.makeRegisterReady(inst, 0, 7);
         return true;
     }
 };
