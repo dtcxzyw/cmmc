@@ -40,6 +40,11 @@
       "parent": "ba8d0441b4ccfd5968fa774ec920241e88008dbc",
       "time": "2023-07-04 03:02:32 +0800"
     },
+    "0b52a9f61605dc038053c156a8571ec4e7208e8a": {
+      "message": "feat(codegen): tune post ra scheduling",
+      "parent": "de519756c8764c9e9190395916dea1ad42ac3fd6",
+      "time": "2023-08-03 19:52:20 +0800"
+    },
     "0d03d7e241b13c4f24d6f18a5934e5b906da2fdd": {
       "message": "feat(transform): support transitive in constraint reduce",
       "parent": "d40d138db693f396a43e7c1ff30dda6468ceb38b",
@@ -349,6 +354,11 @@
       "message": "feat(transform): canonicalize loops",
       "parent": "aa4929e70bd9e93a7b8952c78a68675eb0a06c7a",
       "time": "2023-07-24 01:11:40 +0800"
+    },
+    "4b106fcbf076b8476a70bf0ff416aacbf0d9be77": {
+      "message": "feat(codegen): fix copyfree proposal",
+      "parent": "a2a56d75e7bfd3021aaf1830a3e03f92da12c406",
+      "time": "2023-08-03 22:16:53 +0800"
     },
     "4b7168be87eea9ff5ddf64cec1114c0450920b8f": {
       "message": "feat(transform): add more optimizations for trunc/bitwise ops",
@@ -700,6 +710,11 @@
       "parent": "dc7db4146929b1047ca1cd6beeeabf309cbc496e",
       "time": "2023-07-28 14:25:22 +0800"
     },
+    "a2a56d75e7bfd3021aaf1830a3e03f92da12c406": {
+      "message": "feat(codegen): remove invisible insts",
+      "parent": "0b52a9f61605dc038053c156a8571ec4e7208e8a",
+      "time": "2023-08-03 20:47:49 +0800"
+    },
     "a398fc69ea29911ee35d3ef481e077fc10e79317": {
       "message": "feat(transform): move large allocas to global",
       "parent": "791d799938ed2429ceaf4f7f52e5a38e47e055e0",
@@ -955,6 +970,11 @@
       "parent": "48d1d909299606555ee6fd868cbcd8648fe7ee9d",
       "time": "2023-07-02 03:31:52 +0800"
     },
+    "de519756c8764c9e9190395916dea1ad42ac3fd6": {
+      "message": "feat(codegen): add fma/fms",
+      "parent": "94f8356dfee136d4257a21bba074d2aa79f29134",
+      "time": "2023-08-03 13:37:31 +0800"
+    },
     "df1be2c1cfc7dbadc189533186f436ba5ed148c8": {
       "message": "feat(transform): select2branch",
       "parent": "e27459b1043462ed8a0ef0130b70002791c39a3f",
@@ -1071,5 +1091,5 @@
       "time": "2023-07-06 01:05:50 +0800"
     }
   },
-  "head": "94f8356dfee136d4257a21bba074d2aa79f29134"
+  "head": "4b106fcbf076b8476a70bf0ff416aacbf0d9be77"
 }
