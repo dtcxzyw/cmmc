@@ -72,8 +72,8 @@ label134:
 	vldr s4, [r2, #0]
 	add r10, r0, r5, lsl #2
 	add r9, r5, #1
-	vldr s5, [r10, #0]
 	cmp r4, r9
+	vldr s5, [r10, #0]
 	vmul.f32 s4, s4, s5
 	vadd.f32 s3, s3, s4
 	bgt label36
@@ -232,8 +232,8 @@ label19:
 .p2align 4
 label29:
 	add r8, r2, r9, lsl #2
-	vldr s4, [r8, #0]
 	add r10, r0, r9, lsl #2
+	vldr s4, [r8, #0]
 	add r9, r9, #1
 	vldr s5, [r10, #0]
 	cmp r4, r9
@@ -261,9 +261,9 @@ label73:
 	bgt label23
 label230:
 	vmov s3, r5
-	vadd.f32 s1, s1, s3
 	add r6, r6, #1
 	mov r8, r7
+	vadd.f32 s1, s1, s3
 	b label2
 label42:
 	mov r0, #1

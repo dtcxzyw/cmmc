@@ -87,8 +87,8 @@ label73:
 	sw t2, 0(a1)
 	addiw a0, a0, 1
 	addi a4, a4, 4
-	addi a1, a1, 4
 	slt t1, a3, s10
+	addi a1, a1, 4
 	slt t2, a0, s0
 	and t3, t1, t2
 	bne t3, zero, label73
@@ -98,9 +98,9 @@ label74:
 	sw t1, 0(a1)
 	addiw a3, a3, 1
 	addi a5, a5, 4
+	slt t2, a0, s0
 	addi a1, a1, 4
 	slt t1, a3, s10
-	slt t2, a0, s0
 	and t3, t1, t2
 	bne t3, zero, label73
 label76:
@@ -178,8 +178,8 @@ label62:
 	sw t1, 0(a1)
 	addiw a0, a0, 1
 	addi a2, a2, 4
-	addi a1, a1, 4
 	slt t0, a4, s6
+	addi a1, a1, 4
 	slt t1, a0, s0
 	and t2, t0, t1
 	bne t2, zero, label62
@@ -189,9 +189,9 @@ label63:
 	sw t0, 0(a1)
 	addiw a4, a4, 1
 	addi a3, a3, 4
+	slt t1, a0, s0
 	addi a1, a1, 4
 	slt t0, a4, s6
-	slt t1, a0, s0
 	and t2, t0, t1
 	bne t2, zero, label62
 	j label11
@@ -382,8 +382,8 @@ label189:
 	sw t3, 0(a2)
 	addiw a1, a1, 1
 	addi a5, a5, 4
-	addi a2, a2, 4
 	slt t2, a4, s10
+	addi a2, a2, 4
 	slt t4, a1, s6
 	and t3, t2, t4
 	bne t3, zero, label189
@@ -393,9 +393,9 @@ label190:
 	sw t2, 0(a2)
 	addiw a4, a4, 1
 	addi t0, t0, 4
+	slt t4, a1, s6
 	addi a2, a2, 4
 	slt t2, a4, s10
-	slt t4, a1, s6
 	and t3, t2, t4
 	bne t3, zero, label189
 	j label138

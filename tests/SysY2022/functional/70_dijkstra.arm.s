@@ -170,21 +170,21 @@ label26:
 	bgt label30
 	add r8, r8, #1
 	add r7, r7, #4
-	add r3, r3, #4
 	ldr r9, [sp, #0]
+	add r3, r3, #4
 	cmp r9, r8
 	bge label26
 	b label249
 .p2align 4
 label30:
 	ldr r11, [r3, #0]
+	add r7, r7, #4
+	add r3, r3, #4
 	cmp r11, #0
 	moveq r2, r8
 	moveq r10, r9
-	add r8, r8, #1
-	add r7, r7, #4
-	add r3, r3, #4
 	ldr r9, [sp, #0]
+	add r8, r8, #1
 	cmp r9, r8
 	bge label26
 	mov r7, #1
@@ -214,8 +214,8 @@ label35:
 label38:
 	str r8, [r3, #0]
 	add r7, r7, #1
-	add r3, r3, #4
 	ldr r9, [sp, #0]
+	add r3, r3, #4
 	cmp r9, r7
 	bge label35
 	add r1, r1, #1

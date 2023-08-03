@@ -61,9 +61,9 @@ label7:
 	fmul.s f14, f10, f11
 	fmul.s f15, f14, f10
 	fmul.s f12, f15, f10
-	fsub.s f11, f13, f12
 	fmv.w.x f10, a0
 	lui a0, 263168
+	fsub.s f11, f13, f12
 	fmul.s f14, f11, f10
 	fmul.s f13, f14, f11
 	fmv.w.x f14, a0
@@ -107,19 +107,19 @@ main:
 	li a0, 10
 	jal putch
 	mv s10, zero
-	lui s3, 258048
-	mv a1, zero
+	lui s1, 264192
+	sd zero, 104(sp)
 	lui s4, 263168
 pcrel414:
 	auipc a0, %pcrel_hi(__cmmc_fp_constant_pool)
-	lui s1, 264192
 	lui s2, 253952
+	lui s3, 258048
+	mv a1, zero
 	lui s6, 269312
-	sd zero, 104(sp)
-	lui a1, 6
 	addi s0, a0, %pcrel_lo(pcrel414)
-	addiw s8, a1, -1243
+	lui a1, 6
 	lui a0, 4878
+	addiw s8, a1, -1243
 	addiw s7, a0, -158
 	lui a0, 24414
 	addiw s5, a0, 263
@@ -346,13 +346,13 @@ label77:
 	blt s9, a0, label59
 	li a0, 10
 	jal putch
-	ld a1, 104(sp)
-	addiw a1, a1, 1
-	sd a1, 104(sp)
-	lui a0, 275456
 	li a2, 192
+	lui a0, 275456
+	ld a1, 104(sp)
 	fmv.w.x f11, a0
+	addiw a1, a1, 1
 	fcvt.s.w f10, a1
+	sd a1, 104(sp)
 	fdiv.s f8, f10, f11
 	blt a1, a2, label87
 	j label58
@@ -360,16 +360,16 @@ label77:
 label74:
 	fadd.s f11, f11, f12
 	addiw a0, a0, 1
-	slti a1, a0, 10
 	lui a5, 262144
+	slti a1, a0, 10
 	fmv.w.x f12, a5
 	flt.s a2, f11, f12
 	and a4, a1, a2
 	bne a4, zero, label73
 	fmv.w.x f14, zero
-	fadd.s f1, f1, f14
 	addiw a3, a3, 1
 	li a0, 24
+	fadd.s f1, f1, f14
 	blt a3, a0, label62
 	j label77
 .p2align 2
@@ -424,8 +424,8 @@ label377:
 	fcvt.w.s a0, f12, rtz
 	fcvt.s.w f13, a0
 	fmul.s f11, f13, f10
-	fsub.s f3, f3, f11
 	flw f10, 20(s0)
+	fsub.s f3, f3, f11
 	flw f11, 8(s0)
 	flt.s a0, f10, f3
 	fsub.s f12, f3, f11
@@ -445,11 +445,11 @@ label80:
 	fcvt.w.s a0, f13, rtz
 	fcvt.s.w f14, a0
 	fmul.s f12, f14, f11
-	fsub.s f10, f10, f12
 	flw f11, 20(s0)
 	flw f4, 8(s0)
-	flt.s a0, f11, f10
+	fsub.s f10, f10, f12
 	fsub.s f12, f10, f4
+	flt.s a0, f11, f10
 	fmv.s f11, f12
 	bne a0, zero, label375
 	fmv.s f11, f10
@@ -462,8 +462,8 @@ label80:
 .p2align 2
 label174:
 	fmv.w.x f14, zero
-	fadd.s f1, f1, f14
 	addiw a3, a3, 1
 	li a0, 24
+	fadd.s f1, f1, f14
 	blt a3, a0, label62
 	j label77

@@ -365,17 +365,17 @@ main:
 	mv s1, a0
 	jal getint
 pcrel517:
-	auipc a2, %pcrel_hi(cap)
-pcrel518:
 	auipc a1, %pcrel_hi(to)
+pcrel518:
+	auipc a2, %pcrel_hi(cap)
 	sd zero, 88(sp)
-	addi s4, a2, %pcrel_lo(pcrel517)
-	addi s3, a1, %pcrel_lo(pcrel518)
-	sd zero, 96(sp)
+	addi s3, a1, %pcrel_lo(pcrel517)
+	addi s4, a2, %pcrel_lo(pcrel518)
 pcrel519:
 	auipc a1, %pcrel_hi(rev)
-	sd zero, 104(sp)
+	sd zero, 96(sp)
 	addi s5, a1, %pcrel_lo(pcrel519)
+	sd zero, 104(sp)
 	sd zero, 112(sp)
 	sd zero, 120(sp)
 	bgt a0, zero, label414
@@ -402,8 +402,8 @@ label385:
 	jal putint
 	li a0, 10
 	jal putch
-	mv a0, zero
 	ld ra, 0(sp)
+	mv a0, zero
 	ld s2, 8(sp)
 	ld s0, 16(sp)
 	ld s5, 24(sp)
@@ -424,9 +424,9 @@ label389:
 	jal getint
 	mv s9, a0
 	jal getint
-	lw a1, 0(s7)
-	sh2add a2, s8, s8
 	addiw s6, s6, -1
+	sh2add a2, s8, s8
+	lw a1, 0(s7)
 	sh3add a4, a2, s4
 	sh3add a3, a2, s3
 	sh2add a5, a1, a4

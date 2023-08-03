@@ -255,8 +255,8 @@ label23:
 	sub r1, r2, r1
 	usat r1, #8, r1
 	str r1, [r7, r0, lsl #2]
-	str r9, [sp, #24]
 	movw r0, #511
+	str r9, [sp, #24]
 	cmp r9, r0
 	blt label17
 	b label4

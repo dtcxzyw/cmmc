@@ -84,8 +84,8 @@ label21:
 	cmp r6, r5
 	blt label21
 	ldr r3, [sp, #12]
-	add r3, r3, r6, lsl #2
 	cmp r5, r6
+	add r3, r3, r6, lsl #2
 	bgt label18
 	str r6, [sp, #4]
 	b label105
@@ -118,8 +118,8 @@ label78:
 	add r5, r3, r6, lsl #2
 	cmp r4, r6
 	blt label82
-	add r3, r3, r4, lsl #2
 	cmp r6, r4
+	add r3, r3, r4, lsl #2
 	bgt label89
 	b label337
 .p2align 4
@@ -132,8 +132,8 @@ label82:
 	cmp r4, r6
 	blt label82
 	ldr r3, [sp, #12]
-	add r3, r3, r4, lsl #2
 	cmp r6, r4
+	add r3, r3, r4, lsl #2
 	ble label338
 .p2align 4
 label89:
@@ -172,8 +172,8 @@ label41:
 	add r7, r3, r8, lsl #2
 	cmp r6, r8
 	blt label45
-	add r3, r3, r6, lsl #2
 	cmp r8, r6
+	add r3, r3, r6, lsl #2
 	bgt label51
 	b label333
 .p2align 4
@@ -186,8 +186,8 @@ label45:
 	cmp r6, r8
 	blt label45
 	ldr r3, [sp, #12]
-	add r3, r3, r6, lsl #2
 	cmp r8, r6
+	add r3, r3, r6, lsl #2
 	ble label334
 .p2align 4
 label51:
@@ -245,8 +245,8 @@ label75:
 	cmp r8, r10
 	blt label75
 	ldr r3, [sp, #12]
-	add r3, r3, r8, lsl #2
 	cmp r10, r8
+	add r3, r3, r8, lsl #2
 	bgt label72
 	b label63
 .p2align 4
@@ -340,11 +340,11 @@ label128:
 main:
 	push { r4, r5, r6, lr }
 	sub sp, sp, #40
-	mov r0, #4
 	mov r2, #9
+	mov r0, #4
 	mov r4, #0
-	str r0, [sp, #0]
 	mov r5, sp
+	str r0, [sp, #0]
 	mov r0, #3
 	str r0, [sp, #4]
 	mov r0, #2

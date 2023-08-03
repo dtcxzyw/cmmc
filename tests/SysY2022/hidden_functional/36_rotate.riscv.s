@@ -60,9 +60,9 @@ label7:
 	fmul.s f14, f10, f11
 	fmul.s f15, f14, f10
 	fmul.s f12, f15, f10
-	fsub.s f11, f13, f12
 	fmv.w.x f10, a0
 	lui a0, 263168
+	fsub.s f11, f13, f12
 	fmul.s f14, f11, f10
 	fmul.s f13, f14, f11
 	fmv.w.x f14, a0

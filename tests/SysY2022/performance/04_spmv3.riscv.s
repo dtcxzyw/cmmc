@@ -109,8 +109,8 @@ label487:
 .p2align 2
 label518:
 	sh2add t0, t1, s1
-	sw zero, 0(t0)
 	addiw t1, t1, 1
+	sw zero, 0(t0)
 	bgt s4, t1, label107
 	j label675
 .p2align 2
@@ -125,8 +125,8 @@ label107:
 .p2align 2
 label507:
 	sh2add t0, t1, s1
-	sw zero, 0(t0)
 	addiw t1, t1, 4
+	sw zero, 0(t0)
 	sw zero, 4(t0)
 	sw zero, 8(t0)
 	sw zero, 12(t0)
@@ -224,10 +224,10 @@ label27:
 .p2align 2
 label32:
 	sh2add a6, a7, s3
-	lw s8, 0(a6)
 	sh2add s10, a7, s2
-	sh2add s6, s8, s1
+	lw s8, 0(a6)
 	addiw a7, a7, 1
+	sh2add s6, s8, s1
 	lw s7, 0(s6)
 	lw s9, 0(s10)
 	addw s8, s7, s9
@@ -238,10 +238,10 @@ label32:
 	addi t4, a6, -1
 	bgt t2, t5, label21
 	sh2add t3, t6, s3
-	lw a7, 0(t3)
 	sh2add s6, t6, s2
-	sh2add t5, a7, s1
+	lw a7, 0(t3)
 	addiw t6, t6, 1
+	sh2add t5, a7, s1
 	lw a6, 0(t5)
 	lw s8, 0(s6)
 	mulw a7, t4, s8
@@ -291,10 +291,10 @@ label19:
 .p2align 2
 label25:
 	sh2add t3, t6, s3
-	lw a7, 0(t3)
 	sh2add s6, t6, s2
-	sh2add t5, a7, s1
+	lw a7, 0(t3)
 	addiw t6, t6, 1
+	sh2add t5, a7, s1
 	lw a6, 0(t5)
 	lw s8, 0(s6)
 	mulw a7, t4, s8
@@ -358,8 +358,8 @@ label10:
 .p2align 2
 label461:
 	sh2add t0, t1, s0
-	sw zero, 0(t0)
 	addiw t1, t1, 4
+	sw zero, 0(t0)
 	sw zero, 4(t0)
 	sw zero, 8(t0)
 	sw zero, 12(t0)
@@ -380,8 +380,8 @@ label82:
 .p2align 2
 label81:
 	sh2add t0, t1, s0
-	sw zero, 0(t0)
 	addiw t1, t1, 1
+	sw zero, 0(t0)
 	bgt s4, t1, label87
 	j label657
 .p2align 2
@@ -474,10 +474,10 @@ label41:
 .p2align 2
 label649:
 	sh2add t3, t6, s3
-	lw a7, 0(t3)
 	sh2add s8, t6, s2
-	sh2add t5, a7, s0
+	lw a7, 0(t3)
 	addiw t6, t6, 1
+	sh2add t5, a7, s0
 	lw a6, 0(t5)
 	lw a7, 0(s8)
 	mulw s7, t4, a7
@@ -495,10 +495,10 @@ label44:
 .p2align 2
 label424:
 	sh2add a6, a7, s3
-	lw s8, 0(a6)
 	sh2add s9, a7, s2
-	sh2add s6, s8, s0
+	lw s8, 0(a6)
 	addiw a7, a7, 1
+	sh2add s6, s8, s0
 	lw s7, 0(s6)
 	lw s10, 0(s9)
 	addw s8, s7, s10
@@ -512,10 +512,10 @@ label424:
 .p2align 2
 label364:
 	sh2add t3, t6, s3
-	lw a7, 0(t3)
 	sh2add s8, t6, s2
-	sh2add t5, a7, s0
+	lw a7, 0(t3)
 	addiw t6, t6, 1
+	sh2add t5, a7, s0
 	lw a6, 0(t5)
 	lw a7, 0(s8)
 	mulw s7, t4, a7
@@ -610,8 +610,8 @@ label69:
 .p2align 2
 label674:
 	sh2add t0, t1, s1
-	sw zero, 0(t0)
 	addiw t1, t1, 1
+	sw zero, 0(t0)
 	bgt s4, t1, label107
 	mv t0, s5
 	mv t4, zero
@@ -631,8 +631,8 @@ label71:
 .p2align 2
 label671:
 	sh2add t0, t1, s0
-	sw zero, 0(t0)
 	addiw t1, t1, 1
+	sw zero, 0(t0)
 	bgt s4, t1, label87
 	mv t0, s5
 	mv t4, zero

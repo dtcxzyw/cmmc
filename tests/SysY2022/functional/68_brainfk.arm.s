@@ -73,10 +73,10 @@ label156:
 	cmp r0, #43
 	bne label166
 	add r0, r5, r6, lsl #2
+	add r7, r7, #1
 	ldr r1, [r0, #0]
 	add r1, r1, #1
 	str r1, [r0, #0]
-	add r7, r7, #1
 	ldr r0, [r4, r7, lsl #2]
 	cmp r0, #0
 	bne label7
@@ -86,10 +86,10 @@ label166:
 	cmp r0, #45
 	bne label169
 	add r0, r5, r6, lsl #2
+	add r7, r7, #1
 	ldr r1, [r0, #0]
 	sub r1, r1, #1
 	str r1, [r0, #0]
-	add r7, r7, #1
 	ldr r0, [r4, r7, lsl #2]
 	cmp r0, #0
 	bne label7

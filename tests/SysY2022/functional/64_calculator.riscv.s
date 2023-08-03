@@ -121,15 +121,15 @@ label61:
 	sw t0, 4(t1)
 	bne a5, zero, label298
 	mv a3, a4
+	addi a1, a1, 4
+	mv t0, a4
 	addiw a4, a5, 1
-	mv t0, a3
+	sh2add a3, a3, s1
 	sh2add t1, a4, s5
 	sw s4, 0(t1)
-	sh2add a3, a3, s1
 	addiw t1, t0, 1
-	addi a1, a1, 4
-	sh2add a5, t1, s1
 	sw s0, 0(a3)
+	sh2add a5, t1, s1
 	bgt a0, a2, label16
 	j label101
 .p2align 2
@@ -178,8 +178,8 @@ label351:
 	sh2add a3, t1, s1
 	addiw t1, t1, 1
 	addi a1, a1, 4
-	sh2add a5, t1, s1
 	sw s0, 0(a3)
+	sh2add a5, t1, s1
 	bgt a0, a2, label16
 	j label101
 .p2align 2
@@ -500,8 +500,8 @@ label140:
 	ld t1, 104(sp)
 	sh2add a2, a0, t1
 	sw a4, 0(a2)
-	sh2add a2, a1, s1
 	li a4, 64
+	sh2add a2, a1, s1
 	lw a3, 0(a2)
 	bne a3, a4, label503
 	j label118
@@ -513,8 +513,8 @@ label143:
 	ld t1, 104(sp)
 	sh2add a2, a0, t1
 	sw a4, 0(a2)
-	sh2add a2, a1, s1
 	li a4, 64
+	sh2add a2, a1, s1
 	lw a3, 0(a2)
 	bne a3, a4, label503
 	j label118
@@ -550,8 +550,8 @@ label691:
 	ld t1, 104(sp)
 	sh2add a2, a0, t1
 	sw a4, 0(a2)
-	sh2add a2, a1, s1
 	li a4, 64
+	sh2add a2, a1, s1
 	lw a3, 0(a2)
 	bne a3, a4, label503
 	j label118
@@ -564,8 +564,8 @@ label137:
 	ld t1, 104(sp)
 	sh2add a2, a0, t1
 	sw a4, 0(a2)
-	sh2add a2, a1, s1
 	li a4, 64
+	sh2add a2, a1, s1
 	lw a3, 0(a2)
 	bne a3, a4, label503
 	j label118
@@ -642,8 +642,8 @@ label716:
 	sh2add a3, t0, s1
 	addiw t1, t0, 1
 	addi a1, a1, 4
-	sh2add a5, t1, s1
 	sw s0, 0(a3)
+	sh2add a5, t1, s1
 	bgt a0, a2, label16
 	j label101
 label338:
@@ -658,13 +658,13 @@ label286:
 	mv a3, a4
 	addiw a4, a5, 1
 	mv t0, a3
-	sh2add t1, a4, s5
-	sw s4, 0(t1)
-	sh2add a3, a3, s1
-	addiw t1, t0, 1
 	addi a1, a1, 4
-	sh2add a5, t1, s1
+	sh2add t1, a4, s5
+	sh2add a3, a3, s1
+	sw s4, 0(t1)
+	addiw t1, t0, 1
 	sw s0, 0(a3)
+	sh2add a5, t1, s1
 	bgt a0, a2, label16
 	j label101
 label368:

@@ -145,10 +145,10 @@ label105:
 .p2align 2
 label58:
 	addi t1, t1, 4
-	lw a2, 0(t1)
 	mv a0, zero
-	divw a3, s1, a2
 	mv a4, zero
+	lw a2, 0(t1)
+	divw a3, s1, a2
 	bgt a3, zero, label95
 	j label94
 .p2align 2

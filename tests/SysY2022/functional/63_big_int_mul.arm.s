@@ -126,8 +126,8 @@ label20:
 	bgt label22
 	str r8, [r5, #0]
 	sub r4, r4, #4
-	sub r5, r5, #4
 	cmn r7, #1
+	sub r5, r5, #4
 	bgt label20
 	b label243
 .p2align 4
@@ -137,15 +137,15 @@ label22:
 	movw r11, #26215
 	movt r11, #26214
 	sub r4, r4, #4
-	sub r5, r5, #4
+	cmn r7, #1
 	add r9, r9, r6, lsl #2
 	smmul r8, r8, r11
+	sub r5, r5, #4
 	ldr r10, [r9, #0]
 	asr r11, r8, #2
 	add r8, r11, r8, lsr #31
 	add r8, r10, r8
 	str r8, [r9, #0]
-	cmn r7, #1
 	bgt label20
 	add r6, r6, #19
 	sub r3, r3, #1

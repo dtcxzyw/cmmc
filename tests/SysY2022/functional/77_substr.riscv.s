@@ -144,9 +144,9 @@ label16:
 	blt t2, a0, label15
 	addiw a5, a5, 1
 	addi a2, a2, 64
+	li t0, 16
 	addiw a1, a5, -1
 	addi a4, a2, -64
-	li t0, 16
 	blt a5, t0, label10
 label19:
 	lw a0, 1012(a3)
@@ -164,16 +164,16 @@ label19:
 label302:
 	addiw a5, a5, 1
 	addi a2, a2, 64
+	li t0, 16
 	addiw a1, a5, -1
 	addi a4, a2, -64
-	li t0, 16
 	blt a5, t0, label10
 	j label19
 label131:
 	addiw a5, a5, 1
 	addi a2, a2, 64
+	li t0, 16
 	addiw a1, a5, -1
 	addi a4, a2, -64
-	li t0, 16
 	blt a5, t0, label10
 	j label19

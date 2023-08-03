@@ -218,10 +218,10 @@ label463:
 	li t1, 45
 	bne t0, t1, label468
 	sh2add t0, a4, a1
+	addiw a5, a5, 1
 	lw t2, 0(t0)
 	addi t1, t2, -1
 	sw t1, 0(t0)
-	addiw a5, a5, 1
 	bgt s7, a5, label31
 	j label24
 .p2align 2
@@ -260,12 +260,12 @@ label44:
 	sh2add t1, a4, a1
 pcrel492:
 	auipc t3, %pcrel_hi(output)
-	lw t0, 0(t1)
+	addiw a5, a5, 1
 	addi t2, t3, %pcrel_lo(pcrel492)
+	lw t0, 0(t1)
 	sh2add t1, s8, t2
 	addiw s8, s8, 1
 	sw t0, 0(t1)
-	addiw a5, a5, 1
 	j label18
 label25:
 	mv a0, zero
@@ -306,8 +306,8 @@ label284:
 	j label18
 label47:
 	sh2add t0, a4, a1
-	sw zero, 0(t0)
 	addiw a5, a5, 1
+	sw zero, 0(t0)
 	j label18
 label255:
 	addiw a5, a5, 1

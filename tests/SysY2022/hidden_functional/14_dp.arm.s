@@ -79,8 +79,8 @@ label27:
 	blt label29
 	str r10, [r3, #0]
 	add r7, r7, #4
-	add r3, r3, #4
 	ldr r9, [sp, #4]
+	add r3, r3, #4
 	cmp r9, r8
 	bge label27
 	b label125
@@ -88,16 +88,16 @@ label27:
 label29:
 	str r9, [r3, #0]
 	add r7, r7, #4
-	add r3, r3, #4
 	ldr r9, [sp, #4]
+	add r3, r3, #4
 	cmp r9, r8
 	bge label27
 	add r2, r2, #1
 	add r0, r0, #8
 	add r1, r1, #140
-	sub r7, r2, #1
 	mov r3, #140
 	cmp r5, r2
+	sub r7, r2, #1
 	mla r3, r7, r3, r6
 	bge label21
 label12:
@@ -113,9 +113,9 @@ label125:
 	add r2, r2, #1
 	add r0, r0, #8
 	add r1, r1, #140
-	sub r7, r2, #1
 	mov r3, #140
 	cmp r5, r2
+	sub r7, r2, #1
 	mla r3, r7, r3, r6
 	bge label21
 	b label12
@@ -134,9 +134,9 @@ label26:
 	add r2, r2, #1
 	add r0, r0, #8
 	add r1, r1, #140
-	sub r7, r2, #1
 	mov r3, #140
 	cmp r5, r2
+	sub r7, r2, #1
 	mla r3, r7, r3, r6
 	bge label21
 	b label12

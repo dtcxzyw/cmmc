@@ -99,14 +99,14 @@ label9:
 	mv a2, s1
 	jal f
 	sw zero, 0(s2)
+	addi s2, s2, 4
 	sw zero, 0(s10)
 	lw a1, 0(s1)
 	addw a0, s9, a1
 	subw a2, a0, s7
+	addiw s7, s7, 1
 	sh2add a3, a2, s6
 	sw zero, 0(a3)
-	addiw s7, s7, 1
-	addi s2, s2, 4
 	lw a0, 0(s1)
 	ble s7, a0, label5
 	j label19
@@ -130,9 +130,9 @@ label15:
 	beq s10, s11, label16
 	li a0, 32
 	jal putch
+	lw s11, 0(s1)
 	addi s9, s9, 4
 	addiw s10, s10, 1
-	lw s11, 0(s1)
 	ble s10, s11, label15
 	j label82
 label19:

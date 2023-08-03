@@ -67,15 +67,15 @@ label16:
 	str r0, [sp, #0]
 	beq label29
 	mov r0, r4
-	subs r0, r4, #1
 	lsl r8, r8, #1
+	subs r0, r4, #1
 	bne label26
 	add r8, r5, r8
 .p2align 4
 label37:
 	ldr r1, [sp, #0]
-	sub r9, r1, r5
 	cmp r8, #5
+	sub r9, r1, r5
 	str r9, [sp, #0]
 	blt label16
 	b label5
@@ -133,8 +133,8 @@ label136:
 	str r0, [sp, #0]
 	beq label29
 	mov r0, r4
-	subs r0, r4, #1
 	lsl r8, r8, #1
+	subs r0, r4, #1
 	bne label26
 	add r8, r5, r8
 	beq label37

@@ -482,9 +482,9 @@ label108:
 	mov r1, r5
 	mov r0, r6
 	mov r2, r7
+	mov r3, #0
 	movw r6, #:lower16:oprs
 	movt r6, #:upper16:oprs
-	mov r3, #0
 	mov r5, r3
 	b label17
 label1006:
@@ -806,9 +806,9 @@ label94:
 label551:
 	mov r0, r5
 	mov r3, #0
-	mov r2, r3
 	movw r6, #:lower16:ops
 	movt r6, #:upper16:ops
+	mov r2, r3
 	ldr r5, [r6, #0]
 	cmp r5, #0
 	bne label54
@@ -860,9 +860,9 @@ label63:
 .p2align 4
 label92:
 	sdiv r3, r7, r5
-	mls r3, r3, r5, r7
 	movw r6, #:lower16:oprs
 	movt r6, #:upper16:oprs
+	mls r3, r3, r5, r7
 	ldr r5, [r6, #0]
 	add r5, r5, #1
 	str r5, [r6, #0]
@@ -889,9 +889,9 @@ label64:
 label621:
 	mov r0, r5
 	mov r3, #0
-	mov r2, r3
 	movw r6, #:lower16:ops
 	movt r6, #:upper16:ops
+	mov r2, r3
 	ldr r5, [r6, #0]
 	cmp r5, #0
 	bne label84
@@ -915,12 +915,12 @@ label534:
 .p2align 4
 label456:
 	mov r1, r0
+	sub r2, r0, #10
 	sub r0, r0, #32
-	sub r2, r1, #10
-	clz r0, r0
 	clz r2, r2
-	lsr r0, r0, #5
+	clz r0, r0
 	lsr r2, r2, #5
+	lsr r0, r0, #5
 	orrs r0, r0, r2
 	bne label99
 	b label1006

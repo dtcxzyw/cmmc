@@ -55,10 +55,10 @@ label7:
 	lw a4, 0(s2)
 	divw a2, s1, s4
 	mulw a3, a2, a4
+	divw a2, s0, s1
 	subw a5, a1, a3
 	sw a5, 0(s2)
 	lw a1, 0(s3)
-	divw a2, s0, s1
 	lw a3, 0(s2)
 	sw a3, 0(s3)
 	lw a5, 0(s2)
@@ -79,8 +79,8 @@ main:
 	sw a4, 12(sp)
 	sw a4, 8(sp)
 	jal exgcd
-	lui a0, 559241
 	lw a1, 12(sp)
+	lui a0, 559241
 	addiw a3, a0, -1911
 	mul a5, a1, a3
 	srli a2, a5, 32

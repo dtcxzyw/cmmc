@@ -60,13 +60,13 @@ label14:
 label15:
 	add r8, r1, #4
 	str r6, [r1, #4]
+	cmp r0, r5
 	str r7, [r1, #0]
 	mov r1, r8
-	cmp r0, r5
 	bgt label14
 	add r3, r3, #1
-	rsb r0, r3, #10
 	cmp r3, #9
+	rsb r0, r3, #10
 	sub r0, r0, #1
 	blt label10
 	b label4
@@ -88,15 +88,15 @@ label9:
 .p2align 4
 label72:
 	add r3, r3, #1
-	rsb r0, r3, #10
 	cmp r3, #9
+	rsb r0, r3, #10
 	sub r0, r0, #1
 	blt label10
 	b label4
 label43:
 	add r3, r3, #1
-	rsb r0, r3, #10
 	cmp r3, #9
+	rsb r0, r3, #10
 	sub r0, r0, #1
 	blt label10
 	b label4

@@ -178,8 +178,8 @@ label85:
 .p2align 2
 label89:
 	sh2add a1, a0, s1
-	sw a2, 0(a1)
 	addiw s3, s3, 1
+	sw a2, 0(a1)
 	bgt s2, s3, label85
 	j label118
 label83:

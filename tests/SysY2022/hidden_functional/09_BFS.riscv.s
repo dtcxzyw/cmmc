@@ -385,9 +385,9 @@ label451:
 	mv a0, a1
 	bne s9, zero, label767
 	mv a0, s11
-	ld t0, 112(sp)
 	mv a4, s2
 	mv a3, zero
+	ld t0, 112(sp)
 	sh2add a1, s8, t0
 	sw s2, 0(a1)
 	mv a1, zero

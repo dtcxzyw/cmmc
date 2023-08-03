@@ -328,12 +328,12 @@ label126:
 label129:
 	movw r5, #:lower16:dep
 	movt r5, #:upper16:dep
+	sub r1, r1, #1
 	ldr r5, [r5, r4, lsl #2]
 	cmp r3, r5
-	movle r2, r4
-	sub r1, r1, #1
 	movw r5, #:lower16:dep
 	movt r5, #:upper16:dep
+	movle r2, r4
 	ldr r4, [r5, r2, lsl #2]
 	ldr r3, [r5, r0, lsl #2]
 	cmp r4, r3

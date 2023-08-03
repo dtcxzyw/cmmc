@@ -405,8 +405,8 @@ label21:
 .p2align 2
 label281:
 	sh2add a0, a1, s1
-	sw zero, 0(a0)
 	addi a1, a1, 1
+	sw zero, 0(a0)
 	blt a1, s7, label122
 	j label949
 .p2align 2
@@ -584,10 +584,10 @@ label929:
 	j label56
 label78:
 	jal getch
-	li a1, 1
 pcrel1005:
 	auipc s2, %pcrel_hi(ops)
 	lw a3, %pcrel_lo(pcrel1005)(s2)
+	li a1, 1
 	bne a3, zero, label63
 	j label934
 .p2align 2

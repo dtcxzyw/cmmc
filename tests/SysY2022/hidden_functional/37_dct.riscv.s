@@ -66,9 +66,9 @@ label7:
 	fmul.s f14, f10, f11
 	fmul.s f15, f14, f10
 	fmul.s f12, f15, f10
-	fsub.s f11, f13, f12
 	fmv.w.x f10, a0
 	lui a0, 263168
+	fsub.s f11, f13, f12
 	fmul.s f14, f11, f10
 	fmul.s f13, f14, f11
 	fmv.w.x f14, a0
@@ -298,11 +298,11 @@ label89:
 	fcvt.w.s a0, f13, rtz
 	fcvt.s.w f12, a0
 	fmul.s f14, f12, f11
-	fsub.s f10, f10, f14
 	flw f11, 4(s0)
 	flw f12, 12(s0)
-	flt.s a0, f11, f10
+	fsub.s f10, f10, f14
 	fsub.s f13, f10, f12
+	flt.s a0, f11, f10
 	fmv.s f11, f13
 	bne a0, zero, label823
 	fmv.s f11, f10
@@ -332,9 +332,9 @@ label96:
 label102:
 	li a0, 10
 	jal putch
+	ld a1, 128(sp)
 	addi s8, s8, 32
 	addiw s9, s9, 1
-	ld a1, 128(sp)
 	bgt a1, s9, label96
 label103:
 	li a0, 10
@@ -408,13 +408,13 @@ label629:
 	fadd.s f13, f10, f10
 	fdiv.s f11, f13, f19
 	fsw f11, 0(a3)
-	addi a3, a3, 4
 	ld a0, 136(sp)
+	addi a3, a3, 4
 	bgt a0, t5, label112
 	addiw t4, t4, 1
 	addi t2, t2, 32
-	fcvt.s.w f10, t4
 	fmv.w.x f11, s1
+	fcvt.s.w f10, t4
 	fadd.s f12, f10, f11
 	fmul.s f1, f9, f12
 	bgt a1, t4, label107
@@ -662,10 +662,10 @@ label116:
 label426:
 	slliw a2, a1, 5
 	fmv.s f10, f11
-	add a0, s7, a2
-	mv a2, a1
-	flw f11, 0(a0)
 	fmv.w.x f13, s1
+	add a0, s7, a2
+	flw f11, 0(a0)
+	mv a2, a1
 	addiw a2, a1, 1
 	fmul.s f12, f11, f13
 	fadd.s f10, f10, f12
@@ -762,8 +762,8 @@ label140:
 	fadd.s f13, f10, f10
 	fdiv.s f11, f13, f19
 	fsw f11, 0(a3)
-	addi a3, a3, 4
 	ld a0, 136(sp)
+	addi a3, a3, 4
 	bgt a0, t5, label112
 	j label868
 .p2align 2
@@ -771,8 +771,8 @@ label156:
 	flw f10, 0(a3)
 	addi a2, s7, 4
 	mv a1, s2
-	flw f11, 0(a2)
 	fmv.w.x f12, s1
+	flw f11, 0(a2)
 	addiw a1, s2, 1
 	fmul.s f13, f11, f12
 	fadd.s f10, f10, f13
@@ -788,9 +788,9 @@ label156:
 label163:
 	sh2add a2, a1, s7
 	fmv.s f10, f11
-	flw f11, 0(a2)
 	fmv.w.x f12, s1
 	addiw a1, a1, 1
+	flw f11, 0(a2)
 	fmul.s f13, f11, f12
 	fadd.s f10, f10, f13
 	fsw f10, 0(a3)
@@ -843,17 +843,17 @@ label115:
 label184:
 	li a0, 10
 	jal putch
+	ld a1, 128(sp)
 	addi s0, s0, 32
 	addiw s1, s1, 1
-	ld a1, 128(sp)
 	bgt a1, s1, label183
 	j label182
 label868:
 	addiw t4, t4, 1
 	addi t2, t2, 32
-	fcvt.s.w f10, t4
-	ld a1, 128(sp)
 	fmv.w.x f11, s1
+	ld a1, 128(sp)
+	fcvt.s.w f10, t4
 	fadd.s f12, f10, f11
 	fmul.s f1, f9, f12
 	bgt a1, t4, label107
@@ -871,8 +871,8 @@ label534:
 	fadd.s f13, f10, f10
 	fdiv.s f11, f13, f19
 	fsw f11, 0(a3)
-	addi a3, a3, 4
 	ld a0, 136(sp)
+	addi a3, a3, 4
 	bgt a0, t5, label112
 	j label868
 .p2align 2
@@ -880,8 +880,8 @@ label398:
 	flw f10, 0(a3)
 	addi a0, s7, 32
 	mv a2, s2
-	flw f11, 0(a0)
 	fmv.w.x f13, s1
+	flw f11, 0(a0)
 	addiw a2, s2, 1
 	fmul.s f12, f11, f13
 	fadd.s f10, f10, f12
@@ -910,8 +910,8 @@ label753:
 	fadd.s f13, f10, f10
 	fdiv.s f11, f13, f19
 	fsw f11, 0(a3)
-	addi a3, a3, 4
 	ld a0, 136(sp)
+	addi a3, a3, 4
 	bgt a0, t5, label112
 	j label868
 .p2align 2
@@ -927,8 +927,8 @@ label873:
 	fadd.s f13, f10, f10
 	fdiv.s f11, f13, f19
 	fsw f11, 0(a3)
-	addi a3, a3, 4
 	ld a0, 136(sp)
+	addi a3, a3, 4
 	bgt a0, t5, label112
 	j label868
 .p2align 2
@@ -943,9 +943,9 @@ label881:
 label111:
 	addiw t4, t4, 1
 	addi t2, t2, 32
-	fcvt.s.w f10, t4
-	ld a1, 128(sp)
 	fmv.w.x f11, s1
+	ld a1, 128(sp)
+	fcvt.s.w f10, t4
 	fadd.s f12, f10, f11
 	fmul.s f1, f9, f12
 	bgt a1, t4, label107
@@ -953,8 +953,8 @@ label111:
 label182:
 	li a0, 10
 	jal putch
-	mv a0, zero
 	ld ra, 0(sp)
+	mv a0, zero
 	ld s11, 8(sp)
 	ld s10, 16(sp)
 	ld s4, 24(sp)
@@ -990,15 +990,15 @@ label232:
 	bgt a0, t0, label73
 	addiw a5, a5, 1
 	addi a4, a4, 32
-	fcvt.s.w f1, a5
 	ld a1, 128(sp)
+	fcvt.s.w f1, a5
 	bgt a1, a5, label69
 	j label222
 label226:
 	addiw a5, a5, 1
 	addi a4, a4, 32
-	fcvt.s.w f1, a5
 	ld a1, 128(sp)
+	fcvt.s.w f1, a5
 	bgt a1, a5, label69
 	j label222
 .p2align 2

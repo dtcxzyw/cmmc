@@ -155,9 +155,8 @@ label147:
 	sd a3, 448(sp)
 	sd a0, 456(sp)
 	ld a3, 408(sp)
+	addw a2, a3, a0
 	li a0, 2
-	ld a1, 456(sp)
-	addw a2, a3, a1
 	sd a2, 464(sp)
 	blt a1, a0, label10
 	j label9
@@ -215,12 +214,12 @@ label14:
 .p2align 2
 label244:
 	ld a0, 496(sp)
+	li t4, 3
 	ld a3, 480(sp)
 	addiw a0, a0, 1
 	addi a3, a3, 960
 	sd a3, 480(sp)
 	sd a0, 496(sp)
-	li t4, 3
 	blt a0, t4, label14
 	j label147
 .p2align 2
@@ -509,14 +508,14 @@ label96:
 	addiw a0, a0, 1
 	ble a1, a0, label64
 	ld a1, 512(sp)
-	addi a1, a1, 960
-	sd a1, 512(sp)
-	sd a0, 528(sp)
-	ld a3, 488(sp)
 	slli a2, a0, 3
+	addi a1, a1, 960
 	sub a5, a2, a0
 	li a2, 1000
+	sd a1, 512(sp)
 	slli a1, a5, 8
+	sd a0, 528(sp)
+	ld a3, 488(sp)
 	add a4, a3, a1
 	sd a4, 560(sp)
 	blt a0, a2, label67
@@ -615,14 +614,14 @@ label37:
 label347:
 	addiw t5, t5, 1
 	addi t4, t4, 896
-	addw t6, a1, t5
-	addw a6, a2, t5
-	addw a7, a3, t5
-	addw s0, a4, t5
-	addw s1, a5, t5
-	addw s2, t0, t5
-	addw s3, t1, t5
 	li a0, 2
+	addw s3, t1, t5
+	addw s2, t0, t5
+	addw s1, a5, t5
+	addw a7, a3, t5
+	addw a6, a2, t5
+	addw s0, a4, t5
+	addw t6, a1, t5
 	blt t5, a0, label37
 	addiw t3, t3, 1
 	addi t2, t2, 1792

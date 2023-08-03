@@ -336,9 +336,9 @@ label340:
 label582:
 	mov r10, r9
 	mov r11, r6
-	add r9, r9, #1
-	add r8, r8, #4
 	ldr r0, [sp, #48]
+	add r8, r8, #4
+	add r9, r9, #1
 	cmp r9, r0
 	ble label340
 	add r6, r6, #1

@@ -111,10 +111,10 @@ label75:
 .p2align 4
 label8:
 	add r0, r0, #4
-	ldr r3, [r0, #0]
 	movw r9, #:lower16:head
 	movt r9, #:upper16:head
 	add r2, r2, #1
+	ldr r3, [r0, #0]
 	ldr r7, [sp, #0]
 	sdiv r8, r3, r7
 	mls r8, r8, r7, r3
@@ -138,15 +138,15 @@ label26:
 	bne label127
 	movw r3, #:lower16:nextvalue
 	movt r3, #:upper16:nextvalue
+	add r1, r1, #1
 	add r8, r3, r10, lsl #2
+	cmp r5, r1
 	ldr r9, [r8, #0]
 	str r9, [r3, r2, lsl #2]
 	movw r3, #:lower16:value
 	movt r3, #:upper16:value
 	str r2, [r8, #0]
 	str r7, [r3, r2, lsl #2]
-	add r1, r1, #1
-	cmp r5, r1
 	bgt label8
 	b label75
 label87:
@@ -168,9 +168,9 @@ label15:
 .p2align 4
 label95:
 	mov r1, r2
-	mov r2, #0
 	movw r3, #:lower16:value
 	movt r3, #:upper16:value
+	mov r2, #0
 	ldr r3, [r3, r1, lsl #2]
 	add r2, r2, r3
 	movw r3, #:lower16:nextvalue
@@ -198,9 +198,9 @@ label20:
 	ble label22
 	add r4, r4, #4
 	mov r0, r1
-	ldr r1, [r4, #0]
 	movw r9, #:lower16:head
 	movt r9, #:upper16:head
+	ldr r1, [r4, #0]
 	ldr r7, [sp, #0]
 	sdiv r2, r1, r7
 	mls r2, r2, r7, r1

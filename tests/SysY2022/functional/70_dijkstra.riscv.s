@@ -74,9 +74,9 @@ label9:
 	mv a4, zero
 	beq a0, a3, label258
 	lui a5, 16
+	addiw a3, a3, 1
 	addiw a4, a5, -1
 	sw a4, 0(a2)
-	addiw a3, a3, 1
 	bge s0, a3, label9
 	addiw a0, a0, 1
 	addi a1, a1, 64

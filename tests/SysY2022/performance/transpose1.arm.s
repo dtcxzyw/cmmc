@@ -84,8 +84,8 @@ label87:
 	movw r0, #:lower16:a
 	movt r0, #:upper16:a
 	mov r5, #0
-	mov r4, r0
 	ldr r1, [r0, #0]
+	mov r4, r0
 	ldr r0, [sp, #116]
 	sdiv r2, r0, r1
 	mov r0, #0
@@ -149,8 +149,8 @@ label28:
 .p2align 4
 label414:
 	add r0, r0, #1
-	mul r3, r1, r0
 	cmp r2, r0
+	mul r3, r1, r0
 	bgt label163
 	add r5, r5, #1
 	ldr r0, [sp, #72]
@@ -163,8 +163,8 @@ label72:
 	ldr r0, [sp, #116]
 	sdiv r2, r0, r1
 	mov r0, #0
-	mul r3, r1, r0
 	cmp r2, r0
+	mul r3, r1, r0
 	bgt label163
 	b label162
 .p2align 4
@@ -174,12 +174,12 @@ label76:
 	blt label351
 	mla r8, r2, r6, r0
 	add r9, r3, r6
+	cmp r1, r7
 	movw r6, #:lower16:matrix
 	movt r6, #:upper16:matrix
 	ldr r9, [r6, r9, lsl #2]
 	str r9, [r6, r8, lsl #2]
 	mov r6, r7
-	cmp r1, r7
 	bgt label76
 	b label414
 .p2align 4
@@ -188,8 +188,8 @@ label351:
 	cmp r1, r7
 	bgt label76
 	add r0, r0, #1
-	mul r3, r1, r0
 	cmp r2, r0
+	mul r3, r1, r0
 	bgt label163
 	add r5, r5, #1
 	ldr r0, [sp, #72]
@@ -415,8 +415,8 @@ label64:
 .p2align 4
 label407:
 	add r0, r0, #1
-	mul r3, r1, r0
 	cmp r2, r0
+	mul r3, r1, r0
 	bgt label163
 	add r5, r5, #1
 	ldr r0, [sp, #72]

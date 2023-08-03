@@ -227,9 +227,9 @@ label98:
 	ldr r3, [sp, #188]
 	add r0, r0, #1
 	add r3, r3, #960
+	cmp r0, #3
 	str r3, [sp, #188]
 	str r0, [sp, #192]
-	cmp r0, #3
 	blt label94
 	b label338
 .p2align 4
@@ -500,9 +500,9 @@ label80:
 .p2align 4
 label75:
 	ldr r2, [sp, #8]
+	rsb r1, r0, r0, lsl #3
 	add r2, r2, #8
 	str r2, [sp, #8]
-	rsb r1, r0, r0, lsl #3
 	ldr r2, [sp, #28]
 	add r1, r2, r1, lsl #2
 	movw r2, #16960
@@ -628,9 +628,9 @@ label18:
 label175:
 	add r2, r2, #1
 	ldr r4, [sp, #0]
+	cmp r2, #3
 	add r4, r4, #1792
 	str r4, [sp, #0]
-	cmp r2, #3
 	blt label18
 	b label164
 .p2align 4

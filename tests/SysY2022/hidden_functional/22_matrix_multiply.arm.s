@@ -153,8 +153,8 @@ label49:
 label194:
 	str r5, [r3, #0]
 	add r0, r0, #1
-	add r3, r3, #4
 	ldr r8, [sp, #8]
+	add r3, r3, #4
 	cmp r8, r0
 	bgt label45
 .p2align 4
@@ -177,8 +177,8 @@ label178:
 	mla r4, r5, r7, r4
 	mov r6, r5
 	ldr r7, [sp, #0]
+	add r6, r5, #1
 	ldr r5, [r7, r5, lsl #2]
-	add r6, r6, #1
 	ldr r7, [r4, r0, lsl #2]
 	mla r5, r5, r7, r8
 	ldr r8, [sp, #12]
@@ -223,9 +223,9 @@ label32:
 label38:
 	mov r0, #10
 	bl putch
+	ldr r0, [sp, #16]
 	add r4, r4, #400
 	add r5, r5, #1
-	ldr r0, [sp, #16]
 	cmp r0, r5
 	bgt label32
 label39:
@@ -265,8 +265,8 @@ label141:
 	movw r4, #:lower16:b
 	movt r4, #:upper16:b
 	mov r8, r6
-	mov r6, #0
 	ldr r7, [sp, #0]
+	mov r6, #0
 	ldr r5, [r7, r6, lsl #2]
 	add r6, r6, #1
 	ldr r7, [r4, r0, lsl #2]
@@ -276,8 +276,8 @@ label141:
 	bgt label59
 	str r5, [r3, #0]
 	add r0, r0, #1
-	add r3, r3, #4
 	ldr r8, [sp, #8]
+	add r3, r3, #4
 	cmp r8, r0
 	bgt label45
 	b label221
@@ -285,8 +285,8 @@ label141:
 label220:
 	str r5, [r3, #0]
 	add r0, r0, #1
-	add r3, r3, #4
 	ldr r8, [sp, #8]
+	add r3, r3, #4
 	cmp r8, r0
 	bgt label45
 	add r2, r2, #1

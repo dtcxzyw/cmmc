@@ -65,14 +65,14 @@ label14:
 .p2align 4
 label22:
 	ldr r3, [sp, #12]
+	add r6, r6, #1
+	ldr r2, [sp, #0]
 	mov r0, r3
 	cmp r3, r7
 	movle r0, r7
 	mov r7, r9
 	cmp r9, r0
 	movle r7, r0
-	add r6, r6, #1
-	ldr r2, [sp, #0]
 	ldr r0, [r2, #0]
 	cmp r6, r0
 	ble label6
@@ -198,8 +198,8 @@ main:
 	mov r10, #0
 	sub sp, sp, #132
 	str r10, [sp, #0]
-	add r4, sp, #120
 	mov r5, sp
+	add r4, sp, #120
 	str r10, [sp, #4]
 	str r10, [sp, #8]
 	str r10, [sp, #12]
@@ -233,10 +233,10 @@ main:
 	str r0, [sp, #120]
 	bl getint
 	cmp r0, #0
-	movw r8, #:lower16:edges
-	movt r8, #:upper16:edges
 	movw r7, #:lower16:graph
 	movt r7, #:upper16:graph
+	movw r8, #:lower16:edges
+	movt r8, #:upper16:edges
 	mov r6, r0
 	ble label188
 	mov r9, r8

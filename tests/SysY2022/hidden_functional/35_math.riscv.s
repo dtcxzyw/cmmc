@@ -727,8 +727,8 @@ label597:
 	jal putfloat
 	li a0, 32
 	jal putch
-	fmv.s f10, f8
 	li a0, 2
+	fmv.s f10, f8
 	fmv.w.x f12, s0
 	fmul.s f13, f12, f8
 	andi a1, a0, 1
@@ -790,8 +790,8 @@ label602:
 	li a0, 32
 	jal putch
 	fmv.w.x f11, s0
-	fmv.w.x f13, s2
 	fmv.w.x f0, s3
+	fmv.w.x f13, s2
 	fsub.s f10, f8, f11
 	fmul.s f14, f10, f13
 	fadd.s f15, f14, f11

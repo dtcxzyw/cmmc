@@ -171,10 +171,10 @@ label107:
 .p2align 4
 label109:
 	str r8, [r0, #0]
-	str r7, [r2, #0]
 	add r3, r3, #1
-	add r2, r2, #4
+	str r7, [r2, #0]
 	ldr r8, [sp, #0]
+	add r2, r2, #4
 	cmp r8, r3
 	bgt label107
 	add r0, r0, #4

@@ -48,12 +48,12 @@ label4:
 	addw a4, a1, a2
 	ble s0, a3, label61
 	mulw t1, s0, a3
+	addw a2, s0, a2
+	addiw a3, a3, 1
 	addw t2, a1, t1
 	sh2add t0, t2, s2
 	lw a5, 0(t0)
-	addiw a3, a3, 1
 	sh2add t0, a4, a0
-	addw a2, s0, a2
 	sw a5, 0(t0)
 	bgt s0, a3, label4
 	j label264
@@ -177,8 +177,8 @@ label43:
 .p2align 2
 label45:
 	sh2add t1, t3, a0
-	sw t4, 0(t1)
 	addiw t0, t0, 1
+	sw t4, 0(t1)
 	bgt s0, t0, label40
 	addiw a5, a5, 1
 	mulw a3, s0, a5

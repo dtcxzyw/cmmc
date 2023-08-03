@@ -137,8 +137,8 @@ label81:
 .p2align 2
 label84:
 	sh2add a1, a2, s9
-	sw zero, 0(a1)
 	addiw a2, a2, 4
+	sw zero, 0(a1)
 	sw zero, 4(a1)
 	sw zero, 8(a1)
 	sw zero, 12(a1)
@@ -168,8 +168,8 @@ label76:
 .p2align 2
 label269:
 	sh2add a1, a2, s9
-	sw zero, 0(a1)
 	addiw a2, a2, 1
+	sw zero, 0(a1)
 	bgt s0, a2, label76
 	mv a1, s9
 	mv a2, s4
@@ -272,8 +272,8 @@ label145:
 .p2align 2
 label176:
 	sh2add a1, a2, s8
-	sw zero, 0(a1)
 	addiw a2, a2, 1
+	sw zero, 0(a1)
 	bgt s0, a2, label32
 	mv a1, s8
 	mv a2, s4
@@ -283,8 +283,8 @@ label176:
 .p2align 2
 label165:
 	sh2add a1, a2, s8
-	sw zero, 0(a1)
 	addiw a2, a2, 4
+	sw zero, 0(a1)
 	sw zero, 4(a1)
 	sw zero, 8(a1)
 	sw zero, 12(a1)
@@ -334,8 +334,8 @@ label79:
 .p2align 2
 label361:
 	sh2add a1, a2, s9
-	sw zero, 0(a1)
 	addiw a2, a2, 1
+	sw zero, 0(a1)
 	bgt s0, a2, label76
 	mv a1, s9
 	mv a2, s4
@@ -345,8 +345,8 @@ label361:
 .p2align 2
 label365:
 	sh2add a1, a2, s8
-	sw zero, 0(a1)
 	addiw a2, a2, 1
+	sw zero, 0(a1)
 	bgt s0, a2, label32
 	mv a1, s8
 	mv a2, s4

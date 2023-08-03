@@ -150,12 +150,12 @@ label18:
 	addiw a3, a2, 1
 	ble a3, a1, label125
 	lui a0, 262144
-	addiw a1, a0, 1
 	sh2add a2, s4, s2
 	addi s0, s0, 8
+	addiw a1, a0, 1
+	sw s1, 0(a2)
 	mv a0, s6
 	min s3, s3, a1
-	sw s1, 0(a2)
 	j label5
 label57:
 	lui a0, 262144
@@ -361,8 +361,8 @@ label352:
 	bne a0, s0, label587
 	mv s9, s11
 	mv s10, s6
-	addiw s11, s11, 1
 	addi s8, s8, 4
+	addiw s11, s11, 1
 	lw a0, 116(sp)
 	ble s11, a0, label352
 	j label1006

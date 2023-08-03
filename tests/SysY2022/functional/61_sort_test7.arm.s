@@ -83,10 +83,10 @@ label127:
 	str r10, [r1, #0]
 	add r0, r0, #1
 	add r3, r3, #4
-	add r1, r1, #4
 	cmp r5, r8
-	mov r10, #0
 	ldr r6, [sp, #28]
+	mov r10, #0
+	add r1, r1, #4
 	movwgt r10, #1
 	cmp r6, r0
 	mov r6, #0
@@ -99,10 +99,10 @@ label128:
 	str r6, [r1, #0]
 	add r8, r8, #1
 	add r7, r7, #4
-	add r1, r1, #4
-	cmp r5, r8
 	mov r10, #0
 	ldr r6, [sp, #28]
+	add r1, r1, #4
+	cmp r5, r8
 	movwgt r10, #1
 	cmp r6, r0
 	mov r6, #0
@@ -155,8 +155,8 @@ label63:
 	str r8, [r1, #0]
 	add r0, r0, #1
 	add r2, r2, #4
-	add r1, r1, #4
 	ldr r8, [sp, #0]
+	add r1, r1, #4
 	ldr r6, [sp, #28]
 	cmp r8, r5
 	mov r8, #0
@@ -172,8 +172,8 @@ label65:
 	str r6, [r1, #0]
 	add r5, r5, #1
 	add r3, r3, #4
-	add r1, r1, #4
 	ldr r8, [sp, #0]
+	add r1, r1, #4
 	ldr r6, [sp, #28]
 	cmp r8, r5
 	mov r8, #0
@@ -404,10 +404,10 @@ label190:
 	str r11, [r1, #0]
 	add r2, r2, #1
 	add r7, r7, #4
-	add r1, r1, #4
 	cmp r6, r5
-	mov r11, #0
 	ldr r8, [sp, #0]
+	mov r11, #0
+	add r1, r1, #4
 	movwgt r11, #1
 	cmp r8, r2
 	mov r8, #0
@@ -420,10 +420,10 @@ label191:
 	str r8, [r1, #0]
 	add r5, r5, #1
 	add r10, r10, #4
-	add r1, r1, #4
-	cmp r6, r5
 	mov r11, #0
 	ldr r8, [sp, #0]
+	add r1, r1, #4
+	cmp r6, r5
 	movwgt r11, #1
 	cmp r8, r2
 	mov r8, #0

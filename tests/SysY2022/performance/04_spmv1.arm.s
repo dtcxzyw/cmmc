@@ -93,8 +93,8 @@ label429:
 	add r0, r0, #4
 	str r0, [sp, #0]
 	ldr r1, [sp, #8]
-	mov r4, r1
 	ldr r0, [sp, #28]
+	mov r4, r1
 	cmp r0, r1
 	bgt label60
 	ldr r0, [sp, #16]
@@ -264,8 +264,8 @@ label231:
 	add r0, r0, #4
 	str r0, [sp, #4]
 	ldr r1, [sp, #12]
-	mov r4, r1
 	ldr r0, [sp, #28]
+	mov r4, r1
 	cmp r0, r1
 	bgt label28
 	cmp r0, #0
@@ -345,8 +345,8 @@ label513:
 	movt r2, #:upper16:a
 	mov r0, r1
 	add r2, r2, r1, lsl #2
+	add r0, r1, #4
 	mov r1, #0
-	add r0, r0, #4
 	str r1, [r2, #0]
 	str r1, [r2, #4]
 	str r1, [r2, #8]
@@ -388,8 +388,8 @@ label107:
 	movt r2, #:upper16:a
 	mov r1, r0
 	add r2, r2, r0, lsl #2
+	add r1, r0, #1
 	mov r0, #0
-	add r1, r1, #1
 	str r0, [r2, #0]
 	ldr r0, [sp, #28]
 	cmp r0, r1
@@ -423,8 +423,8 @@ label172:
 	movt r2, #:upper16:b
 	mov r0, r1
 	add r2, r2, r1, lsl #2
+	add r0, r1, #4
 	mov r1, #0
-	add r0, r0, #4
 	str r1, [r2, #0]
 	str r1, [r2, #4]
 	str r1, [r2, #8]
@@ -436,8 +436,8 @@ label172:
 	movt r2, #:upper16:b
 	mov r1, r0
 	add r2, r2, r0, lsl #2
+	add r1, r0, #1
 	mov r0, #0
-	add r1, r1, #1
 	str r0, [r2, #0]
 	ldr r0, [sp, #28]
 	cmp r0, r1
@@ -468,8 +468,8 @@ label149:
 	movt r2, #:upper16:b
 	mov r1, r0
 	add r2, r2, r0, lsl #2
+	add r1, r0, #1
 	mov r0, #0
-	add r1, r1, #1
 	str r0, [r2, #0]
 	ldr r0, [sp, #28]
 	cmp r0, r1
@@ -529,8 +529,8 @@ label651:
 	movt r2, #:upper16:a
 	mov r1, r0
 	add r2, r2, r0, lsl #2
+	add r1, r0, #1
 	mov r0, #0
-	add r1, r1, #1
 	str r0, [r2, #0]
 	ldr r0, [sp, #28]
 	cmp r0, r1
@@ -563,8 +563,8 @@ label340:
 	add r0, r0, #4
 	str r0, [sp, #0]
 	ldr r1, [sp, #8]
-	mov r4, r1
 	ldr r0, [sp, #28]
+	mov r4, r1
 	cmp r0, r1
 	bgt label60
 	b label331
@@ -579,8 +579,8 @@ label188:
 	add r0, r0, #4
 	str r0, [sp, #4]
 	ldr r1, [sp, #12]
-	mov r4, r1
 	ldr r0, [sp, #28]
+	mov r4, r1
 	cmp r0, r1
 	bgt label28
 	b label179

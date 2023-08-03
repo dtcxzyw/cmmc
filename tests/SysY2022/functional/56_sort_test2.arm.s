@@ -61,8 +61,8 @@ label10:
 	str r8, [r0, r7, lsl #2]
 	sub r6, r6, #1
 	sub r5, r5, #4
-	add r7, r6, #1
 	cmn r6, #1
+	add r7, r6, #1
 	bgt label10
 	str r3, [r0, r7, lsl #2]
 	add r2, r2, #1

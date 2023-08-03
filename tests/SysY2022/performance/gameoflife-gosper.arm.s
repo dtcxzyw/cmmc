@@ -45,9 +45,9 @@ label5:
 .p2align 4
 label11:
 	bl getch
+	ldr r7, [sp, #28]
 	add r5, r5, #2000
 	add r6, r6, #1
-	ldr r7, [sp, #28]
 	cmp r7, r6
 	bge label5
 label12:
@@ -158,8 +158,8 @@ label54:
 	clz r8, r8
 	lsr r8, r8, #5
 	str r8, [r3, #0]
-	add r3, r3, #4
 	ldr r8, [sp, #24]
+	add r3, r3, #4
 	cmp r8, r7
 	bge label54
 	b label166
@@ -170,8 +170,8 @@ label55:
 	add r5, r5, #4
 	add r4, r4, #4
 	str r8, [r3, #0]
-	add r3, r3, #4
 	ldr r8, [sp, #24]
+	add r3, r3, #4
 	cmp r8, r7
 	bge label54
 	b label166
@@ -231,9 +231,9 @@ label22:
 label20:
 	mov r0, #10
 	bl putch
+	ldr r7, [sp, #28]
 	add r4, r4, #2000
 	add r5, r5, #1
-	ldr r7, [sp, #28]
 	cmp r7, r5
 	bge label19
 label26:
@@ -266,8 +266,8 @@ label33:
 label132:
 	add r2, r2, #1
 	add r1, r1, #2000
-	add r0, r0, #2000
 	ldr r7, [sp, #28]
+	add r0, r0, #2000
 	cmp r7, r2
 	bge label33
 	b label15

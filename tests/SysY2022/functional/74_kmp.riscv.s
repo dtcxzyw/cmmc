@@ -87,9 +87,9 @@ label87:
 	lw t0, 0(a1)
 	beq a5, t0, label27
 	lw a3, 0(a0)
+	lw a5, 0(a2)
 	sh2add a0, a3, s2
 	sh2add a1, a3, s1
-	lw a5, 0(a2)
 	bne a5, zero, label26
 	j label15
 label16:

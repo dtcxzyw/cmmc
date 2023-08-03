@@ -384,8 +384,8 @@ label93:
 	bl putint
 	mov r0, #10
 	bl putch
-	mov r8, #1
 	cmp r9, #10
+	mov r8, #1
 	blt label79
 	cmp r8, #0
 	beq label107

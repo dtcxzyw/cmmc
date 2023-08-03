@@ -94,11 +94,11 @@ label55:
 label173:
 	bne a0, s4, label183
 	sh2add a0, s8, s7
+	addiw s9, s9, 1
 	lw a1, 0(a0)
 	addi a2, a1, 1
-	sw a2, 0(a0)
-	addiw s9, s9, 1
 	sh2add a1, s9, s0
+	sw a2, 0(a0)
 	lw a0, 0(a1)
 	bne a0, zero, label7
 	j label30
@@ -106,10 +106,10 @@ label173:
 label183:
 	bne a0, s5, label186
 	sh2add a0, s8, s7
+	addiw s9, s9, 1
 	lw a2, 0(a0)
 	addi a1, a2, -1
 	sw a1, 0(a0)
-	addiw s9, s9, 1
 	sh2add a1, s9, s0
 	lw a0, 0(a1)
 	bne a0, zero, label7

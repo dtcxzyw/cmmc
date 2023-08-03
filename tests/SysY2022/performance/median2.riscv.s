@@ -61,8 +61,8 @@ label15:
 	blt s2, a4, label66
 	ble s2, a4, label20
 	addiw a0, a4, 1
-	sh2add a4, a0, s0
 	addiw a3, a1, 1
+	sh2add a4, a0, s0
 	lw a2, 0(a4)
 	mv a4, a0
 	j label7
@@ -97,8 +97,8 @@ label56:
 	j label11
 label66:
 	mv a1, a4
+	addiw a3, a4, 1
 	sh2add a4, a0, s0
-	addiw a3, a1, 1
 	lw a2, 0(a4)
 	mv a4, a0
 	bgt a3, a0, label10

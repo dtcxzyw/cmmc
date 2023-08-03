@@ -51,15 +51,15 @@ label2:
 	movt r7, #28633
 	mls r4, r4, r0, r5
 	smmul r7, r6, r7
-	asr r8, r7, #17
 	add r5, r4, r0
 	cmp r4, #0
-	add r7, r8, r7, lsr #31
+	asr r8, r7, #17
 	movlt r4, r5
+	add r7, r8, r7, lsr #31
+	and r5, r4, #1
 	movw r8, #37856
 	movt r8, #4
 	mls r8, r7, r8, r6
-	and r5, r4, #1
 	movw r6, #34953
 	movt r6, #34952
 	smmla r6, r8, r6, r8
@@ -100,9 +100,9 @@ label6:
 	movt r9, #:upper16:a
 	mov r5, r10
 	moveq r5, r8
+	cmp r3, #0
 	add r5, r7, r5
 	str r5, [r9, r6, lsl #2]
-	cmp r3, #0
 	bgt label2
 label8:
 	mov r0, #64

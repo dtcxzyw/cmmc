@@ -196,8 +196,8 @@ label115:
 .p2align 2
 label120:
 	sh2add t2, t3, a4
-	lw t4, 0(t2)
 	sh2add t6, t3, a2
+	lw t4, 0(t2)
 	addiw t3, t3, 1
 	lw t5, 0(t6)
 	mulw a7, a5, t5
@@ -218,8 +218,8 @@ label79:
 	mv a1, s6
 	mv a4, zero
 	mv a2, s5
-	lw a3, 0(s6)
 	li a4, 1
+	lw a3, 0(s6)
 	addw a2, s5, a3
 	bgt s1, a4, label100
 	j label397
@@ -345,15 +345,15 @@ label26:
 .p2align 2
 label215:
 	sh2add a4, a5, a2
-	sw zero, 0(a4)
 	addiw a5, a5, 4
+	sw zero, 0(a4)
 	sw zero, 4(a4)
 	sw zero, 8(a4)
 	sw zero, 12(a4)
 	bgt s0, a5, label26
 	sh2add a4, a5, a2
-	sw zero, 0(a4)
 	addiw a5, a5, 1
+	sw zero, 0(a4)
 	bgt s1, a5, label38
 	addiw a3, a3, 1
 	add a2, a2, s2
@@ -362,8 +362,8 @@ label215:
 .p2align 2
 label192:
 	sh2add a4, a5, a2
-	sw zero, 0(a4)
 	addiw a5, a5, 1
+	sw zero, 0(a4)
 	bgt s1, a5, label38
 	j label655
 .p2align 2
@@ -464,8 +464,8 @@ label56:
 .p2align 2
 label288:
 	sh2add t2, t3, a4
-	lw t4, 0(t2)
 	sh2add t5, t3, a2
+	lw t4, 0(t2)
 	addiw t3, t3, 1
 	lw a6, 0(t5)
 	mulw t6, a5, a6
@@ -526,15 +526,15 @@ label130:
 .p2align 2
 label500:
 	sh2add a4, a5, a2
-	sw zero, 0(a4)
 	addiw a5, a5, 4
+	sw zero, 0(a4)
 	sw zero, 4(a4)
 	sw zero, 8(a4)
 	sw zero, 12(a4)
 	bgt s0, a5, label130
 	sh2add a4, a5, a2
-	sw zero, 0(a4)
 	addiw a5, a5, 1
+	sw zero, 0(a4)
 	bgt s1, a5, label140
 	addiw a3, a3, 1
 	add a2, a2, s2
@@ -543,8 +543,8 @@ label500:
 .p2align 2
 label129:
 	sh2add a4, a5, a2
-	sw zero, 0(a4)
 	addiw a5, a5, 1
+	sw zero, 0(a4)
 	bgt s1, a5, label140
 	j label648
 .p2align 2
@@ -560,9 +560,9 @@ label140:
 label86:
 	sh2add a1, a2, s6
 	mv a4, a2
+	addiw a4, a2, 1
 	mv a2, a3
 	lw a3, 0(a1)
-	addiw a4, a4, 1
 	addw a2, a2, a3
 	bgt s1, a4, label100
 	j label640
@@ -595,8 +595,8 @@ label87:
 .p2align 2
 label93:
 	sh2add a1, a2, s6
-	lw a4, 0(a1)
 	addiw a2, a2, 4
+	lw a4, 0(a1)
 	lw t2, 4(a1)
 	addw t0, a3, a4
 	lw t1, 8(a1)
@@ -607,9 +607,9 @@ label93:
 	bgt s0, a2, label87
 	sh2add a1, a2, s6
 	mv a4, a2
+	addiw a4, a2, 1
 	mv a2, a3
 	lw a3, 0(a1)
-	addiw a4, a4, 1
 	addw a2, a2, a3
 	bgt s1, a4, label100
 	addiw a0, a0, 1

@@ -64,9 +64,9 @@ label13:
 	addiw a2, a2, -1
 	blt a2, zero, label81
 	mv t1, a4
-	addiw a4, a4, -2
-	addiw t0, t1, 1
 	mv a5, a2
+	addiw t0, a4, 1
+	addiw a4, a4, -2
 	blt t0, s0, label8
 	j label13
 .p2align 2
@@ -89,8 +89,8 @@ label52:
 	j label13
 label81:
 	addi a2, a0, 36
-	lw t0, 32(sp)
 	addiw a4, a3, -1
+	lw t0, 32(sp)
 	lw a5, 0(a2)
 	sw a5, 32(sp)
 	mv a5, zero
@@ -136,10 +136,10 @@ label33:
 	lw t2, 0(t3)
 	lw t4, 4(t3)
 	slt t1, t2, t4
-	addw t0, t0, t1
 	sh2add t4, a5, a0
-	sh2add t2, t0, a0
+	addw t0, t0, t1
 	lw t1, 0(t4)
+	sh2add t2, t0, a0
 	lw t3, 0(t2)
 	bgt t1, t3, label21
 	sh2add t2, a5, a0

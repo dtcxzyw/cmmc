@@ -91,13 +91,13 @@ label9:
 	bl f
 	mov r0, #0
 	str r0, [r6, #0]
+	add r6, r6, #4
 	str r0, [r8, #0]
 	ldr r1, [r4, #0]
 	add r1, r5, r1
 	sub r1, r1, r7
-	str r0, [r9, r1, lsl #2]
 	add r7, r7, #1
-	add r6, r6, #4
+	str r0, [r9, r1, lsl #2]
 	ldr r0, [r4, #0]
 	cmp r7, r0
 	ble label5
@@ -126,9 +126,9 @@ label15:
 	beq label16
 	mov r0, #32
 	bl putch
+	ldr r11, [r4, #0]
 	add r9, r9, #4
 	add r10, r10, #1
-	ldr r11, [r4, #0]
 	cmp r10, r11
 	ble label15
 	b label82

@@ -329,7 +329,7 @@ static void postRAScheduleBlock(MIRBasicBlock& block, const TargetScheduleModel&
 
     ScheduleState state{ renameMap };
     MIRInstList newList;
-    std::queue<MIRInst*> schedulePlane;
+    std::list<MIRInst*> schedulePlane;
     if constexpr(debugSched) {
         block.dump(std::cerr, ctx);
         std::cerr << "Cycle 0" << std::endl;
@@ -338,8 +338,39 @@ static void postRAScheduleBlock(MIRBasicBlock& block, const TargetScheduleModel&
         if(degrees[&inst] == 0) {
             if constexpr(debugSched)
                 dumpReady(inst);
-            schedulePlane.push(&inst);
+            schedulePlane.push_back(&inst);
         }
+
+    std::unordered_map<MIRInst*, uint32_t> rank;
+    {
+        std::unordered_map<MIRInst*, std::unordered_set<MIRInst*>> deps;
+        std::unordered_map<MIRInst*, uint32_t> deg;
+        for(auto& inst : block.instructions())
+            for(auto prev : antiDeps[&inst]) {
+                deps[prev].insert(&inst);
+                ++deg[prev];
+            }
+
+        std::queue<MIRInst*> q;
+        for(auto& inst : block.instructions())
+            if(deg[&inst] == 0) {
+                rank.emplace(&inst, 0);
+                q.push(&inst);
+            }
+
+        while(!q.empty()) {
+            auto u = q.front();
+            q.pop();
+            const auto ru = rank[u];
+            for(auto v : deps[u]) {
+                auto& rv = rank[v];
+                rv = std::max(rv, ru + 1);
+                if(--deg[v] == 0) {
+                    q.push(v);
+                }
+            }
+        }
+    }
 
     constexpr uint32_t maxBusyCycles = 200;
     uint32_t busyCycle = 0;
@@ -348,10 +379,11 @@ static void postRAScheduleBlock(MIRBasicBlock& block, const TargetScheduleModel&
         for(uint32_t idx = 0; idx < info.issueWidth; ++idx) {
             uint32_t cnt = 0;
             bool success = false;
+            schedulePlane.sort([&](MIRInst* lhs, MIRInst* rhs) { return rank[lhs] > rank[rhs]; });
             while(cnt < schedulePlane.size()) {
                 auto& inst = *schedulePlane.front();
                 auto& scheduleClass = model.getInstScheClass(inst.opcode());
-                schedulePlane.pop();
+                schedulePlane.pop_front();
                 if(scheduleClass.schedule(state, inst, ctx.instInfo.getInstInfo(inst))) {
                     if constexpr(debugSched)
                         dumpIssue(inst);
@@ -369,7 +401,7 @@ static void postRAScheduleBlock(MIRBasicBlock& block, const TargetScheduleModel&
                     break;
                 }
                 ++cnt;
-                schedulePlane.push(&inst);
+                schedulePlane.push_back(&inst);
             }
             if(!success)
                 break;
@@ -387,7 +419,7 @@ static void postRAScheduleBlock(MIRBasicBlock& block, const TargetScheduleModel&
         for(auto inst : newReadyInsts) {
             if constexpr(debugSched)
                 dumpReady(*inst);
-            schedulePlane.push(inst);
+            schedulePlane.push_back(inst);
         }
     }
 

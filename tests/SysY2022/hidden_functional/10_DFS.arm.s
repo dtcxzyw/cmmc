@@ -211,11 +211,11 @@ label293:
 label307:
 	mov r8, #0
 	cmp r6, #0
-	rsb r0, r8, #0
-	mov r7, r8
 	movw r1, #:lower16:head
 	movt r1, #:upper16:head
 	mov r2, #0
+	mov r7, r8
+	rsb r0, r8, #0
 	movne r7, r0
 	mov r0, r1
 .p2align 4
@@ -382,6 +382,7 @@ label227:
 	rsb r1, r11, #0
 	mov r0, r11
 	movne r0, r1
+	cmp r7, #0
 	movw r1, #:lower16:head
 	movt r1, #:upper16:head
 	str r0, [r5, #0]
@@ -398,7 +399,6 @@ label227:
 	add r1, r6, #1
 	add r6, r6, #2
 	str r1, [r0, #0]
-	cmp r7, #0
 	bne label210
 	b label209
 .p2align 4

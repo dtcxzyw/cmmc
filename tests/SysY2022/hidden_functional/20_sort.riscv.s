@@ -366,8 +366,8 @@ label496:
 label100:
 	addi a3, a3, 16
 	mv t2, t1
-	lw t1, 0(a3)
 	mv a5, a4
+	lw t1, 0(a3)
 	lw t3, 0(t2)
 	blt t1, t3, label466
 	mv a5, t0
@@ -440,8 +440,8 @@ label335:
 	sh2add a3, a2, s0
 	mv t1, a1
 	mv a5, a2
-	lw t2, 0(a3)
 	mv a4, a2
+	lw t2, 0(a3)
 	lw t3, 0(a1)
 	blt t2, t3, label474
 	mv a4, t0
@@ -493,11 +493,11 @@ label86:
 .p2align 2
 label490:
 	mv a0, s11
-	sw s11, 0(s7)
 	sh2add a2, s8, s2
 	sh2add a1, s8, s0
-	sw s11, 0(a2)
+	sw s11, 0(s7)
 	addiw s8, s8, 1
+	sw s11, 0(a2)
 	sw s11, 0(a1)
 	bne s1, s8, label22
 	j label141

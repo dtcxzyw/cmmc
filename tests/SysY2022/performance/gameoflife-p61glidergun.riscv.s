@@ -149,9 +149,9 @@ label56:
 	bge s0, t6, label55
 	addi a0, a0, 2000
 	mv t2, t1
-	addiw t1, t1, -1
 	addi a2, a0, 2000
-	mulw t4, t2, s4
+	mulw t4, t1, s4
+	addiw t1, t1, -1
 	mulw t3, t1, s4
 	addiw t1, t2, 1
 	add a1, a3, t3
@@ -178,9 +178,9 @@ label7:
 label54:
 	addi a0, a0, 2000
 	mv t2, t1
-	addiw t1, t1, -1
 	addi a2, a0, 2000
-	mulw t4, t2, s4
+	mulw t4, t1, s4
+	addiw t1, t1, -1
 	mulw t3, t1, s4
 	addiw t1, t2, 1
 	add a1, a3, t3
@@ -193,9 +193,9 @@ label54:
 label267:
 	addi a0, a0, 2000
 	mv t2, t1
-	addiw t1, t1, -1
 	addi a2, a0, 2000
-	mulw t4, t2, s4
+	mulw t4, t1, s4
+	addiw t1, t1, -1
 	mulw t3, t1, s4
 	addiw t1, t2, 1
 	add a1, a3, t3
@@ -235,8 +235,8 @@ label240:
 	addiw s6, s6, 1
 	blt s0, s6, label21
 	addi s5, s5, 4
-	lw a1, 0(s5)
 	li a0, 35
+	lw a1, 0(s5)
 	beq a1, s1, label240
 	j label239
 label46:

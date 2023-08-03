@@ -146,8 +146,8 @@ label12:
 	addiw t1, t1, 4
 	blt t1, a1, label12
 	sh2add t0, t1, a0
-	sh2add t6, t2, a0
 	mv t2, t1
+	sh2add t6, t3, a0
 	lw t4, 0(t6)
 	lw t5, 0(t0)
 	bgt t4, t5, label180
@@ -186,8 +186,8 @@ label21:
 .p2align 2
 label11:
 	sh2add t0, t1, a0
-	sh2add t6, t3, a0
 	mv t2, t1
+	sh2add t6, t3, a0
 	lw t4, 0(t6)
 	lw t5, 0(t0)
 	bgt t4, t5, label180

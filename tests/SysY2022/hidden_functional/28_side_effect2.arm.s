@@ -518,8 +518,8 @@ label167:
 	cmp r2, #0
 	beq label159
 	mov r0, r1
-	ldr r1, [sp, #32]
 	mov r2, #0
+	ldr r1, [sp, #32]
 	cmp r1, #0
 	add r1, r0, #3
 	movwne r2, #1
@@ -658,17 +658,17 @@ label123:
 	cmp r2, #19
 	blt label636
 	str r4, [sp, #72]
+	add r3, r3, #40
+	add r2, r2, #1
 	ldr r5, [sp, #68]
 	cmp r5, #0
-	add r3, r3, #40
 	movne r3, r6
-	add r2, r2, #1
 	b label69
 label636:
 	movs r5, r0
 	add r3, r3, #40
-	movne r3, r6
 	add r2, r2, #1
+	movne r3, r6
 	b label69
 label36:
 	add r6, r3, #13
@@ -738,12 +738,12 @@ label57:
 	cmp r2, #19
 	blt label412
 	str r0, [sp, #72]
+	add r2, r2, #1
 	ldr r5, [sp, #68]
 	cmp r5, #0
 	add r5, r3, #20
 	mov r3, r6
 	movne r3, r5
-	add r2, r2, #1
 	b label2
 label412:
 	movs r5, r4

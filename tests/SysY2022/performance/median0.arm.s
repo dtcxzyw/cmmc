@@ -62,9 +62,9 @@ label15:
 	blt label66
 	ble label20
 	add r1, r7, #1
-	ldr r2, [r4, r1, lsl #2]
 	add r3, r0, #1
 	mov r7, r1
+	ldr r2, [r4, r1, lsl #2]
 	b label7
 label20:
 	mov r0, #61
@@ -87,19 +87,19 @@ label52:
 .p2align 4
 label56:
 	add r8, r4, r3, lsl #2
+	cmp r3, r7
 	add r9, r4, r7, lsl #2
 	ldr r10, [r9, #0]
 	ldr r11, [r8, #0]
 	str r11, [r9, #0]
 	str r10, [r8, #0]
-	cmp r3, r7
 	bgt label10
 	b label11
 label66:
 	mov r0, r7
 	ldr r2, [r4, r1, lsl #2]
 	add r3, r7, #1
-	mov r7, r1
 	cmp r3, r1
+	mov r7, r1
 	bgt label10
 	b label11

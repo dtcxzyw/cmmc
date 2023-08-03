@@ -27,8 +27,8 @@ label12:
 	bl putint
 	mov r0, #10
 	bl putch
-	lsl r4, r4, #1
 	cmn r5, #1
+	lsl r4, r4, #1
 	bgt label6
 label18:
 	mov r0, r6
@@ -48,8 +48,8 @@ label7:
 	adds r6, r6, #3
 	bne label9
 	mov r0, r6
-	add r6, r6, #1
 	sub r5, r5, #1
+	add r6, r6, #1
 	cmp r6, #14
 	blt label12
 	adds r6, r0, #2

@@ -100,8 +100,8 @@ label85:
 	ble s9, a0, label22
 label21:
 	max a0, s6, s8
-	max s8, s10, a0
 	addiw s7, s7, 1
+	max s8, s10, a0
 	j label2
 .p2align 2
 label22:

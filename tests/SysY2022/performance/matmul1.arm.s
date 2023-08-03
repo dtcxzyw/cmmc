@@ -755,10 +755,10 @@ label70:
 	ldr r1, [r5, #28]
 	ldr r5, [r7, r0, lsl #2]
 	add r0, r0, #1
+	cmp r0, #1000
 	mla r1, r1, r5, r6
 	str r1, [r4, #0]
 	add r4, r4, #4
-	cmp r0, #1000
 	blt label65
 	b label1547
 .p2align 4

@@ -79,9 +79,9 @@ label27:
 	cmp r8, r9
 	beq label29
 	ldr r3, [r0, #0]
+	ldr r8, [r2, #0]
 	add r0, r5, r3, lsl #2
 	add r1, r4, r3, lsl #2
-	ldr r8, [r2, #0]
 	cmp r8, #0
 	bne label26
 	b label15

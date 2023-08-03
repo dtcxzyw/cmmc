@@ -64,8 +64,8 @@ label16:
 	sw a2, 56(sp)
 	beq s0, zero, label29
 	mv a0, s0
-	addiw a0, s0, -1
 	slliw s4, s4, 1
+	addiw a0, s0, -1
 	bne a0, zero, label26
 	addw s4, s1, s4
 .p2align 2
@@ -92,8 +92,8 @@ label38:
 label82:
 	lw a1, 56(sp)
 	mv a0, s0
-	addiw a0, s0, -1
 	slliw a1, a1, 1
+	addiw a0, s0, -1
 	beq a0, zero, label141
 .p2align 2
 label21:
@@ -132,14 +132,14 @@ label141:
 	sw a2, 56(sp)
 	beq s0, zero, label29
 	mv a0, s0
-	addiw a0, s0, -1
 	slliw s4, s4, 1
+	addiw a0, s0, -1
 	bne a0, zero, label26
 	addw s4, s1, s4
 	lw a1, 56(sp)
 	mv a0, s0
-	addiw a0, s0, -1
 	slliw a1, a1, 1
+	addiw a0, s0, -1
 	bne a0, zero, label32
 	j label35
 label55:

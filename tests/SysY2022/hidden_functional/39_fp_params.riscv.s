@@ -1419,8 +1419,8 @@ label1247:
 	fmv.s f17, f8
 	mv a0, s2
 	jal params_f40
-	addi s1, sp, 944
 	fsw f10, 936(sp)
+	addi s1, sp, 944
 	addi a1, s1, 276
 	sh2add a2, s6, a1
 	addi a1, s1, 24
@@ -1486,22 +1486,22 @@ label1247:
 	sd t4, 704(sp)
 	addi a2, s1, 36
 	lw a0, 0(a4)
-	lw a1, 0(a3)
 	addi a4, s1, 192
+	lw a1, 0(a3)
 	sh2add a5, s6, a4
 	lw a3, 0(a5)
 	sh2add a4, s6, a2
-	lw a5, 0(a4)
 	addi a2, s1, 252
+	lw a5, 0(a4)
 	sh2add t0, s6, a2
 	addi a2, s1, 240
-	sd a5, 712(sp)
 	sh2add t1, s6, a2
+	sd a5, 712(sp)
 	lw a4, 0(t0)
 	addi t0, s1, 180
 	sd a4, 720(sp)
-	addi a4, s1, 168
 	lw a5, 0(t1)
+	addi a4, s1, 168
 	sh2add t1, s6, t0
 	sd a5, 728(sp)
 	lw a2, 0(t1)
@@ -1607,28 +1607,28 @@ label1247:
 	mv a7, t0
 	fmv.s f17, f26
 	jal params_f40_i24
-	addi s10, s0, 228
 	addi a1, s0, 156
-	addi a2, s0, 12
-	addi a3, s0, 36
-	addi a4, s0, 48
 	addi s6, s0, 168
-	addi s7, s0, 336
 	addi a7, s0, 84
 	fmv.s f8, f10
-	addi a5, s0, 60
-	addi t2, s0, 432
-	addi s11, s0, 96
-	addi s8, s0, 324
+	addi a3, s0, 36
 	addi a6, s0, 72
-	addi t0, s0, 24
 	addi a0, s0, 132
+	addi t0, s0, 24
+	addi s8, s0, 324
+	addi a2, s0, 12
+	addi a4, s0, 48
+	addi a5, s0, 60
+	addi s11, s0, 96
+	addi s10, s0, 228
 	addi t5, s0, 276
 	addi s9, s0, 288
+	addi s7, s0, 336
 	addi t6, s0, 264
 	addi t4, s0, 372
-	addi t1, s0, 420
 	addi t3, s0, 456
+	addi t1, s0, 420
+	addi t2, s0, 432
 	sd a2, 736(sp)
 	sd t0, 896(sp)
 	addi a2, s0, 120
@@ -1722,19 +1722,19 @@ label1247:
 	mv a1, a2
 	mv a2, t0
 	jal params_fa40
-	addi a1, s1, 276
+	addi t4, s1, 84
 	addi a0, s1, 12
 	fmv.s f23, f10
 	addi a4, s1, 180
-	addi a3, s1, 228
-	addi t4, s1, 84
-	addi a2, s1, 264
-	addi t0, s1, 36
-	addi t1, s1, 132
-	addi t3, s1, 120
 	addi a5, s1, 192
-	addi t2, s1, 144
+	addi a1, s1, 276
+	addi t0, s1, 36
+	addi t3, s1, 120
+	addi t1, s1, 132
+	addi a2, s1, 264
+	addi a3, s1, 228
 	addi t5, s1, 72
+	addi t2, s1, 144
 	sd t0, 880(sp)
 	ld a6, 832(sp)
 	addi t0, s1, 156

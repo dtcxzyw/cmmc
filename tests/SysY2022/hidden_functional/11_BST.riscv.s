@@ -160,9 +160,9 @@ label104:
 	sh2add s3, s1, a5
 	lw a0, 0(s3)
 	jal delete
+	sh2add a1, s0, s2
 	mv a2, s1
 	sw a0, 0(s3)
-	sh2add a1, s0, s2
 	mv a0, s0
 	sw s1, 0(a1)
 	j label96
@@ -180,8 +180,8 @@ pcrel585:
 	sh2add a0, s1, s2
 	lw a1, 0(a0)
 	beq a1, a2, label119
-	lw a2, 0(a0)
 	sh2add a1, s0, s3
+	lw a2, 0(a0)
 	mv a0, s0
 	sw a2, 0(a1)
 	j label96
@@ -207,16 +207,16 @@ label105:
 label221:
 	mv a2, a0
 	sh2add a1, s0, s2
+	sw a0, 0(a1)
 	mv a0, s0
-	sw a2, 0(a1)
 	j label96
 label102:
 	sh2add s3, s1, s2
 	lw a0, 0(s3)
 	jal delete
+	sh2add a1, s0, s2
 	mv a2, s1
 	sw a0, 0(s3)
-	sh2add a1, s0, s2
 	mv a0, s0
 	sw s1, 0(a1)
 	j label96
@@ -242,8 +242,8 @@ pcrel586:
 	lw a0, 0(a1)
 	beq a0, a2, label100
 	sh2add a0, s1, s2
-	lw a2, 0(a0)
 	sh2add a1, s0, s2
+	lw a2, 0(a0)
 	mv a0, s0
 	sw a2, 0(a1)
 	j label96
@@ -271,8 +271,8 @@ label110:
 	mv a2, s1
 	sh2add a1, s1, s2
 	sw a0, 0(a1)
-	sh2add a1, s0, s2
 	mv a0, s0
+	sh2add a1, s0, s2
 	sw s1, 0(a1)
 	j label96
 label112:
@@ -318,8 +318,8 @@ label131:
 	mv a2, s1
 	sh2add a1, s1, s2
 	sw a0, 0(a1)
-	sh2add a1, s0, s3
 	mv a0, s0
+	sh2add a1, s0, s3
 	sw s1, 0(a1)
 	j label96
 label336:
@@ -335,8 +335,8 @@ label156:
 	mv a2, s1
 	sh2add a1, s1, s2
 	sw a0, 0(a1)
-	sh2add a1, s0, s2
 	mv a0, s0
+	sh2add a1, s0, s2
 	sw s1, 0(a1)
 	j label96
 label437:
@@ -348,8 +348,8 @@ label243:
 label315:
 	mv a2, a0
 	sh2add a1, s0, s3
+	sw a0, 0(a1)
 	mv a0, s0
-	sw a2, 0(a1)
 	j label96
 label445:
 	mv a0, a1
@@ -358,9 +358,9 @@ label123:
 	sh2add s2, s1, a5
 	lw a0, 0(s2)
 	jal delete
+	sh2add a1, s0, s3
 	mv a2, s1
 	sw a0, 0(s2)
-	sh2add a1, s0, s3
 	mv a0, s0
 	sw s1, 0(a1)
 	j label96
@@ -368,9 +368,9 @@ label121:
 	sh2add s4, s1, s2
 	lw a0, 0(s4)
 	jal delete
+	sh2add a1, s0, s3
 	mv a2, s1
 	sw a0, 0(s4)
-	sh2add a1, s0, s3
 	mv a0, s0
 	sw s1, 0(a1)
 	j label96

@@ -165,10 +165,10 @@ label237:
 .p2align 2
 label46:
 	mul t2, t0, s4
-	add a5, s2, t2
-	sh2add t2, a0, a5
 	sh2add t6, t0, a1
+	add a5, s2, t2
 	addiw t0, t0, 1
+	sh2add t2, a0, a5
 	lw t3, 0(t6)
 	lw t5, 0(t2)
 	ld t2, 112(sp)
@@ -209,9 +209,9 @@ label25:
 label31:
 	li a0, 10
 	jal putch
+	ld a0, 104(sp)
 	addi s5, s5, 400
 	addiw s0, s0, 1
-	ld a0, 104(sp)
 	bgt a0, s0, label25
 label32:
 	mv a0, zero
@@ -257,8 +257,8 @@ label129:
 	mv t0, zero
 	sh2add t2, a0, s2
 	mv t6, a1
-	li t0, 1
 	lw t3, 0(a1)
+	li t0, 1
 	lw t5, 0(t2)
 	ld t2, 112(sp)
 	mulw t4, t3, t5

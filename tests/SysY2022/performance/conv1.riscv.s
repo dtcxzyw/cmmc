@@ -406,15 +406,15 @@ label29:
 	ble s6, t4, label30
 	ld s3, 160(sp)
 	mv a7, zero
-	addw t6, s3, t4
-	subw t5, t4, s3
-	ld s7, 112(sp)
-	mulw a6, s7, t4
-	mv s2, t5
 	mv s5, zero
 	sext.w s1, s3
+	ld s7, 112(sp)
 	subw s0, zero, s3
+	addw t6, s3, t4
+	subw t5, t4, s3
 	mv s4, s0
+	mv s2, t5
+	mulw a6, s7, t4
 	slt s7, t5, s6
 	xori s3, s7, 1
 	or s7, t5, s0
@@ -538,10 +538,10 @@ label163:
 	ld s0, 168(sp)
 	mv t4, zero
 	mv t3, s0
+	li t4, 1
 	lw t5, 0(s0)
 	ld s6, 120(sp)
 	mv a6, s6
-	li t4, 1
 	sw t5, 0(s6)
 	ld t6, 136(sp)
 	bgt t6, t4, label48
@@ -553,20 +553,20 @@ label251:
 .p2align 2
 label52:
 	addi a4, a4, 4
-	lw t3, 0(a4)
 	mv t4, zero
-	ld s3, 160(sp)
+	mv a6, zero
 	mv a7, zero
+	mv s5, zero
+	lw t3, 0(a4)
+	ld s3, 160(sp)
+	subw s0, zero, s3
 	sext.w t6, s3
+	sext.w s1, s3
 	subw t5, zero, s3
 	ld s7, 112(sp)
-	mv a6, zero
-	mv s2, t5
-	mv s5, zero
-	sext.w s1, s3
-	subw s0, zero, s3
-	ld s6, 104(sp)
 	mv s4, s0
+	mv s2, t5
+	ld s6, 104(sp)
 	slt s7, t5, s6
 	xori s3, s7, 1
 	or s7, t5, s0

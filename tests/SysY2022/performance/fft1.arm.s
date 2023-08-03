@@ -289,17 +289,17 @@ label243:
 	beq label245
 	add r5, r4, r5
 	ldr r7, [sp, #4]
+	cmp r2, r1
 	ldr r3, [r7, r3, lsl #2]
 	str r3, [r0, r5, lsl #2]
-	cmp r2, r1
 	bgt label243
 	b label226
 .p2align 4
 label245:
 	ldr r7, [sp, #4]
+	cmp r2, r1
 	ldr r3, [r7, r3, lsl #2]
 	str r3, [r0, r5, lsl #2]
-	cmp r2, r1
 	bgt label243
 	b label226
 label223:

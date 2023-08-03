@@ -59,8 +59,8 @@ label16:
 	sh2add t2, t0, a0
 	addiw a5, a5, -1
 	addi a4, a4, -4
-	sw t1, 0(t2)
 	addiw t0, a5, 1
+	sw t1, 0(t2)
 	bge a5, zero, label16
 	sh2add a4, t0, a0
 	addiw a2, a2, 1

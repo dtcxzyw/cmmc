@@ -1050,8 +1050,8 @@ label417:
 	sh2add t0, a4, s0
 	addiw a3, a3, -1
 	addi a2, a2, -4
-	sw a5, 0(t0)
 	addiw a4, a3, 1
+	sw a5, 0(t0)
 	bge a3, zero, label417
 	sh2add a2, a4, s0
 	addiw s1, s1, 1
@@ -1232,16 +1232,16 @@ label433:
 	li a4, 3
 	bne a3, a4, label435
 	sw a2, 0(a0)
+	li a3, 32
 	mv a2, zero
 	addi a0, a0, 4
-	li a3, 32
 	blt a1, a3, label433
 	j label1381
 .p2align 2
 label435:
 	sw zero, 0(a0)
-	addi a0, a0, 4
 	li a3, 32
+	addi a0, a0, 4
 	blt a1, a3, label433
 label1381:
 	mv s1, s0
@@ -1346,9 +1346,9 @@ label447:
 	srli a4, a0, 32
 	mv a0, a1
 	add t0, a5, a4
+	li a5, 32
 	li a4, 3
 	sw t0, 176(sp)
-	li a5, 32
 	blt a4, a5, label447
 	j label1495
 .p2align 2
@@ -1384,10 +1384,10 @@ label450:
 	mul a5, a3, t1
 	srli t2, a5, 63
 	srli t0, a5, 32
+	li a5, 32
 	add t1, t2, t0
 	sw t1, -8(a0)
 	addi a0, a0, 4
-	li a5, 32
 	blt a4, a5, label447
 	j label1495
 label457:

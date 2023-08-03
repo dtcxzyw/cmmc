@@ -72,8 +72,8 @@ label23:
 	sh2add t3, t1, a2
 	addiw t0, t0, -1
 	addi a5, a5, -4
-	sw t2, 0(t3)
 	addiw t1, t0, 1
+	sw t2, 0(t3)
 	bge t0, zero, label23
 	sh2add a5, t1, a2
 	addiw a0, a0, 1

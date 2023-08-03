@@ -69,8 +69,8 @@ label133:
 	fmv.w.x f13, zero
 	mv t4, a2
 	mv t5, zero
-	flw f14, 0(a2)
 	mv t6, a0
+	flw f14, 0(a2)
 	li t5, 1
 	flw f0, 0(a0)
 	fmul.s f15, f14, f0
@@ -100,8 +100,8 @@ label39:
 .p2align 2
 label163:
 	sh2add t4, t5, a2
-	flw f14, 0(t4)
 	sh2add t6, t5, a0
+	flw f14, 0(t4)
 	addiw t5, t5, 1
 	flw f0, 0(t6)
 	fmul.s f15, f14, f0
@@ -243,9 +243,9 @@ label73:
 	bgt s0, zero, label23
 label246:
 	fmv.w.x f13, zero
-	fadd.s f12, f12, f13
 	addiw t2, t2, 1
 	mv t4, t3
+	fadd.s f12, f12, f13
 	j label2
 label40:
 	ld ra, 0(sp)

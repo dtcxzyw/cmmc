@@ -258,8 +258,8 @@ label81:
 .p2align 2
 label745:
 	mv t5, s0
-	fsw f10, 0(a5)
 	mv t0, a4
+	fsw f10, 0(a5)
 	addi a5, a5, 4
 	blt a4, s0, label81
 	addiw a3, a3, 1
@@ -331,8 +331,8 @@ label14:
 .p2align 2
 label322:
 	mv t5, s0
-	fsw f10, 0(a5)
 	mv t0, a4
+	fsw f10, 0(a5)
 	addi a5, a5, 4
 	blt a4, s0, label14
 	fmv.w.x f10, zero
@@ -372,8 +372,8 @@ label117:
 .p2align 2
 label954:
 	mv t5, s0
-	fsw f10, 0(a5)
 	mv t0, a4
+	fsw f10, 0(a5)
 	addi a5, a5, 4
 	blt a4, s0, label117
 	fmv.w.x f10, zero
@@ -393,8 +393,8 @@ label99:
 .p2align 2
 label876:
 	mv t5, s0
-	fsw f10, 0(a5)
 	mv t0, a4
+	fsw f10, 0(a5)
 	addi a5, a5, 4
 	blt a4, s0, label99
 	fmv.w.x f10, zero

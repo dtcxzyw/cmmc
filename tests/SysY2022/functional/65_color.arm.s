@@ -267,20 +267,20 @@ label220:
 label224:
 	add r10, r10, #1
 	movw r1, #9072
-	add r9, r9, r1
 	cmp r10, #18
+	add r9, r9, r1
 	blt label220
 	add r8, r8, #1
 	movw r1, #32224
 	movt r1, #2
-	add r7, r7, r1
 	cmp r8, #18
+	add r7, r7, r1
 	blt label215
 	add r3, r3, #1
 	movw r1, #55744
 	movt r1, #44
-	add r2, r2, r1
 	cmp r3, #18
+	add r2, r2, r1
 	blt label210
 	b label206
 .p2align 4
@@ -421,21 +421,21 @@ label219:
 	add r8, r8, #1
 	movw r1, #32224
 	movt r1, #2
-	add r7, r7, r1
 	cmp r8, #18
+	add r7, r7, r1
 	blt label215
 	add r3, r3, #1
 	movw r1, #55744
 	movt r1, #44
-	add r2, r2, r1
 	cmp r3, #18
+	add r2, r2, r1
 	blt label210
 	b label206
 label214:
 	add r3, r3, #1
 	movw r1, #55744
 	movt r1, #44
-	add r2, r2, r1
 	cmp r3, #18
+	add r2, r2, r1
 	blt label210
 	b label206

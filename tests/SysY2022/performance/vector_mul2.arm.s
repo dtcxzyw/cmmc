@@ -356,9 +356,9 @@ label323:
 	movw r5, #:lower16:vectorB
 	movt r5, #:upper16:vectorB
 	mov r2, r5
+	cmp r3, r1
 	mov r8, r3
 	vmov s0, r3
-	cmp r3, r1
 	blt label117
 	movw r5, #:lower16:Vectortm
 	movt r5, #:upper16:Vectortm
@@ -417,9 +417,9 @@ label954:
 	movw r5, #:lower16:Vectortm
 	movt r5, #:upper16:Vectortm
 	mov r2, r5
+	cmp r3, r1
 	mov r8, r3
 	vmov s0, r3
-	cmp r3, r1
 	blt label99
 	movw r9, #:lower16:vectorA
 	movt r9, #:upper16:vectorA
@@ -453,9 +453,9 @@ label876:
 	movw r9, #:lower16:vectorA
 	movt r9, #:upper16:vectorA
 	mov r2, r9
+	cmp r3, r1
 	mov r8, r3
 	vmov s0, r3
-	cmp r3, r1
 	blt label81
 	add r0, r0, #1
 	cmp r0, #1000
@@ -621,9 +621,9 @@ label118:
 	movw r5, #:lower16:Vectortm
 	movt r5, #:upper16:Vectortm
 	mov r2, r5
+	cmp r3, r1
 	mov r8, r3
 	vmov s0, r3
-	cmp r3, r1
 	blt label99
 	b label1066
 label50:
@@ -644,9 +644,9 @@ label100:
 	movw r9, #:lower16:vectorA
 	movt r9, #:upper16:vectorA
 	mov r2, r9
+	cmp r3, r1
 	mov r8, r3
 	vmov s0, r3
-	cmp r3, r1
 	blt label81
 	b label50
 .p2align 4
@@ -675,9 +675,9 @@ label255:
 	movw r5, #:lower16:vectorB
 	movt r5, #:upper16:vectorB
 	mov r2, r5
+	cmp r3, r1
 	mov r8, r3
 	vmov s0, r3
-	cmp r3, r1
 	blt label117
 	b label1055
 label56:
@@ -950,23 +950,23 @@ label250:
 	ldr r3, [sp, #0]
 	movw r5, #:lower16:vectorB
 	movt r5, #:upper16:vectorB
-	mov r2, r5
-	mov r8, r3
-	vmov s0, r3
 	movw r1, #34464
 	movt r1, #1
+	mov r2, r5
 	cmp r3, r1
+	mov r8, r3
+	vmov s0, r3
 	blt label117
 label1055:
 	ldr r3, [sp, #0]
 	movw r5, #:lower16:Vectortm
 	movt r5, #:upper16:Vectortm
-	mov r2, r5
-	mov r8, r3
-	vmov s0, r3
 	movw r1, #34464
 	movt r1, #1
+	mov r2, r5
 	cmp r3, r1
+	mov r8, r3
+	vmov s0, r3
 	blt label99
 	b label1066
 .p2align 4

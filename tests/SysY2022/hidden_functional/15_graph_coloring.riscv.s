@@ -93,10 +93,10 @@ main:
 	addi sp, sp, -88
 	li a4, 1
 	li a2, 1
-	addi a3, sp, 72
-	sd ra, 0(sp)
 	addi a0, sp, 8
+	addi a3, sp, 72
 	slli a1, a2, 32
+	sd ra, 0(sp)
 	zext.w a2, a4
 	ori a5, a1, 1
 	sd a1, 8(sp)

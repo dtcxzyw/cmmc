@@ -88,11 +88,11 @@ label90:
 label137:
 	mov r6, #0
 	cmp r4, #0
-	rsb r0, r6, #0
-	mov r7, r6
 	movw r9, #:lower16:head
 	movt r9, #:upper16:head
 	mov r1, #0
+	mov r7, r6
+	rsb r0, r6, #0
 	movne r7, r0
 .p2align 4
 label12:
@@ -248,6 +248,7 @@ label35:
 	movw r9, #:lower16:head
 	movt r9, #:upper16:head
 	movne r0, r1
+	cmp r7, #0
 	add r1, r9, r8, lsl #2
 	str r0, [r5, #0]
 	add r0, r9, r0, lsl #2
@@ -262,7 +263,6 @@ label35:
 	add r1, r6, #1
 	add r6, r6, #2
 	str r1, [r0, #0]
-	cmp r7, #0
 	bne label21
 	b label88
 .p2align 4

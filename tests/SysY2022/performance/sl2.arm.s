@@ -65,8 +65,8 @@ label233:
 	add r4, r4, #1
 	movw r2, #63744
 	movt r2, #21
-	add r3, r3, r2
 	ldr r6, [sp, #12]
+	add r3, r3, r2
 	cmp r6, r4
 	bgt label24
 	b label5
@@ -272,8 +272,8 @@ label28:
 	add r4, r4, #1
 	movw r2, #63744
 	movt r2, #21
-	add r3, r3, r2
 	ldr r6, [sp, #12]
+	add r3, r3, r2
 	cmp r6, r4
 	bgt label24
 	b label5

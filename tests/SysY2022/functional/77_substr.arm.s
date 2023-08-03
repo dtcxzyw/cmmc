@@ -161,25 +161,25 @@ label15:
 	ldr r9, [r1, r9, lsl #2]
 	cmp r10, r9
 	movle r10, r9
+	cmp r8, #14
 	str r10, [r7, #0]
 	add r7, r7, #4
-	cmp r8, #14
 	blt label15
 	b label265
 .p2align 4
 label16:
 	ldr r9, [r3, r9, lsl #2]
 	add r6, r6, #4
+	cmp r8, #14
 	add r9, r9, #1
 	str r9, [r7, #0]
 	add r7, r7, #4
-	cmp r8, #14
 	blt label15
 	add r5, r5, #1
 	add r1, r1, #64
+	cmp r5, #16
 	sub r0, r5, #1
 	sub r3, r1, #64
-	cmp r5, #16
 	blt label10
 label19:
 	ldr r0, [r2, #1012]
@@ -194,16 +194,16 @@ label19:
 label265:
 	add r5, r5, #1
 	add r1, r1, #64
+	cmp r5, #16
 	sub r0, r5, #1
 	sub r3, r1, #64
-	cmp r5, #16
 	blt label10
 	b label19
 label131:
 	add r5, r5, #1
 	add r1, r1, #64
+	cmp r5, #16
 	sub r0, r5, #1
 	sub r3, r1, #64
-	cmp r5, #16
 	blt label10
 	b label19

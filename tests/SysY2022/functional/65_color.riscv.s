@@ -224,20 +224,20 @@ main:
 	sd zero, 96(sp)
 	sd zero, 104(sp)
 	jal getint
-	mv s0, a0
 pcrel739:
 	auipc a1, %pcrel_hi(dp)
 	lui t4, 718
 	mv t3, zero
 	li a3, -1
+	mv s0, a0
 	li a2, 18
-	li a0, 567
 	addi t1, a1, %pcrel_lo(pcrel739)
 	addiw t2, t4, -1600
-	slli a5, a0, 4
+	li a0, 567
 	lui a1, 40
-	li a0, -1
+	slli a5, a0, 4
 	addiw t0, a1, -544
+	li a0, -1
 	slli a4, a0, 32
 	blt zero, a2, label217
 label213:

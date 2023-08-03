@@ -109,15 +109,15 @@ main:
 	li s6, -1
 	addiw a1, a0, -48
 pcrel1115:
-	auipc s7, %pcrel_hi(dep)
-	li s0, 10
-pcrel1116:
 	auipc a3, %pcrel_hi(to)
-pcrel1117:
+pcrel1116:
 	auipc a2, %pcrel_hi(next)
-	addi a4, s7, %pcrel_lo(pcrel1115)
-	addi s5, a3, %pcrel_lo(pcrel1116)
-	addi s1, a2, %pcrel_lo(pcrel1117)
+	li s0, 10
+pcrel1117:
+	auipc s7, %pcrel_hi(dep)
+	addi s5, a3, %pcrel_lo(pcrel1115)
+	addi s1, a2, %pcrel_lo(pcrel1116)
+	addi a4, s7, %pcrel_lo(pcrel1117)
 pcrel1118:
 	auipc a3, %pcrel_hi(head)
 pcrel1119:

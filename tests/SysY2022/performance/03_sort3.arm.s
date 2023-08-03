@@ -248,8 +248,8 @@ label25:
 	str r9, [r11, #0]
 	add r9, r10, #1
 	str r9, [r8, #0]
-	mov r9, r7
 	ldr r8, [sp, #0]
+	mov r9, r7
 	cmp r8, #0
 	bgt label27
 	asr r8, r7, #31

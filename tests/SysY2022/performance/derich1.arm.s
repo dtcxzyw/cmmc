@@ -202,9 +202,9 @@ label7:
 label21:
 	add r6, r6, #1
 	movw r7, #1080
+	cmp r6, #512
 	add r3, r3, r7
 	add r2, r2, r7
-	cmp r6, #512
 	blt label6
 	b label132
 label24:
@@ -368,9 +368,9 @@ label29:
 label735:
 	add r5, r5, #1
 	movw r6, #1080
+	cmp r5, #512
 	add r2, r2, r6
 	add r3, r3, r6
-	cmp r5, #512
 	blt label28
 	b label438
 .p2align 4
@@ -685,10 +685,10 @@ label53:
 label939:
 	add r6, r6, #1
 	movw r7, #1080
+	cmp r6, #512
 	add r2, r2, r7
 	add r5, r5, r7
 	add r3, r3, r7
-	cmp r6, #512
 	blt label53
 	b label746
 label64:
@@ -1358,10 +1358,10 @@ label74:
 label83:
 	add r3, r3, #1
 	movw r5, #1080
+	cmp r3, #512
 	add r1, r1, r5
 	add r2, r2, r5
 	add r0, r0, r5
-	cmp r3, #512
 	blt label74
 label85:
 	mov r0, #158

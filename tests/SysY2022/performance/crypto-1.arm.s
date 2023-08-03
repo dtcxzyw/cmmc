@@ -138,16 +138,16 @@ label93:
 	movw r7, #:lower16:buffer
 	movt r7, #:upper16:buffer
 	mov r1, #128
+	mov r9, #0
 	add r0, r7, #128000
 	str r1, [r0, #0]
 	movw r1, #32001
 	movw r0, #62468
 	movt r0, #1
-	add r0, r7, r0
-	mov r9, #0
 	add r2, r1, #1
-	str r9, [r0, #0]
+	add r0, r7, r0
 	and r3, r2, #63
+	str r9, [r0, #0]
 	cmp r3, #60
 	bne label16
 	b label17
@@ -419,6 +419,7 @@ label45:
 label46:
 	add r8, r8, r4, lsl #5
 	add r6, r6, #1
+	cmp r6, #80
 	add r8, r10, r8
 	add r8, r9, r8
 	asr r9, r4, #31
@@ -439,7 +440,6 @@ label46:
 	mov r4, r9
 	mov r5, r3
 	mov r3, r10
-	cmp r6, #80
 	blt label45
 	b label44
 .p2align 4

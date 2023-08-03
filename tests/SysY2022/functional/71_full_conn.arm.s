@@ -84,8 +84,8 @@ label14:
 	mvn r3, #66
 	ldr r6, [sp, #156]
 	mla r2, r6, r3, r2
-	mul r4, r6, r3
 	str r6, [sp, #64]
+	mul r4, r6, r3
 	mvn r3, #74
 	str r4, [sp, #36]
 	mvn r4, #101

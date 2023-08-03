@@ -370,8 +370,8 @@ label112:
 	mov r0, r9
 	movne r0, r1
 	bl find
-	str r0, [r4, r6, lsl #2]
 	cmp r5, #0
+	str r0, [r4, r6, lsl #2]
 	bne label95
 	b label94
 label230:

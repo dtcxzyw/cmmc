@@ -105,10 +105,10 @@ main:
 .p2align 4
 label81:
 	mov r8, #0
-	vmov s0, r8
 	movw r0, #0
 	movt r0, #17216
 	mov r2, #0
+	vmov s0, r8
 	vmov s1, r0
 	vmov s4, r2
 	vcvt.f32.s32 s0, s0
@@ -208,12 +208,12 @@ label71:
 	blt label53
 	mov r0, #10
 	bl putch
-	add r7, r7, #1
-	vmov s0, r7
 	movw r0, #0
 	movt r0, #17216
-	cmp r7, #192
+	add r7, r7, #1
 	vmov s1, r0
+	cmp r7, #192
+	vmov s0, r7
 	vcvt.f32.s32 s0, s0
 	vdiv.f32 s16, s0, s1
 	blt label81
@@ -408,9 +408,9 @@ label67:
 	bmi label69
 	vadd.f32 s1, s1, s2
 	add r0, r0, #1
-	cmp r0, #10
-	vmov s2, r4
 	mov r3, #0
+	vmov s2, r4
+	cmp r0, #10
 	movwlt r1, #1
 	vcmp.f32 s1, s2
 	vmrs APSR_nzcv, FPSCR
@@ -432,19 +432,19 @@ label73:
 .p2align 4
 label159:
 	mov r0, #0
-	vmov s7, r0
-	vadd.f32 s4, s4, s7
 	add r2, r2, #1
+	vmov s7, r0
 	cmp r2, #24
+	vadd.f32 s4, s4, s7
 	blt label56
 	b label71
 .p2align 4
 label339:
 	mov r0, #0
-	vmov s7, r0
-	vadd.f32 s4, s4, s7
 	add r2, r2, #1
+	vmov s7, r0
 	cmp r2, #24
+	vadd.f32 s4, s4, s7
 	blt label56
 	b label71
 .p2align 4

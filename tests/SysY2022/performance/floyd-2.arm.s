@@ -45,19 +45,19 @@ label4:
 	cmp r4, r3
 	ble label61
 	mla r7, r4, r3, r1
-	ldr r7, [r5, r7, lsl #2]
-	add r3, r3, #1
-	str r7, [r0, r6, lsl #2]
 	add r2, r4, r2
+	add r3, r3, #1
 	cmp r4, r3
+	ldr r7, [r5, r7, lsl #2]
+	str r7, [r0, r6, lsl #2]
 	bgt label4
 	b label249
 .p2align 4
 label61:
 	mvn r7, #0
 	add r3, r3, #1
-	str r7, [r0, r6, lsl #2]
 	add r2, r4, r2
+	str r7, [r0, r6, lsl #2]
 	cmp r4, r3
 	bgt label4
 	add r1, r1, #1
@@ -84,13 +84,13 @@ label86:
 .p2align 4
 label253:
 	add r6, r6, #1
-	mul r3, r4, r6
 	cmp r4, r6
 	mla r1, r4, r6, r5
+	mul r3, r4, r6
 	bgt label86
 	add r5, r5, #1
-	mul r2, r4, r5
 	cmp r4, r5
+	mul r2, r4, r5
 	bgt label80
 label25:
 	mul r5, r4, r4
@@ -135,13 +135,13 @@ label21:
 	cmp r4, r7
 	bgt label18
 	add r6, r6, #1
-	mul r3, r4, r6
 	cmp r4, r6
 	mla r1, r4, r6, r5
+	mul r3, r4, r6
 	bgt label86
 	add r5, r5, #1
-	mul r2, r4, r5
 	cmp r4, r5
+	mul r2, r4, r5
 	bgt label80
 	b label25
 .p2align 4
@@ -150,13 +150,13 @@ label105:
 	cmp r4, r7
 	bgt label18
 	add r6, r6, #1
-	mul r3, r4, r6
 	cmp r4, r6
 	mla r1, r4, r6, r5
+	mul r3, r4, r6
 	bgt label86
 	add r5, r5, #1
-	mul r2, r4, r5
 	cmp r4, r5
+	mul r2, r4, r5
 	bgt label80
 	b label25
 .p2align 4
@@ -165,13 +165,13 @@ label246:
 	cmp r4, r7
 	bgt label18
 	add r6, r6, #1
-	mul r3, r4, r6
 	cmp r4, r6
 	mla r1, r4, r6, r5
+	mul r3, r4, r6
 	bgt label86
 	add r5, r5, #1
-	mul r2, r4, r5
 	cmp r4, r5
+	mul r2, r4, r5
 	bgt label80
 	b label25
 .p2align 4
@@ -218,16 +218,16 @@ label41:
 	b label41
 label85:
 	add r5, r5, #1
-	mul r2, r4, r5
 	cmp r4, r5
+	mul r2, r4, r5
 	bgt label80
 	b label25
 .p2align 4
 label244:
 	add r6, r6, #1
-	mul r3, r4, r6
 	cmp r4, r6
 	mla r1, r4, r6, r5
+	mul r3, r4, r6
 	bgt label86
 	b label85
 .p2align 4

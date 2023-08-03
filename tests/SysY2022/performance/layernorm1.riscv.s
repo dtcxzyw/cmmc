@@ -498,9 +498,9 @@ label33:
 	fmv.s f14, f12
 	fmv.w.x f1, s5
 	fmul.s f15, f0, f1
+	flw f1, 4(s4)
 	fmv.s f12, f15
 	fmul.s f15, f15, f15
-	flw f1, 4(s4)
 	fsub.s f2, f15, f11
 	fabs.s f0, f2
 	flt.s a5, f1, f0
@@ -512,9 +512,9 @@ label35:
 	fmv.s f13, f12
 	fmv.w.x f1, s5
 	fmul.s f15, f0, f1
+	flw f1, 4(s4)
 	fmv.s f12, f15
 	fmul.s f15, f15, f15
-	flw f1, 4(s4)
 	fsub.s f2, f15, f11
 	fabs.s f0, f2
 	flt.s a5, f1, f0

@@ -776,8 +776,8 @@ label70:
 	mulw t2, t0, t4
 	addw a1, t1, t2
 	sw a1, 0(a5)
-	addi a5, a5, 4
 	li a1, 1000
+	addi a5, a5, 4
 	blt a0, a1, label65
 	j label1547
 .p2align 2

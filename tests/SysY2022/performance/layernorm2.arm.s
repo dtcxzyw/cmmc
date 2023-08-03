@@ -154,6 +154,7 @@ label52:
 	add r7, r7, #4
 	add r3, r3, #4
 	add r2, r2, #4000
+	cmp r8, #1000
 	vldr s3, [r1, #0]
 	vsub.f32 s3, s3, s1
 	vdiv.f32 s3, s3, s0
@@ -195,7 +196,6 @@ label52:
 	vstr s1, [r1, #28]
 	vadd.f32 s0, s2, s1
 	vmov.f32 s2, s0
-	cmp r8, #1000
 	blt label46
 	b label273
 label13:
@@ -223,6 +223,7 @@ label59:
 	add r1, r2, r8, lsl #2
 	add r7, r7, #1
 	add r2, r2, #4000
+	cmp r7, #1000
 	vldr s2, [r1, #0]
 	vadd.f32 s1, s1, s2
 	vldr s2, [r1, #4]
@@ -309,7 +310,6 @@ label59:
 	vdiv.f32 s1, s1, s2
 	vstr s1, [r3, #0]
 	add r3, r3, #4
-	cmp r7, #1000
 	blt label54
 	b label18
 .p2align 4
@@ -327,13 +327,13 @@ label35:
 	vadd.f32 s4, s2, s3
 	mov r8, #1056964608
 	vmov s5, r8
+	movw r8, #4719
+	movt r8, #14979
+	vmov s7, r8
 	vmul.f32 s5, s4, s5
 	vmov.f32 s4, s2
 	vmov.f32 s2, s5
 	vmul.f32 s5, s5, s5
-	movw r8, #4719
-	movt r8, #14979
-	vmov s7, r8
 	vsub.f32 s6, s5, s1
 	vabs.f32 s6, s6
 	vcmp.f32 s6, s7
@@ -345,13 +345,13 @@ label36:
 	vadd.f32 s3, s2, s4
 	mov r8, #1056964608
 	vmov s5, r8
+	movw r8, #4719
+	movt r8, #14979
+	vmov s7, r8
 	vmul.f32 s5, s3, s5
 	vmov.f32 s3, s2
 	vmov.f32 s2, s5
 	vmul.f32 s5, s5, s5
-	movw r8, #4719
-	movt r8, #14979
-	vmov s7, r8
 	vsub.f32 s6, s5, s1
 	vabs.f32 s6, s6
 	vcmp.f32 s6, s7

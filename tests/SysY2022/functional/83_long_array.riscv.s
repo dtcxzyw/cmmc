@@ -517,8 +517,8 @@ label41:
 	addi s4, s4, 4
 	mv a0, s6
 	addi s5, s5, 4
-	addi s7, s7, 4
 	li a2, 625
+	addi s7, s7, 4
 	slli a1, a2, 4
 	blt s6, a1, label41
 	j label63
@@ -551,13 +551,13 @@ label49:
 	subw s8, a2, a5
 	mv a0, s8
 	jal putint
+	li a2, 625
 	addi s2, s2, 4
 	mv a0, s6
 	addi s3, s3, 4
 	addi s4, s4, 4
 	addi s5, s5, 4
 	addi s7, s7, 4
-	li a2, 625
 	slli a1, a2, 4
 	blt s6, a1, label41
 	j label63
@@ -648,8 +648,8 @@ label58:
 	addi s3, s3, 4
 	addi s4, s4, 4
 	addi s5, s5, 4
-	addi s7, s7, 4
 	li a2, 625
+	addi s7, s7, 4
 	slli a1, a2, 4
 	blt s6, a1, label41
 	j label63
@@ -674,8 +674,8 @@ label59:
 	addiw a5, t2, 1045
 	add a4, t1, t0
 	mulw t0, a4, a5
-	subw s8, a3, t0
 	li a4, 625
+	subw s8, a3, t0
 	slli a3, a4, 4
 	blt a2, a3, label59
 	j label58
@@ -712,8 +712,8 @@ label62:
 	add a1, a5, a3
 	mulw a2, a1, a4
 	subw s8, a0, a2
-	mv a0, s6
 	li a2, 625
+	mv a0, s6
 	slli a1, a2, 4
 	blt s6, a1, label41
 label63:

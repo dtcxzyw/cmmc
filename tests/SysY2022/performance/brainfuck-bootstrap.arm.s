@@ -197,8 +197,8 @@ label454:
 	cmp r2, #0
 	beq label229
 	str r8, [r0, r6, lsl #2]
-	add r6, r6, #1
 	add r8, r8, #1
+	add r6, r6, #1
 	b label20
 .p2align 4
 label26:
@@ -256,10 +256,10 @@ label449:
 	cmp r2, #45
 	bne label454
 	add r2, r1, r7, lsl #2
+	add r8, r8, #1
 	ldr r9, [r2, #0]
 	sub r9, r9, #1
 	str r9, [r2, #0]
-	add r8, r8, #1
 	ldr r2, [sp, #0]
 	cmp r2, r8
 	bgt label26
@@ -301,9 +301,9 @@ label41:
 	ldr r2, [r1, r7, lsl #2]
 	movw r9, #:lower16:output
 	movt r9, #:upper16:output
+	add r8, r8, #1
 	str r2, [r9, r5, lsl #2]
 	add r5, r5, #1
-	add r8, r8, #1
 	b label20
 label61:
 	mov r2, #0
@@ -358,8 +358,8 @@ label259:
 	b label20
 label45:
 	mov r2, #0
-	str r2, [r1, r7, lsl #2]
 	add r8, r8, #1
+	str r2, [r1, r7, lsl #2]
 	b label20
 label92:
 	mov r2, #0

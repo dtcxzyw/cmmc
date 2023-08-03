@@ -284,8 +284,8 @@ label39:
 label40:
 	add r10, r10, #1
 	add r7, r7, #4
-	add r6, r6, #4
 	ldr r3, [sp, #36]
+	add r6, r6, #4
 	ldr r0, [r3, r9, lsl #2]
 	cmp r10, r0
 	blt label39
@@ -366,15 +366,15 @@ main:
 	str r0, [sp, #8]
 	mov r1, r0
 	bl getint
+	cmp r0, #0
+	mov r9, #0
 	movw r6, #:lower16:rev
 	movt r6, #:upper16:rev
 	movw r4, #:lower16:to
 	movt r4, #:upper16:to
-	mov r9, #0
-	cmp r0, #0
+	str r9, [sp, #16]
 	movw r5, #:lower16:cap
 	movt r5, #:upper16:cap
-	str r9, [sp, #16]
 	str r9, [sp, #20]
 	str r9, [sp, #24]
 	str r9, [sp, #28]
@@ -401,8 +401,8 @@ label371:
 	mov r10, r0
 	bl getint
 	subs r7, r7, #1
-	mov r1, r0
 	add r2, r9, r9, lsl #2
+	mov r1, r0
 	ldr r0, [r8, #0]
 	add r3, r4, r2, lsl #3
 	str r10, [r3, r0, lsl #2]
