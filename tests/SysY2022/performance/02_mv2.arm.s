@@ -24,10 +24,8 @@ main:
 	movw r2, #:lower16:A
 	movt r2, #:upper16:A
 	str r0, [sp, #0]
-	mov r7, r0
 	sub r3, r0, #4
 	mov r4, r2
-	mov r7, r5
 	str r3, [sp, #12]
 	sub r3, r0, #20
 	str r3, [sp, #8]
@@ -398,10 +396,9 @@ label60:
 label11:
 	mov r1, r5
 	ldr r7, [sp, #4]
-	str r7, [r5, #0]
-	mov r2, r7
-	str r7, [r5, #4]
 	add r2, r7, #4
+	str r7, [r5, #0]
+	str r7, [r5, #4]
 	str r7, [r5, #8]
 	str r7, [r5, #12]
 	ldr r3, [sp, #12]
@@ -469,9 +466,8 @@ label164:
 label113:
 	mov r1, r5
 	ldr r7, [sp, #4]
-	str r7, [r5, #0]
-	mov r2, r7
 	add r2, r7, #1
+	str r7, [r5, #0]
 	ldr r7, [sp, #0]
 	cmp r7, r2
 	bgt label28

@@ -36,7 +36,6 @@ label5:
 	str r4, [sp, #16]
 	ldr r5, [sp, #48]
 	str r5, [sp, #36]
-	mov r3, r5
 	ldr r4, [sp, #24]
 	mov r2, r4
 	ldr r4, [sp, #16]
@@ -266,10 +265,10 @@ label77:
 .globl main
 main:
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
-	sub sp, sp, #68
-	mov r5, #0
 	mov r4, #1
+	mov r5, #0
 	mvn r1, #0
+	sub sp, sp, #68
 	mov r6, r5
 	str r4, [sp, #16]
 	str r5, [sp, #20]

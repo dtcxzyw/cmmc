@@ -29,9 +29,8 @@ main:
 	addiw s0, a0, 1
 	sd a0, 256(sp)
 	jal getint
-	mv a1, a0
-	sd a0, 264(sp)
 	addw a1, s0, a0
+	sd a0, 264(sp)
 	sd a1, 248(sp)
 	ld a0, 256(sp)
 	ld a1, 264(sp)
@@ -128,7 +127,6 @@ pcrel748:
 label5:
 	ld a0, 400(sp)
 	mv a1, zero
-	mv a3, a0
 	sd a0, 448(sp)
 	sd zero, 456(sp)
 	ld a3, 408(sp)
@@ -384,7 +382,6 @@ label52:
 	mv a0, zero
 	sd a1, 512(sp)
 	sd zero, 528(sp)
-	mv a2, zero
 	sub a5, zero, zero
 	li a2, 1000
 	slli a1, a5, 8
@@ -398,7 +395,6 @@ label67:
 	sd zero, 136(sp)
 	mv a1, zero
 	ld a4, 560(sp)
-	mv a0, zero
 	sub a2, zero, zero
 	slli a3, a2, 7
 	ld a2, 392(sp)
@@ -408,7 +404,6 @@ label67:
 label72:
 	ld a1, 600(sp)
 	mv a2, zero
-	mv a4, zero
 	sub t0, zero, zero
 	ld a4, 288(sp)
 	slli a5, t0, 5
@@ -617,10 +612,10 @@ label347:
 	li a0, 2
 	addw s3, t1, t5
 	addw s2, t0, t5
-	addw s1, a5, t5
-	addw a7, a3, t5
-	addw a6, a2, t5
 	addw s0, a4, t5
+	addw a7, a3, t5
+	addw s1, a5, t5
+	addw a6, a2, t5
 	addw t6, a1, t5
 	blt t5, a0, label37
 	addiw t3, t3, 1

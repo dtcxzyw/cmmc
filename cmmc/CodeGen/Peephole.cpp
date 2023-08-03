@@ -470,7 +470,7 @@ static bool machineInstCSE(MIRFunction& func, const CodeGenContext& ctx) {
     return modified;
 }
 
-bool deadInstElimination(MIRFunction& func, const CodeGenContext& ctx) {
+static bool deadInstElimination(MIRFunction& func, const CodeGenContext& ctx) {
     bool modified = false;
     for(auto& block : func.blocks()) {
         auto& instructions = block->instructions();
@@ -522,7 +522,7 @@ bool deadInstElimination(MIRFunction& func, const CodeGenContext& ctx) {
     return modified;
 }
 
-bool removeIndirectCopy(MIRFunction& func, const CodeGenContext& ctx) {
+static bool removeIndirectCopy(MIRFunction& func, const CodeGenContext& ctx) {
     if(ctx.flags.dontForward)
         return false;
 
@@ -696,6 +696,67 @@ bool createIndirectCopy(MIRFunction& func, const CodeGenContext& ctx) {
     return modified;
 }
 
+static bool removeInvisibleInsts(MIRFunction& func, const CodeGenContext& ctx) {
+    if(ctx.flags.preRA)
+        return false;
+
+    // func.dump(std::cerr, ctx);
+
+    bool modified = false;
+    for(auto& block : func.blocks()) {
+        std::unordered_set<MIRInst*> unusedInsts;
+        std::unordered_map<MIROperand, MIRInst*, MIROperandHasher> writer;
+
+        auto use = [&](const MIROperand& op) {
+            if(isOperandISAReg(op)) {
+                if(auto it = writer.find(op); it != writer.cend())
+                    unusedInsts.erase(it->second);
+            }
+        };
+
+        auto visitAll = [&] {
+            for(auto [k, v] : writer)
+                unusedInsts.erase(v);
+        };
+
+        for(auto& inst : block->instructions()) {
+            auto& instInfo = ctx.instInfo.getInstInfo(inst);
+
+            for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
+                if(instInfo.getOperandFlag(idx) & OperandFlagUse) {
+                    use(inst.getOperand(idx));
+                }
+            }
+            if(requireOneFlag(instInfo.getInstFlag(), InstFlagBranch | InstFlagCall)) {
+                visitAll();
+            }
+            for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
+                if(instInfo.getOperandFlag(idx) & OperandFlagDef) {
+                    auto& op = inst.getOperand(idx);
+                    if(isOperandISAReg(op))
+                        writer[op] = &inst;
+                }
+            }
+            if(!requireOneFlag(instInfo.getInstFlag(), InstFlagSideEffect))
+                unusedInsts.insert(&inst);
+        }
+        visitAll();
+
+        if(unusedInsts.empty())
+            continue;
+        modified = true;
+
+        block->instructions().remove_if([&](MIRInst& inst) { return unusedInsts.count(&inst); });
+    }
+
+    // if(modified) {
+    //     std::cerr << "modified\n";
+    //     func.dump(std::cerr, ctx);
+    // }
+
+    return modified;
+}
+
 bool genericPeepholeOpt(MIRFunction& func, CodeGenContext& ctx) {
     bool modified = false;
     modified |= eliminateStackLoads(func, ctx);
@@ -707,6 +768,7 @@ bool genericPeepholeOpt(MIRFunction& func, CodeGenContext& ctx) {
     modified |= machineConstantHoist(func, ctx);
     modified |= machineInstCSE(func, ctx);
     modified |= deadInstElimination(func, ctx);
+    modified |= removeInvisibleInsts(func, ctx);
     modified |= ctx.scheduleModel.peepholeOpt(func, ctx);
     return modified;
 }

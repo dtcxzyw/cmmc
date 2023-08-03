@@ -39,7 +39,6 @@ main:
 label8:
 	cmp r7, #9
 	blt label9
-	mov r8, r4
 	add r7, r7, r4
 	ldr r8, [r0, r6, lsl #2]
 	ldr r9, [r0, r7, lsl #2]
@@ -64,7 +63,6 @@ label13:
 	sub r2, r2, #1
 	cmn r2, #1
 	ble label81
-	mov r6, r5
 	add r7, r5, #1
 	sub r5, r5, #2
 	cmp r7, #10
@@ -111,7 +109,6 @@ label21:
 label29:
 	cmp r5, r7
 	bgt label33
-	mov r8, r4
 	add r7, r7, r4
 	ldr r8, [r0, r6, lsl #2]
 	ldr r9, [r0, r7, lsl #2]

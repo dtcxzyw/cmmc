@@ -215,7 +215,7 @@ InstInfo:
 
   Nop:
     Format: "nop"
-    Flag: []
+    Flag: [Padding]
 
   MoveGPR:
     Format: "move $Rd:GPR[Def], $Rs:GPR[Use]"
@@ -224,18 +224,25 @@ InstInfo:
   # Conditional Move Instructions
   MOVN:
     Format: "movn $Rd:GPR[Def], $Rs:GPR[Use], $Rt:GPR[Use] # Implicit Use: $Rd2:GPR[Use]"
+    CustomVerifier: true
   MOVZ:
     Format: "movz $Rd:GPR[Def], $Rs:GPR[Use], $Rt:GPR[Use] # Implicit Use: $Rd2:GPR[Use]"
+    CustomVerifier: true
   MOVF:
     Format: "movf $Rd:GPR[Def], $Rs:GPR[Use], $Rt:CC[Use] # Implicit Use: $Rd2:GPR[Use]"
+    CustomVerifier: true
   MOVT:
     Format: "movt $Rd:GPR[Def], $Rs:GPR[Use], $Rt:CC[Use] # Implicit Use: $Rd2:GPR[Use]"
+    CustomVerifier: true
   MOVT_S:
     Format: "movt.s $Rd:FPR[Def], $Rs:FPR[Use], $Rt:CC[Use] # Implicit Use: $Rd2:GPR[Use]"
+    CustomVerifier: true
   MOVF_S:
     Format: "movf.s $Rd:FPR[Def], $Rs:FPR[Use], $Rt:CC[Use] # Implicit Use: $Rd2:GPR[Use]"
+    CustomVerifier: true
   MOVZ_S:
     Format: "movz.s $Rd:FPR[Def], $Rs:FPR[Use], $Rt:GPR[Use] # Implicit Use: $Rd2:FPR[Use]"
+    CustomVerifier: true
 
   # Illegal Pseudo Instrucitons
   # select[CC][Val]

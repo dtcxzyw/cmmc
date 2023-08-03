@@ -536,9 +536,8 @@ label48:
 	j label45
 label163:
 	ld s0, 168(sp)
-	mv t4, zero
-	mv t3, s0
 	li t4, 1
+	mv t3, s0
 	lw t5, 0(s0)
 	ld s6, 120(sp)
 	mv a6, s6

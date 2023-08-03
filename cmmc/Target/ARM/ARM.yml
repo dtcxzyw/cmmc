@@ -42,6 +42,7 @@ InstInfo:
 
   IntegerBinaryWithOp2_Cond:
     Format: "$Mnemonic:Template$CF:CondField[Metadata] $Rd:GPR[Def], $Rn:GPR[Use], $Op2:Op2[Use] @ Implicit Use: $CC:CC[Use], $RdUse:GPR[Use]"
+    CustomVerifier: true
     Instances:
       ADD_Cond:
         Mnemonic: add
@@ -150,6 +151,7 @@ InstInfo:
 
   MoveCond:
     Format: "$Mnemonic:Template$CF:CondField[Metadata] $Rd:GPR[Def], $Op2:Op2[Use] @ Implicit Use: $CC:CC[Use], $RdUse:GPR[Use]"
+    CustomVerifier: true
     Instances:
       MOV_Cond:
         Mnemonic: mov
@@ -259,6 +261,7 @@ InstInfo:
     Flag: [LoadConstant]
   MOVW_Cond:
     Format: "movw$CF:CondField[Metadata] $Rd:GPR[Def], $Imm:UImm16[Metadata] @ Implicit Use: $CC:CC[Use], $RdUse:GPR[Use]"
+    CustomVerifier: true
   MOVT:
     Format: "movt $Rd:GPR[Def], $Imm:UImm16[Metadata] @ Implicit Use: $Rs:GPR[Use]"
     CustomVerifier: true
@@ -279,6 +282,7 @@ InstInfo:
 
   FMAInsts:
     Format: "$Mnemonic:Template $Fd:FPR[Def], $Fn:FPR[Use], $Fm:FPR[Use] @ Implicit Def: $Def:FPR[Use]"
+    CustomVerifier: true
     Instances:
       VMLA_F32:
         Mnemonic: vmla.f32
@@ -318,6 +322,7 @@ InstInfo:
 
   VMOV_Cond:
     Format: "vmov$CF:CondField[Metadata].f32 $Fd:FPR[Def], $Fm:FPR[Use] @ Implicit Use: $CC:CC[Use], $FdUse:FPR[Use]"
+    CustomVerifier: true
 
   VMOV_GPR2FPR:
     Format: vmov $Sn:FPR[Def], $Rd:GPR[Use]

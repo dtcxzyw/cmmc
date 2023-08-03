@@ -251,7 +251,6 @@ label40:
 	subw t2, t1, t3
 	addw t1, t2, t4
 	bgt t1, zero, label40
-	mv a5, t0
 	addiw a5, t0, 1
 	j label18
 label44:

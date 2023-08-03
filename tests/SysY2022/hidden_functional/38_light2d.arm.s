@@ -144,13 +144,13 @@ label56:
 	mls r0, r3, r1, r0
 	movs r9, r0
 	add r1, r0, r1
-	movlt r9, r1
-	movw r1, #4059
-	movt r1, #49353
 	movw r0, #48161
 	movt r0, #19646
-	vmov s0, r9
+	movlt r9, r1
 	vmov s1, r0
+	movw r1, #4059
+	movt r1, #49353
+	vmov s0, r9
 	movw r0, #4059
 	movt r0, #16585
 	vcvt.f32.s32 s0, s0

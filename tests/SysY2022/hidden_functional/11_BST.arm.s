@@ -92,9 +92,8 @@ label89:
 	ldr r0, [r7, #0]
 	bl delete
 	str r0, [r7, #0]
-	str r6, [r5, r4, lsl #2]
-	mov r0, r6
 	mov r0, r4
+	str r6, [r5, r4, lsl #2]
 	b label79
 label149:
 	mvn r0, #0
@@ -146,9 +145,8 @@ label103:
 	ldr r0, [r5, #0]
 	bl delete
 	str r0, [r5, #0]
-	str r6, [r7, r4, lsl #2]
-	mov r0, r6
 	mov r0, r4
+	str r6, [r7, r4, lsl #2]
 	b label79
 label85:
 	add r7, r5, r6, lsl #2
@@ -180,9 +178,8 @@ label97:
 	mov r1, r3
 	bl delete
 	str r0, [r5, r6, lsl #2]
-	str r6, [r5, r4, lsl #2]
-	mov r0, r6
 	mov r0, r4
+	str r6, [r5, r4, lsl #2]
 	b label79
 label83:
 	mvn r0, #0
@@ -246,9 +243,8 @@ label115:
 	mov r1, r3
 	bl delete
 	str r0, [r5, r6, lsl #2]
-	str r6, [r7, r4, lsl #2]
-	mov r0, r6
 	mov r0, r4
+	str r6, [r7, r4, lsl #2]
 	b label79
 label129:
 	movw r7, #:lower16:left_child
@@ -299,9 +295,8 @@ label118:
 	ldr r0, [r5, #0]
 	bl delete
 	str r0, [r5, #0]
-	str r6, [r7, r4, lsl #2]
-	mov r0, r6
 	mov r0, r4
+	str r6, [r7, r4, lsl #2]
 	b label79
 .p2align 4
 inorder:

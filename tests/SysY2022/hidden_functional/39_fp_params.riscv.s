@@ -178,7 +178,6 @@ label1062:
 .p2align 2
 params_f40_i24:
 	addi sp, sp, -648
-	fmv.s f2, f15
 	sd ra, 392(sp)
 	sd s2, 400(sp)
 	fsw f24, 408(sp)
@@ -337,8 +336,8 @@ params_f40_i24:
 	addi s9, sp, 600
 	mv a1, s9
 	jal putarray
-	fcvt.s.w f11, s1
 	fcvt.s.w f12, s2
+	fcvt.s.w f11, s1
 	fsub.s f10, f11, f8
 	fsub.s f11, f12, f9
 	fcvt.w.s a0, f10, rtz
@@ -471,7 +470,6 @@ label742:
 .p2align 2
 params_fa40:
 	addi sp, sp, -464
-	mv t6, a5
 	sd ra, 264(sp)
 	sd s2, 272(sp)
 	mv s2, a0
@@ -1277,10 +1275,10 @@ label1247:
 	fsw f10, 584(sp)
 	sh2add a0, s6, a2
 	flw f27, 0(a1)
-	flw f11, 0(a0)
 	addi a1, s0, 228
-	addi a0, s0, 240
+	flw f11, 0(a0)
 	sh2add a2, s6, a1
+	addi a0, s0, 240
 	fsw f11, 1724(sp)
 	sh2add a1, s6, a0
 	flw f10, 0(a2)
@@ -1419,8 +1417,8 @@ label1247:
 	fmv.s f17, f8
 	mv a0, s2
 	jal params_f40
-	fsw f10, 936(sp)
 	addi s1, sp, 944
+	fsw f10, 936(sp)
 	addi a1, s1, 276
 	sh2add a2, s6, a1
 	addi a1, s1, 24
@@ -1486,11 +1484,11 @@ label1247:
 	sd t4, 704(sp)
 	addi a2, s1, 36
 	lw a0, 0(a4)
-	addi a4, s1, 192
 	lw a1, 0(a3)
+	addi a4, s1, 192
 	sh2add a5, s6, a4
-	lw a3, 0(a5)
 	sh2add a4, s6, a2
+	lw a3, 0(a5)
 	addi a2, s1, 252
 	lw a5, 0(a4)
 	sh2add t0, s6, a2
@@ -1500,8 +1498,8 @@ label1247:
 	lw a4, 0(t0)
 	addi t0, s1, 180
 	sd a4, 720(sp)
-	lw a5, 0(t1)
 	addi a4, s1, 168
+	lw a5, 0(t1)
 	sh2add t1, s6, t0
 	sd a5, 728(sp)
 	lw a2, 0(t1)
@@ -1607,28 +1605,28 @@ label1247:
 	mv a7, t0
 	fmv.s f17, f26
 	jal params_f40_i24
-	addi a1, s0, 156
-	addi s6, s0, 168
-	addi a7, s0, 84
 	fmv.s f8, f10
-	addi a3, s0, 36
-	addi a6, s0, 72
-	addi a0, s0, 132
-	addi t0, s0, 24
-	addi s8, s0, 324
-	addi a2, s0, 12
+	addi s7, s0, 336
+	addi a7, s0, 84
 	addi a4, s0, 48
 	addi a5, s0, 60
-	addi s11, s0, 96
+	addi a2, s0, 12
+	addi a0, s0, 132
+	addi a3, s0, 36
+	addi a6, s0, 72
+	addi t0, s0, 24
 	addi s10, s0, 228
-	addi t5, s0, 276
-	addi s9, s0, 288
-	addi s7, s0, 336
-	addi t6, s0, 264
 	addi t4, s0, 372
-	addi t3, s0, 456
-	addi t1, s0, 420
+	addi a1, s0, 156
 	addi t2, s0, 432
+	addi t6, s0, 264
+	addi s9, s0, 288
+	addi s8, s0, 324
+	addi s11, s0, 96
+	addi t5, s0, 276
+	addi s6, s0, 168
+	addi t1, s0, 420
+	addi t3, s0, 456
 	sd a2, 736(sp)
 	sd t0, 896(sp)
 	addi a2, s0, 120
@@ -1638,8 +1636,8 @@ label1247:
 	addi a3, s0, 216
 	sd a5, 608(sp)
 	addi a4, s0, 384
-	addi a5, s0, 180
 	sd a6, 832(sp)
+	addi a5, s0, 180
 	sd a7, 824(sp)
 	addi a6, s0, 108
 	addi a7, s0, 300
@@ -1722,19 +1720,19 @@ label1247:
 	mv a1, a2
 	mv a2, t0
 	jal params_fa40
-	addi t4, s1, 84
 	addi a0, s1, 12
+	addi t0, s1, 36
+	addi a1, s1, 276
+	addi t5, s1, 72
+	addi a5, s1, 192
+	addi a2, s1, 264
 	fmv.s f23, f10
 	addi a4, s1, 180
-	addi a5, s1, 192
-	addi a1, s1, 276
-	addi t0, s1, 36
-	addi t3, s1, 120
-	addi t1, s1, 132
-	addi a2, s1, 264
 	addi a3, s1, 228
-	addi t5, s1, 72
+	addi t4, s1, 84
+	addi t1, s1, 132
 	addi t2, s1, 144
+	addi t3, s1, 120
 	sd t0, 880(sp)
 	ld a6, 832(sp)
 	addi t0, s1, 156
@@ -1855,8 +1853,8 @@ label1247:
 	jal putint
 	li a0, 10
 	jal putch
-	ld ra, 392(sp)
 	mv a0, zero
+	ld ra, 392(sp)
 	flw f20, 400(sp)
 	ld s8, 408(sp)
 	flw f22, 416(sp)

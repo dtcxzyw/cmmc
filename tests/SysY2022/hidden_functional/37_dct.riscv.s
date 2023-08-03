@@ -664,9 +664,8 @@ label426:
 	fmv.s f10, f11
 	fmv.w.x f13, s1
 	add a0, s7, a2
-	flw f11, 0(a0)
-	mv a2, a1
 	addiw a2, a1, 1
+	flw f11, 0(a0)
 	fmul.s f12, f11, f13
 	fadd.s f10, f10, f12
 	fsw f10, 0(a3)
@@ -770,10 +769,9 @@ label140:
 label156:
 	flw f10, 0(a3)
 	addi a2, s7, 4
-	mv a1, s2
 	fmv.w.x f12, s1
-	flw f11, 0(a2)
 	addiw a1, s2, 1
+	flw f11, 0(a2)
 	fmul.s f13, f11, f12
 	fadd.s f10, f10, f13
 	fsw f10, 0(a3)
@@ -879,10 +877,9 @@ label534:
 label398:
 	flw f10, 0(a3)
 	addi a0, s7, 32
-	mv a2, s2
 	fmv.w.x f13, s1
-	flw f11, 0(a0)
 	addiw a2, s2, 1
+	flw f11, 0(a0)
 	fmul.s f12, f11, f13
 	fadd.s f10, f10, f12
 	fsw f10, 0(a3)

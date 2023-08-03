@@ -254,11 +254,10 @@ label39:
 .p2align 2
 label129:
 	mv a5, s2
-	mv t0, zero
 	sh2add t2, a0, s2
 	mv t6, a1
-	lw t3, 0(a1)
 	li t0, 1
+	lw t3, 0(a1)
 	lw t5, 0(t2)
 	ld t2, 112(sp)
 	mulw t4, t3, t5

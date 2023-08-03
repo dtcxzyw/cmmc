@@ -26,7 +26,6 @@ pcrel117:
 	add a2, s1, a0
 	mv a0, zero
 	sraiw s2, a2, 1
-	mv a4, s0
 	addiw a3, a1, 1
 	lw a2, 0(s0)
 	mv a4, zero

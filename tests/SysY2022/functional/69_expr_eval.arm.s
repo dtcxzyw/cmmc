@@ -488,7 +488,6 @@ label108:
 	mov r5, r3
 	b label17
 label1006:
-	mov r0, r1
 	sub r0, r1, #48
 	cmp r0, #10
 	blo label565

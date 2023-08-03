@@ -283,7 +283,6 @@ label35:
 	sub r9, r10, r9
 	adds r10, r9, r8
 	bgt label35
-	mov r8, r2
 	add r8, r2, #1
 	b label20
 label456:

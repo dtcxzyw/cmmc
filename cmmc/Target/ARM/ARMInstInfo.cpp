@@ -134,9 +134,60 @@ using mir::isOperandReloc;
 static MIRInst emitGotoImpl(MIRBasicBlock* targetBlock) {
     return MIRInst{ B }.setOperand<0>(MIROperand::asReloc(targetBlock));
 }
+static bool verifyTwoAddressInst(const MIRInst& inst, uint32_t def, uint32_t use) {
+    return inst.getOperand(def) == inst.getOperand(use);
+}
 
 static bool verifyInstMOVT(const MIRInst& inst) {
-    return inst.getOperand(0) == inst.getOperand(2);
+    return verifyTwoAddressInst(inst, 0, 2);
+}
+static bool verifyInstADD_Cond(const MIRInst& inst) {
+    return verifyTwoAddressInst(inst, 1, 5);
+}
+static bool verifyInstSUB_Cond(const MIRInst& inst) {
+    return verifyTwoAddressInst(inst, 1, 5);
+}
+static bool verifyInstAND_Cond(const MIRInst& inst) {
+    return verifyTwoAddressInst(inst, 1, 5);
+}
+static bool verifyInstORR_Cond(const MIRInst& inst) {
+    return verifyTwoAddressInst(inst, 1, 5);
+}
+static bool verifyInstEOR_Cond(const MIRInst& inst) {
+    return verifyTwoAddressInst(inst, 1, 5);
+}
+static bool verifyInstORN_Cond(const MIRInst& inst) {
+    return verifyTwoAddressInst(inst, 1, 5);
+}
+static bool verifyInstBIC_Cond(const MIRInst& inst) {
+    return verifyTwoAddressInst(inst, 1, 5);
+}
+static bool verifyInstRSB_Cond(const MIRInst& inst) {
+    return verifyTwoAddressInst(inst, 1, 5);
+}
+static bool verifyInstMOV_Cond(const MIRInst& inst) {
+    return verifyTwoAddressInst(inst, 1, 4);
+}
+static bool verifyInstMVN_Cond(const MIRInst& inst) {
+    return verifyTwoAddressInst(inst, 1, 4);
+}
+static bool verifyInstMOVW_Cond(const MIRInst& inst) {
+    return verifyTwoAddressInst(inst, 1, 4);
+}
+static bool verifyInstVMOV_Cond(const MIRInst& inst) {
+    return verifyTwoAddressInst(inst, 1, 4);
+}
+static bool verifyInstVMLA_F32(const MIRInst& inst) {
+    return verifyTwoAddressInst(inst, 0, 3);
+}
+static bool verifyInstVMLS_F32(const MIRInst& inst) {
+    return verifyTwoAddressInst(inst, 0, 3);
+}
+static bool verifyInstVNMLA_F32(const MIRInst& inst) {
+    return verifyTwoAddressInst(inst, 0, 3);
+}
+static bool verifyInstVNMLS_F32(const MIRInst& inst) {
+    return verifyTwoAddressInst(inst, 0, 3);
 }
 
 static bool isOperandRegList(const MIROperand& op) {

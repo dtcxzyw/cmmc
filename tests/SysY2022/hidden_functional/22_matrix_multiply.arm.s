@@ -175,7 +175,6 @@ label178:
 	movt r4, #:upper16:b
 	mov r8, r6
 	mla r4, r5, r7, r4
-	mov r6, r5
 	ldr r7, [sp, #0]
 	add r6, r5, #1
 	ldr r5, [r7, r5, lsl #2]

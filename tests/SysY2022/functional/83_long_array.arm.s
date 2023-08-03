@@ -327,9 +327,8 @@ label2:
 label22:
 	movw r6, #:lower16:a1
 	movt r6, #:upper16:a1
-	str r6, [sp, #160]
-	mov r0, r6
 	mov r0, #0
+	str r6, [sp, #160]
 	str r0, [sp, #164]
 .p2align 4
 label23:
@@ -543,9 +542,8 @@ label23:
 label236:
 	movw r2, #:lower16:a2
 	movt r2, #:upper16:a2
-	str r2, [sp, #48]
-	mov r0, r2
 	mov r0, #0
+	str r2, [sp, #48]
 	str r0, [sp, #44]
 .p2align 4
 label28:
@@ -636,10 +634,8 @@ label32:
 	mov r4, #0
 	mov r5, r2
 	str r2, [sp, #104]
-	mov r0, r2
-	mov r1, r2
-	str r2, [sp, #100]
 	mov r0, r4
+	str r2, [sp, #100]
 	str r2, [sp, #96]
 	movw r2, #:lower16:a2
 	movt r2, #:upper16:a2

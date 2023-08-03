@@ -250,7 +250,6 @@ label36:
 	ld a7, 104(sp)
 	lw a4, 0(a7)
 	bne a1, a4, label37
-	mv a0, s1
 	addiw a1, s1, 1
 	sh2add a2, s4, s2
 	addi s0, s0, 8

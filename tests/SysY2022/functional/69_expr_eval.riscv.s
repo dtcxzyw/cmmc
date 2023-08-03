@@ -712,25 +712,23 @@ label513:
 	j label66
 .p2align 2
 label939:
-	mv a4, zero
-pcrel1010:
 	auipc s0, %pcrel_hi(oprs)
-	lw t0, %pcrel_lo(pcrel1010)(s0)
+	lw t0, %pcrel_lo(label939)(s0)
 	addiw a3, t0, 1
 	sh2add a5, a3, s1
-	sw a3, %pcrel_lo(pcrel1010)(s0)
+	sw a3, %pcrel_lo(label939)(s0)
 	sw zero, 0(a5)
-pcrel1011:
+pcrel1010:
 	auipc s2, %pcrel_hi(ops)
-	lw a4, %pcrel_lo(pcrel1011)(s2)
+	lw a4, %pcrel_lo(pcrel1010)(s2)
 	bne a4, zero, label94
 	j label93
 label934:
 	addiw a2, a3, 1
 	sh2add a4, a2, s4
-pcrel1012:
+pcrel1011:
 	auipc s2, %pcrel_hi(ops)
-	sw a2, %pcrel_lo(pcrel1012)(s2)
+	sw a2, %pcrel_lo(pcrel1011)(s2)
 	sw s9, 0(a4)
 	beq a1, zero, label493
 	j label492
@@ -744,24 +742,24 @@ label71:
 label62:
 	addiw a2, a3, 1
 	sh2add a4, a2, s4
-pcrel1013:
+pcrel1012:
 	auipc s2, %pcrel_hi(ops)
-	sw a2, %pcrel_lo(pcrel1013)(s2)
+	sw a2, %pcrel_lo(pcrel1012)(s2)
 	sw s9, 0(a4)
 	beq a1, zero, label493
 	j label492
 label69:
 	subw a3, t0, a3
-pcrel1014:
+pcrel1013:
 	auipc s0, %pcrel_hi(oprs)
-	lw a4, %pcrel_lo(pcrel1014)(s0)
+	lw a4, %pcrel_lo(pcrel1013)(s0)
 	addiw a2, a4, 1
 	sh2add a5, a2, s1
-	sw a2, %pcrel_lo(pcrel1014)(s0)
+	sw a2, %pcrel_lo(pcrel1013)(s0)
 	sw a3, 0(a5)
-pcrel1015:
+pcrel1014:
 	auipc s2, %pcrel_hi(ops)
-	lw a3, %pcrel_lo(pcrel1015)(s2)
+	lw a3, %pcrel_lo(pcrel1014)(s2)
 	bne a3, zero, label63
 	j label62
 label46:
@@ -776,9 +774,9 @@ label86:
 label635:
 	mv a1, s9
 	mv a2, zero
-pcrel1016:
+pcrel1015:
 	auipc s2, %pcrel_hi(ops)
-	lw a4, %pcrel_lo(pcrel1016)(s2)
+	lw a4, %pcrel_lo(pcrel1015)(s2)
 	bne a4, zero, label94
 	j label93
 .p2align 2

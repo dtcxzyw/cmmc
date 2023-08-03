@@ -297,8 +297,6 @@ label341:
 	mv s11, s8
 	slti s9, s5, 40
 	bne s9, zero, label616
-	lui s11, 586172
-	addiw s11, s11, -804
 	lui s10, 828972
 	addiw s11, s10, 262
 	lui s10, 454047

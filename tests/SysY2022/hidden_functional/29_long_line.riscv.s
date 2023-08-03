@@ -399,8 +399,8 @@ label4:
 	sh1add a1, a4, s6
 	sh1add a0, a1, a3
 	jal fib
-	mv t4, a0
 	sd a0, 496(sp)
+	mv t4, a0
 	srliw a0, a0, 31
 	ld a2, 168(sp)
 	add a4, t4, a0

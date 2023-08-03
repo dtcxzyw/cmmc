@@ -11,8 +11,8 @@ main:
 	bl getint
 	cmp r0, #5
 	mov r4, r0
-	moveq r4, #6
 	mov r0, #0
+	moveq r4, #6
 	bl putint
 	mov r0, #1
 	bl putint

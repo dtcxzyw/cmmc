@@ -598,9 +598,9 @@ label132:
 	cmp r4, #0
 	sub r8, r2, r7
 	mov r4, r6
+	mul r6, r7, r2
 	movne r4, r8
 	cmp r5, #0
-	mul r6, r7, r2
 	movne r4, r6
 	cmp r3, #47
 	beq label144

@@ -38,10 +38,9 @@ main:
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
 	sub sp, sp, #12
 	bl getint
-	str r0, [sp, #0]
-	mov r7, r0
 	movw r7, #:lower16:keys
 	movt r7, #:upper16:keys
+	str r0, [sp, #0]
 	mov r0, r7
 	bl getarray
 	movw r6, #:lower16:values

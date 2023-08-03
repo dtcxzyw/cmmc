@@ -66,9 +66,8 @@ label16:
 	add r0, r5, r1
 	str r0, [sp, #0]
 	beq label29
-	mov r0, r4
-	lsl r8, r8, #1
 	subs r0, r4, #1
+	lsl r8, r8, #1
 	bne label26
 	add r8, r5, r8
 .p2align 4
@@ -88,7 +87,6 @@ label38:
 .p2align 4
 label82:
 	ldr r1, [sp, #0]
-	mov r0, r4
 	subs r0, r4, #1
 	lsl r1, r1, #1
 	beq label136
@@ -132,14 +130,12 @@ label136:
 	cmp r4, #0
 	str r0, [sp, #0]
 	beq label29
-	mov r0, r4
-	lsl r8, r8, #1
 	subs r0, r4, #1
+	lsl r8, r8, #1
 	bne label26
 	add r8, r5, r8
 	beq label37
 	ldr r1, [sp, #0]
-	mov r0, r4
 	subs r0, r4, #1
 	lsl r1, r1, #1
 	bne label32

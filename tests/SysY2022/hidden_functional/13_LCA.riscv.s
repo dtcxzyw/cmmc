@@ -616,8 +616,6 @@ label591:
 	slt a2, a5, t0
 	bne a2, zero, label945
 	mv a0, s5
-	mv a3, s5
-	mv a3, s2
 	li a1, 19
 	mv a2, s2
 	sh2add t1, s5, a4

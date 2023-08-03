@@ -262,9 +262,8 @@ label32:
 	j label28
 label145:
 	mv a1, s8
-	mv a2, zero
-	sw zero, 0(s8)
 	li a2, 4
+	sw zero, 0(s8)
 	sw zero, 4(s8)
 	sw zero, 8(s8)
 	sw zero, 12(s8)
@@ -322,9 +321,8 @@ label72:
 	j label73
 label79:
 	mv a1, s9
-	mv a2, zero
-	sw zero, 0(s9)
 	li a2, 4
+	sw zero, 0(s9)
 	sw zero, 4(s9)
 	sw zero, 8(s9)
 	sw zero, 12(s9)

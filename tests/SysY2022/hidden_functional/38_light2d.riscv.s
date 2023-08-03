@@ -107,19 +107,18 @@ main:
 	li a0, 10
 	jal putch
 	mv s10, zero
-	lui s1, 264192
-	sd zero, 104(sp)
-	lui s4, 263168
 pcrel414:
 	auipc a0, %pcrel_hi(__cmmc_fp_constant_pool)
+	lui a1, 6
+	lui s4, 263168
+	lui s1, 264192
 	lui s2, 253952
 	lui s3, 258048
-	mv a1, zero
 	lui s6, 269312
+	sd zero, 104(sp)
 	addi s0, a0, %pcrel_lo(pcrel414)
-	lui a1, 6
-	lui a0, 4878
 	addiw s8, a1, -1243
+	lui a0, 4878
 	addiw s7, a0, -158
 	lui a0, 24414
 	addiw s5, a0, 263

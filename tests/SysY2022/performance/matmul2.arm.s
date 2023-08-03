@@ -1048,9 +1048,8 @@ label635:
 	movt r1, #:upper16:c
 	mov r4, #0
 	str r1, [sp, #20]
-	mov r0, r1
-	str r4, [sp, #24]
 	mov r0, r4
+	str r4, [sp, #24]
 label37:
 	ldr r0, [sp, #24]
 	cmp r0, #1000
@@ -1754,8 +1753,8 @@ label55:
 	ldr r3, [r0, #156]
 	mov r0, r2
 	cmp r2, r3
-	movge r0, r3
 	mov r2, #0
+	movge r0, r3
 .p2align 4
 label56:
 	str r0, [r1, #0]

@@ -349,7 +349,6 @@ label40:
 	str r4, [sp, #28]
 	str r3, [sp, #24]
 	str r2, [sp, #76]
-	mov r3, r2
 	str r1, [sp, #80]
 	ldr r1, [sp, #0]
 	str r1, [sp, #84]

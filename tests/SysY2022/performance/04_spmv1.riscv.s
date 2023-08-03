@@ -99,9 +99,8 @@ label92:
 .p2align 2
 label487:
 	mv t0, s1
-	mv t1, zero
-	sw zero, 0(s1)
 	li t1, 4
+	sw zero, 0(s1)
 	sw zero, 4(s1)
 	sw zero, 8(s1)
 	sw zero, 12(s1)
@@ -594,17 +593,15 @@ label668:
 .p2align 2
 label89:
 	mv t0, s1
-	mv t1, zero
-	sw zero, 0(s1)
 	li t1, 1
+	sw zero, 0(s1)
 	bgt s4, t1, label107
 	j label106
 .p2align 2
 label69:
 	mv t0, s0
-	mv t1, zero
-	sw zero, 0(s0)
 	li t1, 1
+	sw zero, 0(s0)
 	bgt s4, t1, label87
 	j label86
 .p2align 2
@@ -620,9 +617,8 @@ label674:
 .p2align 2
 label71:
 	mv t0, s0
-	mv t1, zero
-	sw zero, 0(s0)
 	li t1, 4
+	sw zero, 0(s0)
 	sw zero, 4(s0)
 	sw zero, 8(s0)
 	sw zero, 12(s0)

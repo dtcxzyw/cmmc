@@ -68,9 +68,8 @@ label8:
 label133:
 	fmv.w.x f13, zero
 	mv t4, a2
-	mv t5, zero
-	mv t6, a0
 	flw f14, 0(a2)
+	mv t6, a0
 	li t5, 1
 	flw f0, 0(a0)
 	fmul.s f15, f14, f0

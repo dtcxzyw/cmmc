@@ -68,10 +68,9 @@ label8:
 label134:
 	vmov s3, r5
 	mov r8, r2
-	mov r9, r5
-	vldr s4, [r2, #0]
 	add r10, r0, r5, lsl #2
 	add r9, r5, #1
+	vldr s4, [r2, #0]
 	cmp r4, r9
 	vldr s5, [r10, #0]
 	vmul.f32 s4, s4, s5

@@ -343,7 +343,6 @@ label18:
 label513:
 	movw r2, #:lower16:a
 	movt r2, #:upper16:a
-	mov r0, r1
 	add r2, r2, r1, lsl #2
 	add r0, r1, #4
 	mov r1, #0
@@ -386,7 +385,6 @@ label95:
 label107:
 	movw r2, #:lower16:a
 	movt r2, #:upper16:a
-	mov r1, r0
 	add r2, r2, r0, lsl #2
 	add r1, r0, #1
 	mov r0, #0
@@ -421,7 +419,6 @@ label14:
 label172:
 	movw r2, #:lower16:b
 	movt r2, #:upper16:b
-	mov r0, r1
 	add r2, r2, r1, lsl #2
 	add r0, r1, #4
 	mov r1, #0
@@ -434,7 +431,6 @@ label172:
 	bgt label14
 	movw r2, #:lower16:b
 	movt r2, #:upper16:b
-	mov r1, r0
 	add r2, r2, r0, lsl #2
 	add r1, r0, #1
 	mov r0, #0
@@ -466,7 +462,6 @@ label9:
 label149:
 	movw r2, #:lower16:b
 	movt r2, #:upper16:b
-	mov r1, r0
 	add r2, r2, r0, lsl #2
 	add r1, r0, #1
 	mov r0, #0
@@ -527,7 +522,6 @@ label97:
 label651:
 	movw r2, #:lower16:a
 	movt r2, #:upper16:a
-	mov r1, r0
 	add r2, r2, r0, lsl #2
 	add r1, r0, #1
 	mov r0, #0

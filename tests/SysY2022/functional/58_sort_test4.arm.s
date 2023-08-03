@@ -146,7 +146,6 @@ label26:
 	pop { r4, r5, r6, r7, r8, r9, r10, pc }
 label46:
 	add r5, r0, r2, lsl #2
-	mov r8, r2
 	mov r6, r3
 	ldr r7, [r0, r3, lsl #2]
 	add r8, r2, #1

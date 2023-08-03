@@ -20,7 +20,6 @@ main:
 	add r4, r0, #1
 	str r0, [sp, #152]
 	bl getint
-	mov r2, r0
 	str r0, [sp, #148]
 	add r1, r4, r0
 	str r1, [sp, #156]

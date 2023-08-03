@@ -71,7 +71,6 @@ label13:
 	j label13
 .p2align 2
 label52:
-	mv t2, zero
 	sext.w t1, t0
 	sh2add t4, a5, a0
 	sh2add t3, t1, a0
@@ -113,7 +112,6 @@ label21:
 .p2align 2
 label29:
 	bgt a4, t0, label33
-	mv t1, zero
 	sext.w t0, t0
 	sh2add t4, a5, a0
 	sh2add t2, t0, a0

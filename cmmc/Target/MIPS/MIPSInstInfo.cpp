@@ -134,6 +134,31 @@ static void inverseBranchImpl(MIRInst& inst, MIRBasicBlock* newTarget) {
     }
 }
 
+static bool verifyConditonalMove(const MIRInst& inst) {
+    return inst.getOperand(0) == inst.getOperand(3);
+}
+static bool verifyInstMOVN(const MIRInst& inst) {
+    return verifyConditonalMove(inst);
+}
+static bool verifyInstMOVZ(const MIRInst& inst) {
+    return verifyConditonalMove(inst);
+}
+static bool verifyInstMOVF(const MIRInst& inst) {
+    return verifyConditonalMove(inst);
+}
+static bool verifyInstMOVT(const MIRInst& inst) {
+    return verifyConditonalMove(inst);
+}
+static bool verifyInstMOVF_S(const MIRInst& inst) {
+    return verifyConditonalMove(inst);
+}
+static bool verifyInstMOVT_S(const MIRInst& inst) {
+    return verifyConditonalMove(inst);
+}
+static bool verifyInstMOVZ_S(const MIRInst& inst) {
+    return verifyConditonalMove(inst);
+}
+
 CMMC_TARGET_NAMESPACE_END
 
 #include <MIPS/InstInfoImpl.hpp>

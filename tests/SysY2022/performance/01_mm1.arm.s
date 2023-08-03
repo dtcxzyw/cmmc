@@ -774,10 +774,9 @@ label125:
 label466:
 	mov r3, r1
 	ldr r6, [sp, #4]
-	str r6, [r1, #0]
-	mov r4, r6
-	ldr r7, [sp, #8]
 	add r4, r6, #1
+	str r6, [r1, #0]
+	ldr r7, [sp, #8]
 	cmp r7, r4
 	bgt label140
 	add r2, r2, #1
@@ -789,10 +788,9 @@ label466:
 label181:
 	mov r3, r1
 	ldr r6, [sp, #4]
-	str r6, [r1, #0]
-	mov r4, r6
-	ldr r7, [sp, #8]
 	add r4, r6, #1
+	str r6, [r1, #0]
+	ldr r7, [sp, #8]
 	cmp r7, r4
 	bgt label38
 	add r2, r2, #1

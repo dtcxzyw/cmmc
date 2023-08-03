@@ -67,9 +67,9 @@ label11:
 	mov r8, r6
 	movw r4, #:lower16:c
 	movt r4, #:upper16:c
-	movne r8, r0
 	movw r6, #:lower16:a
 	movt r6, #:upper16:a
+	movne r8, r0
 	cmp r8, #0
 	str r8, [sp, #0]
 	beq label149
@@ -217,8 +217,8 @@ label41:
 	str r11, [r10, #0]
 	ldr r9, [r1, #8]
 	cmp r8, r9
-	movle r7, r9
 	add r8, r3, r9, lsl #2
+	movle r7, r9
 	ldr r9, [r8, #0]
 	add r9, r9, #1
 	str r9, [r8, #0]

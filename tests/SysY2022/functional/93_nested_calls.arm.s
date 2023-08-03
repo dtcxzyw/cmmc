@@ -108,8 +108,8 @@ label9:
 	ldr r8, [sp, #12]
 	mov r9, r0
 	movne r9, r1
-	cmp r7, #0
 	clz r0, r8
+	cmp r7, #0
 	ldr r8, [sp, #16]
 	lsr r0, r0, #5
 	add r8, r8, r0
@@ -131,12 +131,12 @@ label12:
 	add r7, r9, r0
 	cmp r0, #0
 	mov r0, r7
+	sub r7, r1, r2
 	moveq r0, r9
 	cmp r2, #0
-	sub r7, r1, r2
 	mov r2, r7
-	moveq r2, r1
 	ldr r7, [sp, #0]
+	moveq r2, r1
 	mla r0, r2, r0, r2
 	cmp r7, #0
 	bne label22

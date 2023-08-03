@@ -177,7 +177,6 @@ label177:
 .p2align 2
 label435:
 	sw zero, 8(sp)
-	mv t4, zero
 	addiw t4, t2, 4
 	blt t1, a3, label445
 	sw zero, 12(sp)

@@ -66,7 +66,6 @@ label13:
 	j label66
 .p2align 2
 label78:
-	mv a0, zero
 	addiw s7, s7, 1
 	lw a0, 0(s3)
 	ble s7, a0, label5
@@ -125,7 +124,6 @@ label36:
 	sh2add t0, t1, a5
 	lw a4, 0(t0)
 	bne a4, zero, label124
-	mv a0, zero
 	addiw s9, s9, 1
 	lw a0, 0(s3)
 	ble s9, a0, label22

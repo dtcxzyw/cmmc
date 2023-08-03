@@ -502,7 +502,6 @@ label153:
 	add r5, r1, #9
 	cmp r6, #0
 	beq label154
-	mov r1, r5
 	add r1, r5, #3
 	b label155
 .p2align 4
@@ -746,7 +745,7 @@ label57:
 	movne r3, r5
 	b label2
 label412:
-	movs r5, r4
+	cmp r4, #0
 	add r5, r3, #20
 	mov r3, r6
 	movne r3, r5

@@ -156,16 +156,13 @@ label13:
 	sd s9, 232(sp)
 	sd s11, 304(sp)
 	mv s9, a0
-	sd a5, 312(sp)
-	mv s11, a5
-	mv a0, a4
-	mv a5, t4
-	mv s11, a1
-	mv a4, t5
-	sd a1, 320(sp)
-	mv s11, a2
-	mv a1, t0
 	mv s11, a3
+	mv a0, a4
+	sd a5, 312(sp)
+	mv a4, t5
+	mv a5, t4
+	sd a1, 320(sp)
+	mv a1, t0
 	sd a2, 328(sp)
 	mv t0, t3
 	mv a2, t1

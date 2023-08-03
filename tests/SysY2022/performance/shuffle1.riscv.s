@@ -69,7 +69,6 @@ pcrel206:
 	auipc a0, %pcrel_hi(key)
 pcrel207:
 	auipc t0, %pcrel_hi(value)
-	mv t1, zero
 	addi a3, a1, %pcrel_lo(pcrel204)
 	addi a4, a5, %pcrel_lo(pcrel205)
 	addi a2, a0, %pcrel_lo(pcrel206)
@@ -138,7 +137,6 @@ label14:
 	sh2add t3, t1, a2
 	lw t4, 0(t3)
 	bne t2, t4, label84
-	mv t2, zero
 	sh2add t5, t1, a1
 	sh2add t4, t1, a0
 	lw t3, 0(t5)

@@ -476,10 +476,9 @@ label44:
 	add r5, r5, r8
 	str r5, [sp, #8]
 	str r4, [sp, #4]
-	str r3, [sp, #44]
-	mov r4, r3
-	str r2, [sp, #0]
 	mov r4, r2
+	str r3, [sp, #44]
+	str r2, [sp, #0]
 	ldr r2, [sp, #20]
 	cmp r2, r0
 	bgt label25

@@ -295,7 +295,6 @@ label30:
 	b label2
 .p2align 4
 label222:
-	mov r7, r9
 	asr r8, r9, #31
 	add r8, r9, r8, lsr #28
 	asr r8, r8, #4

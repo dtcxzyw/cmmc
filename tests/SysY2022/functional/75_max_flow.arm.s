@@ -37,9 +37,8 @@ dfs:
 	add r1, r1, r0, lsl #3
 	add r0, r2, r0, lsl #3
 	str r1, [sp, #52]
-	str r0, [sp, #48]
-	mov r1, r0
 	mov r1, #0
+	str r0, [sp, #48]
 	str r1, [sp, #44]
 	ldr r0, [r3, r4, lsl #2]
 	cmp r1, r0
@@ -61,9 +60,7 @@ label8:
 	add r1, r1, #4
 	str r1, [sp, #52]
 	str r2, [sp, #48]
-	mov r1, r2
 	str r0, [sp, #44]
-	mov r1, r0
 	ldr r4, [sp, #32]
 	ldr r3, [sp, #36]
 	ldr r0, [r3, r4, lsl #2]
@@ -96,11 +93,9 @@ label9:
 	ldr r1, [sp, #104]
 	mov r3, #1
 	str r3, [r1, r4, lsl #2]
-	str r0, [sp, #20]
-	mov r1, r0
-	str r2, [sp, #64]
-	mov r1, r2
 	mov r1, #0
+	str r0, [sp, #20]
+	str r2, [sp, #64]
 	str r1, [sp, #60]
 	ldr r3, [sp, #36]
 	ldr r0, [r3, r4, lsl #2]
@@ -141,9 +136,7 @@ label44:
 	add r1, r1, #4
 	str r1, [sp, #20]
 	str r2, [sp, #64]
-	mov r1, r2
 	str r0, [sp, #60]
-	mov r1, r0
 	ldr r3, [sp, #36]
 	ldr r4, [sp, #56]
 	ldr r0, [r3, r4, lsl #2]
@@ -216,7 +209,6 @@ label28:
 	add r4, r4, #4
 	add r0, r1, #1
 	str r0, [sp, #8]
-	mov r1, r0
 	ldr r3, [sp, #36]
 	ldr r2, [sp, #16]
 	ldr r0, [r3, r2, lsl #2]
@@ -367,14 +359,14 @@ main:
 	mov r1, r0
 	bl getint
 	cmp r0, #0
-	mov r9, #0
 	movw r6, #:lower16:rev
 	movt r6, #:upper16:rev
+	movw r5, #:lower16:cap
+	movt r5, #:upper16:cap
+	mov r9, #0
 	movw r4, #:lower16:to
 	movt r4, #:upper16:to
 	str r9, [sp, #16]
-	movw r5, #:lower16:cap
-	movt r5, #:upper16:cap
 	str r9, [sp, #20]
 	str r9, [sp, #24]
 	str r9, [sp, #28]
@@ -401,8 +393,8 @@ label371:
 	mov r10, r0
 	bl getint
 	subs r7, r7, #1
-	add r2, r9, r9, lsl #2
 	mov r1, r0
+	add r2, r9, r9, lsl #2
 	ldr r0, [r8, #0]
 	add r3, r4, r2, lsl #3
 	str r10, [r3, r0, lsl #2]
