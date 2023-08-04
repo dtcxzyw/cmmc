@@ -185,6 +185,11 @@
       "parent": "dabfc3a1c89344fa298928384e4e5a0a72ce1506",
       "time": "2023-07-10 19:22:24 +0800"
     },
+    "359ba93c2bef3d49fe84792d782098eeeae6ec07": {
+      "message": "build(analysis): fix compilation error",
+      "parent": "9679f5252bd883683dc81fecd8759a134bee9a6d",
+      "time": "2023-08-04 14:48:46 +0800"
+    },
     "35dc72d99b7ec497a44db7c1c2363cd245ba9460": {
       "message": "feat(codegen): fix block layout opt",
       "parent": "cfebead82d8d79dc0150fc236ea7381e35979faa",
@@ -1096,5 +1101,5 @@
       "time": "2023-07-06 01:05:50 +0800"
     }
   },
-  "head": "9679f5252bd883683dc81fecd8759a134bee9a6d"
+  "head": "359ba93c2bef3d49fe84792d782098eeeae6ec07"
 }
