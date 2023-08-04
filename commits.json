@@ -660,6 +660,11 @@
       "parent": "81ce6ea2c3ca9f2730467fde3d465a6cfad79136",
       "time": "2023-08-03 02:23:02 +0800"
     },
+    "9679f5252bd883683dc81fecd8759a134bee9a6d": {
+      "message": "refactor(codegen): refactor scheduling",
+      "parent": "4b106fcbf076b8476a70bf0ff416aacbf0d9be77",
+      "time": "2023-08-04 14:24:32 +0800"
+    },
     "97cc72f856cc319dc4b12d569da66b09a1abf5ea": {
       "message": "fix(codegen): fix call eliminate on same block",
       "parent": "fff5d50daaa4fdf0b5dfbf75446966c0d0861dab",
@@ -1091,5 +1096,5 @@
       "time": "2023-07-06 01:05:50 +0800"
     }
   },
-  "head": "4b106fcbf076b8476a70bf0ff416aacbf0d9be77"
+  "head": "9679f5252bd883683dc81fecd8759a134bee9a6d"
 }
