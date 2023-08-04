@@ -140,3 +140,11 @@ test3:
 	rsb r1, r1, r1, lsl #31
 	sub r0, r0, r1
 	bx lr
+.p2align 4
+.globl test4
+test4:
+	add r1, r0, r0, lsr #31
+	asr r1, r1, #1
+	sub r1, r0, r1, lsl #1
+	add r0, r1, r0, lsl #1
+	bx lr

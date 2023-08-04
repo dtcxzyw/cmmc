@@ -72,3 +72,12 @@ test3:
 	slliw a4, a1, 31
 	subw a0, a2, a4
 	ret
+.p2align 2
+.globl test4
+test4:
+	srliw a1, a0, 31
+	add a2, a0, a1
+	andi a3, a2, -2
+	subw a4, a0, a3
+	sh1add a0, a0, a4
+	ret

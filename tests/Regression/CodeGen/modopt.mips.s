@@ -113,3 +113,13 @@ test3:
 	mfhi $v0
 	jr $ra
 	nop
+.p2align 2
+.globl test4
+test4:
+	sll $t0, $a0, 1
+	li $t1, 2
+	div $zero, $a0, $t1
+	mfhi $t1
+	addu $v0, $t0, $t1
+	jr $ra
+	nop

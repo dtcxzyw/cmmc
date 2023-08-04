@@ -55,7 +55,7 @@ DomTreeNode::NodeIndex DominateAnalysisResult::getIndex(Block* block) const {
 bool DominateAnalysisResult::reachable(Block* block) const {
     return mDomTreeInvMap.count(block);
 }
-NodeIndex DominateAnalysisResult::subTreeSize(Block* node) const {
+DomTreeNode::NodeIndex DominateAnalysisResult::subTreeSize(Block* node) const {
     const auto iter = mDomTreeInvMap.find(node);
     if(iter != mDomTreeInvMap.cend())
         return mDomTree[iter->second].size;

@@ -14,3 +14,6 @@ int test2(int x, int y) {
 int test3(int x) {
     return x % 2147483647;
 }
+int test4(int x) {
+    return x * 2 + x % 2;
+}
