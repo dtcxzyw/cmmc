@@ -329,3 +329,14 @@ int select_add_one(int y, int x) {
 int select_sub_one(int y, int x) {
     return x ? y - 1 : y;
 }
+int cutout(int val){
+    if(val < 0){
+        val = 0;
+    }
+    else{
+        if(val > 255){
+            val = 255;
+        }
+    }
+    return val;
+}

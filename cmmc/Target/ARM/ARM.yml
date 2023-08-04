@@ -400,6 +400,10 @@ InstInfo:
       PseudoSMin_Inverted:
         Mnemonic: smin_inverted
 
+  PseudoFMA:
+    Format: pseudo_fma $Dst:GPR[Def], $X:FPR[Use], $Y:FPR[Use], $Z:FPR[Use], $Op:Imm[Metadata]
+    Flag: [LegalizePreRA]
+
   UNIMP:
     Format: .inst 0xdeff
     Flag: [Terminator, NoFallthrough]
@@ -943,6 +947,23 @@ InstSelection:
           VCVT_S32_F32:
             Rd: getVRegAs(ctx, $Src)
             Fm: $Src
+
+  # - Pattern:
+  #     InstFAdd:
+  #       Dst: $Dst
+  #       Lhs:
+  #         InstFMul:
+  #           Dst: $MulDst
+  #           Lhs: $X
+  #           Rhs: $Y
+  #       Rhs: $Z
+  #   Replace:
+  #     PseudoFMA:
+  #       Dst: $Dst
+  #       X: $X
+  #       Y: $Y
+  #       Z: $Z
+  #       Op: MIROperand::asImm(VMLA_F32, OperandType::Special)
 
   - Pattern:
       $Template:

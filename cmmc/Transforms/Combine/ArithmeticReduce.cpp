@@ -17,6 +17,7 @@
 // a == a -> 1
 // etc.
 
+#include <cmath>
 #include <cmmc/Analysis/AnalysisPass.hpp>
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
@@ -1219,6 +1220,17 @@ class ArithmeticReduce final : public TransformPass<Function> {
                i1 == i2 && isPowerOf2(static_cast<size_t>(i1)) && cmp == CompareOp::ICmpSignedLessThan) {
                 return builder.makeOp<BinaryInst>(InstructionID::And, v2, makeIntLike(i1 - 1, v2));
             }
+
+            // dangerous!!!
+            // double f2;
+            // if(fsub(oneUse(fsub(any(v1), fp_(f1))), fp_(f2))(matchCtx)) {
+            //     return builder.makeOp<BinaryInst>(InstructionID::FSub, v1, make<ConstantFloatingPoint>(v1->getType(), f1 +
+            //     f2));
+            // }
+            // if(fcmp(cmp, oneUse(fsub(any(v1), fp_(f1))), fp_(f2))(matchCtx)) {
+            //     return builder.makeOp<CompareInst>(InstructionID::FCmp, cmp, v1,
+            //                                        make<ConstantFloatingPoint>(v1->getType(), f1 + f2));
+            // }
 
             return nullptr;
         });

@@ -1,0 +1,6 @@
+float fmadd1(float x, float y, float z) {
+    return x * y + z;
+}
+float fmadd2(float x, float y, float z) {
+    return z + x * y;
+}

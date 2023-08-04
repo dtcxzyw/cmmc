@@ -604,3 +604,8 @@ select_sub_one:
 	cmp r1, #0
 	subne r0, r0, #1
 	bx lr
+.p2align 4
+.globl cutout
+cutout:
+	usat r0, #8, r0
+	bx lr

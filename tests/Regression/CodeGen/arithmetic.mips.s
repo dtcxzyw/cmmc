@@ -707,3 +707,15 @@ select_sub_one:
 	subu $v0, $a0, $t0
 	jr $ra
 	nop
+.p2align 2
+.globl cutout
+cutout:
+	li $t1, 255
+	slt $t2, $t1, $a0
+	move $t0, $a0
+	movn $t0, $t1, $t2
+	slti $t1, $a0, 0
+	movn $t0, $zero, $t1
+	move $v0, $t0
+	jr $ra
+	nop

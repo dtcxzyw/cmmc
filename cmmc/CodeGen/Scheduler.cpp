@@ -26,200 +26,212 @@
 
 CMMC_MIR_NAMESPACE_BEGIN
 
+static void topDownScheduling(MIRBasicBlock& block, std::unordered_map<MIRInst*, uint32_t>& degrees,
+                              std::unordered_map<MIRInst*, std::unordered_set<MIRInst*>>& antiDeps,
+                              const std::unordered_map<const MIRInst*, std::unordered_map<uint32_t, uint32_t>>& renameMap,
+                              std::unordered_map<MIRInst*, int32_t>& rank, const CodeGenContext& ctx, int32_t waitPenalty) {
+    auto& model = ctx.scheduleModel;
+    auto& info = model.getInfo();
+    // top-down scheduling
+    constexpr bool debugSched = false;
+    [[maybe_unused]] auto dumpIssue = [&](const MIRInst& inst) {
+        auto& instInfo = ctx.instInfo.getInstInfo(inst);
+        instInfo.print(std::cerr << "issue ", inst, true);
+        std::cerr << std::endl;
+    };
+    [[maybe_unused]] auto dumpReady = [&](const MIRInst& inst) {
+        auto& instInfo = ctx.instInfo.getInstInfo(inst);
+        instInfo.print(std::cerr << "ready ", inst, true);
+        std::cerr << std::endl;
+    };
+
+    ScheduleState state{ renameMap };
+    MIRInstList newList;
+    std::list<MIRInst*> schedulePlane;
+    if constexpr(debugSched) {
+        block.dump(std::cerr, ctx);
+        std::cerr << "Cycle 0" << std::endl;
+    }
+    for(auto& inst : block.instructions())
+        if(degrees[&inst] == 0) {
+            if constexpr(debugSched)
+                dumpReady(inst);
+            schedulePlane.push_back(&inst);
+        }
+
+    constexpr uint32_t maxBusyCycles = 200;
+    uint32_t busyCycle = 0, cycle = 0;
+    std::unordered_map<MIRInst*, uint32_t> readyTime;
+    while(newList.size() != block.instructions().size()) {
+        std::vector<MIRInst*> newReadyInsts;
+        for(uint32_t idx = 0; idx < info.issueWidth; ++idx) {
+            uint32_t cnt = 0;
+            bool success = false;
+            auto evalRank = [&](MIRInst* inst) {
+                return rank[inst] + static_cast<int32_t>(cycle - readyTime[inst]) * waitPenalty;
+            };
+            schedulePlane.sort([&](MIRInst* lhs, MIRInst* rhs) { return evalRank(lhs) > evalRank(rhs); });
+            while(cnt < schedulePlane.size()) {
+                auto& inst = *schedulePlane.front();
+                auto& scheduleClass = model.getInstScheClass(inst.opcode());
+                schedulePlane.pop_front();
+                if(scheduleClass.schedule(state, inst, ctx.instInfo.getInstInfo(inst))) {
+                    if constexpr(debugSched)
+                        dumpIssue(inst);
+                    newList.push_back(inst);
+
+                    busyCycle = 0;
+                    for(auto v : antiDeps[&inst]) {
+                        if(--degrees[v] == 0) {
+                            // Don't push to schedulePlane here, because there are data/control harzards.
+                            // It should be scheduled in next cycle.
+                            newReadyInsts.push_back(v);
+                        }
+                    }
+                    success = true;
+                    break;
+                }
+                ++cnt;
+                schedulePlane.push_back(&inst);
+            }
+            if(!success)
+                break;
+        }
+        cycle = state.nextCycle();
+        if constexpr(debugSched) {
+            std::cerr << "Cycle " << cycle << std::endl;
+        }
+        ++busyCycle;
+        if(busyCycle > maxBusyCycles) {
+            std::cerr << "Failed to schedule instructions" << std::endl;
+            reportUnreachable(CMMC_LOCATION());
+        }
+
+        for(auto inst : newReadyInsts) {
+            if constexpr(debugSched)
+                dumpReady(*inst);
+            readyTime[inst] = cycle;
+            schedulePlane.push_back(inst);
+        }
+    }
+
+    block.instructions().swap(newList);
+}
+
 static void preRAScheduleBlock(MIRBasicBlock& block, const CodeGenContext& ctx) {
     std::unordered_map<MIRInst*, std::unordered_set<MIRInst*>> antiDeps;
+    std::unordered_map<const MIRInst*, std::unordered_map<uint32_t, uint32_t>> renameMap;
     std::unordered_map<MIRInst*, uint32_t> degrees;
-    std::unordered_map<MIROperand, MIRInst*, MIROperandHasher> lastDef;
-    std::unordered_map<MIROperand, std::vector<MIRInst*>, MIROperandHasher> lastRef;
-    MIRInst *lastSideEffect = nullptr, *lastRename = nullptr, *lastInst = nullptr;
+    std::unordered_map<uint32_t, std::vector<MIRInst*>> lastTouch;
+    std::unordered_map<uint32_t, MIRInst*> lastDef;
     auto addDep = [&](MIRInst* u, MIRInst* v) {
         if(u == v)
             return;
-        if(antiDeps[v].insert(u).second)
+        if(antiDeps[v].insert(u).second) {
             ++degrees[u];
-    };
-    auto isAllocatableType = [&](OperandType type) { return type <= OperandType::Float32; };
-    struct InstScore final {
-        int32_t offset = 0;
-        int32_t weight = 1;
-        int32_t maxSuccWeight = 0;
-        int32_t maxPredWeight = 0;
 
-        [[nodiscard]] int32_t getScore() const {
-            return offset - maxSuccWeight + maxPredWeight;
+            // auto& instInfoU = ctx.instInfo.getInstInfo(*u);
+            // auto& instInfoV = ctx.instInfo.getInstInfo(*v);
+            // instInfoU.print(std::cerr, *u, true);
+            // std::cerr << " -> ";
+            // instInfoV.print(std::cerr, *v, true);
+            // std::cerr << std::endl;
         }
     };
-    std::unordered_map<MIRInst*, InstScore> instScore;
+
+    MIRInst* lastSideEffect = nullptr;
+    MIRInst* lastInOrder = nullptr;
     for(auto& inst : block.instructions()) {
-        if(&inst == &block.instructions().back()) {
-            break;
-        }
         auto& instInfo = ctx.instInfo.getInstInfo(inst);
 
-        auto isRenameInst = [&] {
-            for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
-                if(instInfo.getOperandFlag(idx) & OperandFlagUse) {
-                    auto& op = inst.getOperand(idx);
-                    if(isOperandISAReg(op) && (!ctx.registerInfo || !ctx.registerInfo->isZeroRegister(op.reg())) &&
-                       isAllocatableType(op.type())) {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        };
-        auto isLockInst = [&] {
-            for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
-                if(instInfo.getOperandFlag(idx) & OperandFlagDef) {
-                    auto& op = inst.getOperand(idx);
-                    if(isOperandISAReg(op) && (!ctx.registerInfo || !ctx.registerInfo->isZeroRegister(op.reg())) &&
-                       isAllocatableType(op.type())) {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        };
-
-        if(lastRename)
-            addDep(&inst, lastRename);
-        const auto isRename = isRenameInst();
-        if(isRename) {
-            lastRename = &inst;
-            if(lastSideEffect)
-                addDep(&inst, lastSideEffect);
-        }
-        const auto isLock = isLockInst();
-        if(isLock && lastInst) {
-            addDep(&inst, lastInst);
-        }
-
-        if(requireOneFlag(instInfo.getInstFlag(), InstFlagSideEffect) || isLock) {
-            if(lastSideEffect)
-                addDep(&inst, lastSideEffect);
-            lastSideEffect = &inst;
-        }
-        auto& score = instScore[&inst];
-        if(isRename)
-            score.offset += 10000000;
-        if(isLock)
-            score.offset -= 10000000;
         for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
-            if(instInfo.getOperandFlag(idx) & OperandFlagUse) {
-                auto& op = inst.getOperand(idx);
-                if(isOperandVRegOrISAReg(op)) {
-                    if(auto it = lastDef.find(op); it != lastDef.end()) {
+            auto flag = instInfo.getOperandFlag(idx);
+            auto op = inst.getOperand(idx);
+            if(op.isReg()) {
+                if(isOperandStackObject(op)) {
+                    op = ctx.registerInfo->getStackPointerRegister();
+                    flag = OperandFlagUse;
+                }
+
+                const auto reg = op.reg();
+                // TODO: regRenaming
+                renameMap[&inst][idx] = reg;
+
+                if(flag & OperandFlagUse) {
+                    if(auto it = lastDef.find(reg); it != lastDef.end())
                         addDep(&inst, it->second);
-                    }
-                    lastRef[op].push_back(&inst);
+
+                    lastTouch[reg].push_back(&inst);
                 }
             }
         }
         for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
-            if(instInfo.getOperandFlag(idx) & OperandFlagDef) {
-                auto& op = inst.getOperand(idx);
-                if(isOperandVRegOrISAReg(op)) {
-                    if(auto it = lastRef.find(op); it != lastRef.end()) {
-                        for(auto ref : it->second)
-                            addDep(&inst, ref);
-                    }
-                    lastDef[op] = &inst;
-                    lastRef[op] = { &inst };
+            auto flag = instInfo.getOperandFlag(idx);
+            auto op = inst.getOperand(idx);
+            if(op.isReg()) {
+                if(isOperandStackObject(op))
+                    op = ctx.registerInfo->getStackPointerRegister();
+                const auto reg = op.reg();
+                if(flag & OperandFlagDef) {
+                    for(auto use : lastTouch[reg])
+                        addDep(&inst, use);
+
+                    lastTouch[reg] = { &inst };
+                    lastDef[reg] = &inst;
                 }
             }
         }
-        lastInst = &inst;
+
+        if(lastInOrder) {
+            addDep(&inst, lastInOrder);
+        }
+        if(requireOneFlag(instInfo.getInstFlag(), InstFlagSideEffect)) {
+            if(lastSideEffect) {
+                addDep(&inst, lastSideEffect);
+            }
+            lastSideEffect = &inst;
+            if(requireOneFlag(instInfo.getInstFlag(), InstFlagInOrder | InstFlagCall | InstFlagTerminator)) {
+                for(auto& prevInst : block.instructions()) {
+                    if(&prevInst == &inst)
+                        break;
+                    addDep(&inst, &prevInst);
+                }
+                lastInOrder = &inst;
+            }
+        }
     }
 
-    // calc weight
+    std::unordered_map<MIRInst*, int32_t> rank;
     {
-        auto deg = degrees;
-        std::queue<MIRInst*> q;
-        for(auto& inst : block.instructions()) {
-            if(&inst == &block.instructions().back()) {
-                break;
-            }
-            if(deg[&inst] == 0)
-                q.push(&inst);
-        }
-        while(!q.empty()) {
-            auto u = q.front();
-            q.pop();
-            const auto w = instScore[u].weight;
-
-            for(auto v : antiDeps[u]) {
-                auto& score = instScore[v];
-                score.weight += w;
-                if(--deg[v] == 0)
-                    q.push(v);
-            }
-        }
-
-        for(auto& inst : block.instructions()) {
-            if(&inst == &block.instructions().back()) {
-                break;
-            }
-            auto& score = instScore[&inst];
-            // auto& instInfo = ctx.instInfo.getInstInfo(inst);
-            // instInfo.print(std::cerr, inst, true);
-            // std::cerr << " -> " << score.weight << '\n';
-            for(auto v : antiDeps[&inst]) {
-                auto& sv = instScore[v];
-                score.maxSuccWeight = std::max(score.maxSuccWeight, sv.weight);
-                sv.maxPredWeight = std::max(sv.maxPredWeight, score.weight);
-            }
-        }
+        int32_t idx = 0;
+        for(auto& inst : block.instructions())
+            rank[&inst] = --idx;
+        // auto deg = degrees;
+        // std::queue<MIRInst*> q;
+        // for(auto& inst : block.instructions()) {
+        //     if(deg[&inst] == 0) {
+        //         rank.emplace(&inst, 0);
+        //         q.push(&inst);
+        //     }
+        // }
+        // while(!q.empty()) {
+        //     auto u = q.front();
+        //     q.pop();
+        //     const auto ru = rank[u];
+        //     for(auto v : antiDeps[u]) {
+        //         auto& rv = rank[v];
+        //         rv = std::max(rv, ru + 1);
+        //         if(--deg[v] == 0) {
+        //             q.push(v);
+        //         }
+        //     }
+        // }
     }
 
-    std::priority_queue<std::pair<int32_t, MIRInst*>> q;
-
-    auto dumpEnqueue = [&](MIRInst& inst) {
-        auto& instInfo = ctx.instInfo.getInstInfo(inst);
-        instInfo.print(std::cerr << "enqueue ", inst, true);
-        std::cerr << " with " << instScore.at(&inst).getScore() << std::endl;
-    };
-    auto dumpDequeue = [&](MIRInst& inst, int32_t score) {
-        auto& instInfo = ctx.instInfo.getInstInfo(inst);
-        instInfo.print(std::cerr << "dequeue ", inst, true);
-        std::cerr << " with " << score << std::endl;
-    };
-    CMMC_UNUSED(dumpEnqueue);
-    CMMC_UNUSED(dumpDequeue);
-
-    for(auto& inst : block.instructions()) {
-        if(&inst == &block.instructions().back()) {
-            break;
-        }
-        if(degrees[&inst] == 0) {
-            // dumpEnqueue(inst);
-            q.emplace(instScore.at(&inst).getScore(), &inst);
-        }
-    }
-
-    MIRInstList newInsts;
-    while(!q.empty()) {
-        auto top = q.top().second;
-        // dumpDequeue(*top, q.top().first);
-        q.pop();
-
-        newInsts.push_back(*top);
-
-        for(auto succ : antiDeps[top]) {
-            if(--degrees[succ] == 0) {
-                // dumpEnqueue(*succ);
-                q.emplace(instScore[succ].getScore(), succ);
-            }
-        }
-    }
-
-    newInsts.push_back(block.instructions().back());
-
-    assert(newInsts.size() == block.instructions().size());
-    newInsts.swap(block.instructions());
+    topDownScheduling(block, degrees, antiDeps, renameMap, rank, ctx, 2);
 }
 
 void preRASchedule(MIRFunction& func, const CodeGenContext& ctx) {
-    // FIXME
     return;
     // func.dump(std::cerr, ctx);
     for(auto& block : func.blocks()) {
@@ -228,8 +240,7 @@ void preRASchedule(MIRFunction& func, const CodeGenContext& ctx) {
     // func.dump(std::cerr, ctx);
 }
 
-static void postRAScheduleBlock(MIRBasicBlock& block, const TargetScheduleModel& model, const MicroarchitectureInfo& info,
-                                const CodeGenContext& ctx) {
+static void postRAScheduleBlock(MIRBasicBlock& block, const CodeGenContext& ctx) {
     // build DAG & rename map
     std::unordered_map<const MIRInst*, std::unordered_map<uint32_t, uint32_t>> renameMap;
     std::unordered_map<MIRInst*, std::unordered_set<MIRInst*>> antiDeps;
@@ -314,34 +325,7 @@ static void postRAScheduleBlock(MIRBasicBlock& block, const TargetScheduleModel&
         }
     }
 
-    // top-down scheduling
-    constexpr bool debugSched = false;
-    [[maybe_unused]] auto dumpIssue = [&](const MIRInst& inst) {
-        auto& instInfo = ctx.instInfo.getInstInfo(inst);
-        instInfo.print(std::cerr << "issue ", inst, true);
-        std::cerr << std::endl;
-    };
-    [[maybe_unused]] auto dumpReady = [&](const MIRInst& inst) {
-        auto& instInfo = ctx.instInfo.getInstInfo(inst);
-        instInfo.print(std::cerr << "ready ", inst, true);
-        std::cerr << std::endl;
-    };
-
-    ScheduleState state{ renameMap };
-    MIRInstList newList;
-    std::list<MIRInst*> schedulePlane;
-    if constexpr(debugSched) {
-        block.dump(std::cerr, ctx);
-        std::cerr << "Cycle 0" << std::endl;
-    }
-    for(auto& inst : block.instructions())
-        if(degrees[&inst] == 0) {
-            if constexpr(debugSched)
-                dumpReady(inst);
-            schedulePlane.push_back(&inst);
-        }
-
-    std::unordered_map<MIRInst*, uint32_t> rank;
+    std::unordered_map<MIRInst*, int32_t> rank;
     {
         std::unordered_map<MIRInst*, std::unordered_set<MIRInst*>> deps;
         std::unordered_map<MIRInst*, uint32_t> deg;
@@ -372,68 +356,16 @@ static void postRAScheduleBlock(MIRBasicBlock& block, const TargetScheduleModel&
         }
     }
 
-    constexpr uint32_t maxBusyCycles = 200;
-    uint32_t busyCycle = 0;
-    while(newList.size() != block.instructions().size()) {
-        std::vector<MIRInst*> newReadyInsts;
-        for(uint32_t idx = 0; idx < info.issueWidth; ++idx) {
-            uint32_t cnt = 0;
-            bool success = false;
-            schedulePlane.sort([&](MIRInst* lhs, MIRInst* rhs) { return rank[lhs] > rank[rhs]; });
-            while(cnt < schedulePlane.size()) {
-                auto& inst = *schedulePlane.front();
-                auto& scheduleClass = model.getInstScheClass(inst.opcode());
-                schedulePlane.pop_front();
-                if(scheduleClass.schedule(state, inst, ctx.instInfo.getInstInfo(inst))) {
-                    if constexpr(debugSched)
-                        dumpIssue(inst);
-                    newList.push_back(inst);
-
-                    busyCycle = 0;
-                    for(auto v : antiDeps[&inst]) {
-                        if(--degrees[v] == 0) {
-                            // Don't push to schedulePlane here, because there are data/control harzards.
-                            // It should be scheduled in next cycle.
-                            newReadyInsts.push_back(v);
-                        }
-                    }
-                    success = true;
-                    break;
-                }
-                ++cnt;
-                schedulePlane.push_back(&inst);
-            }
-            if(!success)
-                break;
-        }
-        [[maybe_unused]] auto cycle = state.nextCycle();
-        if constexpr(debugSched) {
-            std::cerr << "Cycle " << cycle << std::endl;
-        }
-        ++busyCycle;
-        if(busyCycle > maxBusyCycles) {
-            std::cerr << "Failed to schedule instructions" << std::endl;
-            reportUnreachable(CMMC_LOCATION());
-        }
-
-        for(auto inst : newReadyInsts) {
-            if constexpr(debugSched)
-                dumpReady(*inst);
-            schedulePlane.push_back(inst);
-        }
-    }
-
-    block.instructions().swap(newList);
+    topDownScheduling(block, degrees, antiDeps, renameMap, rank, ctx, 0);
 }
 
 void postRASchedule(MIRFunction& func, const CodeGenContext& ctx) {
-    auto& model = ctx.scheduleModel;
-    auto& info = model.getInfo();
+    auto& info = ctx.scheduleModel.getInfo();
     if(!info.enablePostRAScheduling)
         return;
 
     for(auto& block : func.blocks()) {
-        postRAScheduleBlock(*block, model, info, ctx);
+        postRAScheduleBlock(*block, ctx);
     }
 }
 

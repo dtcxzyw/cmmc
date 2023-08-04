@@ -834,6 +834,19 @@ static bool legalizeInst(MIRInst& inst, ISelContext& ctx) {
                 imm2reg(shamt);
             break;
         }
+        // case InstFAdd: {
+        //     auto& lhs = inst.getOperand(1);
+        //     auto& rhs = inst.getOperand(2);
+        //     auto isFMul = [&](const MIROperand& val) {
+        //         auto def = ctx.lookupDef(val);
+        //         return def && def->opcode() == InstFMul;
+        //     };
+        //     if(isFMul(rhs) && !isFMul(lhs)) {
+        //         std::swap(lhs, rhs);
+        //         modified = true;
+        //     }
+        //     break;
+        // }
         default:
             break;
     }
@@ -978,6 +991,18 @@ void ARMISelInfo::preRALegalizeInst(const InstLegalizeContext& ctx) const {
             auto cf = MIROperand::asImm(inst.opcode() == PseudoSMin ? CondField::GE : CondField::LE, OperandType::CondField);
             *ctx.iter =
                 MIRInst{ MOV_Cond }.setOperand<0>(cf).setOperand<1>(dst).setOperand<2>(op2).setOperand<3>(cc).setOperand<4>(dst);
+            break;
+        }
+        case PseudoFMA: {
+            auto dst = inst.getOperand(0);
+            auto x = inst.getOperand(1);
+            auto y = inst.getOperand(2);
+            auto z = inst.getOperand(3);
+            auto op = inst.getOperand(4);
+            ctx.instructions.insert(ctx.iter, MIRInst{ VMOV }.setOperand<0>(dst).setOperand<1>(z));
+            ctx.inst =
+                MIRInst{ static_cast<uint32_t>(op.imm()) }.setOperand<0>(dst).setOperand<1>(x).setOperand<2>(y).setOperand<3>(
+                    dst);
             break;
         }
         default:

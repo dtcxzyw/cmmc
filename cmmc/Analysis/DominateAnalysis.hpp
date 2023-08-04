@@ -51,6 +51,7 @@ public:
     DomTreeNode::NodeIndex getIndex(Block* block) const;
     bool reachable(Block* block) const;
     Block* parent(Block* node) const;
+    DomTreeNode::NodeIndex subTreeSize(Block* node) const;
     const std::vector<Block*>& blocks() const {
         return mOrder;
     }

@@ -624,3 +624,10 @@ select_sub_one:
 	sltu a2, zero, a1
 	subw a0, a0, a2
 	ret
+.p2align 2
+.globl cutout
+cutout:
+	li a2, 255
+	min a1, a0, a2
+	max a0, a1, zero
+	ret

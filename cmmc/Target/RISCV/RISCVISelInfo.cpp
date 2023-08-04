@@ -701,6 +701,19 @@ static bool legalizeInst(MIRInst& inst, ISelContext& ctx) {
             imm2reg(cond);
             break;
         }
+        // case InstFAdd: {
+        //     auto& lhs = inst.getOperand(1);
+        //     auto& rhs = inst.getOperand(2);
+        //     auto isFMul = [&](const MIROperand& val) {
+        //         auto def = ctx.lookupDef(val);
+        //         return def && def->opcode() == InstFMul;
+        //     };
+        //     if(isFMul(rhs) && !isFMul(lhs)) {
+        //         std::swap(lhs, rhs);
+        //         modified = true;
+        //     }
+        //     break;
+        // }
         default:
             break;
     }
