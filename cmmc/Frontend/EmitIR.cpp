@@ -1717,7 +1717,7 @@ void ArrayInitializer::shapeAwareEmitDynamic(EmitContext& ctx, Value* storage, c
             }
         } else {
             const auto beg = getAddress(lastNotAssigned);
-            const auto ptr = beg->getType()->isSame(ptrType) ? beg : ctx.makeOp<PtrCastInst>(beg, ptrType);
+            const auto ptr = ctx.makeOp<PtrCastInst>(beg, ptrType);
             assert(totalSize % memsetAtomicSize == 0);
             const auto size = ConstantInteger::get(ctx.getIndexType(), totalSize / memsetAtomicSize);
             ctx.makeOp<FunctionCallInst>(memsetFunc, std::vector<Value*>{ ptr, size });

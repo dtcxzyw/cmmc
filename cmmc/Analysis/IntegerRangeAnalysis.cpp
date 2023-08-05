@@ -49,8 +49,10 @@ IntegerRange::IntegerRange(ConstantInteger* integer) {
 
 IntegerRange IntegerRangeAnalysisResult::query(Value* val, const DominateAnalysisResult& dom, Instruction* ctx,
                                                uint32_t depth) const {
-    if(auto cint = dynamic_cast<ConstantInteger*>(val))
-        return IntegerRange(cint);
+    if(auto cint = dynamic_cast<ConstantInteger*>(val)) {
+        if(cint->getType()->as<IntegerType>()->getBitwidth() == 32)
+            return IntegerRange(cint);
+    }
     IntegerRange range;
     if(auto iter = mRanges.find(val); iter != mRanges.cend()) {
         range = iter->second;

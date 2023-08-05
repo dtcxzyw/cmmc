@@ -53,10 +53,13 @@ public:
             for(auto& inst : block->instructions()) {
                 if(inst.getInstID() == InstructionID::PtrCast && inst.getType()->isSame(inst.getOperand(0)->getType())) {
                     const auto val = inst.getOperand(0);
-                    if(!val->is<GlobalVariable>()) {
-                        inst.replaceWith(val);
-                        modified = true;
+                    if(val->is<GlobalVariable>())
+                        continue;
+                    if(val->is<GetElementPtrInst>() && val->as<Instruction>()->operands().size() > 3) {
+                        continue;
                     }
+                    inst.replaceWith(val);
+                    modified = true;
                 }
             }
         }

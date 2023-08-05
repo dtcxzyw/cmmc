@@ -72,15 +72,12 @@ struct KnownRelations final {
     bool update(const KnownRelations& rhs) {
         auto old = *this;
         if(rhs.equal != KnownRelation::Unknown && equal != rhs.equal) {
-            assert(equal == KnownRelation::Unknown);
             equal = rhs.equal;
         }
         if(rhs.lessThan != KnownRelation::Unknown && lessThan != rhs.lessThan) {
-            assert(lessThan == KnownRelation::Unknown);
             lessThan = rhs.lessThan;
         }
         if(rhs.greaterThan != KnownRelation::Unknown && greaterThan != rhs.greaterThan) {
-            assert(greaterThan == KnownRelation::Unknown);
             greaterThan = rhs.greaterThan;
         }
         return !(old == *this);

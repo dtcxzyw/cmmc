@@ -129,10 +129,10 @@ label2:
 	str r5, [r0, #244]
 	str r5, [r0, #248]
 	str r5, [r0, #252]
-	bge label117
+	bge label118
 	add r0, r0, #256
 	b label2
-label117:
+label118:
 	add r1, r2, #64
 	mov r8, #1
 	mov r5, r8
@@ -146,7 +146,7 @@ label10:
 	add r6, r3, #4
 	mov r8, #1
 	cmp r8, #14
-	bge label131
+	bge label132
 .p2align 4
 label15:
 	sub r9, r8, #1
@@ -165,7 +165,7 @@ label15:
 	str r10, [r7, #0]
 	add r7, r7, #4
 	blt label15
-	b label265
+	b label266
 .p2align 4
 label16:
 	ldr r9, [r3, r9, lsl #2]
@@ -191,7 +191,7 @@ label19:
 	mov r0, r5
 	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
 .p2align 4
-label265:
+label266:
 	add r5, r5, #1
 	add r1, r1, #64
 	cmp r5, #16
@@ -199,7 +199,7 @@ label265:
 	sub r3, r1, #64
 	blt label10
 	b label19
-label131:
+label132:
 	add r5, r5, #1
 	add r1, r1, #64
 	cmp r5, #16

@@ -164,10 +164,10 @@ label7:
 	cmp r5, r6
 	str r0, [r1, #8]
 	str r0, [r1, #12]
-	bge label151
+	bge label152
 	add r1, r1, #16
 	b label7
-label151:
+label152:
 	add r1, r3, r5, lsl #2
 .p2align 4
 label12:
