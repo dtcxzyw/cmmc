@@ -15,8 +15,10 @@
 #include <algorithm>
 #include <array>
 #include <atomic>
+#include <cerrno>
 #include <csignal>
 #include <cstdint>
+#include <cstdio>
 #include <linux/futex.h>
 #include <sched.h>
 #include <sys/mman.h>
@@ -25,77 +27,92 @@
 #include <unistd.h>
 
 constexpr uint32_t maxThreads = 4;
-constexpr auto stackSize = 4 * 1024;  // 4KB
+constexpr auto stackSize = 1024 * 1024;  // 1MB
+constexpr auto threadCreationFlags = CLONE_VM | CLONE_FS | CLONE_FILES | CLONE_SIGHAND | CLONE_THREAD | CLONE_SYSVSEM;
 using CmmcForLoop = void (*)(int32_t beg, int32_t end, void* payload);
 
-class Futex final {
-    std::atomic_uint32_t storage;
+namespace {
+    class Futex final {
+        std::atomic_uint32_t storage;
 
-public:
-    void wait() {
-        uint32_t one = 1;
-        while(!storage.compare_exchange_strong(one, 0)) {
-            one = 1;
-            syscall(SYS_futex, &storage, FUTEX_WAIT, 0, nullptr, nullptr, 0);
+    public:
+        void wait() {
+            uint32_t one = 1;
+            while(!storage.compare_exchange_strong(one, 0)) {
+                one = 1;
+                syscall(SYS_futex, reinterpret_cast<long>(&storage), FUTEX_WAIT, 0, nullptr, nullptr, 0);
+            }
         }
-    }
 
-    void post() {
-        uint32_t zero = 0;
-        if(storage.compare_exchange_strong(zero, 1)) {
-            syscall(SYS_futex, &storage, FUTEX_WAKE, 1, nullptr, nullptr, 0);
+        void post() {
+            uint32_t zero = 0;
+            if(storage.compare_exchange_strong(zero, 1)) {
+                syscall(SYS_futex, reinterpret_cast<long>(&storage), FUTEX_WAKE, 1, nullptr, nullptr, 0);
+            }
         }
+    };
+
+    struct Worker final {
+        pid_t pid;
+        void* stack;
+        std::atomic_uint32_t core;
+        std::atomic_uint32_t run;
+        std::atomic<CmmcForLoop> func;
+        std::atomic_int32_t beg;
+        std::atomic_int32_t end;
+        std::atomic<void*> payload;
+
+        Futex ready, done;
+    };
+    std::array<Worker, maxThreads> workers;  // NOLINT
+
+    static_assert(std::atomic_uint32_t::is_always_lock_free);
+    static_assert(std::atomic_int32_t::is_always_lock_free);
+    static_assert(std::atomic<void*>::is_always_lock_free);
+    static_assert(std::atomic<CmmcForLoop>::is_always_lock_free);
+
+    int cmmcWorker(void* ptr) {
+        auto& worker = *static_cast<Worker*>(ptr);
+        {
+            cpu_set_t set;
+            CPU_SET(worker.core, &set);
+            auto pid = getpid();
+            sched_setaffinity(pid, sizeof(set), &set);
+        }
+        while(worker.run) {
+            // wait for task
+            worker.ready.wait();
+            if(!worker.run)
+                break;
+            // exec task
+            worker.func.load()(worker.beg.load(), worker.end.load(), worker.payload.load());
+            // signal completion
+            worker.done.post();
+        }
+        return 0;
     }
-};
-
-struct Worker final {
-    pid_t pid;
-    void* stack;
-    std::atomic_uint32_t run;
-    std::atomic<CmmcForLoop> func;
-    std::atomic_int32_t beg;
-    std::atomic_int32_t end;
-    std::atomic<void*> payload;
-
-    Futex ready, done;
-};
-std::array<Worker, maxThreads> workers;
-
-static_assert(std::atomic_uint32_t::is_always_lock_free);
-static_assert(std::atomic<void*>::is_always_lock_free);
-
-static int cmmc_worker(void* ptr) {
-    auto& worker = *static_cast<Worker*>(ptr);
-    while(worker.run) {
-        // wait for task
-        worker.ready.wait();
-        if(!worker.run)
-            break;
-        // exec task
-        worker.func.load()(worker.beg.load(), worker.end.load(), worker.payload.load());
-        // signal completion
-        worker.done.post();
-    }
-    return 0;
-}
+}  // namespace
 
 extern "C" {
-__attribute((constructor)) void cmmc_init_rt() {
+__attribute((constructor)) void cmmcInitRuntime() {
     for(uint32_t i = 0; i < maxThreads; ++i) {
         auto& worker = workers[i];
         worker.run = 1;
         worker.stack = mmap(nullptr, stackSize, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_STACK, -1, 0);
-        worker.pid = clone(cmmc_worker, static_cast<uint8_t*>(worker.stack) + stackSize, CLONE_VM | SIGCHLD, &worker);
+        worker.core = i;
+        worker.pid = clone(cmmcWorker, static_cast<uint8_t*>(worker.stack) + stackSize, threadCreationFlags, &worker);
     }
 }
-__attribute((destructor)) void cmmc_uninit_rt() {
+__attribute((destructor)) void cmmcUninitRuntime() {
     for(auto& worker : workers) {
         worker.run = 0;
         worker.ready.post();
         waitpid(worker.pid, nullptr, 0);
     }
+    for(auto& worker : workers)
+        munmap(worker.stack, stackSize);
 }
-void cmmc_parallel_for(int32_t beg, int32_t end, CmmcForLoop func, void* payload) {
+void cmmcParallelFor(int32_t beg, int32_t end, CmmcForLoop func, void* payload) {
     if(end <= beg)
         return;
     const auto size = static_cast<uint32_t>(end - beg);
@@ -112,7 +129,7 @@ void cmmc_parallel_for(int32_t beg, int32_t end, CmmcForLoop func, void* payload
         if(i == maxThreads - 1)
             subEnd = end;
         // cmmc_exec_for(subBeg, subEnd, func, payload);
-        auto& worker = workers[i];
+        auto& worker = workers[static_cast<size_t>(i)];
         worker.func = func;
         worker.beg = subBeg;
         worker.end = subEnd;
@@ -120,8 +137,8 @@ void cmmc_parallel_for(int32_t beg, int32_t end, CmmcForLoop func, void* payload
         // signal worker
         worker.ready.post();
     }
-    for(int32_t i = 0; i < static_cast<int32_t>(maxThreads); ++i) {
-        workers[i].done.wait();
+    for(auto& worker : workers) {
+        worker.done.wait();
     }
 }
 }

@@ -478,6 +478,7 @@ std::shared_ptr<PassManager<Module>> PassManager<Module>::get(OptimizationLevel 
                 "CallEliminate",       //
                 "LoadEliminate",       //
                 "FuncInlining",        //
+                "LoopBodyExtract"      //
             }))
             perFuncWithInline->addPass(pass);
         perFuncWithInline->addPass(perFunc);
