@@ -111,6 +111,7 @@ endif()
 file(GLOB CMMC_SRC cmmc/**/*.cpp cmmc/Transforms/**/*.cpp cmmc/Target/**/*.cpp)
 list(FILTER CMMC_SRC EXCLUDE REGEX LLVM[.]cpp)
 list(FILTER CMMC_SRC EXCLUDE REGEX LLVMOrcJIT[.]cpp)
+list(FILTER CMMC_SRC EXCLUDE REGEX cmmc_sysy_rt[.]cpp)
 if(${LLVM_FOUND})
   add_compile_definitions(CMMC_WITH_LLVM_SUPPORT)
   set(CMMC_SRC_LLVM cmmc/Conversion/LLVM.cpp cmmc/ExecutionEngine/LLVMOrcJIT.cpp)
@@ -164,6 +165,7 @@ COMMAND ${CMAKE_COMMAND} -E rm -rf ${CMMC_EDUCG_SUBMIT_DIR}/cmmc/Conversion/ ${C
 COMMAND ${CMAKE_COMMAND} -E rm -rf ${CMMC_EDUCG_SUBMIT_DIR}/cmmc/Transforms/Verify.cpp
 COMMAND ${CMAKE_COMMAND} -E rm -rf ${CMMC_EDUCG_SUBMIT_DIR}/cmmc/Support/Deterministic.cpp
 COMMAND ${CMAKE_COMMAND} -E rm -rf ${CMMC_EDUCG_SUBMIT_DIR}/cmmc/Support/mimalloc
+COMMAND ${CMAKE_COMMAND} -E rm -rf ${CMMC_EDUCG_SUBMIT_DIR}/cmmc/Runtime/
 COMMAND ${CMAKE_COMMAND} -E rm -rf ${CMMC_EDUCG_SUBMIT_DIR}/MIPS ${CMMC_EDUCG_SUBMIT_DIR}/TAC
 COMMAND ${CMAKE_COMMAND} -E rm -rf ${CMMC_EDUCG_SUBMIT_DIR}/cmmc/Target/LLVM ${CMMC_EDUCG_SUBMIT_DIR}/cmmc/Target/MIPS ${CMMC_EDUCG_SUBMIT_DIR}/cmmc/Target/Sim ${CMMC_EDUCG_SUBMIT_DIR}/cmmc/Target/TAC ${CMMC_EDUCG_SUBMIT_DIR}/cmmc/Target/Old ${CMMC_EDUCG_SUBMIT_DIR}/cmmc/Target/Template ${CMMC_EDUCG_SUBMIT_DIR}/cmmc/Target/Generic
 COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_LIST_DIR}/educg/cmmc_header_fix.py ${CMMC_EDUCG_SUBMIT_DIR}
