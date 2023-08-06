@@ -60,6 +60,11 @@
       "parent": "3ef1519d1e0426512f9d470691a7b4f61bb90e01",
       "time": "2023-07-29 16:39:03 +0800"
     },
+    "10979d71158b0e3f6f09c7fc7f05dd6276c1b66e": {
+      "message": "fix(runtime): fix syscall",
+      "parent": "c2f8e6499dfdbb83ab2ed8496a5809f08d6cb155",
+      "time": "2023-08-07 01:32:14 +0800"
+    },
     "113483ade1c34ea82f3db51a354e1176dad083e4": {
       "message": "feat(codegen): remove scratch register for rv/mips",
       "parent": "a398fc69ea29911ee35d3ef481e077fc10e79317",
@@ -85,6 +90,11 @@
       "parent": "8a4d1036a3eecea8e3fbd9346076680e12e3a425",
       "time": "2023-07-06 19:29:22 +0800"
     },
+    "15eb8e80d69cabab7affdafb99cc2cb43e010416": {
+      "message": "feat(transform): add modopt",
+      "parent": "10979d71158b0e3f6f09c7fc7f05dd6276c1b66e",
+      "time": "2023-08-07 02:41:47 +0800"
+    },
     "1654538e58af217874fbe577dbcbb7be8c2d6b5d": {
       "message": "feat(transform): add intrinsic fabs",
       "parent": "7c2223de642e44e968c41c21da9c9915d2339e8f",
@@ -104,6 +114,11 @@
       "message": "feat(codegen): do post-RA scheduling after CFG simplification",
       "parent": "c9c373ab7eefd99835ddc5441c452517ef6c17ad",
       "time": "2023-07-07 00:43:43 +0800"
+    },
+    "1bf06c34af35d5e8f3ce8e4b5323dc24682f6019": {
+      "message": "fix(transform): fix SROA",
+      "parent": "359ba93c2bef3d49fe84792d782098eeeae6ec07",
+      "time": "2023-08-06 02:03:42 +0800"
     },
     "1c8acc1c21e3b23e27da33f663e1f7c2e06fbb42": {
       "message": "feat(codegen): opt tail dup",
@@ -845,6 +860,11 @@
       "parent": "df7551af60523f1ec1eb36e92ae19c1c45386d44",
       "time": "2023-07-07 20:59:58 +0800"
     },
+    "c2f8e6499dfdbb83ab2ed8496a5809f08d6cb155": {
+      "message": "feat(runtime): add runtime for threading",
+      "parent": "1bf06c34af35d5e8f3ce8e4b5323dc24682f6019",
+      "time": "2023-08-06 21:04:54 +0800"
+    },
     "c3882abda8d58101011908f2fdab66ed09ae2093": {
       "message": "feat(transform): add modulo opt",
       "parent": "62ce6e90349d4d8d7b262a67b7f0f7f59d071607",
@@ -1030,6 +1050,11 @@
       "parent": "00e6cd2b13e3b99ff19815f49db801e9cc1d7db7",
       "time": "2023-07-03 22:26:57 +0800"
     },
+    "e7cd8719f78bec7d1916df3c060ff95f0c04246b": {
+      "message": "feat(transform): gernrealize loop rotating",
+      "parent": "15eb8e80d69cabab7affdafb99cc2cb43e010416",
+      "time": "2023-08-07 04:34:15 +0800"
+    },
     "e87901f1931b3bbb5175bd3035309c5db03280ad": {
       "message": "feat(transform): improve cond merge",
       "parent": "3afb7cdcd5d524ef12d5c86589ed479a9c2a8bd0",
@@ -1101,5 +1126,5 @@
       "time": "2023-07-06 01:05:50 +0800"
     }
   },
-  "head": "359ba93c2bef3d49fe84792d782098eeeae6ec07"
+  "head": "e7cd8719f78bec7d1916df3c060ff95f0c04246b"
 }
