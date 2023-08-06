@@ -254,36 +254,64 @@ class ModuloOpt final : public TransformPass<Function> {
                     } else {
                         const auto remRange = IntegerRange{}.srem(range.query(rem, dom, &inst, depth));
                         const auto incRange = range.query(inc, dom, &inst, depth);
-                        if(!(remRange + remRange).isNoSignedOverflow() || !incRange.isPositive())
+                        if(!incRange.isPositive())
                             continue;
 
-                        // O(log(n))
-                        const auto tripCount = builder.makeOp<BinaryInst>(InstructionID::Sub, end, initial);
-                        // always positive
-                        const auto a = builder.makeOp<BinaryInst>(InstructionID::SRem, tripCount, rem);
-                        intmax_t i1;
-                        if(int_(i1)(MatchContext<Value>{ inc })) {
-                            assert(i1 > 0);
-                            Value* res = ConstantInteger::get(inst.getType(), 0);
-                            Value* add = a;
-                            const auto one = ConstantInteger::get(inst.getType(), 1);
-                            while(true) {
-                                if(i1 & 1) {
-                                    res = builder.makeOp<BinaryInst>(InstructionID::Add, add, res);
-                                    res = builder.makeOp<BinaryInst>(InstructionID::SRem, res, rem);
+                        if((remRange + remRange).isNoSignedOverflow()) {
+                            // O(log(n))
+                            const auto tripCount = builder.makeOp<BinaryInst>(InstructionID::Sub, end, initial);
+                            // always positive
+                            const auto a = builder.makeOp<BinaryInst>(InstructionID::SRem, tripCount, rem);
+                            intmax_t i1;
+                            if(int_(i1)(MatchContext<Value>{ inc })) {
+                                assert(i1 > 0);
+                                Value* res = ConstantInteger::get(inst.getType(), 0);
+                                Value* add = a;
+                                const auto one = ConstantInteger::get(inst.getType(), 1);
+                                while(true) {
+                                    if(i1 & 1) {
+                                        res = builder.makeOp<BinaryInst>(InstructionID::Add, add, res);
+                                        res = builder.makeOp<BinaryInst>(InstructionID::SRem, res, rem);
+                                    }
+                                    i1 >>= 1;
+                                    if(i1) {
+                                        add = builder.makeOp<BinaryInst>(InstructionID::Shl, add, one);
+                                        add = builder.makeOp<BinaryInst>(InstructionID::SRem, add, rem);
+                                    } else
+                                        break;
                                 }
-                                i1 >>= 1;
-                                if(i1) {
-                                    add = builder.makeOp<BinaryInst>(InstructionID::Shl, add, one);
-                                    add = builder.makeOp<BinaryInst>(InstructionID::SRem, add, rem);
-                                } else
-                                    break;
+                                inst.replaceWith(res);
+                            } else {
+                                const auto func = getMulMod32(mod);
+                                const auto call = builder.makeOp<FunctionCallInst>(func, std::vector<Value*>{ a, inc, rem });
+                                inst.replaceWith(call);
                             }
-                            inst.replaceWith(res);
                         } else {
-                            const auto func = getMulMod32(mod);
-                            const auto call = builder.makeOp<FunctionCallInst>(func, std::vector<Value*>{ a, inc, rem });
-                            inst.replaceWith(call);
+                            // O(log(n))
+                            intmax_t i1;
+                            if(int_(i1)(MatchContext<Value>{ inc })) {
+                                const auto tripCount = builder.makeOp<BinaryInst>(InstructionID::Sub, end, initial);
+                                // always positive
+                                const auto a = builder.makeOp<BinaryInst>(InstructionID::SRem, tripCount, rem);
+                                assert(i1 > 0);
+                                Value* res = ConstantInteger::get(inst.getType(), 0);
+                                Value* add = a;
+                                const auto one = ConstantInteger::get(inst.getType(), 1);
+                                while(true) {
+                                    if(i1 & 1) {
+                                        res = builder.makeOp<BinaryInst>(InstructionID::Add, add, res);
+                                        res = builder.makeOp<BinaryInst>(InstructionID::URem, res, rem);
+                                    }
+                                    i1 >>= 1;
+                                    if(i1) {
+                                        add = builder.makeOp<BinaryInst>(InstructionID::Shl, add, one);
+                                        add = builder.makeOp<BinaryInst>(InstructionID::URem, add, rem);
+                                    } else
+                                        break;
+                                }
+                                inst.replaceWith(res);
+                            } else
+                                continue;
                         }
                         modified = true;
                     }
