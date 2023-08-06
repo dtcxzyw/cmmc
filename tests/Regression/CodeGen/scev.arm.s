@@ -11,16 +11,16 @@ foo4:
 	cmp r1, #0
 	ble label24
 	cmp r1, #4
-	ble label32
+	ble label3
 	sub r3, r1, #4
 	sub r5, r1, #20
 	cmp r3, #16
-	ble label4
+	ble label10
 	mov r2, r0
 	mov r4, #0
 	mov r6, r4
 .p2align 4
-label12:
+label18:
 	str r4, [r2, #0]
 	add r7, r4, #4
 	add r6, r6, #16
@@ -55,12 +55,28 @@ label12:
 	add r7, r4, #60
 	add r4, r4, #64
 	str r7, [r2, #60]
-	ble label16
+	ble label96
 	add r2, r2, #64
-	b label12
-label16:
-	add r2, r0, r6, lsl #2
-label5:
+	b label18
+label3:
+	mov r2, #0
+	mov r3, r2
+label4:
+	str r2, [r0, #0]
+	add r3, r3, #1
+	add r2, r2, #4
+	cmp r1, r3
+	ble label24
+	add r0, r0, #4
+	b label4
+label24:
+	pop { r4, r5, r6, r7 }
+	bx lr
+label10:
+	mov r2, r0
+	mov r6, #0
+	mov r4, r6
+label11:
 	str r4, [r2, #0]
 	add r5, r4, #4
 	add r6, r6, #4
@@ -71,30 +87,14 @@ label5:
 	add r5, r4, #12
 	add r4, r4, #16
 	str r5, [r2, #12]
-	ble label9
+	ble label15
 	add r2, r2, #16
-	b label5
-label9:
+	b label11
+label15:
 	add r0, r0, r6, lsl #2
 	mov r2, r4
 	mov r3, r6
-label19:
-	str r2, [r0, #0]
-	add r3, r3, #1
-	add r2, r2, #4
-	cmp r1, r3
-	ble label24
-	add r0, r0, #4
-	b label19
-label24:
-	pop { r4, r5, r6, r7 }
-	bx lr
-label4:
-	mov r2, r0
-	mov r6, #0
-	mov r4, r6
-	b label5
-label32:
-	mov r2, #0
-	mov r3, r2
-	b label19
+	b label4
+label96:
+	add r2, r0, r6, lsl #2
+	b label11

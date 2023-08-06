@@ -13,6 +13,8 @@
 */
 
 #pragma once
+#include <cmmc/Analysis/CFGAnalysis.hpp>
+#include <cmmc/Analysis/DominateAnalysis.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/Function.hpp>
 #include <cmmc/IR/IRBuilder.hpp>
@@ -40,5 +42,7 @@ bool hasSamePhiValue(Block* target, Block* sourceLhs, Block* sourceRhs);
 bool removePhi(Block* source, Block* target);
 void applyForSuccessors(BranchInst* branch, const std::function<void(Block*&)>& functor);
 uint32_t estimateBlockSize(Block* block, bool dynamic);
+bool collectLoopBody(Block* header, Block* latch, const DominateAnalysisResult& dom, const CFGAnalysisResult& cfg,
+                     std::unordered_set<Block*>& body);
 
 CMMC_NAMESPACE_END

@@ -163,9 +163,9 @@ internal func @takFP(f32 %x, f32 %y, f32 %z) -> f32 { NoMemoryRead NoMemoryWrite
   ^0:
     ubr ^entry;
   ^entry:
-    f32 %1 = phi [^0, f32 %z] [^b2, f32 %2] [^if.then3, f32 %42];
-    f32 %2 = phi [^0, f32 %y] [^b2, f32 %30] [^if.then3, f32 %30];
-    f32 %3 = phi [^0, f32 %x] [^b2, f32 %17] [^if.then3, f32 %17];
+    f32 %1 = phi [^0, f32 %z] [^if.then3, f32 %2] [^if.then4, f32 %42];
+    f32 %2 = phi [^0, f32 %y] [^if.then3, f32 %30] [^if.then4, f32 %30];
+    f32 %3 = phi [^0, f32 %x] [^if.then3, f32 %17] [^if.then4, f32 %17];
     i1 %4 = fcmp olt f32 %2, f32 %3;
     cbr i1 %4(prob = 0.5), ^if.then, ^b;
   ^if.then:
@@ -190,7 +190,7 @@ internal func @takFP(f32 %x, f32 %y, f32 %z) -> f32 { NoMemoryRead NoMemoryWrite
     f32 %17 = phi [^if.then, f32 %1] [^if.then1, f32 %16];
     f32 %18 = fsub f32 %2, f32 1;
     i1 %19 = fcmp olt f32 %1, f32 %18;
-    cbr i1 %19(prob = 0.5), ^if.then2, ^b2;
+    cbr i1 %19(prob = 0.5), ^if.then2, ^if.then3;
   ^if.then2:
     f32 %20 = phi [^b1, f32 %18] [^if.then2, f32 %24];
     f32 %21 = phi [^b1, f32 %1] [^if.then2, f32 %26];
@@ -202,16 +202,16 @@ internal func @takFP(f32 %x, f32 %y, f32 %z) -> f32 { NoMemoryRead NoMemoryWrite
     i1 %27 = fcmp olt f32 %26, f32 %24;
     f32 %28 = fsub f32 %22, f32 1;
     f32 %29 = call (f32, f32, f32) -> f32 @takFP(f32 %28, f32 %20, f32 %21);
-    cbr i1 %27(prob = 0.5), ^if.then2, ^b2;
-  ^b2:
+    cbr i1 %27(prob = 0.5), ^if.then2, ^if.then3;
+  ^if.then3:
     f32 %30 = phi [^b1, f32 %3] [^if.then2, f32 %29];
     f32 %31 = fsub f32 %1, f32 1;
     i1 %32 = fcmp olt f32 %3, f32 %31;
-    cbr i1 %32(prob = 0.5), ^if.then3, ^entry;
-  ^if.then3:
-    f32 %33 = phi [^b2, f32 %31] [^if.then3, f32 %37];
-    f32 %34 = phi [^b2, f32 %3] [^if.then3, f32 %39];
-    f32 %35 = phi [^b2, f32 %2] [^if.then3, f32 %42];
+    cbr i1 %32(prob = 0.5), ^if.then4, ^entry;
+  ^if.then4:
+    f32 %33 = phi [^if.then3, f32 %31] [^if.then4, f32 %37];
+    f32 %34 = phi [^if.then3, f32 %3] [^if.then4, f32 %39];
+    f32 %35 = phi [^if.then3, f32 %2] [^if.then4, f32 %42];
     f32 %36 = fsub f32 %33, f32 1;
     f32 %37 = call (f32, f32, f32) -> f32 @takFP(f32 %36, f32 %34, f32 %35);
     f32 %38 = fsub f32 %34, f32 1;
@@ -219,7 +219,7 @@ internal func @takFP(f32 %x, f32 %y, f32 %z) -> f32 { NoMemoryRead NoMemoryWrite
     i1 %40 = fcmp olt f32 %39, f32 %37;
     f32 %41 = fsub f32 %35, f32 1;
     f32 %42 = call (f32, f32, f32) -> f32 @takFP(f32 %41, f32 %33, f32 %34);
-    cbr i1 %40(prob = 0.5), ^if.then3, ^entry;
+    cbr i1 %40(prob = 0.5), ^if.then4, ^entry;
 }
 func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
   ^entry:

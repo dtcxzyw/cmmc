@@ -3,7 +3,7 @@
 .p2align 2
 .globl test
 test:
-	blez $a1, label2
+	blez $a1, label14
 	nop
 	addiu $t1, $a1, -4
 	blez $t1, label23
@@ -11,7 +11,7 @@ test:
 	move $t0, $a0
 	move $t2, $zero
 .p2align 2
-label5:
+label4:
 	lw $t4, 0($t0)
 	li $t3, 3
 	div $zero, $t4, $t3
@@ -34,12 +34,12 @@ label5:
 	blez $t3, label39
 	nop
 	addiu $t0, $t0, 16
-	b label5
+	b label4
 	nop
 label39:
 	sll $t0, $t2, 2
 	addu $a0, $a0, $t0
-label10:
+label9:
 	lw $t0, 0($a0)
 	li $t1, 3
 	div $zero, $t0, $t1
@@ -47,15 +47,15 @@ label10:
 	sw $t0, 0($a0)
 	addiu $t2, $t2, 1
 	subu $t0, $a1, $t2
-	blez $t0, label2
+	blez $t0, label14
 	nop
 	addiu $a0, $a0, 4
-	b label10
+	b label9
 	nop
-label2:
+label14:
 	jr $ra
 	nop
 label23:
 	move $t2, $zero
-	b label10
+	b label9
 	nop

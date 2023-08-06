@@ -388,12 +388,10 @@ internal func @my_exp(f32 %x) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect S
 func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
   ^entry:
     i32 %0 = call () -> i32 @getint();
-    ubr ^while.header;
-  ^while.header:
-    i32 %1 = phi [^entry, i32 %0] [^b4, i32 %47];
-    i1 %2 = icmp neq i32 %1, i32 0;
-    cbr i1 %2(prob = 0.984615), ^while.body, ^b;
+    i1 %1 = icmp neq i32 %0, i32 0;
+    cbr i1 %1(prob = 0.984615), ^while.body, ^b;
   ^while.body:
+    i32 %2 = phi [^entry, i32 %0] [^b4, i32 %47];
     f32 %3 = call () -> f32 @getfloat();
     f32 %4 = fabs f32 %3;
     f32 %5 = call () -> f32 @getfloat();
@@ -479,6 +477,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     ubr ^b4;
   ^b4:
     call (i32) -> void @putch(i32 10);
-    i32 %47 = add i32 %1, i32 -1;
-    ubr ^while.header;
+    i32 %47 = add i32 %2, i32 -1;
+    i1 %48 = icmp neq i32 %47, i32 0;
+    cbr i1 %48(prob = 0.984615), ^while.body, ^b;
 }

@@ -200,48 +200,50 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i1 %97 = icmp slt i64 %96, i64 256;
     cbr i1 %97(prob = 0.75), ^b, ^while.header;
   ^while.header:
-    i32 %98 = phi [^b, i32 1] [^b2, i32 %108];
-    i32 %99 = add i32 %98, i32 -1;
-    i32* %100 = getelementptr &(i32* %0)[i32 %99];
-    [16 * i32]* %101 = getelementptr &([16 * [16 * i32]]* %28)[i64 0][i32 %98];
-    [16 * i32]* %102 = getelementptr &([16 * i32]* %101)[i64 -1];
-    i1 %103 = icmp slt i32 %98, i32 16;
-    cbr i1 %103(prob = 0.984615), ^while.header1, ^b1;
+    i32 %98 = phi [^b, i32 1] [^b3, i32 %123];
+    i1 %99 = icmp slt i32 %98, i32 16;
+    cbr i1 %99(prob = 0.984615), ^while.header1, ^b1;
   ^while.header1:
-    i32 %104 = phi [^while.header, i32 1] [^if.then, i32 %115] [^if.else, i32 %115];
-    i1 %105 = icmp slt i32 %104, i32 14;
-    cbr i1 %105(prob = 0.984615), ^while.body, ^b2;
+    i32 %100 = add i32 %98, i32 -1;
+    [16 * i32]* %101 = getelementptr &([16 * [16 * i32]]* %28)[i64 0][i32 %100];
+    i32* %102 = getelementptr &(i32* %0)[i32 %100];
+    [16 * i32]* %103 = getelementptr &([16 * [16 * i32]]* %28)[i64 0][i32 %98];
+    ubr ^while.body;
   ^b1:
-    i32* %106 = getelementptr &([16 * [16 * i32]]* %28)[i64 0][i64 15][i64 13];
-    i32 %107 = load i32* %106;
-    call (i32) -> void @putint(i32 %107);
+    i32* %104 = getelementptr &([16 * [16 * i32]]* %28)[i64 0][i64 15][i64 13];
+    i32 %105 = load i32* %104;
+    call (i32) -> void @putint(i32 %105);
     call (i32) -> void @putch(i32 10);
     ret i32 0;
-  ^b2:
-    i32 %108 = add i32 %98, i32 1;
-    ubr ^while.header;
   ^while.body:
-    i32 %109 = add i32 %104, i32 -1;
-    i32* %110 = getelementptr &(i32* %15)[i32 %109];
-    i32 %111 = load i32* %100;
-    i32 %112 = load i32* %110;
-    i1 %113 = icmp eq i32 %111, i32 %112;
-    i32* %114 = getelementptr &([16 * i32]* %101)[i64 0][i32 %104];
-    i32 %115 = add i32 %104, i32 1;
-    cbr i1 %113(prob = 0.5), ^if.then, ^if.else;
+    i32 %106 = phi [^while.header1, i32 1] [^b2, i32 %121];
+    i32 %107 = add i32 %106, i32 -1;
+    i32* %108 = getelementptr &(i32* %15)[i32 %107];
+    i32 %109 = load i32* %102;
+    i32 %110 = load i32* %108;
+    i1 %111 = icmp eq i32 %109, i32 %110;
+    i32* %112 = getelementptr &([16 * i32]* %103)[i64 0][i32 %106];
+    cbr i1 %111(prob = 0.5), ^if.then, ^if.else;
   ^if.then:
-    i32* %116 = getelementptr &([16 * i32]* %102)[i64 0][i32 %109];
-    i32 %117 = load i32* %116;
-    i32 %118 = add i32 %117, i32 1;
-    store i32* %114 with i32 %118;
-    ubr ^while.header1;
+    i32* %113 = getelementptr &([16 * i32]* %101)[i64 0][i32 %107];
+    i32 %114 = load i32* %113;
+    i32 %115 = add i32 %114, i32 1;
+    store i32* %112 with i32 %115;
+    ubr ^b2;
   ^if.else:
-    i32* %119 = getelementptr &([16 * i32]* %102)[i64 0][i32 %104];
-    i32 %120 = load i32* %119;
-    i32* %121 = getelementptr &([16 * i32]* %101)[i64 0][i32 %109];
-    i32 %122 = load i32* %121;
-    i32 %123 = smax i32 %120, i32 %122;
-    store i32* %114 with i32 %123;
-    ubr ^while.header1;
+    i32* %116 = getelementptr &([16 * i32]* %101)[i64 0][i32 %106];
+    i32 %117 = load i32* %116;
+    i32* %118 = getelementptr &([16 * i32]* %103)[i64 0][i32 %107];
+    i32 %119 = load i32* %118;
+    i32 %120 = smax i32 %117, i32 %119;
+    store i32* %112 with i32 %120;
+    ubr ^b2;
+  ^b2:
+    i32 %121 = add i32 %106, i32 1;
+    i1 %122 = icmp slt i32 %121, i32 14;
+    cbr i1 %122(prob = 0.923077), ^while.body, ^b3;
+  ^b3:
+    i32 %123 = add i32 %98, i32 1;
+    ubr ^while.header;
 }
 internal [16 * [16 * i32]]* @p, align 8 { Flexible };

@@ -23,6 +23,7 @@
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
 #include <cstdint>
+#include <iostream>
 #include <iterator>
 #include <unordered_map>
 #include <unordered_set>
@@ -43,7 +44,7 @@ CMMC_NAMESPACE_BEGIN
 //           |
 //         header ---> exiting
 //           |            |
-//          xxx           |
+//          xxx  <--------|
 //           |            |
 //   -> body + header ---->
 //   |       |
@@ -57,9 +58,8 @@ struct SimpleLoopInfo final {
 constexpr uint32_t maxRotateCount = 8;
 
 class LoopRotate final : public TransformPass<Function> {
-    static std::vector<SimpleLoopInfo> detectLoops(Function& func, AnalysisPassManager& analysis) {
+    static std::vector<SimpleLoopInfo> detectLoops(Function& func, const DominateAnalysisResult& dom) {
         std::vector<SimpleLoopInfo> ret;
-        auto& dom = analysis.get<DominateAnalysis>(func);
         for(auto block : func.blocks()) {
             const auto terminator = block->getTerminator();
             if(terminator->getInstID() != InstructionID::Branch)
@@ -80,26 +80,46 @@ class LoopRotate final : public TransformPass<Function> {
 public:
     bool run(Function& func, AnalysisPassManager& analysis) const override {
         auto& cfg = analysis.get<CFGAnalysis>(func);
+        auto& dom = analysis.get<DominateAnalysis>(func);
+        // func.dumpCFG(std::cerr);
 
         bool modified = false;
-        for(auto loop : detectLoops(func, analysis)) {
+        for(auto loop : detectLoops(func, dom)) {
             if(loop.header == loop.latch)
                 continue;
             if(hasCall(*loop.header))
                 continue;
-            auto& pred = cfg.predecessors(loop.latch);
-            if(!(pred.size() == 1 && pred.front() == loop.header))
-                continue;
+            // auto& pred = cfg.predecessors(loop.latch);
+            // if(!(pred.size() == 1 && pred.front() == loop.header))
+            //     continue;
             auto& succ = cfg.successors(loop.latch);
             if(!(succ.size() == 1 && succ.front() == loop.header))
                 continue;
-            auto& predHeader = cfg.predecessors(loop.header);
-            if(predHeader.size() != 2)
-                continue;
+            // auto& predHeader = cfg.predecessors(loop.header);
+            // if(predHeader.size() != 2)
+            //     continue;
             auto& succHeader = cfg.successors(loop.header);
             if(succHeader.size() != 2)
                 continue;
-            const auto exiting = succHeader.front() == loop.latch ? succHeader.back() : succHeader.front();
+            Block* phiLoc = nullptr;
+            for(auto b : succHeader)
+                if(dom.dominate(loop.header, b) && dom.dominate(b, loop.latch)) {
+                    phiLoc = b;
+                }
+            // FIXME
+            if(!phiLoc)
+                continue;
+
+            std::unordered_set<Block*> body;
+            if(!collectLoopBody(loop.header, loop.latch, dom, cfg, body))
+                continue;
+            // for(auto b : body) {
+            //     b->dumpAsTarget(std::cerr);
+            //     std::cerr << ' ';
+            // }
+            // std::cerr << '\n';
+
+            const auto exiting = succHeader.front() == phiLoc ? succHeader.back() : succHeader.front();
             auto& rotateCount = loop.latch->getTransformMetadata().rotateCount;
             if(rotateCount < maxRotateCount) {
                 ++rotateCount;
@@ -119,13 +139,15 @@ public:
             loop.latch->instructions().pop_back();
             std::unordered_set<Instruction*> oldInsts;
             std::unordered_set<Instruction*> newInsts;
-            for(auto& inst : loop.latch->instructions())
-                oldInsts.insert(&inst);
+            for(auto b : body)
+                if(b != loop.header)
+                    for(auto& inst : b->instructions())
+                        oldInsts.insert(&inst);
             for(auto& inst : loop.header->instructions()) {
                 if(inst.canbeOperand()) {
                     const auto phi = make<PhiInst>(inst.getType());
                     replace.emplace(&inst, phi);
-                    phi->insertBefore(loop.latch, loop.latch->instructions().begin());
+                    phi->insertBefore(phiLoc, phiLoc->instructions().begin());
                 }
             }
             for(auto& inst : loop.header->instructions()) {
@@ -178,7 +200,7 @@ public:
                 auto& users = inst.users();
                 for(auto user : users) {
                     const auto block = user->getBlock();
-                    if(block != loop.latch && block != loop.header) {
+                    if(!body.count(block)) {
                         usedByOuter = true;
                         break;
                     }
@@ -192,7 +214,7 @@ public:
                 for(auto iter = users.begin(); iter != users.end();) {
                     const auto next = std::next(iter);
                     const auto block = iter.ref()->user->getBlock();
-                    if(block != loop.latch && block != loop.header) {
+                    if(!body.count(block)) {
                         iter.ref()->resetValue(phi);
                     }
                     iter = next;
@@ -220,6 +242,7 @@ public:
             }
 
             modified = true;
+            break;
         }
         return modified;
     }

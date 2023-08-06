@@ -20,6 +20,7 @@
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
 #include <iostream>
 #include <iterator>
+#include <stack>
 #include <unordered_map>
 #include <unordered_set>
 
@@ -262,4 +263,38 @@ uint32_t estimateBlockSize(Block* block, bool dynamic) {
     }
     return count;
 }
+bool collectLoopBody(Block* header, Block* latch, const DominateAnalysisResult& dom, const CFGAnalysisResult& cfg,
+                     std::unordered_set<Block*>& body) {
+    body.insert(header);
+    std::stack<Block*> stack;
+    stack.push(latch);
+    while(!stack.empty()) {
+        const auto u = stack.top();
+        stack.pop();
+        if(body.insert(u).second) {
+            for(auto v : cfg.predecessors(u)) {
+                stack.push(v);
+            }
+        }
+    }
+
+    if(body.size() <= 1)
+        return false;
+    for(auto block : body) {
+        if(block == header)
+            continue;
+        for(auto succ : cfg.successors(block)) {
+            if(!body.count(succ)) {
+                return false;
+            }
+            if(dom.dominate(succ, block) && succ != header)
+                return false;
+            if(succ == header && block != latch)
+                return false;
+        }
+    }
+
+    return true;
+}
+
 CMMC_NAMESPACE_END

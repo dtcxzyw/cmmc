@@ -4,7 +4,7 @@ internal func @putch() -> void { NoMemoryRead NoMemoryWrite };
 internal func @hanoi(i32 %n, i32 %one, i32 %two, i32 %three) -> void { NoMemoryRead NoMemoryWrite } {
   ^0:
     i1 %1 = icmp eq i32 %n, i32 1;
-    cbr i1 %1(prob = 0.5), ^entry, ^if.else;
+    cbr i1 %1(prob = 0.5), ^if.then, ^if.else;
   ^if.else:
     i32 %2 = phi [^0, i32 %n] [^if.else, i32 %5];
     i32 %3 = phi [^0, i32 %one] [^if.else, i32 %4];
@@ -17,8 +17,8 @@ internal func @hanoi(i32 %n, i32 %one, i32 %two, i32 %three) -> void { NoMemoryR
     call (i32) -> void @putch(i32 44);
     call (i32) -> void @putch(i32 32);
     i1 %6 = icmp neq i32 %5, i32 1;
-    cbr i1 %6(prob = 0.5), ^if.else, ^entry;
-  ^entry:
+    cbr i1 %6(prob = 0.5), ^if.else, ^if.then;
+  ^if.then:
     i32 %7 = phi [^0, i32 %one] [^if.else, i32 %4];
     call (i32) -> void @putint(i32 %7);
     call (i32) -> void @putch(i32 32);
