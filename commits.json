@@ -300,6 +300,11 @@
       "parent": "d52bedd212f655f50fa633157a04c7baff395853",
       "time": "2023-08-02 22:59:25 +0800"
     },
+    "42f0f63db35a6dc8f0f94b3dd0925fd814d46889": {
+      "message": "feat(transform): add func cache",
+      "parent": "e7cd8719f78bec7d1916df3c060ff95f0c04246b",
+      "time": "2023-08-07 15:55:40 +0800"
+    },
     "43be4d9f3b3a4ab02e68f04af9d41f3b417f4758": {
       "message": "feat(transform): handle N-sat",
       "parent": "e87901f1931b3bbb5175bd3035309c5db03280ad",
@@ -1126,5 +1131,5 @@
       "time": "2023-07-06 01:05:50 +0800"
     }
   },
-  "head": "e7cd8719f78bec7d1916df3c060ff95f0c04246b"
+  "head": "42f0f63db35a6dc8f0f94b3dd0925fd814d46889"
 }
