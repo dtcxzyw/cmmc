@@ -15,7 +15,7 @@ jobs:
       - name: Env
         run: |
           sudo apt update
-          sudo apt install ninja-build libgtest-dev
+          sudo apt install ninja-build libgtest-dev g++-12-riscv64-linux-gnu g++-12-arm-linux-gnueabihf
 
       - name: Build
         run: |
