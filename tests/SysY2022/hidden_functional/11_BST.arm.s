@@ -331,7 +331,7 @@ main:
 	bl getint
 	cmp r0, #0
 	mov r5, r0
-	beq label590
+	beq label581
 	bl getint
 	cmp r5, #1
 	movw r1, #:lower16:value
@@ -346,10 +346,10 @@ main:
 	str r0, [r1, #0]
 	mov r0, #1
 	str r0, [sp, #0]
-	ble label584
+	ble label585
 	mov r6, #1
 .p2align 4
-label582:
+label583:
 	bl getint
 	mov r2, r4
 	mov r1, r0
@@ -357,8 +357,8 @@ label582:
 	bl insert
 	add r6, r6, #1
 	cmp r5, r6
-	bgt label582
-label584:
+	bgt label583
+label585:
 	mov r0, #0
 	bl inorder
 	mov r0, #10
@@ -370,24 +370,25 @@ label584:
 	mov r5, #0
 	mov r6, r5
 .p2align 4
-label585:
+label586:
 	bl getint
 	mov r1, r0
 	mov r0, r6
 	bl delete
 	add r5, r5, #1
 	cmp r4, r5
-	ble label588
+	ble label589
 	mov r6, r0
-	b label585
-label588:
-	bl inorder
-	mov r0, #10
-	bl putch
-label590:
+	b label586
+label581:
 	mov r0, #0
 	add sp, sp, #8
 	pop { r4, r5, r6, pc }
+label589:
+	bl inorder
+	mov r0, #10
+	bl putch
+	b label581
 label618:
 	mov r0, #0
-	b label588
+	b label589

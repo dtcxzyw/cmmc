@@ -133,4 +133,4 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     ret i32 0;
 }
 internal func @cmmcCacheLookup([4084 * i32]*, i32, i32) -> i32* { Builtin };
-[4084 * i32]* @lut_fibFP, align 8;
+internal [4084 * i32]* @lut_fibFP, align 8;

@@ -420,7 +420,7 @@ main:
 	sd s2, 24(sp)
 	jal getint
 	mv s1, a0
-	beq a0, zero, label641
+	beq a0, zero, label632
 	jal getint
 pcrel697:
 	auipc a3, %pcrel_hi(left_child)
@@ -434,18 +434,18 @@ pcrel699:
 	sw a1, %pcrel_lo(pcrel697)(a3)
 	sw a1, %pcrel_lo(pcrel699)(a2)
 	sw a0, 32(sp)
-	ble s1, a0, label635
+	ble s1, a0, label636
 	li s2, 1
 .p2align 2
-label633:
+label634:
 	jal getint
 	mv a2, s0
 	mv a1, a0
 	mv a0, zero
 	jal insert
 	addiw s2, s2, 1
-	bgt s1, s2, label633
-label635:
+	bgt s1, s2, label634
+label636:
 	mv a0, zero
 	jal inorder
 	li a0, 10
@@ -456,20 +456,16 @@ label635:
 	mv s1, zero
 	mv s2, zero
 .p2align 2
-label636:
+label637:
 	jal getint
 	mv a1, a0
 	mv a0, s2
 	jal delete
 	addiw s1, s1, 1
-	ble s0, s1, label639
+	ble s0, s1, label640
 	mv s2, a0
-	j label636
-label639:
-	jal inorder
-	li a0, 10
-	jal putch
-label641:
+	j label637
+label632:
 	mv a0, zero
 	ld ra, 0(sp)
 	ld s0, 8(sp)
@@ -477,6 +473,11 @@ label641:
 	ld s2, 24(sp)
 	addi sp, sp, 40
 	ret
+label640:
+	jal inorder
+	li a0, 10
+	jal putch
+	j label632
 label669:
 	mv a0, zero
-	j label639
+	j label640

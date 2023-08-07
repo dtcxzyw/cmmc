@@ -186,49 +186,88 @@ label17:
 main:
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
 	sub sp, sp, #92
-	mov r4, #0
-	add r6, sp, #8
-	str r4, [sp, #8]
-	str r4, [sp, #12]
-	str r4, [sp, #16]
-	str r4, [sp, #20]
-	str r4, [sp, #24]
-	str r4, [sp, #28]
-	str r4, [sp, #32]
-	str r4, [sp, #36]
-	str r4, [sp, #40]
-	str r4, [sp, #44]
-	str r4, [sp, #48]
-	str r4, [sp, #52]
-	str r4, [sp, #56]
-	str r4, [sp, #60]
-	str r4, [sp, #64]
-	str r4, [sp, #68]
-	str r4, [sp, #72]
-	str r4, [sp, #76]
-	str r4, [sp, #80]
-	str r4, [sp, #84]
+	mov r7, #0
+	add r5, sp, #8
+	str r7, [sp, #8]
+	str r7, [sp, #12]
+	str r7, [sp, #16]
+	str r7, [sp, #20]
+	str r7, [sp, #24]
+	str r7, [sp, #28]
+	str r7, [sp, #32]
+	str r7, [sp, #36]
+	str r7, [sp, #40]
+	str r7, [sp, #44]
+	str r7, [sp, #48]
+	str r7, [sp, #52]
+	str r7, [sp, #56]
+	str r7, [sp, #60]
+	str r7, [sp, #64]
+	str r7, [sp, #68]
+	str r7, [sp, #72]
+	str r7, [sp, #76]
+	str r7, [sp, #80]
+	str r7, [sp, #84]
 	bl getint
-	mov r3, r4
-	movw r2, #:lower16:dp
-	movt r2, #:upper16:dp
-	mov r5, r0
+	mov r6, r7
+	movw r3, #:lower16:dp
+	movt r3, #:upper16:dp
+	mov r4, r0
 	mvn r0, #0
-	cmp r4, #18
-	blt label210
+	cmp r7, #18
+	bge label221
+.p2align 4
 label206:
-	cmp r5, #0
-	ble label207
-	mov r7, r4
-	b label208
-label207:
+	mov r8, r3
+	mov r7, #0
+	mov r9, r7
+	cmp r7, #18
+	bge label254
+.p2align 4
+label210:
+	mov r2, r8
+	mov r7, #0
+	mov r10, r7
+	cmp r7, #18
+	blt label215
+	b label214
+.p2align 4
+label586:
+	add r9, r9, #1
+	movw r1, #32224
+	movt r1, #2
+	cmp r9, #18
+	add r8, r8, r1
+	blt label210
+	add r6, r6, #1
+	movw r1, #55744
+	movt r1, #44
+	cmp r6, #18
+	add r3, r3, r1
+	blt label206
+label221:
+	cmp r4, #0
+	ble label224
+	mov r7, #0
+.p2align 4
+label222:
+	bl getint
+	add r7, r7, #1
+	add r0, r5, r0, lsl #2
+	cmp r4, r7
+	ldr r1, [r0, #0]
+	add r1, r1, #1
+	str r1, [r0, #0]
+	bgt label222
+label224:
 	ldr r0, [sp, #12]
+	mov r7, #0
 	ldr r1, [sp, #16]
 	ldr r2, [sp, #20]
 	ldr r3, [sp, #24]
-	ldr r5, [sp, #28]
-	str r5, [sp, #0]
-	str r4, [sp, #4]
+	ldr r4, [sp, #28]
+	str r4, [sp, #0]
+	str r7, [sp, #4]
 	bl dfs
 	mov r4, r0
 	bl putint
@@ -236,60 +275,18 @@ label207:
 	mov r0, r4
 	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
 .p2align 4
-label208:
-	bl getint
-	add r7, r7, #1
-	add r0, r6, r0, lsl #2
-	cmp r5, r7
-	ldr r1, [r0, #0]
-	add r1, r1, #1
-	str r1, [r0, #0]
-	bgt label208
-	b label207
-.p2align 4
-label210:
-	mov r7, r2
-	mov r8, r4
-	cmp r4, #18
-	bge label214
-.p2align 4
 label215:
-	mov r9, r7
-	mov r10, r4
-	cmp r4, #18
-	bge label219
+	mov r1, r2
+	mov r7, #0
 .p2align 4
-label220:
-	mov r1, r9
-	mov r11, r4
-	b label221
-.p2align 4
-label224:
-	add r10, r10, #1
-	movw r1, #9072
-	cmp r10, #18
-	add r9, r9, r1
-	blt label220
-	add r8, r8, #1
-	movw r1, #32224
-	movt r1, #2
-	cmp r8, #18
-	add r7, r7, r1
-	blt label215
-	add r3, r3, #1
-	movw r1, #55744
-	movt r1, #44
-	cmp r3, #18
-	add r2, r2, r1
-	blt label210
-	b label206
-.p2align 4
-label221:
+label216:
+	add r7, r7, #1
 	str r0, [r1, #0]
-	add r11, r11, #1
+	cmp r7, #18
+	rsb r11, r7, r7, lsl #6
 	str r0, [r1, #4]
-	cmp r11, #18
 	str r0, [r1, #8]
+	add r11, r2, r11, lsl #3
 	str r0, [r1, #12]
 	str r0, [r1, #16]
 	str r0, [r1, #20]
@@ -413,29 +410,37 @@ label221:
 	str r0, [r1, #492]
 	str r0, [r1, #496]
 	str r0, [r1, #500]
-	bge label224
-	add r1, r1, #504
-	b label221
+	blt label393
+	add r10, r10, #1
+	movw r1, #9072
+	cmp r10, #18
+	add r2, r2, r1
+	blt label215
+	b label586
 .p2align 4
-label219:
-	add r8, r8, #1
+label393:
+	mov r1, r11
+	b label216
+.p2align 4
+label214:
+	add r9, r9, #1
 	movw r1, #32224
 	movt r1, #2
-	cmp r8, #18
-	add r7, r7, r1
-	blt label215
-	add r3, r3, #1
+	cmp r9, #18
+	add r8, r8, r1
+	blt label210
+	add r6, r6, #1
 	movw r1, #55744
 	movt r1, #44
-	cmp r3, #18
-	add r2, r2, r1
-	blt label210
-	b label206
-label214:
-	add r3, r3, #1
+	cmp r6, #18
+	add r3, r3, r1
+	blt label206
+	b label221
+label254:
+	add r6, r6, #1
 	movw r1, #55744
 	movt r1, #44
-	cmp r3, #18
-	add r2, r2, r1
-	blt label210
-	b label206
+	cmp r6, #18
+	add r3, r3, r1
+	blt label206
+	b label221

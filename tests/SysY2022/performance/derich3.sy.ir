@@ -1882,4 +1882,3 @@ func @main() -> i32 { NoRecurse Entry } {
     i32 %1624 = add i32 %1254, i32 1;
     ubr ^while.header5;
 }
-[4084 * i32]* @lut_newPow, align 8;

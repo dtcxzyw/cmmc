@@ -12,7 +12,6 @@
     limitations under the License.
 */
 
-#include "cmmc/Support/StaticReflection.hpp"
 #include <algorithm>
 #include <cmmc/ExecutionEngine/Interpreter.hpp>
 #include <cmmc/IR/Block.hpp>
@@ -22,6 +21,7 @@
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/IR/Module.hpp>
 #include <cmmc/IR/Type.hpp>
+#include <cmmc/Support/StaticReflection.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <iostream>
 #include <variant>

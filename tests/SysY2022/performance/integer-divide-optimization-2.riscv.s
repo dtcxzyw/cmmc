@@ -15,21 +15,7 @@ main:
 	lui a2, 524264
 	addiw a1, a3, 1
 	addiw a0, a2, 3
-	bgt s0, zero, label4
-	j label15
-label2:
-	li a0, 1031
-	jal _sysy_stoptime
-	mv a0, s0
-	jal putint
-	li a0, 10
-	jal putch
-	ld ra, 0(sp)
-	mv a0, zero
-	ld s0, 8(sp)
-	addi sp, sp, 16
-	ret
-label4:
+	ble s0, zero, label15
 	addiw a2, s0, -4
 	li a5, 4
 	ble s0, a5, label20
@@ -37,19 +23,19 @@ label4:
 	mv a4, zero
 	mv a3, zero
 .p2align 2
-label5:
+label3:
 	srliw t1, a3, 31
 	addiw a4, a4, 4
 	add t2, a3, t1
 	sraiw t3, t2, 1
 	addw t0, a5, t3
 	mul t1, t0, a1
-	srli t4, t1, 63
+	srli a5, t1, 63
 	srai t2, t1, 61
-	add a5, t4, t2
+	add t4, a5, t2
 	addiw t2, a3, 2
+	mulw t3, t4, a0
 	srliw t4, t2, 31
-	mulw t3, a5, a0
 	subw t1, t0, t3
 	add t3, t2, t4
 	sraiw t5, t3, 1
@@ -57,35 +43,35 @@ label5:
 	mul t0, a5, a1
 	srli t1, t0, 63
 	srai t2, t0, 61
-	add t3, t1, t2
+	add t4, t1, t2
 	addiw t1, a3, 4
-	srliw t5, t1, 31
-	mulw t4, t3, a0
-	add t2, t1, t5
-	subw t0, a5, t4
+	mulw t3, t4, a0
+	srliw t4, t1, 31
+	subw t0, a5, t3
+	add t2, t1, t4
 	sraiw t3, t2, 1
 	addw a5, t0, t3
 	mul t1, a5, a1
 	srli t0, t1, 63
 	srai t2, t1, 61
-	add t3, t0, t2
+	add t4, t0, t2
 	addiw t2, a3, 6
 	addiw a3, a3, 8
 	srliw t5, t2, 31
-	mulw t4, t3, a0
-	add t3, t2, t5
-	subw t1, a5, t4
-	sraiw t4, t3, 1
-	addw t0, t1, t4
+	mulw t3, t4, a0
+	add t4, t2, t5
+	subw t1, a5, t3
+	sraiw t3, t4, 1
+	addw t0, t1, t3
 	mul a5, t0, a1
 	srli t3, a5, 63
 	srai t2, a5, 61
 	add t1, t3, t2
 	mulw t4, t1, a0
 	subw a5, t0, t4
-	bgt a2, a4, label5
+	bgt a2, a4, label3
 	mv a2, a5
-label9:
+label7:
 	srliw t0, a3, 31
 	addiw a4, a4, 1
 	add t1, a3, t0
@@ -98,14 +84,25 @@ label9:
 	add t2, t3, t1
 	mulw t4, t2, a0
 	subw a2, a5, t4
-	bgt s0, a4, label9
+	bgt s0, a4, label7
 	mv s0, a2
-	j label2
+label11:
+	li a0, 1031
+	jal _sysy_stoptime
+	mv a0, s0
+	jal putint
+	li a0, 10
+	jal putch
+	ld ra, 0(sp)
+	mv a0, zero
+	ld s0, 8(sp)
+	addi sp, sp, 16
+	ret
 label15:
 	mv s0, zero
-	j label2
+	j label11
 label20:
 	mv a3, zero
 	mv a4, zero
 	mv a2, zero
-	j label9
+	j label7

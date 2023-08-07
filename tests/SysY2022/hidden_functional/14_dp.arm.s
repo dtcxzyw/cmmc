@@ -34,7 +34,7 @@ main:
 	add r7, r8, #8
 	mov r9, r4
 .p2align 4
-label3:
+label26:
 	bl getint
 	mov r3, #140
 	and r0, r0, #1
@@ -48,7 +48,7 @@ label3:
 	str r1, [r0, #0]
 	blt label40
 	add r7, r7, #8
-	b label3
+	b label26
 label40:
 	add r0, r8, #8
 	add r1, r6, #140
@@ -57,17 +57,17 @@ label40:
 	mov r3, #140
 	cmp r5, r4
 	mla r3, r7, r3, r6
-	blt label12
+	blt label6
 .p2align 4
-label21:
+label15:
 	add r7, r3, #4
 	mov r8, r4
 	add r3, r1, #4
 	ldr r9, [sp, #4]
 	cmp r9, r4
-	blt label26
+	blt label20
 .p2align 4
-label27:
+label21:
 	add r8, r8, #1
 	ldr r9, [r7, #0]
 	and r10, r8, #1
@@ -76,22 +76,22 @@ label27:
 	add r9, r9, r11
 	add r10, r11, r10
 	cmp r10, r9
-	blt label29
+	blt label22
 	str r10, [r3, #0]
 	add r7, r7, #4
 	ldr r9, [sp, #4]
 	add r3, r3, #4
 	cmp r9, r8
-	bge label27
-	b label125
+	bge label21
+	b label127
 .p2align 4
-label29:
+label22:
 	str r9, [r3, #0]
 	add r7, r7, #4
 	ldr r9, [sp, #4]
 	add r3, r3, #4
 	cmp r9, r8
-	bge label27
+	bge label21
 	add r2, r2, #1
 	add r0, r0, #8
 	add r1, r1, #140
@@ -99,17 +99,27 @@ label29:
 	cmp r5, r2
 	sub r7, r2, #1
 	mla r3, r7, r3, r6
-	bge label21
-label12:
+	bge label15
+	b label6
+label20:
+	add r2, r2, #1
+	add r0, r0, #8
+	add r1, r1, #140
+	mov r3, #140
+	cmp r5, r2
+	sub r7, r2, #1
+	mla r3, r7, r3, r6
+	bge label15
+label6:
 	ldr r9, [sp, #4]
 	cmn r9, #1
-	ble label71
+	ble label51
 	ldr r0, [sp, #0]
 	mov r2, #0
 	mov r1, r2
-	b label16
+	b label10
 .p2align 4
-label125:
+label127:
 	add r2, r2, #1
 	add r0, r0, #8
 	add r1, r1, #140
@@ -117,35 +127,25 @@ label125:
 	cmp r5, r2
 	sub r7, r2, #1
 	mla r3, r7, r3, r6
-	bge label21
-	b label12
+	bge label15
+	b label6
 .p2align 4
-label16:
+label10:
 	ldr r3, [r0, #0]
 	add r2, r2, #1
 	ldr r9, [sp, #4]
 	cmp r1, r3
 	movle r1, r3
 	cmp r9, r2
-	blt label78
+	blt label58
 	add r0, r0, #4
-	b label16
-label26:
-	add r2, r2, #1
-	add r0, r0, #8
-	add r1, r1, #140
-	mov r3, #140
-	cmp r5, r2
-	sub r7, r2, #1
-	mla r3, r7, r3, r6
-	bge label21
-	b label12
-label13:
+	b label10
+label7:
 	add sp, sp, #12
 	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
-label78:
+label58:
 	mov r0, r1
-	b label13
-label71:
+	b label7
+label51:
 	mov r0, #0
-	b label13
+	b label7

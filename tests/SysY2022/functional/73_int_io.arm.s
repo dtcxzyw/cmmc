@@ -51,7 +51,7 @@ label55:
 	mov r2, r7
 	mov r1, #0
 .p2align 4
-label15:
+label20:
 	smmul r3, r2, r5
 	add r1, r1, #1
 	asr r7, r3, #2
@@ -62,38 +62,35 @@ label15:
 	add r2, r2, #48
 	str r2, [r0, #0]
 	mov r2, r3
-	ble label69
+	ble label86
 	add r0, r0, #4
-	b label15
+	b label20
 .p2align 4
-label69:
-	cmp r1, #0
-	ble label22
-.p2align 4
-label75:
-	mov r7, r1
-	b label23
-.p2align 4
-label22:
+label16:
 	mov r0, #10
 	bl putch
 	subs r6, r6, #1
 	bgt label9
 	b label25
 .p2align 4
-label23:
+label17:
 	sub r7, r7, #1
 	ldr r0, [r4, r7, lsl #2]
 	bl putch
 	cmp r7, #0
-	bgt label23
-	b label22
-label110:
-	mov r1, #0
-	cmp r1, #0
-	bgt label75
-	b label22
+	bgt label17
+	b label16
+.p2align 4
+label86:
+	movs r7, r1
+	bgt label17
+	b label16
 label25:
 	mov r0, #0
 	add sp, sp, #68
 	pop { r4, r5, r6, r7, pc }
+label110:
+	mov r7, #0
+	cmp r7, #0
+	bgt label17
+	b label16

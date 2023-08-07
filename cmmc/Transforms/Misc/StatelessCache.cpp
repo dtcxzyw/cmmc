@@ -99,6 +99,7 @@ public:
         auto lookup = getLookupLibFunc(analysis.module(), arrayType, i32);
         const auto lut = make<GlobalVariable>(String::get("lut_" + std::string(func.getSymbol().prefix())), arrayType,
                                               dataLyaout.getStorageAlignment());
+        lut->setLinkage(Linkage::Internal);
         analysis.module().add(lut);
         std::vector<Value*> argVal;
         argVal.reserve(3);

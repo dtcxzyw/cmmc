@@ -17,18 +17,7 @@ main:
 	movw r0, #49153
 	movt r0, #16384
 	cmp r4, #0
-	bgt label4
-	b label15
-label2:
-	movw r0, #1031
-	bl _sysy_stoptime
-	mov r0, r6
-	bl putint
-	mov r0, #10
-	bl putch
-	mov r0, #0
-	pop { r4, r5, r6, r7, r8, pc }
-label4:
+	ble label15
 	sub r5, r4, #4
 	cmp r4, #4
 	ble label20
@@ -36,7 +25,7 @@ label4:
 	mov r3, r6
 	mov r2, r6
 .p2align 4
-label5:
+label3:
 	add r7, r3, r3, lsr #31
 	add r2, r2, #4
 	cmp r5, r2
@@ -71,8 +60,8 @@ label5:
 	asr r8, r7, #29
 	add r7, r8, r7, lsr #31
 	mls r6, r7, r1, r6
-	bgt label5
-label9:
+	bgt label3
+label7:
 	add r5, r3, r3, lsr #31
 	add r2, r2, #1
 	add r3, r3, #2
@@ -83,13 +72,21 @@ label9:
 	asr r7, r6, #29
 	add r6, r7, r6, lsr #31
 	mls r6, r6, r1, r5
-	bgt label9
-	b label2
+	bgt label7
+label11:
+	movw r0, #1031
+	bl _sysy_stoptime
+	mov r0, r6
+	bl putint
+	mov r0, #10
+	bl putch
+	mov r0, #0
+	pop { r4, r5, r6, r7, r8, pc }
 label15:
 	mov r6, #0
-	b label2
+	b label11
 label20:
 	mov r3, #0
 	mov r6, r3
 	mov r2, r3
-	b label9
+	b label7

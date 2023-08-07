@@ -31,15 +31,15 @@ label2:
 	bl putint
 	add r8, r8, #1
 	cmp r8, #3
-	bge label5
+	bge label6
 	add r6, r6, #4
 	b label2
-label5:
+label6:
 	mov r0, #10
 	bl putch
 	mov r6, r7
 	mov r7, r4
-label6:
+label7:
 	vldr s0, [r6, #0]
 	vcvt.s32.f32 s0, s0
 	vmov r0, s0
@@ -48,7 +48,7 @@ label6:
 	cmp r7, #3
 	bge label10
 	add r6, r6, #4
-	b label6
+	b label7
 label10:
 	mov r0, #10
 	bl putch

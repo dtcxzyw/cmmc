@@ -19,15 +19,28 @@ main:
 	cmp r4, #0
 	ble label17
 	cmp r4, #4
-	ble label21
+	bgt label6
+	b label21
+label3:
+	add r3, r2, r3
+	add r2, r2, #1
+	smmul r5, r3, r0
+	cmp r4, r2
+	asr r6, r5, #27
+	add r5, r6, r5, lsr #31
+	mls r3, r5, r1, r3
+	bgt label3
+	mov r4, r3
+	b label13
+label6:
 	sub r2, r4, #4
 	sub r5, r4, #20
 	cmp r2, #16
-	ble label27
+	ble label34
 	mov r3, #0
 	mov r6, r3
 .p2align 4
-label4:
+label7:
 	add r6, r3, r6
 	smmul r7, r6, r0
 	asr r8, r7, #27
@@ -125,8 +138,8 @@ label4:
 	asr r8, r7, #27
 	add r7, r8, r7, lsr #31
 	mls r6, r7, r1, r6
-	bgt label4
-label7:
+	bgt label7
+label10:
 	add r5, r6, r3
 	smmul r6, r5, r0
 	asr r7, r6, #27
@@ -152,19 +165,10 @@ label7:
 	asr r7, r6, #27
 	add r6, r7, r6, lsr #31
 	mls r6, r6, r1, r5
-	bgt label7
+	bgt label10
 	mov r2, r3
 	mov r3, r6
-label10:
-	add r3, r2, r3
-	add r2, r2, #1
-	smmul r5, r3, r0
-	cmp r4, r2
-	asr r6, r5, #27
-	add r5, r6, r5, lsr #31
-	mls r3, r5, r1, r3
-	bgt label10
-	mov r4, r3
+	b label3
 label13:
 	movw r0, #10030
 	bl _sysy_stoptime
@@ -180,8 +184,8 @@ label17:
 label21:
 	mov r2, #0
 	mov r3, r2
-	b label10
-label27:
+	b label3
+label34:
 	mov r6, #0
 	mov r3, r6
-	b label7
+	b label10

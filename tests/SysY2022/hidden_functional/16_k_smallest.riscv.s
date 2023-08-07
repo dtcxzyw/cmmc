@@ -18,75 +18,82 @@ main:
 	jal getint
 	mv s2, a0
 	jal getint
-pcrel123:
+pcrel133:
 	auipc a1, %pcrel_hi(array)
 	mv s1, a0
-	addi s0, a1, %pcrel_lo(pcrel123)
-	ble s2, zero, label38
+	addi s0, a1, %pcrel_lo(pcrel133)
+	ble s2, zero, label2
 	mv s3, s0
 	mv s4, zero
 .p2align 2
-label3:
+label31:
 	jal getint
 	addiw s4, s4, 1
 	sw a0, 0(s3)
-	ble s2, s4, label38
+	ble s2, s4, label2
 	addi s3, s3, 4
-	j label3
-label38:
+	j label31
+label2:
 	addiw a1, s2, -1
 	mv a0, zero
-label11:
-	beq a0, a1, label13
-	sh2add a4, a1, s0
-	mv s2, a0
+label6:
+	beq a0, a1, label8
+	sh2add a2, a1, s0
+	lw a3, 0(a2)
+	bge a0, a1, label52
 	sh2add a2, a0, s0
-	lw a3, 0(a4)
 	mv a4, a0
-	ble a1, a0, label23
-.p2align 2
-label19:
-	lw a5, 0(a2)
-	bge a3, a5, label20
-	addiw a4, a4, 1
-	addi a2, a2, 4
-	bgt a1, a4, label19
-	j label23
-.p2align 2
-label20:
-	sh2add t0, s2, s0
-	addiw s2, s2, 1
-	lw t1, 0(t0)
-	sw t1, 0(a2)
-	sw a5, 0(t0)
-	addiw a4, a4, 1
-	addi a2, a2, 4
-	bgt a1, a4, label19
-label23:
+	mv a5, a0
+	lw t0, 0(a2)
+	bge a3, t0, label29
+	addiw a4, a0, 1
+	bgt a1, a4, label28
+	j label91
+label10:
 	sh2add a2, s2, s0
 	sh2add a4, a1, s0
 	lw a3, 0(a2)
 	lw a5, 0(a4)
 	sw a5, 0(a2)
 	sw a3, 0(a4)
-	bne s1, s2, label24
-	ble s2, zero, label13
-	mv s1, zero
+	beq s1, s2, label15
+	j label12
+label91:
+	mv s2, a5
+	j label10
+.p2align 2
+label28:
+	addi a2, a2, 4
+	lw t0, 0(a2)
+	blt a3, t0, label121
 .p2align 2
 label29:
+	sh2add t1, a5, s0
+	addiw a4, a4, 1
+	addiw a5, a5, 1
+	lw t2, 0(t1)
+	sw t2, 0(a2)
+	sw t0, 0(t1)
+	bgt a1, a4, label28
+	j label91
+label12:
+	blt s1, s2, label14
+	addiw a0, s2, 1
+	j label6
+label15:
+	ble s2, zero, label8
+	mv s1, zero
+.p2align 2
+label17:
 	lw a0, 0(s0)
 	jal putint
 	li a0, 32
 	jal putch
 	addiw s1, s1, 1
-	ble s2, s1, label13
+	ble s2, s1, label8
 	addi s0, s0, 4
-	j label29
-label24:
-	blt s1, s2, label26
-	addiw a0, s2, 1
-	j label11
-label13:
+	j label17
+label8:
 	mv a0, zero
 	ld ra, 0(sp)
 	ld s2, 8(sp)
@@ -96,6 +103,14 @@ label13:
 	ld s4, 40(sp)
 	addi sp, sp, 48
 	ret
-label26:
+.p2align 2
+label121:
+	addiw a4, a4, 1
+	bgt a1, a4, label28
+	j label91
+label14:
 	addiw a1, s2, -1
-	j label11
+	j label6
+label52:
+	mv s2, a0
+	j label10

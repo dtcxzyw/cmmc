@@ -24,23 +24,23 @@ main:
 	sd s8, 72(sp)
 	jal getint
 	li s4, 140
-pcrel146:
+pcrel148:
 	auipc a2, %pcrel_hi(dp)
 	mv s2, a0
 	mul a1, a0, s4
-	addi s3, a2, %pcrel_lo(pcrel146)
+	addi s3, a2, %pcrel_lo(pcrel148)
 	add s5, s3, a1
 	jal getint
 	li s1, 1
-pcrel147:
+pcrel149:
 	auipc a1, %pcrel_hi(t)
 	mv s0, a0
-	addi s7, a1, %pcrel_lo(pcrel147)
+	addi s7, a1, %pcrel_lo(pcrel149)
 	ble s2, zero, label40
 	addi s6, s7, 8
 	mv s8, s1
 .p2align 2
-label3:
+label26:
 	jal getint
 	mul a2, s8, s4
 	andi a3, a0, 1
@@ -54,7 +54,7 @@ label3:
 	sw a2, 0(a0)
 	blt s2, s8, label40
 	addi s6, s6, 8
-	j label3
+	j label26
 label40:
 	addi a0, s7, 8
 	addi a1, s3, 140
@@ -62,15 +62,15 @@ label40:
 	addiw a4, s1, -1
 	mul a5, a4, s4
 	add a3, s3, a5
-	blt s2, s1, label12
+	blt s2, s1, label6
 .p2align 2
-label21:
+label15:
 	addi a5, a3, 4
 	mv a4, s1
 	addi a3, a1, 4
-	blt s0, s1, label26
+	blt s0, s1, label20
 .p2align 2
-label27:
+label21:
 	addiw a4, a4, 1
 	lw t0, 0(a5)
 	andi t2, a4, 1
@@ -79,58 +79,58 @@ label27:
 	addw t3, t0, t1
 	lw t4, -4(a5)
 	addw t2, t1, t4
-	blt t2, t3, label29
+	blt t2, t3, label22
 	sw t2, 0(a3)
 	addi a5, a5, 4
 	addi a3, a3, 4
-	bge s0, a4, label27
-	j label136
+	bge s0, a4, label21
+	j label138
 .p2align 2
-label29:
+label22:
 	sw t3, 0(a3)
 	addi a5, a5, 4
 	addi a3, a3, 4
-	bge s0, a4, label27
+	bge s0, a4, label21
 	addiw a2, a2, 1
 	addi a0, a0, 8
 	addi a1, a1, 140
 	addiw a4, a2, -1
 	mul a5, a4, s4
 	add a3, s3, a5
-	bge s2, a2, label21
-label12:
-	blt s0, zero, label71
+	bge s2, a2, label15
+	j label6
+label20:
+	addiw a2, a2, 1
+	addi a0, a0, 8
+	addi a1, a1, 140
+	addiw a4, a2, -1
+	mul a5, a4, s4
+	add a3, s3, a5
+	bge s2, a2, label15
+label6:
+	blt s0, zero, label51
 	mv a1, zero
 	mv a0, zero
-	j label16
+	j label10
 .p2align 2
-label136:
+label138:
 	addiw a2, a2, 1
 	addi a0, a0, 8
 	addi a1, a1, 140
 	addiw a4, a2, -1
 	mul a5, a4, s4
 	add a3, s3, a5
-	bge s2, a2, label21
-	j label12
+	bge s2, a2, label15
+	j label6
 .p2align 2
-label16:
+label10:
 	lw a2, 0(s5)
 	addiw a1, a1, 1
 	max a0, a0, a2
-	blt s0, a1, label13
+	blt s0, a1, label7
 	addi s5, s5, 4
-	j label16
-label26:
-	addiw a2, a2, 1
-	addi a0, a0, 8
-	addi a1, a1, 140
-	addiw a4, a2, -1
-	mul a5, a4, s4
-	add a3, s3, a5
-	bge s2, a2, label21
-	j label12
-label13:
+	j label10
+label7:
 	ld ra, 0(sp)
 	ld s2, 8(sp)
 	ld s3, 16(sp)
@@ -143,6 +143,6 @@ label13:
 	ld s8, 72(sp)
 	addi sp, sp, 80
 	ret
-label71:
+label51:
 	mv a0, zero
-	j label13
+	j label7

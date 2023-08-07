@@ -27,17 +27,17 @@ main:
 	str r9, [sp, #24]
 	movw r0, #1023
 	cmp r9, r0
-	blt label17
-label4:
+	blt label4
+label30:
 	movw r5, #:lower16:image_in
 	movt r5, #:upper16:image_in
 	mov r1, #1024
 	mov r2, #0
 	mov r0, r5
 	mov r3, r2
-	b label5
+	b label12
 .p2align 4
-label17:
+label4:
 	ldr r9, [sp, #24]
 	movw r0, #1023
 	movw r1, #2047
@@ -59,87 +59,8 @@ label17:
 	str r11, [sp, #12]
 	mov r11, #0
 	str r11, [sp, #8]
-	b label18
 .p2align 4
-label23:
-	ldr r9, [sp, #24]
-	movw r5, #:lower16:image_in
-	movt r5, #:upper16:image_in
-	add r0, r9, r11
-	ldr r1, [r5, r0, lsl #2]
-	ldr r10, [sp, #20]
-	add r2, r10, r7
-	ldr r2, [r5, r2, lsl #2]
-	rsb r1, r2, r1, lsl #3
-	add r2, r9, r7
-	movw r7, #:lower16:image_out
-	movt r7, #:upper16:image_out
-	add r2, r5, r2, lsl #2
-	ldr r3, [r2, #0]
-	ldr r2, [r2, #4]
-	sub r1, r1, r3
-	sub r1, r1, r2
-	add r2, r10, r11
-	add r2, r5, r2, lsl #2
-	ldr r3, [r2, #0]
-	ldr r2, [r2, #8]
-	sub r1, r1, r3
-	sub r1, r1, r2
-	add r2, r10, r6
-	ldr r2, [r5, r2, lsl #2]
-	sub r1, r1, r2
-	add r2, r9, r6
-	add r2, r5, r2, lsl #2
-	ldr r3, [r2, #0]
-	ldr r2, [r2, #4]
-	sub r1, r1, r3
-	sub r1, r1, r2
-	usat r1, #8, r1
-	str r1, [r7, r0, lsl #2]
-	ldr r11, [sp, #12]
-	add r1, r9, #5120
-	add r9, r9, #1
-	add r0, r11, r1
-	ldr r2, [r5, r0, lsl #2]
-	ldr r11, [sp, #8]
-	add r3, r11, #5120
-	add r3, r10, r3
-	ldr r3, [r5, r3, lsl #2]
-	rsb r2, r3, r2, lsl #3
-	add r3, r11, r1
-	add r3, r5, r3, lsl #2
-	ldr r4, [r3, #0]
-	ldr r3, [r3, #4]
-	ldr r11, [sp, #12]
-	sub r2, r2, r4
-	sub r2, r2, r3
-	add r3, r11, #5120
-	add r3, r10, r3
-	add r3, r5, r3, lsl #2
-	ldr r4, [r3, #0]
-	ldr r3, [r3, #8]
-	ldr r6, [sp, #16]
-	sub r2, r2, r4
-	sub r2, r2, r3
-	add r1, r6, r1
-	add r3, r6, #5120
-	add r1, r5, r1, lsl #2
-	add r3, r10, r3
-	ldr r3, [r5, r3, lsl #2]
-	sub r2, r2, r3
-	ldr r3, [r1, #0]
-	ldr r1, [r1, #4]
-	sub r2, r2, r3
-	sub r1, r2, r1
-	usat r1, #8, r1
-	str r1, [r7, r0, lsl #2]
-	movw r0, #1023
-	str r9, [sp, #24]
-	cmp r9, r0
-	blt label17
-	b label4
-.p2align 4
-label18:
+label5:
 	ldr r9, [sp, #24]
 	movw r5, #:lower16:image_in
 	movt r5, #:upper16:image_in
@@ -285,14 +206,92 @@ label18:
 	add r7, r11, #4096
 	ldr r11, [sp, #12]
 	add r11, r11, #4096
-	bge label23
+	bge label10
 	str r6, [sp, #16]
 	str r11, [sp, #12]
 	str r7, [sp, #8]
 	mov r11, r7
-	b label18
+	b label5
 .p2align 4
-label5:
+label10:
+	ldr r9, [sp, #24]
+	movw r5, #:lower16:image_in
+	movt r5, #:upper16:image_in
+	add r0, r9, r11
+	ldr r1, [r5, r0, lsl #2]
+	ldr r10, [sp, #20]
+	add r2, r10, r7
+	ldr r2, [r5, r2, lsl #2]
+	rsb r1, r2, r1, lsl #3
+	add r2, r9, r7
+	movw r7, #:lower16:image_out
+	movt r7, #:upper16:image_out
+	add r2, r5, r2, lsl #2
+	ldr r3, [r2, #0]
+	ldr r2, [r2, #4]
+	sub r1, r1, r3
+	sub r1, r1, r2
+	add r2, r10, r11
+	add r2, r5, r2, lsl #2
+	ldr r3, [r2, #0]
+	ldr r2, [r2, #8]
+	sub r1, r1, r3
+	sub r1, r1, r2
+	add r2, r10, r6
+	ldr r2, [r5, r2, lsl #2]
+	sub r1, r1, r2
+	add r2, r9, r6
+	add r2, r5, r2, lsl #2
+	ldr r3, [r2, #0]
+	ldr r2, [r2, #4]
+	sub r1, r1, r3
+	sub r1, r1, r2
+	usat r1, #8, r1
+	str r1, [r7, r0, lsl #2]
+	ldr r11, [sp, #12]
+	add r1, r9, #5120
+	add r9, r9, #1
+	add r0, r11, r1
+	ldr r2, [r5, r0, lsl #2]
+	ldr r11, [sp, #8]
+	add r3, r11, #5120
+	add r3, r10, r3
+	ldr r3, [r5, r3, lsl #2]
+	rsb r2, r3, r2, lsl #3
+	add r3, r11, r1
+	add r3, r5, r3, lsl #2
+	ldr r4, [r3, #0]
+	ldr r3, [r3, #4]
+	ldr r11, [sp, #12]
+	sub r2, r2, r4
+	sub r2, r2, r3
+	add r3, r11, #5120
+	add r3, r10, r3
+	add r3, r5, r3, lsl #2
+	ldr r4, [r3, #0]
+	ldr r3, [r3, #8]
+	ldr r6, [sp, #16]
+	sub r2, r2, r4
+	sub r2, r2, r3
+	add r1, r6, r1
+	add r3, r6, #5120
+	add r1, r5, r1, lsl #2
+	add r3, r10, r3
+	ldr r3, [r5, r3, lsl #2]
+	sub r2, r2, r3
+	ldr r3, [r1, #0]
+	ldr r1, [r1, #4]
+	sub r2, r2, r3
+	sub r1, r2, r1
+	usat r1, #8, r1
+	str r1, [r7, r0, lsl #2]
+	movw r0, #1023
+	str r9, [sp, #24]
+	cmp r9, r0
+	blt label4
+	b label30
+.p2align 4
+label12:
 	ldr r4, [r0, #0]
 	movw r7, #:lower16:image_out
 	movt r7, #:upper16:image_out
@@ -411,15 +410,15 @@ label5:
 	add r1, r1, #16384
 	ldr r5, [r5, r4, lsl #2]
 	str r5, [r7, r4, lsl #2]
-	bge label226
+	bge label504
 	add r0, r0, #65536
-	b label5
-label226:
+	b label12
+label504:
 	movw r5, #:lower16:image_in
 	movt r5, #:upper16:image_in
 	mov r1, #0
 .p2align 4
-label12:
+label19:
 	ldr r2, [r5, #0]
 	movw r7, #:lower16:image_out
 	movt r7, #:upper16:image_out
@@ -553,10 +552,10 @@ label12:
 	add r3, r5, r2
 	ldr r3, [r3, #0]
 	str r3, [r0, #0]
-	bge label16
+	bge label23
 	add r5, r5, #64
-	b label12
-label16:
+	b label19
+label23:
 	mov r0, #59
 	bl _sysy_stoptime
 	mov r0, #1048576

@@ -37,4 +37,4 @@ func @fib(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless 
     ret i32 %19;
 }
 internal func @cmmcCacheLookup([4084 * i32]*, i32, i32) -> i32* { Builtin };
-[4084 * i32]* @lut_fib, align 8;
+internal [4084 * i32]* @lut_fib, align 8;

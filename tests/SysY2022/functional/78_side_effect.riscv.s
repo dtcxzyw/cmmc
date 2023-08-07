@@ -4,35 +4,36 @@
 .p2align 2
 .globl main
 main:
-	addi sp, sp, -48
+	addi sp, sp, -40
 	sd ra, 0(sp)
 	sd s0, 8(sp)
 	li s0, 1
-	sd s3, 16(sp)
-	li s3, -1
-	sd s2, 24(sp)
-	li s2, 5
-	sd s1, 32(sp)
-	li s1, 14
-	sd s4, 40(sp)
-	blt s2, zero, label18
+	sd s2, 16(sp)
+	li s2, -1
+	sd s1, 24(sp)
+	li s1, 5
+	sd s3, 32(sp)
+	li s3, 14
+.p2align 2
+label2:
+	addiw a0, s2, 1
+	bne a0, zero, label18
 .p2align 2
 label6:
-	addiw a0, s3, 1
-	bne a0, zero, label7
-	addiw s3, a0, 1
-	addiw s2, s2, -1
-	bge s3, s1, label69
-.p2align 2
-label12:
-	mv a0, s3
+	addiw s2, a0, 1
+	bge s2, s3, label28
+label8:
+	mv a0, s2
 	jal putint
 	li a0, 10
 	jal putch
 	slliw s0, s0, 1
-	bge s2, zero, label6
-label18:
-	mv a0, s3
+.p2align 2
+label10:
+	addiw s1, s1, -1
+	bge s1, zero, label2
+label13:
+	mv a0, s2
 	jal putint
 	li a0, 32
 	jal putch
@@ -40,50 +41,20 @@ label18:
 	jal putint
 	li a0, 10
 	jal putch
-	mv a0, s3
+	mv a0, s2
 	ld ra, 0(sp)
 	ld s0, 8(sp)
-	ld s3, 16(sp)
-	ld s2, 24(sp)
-	ld s1, 32(sp)
-	ld s4, 40(sp)
-	addi sp, sp, 48
+	ld s2, 16(sp)
+	ld s1, 24(sp)
+	ld s3, 32(sp)
+	addi sp, sp, 40
 	ret
-.p2align 2
-label7:
-	addiw a0, s3, 2
-	beq a0, zero, label30
-	addiw s4, s3, 3
-	bne s4, zero, label9
-	mv a0, s4
-	addiw s3, s4, 1
-	addiw s2, s2, -1
-	blt s3, s1, label12
-	addiw s3, s4, 2
-	bne s3, zero, label15
-	addiw s3, s3, 1
-	bge s2, zero, label6
-	j label18
-.p2align 2
-label30:
-	addiw s3, a0, 1
-	addiw s2, s2, -1
-	blt s3, s1, label12
-	addiw s3, a0, 2
-	beq s3, zero, label76
-.p2align 2
-label15:
-	addiw a1, a0, 3
-	addiw s3, a0, 4
-	subw a2, a1, s3
-	addiw a3, a2, 1
-	bne a3, zero, label12
-	addiw s3, s3, 1
-	bge s2, zero, label6
-	j label18
-.p2align 2
-label9:
-	mv a0, s4
+label18:
+	addiw a0, s2, 2
+	beq a0, zero, label6
+	addiw s2, s2, 3
+	beq s2, zero, label58
+	mv a0, s2
 	jal putint
 	li a0, 32
 	jal putch
@@ -91,23 +62,23 @@ label9:
 	jal putint
 	li a0, 10
 	jal putch
-	mv a0, s4
-	addiw s3, s4, 1
-	addiw s2, s2, -1
-	blt s3, s1, label12
-	addiw s3, s4, 2
-	bne s3, zero, label15
-	addiw s3, s3, 1
-	bge s2, zero, label6
-	j label18
-.p2align 2
-label69:
-	addiw s3, a0, 2
-	bne s3, zero, label15
-	addiw s3, s3, 1
-	bge s2, zero, label6
-	j label18
-label76:
-	addiw s3, s3, 1
-	bge s2, zero, label6
-	j label18
+	mv a0, s2
+	j label6
+label28:
+	addiw s2, a0, 2
+	bne s2, zero, label15
+	addiw s2, s2, 1
+	j label10
+label15:
+	addiw a1, a0, 3
+	addiw s2, a0, 4
+	subw a2, a1, s2
+	addiw a3, a2, 1
+	bne a3, zero, label8
+	addiw s2, s2, 1
+	addiw s1, s1, -1
+	bge s1, zero, label2
+	j label13
+label58:
+	mv a0, s2
+	j label6

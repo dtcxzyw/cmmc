@@ -67,11 +67,11 @@ label2:
 	sd zero, 232(a0)
 	sd zero, 240(a0)
 	sd zero, 248(a0)
-	bge a5, a3, label6
+	bge a5, a3, label5
 	addi a0, a0, 256
 	mv a4, a5
 	j label2
-label6:
+label5:
 	sh2add a0, a5, a2
 	addi a3, a4, 112
 	sw zero, 0(a0)
@@ -124,7 +124,7 @@ label6:
 	sw zero, 188(a0)
 	sh2add a0, a3, a2
 .p2align 2
-label7:
+label6:
 	sw zero, 0(a0)
 	addi a3, a3, 4
 	li a5, 2043
@@ -132,33 +132,33 @@ label7:
 	slli a4, a5, 1
 	sw zero, 8(a0)
 	sw zero, 12(a0)
-	bge a3, a4, label152
+	bge a3, a4, label151
 	addi a0, a0, 16
-	j label7
-label152:
+	j label6
+label151:
 	sh2add a0, a3, a2
 .p2align 2
-label12:
+label11:
 	sw zero, 0(a0)
 	addi a3, a3, 1
 	li a4, 2045
 	slli a2, a4, 1
-	bge a3, a2, label16
+	bge a3, a2, label15
 	addi a0, a0, 4
-	j label12
-label16:
+	j label11
+label15:
 	auipc a2, %pcrel_hi(a)
 	li a4, 125
-	addi a0, a2, %pcrel_lo(label16)
+	addi a0, a2, %pcrel_lo(label15)
 	slli a3, a4, 5
 	slli a2, a3, 2
 	sw a3, 20(a0)
-	addi a5, a2, 380
-	add a4, a0, a2
-	add a3, a0, a5
-	sw a1, 0(a4)
-	li a4, 7
-	sw a4, 0(a3)
+	addi a4, a2, 380
+	add a5, a0, a2
+	add a3, a0, a4
+	sw a1, 0(a5)
+	li a5, 7
+	sw a5, 0(a3)
 	mv a0, a1
 	jal putint
 	li a0, 10
