@@ -630,6 +630,11 @@
       "parent": "bc4999d1ddd872bad964ca1fd4720bc9dfb4b700",
       "time": "2023-07-02 00:59:38 +0800"
     },
+    "84c67c7d2e1c4c4ba2420f41a9a5b8cf1c2d2554": {
+      "message": "ci: fix deps",
+      "parent": "42f0f63db35a6dc8f0f94b3dd0925fd814d46889",
+      "time": "2023-08-07 16:19:30 +0800"
+    },
     "84ec2b3394ff6aecb740769207da5b06edac6cf9": {
       "message": "misc: update ref",
       "parent": "e08641d29e96a13eb5410e28160018520c77dfcb",
@@ -1131,5 +1136,5 @@
       "time": "2023-07-06 01:05:50 +0800"
     }
   },
-  "head": "42f0f63db35a6dc8f0f94b3dd0925fd814d46889"
+  "head": "84c67c7d2e1c4c4ba2420f41a9a5b8cf1c2d2554"
 }
