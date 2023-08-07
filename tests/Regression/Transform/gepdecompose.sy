@@ -1,0 +1,7 @@
+int test(int x[], int n, int m) {
+    int sum = 0;
+    for(int i = 0; i < n; ++i)
+        for(int j = 0; j < m; ++j)
+            sum += x[i * m + j];
+    return sum;
+}
