@@ -475,6 +475,11 @@
       "parent": "3b456200e42e06bf7b9c01045913353124de379f",
       "time": "2023-07-08 02:55:14 +0800"
     },
+    "6842ba541831a78cfbbe05ddff730cc6c2cd1575": {
+      "message": "feat(transform): unroll loops with multiple blocks",
+      "parent": "cd9001b7b00e54e9b5a06a8a4054a2903805d8ee",
+      "time": "2023-08-07 23:23:41 +0800"
+    },
     "68cba9aba7f9c31af280650e8b47dce79eaab030": {
       "message": "feat(transform): tune unrolling",
       "parent": "c96cca659b32392bef240df81d7dab107a91d02e",
@@ -649,6 +654,11 @@
       "message": "test: add sccp tests",
       "parent": "97cc72f856cc319dc4b12d569da66b09a1abf5ea",
       "time": "2023-07-06 19:29:20 +0800"
+    },
+    "89b6ae2d896b2eb9f6f435f6d3701a3ca6bc54fd": {
+      "message": "feat(transform): decompose gep",
+      "parent": "6842ba541831a78cfbbe05ddff730cc6c2cd1575",
+      "time": "2023-08-07 23:55:20 +0800"
     },
     "8a442367ad14b632eadb8d0719bb9237ab864a62": {
       "message": "feat(transform): fold constant arguments",
@@ -1141,5 +1151,5 @@
       "time": "2023-07-06 01:05:50 +0800"
     }
   },
-  "head": "cd9001b7b00e54e9b5a06a8a4054a2903805d8ee"
+  "head": "89b6ae2d896b2eb9f6f435f6d3701a3ca6bc54fd"
 }
