@@ -1,8 +1,8 @@
-func @ifThen_arithmetic_fence() -> void;
+func @ifThen_arithmetic_fence(f32) -> void;
 func @ifThen_call_readnone() -> void;
 func @ifThen_call_sideeffects() -> void;
 func @ifThen_ctlz() -> void;
 func @ifThen_fabs() -> void;
-func @ifThen_fpclass() -> void;
-func @ifThen_fptrunc_round() -> void;
-func @ifThen_ldexp() -> void;
+func @ifThen_fpclass(f32) -> void;
+func @ifThen_fptrunc_round(f32) -> void;
+func @ifThen_ldexp(f32, i32) -> void;

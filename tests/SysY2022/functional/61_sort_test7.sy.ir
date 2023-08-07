@@ -1,5 +1,5 @@
-internal func @getarray() -> i32 { NoMemoryRead };
-internal func @putarray() -> void { NoMemoryWrite };
+internal func @getarray(i32*) -> i32 { NoMemoryRead };
+internal func @putarray(i32, i32*) -> void { NoMemoryWrite };
 internal [2 * [100 * i32]]* @buf, align 8;
 internal func @merge_sort(i32 %l, i32 %r) -> void {
   ^entry:

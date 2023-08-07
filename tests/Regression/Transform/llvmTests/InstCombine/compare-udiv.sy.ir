@@ -1,2 +1,2 @@
-func @test1() -> i32;
-func @test10() -> i32;
+func @test1(i32, i32) -> i32;
+func @test10(i32) -> i32;

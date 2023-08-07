@@ -100,25 +100,8 @@ public:
 
                         phi->insertBefore(nextBlock, nextBlock->instructions().begin());
 
-                        // fix phi nodes: block -> nextBlock
                         // TODO: merge into splitBlock
-                        const auto terminator = nextBlock->getTerminator();
-                        if(terminator->isBranch()) {
-                            const auto branch = terminator->as<BranchInst>();
-
-                            auto handleTarget = [&](Block* target) {
-                                for(auto& phiInst : target->instructions()) {
-                                    if(phiInst.getInstID() == InstructionID::Phi) {
-                                        phiInst.as<PhiInst>()->replaceSource(block, nextBlock);
-                                    } else
-                                        break;
-                                }
-                            };
-
-                            handleTarget(branch->getTrueTarget());
-                            if(branch->getFalseTarget() && branch->getFalseTarget() != branch->getTrueTarget())
-                                handleTarget(branch->getFalseTarget());
-                        }
+                        fixPhiNode(block, nextBlock);
 
                         modified = true;
                         break;

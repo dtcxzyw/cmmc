@@ -1,139 +1,40 @@
 internal func @getint() -> i32 { NoMemoryRead NoMemoryWrite };
-internal func @putch() -> void { NoMemoryRead NoMemoryWrite };
-internal func @starttime() -> void { NoMemoryRead NoMemoryWrite };
-internal func @stoptime() -> void { NoMemoryRead NoMemoryWrite };
+internal func @putch(i32) -> void { NoMemoryRead NoMemoryWrite };
+internal func @starttime(i32) -> void { NoMemoryRead NoMemoryWrite };
+internal func @stoptime(i32) -> void { NoMemoryRead NoMemoryWrite };
 internal func @func(f32 %data, i32 %num) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless } {
   ^entry:
-    i1 %0 = icmp slt i32 %num, i32 0;
-    cbr i1 %0(prob = 0.5), ^b1, ^b;
+    i32 %0 = bitcast f32 %data to i32;
+    [4084 * i32]* %1 = ptrcast [4084 * i32]* @lut_func to [4084 * i32]*;
+    i32* %2 = call ([4084 * i32]*, i32, i32) -> i32* @cmmcCacheLookup([4084 * i32]* %1, i32 %0, i32 %num);
+    i32* %3 = getelementptr &(i32* %2)[i64 3];
+    i32 %4 = load i32* %3;
+    i1 %5 = icmp neq i32 %4, i32 0;
+    i32* %6 = getelementptr &(i32* %2)[i64 2];
+    f32* %7 = ptrcast i32* %6 to f32*;
+    cbr i1 %5(prob = 0.9), ^b, ^entry1;
   ^b:
-    i32 %1 = add i32 %num, i32 -1;
-    i1 %2 = icmp slt i32 %1, i32 0;
-    i32 %3 = add i32 %num, i32 -2;
-    i1 %4 = icmp slt i32 %3, i32 0;
-    i32 %5 = add i32 %num, i32 -3;
-    i1 %6 = icmp slt i32 %5, i32 0;
-    i32 %7 = add i32 %num, i32 -4;
-    cbr i1 %2(prob = 0.5), ^b2, ^entry1;
-  ^b1:
-    f32 %8 = phi [^entry, f32 0] [^b3, f32 %12];
-    ret f32 %8;
-  ^b2:
-    f32 %9 = phi [^b, f32 0] [^b6, f32 %16];
-    f32 %10 = fadd f32 %data, f32 %9;
-    cbr i1 %2(prob = 0.5), ^b3, ^entry2;
-  ^entry1:
-    cbr i1 %4(prob = 0.5), ^b4, ^b5;
-  ^b3:
-    f32 %11 = phi [^b2, f32 0] [^b12, f32 %26];
-    f32 %12 = fsub f32 %10, f32 %11;
-    ubr ^b1;
-  ^b4:
-    f32 %13 = phi [^entry1, f32 0] [^b13, f32 %28];
-    f32 %14 = fadd f32 %data, f32 %13;
-    cbr i1 %4(prob = 0.5), ^b6, ^b11;
-  ^entry2:
-    cbr i1 %4(prob = 0.5), ^b7, ^b10;
-  ^b5:
-    cbr i1 %6(prob = 0.5), ^b9, ^b8;
-  ^b6:
-    f32 %15 = phi [^b4, f32 0] [^b21, f32 %48];
-    f32 %16 = fsub f32 %14, f32 %15;
-    ubr ^b2;
-  ^b7:
-    f32 %17 = phi [^entry2, f32 0] [^b20, f32 %46];
-    f32 %18 = fadd f32 %10, f32 %17;
-    cbr i1 %4(prob = 0.5), ^b12, ^b19;
-  ^b8:
-    f32 %19 = call (f32, i32) -> f32 @func(f32 %data, i32 %7);
-    f32 %20 = fadd f32 %data, f32 %19;
-    f32 %21 = call (f32, i32) -> f32 @func(f32 %20, i32 %7);
-    f32 %22 = fsub f32 %20, f32 %21;
-    ubr ^b9;
-  ^b9:
-    f32 %23 = phi [^b5, f32 0] [^b8, f32 %22];
-    f32 %24 = fadd f32 %data, f32 %23;
-    cbr i1 %6(prob = 0.5), ^b13, ^b14;
-  ^b10:
-    cbr i1 %6(prob = 0.5), ^b17, ^b15;
-  ^b11:
-    cbr i1 %6(prob = 0.5), ^b18, ^b16;
-  ^b12:
-    f32 %25 = phi [^b7, f32 0] [^b26, f32 %64];
-    f32 %26 = fsub f32 %18, f32 %25;
+    f32 %8 = load f32* %7;
     ubr ^b3;
-  ^b13:
-    f32 %27 = phi [^b9, f32 0] [^b14, f32 %32];
-    f32 %28 = fsub f32 %24, f32 %27;
-    ubr ^b4;
-  ^b14:
-    f32 %29 = call (f32, i32) -> f32 @func(f32 %24, i32 %7);
-    f32 %30 = fadd f32 %24, f32 %29;
-    f32 %31 = call (f32, i32) -> f32 @func(f32 %30, i32 %7);
-    f32 %32 = fsub f32 %30, f32 %31;
-    ubr ^b13;
-  ^b15:
-    f32 %33 = call (f32, i32) -> f32 @func(f32 %10, i32 %7);
-    f32 %34 = fadd f32 %10, f32 %33;
-    f32 %35 = call (f32, i32) -> f32 @func(f32 %34, i32 %7);
-    f32 %36 = fsub f32 %34, f32 %35;
-    ubr ^b17;
-  ^b16:
-    f32 %37 = call (f32, i32) -> f32 @func(f32 %14, i32 %7);
-    f32 %38 = fadd f32 %14, f32 %37;
-    f32 %39 = call (f32, i32) -> f32 @func(f32 %38, i32 %7);
-    f32 %40 = fsub f32 %38, f32 %39;
-    ubr ^b18;
-  ^b17:
-    f32 %41 = phi [^b10, f32 0] [^b15, f32 %36];
-    f32 %42 = fadd f32 %10, f32 %41;
-    cbr i1 %6(prob = 0.5), ^b20, ^b22;
-  ^b18:
-    f32 %43 = phi [^b11, f32 0] [^b16, f32 %40];
-    f32 %44 = fadd f32 %14, f32 %43;
-    cbr i1 %6(prob = 0.5), ^b21, ^b23;
-  ^b19:
-    cbr i1 %6(prob = 0.5), ^b25, ^b24;
-  ^b20:
-    f32 %45 = phi [^b17, f32 0] [^b22, f32 %52];
-    f32 %46 = fsub f32 %42, f32 %45;
-    ubr ^b7;
-  ^b21:
-    f32 %47 = phi [^b18, f32 0] [^b23, f32 %56];
-    f32 %48 = fsub f32 %44, f32 %47;
-    ubr ^b6;
-  ^b22:
-    f32 %49 = call (f32, i32) -> f32 @func(f32 %42, i32 %7);
-    f32 %50 = fadd f32 %42, f32 %49;
-    f32 %51 = call (f32, i32) -> f32 @func(f32 %50, i32 %7);
-    f32 %52 = fsub f32 %50, f32 %51;
-    ubr ^b20;
-  ^b23:
-    f32 %53 = call (f32, i32) -> f32 @func(f32 %44, i32 %7);
-    f32 %54 = fadd f32 %44, f32 %53;
-    f32 %55 = call (f32, i32) -> f32 @func(f32 %54, i32 %7);
-    f32 %56 = fsub f32 %54, f32 %55;
-    ubr ^b21;
-  ^b24:
-    f32 %57 = call (f32, i32) -> f32 @func(f32 %18, i32 %7);
-    f32 %58 = fadd f32 %18, f32 %57;
-    f32 %59 = call (f32, i32) -> f32 @func(f32 %58, i32 %7);
-    f32 %60 = fsub f32 %58, f32 %59;
-    ubr ^b25;
-  ^b25:
-    f32 %61 = phi [^b19, f32 0] [^b24, f32 %60];
-    f32 %62 = fadd f32 %18, f32 %61;
-    cbr i1 %6(prob = 0.5), ^b26, ^b27;
-  ^b26:
-    f32 %63 = phi [^b25, f32 0] [^b27, f32 %68];
-    f32 %64 = fsub f32 %62, f32 %63;
-    ubr ^b12;
-  ^b27:
-    f32 %65 = call (f32, i32) -> f32 @func(f32 %62, i32 %7);
-    f32 %66 = fadd f32 %62, f32 %65;
-    f32 %67 = call (f32, i32) -> f32 @func(f32 %66, i32 %7);
-    f32 %68 = fsub f32 %66, f32 %67;
-    ubr ^b26;
+  ^entry1:
+    i1 %9 = icmp slt i32 %num, i32 0;
+    cbr i1 %9(prob = 0.5), ^b1, ^b2;
+  ^b1:
+    store i32* %3 with i32 1;
+    store f32* %7 with f32 0;
+    ubr ^b3;
+  ^b2:
+    i32 %10 = add i32 %num, i32 -1;
+    f32 %11 = call (f32, i32) -> f32 @func(f32 %data, i32 %10);
+    f32 %12 = fadd f32 %data, f32 %11;
+    f32 %13 = call (f32, i32) -> f32 @func(f32 %12, i32 %10);
+    f32 %14 = fsub f32 %12, f32 %13;
+    store i32* %3 with i32 1;
+    store f32* %7 with f32 %14;
+    ubr ^b3;
+  ^b3:
+    f32 %15 = phi [^b, f32 %8] [^b1, f32 0] [^b2, f32 %14];
+    ret f32 %15;
 }
 func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
   ^entry:
@@ -149,3 +50,5 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     call (i32) -> void @stoptime(i32 32);
     ret i32 0;
 }
+internal func @cmmcCacheLookup([4084 * i32]*, i32, i32) -> i32* { Builtin };
+[4084 * i32]* @lut_func, align 8;

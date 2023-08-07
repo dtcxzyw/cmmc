@@ -2,4 +2,4 @@ func @llvm_smin_i32(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite No
   ^entry:
     ret i32 0;
 }
-func @maybe_not_positive() -> i32;
+func @maybe_not_positive(i32) -> i32;

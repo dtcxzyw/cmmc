@@ -1,7 +1,7 @@
-func @mul_select_nonp2_x_fail() -> i8;
-func @mul_selectp2_x() -> i8;
-func @mul_selectp2_x_multiuse_fixme() -> i8;
-func @mul_selectp2_x_non_const() -> i8;
-func @mul_selectp2_x_non_const_multiuse() -> i8;
-func @mul_selectp2_x_propegate_nuw() -> i8;
-func @mul_x_selectp2() -> i8;
+func @mul_select_nonp2_x_fail(i8, i32) -> i8;
+func @mul_selectp2_x(i8, i32) -> i8;
+func @mul_selectp2_x_multiuse_fixme(i8, i32) -> i8;
+func @mul_selectp2_x_non_const(i8, i32, i8) -> i8;
+func @mul_selectp2_x_non_const_multiuse(i8, i32, i8) -> i8;
+func @mul_selectp2_x_propegate_nuw(i8, i32) -> i8;
+func @mul_x_selectp2(i8, i32) -> i8;

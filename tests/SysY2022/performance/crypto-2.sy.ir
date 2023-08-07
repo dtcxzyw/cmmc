@@ -1,7 +1,7 @@
 internal func @getint() -> i32 { NoMemoryRead NoMemoryWrite };
-internal func @putarray() -> void { NoMemoryWrite };
-internal func @starttime() -> void { NoMemoryRead NoMemoryWrite };
-internal func @stoptime() -> void { NoMemoryRead NoMemoryWrite };
+internal func @putarray(i32, i32*) -> void { NoMemoryWrite };
+internal func @starttime(i32) -> void { NoMemoryRead NoMemoryWrite };
+internal func @stoptime(i32) -> void { NoMemoryRead NoMemoryWrite };
 internal [32768 * i32]* @buffer, align 8 { Flexible };
 func @main() -> i32 { NoRecurse Entry } {
   ^entry:

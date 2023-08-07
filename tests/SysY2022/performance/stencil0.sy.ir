@@ -1,7 +1,7 @@
-internal func @getarray() -> i32 { NoMemoryRead };
-internal func @putarray() -> void { NoMemoryWrite };
-internal func @starttime() -> void { NoMemoryRead NoMemoryWrite };
-internal func @stoptime() -> void { NoMemoryRead NoMemoryWrite };
+internal func @getarray(i32*) -> i32 { NoMemoryRead };
+internal func @putarray(i32, i32*) -> void { NoMemoryWrite };
+internal func @starttime(i32) -> void { NoMemoryRead NoMemoryWrite };
+internal func @stoptime(i32) -> void { NoMemoryRead NoMemoryWrite };
 internal [524288 * i32]* @image_in, align 8;
 internal [524288 * i32]* @image_out, align 8;
 func @main() -> i32 { NoRecurse Entry } {

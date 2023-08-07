@@ -86,6 +86,25 @@ Block* splitBlock(List<Block*>& blocks, List<Block*>::iterator block, IntrusiveL
     blocks.insert(std::next(block), nextBlock);
     return nextBlock;
 }
+void fixPhiNode(Block* oldPred, Block* newPred) {
+    const auto terminator = newPred->getTerminator();
+    if(terminator->isBranch()) {
+        const auto branch = terminator->as<BranchInst>();
+
+        auto handleTarget = [&](Block* target) {
+            for(auto& phiInst : target->instructions()) {
+                if(phiInst.getInstID() == InstructionID::Phi) {
+                    phiInst.as<PhiInst>()->replaceSource(oldPred, newPred);
+                } else
+                    break;
+            }
+        };
+
+        handleTarget(branch->getTrueTarget());
+        if(branch->getFalseTarget() && branch->getFalseTarget() != branch->getTrueTarget())
+            handleTarget(branch->getFalseTarget());
+    }
+}
 
 Block* createIndirectBlock(const Module& module, Function& func, Block* sourceBlock, Block* targetBlock) {
     IRBuilder builder{ module.getTarget() };

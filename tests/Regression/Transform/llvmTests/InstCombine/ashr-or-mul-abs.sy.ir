@@ -1,6 +1,6 @@
-func @ashr_or_mul_to_abs() -> i32;
-func @ashr_or_mul_to_abs2() -> i32;
-func @ashr_or_mul_to_abs3() -> i32;
-func @ashr_or_mul_to_abs_neg() -> i32;
-func @ashr_or_mul_to_abs_neg2() -> i32;
-func @ashr_or_mul_to_abs_neg3() -> i32;
+func @ashr_or_mul_to_abs(i32) -> i32;
+func @ashr_or_mul_to_abs2(i32) -> i32;
+func @ashr_or_mul_to_abs3(i32) -> i32;
+func @ashr_or_mul_to_abs_neg(i32) -> i32;
+func @ashr_or_mul_to_abs_neg2(i32) -> i32;
+func @ashr_or_mul_to_abs_neg3(i32, i32) -> i32;

@@ -1,2 +1,2 @@
-func @ctpop1() -> i32;
-func @ctpop1_multiuse() -> i32;
+func @ctpop1(i32) -> i32;
+func @ctpop1_multiuse(i32) -> i32;

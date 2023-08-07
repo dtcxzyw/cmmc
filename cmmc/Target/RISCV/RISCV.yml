@@ -260,6 +260,8 @@ InstInfo:
     Template: FIFType
     FCLASS_S:
       Mnemonic: fclass.s
+    FMV_X_W:
+      Mnemonic: fmv.x.w
   InstanceFIFF:
     Template: FIFFType
     FEQ_S:
@@ -276,8 +278,7 @@ InstInfo:
       Mnemonic: fcvt.s.w
     FCVT_S_WU:
       Mnemonic: fcvt.s.wu
-    FMV_X_W:
-      Mnemonic: fmv.x.w
+
   Fma:
     Format: $Mnemonic:Template $Rd:FPR[Def], $Rs1:FPR[Use], $Rs2:FPR[Use], $Rs3:FPR[Use]
     Instances:

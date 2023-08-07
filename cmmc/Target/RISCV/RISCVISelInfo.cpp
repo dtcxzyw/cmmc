@@ -1125,8 +1125,15 @@ MIROperand RISCVISelInfo::materializeFPConstant(ConstantFloatingPoint* fp, Lower
     return MIROperand{};
 }
 bool RISCVISelInfo::lowerInst(Instruction* inst, LoweringContext& loweringCtx) const {
-    CMMC_UNUSED(inst);
-    CMMC_UNUSED(loweringCtx);
+    if(inst->getInstID() == InstructionID::Bitcast) {
+        const auto src = loweringCtx.mapOperand(inst->getOperand(0));
+        if(src.type() == OperandType::Float32 && inst->getType()->isSame(IntegerType::get(32))) {
+            auto dst = loweringCtx.newVReg(OperandType::Int32);
+            loweringCtx.emitInst(MIRInst{ FMV_X_W }.setOperand<0>(dst).setOperand<1>(src));
+            loweringCtx.addOperand(inst, dst);
+            return true;
+        }
+    }
     return false;
 }
 CMMC_TARGET_NAMESPACE_END

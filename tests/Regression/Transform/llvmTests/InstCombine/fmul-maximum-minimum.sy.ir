@@ -1,6 +1,6 @@
-func @test() -> f32;
-func @test_comm1() -> f32;
-func @test_comm2() -> f32;
-func @test_comm3() -> f32;
-func @test_flags() -> f32;
-func @test_flags2() -> f32;
+func @test(f32, f32) -> f32;
+func @test_comm1(f32, f32) -> f32;
+func @test_comm2(f32, f32) -> f32;
+func @test_comm3(f32, f32) -> f32;
+func @test_flags(f32, f32) -> f32;
+func @test_flags2(f32, f32) -> f32;

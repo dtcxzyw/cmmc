@@ -51,6 +51,9 @@ public:
     [[nodiscard]] const DataLayout& getDataLayout() const noexcept override {
         return mDataLayout;
     }
+    [[nodiscard]] bool isLibCallSupported(CMMCLibCall libCall) const noexcept override {
+        return libCall == CMMCLibCall::cacheLookup;
+    }
 };
 
 CMMC_TARGET("llvm", LLVMTarget);

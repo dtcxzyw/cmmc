@@ -1,7 +1,7 @@
-func @udiv_c_i32() -> i32;
-func @udiv_const_constexpr() -> i32;
-func @udiv_constexpr() -> i32;
-func @udiv_constexpr_const() -> i32;
-func @udiv_i32() -> i32;
-func @udiv_i32_c() -> i32;
-func @udiv_i32_c_multiuse() -> i32;
+func @udiv_c_i32(i8) -> i32;
+func @udiv_const_constexpr(i8) -> i32;
+func @udiv_constexpr(i8) -> i32;
+func @udiv_constexpr_const(i8) -> i32;
+func @udiv_i32(i8, i8) -> i32;
+func @udiv_i32_c(i8) -> i32;
+func @udiv_i32_c_multiuse(i8) -> i32;

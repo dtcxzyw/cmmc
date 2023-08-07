@@ -54,6 +54,9 @@ write:
 )";
 
 constexpr int32_t passingByRegBase = 0x100000;
+static const char* const builtinSysYRuntime =
+#include <RISCV/SysYRuntime.hpp>
+    ;
 
 class RISCVDataLayout final : public DataLayout {
 public:
@@ -249,10 +252,12 @@ public:
                             target.getFrameInfo(),
                             target.getRegisterInfo(),
                             MIRFlags{ false, false } };
-
-        if(runtime == RuntimeType::None) {
+        if(runtime != RuntimeType::SplRuntime) {
             // out << ".option arch rv64gc_zba_zbb\n";
             out << R"(.attribute arch, "rv64i2p1_m2p0_a2p1_f2p2_d2p2_c2p0_zicsr2p0_zifencei2p0_zba1p0_zbb1p0")" << '\n';
+        }
+        if(runtime == RuntimeType::SysYRuntime) {
+            out << builtinSysYRuntime;
         }
 
         cmmc::mir::dumpAssembly(
@@ -288,6 +293,9 @@ public:
             perFunc->addPass(pass);
         modulePassManager.addPass(createWrapper(std::move(perFunc)));
         modulePassManager.run(module, analysis);
+    }
+    [[nodiscard]] bool isLibCallSupported(CMMCLibCall) const noexcept override {
+        return true;
     }
 };
 

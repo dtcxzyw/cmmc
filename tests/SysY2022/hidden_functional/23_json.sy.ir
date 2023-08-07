@@ -1,5 +1,5 @@
 internal func @getch() -> i32 { NoMemoryRead NoMemoryWrite };
-internal func @putch() -> void { NoMemoryRead NoMemoryWrite };
+internal func @putch(i32) -> void { NoMemoryRead NoMemoryWrite };
 internal func @detect_item(i32 %type, i32* %buf, i32 %len, i32* %0) -> i32 {
   ^1:
     ubr ^2;

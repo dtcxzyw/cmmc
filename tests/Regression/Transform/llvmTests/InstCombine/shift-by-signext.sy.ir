@@ -14,11 +14,11 @@ func @llvm_fshr_i8(i8 %var0, i8 %var1, i8 %var2) -> i8 { NoMemoryRead NoMemoryWr
   ^entry:
     ret i8 0;
 }
-func @n11_extrause() -> i32;
-func @n12_twoshifts_and_extrause() -> i32;
-func @n7_fshl() -> i8;
-func @n8_fshr() -> i8;
-func @t0_shl() -> i32;
-func @t10_fshr() -> i8;
-func @t1_lshr() -> i32;
-func @t2_ashr() -> i32;
+func @n11_extrause(i32, i8) -> i32;
+func @n12_twoshifts_and_extrause(i32, i8) -> i32;
+func @n7_fshl(i8, i8, i8) -> i8;
+func @n8_fshr(i8, i8, i8) -> i8;
+func @t0_shl(i32, i8) -> i32;
+func @t10_fshr(i8, i8, i8) -> i8;
+func @t1_lshr(i32, i8) -> i32;
+func @t2_ashr(i32, i8) -> i32;

@@ -1,7 +1,7 @@
-internal func @getfarray() -> i32 { NoMemoryRead };
-internal func @putfloat() -> void { NoMemoryRead NoMemoryWrite };
-internal func @starttime() -> void { NoMemoryRead NoMemoryWrite };
-internal func @stoptime() -> void { NoMemoryRead NoMemoryWrite };
+internal func @getfarray(f32*) -> i32 { NoMemoryRead };
+internal func @putfloat(f32) -> void { NoMemoryRead NoMemoryWrite };
+internal func @starttime(i32) -> void { NoMemoryRead NoMemoryWrite };
+internal func @stoptime(i32) -> void { NoMemoryRead NoMemoryWrite };
 internal [1000 * [1000 * f32]]* @a, align 8;
 func @main() -> i32 { NoRecurse Entry } {
   ^entry:

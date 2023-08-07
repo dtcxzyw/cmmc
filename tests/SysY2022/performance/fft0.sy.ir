@@ -1,7 +1,7 @@
-internal func @getarray() -> i32 { NoMemoryRead };
-internal func @putarray() -> void { NoMemoryWrite };
-internal func @starttime() -> void { NoMemoryRead NoMemoryWrite };
-internal func @stoptime() -> void { NoMemoryRead NoMemoryWrite };
+internal func @getarray(i32*) -> i32 { NoMemoryRead };
+internal func @putarray(i32, i32*) -> void { NoMemoryWrite };
+internal func @starttime(i32) -> void { NoMemoryRead NoMemoryWrite };
+internal func @stoptime(i32) -> void { NoMemoryRead NoMemoryWrite };
 internal func @multiply(i32 %a, i32 %b) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless } {
   ^entry:
     i1 %0 = icmp eq i32 %b, i32 0;

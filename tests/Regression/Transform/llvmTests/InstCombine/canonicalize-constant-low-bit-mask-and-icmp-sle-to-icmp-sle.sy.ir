@@ -1,4 +1,4 @@
-func @c0() -> i32;
-func @cv0_GOOD() -> i32;
-func @cv1() -> i32;
-func @cv2() -> i32;
+func @c0(i8) -> i32;
+func @cv0_GOOD(i8) -> i32;
+func @cv1(i8) -> i32;
+func @cv2(i8, i8) -> i32;

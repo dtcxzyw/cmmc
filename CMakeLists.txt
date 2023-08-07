@@ -72,6 +72,16 @@ function(add_backend backend)
         COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_LIST_DIR}/cmmc/Target/Template/generate.py ${DESC_FILE} ${GENERATED_DIR}
         DEPENDS ${DESC_FILE} ${CMMC_TARGET_TEMPLATE_ENGINE_FILES} ${CMAKE_CURRENT_LIST_DIR}/cmmc/Target/Generic/Generic.yml
     )
+    if(${backend} STREQUAL "RISCV" OR ${backend} STREQUAL "ARM")
+      set(SYSY_RUNTIME_OUTPUT ${GENERATED_DIR}/SysYRuntime.hpp)
+      add_custom_command(
+        OUTPUT ${SYSY_RUNTIME_OUTPUT}
+        COMMAND ${CMAKE_COMMAND} -E echo Building SysY runtime for target ${backend}
+        COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_LIST_DIR}/cmmc/Runtime/compile_runtime.py ${backend} ${SYSY_RUNTIME_OUTPUT}
+        DEPENDS ${CMAKE_CURRENT_LIST_DIR}/cmmc/Runtime/compile_runtime.py ${CMAKE_CURRENT_LIST_DIR}/cmmc/Runtime/cmmc_sysy_rt.cpp
+      )
+      list(APPEND OUTPUTS ${SYSY_RUNTIME_OUTPUT})
+    endif()
     add_custom_target(${backend}_generated DEPENDS ${OUTPUTS})
     list(APPEND CMMC_GENERATED_TARGETS ${backend}_generated)
     set(CMMC_GENERATED_TARGETS ${CMMC_GENERATED_TARGETS} PARENT_SCOPE)

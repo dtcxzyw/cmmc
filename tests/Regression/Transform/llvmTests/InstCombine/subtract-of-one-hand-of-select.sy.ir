@@ -1,4 +1,4 @@
-func @n3_extrause() -> i8;
-func @n4_wrong_hands() -> i8;
-func @t0_sub_of_trueval() -> i8;
-func @t1_sub_of_falseval() -> i8;
+func @n3_extrause(i32, i8, i8) -> i8;
+func @n4_wrong_hands(i32, i8, i8, i8) -> i8;
+func @t0_sub_of_trueval(i32, i8, i8) -> i8;
+func @t1_sub_of_falseval(i32, i8, i8) -> i8;

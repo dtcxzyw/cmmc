@@ -462,6 +462,7 @@ std::shared_ptr<PassManager<Module>> PassManager<Module>::get(OptimizationLevel 
         for(const auto& pass : passesSource.collectFunctionPass({
                 "DiscardReturnValue",  //
                 "TailCallEliminate",   //
+                "StatelessCache",      //
                 "ShrinkWrapping",      //
                 "CallEliminate",       //
                 "LoadEliminate",       //

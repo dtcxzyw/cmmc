@@ -30,6 +30,7 @@ bool reduceBlock(IRBuilder& builder, Block& block, const BlockReducer& reducer);
 void removeInst(Instruction* inst);
 // NOTICE: no terminator/operand fix
 Block* splitBlock(List<Block*>& blocks, List<Block*>::iterator block, IntrusiveListIterator<Instruction> after);
+void fixPhiNode(Block* oldPred, Block* newPred);
 bool applyReplace(Instruction* inst, const ReplaceMap& replace);
 Block* createIndirectBlock(const Module& module, Function& func, Block* sourceBlock, Block* targetBlock);
 bool isNoSideEffectExpr(const Instruction& inst);

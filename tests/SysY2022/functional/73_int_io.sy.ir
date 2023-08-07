@@ -1,5 +1,5 @@
 internal func @getch() -> i32 { NoMemoryRead NoMemoryWrite };
-internal func @putch() -> void { NoMemoryRead NoMemoryWrite };
+internal func @putch(i32) -> void { NoMemoryRead NoMemoryWrite };
 func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
   ^entry:
     [16 * i32]* %b = alloc [16 * i32], align 8;

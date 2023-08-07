@@ -1,6 +1,6 @@
 internal func @getint() -> i32 { NoMemoryRead NoMemoryWrite };
-internal func @putint() -> void { NoMemoryRead NoMemoryWrite };
-internal func @putch() -> void { NoMemoryRead NoMemoryWrite };
+internal func @putint(i32) -> void { NoMemoryRead NoMemoryWrite };
+internal func @putch(i32) -> void { NoMemoryRead NoMemoryWrite };
 internal [50 * i32]* @ans, align 8 { Flexible };
 internal [50 * i32]* @row, align 8 { Flexible };
 internal [50 * i32]* @line1, align 8 { Flexible };

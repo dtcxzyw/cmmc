@@ -28,6 +28,7 @@
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
 #include <cmmc/Transforms/Util/PatternMatch.hpp>
 #include <cstdint>
+#include <iostream>
 #include <iterator>
 #include <limits>
 #include <unordered_map>
@@ -40,55 +41,65 @@ public:
     bool run(Function& func, AnalysisPassManager&) const override {
         bool modified = false;
         // TODO: common base opt
-        for(auto block : func.blocks()) {
-            std::unordered_map<Instruction*, uint64_t> instId;
-            const auto increment = std::numeric_limits<uint64_t>::max() / 2 / (block->instructions().size() + 2);
-            uint64_t idx = increment;
-            for(auto& inst : block->instructions()) {
-                instId[&inst] = idx;
-                idx += increment;
-            }
 
-            for(auto& inst : block->instructions()) {
-                if(inst.getInstID() == InstructionID::Load || inst.getInstID() == InstructionID::Store) {
-                    const auto addr = inst.getOperand(0);
-                    if(addr->isInstruction() && addr->getBlock() != block) {
-                        const auto addrInst = addr->as<Instruction>();
-                        if(addrInst->getInstID() != InstructionID::GetElementPtr)
-                            continue;
+        for(auto k = 0; k < 2; ++k)
+            for(auto block : func.blocks()) {
+                std::unordered_map<Instruction*, uint64_t> instId;
+                const auto increment = std::numeric_limits<uint64_t>::max() / 2 / (block->instructions().size() + 2);
+                uint64_t idx = increment;
+                for(auto& inst : block->instructions()) {
+                    instId[&inst] = idx;
+                    idx += increment;
+                }
 
-                        bool usedByPhi = false;
-                        uint64_t minId = std::numeric_limits<uint64_t>::max();
-                        Instruction* firstUse = nullptr;
-                        for(auto user : addrInst->users()) {
-                            if(user->getBlock() == block) {
-                                if(user->getInstID() == InstructionID::Phi) {
-                                    usedByPhi = true;
-                                    break;
-                                }
-                                auto id = instId.at(user);
-                                if(id < minId) {
-                                    minId = id;
-                                    firstUse = user;
+                for(auto& inst : block->instructions()) {
+                    if(inst.getInstID() == InstructionID::Load || inst.getInstID() == InstructionID::Store ||
+                       inst.getInstID() == InstructionID::PtrCast) {
+                        const auto addr = inst.getOperand(0);
+                        if(addr->isInstruction() && addr->getBlock() != block) {
+                            const auto addrInst = addr->as<Instruction>();
+                            if(addrInst->getInstID() != InstructionID::GetElementPtr &&
+                               addrInst->getInstID() != InstructionID::PtrCast)
+                                continue;
+
+                            if(addrInst->getInstID() == InstructionID::PtrCast) {
+                                if(!addrInst->getOperand(0)->is<GetElementPtrInst>())
+                                    continue;
+                            }
+
+                            bool usedByPhi = false;
+                            uint64_t minId = std::numeric_limits<uint64_t>::max();
+                            Instruction* firstUse = nullptr;
+                            for(auto user : addrInst->users()) {
+                                if(user->getBlock() == block) {
+                                    if(user->getInstID() == InstructionID::Phi) {
+                                        usedByPhi = true;
+                                        break;
+                                    }
+                                    auto id = instId.at(user);
+                                    if(id < minId) {
+                                        minId = id;
+                                        firstUse = user;
+                                    }
                                 }
                             }
+
+                            if(usedByPhi)
+                                continue;
+
+                            const auto dup = addrInst->clone();
+                            dup->insertBefore(block, firstUse->asIterator());
+                            const auto l = dup->asIterator() == block->instructions().begin() ?
+                                0 :
+                                instId.at(&*std::prev(dup->asIterator()));
+                            const auto r = instId.at(firstUse);
+                            instId[dup] = (l + r) / 2;
+                            addrInst->replaceWithInBlock(block, dup);
+                            modified = true;
                         }
-
-                        if(usedByPhi)
-                            continue;
-
-                        const auto dup = addrInst->clone();
-                        dup->insertBefore(block, firstUse->asIterator());
-                        const auto l =
-                            dup->asIterator() == block->instructions().begin() ? 0 : instId.at(&*std::prev(dup->asIterator()));
-                        const auto r = instId.at(firstUse);
-                        instId[dup] = (l + r) / 2;
-                        addrInst->replaceWithInBlock(block, dup);
-                        modified = true;
                     }
                 }
             }
-        }
 
         return modified;
     }

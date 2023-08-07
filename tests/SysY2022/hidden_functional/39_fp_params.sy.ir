@@ -1,11 +1,11 @@
 internal func @getint() -> i32 { NoMemoryRead NoMemoryWrite };
-internal func @getarray() -> i32 { NoMemoryRead };
-internal func @getfarray() -> i32 { NoMemoryRead };
-internal func @putint() -> void { NoMemoryRead NoMemoryWrite };
-internal func @putch() -> void { NoMemoryRead NoMemoryWrite };
-internal func @putarray() -> void { NoMemoryWrite };
-internal func @putfloat() -> void { NoMemoryRead NoMemoryWrite };
-internal func @putfarray() -> void { NoMemoryWrite };
+internal func @getarray(i32*) -> i32 { NoMemoryRead };
+internal func @getfarray(f32*) -> i32 { NoMemoryRead };
+internal func @putint(i32) -> void { NoMemoryRead NoMemoryWrite };
+internal func @putch(i32) -> void { NoMemoryRead NoMemoryWrite };
+internal func @putarray(i32, i32*) -> void { NoMemoryWrite };
+internal func @putfloat(f32) -> void { NoMemoryRead NoMemoryWrite };
+internal func @putfarray(i32, f32*) -> void { NoMemoryWrite };
 internal func @params_f40(f32 %x0, f32 %x1, f32 %x2, f32 %x3, f32 %x4, f32 %x5, f32 %x6, f32 %x7, f32 %x8, f32 %x9, f32 %x10, f32 %x11, f32 %x12, f32 %x13, f32 %x14, f32 %x15, f32 %x16, f32 %x17, f32 %x18, f32 %x19, f32 %x20, f32 %x21, f32 %x22, f32 %x23, f32 %x24, f32 %x25, f32 %x26, f32 %x27, f32 %x28, f32 %x29, f32 %x30, f32 %x31, f32 %x32, f32 %x33, f32 %x34, f32 %x35, f32 %x36, f32 %x37, f32 %x38, f32 %x39, i32* %0) -> f32 { NoMemoryWrite } {
   ^entry:
     [10 * f32]* %arr = alloc [10 * f32], align 8;

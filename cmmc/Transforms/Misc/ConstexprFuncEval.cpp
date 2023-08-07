@@ -12,6 +12,7 @@
     limitations under the License.
 */
 
+#include "cmmc/Support/StaticReflection.hpp"
 #include <algorithm>
 #include <cmmc/ExecutionEngine/Interpreter.hpp>
 #include <cmmc/IR/Block.hpp>
@@ -22,6 +23,7 @@
 #include <cmmc/IR/Module.hpp>
 #include <cmmc/IR/Type.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
+#include <iostream>
 #include <variant>
 
 CMMC_NAMESPACE_BEGIN
@@ -50,6 +52,7 @@ class ConstexprFuncEval final : public TransformPass<Function> {
         const auto res = interpreter.execute(module, func, args, nullptr);
         if(std::holds_alternative<ConstantValue*>(res))
             return std::get<ConstantValue*>(res);
+        // std::cerr << enumName(std::get<SimulationFailReason>(res));
         return nullptr;
     }
 

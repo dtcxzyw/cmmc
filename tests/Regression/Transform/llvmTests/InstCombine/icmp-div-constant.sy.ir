@@ -1,5 +1,5 @@
-func @icmp_div() -> i32;
-func @icmp_div2() -> i32;
-func @icmp_div3() -> i32;
-func @is_rem16_something_i8() -> i32;
-func @is_rem2_neg_i8() -> i32;
+func @icmp_div(i16, i16) -> i32;
+func @icmp_div2(i16, i16) -> i32;
+func @icmp_div3(i16, i16) -> i32;
+func @is_rem16_something_i8(i8) -> i32;
+func @is_rem2_neg_i8(i8) -> i32;

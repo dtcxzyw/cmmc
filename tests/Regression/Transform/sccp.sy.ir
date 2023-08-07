@@ -1,4 +1,4 @@
-internal func @putint() -> void { NoMemoryRead NoMemoryWrite };
+internal func @putint(i32) -> void { NoMemoryRead NoMemoryWrite };
 func @foo1(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
   ^entry:
     i1 %0 = icmp eq i32 %x, i32 10;

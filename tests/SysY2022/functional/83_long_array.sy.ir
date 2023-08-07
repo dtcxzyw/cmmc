@@ -1,4 +1,4 @@
-internal func @putint() -> void { NoMemoryRead NoMemoryWrite };
+internal func @putint(i32) -> void { NoMemoryRead NoMemoryWrite };
 func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
   ^entry:
     [10000 * i32]* %0 = ptrcast [10000 * i32]* @a1 to [10000 * i32]*;

@@ -1,4 +1,4 @@
-func @udiv_big_const() -> i16;
-func @udiv_exact() -> i16;
-func @udiv_one_arg() -> i16;
-func @udiv_two_args() -> i16;
+func @udiv_big_const(i8) -> i16;
+func @udiv_exact(i16, i16) -> i16;
+func @udiv_one_arg(i8) -> i16;
+func @udiv_two_args(i16, i16) -> i16;

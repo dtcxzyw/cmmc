@@ -38,7 +38,7 @@ class MIRModule;
 class IPRAUsageCache;
 class MIRRelocable;
 
-enum class RuntimeType { None, SplRuntime };
+enum class RuntimeType { None, SplRuntime, SysYRuntime };
 
 struct TargetOptHeuristic final {
     uint32_t registerLength = 32U;
@@ -53,6 +53,11 @@ struct TargetOptHeuristic final {
     bool disableSelectionOpt = false;
     uint32_t branchPredictionWarmupThreshold = 2U;
     uint32_t maxConstantHoistCount = 0U;
+};
+
+enum class CMMCLibCall {
+    parallelFor,
+    cacheLookup,
 };
 
 class Target {
@@ -101,6 +106,10 @@ public:
     virtual void addExternalFuncIPRAInfo(MIRRelocable* symbol, IPRAUsageCache& infoIPRA) const {
         CMMC_UNUSED(symbol);
         CMMC_UNUSED(infoIPRA);
+    }
+    [[nodiscard]] virtual bool isLibCallSupported(CMMCLibCall libCall) const noexcept {
+        CMMC_UNUSED(libCall);
+        return false;
     }
 };
 

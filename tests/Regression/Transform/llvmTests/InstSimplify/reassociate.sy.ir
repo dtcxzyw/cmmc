@@ -1,4 +1,4 @@
-func @add1() -> i32;
-func @and1() -> i32;
-func @and2() -> i32;
-func @mulnsw_sdiv() -> i32;
+func @add1(i32) -> i32;
+func @and1(i32, i32) -> i32;
+func @and2(i32, i32) -> i32;
+func @mulnsw_sdiv(i32, i32) -> i32;

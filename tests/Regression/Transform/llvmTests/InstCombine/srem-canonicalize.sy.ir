@@ -1,4 +1,4 @@
-func @test_srem_canonicalize_multiple_uses() -> i32;
-func @test_srem_canonicalize_nonsw() -> i32;
-func @test_srem_canonicalize_op0() -> i32;
-func @test_srem_canonicalize_op1() -> i32;
+func @test_srem_canonicalize_multiple_uses(i32, i32) -> i32;
+func @test_srem_canonicalize_nonsw(i32, i32) -> i32;
+func @test_srem_canonicalize_op0(i32, i32) -> i32;
+func @test_srem_canonicalize_op1(i32, i32) -> i32;

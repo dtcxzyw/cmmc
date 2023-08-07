@@ -76,7 +76,7 @@ namespace {
         {
             cpu_set_t set;
             CPU_SET(worker.core, &set);
-            auto pid = getpid();
+            auto pid = gettid();
             sched_setaffinity(pid, sizeof(set), &set);
         }
         while(worker.run) {
@@ -109,8 +109,9 @@ __attribute((destructor)) void cmmcUninitRuntime() {
         worker.ready.post();
         waitpid(worker.pid, nullptr, 0);
     }
-    for(auto& worker : workers)
-        munmap(worker.stack, stackSize);
+    // FIXME
+    // for(auto& worker : workers)
+    //     munmap(worker.stack, stackSize);
 }
 void cmmcParallelFor(int32_t beg, int32_t end, CmmcForLoop func, void* payload) {
     if(end <= beg)
@@ -139,6 +140,31 @@ void cmmcParallelFor(int32_t beg, int32_t end, CmmcForLoop func, void* payload) 
     }
     for(auto& worker : workers) {
         worker.done.wait();
+    }
+}
+constexpr uint32_t m1 = 1021, m2 = 1019;
+struct LUTEntry final {
+    uint64_t key;
+    int val;
+    int hasVal;
+};
+static_assert(sizeof(LUTEntry) == sizeof(uint32_t) * 4);
+LUTEntry* cmmcCacheLookup(LUTEntry* table, int key1, int key2) {
+    const auto key = static_cast<uint64_t>(key1) << 32 | static_cast<uint64_t>(key2);
+    const auto ha = key % m1, hb = 1 + key % m2;
+    auto cur = ha;
+    while(true) {
+        auto& ref = table[cur];
+        if(!ref.hasVal) {
+            ref.key = key;
+            return &ref;
+        }
+        if(ref.key == key) {
+            return &ref;
+        }
+        cur += hb;
+        if(cur >= m1)
+            cur -= m1;
     }
 }
 }

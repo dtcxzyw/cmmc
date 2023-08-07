@@ -1,4 +1,4 @@
-func @fshr_sgt_n1() -> i32;
+func @fshr_sgt_n1(i8, i8, i8) -> i32;
 func @llvm_fshl_i8(i8 %var0, i8 %var1, i8 %var2) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     ret i8 0;

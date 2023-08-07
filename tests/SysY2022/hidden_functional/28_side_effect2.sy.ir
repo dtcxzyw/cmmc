@@ -1,4 +1,4 @@
-internal func @putint() -> void { NoMemoryRead NoMemoryWrite };
+internal func @putint(i32) -> void { NoMemoryRead NoMemoryWrite };
 func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
   ^entry:
     [20 * i32]* %array = alloc [20 * i32], align 8;

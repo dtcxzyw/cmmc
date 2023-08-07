@@ -62,16 +62,28 @@ void Function::dump(std::ostream& out, const HighlightSelector& selector) const 
     out << "func @"sv << getSymbol() << '(';
 
     LabelAllocator allocator;
-    for(auto arg : mArgs)
-        arg->setLabel(allocator.allocate(arg->getLabel()));
+    if(mBlocks.empty()) {
+        auto& args = getType()->as<FunctionType>()->getArgTypes();
+        bool isFirst = true;
+        for(auto arg : args) {
+            if(!isFirst) {
+                out << ", "sv;
+            } else
+                isFirst = false;
+            arg->dumpName(out);
+        }
+    } else {
+        for(auto arg : mArgs)
+            arg->setLabel(allocator.allocate(arg->getLabel()));
 
-    bool isFirst = true;
-    for(auto arg : mArgs) {
-        if(!isFirst) {
-            out << ", "sv;
-        } else
-            isFirst = false;
-        arg->dumpAsOperand(out);
+        bool isFirst = true;
+        for(auto arg : mArgs) {
+            if(!isFirst) {
+                out << ", "sv;
+            } else
+                isFirst = false;
+            arg->dumpAsOperand(out);
+        }
     }
     out << ") -> "sv;
     getType()->as<FunctionType>()->getRetType()->dumpName(out);

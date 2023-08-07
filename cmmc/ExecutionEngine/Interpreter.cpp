@@ -30,6 +30,7 @@
 #include <cmmc/Support/Options.hpp>
 #include <cmmc/Support/Profiler.hpp>
 #include <cstdint>
+#include <cstring>
 #include <deque>
 #include <ios>
 #include <iostream>
@@ -915,7 +916,16 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
                 break;
             }
             case InstructionID::Bitcast: {
-                reportNotImplemented(CMMC_LOCATION());
+                const auto f32 = FloatingPointType::get(true);
+                const auto i32 = IntegerType::get(32);
+                if(inst.getType()->isSame(i32) && inst.getOperand(0)->getType()->isSame(f32)) {
+                    const auto val = static_cast<float>(getFP(0));
+                    int32_t ival;
+                    memcpy(&ival, &val, sizeof(int32_t));
+                    addInt(ival);
+                } else
+                    reportNotImplemented(CMMC_LOCATION());
+                break;
             }
             case InstructionID::F2U: {
                 addUInt(static_cast<uintmax_t>(getFP(0)));
@@ -1017,13 +1027,18 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
                 switch(callee->getIntrinsic()) {
                     case Intrinsic::none: {
                         if(callee->blocks().empty()) {
-
                             // runtime func
+                            const auto symbol = callee->getSymbol().prefix();
+                            if(symbol == "cmmcCacheLookup"sv) {
+                                const auto base = getPtr(0);
+                                memCtx.storeValue(base + 12, static_cast<int32_t>(0));
+                                addPtr(base);
+                                break;
+                            }
 
                             if(!ioCtx)
                                 return SimulationFailReason::RuntimeError;
 
-                            const auto symbol = callee->getSymbol().prefix();
                             if(symbol == "read"sv || symbol == "getint"sv) {
                                 int x = 0;
                                 ioCtx->stdinStream.get("%d", x);

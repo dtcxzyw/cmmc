@@ -1,6 +1,6 @@
-func @n0_urem_of_maybe_not_power_of_two() -> i32;
-func @n1_urem_by_maybe_power_of_two() -> i32;
-func @p0_scalar_urem_by_const() -> i32;
-func @p1_scalar_urem_by_nonconst() -> i32;
-func @p2_scalar_shifted_urem_by_const() -> i32;
-func @p3_scalar_shifted2_urem_by_const() -> i32;
+func @n0_urem_of_maybe_not_power_of_two(i32, i32) -> i32;
+func @n1_urem_by_maybe_power_of_two(i32, i32) -> i32;
+func @p0_scalar_urem_by_const(i32, i32) -> i32;
+func @p1_scalar_urem_by_nonconst(i32, i32) -> i32;
+func @p2_scalar_shifted_urem_by_const(i32, i32) -> i32;
+func @p3_scalar_shifted2_urem_by_const(i32, i32) -> i32;

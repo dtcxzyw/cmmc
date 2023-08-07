@@ -36,6 +36,10 @@ CMMC_MIR_NAMESPACE_BEGIN
 
 constexpr int32_t passingByRegBase = 0x100000;
 
+static const char* const builtinSysYRuntime =
+#include <ARM/SysYRuntime.hpp>
+    ;
+
 class ARMDataLayout final : public DataLayout {
 public:
     [[nodiscard]] Endian getEndian() const noexcept override {
@@ -199,6 +203,9 @@ public:
     [[nodiscard]] const TargetScheduleModel& getScheduleModel() const noexcept override {
         return ARM::getARMScheduleModel();
     }
+    [[nodiscard]] bool isLibCallSupported(CMMCLibCall) const noexcept override {
+        return true;
+    }
     void emitAssembly(const MIRModule& module, std::ostream& out, RuntimeType runtime) const override {
         CMMC_UNUSED(runtime);
         auto& target = *this;
@@ -210,6 +217,10 @@ public:
                             target.getFrameInfo(),
                             target.getRegisterInfo(),
                             MIRFlags{ false, false } };
+
+        if(runtime == RuntimeType::SysYRuntime) {
+            out << builtinSysYRuntime;
+        }
 
         out << ".arch armv7ve" << std::endl;
 

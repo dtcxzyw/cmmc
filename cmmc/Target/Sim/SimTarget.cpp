@@ -50,6 +50,9 @@ public:
     [[nodiscard]] const DataLayout& getDataLayout() const noexcept override {
         return mDataLayout;
     }
+    [[nodiscard]] bool isLibCallSupported(CMMCLibCall) const noexcept override {
+        return true;
+    }
 };
 
 CMMC_TARGET("sim", SimTarget);

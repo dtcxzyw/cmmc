@@ -1,2 +1,2 @@
-func @t0() -> i8;
-func @t1() -> i8;
+func @t0(i8, i8, i8) -> i8;
+func @t1(i8) -> i8;

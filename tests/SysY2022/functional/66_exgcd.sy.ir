@@ -1,4 +1,4 @@
-internal func @putint() -> void { NoMemoryRead NoMemoryWrite };
+internal func @putint(i32) -> void { NoMemoryRead NoMemoryWrite };
 internal func @exgcd(i32 %a, i32 %b, i32* %x, i32* %y) -> i32 {
   ^entry:
     i1 %0 = icmp eq i32 %b, i32 0;

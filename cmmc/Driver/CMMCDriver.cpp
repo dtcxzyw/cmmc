@@ -185,9 +185,14 @@ static int runIRPipeline(Module& module, const std::string& base, const std::str
         mir::lowerToMachineModule(module, analysis, static_cast<OptimizationLevel>(optimizationLevel.get()));
     {
         Stage stage{ "dump ASM"sv };
-        target.emitAssembly(*machineModule, out,
-                            (lang == FrontEndLang::Spl && withRuntime.get()) ? mir::RuntimeType::SplRuntime :
-                                                                               mir::RuntimeType::None);
+        auto runtime = mir::RuntimeType::None;
+        if(withRuntime.get()) {
+            if(lang == FrontEndLang::Spl)
+                runtime = mir::RuntimeType::SplRuntime;
+            if(lang == FrontEndLang::SysY)
+                runtime = mir::RuntimeType::SysYRuntime;
+        }
+        target.emitAssembly(*machineModule, out, runtime);
     }
 
     return EXIT_SUCCESS;

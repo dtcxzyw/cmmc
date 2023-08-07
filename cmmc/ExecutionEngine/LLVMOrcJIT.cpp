@@ -153,6 +153,32 @@ namespace sysy {
     }
 }  // namespace sysy
 
+constexpr uint32_t m1 = 1021, m2 = 1019;
+struct LUTEntry final {
+    uint64_t key;
+    int val;
+    int hasVal;
+};
+static_assert(sizeof(LUTEntry) == sizeof(uint32_t) * 4);
+LUTEntry* cmmcCacheLookup(LUTEntry* table, int key1, int key2) {
+    const auto key = static_cast<uint64_t>(key1) << 32 | static_cast<uint64_t>(key2);
+    const auto ha = key % m1, hb = 1 + key % m2;
+    auto cur = ha;
+    while(true) {
+        auto& ref = table[cur];
+        if(!ref.hasVal) {
+            ref.key = key;
+            return &ref;
+        }
+        if(ref.key == key) {
+            return &ref;
+        }
+        cur += hb;
+        if(cur >= m1)
+            cur -= m1;
+    }
+}
+
 std::variant<int, SimulationFailReason> llvmExecMain(Module& module, const std::string& srcPath, SimulationIOContext& ioCtx) {
     llvm::InitializeNativeTarget();
     llvm::InitializeNativeTargetAsmPrinter();
@@ -235,6 +261,7 @@ std::variant<int, SimulationFailReason> llvmExecMain(Module& module, const std::
         CMMC_NATIVE_FUNC(putfarray, sysy::putfarray),
         CMMC_NATIVE_FUNC(starttime, sysy::startTime),
         CMMC_NATIVE_FUNC(stoptime, sysy::stopTime),
+        CMMC_NATIVE_FUNC(cmmcCacheLookup, cmmcCacheLookup),
         // Memory operations
         CMMC_NATIVE_FUNC(memset, ::memset),
         CMMC_NATIVE_FUNC(memcpy, ::memcpy),

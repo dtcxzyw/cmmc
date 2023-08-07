@@ -161,23 +161,7 @@ class FuncInlining final : public TransformPass<Function> {
         }
 
         // fix phi nodes: block -> sinkBlock
-        const auto terminator = sinkBlock->getTerminator();
-        if(terminator->isBranch()) {
-            const auto branch = terminator->as<BranchInst>();
-
-            auto handleTarget = [&](Block* target) {
-                for(auto& inst : target->instructions()) {
-                    if(inst.getInstID() == InstructionID::Phi) {
-                        inst.as<PhiInst>()->replaceSource(block, sinkBlock);
-                    } else
-                        break;
-                }
-            };
-
-            handleTarget(branch->getTrueTarget());
-            if(branch->getFalseTarget() && branch->getFalseTarget() != branch->getTrueTarget())
-                handleTarget(branch->getFalseTarget());
-        }
+        fixPhiNode(block, sinkBlock);
     }
 
     static bool tryInline(Function& func) {

@@ -1,8 +1,8 @@
-func @and_sel_op0() -> i32;
-func @and_sel_op0_use() -> i32;
-func @ashr_sel_op1() -> i32;
-func @ashr_sel_op1_use() -> i32;
-func @extra_use() -> i32;
-func @extra_use2() -> i32;
-func @fadd_sel_op0() -> f32;
-func @fadd_sel_op0_use() -> f32;
+func @and_sel_op0(i32) -> i32;
+func @and_sel_op0_use(i32) -> i32;
+func @ashr_sel_op1(i32) -> i32;
+func @ashr_sel_op1_use(i32) -> i32;
+func @extra_use(i32, i32, i32) -> i32;
+func @extra_use2(i32, i32) -> i32;
+func @fadd_sel_op0(i32, f32) -> f32;
+func @fadd_sel_op0_use(i32, f32) -> f32;

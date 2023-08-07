@@ -1,7 +1,7 @@
 internal func @getint() -> i32 { NoMemoryRead NoMemoryWrite };
 internal func @getfloat() -> f32 { NoMemoryRead NoMemoryWrite };
-internal func @putch() -> void { NoMemoryRead NoMemoryWrite };
-internal func @putfloat() -> void { NoMemoryRead NoMemoryWrite };
+internal func @putch(i32) -> void { NoMemoryRead NoMemoryWrite };
+internal func @putfloat(f32) -> void { NoMemoryRead NoMemoryWrite };
 internal [8 * [8 * f32]]* @test_block, align 8 { Flexible };
 internal [8 * [8 * f32]]* @test_dct, align 8 { Flexible };
 internal [8 * [8 * f32]]* @test_idct, align 8 { Flexible };

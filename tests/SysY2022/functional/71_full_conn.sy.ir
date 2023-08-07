@@ -1,5 +1,5 @@
 internal func @getint() -> i32 { NoMemoryRead NoMemoryWrite };
-internal func @putch() -> void { NoMemoryRead NoMemoryWrite };
+internal func @putch(i32) -> void { NoMemoryRead NoMemoryWrite };
 func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
   ^entry:
     [5 * [5 * i32]]* %a = alloc [5 * [5 * i32]], align 8;

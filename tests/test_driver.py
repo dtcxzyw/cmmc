@@ -96,7 +96,7 @@ def basename(filename: str):
     return os.path.splitext(filename)[0]
 
 
-def run_cmmc(source, *, target, output = '/dev/stdout', opt_level = None, emit_ir = False, hide_symbol = False, strict = False, input_file = None, more = [], check = True) -> subprocess.CompletedProcess:
+def run_cmmc(source, *, target, output = '/dev/stdout', opt_level = None, emit_ir = False, hide_symbol = False, strict = False, input_file = None, no_runtime = False, more = [], check = True) -> subprocess.CompletedProcess:
     assert opt_level is None or 0 <= opt_level <= 3, "Invalid optimization level"
 
     command = [
@@ -111,6 +111,8 @@ def run_cmmc(source, *, target, output = '/dev/stdout', opt_level = None, emit_i
         command.append('--hide-symbol')
     if strict:
         command.append('--strict')
+    if no_runtime:
+        command.append('--with-runtime=false')
     if input_file is not None:
         command.extend(['-e', input_file])
     command = command + more + [source]
@@ -471,7 +473,7 @@ def sysy_regression(src):
 
 def sysy_regression_codegen(src, target):
     output_asm = f'{basename(src)}.{target}.s'
-    out = run_cmmc(src, target=target)
+    out = run_cmmc(src, target=target, no_runtime=True)
     return compare_with_ref_file(output_asm, out.stdout)
 
 def sysy_regression_ref(src):
@@ -480,11 +482,11 @@ def sysy_regression_ref(src):
 
 def sysy_regression_ref_codegen(src, target):
     output_asm = f'{basename(src)}.{target}.s'
-    run_cmmc(src, target=target, output=output_asm)
+    run_cmmc(src, target=target, output=output_asm, no_runtime=True)
 
 def sysy_perf_ref_codegen(src, target):
     output_asm = f'{basename(src)}.{target}.s'
-    run_cmmc(src, target=target, output=output_asm, hide_symbol=True)
+    run_cmmc(src, target=target, output=output_asm, hide_symbol=True, no_runtime=True)
 
 def sysy_codegen_llvm(src):
     input_file = basename(src) + ".in"

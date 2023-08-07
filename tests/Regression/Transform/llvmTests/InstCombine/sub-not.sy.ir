@@ -1,2 +1,2 @@
-func @dec_sub() -> i8;
-func @dec_sub_extra_use() -> i8;
+func @dec_sub(i8, i8) -> i8;
+func @dec_sub_extra_use(i8, i8) -> i8;

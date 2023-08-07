@@ -1,8 +1,8 @@
 internal func @getint() -> i32 { NoMemoryRead NoMemoryWrite };
-internal func @getarray() -> i32 { NoMemoryRead };
-internal func @putarray() -> void { NoMemoryWrite };
-internal func @starttime() -> void { NoMemoryRead NoMemoryWrite };
-internal func @stoptime() -> void { NoMemoryRead NoMemoryWrite };
+internal func @getarray(i32*) -> i32 { NoMemoryRead };
+internal func @putarray(i32, i32*) -> void { NoMemoryWrite };
+internal func @starttime(i32) -> void { NoMemoryRead NoMemoryWrite };
+internal func @stoptime(i32) -> void { NoMemoryRead NoMemoryWrite };
 internal [10000000 * i32]* @a, align 8;
 internal [10000000 * i32]* @b, align 8 { Flexible };
 internal [10000 * i32]* @kernelid, align 8;
