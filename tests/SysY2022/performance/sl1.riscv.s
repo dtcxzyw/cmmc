@@ -17,8 +17,8 @@ main:
 	sd s3, 40(sp)
 	sd s2, 48(sp)
 	sd s4, 56(sp)
-	sd s7, 64(sp)
-	sd s8, 72(sp)
+	sd s8, 64(sp)
+	sd s7, 72(sp)
 	sd s9, 80(sp)
 	sd s10, 88(sp)
 	jal getint
@@ -31,14 +31,14 @@ main:
 	addiw a0, s1, -1
 	addiw t0, s1, -4
 	addiw a5, s1, -20
-	li t1, 4
-pcrel306:
+pcrel307:
 	auipc a1, %pcrel_hi(x)
 	mv t5, zero
 	li t6, 1
+	li t1, 4
 	li a3, 75
 	li t2, 16
-	addi s3, a1, %pcrel_lo(pcrel306)
+	addi s3, a1, %pcrel_lo(pcrel307)
 	slli t3, t6, 32
 	slli s2, a3, 5
 	li a1, 1
@@ -164,7 +164,7 @@ label10:
 	bgt a0, a1, label14
 	j label70
 .p2align 2
-label277:
+label276:
 	add t3, t3, s4
 	mv s6, t5
 	mv a4, t4
@@ -178,13 +178,13 @@ label23:
 	mv a0, s1
 	mv a1, s3
 	jal putarray
-	srliw a3, s1, 31
-	add a1, s1, a3
+	srliw a0, s1, 31
+	add a1, s1, a0
+	mv a0, s1
 	sraiw a2, a1, 1
 	mul a4, a2, s2
-	mul a0, a2, s4
-	add a3, s3, a0
-	mv a0, s1
+	mul a5, a2, s4
+	add a3, s3, a5
 	add a1, a3, a4
 	jal putarray
 	mv a0, s1
@@ -201,8 +201,8 @@ label23:
 	ld s3, 40(sp)
 	ld s2, 48(sp)
 	ld s4, 56(sp)
-	ld s7, 64(sp)
-	ld s8, 72(sp)
+	ld s8, 64(sp)
+	ld s7, 72(sp)
 	ld s9, 80(sp)
 	ld s10, 88(sp)
 	addi sp, sp, 96
@@ -215,37 +215,42 @@ label14:
 	addiw t5, t5, 1
 	add t6, s5, a6
 	add t1, t2, a6
-	ble a0, a1, label15
+	ble a0, a1, label81
 	addi t6, t6, 4
 	mv a6, a1
 .p2align 2
-label17:
-	lw s6, 0(t6)
-	sh2add s7, a6, t1
+label16:
+	lw a7, 0(t6)
+	sh2add s8, a6, t1
 	sh2add s9, a6, t0
-	lw s8, 0(s7)
+	lw s7, 0(s8)
 	lw s10, 0(s9)
-	addw a7, s6, s8
-	sh2add s8, a6, a5
-	addw s7, a7, s10
-	lw s9, 0(s8)
-	sh2add a7, a6, a4
-	addw s6, s7, s9
-	addiw a6, a6, 1
-	lw s10, -4(a7)
-	lw s9, 4(a7)
+	addw s6, a7, s7
+	sh2add a7, a6, a5
 	addw s7, s6, s10
-	addw s8, s7, s9
+	lw s8, 0(a7)
+	sh2add a7, a6, a4
+	addw s6, s7, s8
+	addiw a6, a6, 1
+	lw s9, -4(a7)
+	lw s10, 4(a7)
+	addw s7, s6, s9
+	addw s8, s7, s10
 	divw s6, s8, s0
 	sw s6, 0(a7)
-	bgt a0, a6, label21
+	bgt a0, a6, label20
 	add a4, a4, s2
 	bgt a0, t5, label14
-	j label277
+	j label276
 .p2align 2
-label21:
+label20:
 	addi t6, t6, 4
-	j label17
+	j label16
+label28:
+	addiw t5, t5, 1
+	add t4, t4, s4
+	bgt s1, t5, label24
+	j label5
 label70:
 	add t3, t3, s4
 	mv s6, t5
@@ -256,15 +261,10 @@ label70:
 	bgt a0, a4, label10
 	j label23
 .p2align 2
-label15:
+label81:
 	add a4, a4, s2
 	bgt a0, t5, label14
 	j label70
-label28:
-	addiw t5, t5, 1
-	add t4, t4, s4
-	bgt s1, t5, label24
-	j label5
 .p2align 2
 label143:
 	mv a6, t3

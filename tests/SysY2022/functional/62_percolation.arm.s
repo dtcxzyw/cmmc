@@ -19,38 +19,38 @@ findfa:
 	beq label22
 	ldr r6, [r7, r5, lsl #2]
 	cmp r5, r6
-	bne label7
+	bne label5
 	mov r0, r5
 	str r5, [r7, r4, lsl #2]
-	b label2
+	b label12
 label22:
 	mov r0, r4
-label2:
+label12:
 	pop { r4, r5, r6, r7, r8, pc }
-label7:
+label5:
 	ldr r8, [r7, r6, lsl #2]
 	cmp r6, r8
 	beq label38
 	ldr r0, [r7, r8, lsl #2]
 	cmp r8, r0
-	bne label13
+	bne label11
 	mov r0, r8
 	str r8, [r7, r6, lsl #2]
 	str r8, [r7, r5, lsl #2]
 	str r8, [r7, r4, lsl #2]
-	b label2
+	b label12
 label38:
 	mov r0, r6
 	str r6, [r7, r5, lsl #2]
 	str r6, [r7, r4, lsl #2]
-	b label2
-label13:
+	b label12
+label11:
 	bl findfa
 	str r0, [r7, r8, lsl #2]
 	str r0, [r7, r6, lsl #2]
 	str r0, [r7, r5, lsl #2]
 	str r0, [r7, r4, lsl #2]
-	b label2
+	b label12
 .p2align 4
 .globl main
 main:
@@ -108,8 +108,8 @@ label76:
 	bl getint
 	mov r10, r0
 	bl getint
-	add r9, r9, #1
 	cmp r8, #0
+	add r9, r9, #1
 	mov r2, r0
 	beq label79
 	cmp r9, #10

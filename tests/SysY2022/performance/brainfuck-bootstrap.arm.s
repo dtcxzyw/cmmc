@@ -214,17 +214,14 @@ label167:
 label13:
 	ldr r2, [sp, #0]
 	cmp r2, r8
-	bgt label26
-	b label19
-label33:
-	ldr r2, [r1, r7, lsl #2]
-	cmp r2, #0
-	bne label37
+	bgt label19
+	b label48
+label209:
 	mov r2, #1
 	mov r10, r2
 	mov r2, r8
 .p2align 4
-label34:
+label28:
 	add r2, r2, #1
 	movw r9, #:lower16:program
 	movt r9, #:upper16:program
@@ -237,39 +234,59 @@ label34:
 	lsr r8, r8, #5
 	sub r9, r10, r9
 	adds r10, r9, r8
-	bgt label34
+	bgt label28
 	add r8, r2, #1
 	b label13
 .p2align 4
-label26:
+label19:
 	movw r9, #:lower16:program
 	movt r9, #:upper16:program
 	ldr r2, [r9, r8, lsl #2]
 	cmp r2, #62
-	beq label27
+	beq label20
 	cmp r2, #60
-	beq label29
+	beq label41
 	b label445
 .p2align 4
-label27:
+label20:
 	add r7, r7, #1
 	add r8, r8, #1
 	ldr r2, [sp, #0]
 	cmp r2, r8
-	bgt label26
-	b label19
+	bgt label19
+label48:
+	movw r4, #:lower16:output
+	movt r4, #:upper16:output
+	mov r0, #118
+	bl _sysy_stoptime
+	cmp r5, #0
+	ble label54
+	mov r2, #0
+	mov r6, r2
 .p2align 4
-label29:
+label50:
+	ldr r0, [r4, #0]
+	bl putch
+	add r0, r6, #1
+	cmp r5, r0
+	ble label54
+	add r4, r4, #4
+	mov r6, r0
+	b label50
+.p2align 4
+label41:
 	sub r7, r7, #1
+.p2align 4
+label42:
 	add r8, r8, #1
 	ldr r2, [sp, #0]
 	cmp r2, r8
-	bgt label26
-	b label19
+	bgt label19
+	b label48
 .p2align 4
 label445:
 	cmp r2, #43
-	beq label48
+	beq label23
 	cmp r2, #45
 	bne label454
 	add r2, r1, r7, lsl #2
@@ -279,29 +296,65 @@ label445:
 	str r9, [r2, #0]
 	ldr r2, [sp, #0]
 	cmp r2, r8
-	bgt label26
-	b label19
-.p2align 4
-label48:
-	add r2, r1, r7, lsl #2
-	ldr r9, [r2, #0]
-	add r9, r9, #1
-	str r9, [r2, #0]
-.p2align 4
-label49:
-	add r8, r8, #1
-	ldr r2, [sp, #0]
-	cmp r2, r8
-	bgt label26
-	b label19
+	bgt label19
+	b label48
 .p2align 4
 label454:
 	cmp r2, #91
-	beq label33
+	bne label456
+	ldr r2, [r1, r7, lsl #2]
+	cmp r2, #0
+	beq label209
+	str r8, [r0, r6, lsl #2]
+	add r8, r8, #1
+	add r6, r6, #1
+	b label13
+label456:
 	cmp r2, #93
-	beq label39
+	beq label38
 	cmp r2, #46
-	bne label43
+	beq label37
+	cmp r2, #44
+	bne label238
+	cmp r4, r3
+	bgt label35
+	mov r2, #0
+	add r8, r8, #1
+	str r2, [r1, r7, lsl #2]
+	b label13
+label54:
+	mov r2, #0
+	add sp, sp, #8
+	mov r0, r2
+	pop { r4, r5, r6, r7, r8, r9, r10, pc }
+label38:
+	ldr r9, [r1, r7, lsl #2]
+	sub r2, r6, #1
+	cmp r9, #0
+	bne label266
+	mov r6, r2
+	add r8, r8, #1
+	b label13
+label35:
+	movw r2, #:lower16:input
+	movt r2, #:upper16:input
+	add r8, r8, #1
+	ldr r2, [r2, r3, lsl #2]
+	add r3, r3, #1
+	str r2, [r1, r7, lsl #2]
+	b label13
+.p2align 4
+label23:
+	add r2, r1, r7, lsl #2
+	add r8, r8, #1
+	ldr r9, [r2, #0]
+	add r9, r9, #1
+	str r9, [r2, #0]
+	ldr r2, [sp, #0]
+	cmp r2, r8
+	bgt label19
+	b label48
+label37:
 	ldr r2, [r1, r7, lsl #2]
 	movw r9, #:lower16:output
 	movt r9, #:upper16:output
@@ -309,62 +362,9 @@ label454:
 	str r2, [r9, r5, lsl #2]
 	add r5, r5, #1
 	b label13
-label19:
-	movw r4, #:lower16:output
-	movt r4, #:upper16:output
-	mov r0, #118
-	bl _sysy_stoptime
-	cmp r5, #0
-	ble label25
-	mov r2, #0
-	mov r6, r2
-.p2align 4
-label21:
-	ldr r0, [r4, #0]
-	bl putch
-	add r0, r6, #1
-	cmp r5, r0
-	ble label25
-	add r4, r4, #4
-	mov r6, r0
-	b label21
-label25:
-	mov r2, #0
-	add sp, sp, #8
-	mov r0, r2
-	pop { r4, r5, r6, r7, r8, r9, r10, pc }
-label39:
-	ldr r9, [r1, r7, lsl #2]
-	sub r2, r6, #1
-	cmp r9, #0
-	bne label248
-	mov r6, r2
-	add r8, r8, #1
-	b label13
-label43:
-	cmp r2, #44
-	beq label44
-	add r8, r8, #1
-	b label13
-label44:
-	cmp r4, r3
-	ble label45
-	movw r2, #:lower16:input
-	movt r2, #:upper16:input
-	ldr r2, [r2, r3, lsl #2]
-	add r3, r3, #1
-	str r2, [r1, r7, lsl #2]
-	b label49
-label248:
+label266:
 	ldr r8, [r0, r2, lsl #2]
-	b label49
-label37:
-	str r8, [r0, r6, lsl #2]
+	b label42
+label238:
 	add r8, r8, #1
-	add r6, r6, #1
-	b label13
-label45:
-	mov r2, #0
-	add r8, r8, #1
-	str r2, [r1, r7, lsl #2]
 	b label13

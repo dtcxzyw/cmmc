@@ -34,27 +34,25 @@ dfs:
 	add r11, r0, r1, lsl #2
 	ldr r0, [r11, r9, lsl #2]
 	cmn r0, #1
-	beq label4
-label2:
+	bne label19
+	add r0, r5, r6
+	add r0, r2, r0
+	add r0, r3, r0
+	adds r0, r10, r0
+	bne label3
+	mov r0, #1
+label19:
 	add sp, sp, #12
 	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
-label4:
-	add r0, r5, r6
-	add r0, r7, r0
-	add r0, r8, r0
-	adds r0, r10, r0
-	bne label5
-	mov r0, #1
-	b label2
-label5:
+label3:
 	cmp r5, #0
-	bne label20
+	bne label18
 	mov r4, #0
-label6:
+label4:
 	cmp r6, #0
-	bne label8
-	b label9
-label20:
+	bne label6
+	b label7
+label18:
 	sub r0, r5, #1
 	str r10, [sp, #0]
 	mov r1, #1
@@ -76,8 +74,8 @@ label20:
 	movw r2, #51719
 	movt r2, #15258
 	mls r4, r1, r2, r0
-	b label6
-label8:
+	b label4
+label6:
 	add r0, r5, #1
 	sub r1, r6, #1
 	str r10, [sp, #0]
@@ -99,9 +97,9 @@ label8:
 	movw r2, #51719
 	movt r2, #15258
 	mls r4, r1, r2, r0
-label9:
+label7:
 	cmp r7, #0
-	beq label12
+	beq label10
 	add r1, r6, #1
 	sub r2, r7, #1
 	str r10, [sp, #0]
@@ -123,9 +121,9 @@ label9:
 	movw r2, #51719
 	movt r2, #15258
 	mls r4, r1, r2, r0
-label12:
+label10:
 	cmp r8, #0
-	beq label15
+	beq label13
 	add r2, r7, #1
 	sub r3, r8, #1
 	str r10, [sp, #0]
@@ -147,9 +145,9 @@ label12:
 	movw r2, #51719
 	movt r2, #15258
 	mls r4, r1, r2, r0
-label15:
+label13:
 	cmp r10, #0
-	bne label17
+	bne label15
 label109:
 	movw r0, #12185
 	movt r0, #17592
@@ -160,8 +158,8 @@ label109:
 	movt r1, #15258
 	mls r0, r0, r1, r4
 	str r0, [r11, r9, lsl #2]
-	b label2
-label17:
+	b label19
+label15:
 	add r3, r8, #1
 	sub r0, r10, #1
 	str r0, [sp, #0]

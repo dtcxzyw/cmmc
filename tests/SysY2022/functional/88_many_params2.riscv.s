@@ -193,11 +193,11 @@ label17:
 	sd zero, 232(a1)
 	sd zero, 240(a1)
 	sd zero, 248(a1)
-	bge a4, a0, label20
+	bge a4, a0, label21
 	addi a1, a1, 256
 	mv a3, a4
 	j label17
-label20:
+label21:
 	sh2add a0, a4, a2
 	addi a1, a3, 112
 	sw zero, 0(a0)
@@ -250,7 +250,7 @@ label20:
 	sw zero, 188(a0)
 	sh2add a0, a1, a2
 .p2align 2
-label21:
+label22:
 	sw zero, 0(a0)
 	addi a1, a1, 4
 	lui a4, 1
@@ -258,23 +258,24 @@ label21:
 	addiw a3, a4, -973
 	sw zero, 8(a0)
 	sw zero, 12(a0)
-	bge a1, a3, label24
+	bge a1, a3, label328
 	addi a0, a0, 16
-	j label21
-label24:
+	j label22
+label328:
 	sh2add a0, a1, a2
 .p2align 2
-label25:
+label27:
 	sw zero, 0(a0)
 	addi a1, a1, 1
 	lui a4, 1
 	addiw a3, a4, -969
-	bge a1, a3, label28
+	bge a1, a3, label30
 	addi a0, a0, 4
-	j label25
-label28:
+	j label27
+label30:
 	li a4, 573
 	li a0, 9
+	li a5, 1
 	addi s7, a2, 1416
 	mv s10, zero
 	slli a3, a4, 3
@@ -282,13 +283,12 @@ label28:
 	mv s5, s7
 	li a4, 3
 	add a1, s4, a3
-	li a3, 1
+	slli a3, a4, 32
 	sw a0, 0(a1)
-	slli a1, a4, 32
-	sw a3, 1420(a2)
-	addi a3, a1, 2
-	sd a3, 1424(a2)
+	addi a1, a3, 2
+	sw a5, 1420(a2)
 	li a3, 1005
+	sd a1, 1424(a2)
 	sw a0, 1452(a2)
 	slli a0, a3, 3
 	lw s6, 1416(a2)
@@ -299,16 +299,16 @@ label28:
 	add a1, a2, a0
 	lw s9, 0(a1)
 .p2align 2
-label29:
+label31:
 	lw a0, 0(s11)
 	jal putint
 	addiw a1, s10, 1
 	li s10, 10
-	bge a1, s10, label33
+	bge a1, s10, label34
 	addi s11, s11, 4
 	mv s10, a1
-	j label29
-label33:
+	j label31
+label34:
 	li s10, 10
 	mv a0, s10
 	jal putch
@@ -319,100 +319,100 @@ label33:
 	jal putint
 	mv a0, s10
 	jal putch
-	bge s9, s10, label34
-	addiw a1, s9, 4
+	bge s9, s10, label49
+	addiw a0, s9, 4
 	li s10, 10
-	bge a1, s10, label379
+	bge a0, s10, label365
 	sh2add a0, s9, s7
 	mv a1, s8
 	mv a2, s9
 .p2align 2
-label43:
+label37:
 	mulw a3, a1, s0
 	addiw a2, a2, 4
 	mul t0, a3, s2
 	srli t1, t0, 32
 	add a4, t1, a3
-	srliw t2, a4, 31
+	srliw t0, a4, 31
 	sraiw a5, a4, 11
-	add t0, t2, a5
-	addiw a5, a1, 7
-	mulw t1, t0, s1
-	subw a4, a3, t1
-	mulw a3, a5, s0
-	sw a4, 0(a0)
-	mul t0, a3, s2
-	srli t1, t0, 32
-	add a4, t1, a3
-	srliw t2, a4, 31
+	addiw a4, a1, 7
+	add t2, t0, a5
+	mulw t1, t2, s1
+	subw t3, a3, t1
+	mulw a3, a4, s0
+	sw t3, 0(a0)
+	mul t1, a3, s2
+	srli t0, t1, 32
+	add a4, t0, a3
+	srliw t3, a4, 31
 	sraiw a5, a4, 11
 	addiw a4, a1, 14
-	add t0, t2, a5
-	mulw t3, t0, s1
-	subw t1, a3, t3
+	add t0, t3, a5
+	mulw t1, t0, s1
+	subw t2, a3, t1
 	mulw a3, a4, s0
-	sw t1, 4(a0)
+	sw t2, 4(a0)
 	mul t0, a3, s2
 	srli t1, t0, 32
 	add a4, t1, a3
 	srliw t2, a4, 31
 	sraiw a5, a4, 11
 	addiw a4, a1, 21
-	add t0, t2, a5
+	add t1, t2, a5
 	addiw a1, a1, 28
-	mulw t1, t0, s1
-	subw t3, a3, t1
+	mulw t0, t1, s1
+	subw t3, a3, t0
 	mulw a3, a4, s0
 	sw t3, 8(a0)
-	mul t0, a3, s2
-	srli t1, t0, 32
-	add a4, t1, a3
-	srliw t2, a4, 31
+	mul t1, a3, s2
+	srli t0, t1, 32
+	add a4, t0, a3
+	srliw t1, a4, 31
 	sraiw a5, a4, 11
-	add t1, t2, a5
-	mulw t0, t1, s1
-	subw a4, a3, t0
+	add t0, t1, a5
+	mulw t2, t0, s1
+	subw a4, a3, t2
 	sw a4, 12(a0)
-	bge a2, s3, label401
+	bge a2, s3, label387
 	addi a0, a0, 16
-	j label43
-label379:
+	j label37
+label365:
 	sh2add a0, s9, s7
 	mv a2, s9
-label50:
-	mulw a1, s8, s0
+label43:
+	mulw a3, s8, s0
 	addiw a2, a2, 1
 	li s10, 10
 	addiw s8, s8, 7
-	mul a5, a1, s2
-	srli t1, a5, 32
-	add a3, t1, a1
-	srliw t0, a3, 31
-	sraiw a4, a3, 11
-	add a5, t0, a4
-	mulw t1, a5, s1
-	subw a3, a1, t1
-	sw a3, 0(a0)
-	bge a2, s10, label34
+	mul a5, a3, s2
+	srli t0, a5, 32
+	add a1, t0, a3
+	srliw t1, a1, 31
+	sraiw a4, a1, 11
+	add a5, t1, a4
+	mulw t0, a5, s1
+	subw a1, a3, t0
+	sw a1, 0(a0)
+	bge a2, s10, label49
 	addi a0, a0, 4
-	j label50
-label34:
+	j label43
+label49:
 	addiw a1, s6, 3
 	sh1add a0, a1, a1
 	mv s1, a0
-	blt a0, zero, label40
+	blt a0, zero, label55
 	sh2add s0, a0, s5
 .p2align 2
-label36:
+label51:
 	lw a0, 0(s0)
 	jal putint
 	li a0, 32
 	jal putch
 	addiw s1, s1, -1
-	blt s1, zero, label40
+	blt s1, zero, label55
 	addi s0, s0, -4
-	j label36
-label40:
+	j label51
+label55:
 	li s10, 10
 	mv a0, s10
 	jal putch
@@ -432,7 +432,7 @@ label40:
 	ld s10, 96(sp)
 	addi sp, sp, 104
 	ret
-label401:
+label387:
 	sh2add a0, a2, s7
 	mv s8, a1
-	j label50
+	j label43

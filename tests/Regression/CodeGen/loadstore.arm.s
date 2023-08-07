@@ -115,15 +115,15 @@ memset_impl:
 	movw r1, #:lower16:arr
 	movt r1, #:upper16:arr
 	cmp r2, #4
-	ble label129
+	ble label102
 	sub r4, r2, #4
 	sub r5, r2, #20
 	cmp r4, #16
-	ble label107
+	ble label104
 	mov r3, r1
 	mov r6, r0
 .p2align 4
-label114:
+label111:
 	str r0, [r3, #0]
 	add r6, r6, #16
 	str r0, [r3, #4]
@@ -142,42 +142,41 @@ label114:
 	str r0, [r3, #52]
 	str r0, [r3, #56]
 	str r0, [r3, #60]
-	ble label117
+	ble label114
 	add r3, r3, #64
-	b label114
-label117:
+	b label111
+label114:
 	add r3, r1, r6, lsl #2
-label108:
+label105:
 	str r0, [r3, #0]
 	add r6, r6, #4
 	str r0, [r3, #4]
 	cmp r4, r6
 	str r0, [r3, #8]
 	str r0, [r3, #12]
-	ble label111
+	ble label143
 	add r3, r3, #16
-	b label108
+	b label105
 label102:
+	mov r3, r0
+label116:
 	str r0, [r1, #0]
 	add r3, r3, #1
 	cmp r2, r3
 	ble label120
 	add r1, r1, #4
-	b label102
-label111:
-	add r1, r1, r6, lsl #2
-	mov r3, r6
-	b label102
+	b label116
 label120:
 	pop { r4, r5, r6 }
 	bx lr
-label107:
+label104:
 	mov r3, r1
 	mov r6, r0
-	b label108
-label129:
-	mov r3, r0
-	b label102
+	b label105
+label143:
+	add r1, r1, r6, lsl #2
+	mov r3, r6
+	b label116
 .p2align 4
 .globl fused_store
 fused_store:

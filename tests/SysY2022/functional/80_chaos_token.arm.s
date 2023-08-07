@@ -159,7 +159,67 @@ label6:
 	add r1, r0, r0, lsl #1
 	sub r7, r6, r1, lsl #1
 	cmp r0, r7
-	bne label10
+	beq label8
+	movw r8, #:lower16:N4__mE___
+	movt r8, #:upper16:N4__mE___
+	mov r1, #200
+	mla r9, r0, r1, r8
+	ldr r0, [r9, #0]
+	cmp r0, #0
+	bne label12
+label15:
+	movw r9, #:lower16:saY_HeI10_To
+	movt r9, #:upper16:saY_HeI10_To
+	ldr r0, [r9, #0]
+	cmp r0, #0
+	beq label16
+.p2align 4
+label27:
+	ldr r0, [r9, #0]
+	bl putch
+	ldr r0, [r9, #4]
+	cmp r0, #0
+	beq label16
+	add r9, r9, #4
+	b label27
+.p2align 4
+label12:
+	ldr r0, [r9, #0]
+	bl putch
+	ldr r0, [r9, #4]
+	cmp r0, #0
+	beq label15
+	add r9, r9, #4
+	b label12
+label16:
+	mov r0, #200
+	mla r7, r7, r0, r8
+	ldr r0, [r7, #0]
+	cmp r0, #0
+	beq label21
+.p2align 4
+label18:
+	ldr r0, [r7, #0]
+	bl putch
+	ldr r0, [r7, #4]
+	cmp r0, #0
+	beq label21
+	add r7, r7, #4
+	b label18
+label21:
+	ldr r0, [sp, #0]
+	cmp r0, #0
+	beq label8
+	mov r7, r5
+.p2align 4
+label23:
+	ldr r0, [r7, #0]
+	bl putch
+	ldr r0, [r7, #4]
+	cmp r0, #0
+	beq label8
+	add r7, r7, #4
+	b label23
 label8:
 	add r0, r6, r6, lsl #4
 	add r0, r0, #23
@@ -172,64 +232,3 @@ label8:
 	mov r0, r4
 	add sp, sp, #28
 	pop { r4, r5, r6, r7, r8, r9, pc }
-label10:
-	movw r8, #:lower16:N4__mE___
-	movt r8, #:upper16:N4__mE___
-	mov r1, #200
-	mla r9, r0, r1, r8
-	ldr r0, [r9, #0]
-	cmp r0, #0
-	beq label11
-.p2align 4
-label27:
-	ldr r0, [r9, #0]
-	bl putch
-	ldr r0, [r9, #4]
-	cmp r0, #0
-	beq label11
-	add r9, r9, #4
-	b label27
-label11:
-	movw r9, #:lower16:saY_HeI10_To
-	movt r9, #:upper16:saY_HeI10_To
-	ldr r0, [r9, #0]
-	cmp r0, #0
-	beq label16
-.p2align 4
-label13:
-	ldr r0, [r9, #0]
-	bl putch
-	ldr r0, [r9, #4]
-	cmp r0, #0
-	beq label16
-	add r9, r9, #4
-	b label13
-label16:
-	mov r0, #200
-	mla r7, r7, r0, r8
-	ldr r0, [r7, #0]
-	cmp r0, #0
-	beq label17
-.p2align 4
-label23:
-	ldr r0, [r7, #0]
-	bl putch
-	ldr r0, [r7, #4]
-	cmp r0, #0
-	beq label17
-	add r7, r7, #4
-	b label23
-label17:
-	ldr r0, [sp, #0]
-	cmp r0, #0
-	beq label8
-	mov r7, r5
-.p2align 4
-label19:
-	ldr r0, [r7, #0]
-	bl putch
-	ldr r0, [r7, #4]
-	cmp r0, #0
-	beq label8
-	add r7, r7, #4
-	b label19

@@ -65,7 +65,7 @@ public:
             const auto terminator = block->getTerminator();
             if(terminator->getInstID() != InstructionID::Branch)
                 continue;
-            if(hasCall(*block))
+            if(hasCall(*block, false))
                 continue;
 
             auto& preds = cfg.predecessors(block);

@@ -219,8 +219,8 @@ main:
 	mov r10, #0
 	sub sp, sp, #132
 	str r10, [sp, #0]
-	mov r5, sp
 	add r4, sp, #120
+	mov r5, sp
 	str r10, [sp, #4]
 	str r10, [sp, #8]
 	str r10, [sp, #12]
@@ -253,35 +253,35 @@ main:
 	bl getint
 	str r0, [sp, #120]
 	bl getint
-	cmp r0, #0
 	movw r8, #:lower16:edges
 	movt r8, #:upper16:edges
 	movw r7, #:lower16:graph
 	movt r7, #:upper16:graph
+	cmp r0, #0
 	mov r6, r0
-	ble label184
+	ble label201
 	mov r9, r8
 	mov r10, #0
 .p2align 4
-label186:
+label185:
 	bl getint
 	str r0, [r9, #0]
 	bl getint
 	add r10, r10, #1
 	str r0, [r9, #4]
 	cmp r6, r10
-	ble label189
+	ble label188
 	add r9, r9, #8
-	b label186
-label189:
+	b label185
+label188:
 	cmp r6, #4
-	ble label255
+	ble label254
 	sub r1, r6, #4
 	mov r0, r8
 	mov r10, #0
 	mov r2, r10
 .p2align 4
-label195:
+label190:
 	ldr r9, [r0, #0]
 	add r2, r2, #4
 	ldr r10, [r0, #4]
@@ -317,10 +317,22 @@ label195:
 	rsb r10, r10, r10, lsl #4
 	add r10, r7, r10, lsl #3
 	str r3, [r10, r9, lsl #2]
-	ble label325
+	ble label307
 	add r0, r0, #32
-	b label195
-label190:
+	b label190
+label201:
+	mov r0, #1
+	mov r1, r5
+	mov r2, r4
+	bl maxCliques
+	bl putint
+	add sp, sp, #132
+	mov r10, #0
+	mov r0, r10
+	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
+label307:
+	add r8, r8, r2, lsl #3
+label195:
 	ldr r0, [r8, #0]
 	add r2, r2, #1
 	ldr r3, [r8, #4]
@@ -332,23 +344,10 @@ label190:
 	rsb r3, r3, r3, lsl #4
 	add r3, r7, r3, lsl #3
 	str r1, [r3, r0, lsl #2]
-	ble label184
+	ble label201
 	add r8, r8, #8
-	b label190
-label325:
-	add r8, r8, r2, lsl #3
-	b label190
-label184:
-	mov r0, #1
-	mov r1, r5
-	mov r2, r4
-	bl maxCliques
-	bl putint
-	add sp, sp, #132
-	mov r10, #0
-	mov r0, r10
-	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
-label255:
+	b label195
+label254:
 	mov r10, #0
 	mov r2, r10
-	b label190
+	b label195

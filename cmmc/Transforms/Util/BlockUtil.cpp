@@ -12,7 +12,9 @@
     limitations under the License.
 */
 
+#include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
+#include <cmmc/IR/Function.hpp>
 #include <cmmc/IR/IRBuilder.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/IR/Module.hpp>
@@ -173,9 +175,14 @@ bool isMovableExpr(const Instruction& inst, bool relaxedCtx) {
             return true;
     }
 }
-bool hasCall(Block& block) {
+bool hasCall(Block& block, bool excludeLoopBody) {
     for(auto& inst : block.instructions())
         if(inst.getInstID() == InstructionID::Call) {
+            if(excludeLoopBody) {
+                const auto callee = inst.lastOperand()->as<Function>();
+                if(callee->attr().hasAttr(FunctionAttribute::LoopBody))
+                    continue;
+            }
             return true;
         }
     return false;
@@ -255,9 +262,14 @@ uint32_t estimateBlockSize(Block* block, bool dynamic) {
             break;
         }
         switch(inst.getInstID()) {
-            case InstructionID::Call:
-                count += 16;
-                break;
+            case InstructionID::Call: {
+                const auto callee = inst.lastOperand()->as<Function>();
+                if(callee->attr().hasAttr(FunctionAttribute::LoopBody)) {
+                    for(auto b : callee->blocks())
+                        count += estimateBlockSize(b, dynamic);
+                } else
+                    count += 16;
+            } break;
             case InstructionID::Load:
             case InstructionID::Store:
                 count += dynamic ? 4 : 1;
@@ -303,7 +315,7 @@ bool collectLoopBody(Block* header, Block* latch, const DominateAnalysisResult& 
         if(block == header)
             continue;
         for(auto succ : cfg.successors(block)) {
-            if(!body.count(succ)) {
+            if(block != latch && !body.count(succ)) {
                 return false;
             }
             if(dom.dominate(succ, block) && succ != header)

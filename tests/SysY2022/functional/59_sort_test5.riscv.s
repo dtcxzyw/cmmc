@@ -160,10 +160,10 @@ label24:
 	mv a0, s0
 	jal putch
 	addiw s2, s2, 1
-	bge s2, s0, label28
+	bge s2, s0, label27
 	addi s1, s1, 4
 	j label24
-label28:
+label27:
 	mv a0, zero
 	ld ra, 0(sp)
 	ld s0, 8(sp)

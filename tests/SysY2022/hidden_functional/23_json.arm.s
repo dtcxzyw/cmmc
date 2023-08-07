@@ -870,7 +870,7 @@ label1189:
 	b label1187
 label1196:
 	cmp r1, #0
-	bne label1200
+	bne label1199
 	mov r0, #110
 	bl putch
 	mov r0, #111
@@ -886,14 +886,10 @@ label1196:
 	mov r0, #10
 	bl putch
 	mov r0, #1
-label1198:
+label1197:
 	add sp, sp, #8
 	pop { r4, r5, r6, r7, r8, pc }
-label1207:
-	mov r0, r4
-	mov r7, r4
-	b label1187
-label1200:
+label1199:
 	mov r0, #111
 	bl putch
 	mov r0, #107
@@ -901,4 +897,8 @@ label1200:
 	mov r0, #10
 	bl putch
 	mov r0, r4
-	b label1198
+	b label1197
+label1207:
+	mov r0, r4
+	mov r7, r4
+	b label1187

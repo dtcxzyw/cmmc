@@ -32,6 +32,7 @@ enum class FunctionAttribute {
     NoRecurse = 1 << 6,
     Entry = 1 << 7,
     Builtin = 1 << 8,
+    LoopBody = 1 << 9,
 };
 
 enum class CallingConvention { C, Fast };

@@ -70,14 +70,14 @@ label6:
 	moveq r9, #0
 	cmp r4, r3
 	str r9, [r2, #0]
-	bge label10
+	bge label9
 	add r0, r0, #1
 	add r1, r1, #64
 	cmp r4, r0
 	bge label5
 	b label11
 .p2align 4
-label10:
+label9:
 	add r2, r2, #4
 	b label6
 label11:
@@ -89,10 +89,8 @@ label12:
 	add r1, r7, #64
 	sub r0, r4, #1
 	cmp r4, #0
-	ble label114
-	add r1, r1, #4
-	mov r2, #1
-	b label14
+	bgt label13
+	b label114
 .p2align 4
 label51:
 	bl getint
@@ -105,17 +103,6 @@ label51:
 	cmp r8, r9
 	bge label51
 	b label12
-.p2align 4
-label14:
-	ldr r3, [r1, #0]
-	mov r9, #0
-	str r3, [r5, r2, lsl #2]
-	str r9, [r6, r2, lsl #2]
-	add r2, r2, #1
-	cmp r4, r2
-	blt label114
-	add r1, r1, #4
-	b label14
 label114:
 	mov r1, #1
 	str r1, [sp, #4]
@@ -270,3 +257,17 @@ label261:
 	cmp r0, r1
 	bge label28
 	b label21
+label13:
+	add r1, r1, #4
+	mov r2, #1
+.p2align 4
+label14:
+	ldr r3, [r1, #0]
+	mov r9, #0
+	str r3, [r5, r2, lsl #2]
+	str r9, [r6, r2, lsl #2]
+	add r2, r2, #1
+	cmp r4, r2
+	blt label114
+	add r1, r1, #4
+	b label14

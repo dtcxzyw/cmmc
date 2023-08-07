@@ -1125,24 +1125,24 @@ label1183:
 	bl getfarray
 	add r0, r5, #1
 	cmp r0, #40
-	bge label1203
+	bge label1186
 	add r4, r4, #12
 	mov r5, r0
 	b label1183
-label1203:
+label1186:
 	add r5, sp, #520
 	mov r4, #0
 .p2align 4
-label1188:
+label1187:
 	mov r0, r5
 	bl getarray
 	add r0, r4, #1
 	cmp r0, #24
-	bge label1192
+	bge label1191
 	add r5, r5, #12
 	mov r4, r0
-	b label1188
-label1192:
+	b label1187
+label1191:
 	ldr r10, [sp, #504]
 	add r4, sp, #816
 	add r6, sp, #504
@@ -1150,22 +1150,22 @@ label1192:
 	vldr s0, [r0, #0]
 	add r0, r4, #12
 	add r0, r0, r10, lsl #2
-	vstr s0, [sp, #244]
+	vstr s0, [sp, #248]
 	vldr s22, [r0, #0]
 	add r0, r4, #24
 	add r0, r0, r10, lsl #2
 	vldr s2, [r0, #0]
 	add r0, r4, #36
 	add r0, r0, r10, lsl #2
-	vstr s2, [sp, #264]
+	vstr s2, [sp, #268]
 	vldr s5, [r0, #0]
 	add r0, r4, #48
 	add r0, r0, r10, lsl #2
-	vstr s5, [sp, #208]
+	vstr s5, [sp, #204]
 	vldr s4, [r0, #0]
 	add r0, r4, #60
 	add r0, r0, r10, lsl #2
-	vstr s4, [sp, #212]
+	vstr s4, [sp, #208]
 	vldr s6, [r0, #0]
 	add r0, r4, #72
 	add r0, r0, r10, lsl #2
@@ -1182,15 +1182,15 @@ label1192:
 	vldr s9, [r0, #0]
 	add r0, r4, #120
 	add r0, r0, r10, lsl #2
-	vstr s9, [sp, #248]
+	vstr s9, [sp, #252]
 	vldr s10, [r0, #0]
 	add r0, r4, #132
 	add r0, r0, r10, lsl #2
-	vstr s10, [sp, #236]
+	vstr s10, [sp, #240]
 	vldr s11, [r0, #0]
 	add r0, r4, #144
 	add r0, r0, r10, lsl #2
-	vstr s11, [sp, #272]
+	vstr s11, [sp, #212]
 	vldr s12, [r0, #0]
 	add r0, r4, #156
 	add r0, r0, r10, lsl #2
@@ -1202,11 +1202,11 @@ label1192:
 	vldr s14, [r0, #0]
 	add r0, r4, #180
 	add r0, r0, r10, lsl #2
-	vstr s14, [sp, #240]
+	vstr s14, [sp, #244]
 	vldr s15, [r0, #0]
 	add r0, r4, #192
 	add r0, r0, r10, lsl #2
-	vstr s15, [sp, #256]
+	vstr s15, [sp, #260]
 	vldr s0, [r0, #0]
 	add r0, r4, #204
 	add r0, r0, r10, lsl #2
@@ -1222,7 +1222,7 @@ label1192:
 	vldr s28, [r0, #0]
 	add r0, r4, #240
 	add r0, r0, r10, lsl #2
-	vstr s28, [sp, #276]
+	vstr s28, [sp, #236]
 	vldr s14, [r0, #0]
 	add r0, r4, #252
 	add r0, r0, r10, lsl #2
@@ -1234,15 +1234,15 @@ label1192:
 	vldr s12, [r0, #0]
 	add r0, r4, #276
 	add r0, r0, r10, lsl #2
-	vstr s12, [sp, #268]
+	vstr s12, [sp, #272]
 	vldr s27, [r0, #0]
 	add r0, r4, #288
 	add r0, r0, r10, lsl #2
-	vstr s27, [sp, #260]
+	vstr s27, [sp, #264]
 	vldr s26, [r0, #0]
 	add r0, r4, #300
 	add r0, r0, r10, lsl #2
-	vstr s26, [sp, #252]
+	vstr s26, [sp, #256]
 	vldr s16, [r0, #0]
 	add r0, r4, #312
 	add r0, r0, r10, lsl #2
@@ -1284,7 +1284,7 @@ label1192:
 	vldr s0, [r0, #0]
 	add r0, r4, #444
 	add r0, r0, r10, lsl #2
-	vstr s0, [sp, #200]
+	vstr s0, [sp, #276]
 	vldr s6, [r0, #0]
 	add r0, r4, #456
 	add r0, r0, r10, lsl #2
@@ -1294,7 +1294,7 @@ label1192:
 	add r0, r0, r10, lsl #2
 	vstr s13, [sp, #300]
 	vldr s0, [r0, #0]
-	vstr s0, [sp, #204]
+	vstr s0, [sp, #200]
 	vldr s0, [sp, #288]
 	vstr s0, [sp, #0]
 	vldr s0, [sp, #304]
@@ -1306,7 +1306,7 @@ label1192:
 	vstr s0, [sp, #20]
 	vstr s12, [sp, #24]
 	vstr s27, [sp, #28]
-	vldr s26, [sp, #252]
+	vldr s26, [sp, #256]
 	vstr s26, [sp, #32]
 	vstr s16, [sp, #36]
 	vldr s0, [sp, #292]
@@ -1323,15 +1323,15 @@ label1192:
 	vldr s0, [sp, #216]
 	vstr s0, [sp, #72]
 	vstr s20, [sp, #76]
-	vldr s0, [sp, #200]
+	vldr s0, [sp, #276]
 	vstr s0, [sp, #80]
 	vstr s6, [sp, #84]
 	vstr s13, [sp, #88]
-	vldr s0, [sp, #204]
+	vldr s0, [sp, #200]
 	vstr s0, [sp, #92]
-	vldr s14, [sp, #240]
+	vldr s14, [sp, #244]
 	vldr s13, [sp, #228]
-	vldr s0, [sp, #244]
+	vldr s0, [sp, #248]
 	vldr s6, [sp, #192]
 	vldr s12, [sp, #184]
 	vmov.f32 s1, s22
@@ -1427,14 +1427,14 @@ label1192:
 	str r1, [sp, #24]
 	ldr r1, [sp, #1296]
 	str r1, [sp, #28]
-	vldr s27, [sp, #260]
+	vldr s27, [sp, #264]
 	vstr s27, [sp, #32]
-	vldr s9, [sp, #248]
+	vldr s9, [sp, #252]
 	vstr s9, [sp, #36]
 	vstr s16, [sp, #40]
 	ldr r3, [sp, #320]
 	str r3, [sp, #44]
-	vldr s0, [sp, #204]
+	vldr s0, [sp, #200]
 	vstr s0, [sp, #48]
 	ldr r1, [sp, #324]
 	str r1, [sp, #52]
@@ -1450,11 +1450,11 @@ label1192:
 	str r1, [sp, #72]
 	ldr r3, [sp, #332]
 	str r3, [sp, #76]
-	vldr s14, [sp, #240]
+	vldr s14, [sp, #244]
 	vstr s14, [sp, #80]
-	vldr s10, [sp, #236]
+	vldr s10, [sp, #240]
 	vstr s10, [sp, #84]
-	vldr s0, [sp, #244]
+	vldr s0, [sp, #248]
 	vstr s0, [sp, #88]
 	ldr r1, [sp, #1320]
 	str r1, [sp, #92]
@@ -1464,7 +1464,7 @@ label1192:
 	ldr r1, [sp, #1328]
 	str r1, [sp, #104]
 	vstr s21, [sp, #108]
-	vldr s26, [sp, #252]
+	vldr s26, [sp, #256]
 	vstr s26, [sp, #112]
 	vldr s13, [sp, #228]
 	vstr s13, [sp, #116]
@@ -1478,28 +1478,28 @@ label1192:
 	str r1, [sp, #132]
 	vldr s29, [sp, #220]
 	vstr s29, [sp, #136]
-	vldr s28, [sp, #276]
+	vldr s28, [sp, #236]
 	vstr s28, [sp, #140]
-	vldr s12, [sp, #268]
+	vldr s12, [sp, #272]
 	vstr s12, [sp, #144]
 	vldr s0, [sp, #292]
 	vstr s0, [sp, #148]
-	vldr s0, [sp, #200]
+	vldr s0, [sp, #276]
 	vstr s0, [sp, #152]
 	vldr s0, [sp, #304]
 	vstr s0, [sp, #156]
 	str r0, [sp, #160]
-	vldr s2, [sp, #264]
+	vldr s2, [sp, #268]
 	vstr s2, [sp, #164]
 	ldr r1, [sp, #348]
 	str r1, [sp, #168]
 	vstr s20, [sp, #172]
 	str r6, [sp, #176]
 	ldr r0, [sp, #412]
-	vldr s15, [sp, #256]
-	vldr s11, [sp, #272]
-	vldr s4, [sp, #212]
-	vldr s5, [sp, #208]
+	vldr s15, [sp, #260]
+	vldr s11, [sp, #212]
+	vldr s4, [sp, #208]
+	vldr s5, [sp, #204]
 	vldr s6, [sp, #296]
 	vldr s13, [sp, #300]
 	vldr s26, [sp, #308]
@@ -1528,8 +1528,8 @@ label1192:
 	add r0, r4, #48
 	add r2, r4, #12
 	str r2, [sp, #352]
-	add r2, r4, #192
 	str r3, [sp, #224]
+	add r2, r4, #192
 	str r0, [sp, #480]
 	add r3, r4, #60
 	add r0, r4, #108
@@ -1553,8 +1553,8 @@ label1192:
 	str r0, [sp, #472]
 	add r0, r4, #180
 	str r0, [sp, #444]
-	add r0, r4, #204
 	str r2, [sp, #384]
+	add r0, r4, #204
 	str r0, [sp, #388]
 	add r0, r4, #216
 	str r0, [sp, #468]
@@ -1565,11 +1565,11 @@ label1192:
 	add r0, r4, #252
 	str r0, [sp, #376]
 	add r0, r4, #264
-	str r0, [sp, #464]
+	str r0, [sp, #484]
 	add r0, r4, #276
 	str r0, [sp, #436]
 	add r0, r4, #288
-	str r0, [sp, #460]
+	str r0, [sp, #464]
 	add r0, r4, #300
 	str r0, [sp, #432]
 	add r0, r4, #312
@@ -1577,7 +1577,7 @@ label1192:
 	add r0, r4, #324
 	str r0, [sp, #428]
 	add r0, r4, #336
-	str r0, [sp, #484]
+	str r0, [sp, #460]
 	add r0, r4, #348
 	str r0, [sp, #368]
 	add r0, r4, #360
@@ -1635,11 +1635,11 @@ label1192:
 	str r0, [sp, #64]
 	ldr r0, [sp, #376]
 	str r0, [sp, #68]
-	ldr r0, [sp, #464]
+	ldr r0, [sp, #484]
 	str r0, [sp, #72]
 	ldr r0, [sp, #436]
 	str r0, [sp, #76]
-	ldr r0, [sp, #460]
+	ldr r0, [sp, #464]
 	str r0, [sp, #80]
 	ldr r0, [sp, #432]
 	str r0, [sp, #84]
@@ -1647,7 +1647,7 @@ label1192:
 	str r0, [sp, #88]
 	ldr r0, [sp, #428]
 	str r0, [sp, #92]
-	ldr r0, [sp, #484]
+	ldr r0, [sp, #460]
 	str r0, [sp, #96]
 	ldr r0, [sp, #368]
 	str r0, [sp, #100]
@@ -1678,15 +1678,15 @@ label1192:
 	mov r1, r2
 	mov r2, r10
 	bl params_fa40
-	add r3, r5, #156
+	add r2, r5, #120
 	add r0, r5, #144
 	vmov.f32 s23, s0
-	add r4, r5, #84
-	add r1, r5, #132
-	str r3, [sp, #1332]
-	add r2, r5, #120
 	add r10, r5, #72
+	add r1, r5, #132
+	add r4, r5, #84
+	add r3, r5, #156
 	add r11, r5, #36
+	str r3, [sp, #1332]
 	add r3, r5, #180
 	str r3, [sp, #1312]
 	add r3, r5, #192
@@ -1776,21 +1776,21 @@ label1192:
 	str r1, [sp, #172]
 	str r6, [sp, #176]
 	ldr r2, [sp, #352]
-	vldr s26, [sp, #252]
-	vldr s27, [sp, #260]
-	vldr s12, [sp, #268]
-	vldr s28, [sp, #276]
+	vldr s26, [sp, #256]
+	vldr s27, [sp, #264]
+	vldr s12, [sp, #272]
+	vldr s28, [sp, #236]
 	vldr s29, [sp, #220]
-	vldr s14, [sp, #240]
+	vldr s14, [sp, #244]
 	vldr s13, [sp, #228]
-	vldr s0, [sp, #244]
-	vldr s10, [sp, #236]
-	vldr s9, [sp, #248]
-	vldr s15, [sp, #256]
-	vldr s2, [sp, #264]
-	vldr s11, [sp, #272]
-	vldr s4, [sp, #212]
-	vldr s5, [sp, #208]
+	vldr s0, [sp, #248]
+	vldr s10, [sp, #240]
+	vldr s9, [sp, #252]
+	vldr s15, [sp, #260]
+	vldr s2, [sp, #268]
+	vldr s11, [sp, #212]
+	vldr s4, [sp, #208]
+	vldr s5, [sp, #204]
 	mov r0, r5
 	mov r1, r8
 	vmov.f32 s1, s2

@@ -18,14 +18,14 @@ my_sqrt:
 	fmv.w.x f12, a0
 	fdiv.s f11, f10, f12
 	flt.s a1, f12, f11
-	beq a1, zero, label6
+	beq a1, zero, label4
 	fdiv.s f10, f11, f12
 	jal my_sqrt
 	lui a0, 266752
 	fmv.w.x f11, a0
 	fmul.s f12, f10, f11
 	fmul.s f10, f12, f11
-label2:
+label5:
 	ld ra, 0(sp)
 	addi sp, sp, 8
 	ret
@@ -34,11 +34,11 @@ label7:
 	lui a0, 264192
 	lui a1, 253952
 	fmv.w.x f13, a0
-	fmv.w.x f14, a1
+	fmv.w.x f15, a1
 	lui a0, 258048
-	fadd.s f15, f10, f13
-	fmul.s f13, f10, f14
-	fdiv.s f12, f11, f15
+	fadd.s f14, f10, f13
+	fmul.s f13, f10, f15
+	fdiv.s f12, f11, f14
 	fmv.w.x f11, a0
 	fadd.s f15, f13, f11
 	fadd.s f14, f15, f12
@@ -58,22 +58,22 @@ label7:
 	fadd.s f14, f13, f15
 	fmul.s f12, f14, f11
 	fdiv.s f0, f10, f12
-	fadd.s f1, f12, f0
-	fmul.s f13, f1, f11
-	fdiv.s f15, f10, f13
-	fadd.s f0, f13, f15
-	fmul.s f12, f0, f11
-	fdiv.s f14, f10, f12
-	fadd.s f15, f12, f14
-	fmul.s f13, f15, f11
+	fadd.s f13, f12, f0
+	fmul.s f14, f13, f11
+	fdiv.s f15, f10, f14
+	fadd.s f12, f14, f15
+	fmul.s f13, f12, f11
 	fdiv.s f0, f10, f13
-	fadd.s f14, f13, f0
-	fmul.s f12, f14, f11
-	fdiv.s f15, f10, f12
-	fadd.s f13, f12, f15
-	fmul.s f10, f13, f11
-	j label2
-label6:
+	fadd.s f15, f13, f0
+	fmul.s f12, f15, f11
+	fdiv.s f1, f10, f12
+	fadd.s f14, f12, f1
+	fmul.s f13, f14, f11
+	fdiv.s f15, f10, f13
+	fadd.s f12, f13, f15
+	fmul.s f10, f12, f11
+	j label5
+label4:
 	fadd.s f13, f11, f11
 	lui a0, 264192
 	lui a1, 258048
@@ -108,18 +108,18 @@ label6:
 	fdiv.s f0, f11, f12
 	fadd.s f15, f12, f0
 	fmul.s f13, f15, f10
-	fdiv.s f14, f11, f13
-	fadd.s f0, f13, f14
-	fmul.s f12, f0, f10
+	fdiv.s f1, f11, f13
+	fadd.s f14, f13, f1
+	fmul.s f12, f14, f10
 	fdiv.s f15, f11, f12
-	fadd.s f1, f12, f15
-	fmul.s f13, f1, f10
+	fadd.s f0, f12, f15
+	fmul.s f13, f0, f10
 	fdiv.s f14, f11, f13
 	fmv.w.x f11, a0
 	fadd.s f15, f13, f14
 	fmul.s f12, f15, f10
 	fmul.s f10, f12, f11
-	j label2
+	j label5
 .p2align 2
 asr5:
 	addi sp, sp, -112
@@ -146,20 +146,20 @@ asr5:
 	fmv.w.x f14, s0
 	fmv.s f18, f10
 	fsw f26, 92(sp)
-	fmul.s f0, f15, f14
+	fmul.s f1, f15, f14
 	fsw f25, 96(sp)
 	fmv.w.x f15, s1
 	fsw f24, 100(sp)
 	fdiv.s f21, f15, f11
 	fsw f27, 104(sp)
 	fsw f11, 108(sp)
-	fadd.s f8, f10, f0
-	fmv.w.x f0, s2
+	fadd.s f8, f10, f1
 	fsub.s f10, f11, f8
-	fmul.s f1, f10, f14
-	fadd.s f9, f8, f1
-	fdiv.s f23, f15, f8
+	fmul.s f0, f10, f14
+	fadd.s f9, f8, f0
+	fmv.w.x f0, s2
 	fdiv.s f20, f15, f9
+	fdiv.s f23, f15, f8
 	fmul.s f2, f20, f0
 	fadd.s f1, f23, f2
 	fsub.s f2, f8, f18
@@ -172,10 +172,10 @@ asr5:
 	fdiv.s f10, f15, f19
 	fdiv.s f22, f3, f1
 	fmul.s f14, f10, f0
-	fadd.s f4, f11, f14
-	fadd.s f0, f4, f23
-	fmul.s f3, f0, f2
-	fdiv.s f14, f3, f1
+	fadd.s f3, f11, f14
+	fadd.s f0, f3, f23
+	fmul.s f4, f0, f2
+	fdiv.s f14, f4, f1
 	fadd.s f15, f14, f22
 	fsub.s f0, f15, f13
 	fmv.w.x f13, s4
@@ -183,9 +183,9 @@ asr5:
 	fabs.s f1, f0
 	fle.s a0, f1, f2
 	beq a0, zero, label124
-	fmv.w.x f12, s4
-	fdiv.s f11, f0, f12
-	fadd.s f10, f15, f11
+	fmv.w.x f11, s4
+	fdiv.s f12, f0, f11
+	fadd.s f10, f15, f12
 label122:
 	ld ra, 0(sp)
 	ld s4, 8(sp)
@@ -226,21 +226,23 @@ label124:
 	fadd.s f4, f18, f5
 	fdiv.s f6, f0, f4
 	fmul.s f7, f6, f1
-	fadd.s f5, f11, f7
-	fadd.s f0, f5, f10
-	fmul.s f1, f0, f2
-	fdiv.s f26, f1, f3
 	fmul.s f1, f12, f15
+	fadd.s f5, f11, f7
 	fmul.s f24, f1, f15
+	fadd.s f4, f5, f10
+	fmul.s f0, f4, f2
+	fdiv.s f26, f0, f3
 	fadd.s f10, f26, f13
 	fsub.s f11, f10, f14
 	fmv.w.x f14, s4
 	fmul.s f25, f1, f14
 	fabs.s f0, f11
 	fle.s a0, f0, f25
-	bne a0, zero, label129
-	j label130
-label125:
+	beq a0, zero, label130
+	fmv.w.x f12, s4
+	fdiv.s f13, f11, f12
+	fadd.s f18, f10, f13
+label126:
 	fsub.s f11, f9, f8
 	fmv.w.x f10, s0
 	fmv.w.x f12, s1
@@ -256,29 +258,24 @@ label125:
 	flw f11, 108(sp)
 	fsub.s f0, f11, f9
 	fdiv.s f13, f1, f15
-	fmul.s f1, f0, f10
-	fadd.s f3, f9, f1
-	fdiv.s f2, f12, f3
+	fmul.s f3, f0, f10
+	fadd.s f1, f9, f3
+	fdiv.s f2, f12, f1
 	fmul.s f10, f2, f14
-	fadd.s f1, f20, f10
-	fadd.s f11, f1, f21
-	fmul.s f12, f11, f0
-	fdiv.s f19, f12, f15
+	fadd.s f11, f20, f10
+	fadd.s f12, f11, f21
+	fmul.s f14, f12, f0
+	fdiv.s f19, f14, f15
 	fadd.s f10, f13, f19
 	fsub.s f11, f10, f22
 	fabs.s f12, f11
 	fle.s a0, f12, f25
-	beq a0, zero, label128
-	fmv.w.x f14, s4
-	fdiv.s f12, f11, f14
-	fadd.s f13, f10, f12
-	fadd.s f10, f18, f13
+	beq a0, zero, label129
+	fmv.w.x f13, s4
+	fdiv.s f14, f11, f13
+	fadd.s f12, f10, f14
+	fadd.s f10, f18, f12
 	j label122
-label129:
-	fmv.w.x f12, s4
-	fdiv.s f13, f11, f12
-	fadd.s f18, f10, f13
-	j label125
 label130:
 	fmv.s f10, f19
 	li a0, 1
@@ -293,8 +290,8 @@ label130:
 	fmv.s f13, f26
 	jal asr5
 	fadd.s f18, f10, f27
-	j label125
-label128:
+	j label126
+label129:
 	fmv.s f10, f8
 	li a0, 1
 	fmv.s f11, f9
@@ -695,33 +692,17 @@ main:
 	fsw f18, 68(sp)
 	fsw f9, 72(sp)
 	jal getint
+pcrel742:
+	auipc a1, %pcrel_hi(__cmmc_fp_constant_pool)
 	lui s3, 265216
 	lui s2, 264192
 	lui s1, 258048
-pcrel743:
-	auipc a1, %pcrel_hi(__cmmc_fp_constant_pool)
 	lui s0, 260096
-	addi s4, a1, %pcrel_lo(pcrel743)
-	beq a0, zero, label594
+	addi s4, a1, %pcrel_lo(pcrel742)
+	beq a0, zero, label610
 	mv s5, a0
-	j label595
-label594:
-	mv a0, zero
-	ld ra, 0(sp)
-	ld s0, 8(sp)
-	ld s5, 16(sp)
-	ld s1, 24(sp)
-	ld s6, 32(sp)
-	ld s2, 40(sp)
-	ld s3, 48(sp)
-	ld s4, 56(sp)
-	flw f8, 64(sp)
-	flw f18, 68(sp)
-	flw f9, 72(sp)
-	addi sp, sp, 80
-	ret
 .p2align 2
-label595:
+label594:
 	jal getfloat
 	fabs.s f18, f10
 	fmv.s f8, f10
@@ -740,7 +721,7 @@ label595:
 	bne a1, zero, label724
 	j label723
 .p2align 2
-label605:
+label604:
 	fmv.w.x f10, s0
 	flw f12, 8(s4)
 	li a0, 1
@@ -751,12 +732,26 @@ label605:
 	jal my_exp
 	jal putfloat
 .p2align 2
-label606:
+label605:
 	li a0, 10
 	jal putch
 	addiw s5, s5, -1
-	bne s5, zero, label595
-	j label594
+	bne s5, zero, label594
+label610:
+	mv a0, zero
+	ld ra, 0(sp)
+	ld s0, 8(sp)
+	ld s5, 16(sp)
+	ld s1, 24(sp)
+	ld s6, 32(sp)
+	ld s2, 40(sp)
+	ld s3, 48(sp)
+	ld s4, 56(sp)
+	flw f8, 64(sp)
+	flw f18, 68(sp)
+	flw f9, 72(sp)
+	addi sp, sp, 80
+	ret
 .p2align 2
 label723:
 	fmv.s f11, f12
@@ -766,7 +761,7 @@ label724:
 	fmul.s f10, f10, f10
 	add a2, a0, a1
 	sraiw a0, a2, 1
-	beq a0, zero, label601
+	beq a0, zero, label600
 .p2align 2
 label628:
 	fmv.s f12, f11
@@ -781,7 +776,7 @@ label628:
 	sraiw a0, a2, 1
 	bne a0, zero, label628
 .p2align 2
-label601:
+label600:
 	fmv.s f10, f11
 	jal putfloat
 	fmv.s f10, f8
@@ -800,66 +795,51 @@ label601:
 	jal putfloat
 	li a0, 32
 	jal putch
-	fmv.w.x f14, s1
 	fmv.w.x f11, s0
-	fdiv.s f0, f11, f8
+	fmv.w.x f13, s1
+	fmv.w.x f0, s2
+	fdiv.s f1, f11, f8
 	fsub.s f10, f8, f11
-	fmul.s f15, f10, f14
-	fmv.w.x f14, s2
-	fadd.s f13, f15, f11
-	fdiv.s f12, f11, f13
-	fmul.s f15, f12, f14
+	fmul.s f15, f10, f13
+	fadd.s f14, f15, f11
+	fdiv.s f12, f11, f14
+	fmul.s f15, f12, f0
 	fadd.s f13, f15, f11
 	fmv.w.x f11, s3
-	fadd.s f14, f13, f0
+	fadd.s f14, f13, f1
 	fmul.s f12, f14, f10
 	fmv.w.x f10, zero
 	flt.s s6, f10, f8
 	fdiv.s f18, f12, f11
-	bne s6, zero, label602
-	j label610
+	bne s6, zero, label608
+	li a0, 45
+	jal putch
 .p2align 2
-label603:
+label601:
 	li a0, 32
 	jal putch
 	fmv.w.x f10, zero
 	flt.s a0, f10, f9
 	and a1, s6, a0
-	bne a1, zero, label608
-	j label609
-.p2align 2
-label610:
-	li a0, 45
-	jal putch
-	j label603
-.p2align 2
-label604:
-	li a0, 32
-	jal putch
-	fmv.w.x f10, zero
-	flt.s a0, f10, f8
-	bne a0, zero, label605
-	j label607
-.p2align 2
-label608:
+	beq a1, zero, label607
 	fmv.w.x f28, s0
 	flw f29, 8(s4)
 	li a0, 1
-	fmv.w.x f14, s1
+	fmv.w.x f13, s1
+	fdiv.s f15, f28, f9
 	fsub.s f10, f9, f28
-	fmul.s f13, f10, f14
-	fmv.w.x f14, s2
-	fadd.s f11, f13, f28
-	fdiv.s f13, f28, f9
-	fdiv.s f12, f28, f11
-	fmul.s f15, f12, f14
-	fadd.s f11, f15, f28
-	fmv.w.x f15, s3
-	fadd.s f14, f11, f13
-	fmul.s f12, f14, f10
+	fmul.s f14, f10, f13
+	fmv.w.x f13, s2
+	fadd.s f12, f14, f28
+	fdiv.s f11, f28, f12
+	fmul.s f14, f11, f13
+	fadd.s f12, f14, f28
+	fmv.w.x f14, s3
+	fadd.s f0, f12, f15
+	fmul.s f11, f0, f10
 	fmv.s f10, f28
+	fdiv.s f13, f11, f14
 	fmv.s f11, f9
-	fdiv.s f13, f12, f15
 	fmv.s f12, f29
 	jal asr5
 	li a0, 1
@@ -871,19 +851,18 @@ label608:
 	jal asr5
 	fdiv.s f10, f30, f10
 	jal putfloat
-	j label604
 .p2align 2
-label607:
+label603:
+	li a0, 32
+	jal putch
+	fmv.w.x f10, zero
+	flt.s a0, f10, f8
+	bne a0, zero, label604
 	li a0, 45
 	jal putch
-	j label606
+	j label605
 .p2align 2
-label609:
-	li a0, 45
-	jal putch
-	j label604
-.p2align 2
-label602:
+label608:
 	fmv.w.x f10, s0
 	flw f12, 8(s4)
 	li a0, 1
@@ -891,4 +870,9 @@ label602:
 	fmv.s f13, f18
 	jal asr5
 	jal putfloat
+	j label601
+.p2align 2
+label607:
+	li a0, 45
+	jal putch
 	j label603

@@ -142,17 +142,17 @@ memset_impl:
 	lui $t0, %hi(arr)
 	addiu $t0, $t0, %lo(arr)
 	addiu $t1, $a0, -4
-	blez $t1, label135
+	blez $t1, label108
 	nop
 	addiu $t2, $a0, -4
 	addiu $t3, $a0, -20
 	addiu $t1, $t2, -16
-	blez $t1, label113
+	blez $t1, label110
 	nop
 	move $t1, $t0
 	move $t4, $zero
 .p2align 2
-label120:
+label117:
 	sw $zero, 0($t1)
 	sw $zero, 4($t1)
 	sw $zero, 8($t1)
@@ -171,52 +171,50 @@ label120:
 	sw $zero, 60($t1)
 	addiu $t4, $t4, 16
 	subu $t5, $t3, $t4
-	blez $t5, label123
+	blez $t5, label120
 	nop
 	addiu $t1, $t1, 64
-	b label120
+	b label117
 	nop
-label123:
+label120:
 	sll $t1, $t4, 2
 	addu $t1, $t0, $t1
 	move $t3, $t4
-label114:
+label111:
 	sw $zero, 0($t1)
 	sw $zero, 4($t1)
 	sw $zero, 8($t1)
 	sw $zero, 12($t1)
 	addiu $t3, $t3, 4
 	subu $t4, $t2, $t3
-	blez $t4, label117
+	blez $t4, label149
 	nop
 	addiu $t1, $t1, 16
-	b label114
+	b label111
 	nop
 label108:
+	move $t3, $zero
+label122:
 	sw $zero, 0($t0)
 	addiu $t3, $t3, 1
 	subu $t1, $a0, $t3
 	blez $t1, label126
 	nop
 	addiu $t0, $t0, 4
-	b label108
-	nop
-label117:
-	sll $t1, $t3, 2
-	addu $t0, $t0, $t1
-	b label108
+	b label122
 	nop
 label126:
 	jr $ra
 	nop
-label113:
+label110:
 	move $t1, $t0
 	move $t3, $zero
-	b label114
+	b label111
 	nop
-label135:
-	move $t3, $zero
-	b label108
+label149:
+	sll $t1, $t3, 2
+	addu $t0, $t0, $t1
+	b label122
 	nop
 .p2align 2
 .globl fused_store

@@ -151,7 +151,7 @@ label6:
 	cmp r8, r1
 	blt label13
 	b label249
-label50:
+label68:
 	mov r0, #76
 	bl _sysy_stoptime
 	movw r9, #:lower16:vectorA
@@ -160,7 +160,7 @@ label50:
 	mov r0, r9
 	vmov s0, r1
 .p2align 4
-label51:
+label69:
 	vldr s1, [r0, #0]
 	movw r5, #:lower16:vectorB
 	movt r5, #:upper16:vectorB
@@ -232,25 +232,25 @@ label51:
 	cmp r2, r3
 	vmul.f32 s1, s1, s2
 	vadd.f32 s0, s0, s1
-	bge label55
+	bge label74
 	add r0, r0, #64
 	mov r1, r2
-	b label51
+	b label69
 .p2align 4
-label80:
+label98:
 	add r1, r3, #1
 	movw r4, #34464
 	movt r4, #1
 	cmp r8, r4
-	bge label724
+	bge label804
 	add r4, r8, #4
 	movw r5, #34464
 	movt r5, #1
 	cmp r4, r5
-	blt label88
-	b label729
+	blt label100
+	b label809
 .p2align 4
-label743:
+label877:
 	movw r8, #34464
 	movt r8, #1
 	vstr s0, [r2, #0]
@@ -259,13 +259,13 @@ label743:
 	movw r1, #34464
 	movt r1, #1
 	cmp r3, r1
-	blt label80
+	blt label98
 	add r0, r0, #1
 	cmp r0, #1000
 	blt label6
-	b label50
+	b label68
 .p2align 4
-label88:
+label100:
 	add r4, r3, #2
 	add r6, r3, #3
 	add r7, r3, #4
@@ -273,41 +273,41 @@ label88:
 	movt r5, #:upper16:Vectortm
 	add r5, r5, r8, lsl #2
 .p2align 4
-label89:
-	add r9, r3, r8
-	add r10, r1, r8
+label101:
+	add r10, r3, r8
+	add r9, r1, r8
 	vldr s2, [r5, #0]
 	add r11, r8, #1
+	mul r10, r10, r9
+	add r10, r10, r10, lsr #31
+	asr r10, r10, #1
+	add r10, r10, r11
+	add r11, r8, #2
+	vmov s1, r10
+	add r10, r4, r8
 	mul r9, r9, r10
+	vcvt.f32.s32 s1, s1
 	add r9, r9, r9, lsr #31
 	asr r9, r9, #1
+	vdiv.f32 s1, s2, s1
 	add r9, r9, r11
-	add r11, r8, #2
+	vldr s2, [r5, #4]
+	add r11, r8, #3
+	vadd.f32 s0, s0, s1
 	vmov s1, r9
-	add r9, r4, r8
+	add r9, r6, r8
 	mul r10, r10, r9
 	vcvt.f32.s32 s1, s1
 	add r10, r10, r10, lsr #31
 	asr r10, r10, #1
 	vdiv.f32 s1, s2, s1
 	add r10, r10, r11
-	vldr s2, [r5, #4]
-	add r11, r8, #3
-	vadd.f32 s0, s0, s1
-	vmov s1, r10
-	add r10, r6, r8
-	mul r9, r9, r10
-	vcvt.f32.s32 s1, s1
-	add r9, r9, r9, lsr #31
-	asr r9, r9, #1
-	vdiv.f32 s1, s2, s1
-	add r9, r9, r11
 	vldr s2, [r5, #8]
 	vadd.f32 s0, s0, s1
-	vmov s1, r9
-	add r9, r7, r8
+	vmov s1, r10
+	add r10, r7, r8
 	add r8, r8, #4
-	mul r9, r10, r9
+	mul r9, r9, r10
 	vcvt.f32.s32 s1, s1
 	add r9, r9, r9, lsr #31
 	asr r9, r9, #1
@@ -322,35 +322,17 @@ label89:
 	vcvt.f32.s32 s1, s1
 	vdiv.f32 s1, s2, s1
 	vadd.f32 s0, s0, s1
-	bge label729
+	bge label809
 	add r5, r5, #16
-	b label89
-.p2align 4
-label729:
-	movw r5, #:lower16:Vectortm
-	movt r5, #:upper16:Vectortm
-	add r4, r5, r8, lsl #2
-	mov r5, r8
-.p2align 4
-label82:
-	add r6, r3, r5
-	add r7, r1, r5
-	vldr s2, [r4, #0]
-	add r5, r5, #1
-	mul r6, r6, r7
-	add r6, r6, r6, lsr #31
-	asr r6, r6, #1
-	add r6, r6, r5
-	vmov s1, r6
-	movw r6, #34464
-	movt r6, #1
-	cmp r5, r6
-	vcvt.f32.s32 s1, s1
-	vdiv.f32 s1, s2, s1
-	vadd.f32 s0, s0, s1
-	bge label743
-	add r4, r4, #4
-	b label82
+	b label101
+label1057:
+	mov r8, #0
+	movw r9, #:lower16:vectorA
+	movt r9, #:upper16:vectorA
+	mov r3, r8
+	vmov s0, r8
+	mov r2, r9
+	b label62
 .p2align 4
 label13:
 	add r1, r3, #1
@@ -362,10 +344,10 @@ label13:
 	movw r5, #34464
 	movt r5, #1
 	cmp r4, r5
-	blt label16
-	b label15
+	blt label21
+	b label259
 .p2align 4
-label324:
+label273:
 	movw r8, #34464
 	movt r8, #1
 	vstr s0, [r2, #0]
@@ -382,26 +364,32 @@ label324:
 	vmov s0, r8
 	mov r2, r5
 	cmp r8, r1
-	blt label116
+	blt label37
 	movw r5, #:lower16:Vectortm
 	movt r5, #:upper16:Vectortm
 	mov r2, r5
-	bge label1062
+	b label1057
+label62:
+	movw r1, #34464
+	movt r1, #1
+	cmp r3, r1
+	blt label98
+	b label67
 .p2align 4
-label98:
+label37:
 	add r1, r3, #1
 	movw r4, #34464
 	movt r4, #1
 	cmp r8, r4
-	bge label99
+	bge label337
 	add r4, r8, #4
 	movw r5, #34464
 	movt r5, #1
 	cmp r4, r5
-	blt label109
-	b label103
+	blt label45
+	b label342
 .p2align 4
-label826:
+label356:
 	movw r8, #34464
 	movt r8, #1
 	vstr s0, [r2, #0]
@@ -410,92 +398,34 @@ label826:
 	movw r1, #34464
 	movt r1, #1
 	cmp r3, r1
-	blt label98
+	blt label37
 	mov r8, #0
-	movw r9, #:lower16:vectorA
-	movt r9, #:upper16:vectorA
+	movw r5, #:lower16:Vectortm
+	movt r5, #:upper16:Vectortm
 	mov r3, r8
 	vmov s0, r8
-	mov r2, r9
+	mov r2, r5
 	cmp r8, r1
-	blt label80
-	add r0, r0, #1
-	cmp r0, #1000
-	blt label6
-	b label50
-.p2align 4
-label109:
-	add r4, r3, #2
-	add r6, r3, #3
-	add r7, r3, #4
-	movw r5, #:lower16:vectorB
-	movt r5, #:upper16:vectorB
-	add r5, r5, r8, lsl #2
-.p2align 4
-label110:
-	add r10, r3, r8
-	add r9, r1, r8
-	vldr s2, [r5, #0]
-	mul r10, r10, r9
-	add r10, r10, r10, lsr #31
-	asr r10, r10, #1
-	add r10, r1, r10
-	vmov s1, r10
-	add r10, r4, r8
-	mul r9, r9, r10
-	vcvt.f32.s32 s1, s1
-	add r9, r9, r9, lsr #31
-	asr r9, r9, #1
-	vdiv.f32 s1, s2, s1
-	add r9, r1, r9
-	vldr s2, [r5, #4]
-	vadd.f32 s0, s0, s1
-	vmov s1, r9
-	add r9, r6, r8
-	mul r10, r10, r9
-	vcvt.f32.s32 s1, s1
-	add r10, r10, r10, lsr #31
-	asr r10, r10, #1
-	vdiv.f32 s1, s2, s1
-	add r10, r1, r10
-	vldr s2, [r5, #8]
-	vadd.f32 s0, s0, s1
-	vmov s1, r10
-	add r10, r7, r8
-	add r8, r8, #4
-	mul r9, r9, r10
-	vcvt.f32.s32 s1, s1
-	add r9, r9, r9, lsr #31
-	asr r9, r9, #1
-	vdiv.f32 s1, s2, s1
-	add r9, r1, r9
-	vldr s2, [r5, #12]
-	vadd.f32 s0, s0, s1
-	vmov s1, r9
-	movw r9, #34460
-	movt r9, #1
-	cmp r8, r9
-	vcvt.f32.s32 s1, s1
-	vdiv.f32 s1, s2, s1
-	vadd.f32 s0, s0, s1
-	bge label103
-	add r5, r5, #16
-	b label110
+	blt label116
+	movw r9, #:lower16:vectorA
+	movt r9, #:upper16:vectorA
+	mov r2, r9
+	b label67
 .p2align 4
 label116:
 	add r1, r3, #1
 	movw r4, #34464
 	movt r4, #1
 	cmp r8, r4
-	bge label881
+	bge label117
 	add r4, r8, #4
 	movw r5, #34464
 	movt r5, #1
 	cmp r4, r5
-	blt label124
-	b label886
+	blt label127
+	b label121
 .p2align 4
-label900:
+label906:
 	movw r8, #34464
 	movt r8, #1
 	vstr s0, [r2, #0]
@@ -506,111 +436,25 @@ label900:
 	cmp r3, r1
 	blt label116
 	mov r8, #0
-	movw r5, #:lower16:Vectortm
-	movt r5, #:upper16:Vectortm
-	mov r3, r8
-	vmov s0, r8
-	mov r2, r5
-	cmp r8, r1
-	blt label98
 	movw r9, #:lower16:vectorA
 	movt r9, #:upper16:vectorA
+	mov r3, r8
+	vmov s0, r8
 	mov r2, r9
-	b label49
+	cmp r8, r1
+	blt label98
+	add r0, r0, #1
+	cmp r0, #1000
+	blt label6
+	b label68
 .p2align 4
-label124:
-	add r4, r3, #2
-	add r6, r3, #3
-	add r7, r3, #4
-	movw r5, #:lower16:Vectortm
-	movt r5, #:upper16:Vectortm
-	add r5, r5, r8, lsl #2
-.p2align 4
-label125:
-	add r9, r3, r8
-	add r10, r1, r8
-	vldr s2, [r5, #0]
-	add r11, r8, #1
-	mul r9, r9, r10
-	add r9, r9, r9, lsr #31
-	asr r9, r9, #1
-	add r9, r9, r11
-	add r11, r8, #2
-	vmov s1, r9
-	add r9, r4, r8
-	mul r10, r10, r9
-	vcvt.f32.s32 s1, s1
-	add r10, r10, r10, lsr #31
-	asr r10, r10, #1
-	vdiv.f32 s1, s2, s1
-	add r10, r10, r11
-	vldr s2, [r5, #4]
-	add r11, r8, #3
-	vadd.f32 s0, s0, s1
-	vmov s1, r10
-	add r10, r6, r8
-	mul r9, r9, r10
-	vcvt.f32.s32 s1, s1
-	add r9, r9, r9, lsr #31
-	asr r9, r9, #1
-	vdiv.f32 s1, s2, s1
-	add r9, r9, r11
-	vldr s2, [r5, #8]
-	vadd.f32 s0, s0, s1
-	vmov s1, r9
-	add r9, r7, r8
-	add r8, r8, #4
-	mul r9, r10, r9
-	vcvt.f32.s32 s1, s1
-	add r9, r9, r9, lsr #31
-	asr r9, r9, #1
-	vdiv.f32 s1, s2, s1
-	add r9, r9, r8
-	vldr s2, [r5, #12]
-	vadd.f32 s0, s0, s1
-	vmov s1, r9
-	movw r9, #34460
-	movt r9, #1
-	cmp r8, r9
-	vcvt.f32.s32 s1, s1
-	vdiv.f32 s1, s2, s1
-	vadd.f32 s0, s0, s1
-	bge label886
-	add r5, r5, #16
-	b label125
-.p2align 4
-label103:
-	movw r5, #:lower16:vectorB
-	movt r5, #:upper16:vectorB
-	add r4, r5, r8, lsl #2
-.p2align 4
-label104:
-	add r5, r3, r8
-	add r6, r1, r8
-	vldr s2, [r4, #0]
-	add r8, r8, #1
-	mul r5, r5, r6
-	add r5, r5, r5, lsr #31
-	asr r5, r5, #1
-	add r5, r1, r5
-	vmov s1, r5
-	movw r5, #34464
-	movt r5, #1
-	cmp r8, r5
-	vcvt.f32.s32 s1, s1
-	vdiv.f32 s1, s2, s1
-	vadd.f32 s0, s0, s1
-	bge label826
-	add r4, r4, #4
-	b label104
-.p2align 4
-label886:
+label342:
 	movw r5, #:lower16:Vectortm
 	movt r5, #:upper16:Vectortm
 	add r4, r5, r8, lsl #2
 	mov r5, r8
 .p2align 4
-label118:
+label39:
 	add r6, r3, r5
 	add r7, r1, r5
 	vldr s2, [r4, #0]
@@ -626,23 +470,74 @@ label118:
 	vcvt.f32.s32 s1, s1
 	vdiv.f32 s1, s2, s1
 	vadd.f32 s0, s0, s1
-	bge label900
+	bge label356
 	add r4, r4, #4
-	b label118
-label49:
+	b label39
+.p2align 4
+label259:
+	movw r9, #:lower16:vectorA
+	movt r9, #:upper16:vectorA
+	add r4, r9, r8, lsl #2
+.p2align 4
+label15:
+	add r5, r3, r8
+	add r6, r1, r8
+	vldr s2, [r4, #0]
+	add r8, r8, #1
+	mul r5, r5, r6
+	add r5, r5, r5, lsr #31
+	asr r5, r5, #1
+	add r5, r1, r5
+	vmov s1, r5
+	movw r5, #34464
+	movt r5, #1
+	cmp r8, r5
+	vcvt.f32.s32 s1, s1
+	vdiv.f32 s1, s2, s1
+	vadd.f32 s0, s0, s1
+	bge label273
+	add r4, r4, #4
+	b label15
+.p2align 4
+label809:
+	movw r5, #:lower16:Vectortm
+	movt r5, #:upper16:Vectortm
+	add r4, r5, r8, lsl #2
+	mov r5, r8
+.p2align 4
+label108:
+	add r6, r3, r5
+	add r7, r1, r5
+	vldr s2, [r4, #0]
+	add r5, r5, #1
+	mul r6, r6, r7
+	add r6, r6, r6, lsr #31
+	asr r6, r6, #1
+	add r6, r6, r5
+	vmov s1, r6
+	movw r6, #34464
+	movt r6, #1
+	cmp r5, r6
+	vcvt.f32.s32 s1, s1
+	vdiv.f32 s1, s2, s1
+	vadd.f32 s0, s0, s1
+	bge label877
+	add r4, r4, #4
+	b label108
+label67:
 	add r0, r0, #1
 	cmp r0, #1000
 	blt label6
-	b label50
+	b label68
 .p2align 4
-label99:
+label117:
 	vstr s0, [r2, #0]
 	mov r3, r1
 	add r2, r2, #4
 	movw r1, #34464
 	movt r1, #1
 	cmp r3, r1
-	blt label98
+	blt label116
 	mov r8, #0
 	movw r9, #:lower16:vectorA
 	movt r9, #:upper16:vectorA
@@ -650,8 +545,38 @@ label99:
 	vmov s0, r8
 	mov r2, r9
 	cmp r8, r1
-	blt label80
-	b label49
+	blt label98
+	b label67
+label1052:
+	mov r8, #0
+	movw r9, #:lower16:vectorA
+	movt r9, #:upper16:vectorA
+	movw r1, #34464
+	movt r1, #1
+	mov r3, r8
+	vmov s0, r8
+	mov r2, r9
+	cmp r8, r1
+	blt label98
+	b label67
+.p2align 4
+label337:
+	vstr s0, [r2, #0]
+	mov r3, r1
+	add r2, r2, #4
+	movw r1, #34464
+	movt r1, #1
+	cmp r3, r1
+	blt label37
+	mov r8, #0
+	movw r5, #:lower16:Vectortm
+	movt r5, #:upper16:Vectortm
+	mov r3, r8
+	vmov s0, r8
+	mov r2, r5
+	cmp r8, r1
+	blt label116
+	b label1052
 .p2align 4
 label254:
 	vstr s0, [r2, #0]
@@ -668,52 +593,22 @@ label254:
 	vmov s0, r8
 	mov r2, r5
 	cmp r8, r1
-	blt label116
+	blt label37
 	b label1049
-label1062:
-	mov r8, #0
-	movw r9, #:lower16:vectorA
-	movt r9, #:upper16:vectorA
-	mov r3, r8
-	vmov s0, r8
-	mov r2, r9
-	movw r1, #34464
-	movt r1, #1
-	cmp r8, r1
-	blt label80
-	b label49
 .p2align 4
-label881:
+label804:
 	vstr s0, [r2, #0]
 	mov r3, r1
 	add r2, r2, #4
 	movw r1, #34464
 	movt r1, #1
 	cmp r3, r1
-	blt label116
-	mov r8, #0
-	movw r5, #:lower16:Vectortm
-	movt r5, #:upper16:Vectortm
-	mov r3, r8
-	vmov s0, r8
-	mov r2, r5
-	cmp r8, r1
 	blt label98
-	b label1062
-.p2align 4
-label724:
-	vstr s0, [r2, #0]
-	mov r3, r1
-	add r2, r2, #4
-	movw r1, #34464
-	movt r1, #1
-	cmp r3, r1
-	blt label80
 	add r0, r0, #1
 	cmp r0, #1000
 	blt label6
-	b label50
-label55:
+	b label68
+label74:
 	movw r9, #:lower16:vectorA
 	movt r9, #:upper16:vectorA
 	movw r5, #:lower16:vectorB
@@ -770,8 +665,7 @@ label55:
 	vldr s2, [r2, #44]
 	vmul.f32 s1, s1, s2
 	vadd.f32 s0, s0, s1
-.p2align 4
-label56:
+label75:
 	vldr s1, [r0, #0]
 	movw r5, #:lower16:vectorB
 	movt r5, #:upper16:vectorB
@@ -783,17 +677,17 @@ label56:
 	cmp r1, r2
 	vmul.f32 s1, s1, s2
 	vadd.f32 s0, s0, s1
-	bge label540
+	bge label79
 	add r0, r0, #4
-	b label56
-label540:
+	b label75
+label79:
 	mov r1, #0
 	movw r5, #:lower16:vectorB
 	movt r5, #:upper16:vectorB
 	vmov s1, r1
 	mov r0, r5
 .p2align 4
-label62:
+label80:
 	vldr s2, [r0, #0]
 	add r2, r1, #16
 	movw r3, #34448
@@ -846,11 +740,11 @@ label62:
 	vldr s2, [r0, #60]
 	vmul.f32 s2, s2, s2
 	vadd.f32 s1, s1, s2
-	bge label67
+	bge label84
 	add r0, r0, #64
 	mov r1, r2
-	b label62
-label67:
+	b label80
+label84:
 	movw r5, #:lower16:vectorB
 	movt r5, #:upper16:vectorB
 	add r1, r1, #28
@@ -892,8 +786,7 @@ label67:
 	add r0, r5, r1, lsl #2
 	vmul.f32 s2, s2, s2
 	vadd.f32 s1, s1, s2
-.p2align 4
-label68:
+label85:
 	vldr s2, [r0, #0]
 	add r1, r1, #1
 	movw r2, #34464
@@ -901,10 +794,10 @@ label68:
 	cmp r1, r2
 	vmul.f32 s2, s2, s2
 	vadd.f32 s1, s1, s2
-	bge label73
+	bge label89
 	add r0, r0, #4
-	b label68
-label73:
+	b label85
+label89:
 	vdiv.f32 s0, s0, s1
 	mov r0, #1065353216
 	movw r1, #14269
@@ -924,12 +817,12 @@ label73:
 	vmrs APSR_nzcv, FPSCR
 	movwmi r1, #1
 	orrs r0, r0, r1
-	beq label687
+	beq label765
 	mov r0, #1065353216
 	vmov.f32 s2, s0
 	vmov s1, r0
-	b label76
-label74:
+	b label92
+label90:
 	mov r0, #1065353216
 	movw r1, #14269
 	movt r1, #46470
@@ -955,7 +848,7 @@ label74:
 	mov r0, #0
 	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
 .p2align 4
-label76:
+label92:
 	vadd.f32 s1, s1, s2
 	mov r0, #1056964608
 	movw r1, #14269
@@ -977,8 +870,8 @@ label76:
 	vmrs APSR_nzcv, FPSCR
 	movwmi r1, #1
 	orrs r0, r0, r1
-	bne label76
-	b label74
+	bne label92
+	b label90
 .p2align 4
 label249:
 	mov r8, #0
@@ -990,7 +883,7 @@ label249:
 	vmov s0, r8
 	mov r2, r5
 	cmp r8, r1
-	blt label116
+	blt label37
 label1049:
 	mov r8, #0
 	movw r5, #:lower16:Vectortm
@@ -1001,39 +894,10 @@ label1049:
 	vmov s0, r8
 	mov r2, r5
 	cmp r8, r1
-	blt label98
-	b label1062
+	blt label116
+	b label1057
 .p2align 4
-label15:
-	movw r9, #:lower16:vectorA
-	movt r9, #:upper16:vectorA
-	add r4, r9, r8, lsl #2
-.p2align 4
-label23:
-	add r5, r3, r8
-	add r6, r1, r8
-	vldr s2, [r4, #0]
-	add r8, r8, #1
-	mul r5, r5, r6
-	add r5, r5, r5, lsr #31
-	asr r5, r5, #1
-	add r5, r1, r5
-	vmov s1, r5
-	movw r5, #34464
-	movt r5, #1
-	cmp r8, r5
-	vcvt.f32.s32 s1, s1
-	vdiv.f32 s1, s2, s1
-	vadd.f32 s0, s0, s1
-	bge label324
-	add r4, r4, #4
-	b label23
-label687:
-	mov r0, #1065353216
-	vmov s1, r0
-	b label74
-.p2align 4
-label16:
+label21:
 	add r4, r3, #2
 	add r6, r3, #3
 	add r7, r3, #4
@@ -1041,7 +905,7 @@ label16:
 	movt r9, #:upper16:vectorA
 	add r5, r9, r8, lsl #2
 .p2align 4
-label17:
+label22:
 	add r10, r3, r8
 	add r9, r1, r8
 	vldr s2, [r5, #0]
@@ -1087,6 +951,154 @@ label17:
 	vcvt.f32.s32 s1, s1
 	vdiv.f32 s1, s2, s1
 	vadd.f32 s0, s0, s1
-	bge label15
+	bge label259
 	add r5, r5, #16
-	b label17
+	b label22
+label765:
+	mov r0, #1065353216
+	vmov s1, r0
+	b label90
+.p2align 4
+label127:
+	add r4, r3, #2
+	add r6, r3, #3
+	add r7, r3, #4
+	movw r5, #:lower16:vectorB
+	movt r5, #:upper16:vectorB
+	add r5, r5, r8, lsl #2
+.p2align 4
+label128:
+	add r9, r3, r8
+	add r10, r1, r8
+	vldr s2, [r5, #0]
+	mul r9, r9, r10
+	add r9, r9, r9, lsr #31
+	asr r9, r9, #1
+	add r9, r1, r9
+	vmov s1, r9
+	add r9, r4, r8
+	mul r10, r10, r9
+	vcvt.f32.s32 s1, s1
+	add r10, r10, r10, lsr #31
+	asr r10, r10, #1
+	vdiv.f32 s1, s2, s1
+	add r10, r1, r10
+	vldr s2, [r5, #4]
+	vadd.f32 s0, s0, s1
+	vmov s1, r10
+	add r10, r6, r8
+	mul r9, r9, r10
+	vcvt.f32.s32 s1, s1
+	add r9, r9, r9, lsr #31
+	asr r9, r9, #1
+	vdiv.f32 s1, s2, s1
+	add r9, r1, r9
+	vldr s2, [r5, #8]
+	vadd.f32 s0, s0, s1
+	vmov s1, r9
+	add r9, r7, r8
+	add r8, r8, #4
+	mul r9, r10, r9
+	vcvt.f32.s32 s1, s1
+	add r9, r9, r9, lsr #31
+	asr r9, r9, #1
+	vdiv.f32 s1, s2, s1
+	add r9, r1, r9
+	vldr s2, [r5, #12]
+	vadd.f32 s0, s0, s1
+	vmov s1, r9
+	movw r9, #34460
+	movt r9, #1
+	cmp r8, r9
+	vcvt.f32.s32 s1, s1
+	vdiv.f32 s1, s2, s1
+	vadd.f32 s0, s0, s1
+	bge label121
+	add r5, r5, #16
+	b label128
+.p2align 4
+label121:
+	movw r5, #:lower16:vectorB
+	movt r5, #:upper16:vectorB
+	add r4, r5, r8, lsl #2
+.p2align 4
+label122:
+	add r5, r3, r8
+	add r6, r1, r8
+	vldr s2, [r4, #0]
+	add r8, r8, #1
+	mul r5, r5, r6
+	add r5, r5, r5, lsr #31
+	asr r5, r5, #1
+	add r5, r1, r5
+	vmov s1, r5
+	movw r5, #34464
+	movt r5, #1
+	cmp r8, r5
+	vcvt.f32.s32 s1, s1
+	vdiv.f32 s1, s2, s1
+	vadd.f32 s0, s0, s1
+	bge label906
+	add r4, r4, #4
+	b label122
+.p2align 4
+label45:
+	add r4, r3, #2
+	add r6, r3, #3
+	add r7, r3, #4
+	movw r5, #:lower16:Vectortm
+	movt r5, #:upper16:Vectortm
+	add r5, r5, r8, lsl #2
+.p2align 4
+label46:
+	add r10, r3, r8
+	add r9, r1, r8
+	vldr s2, [r5, #0]
+	add r11, r8, #1
+	mul r10, r10, r9
+	add r10, r10, r10, lsr #31
+	asr r10, r10, #1
+	add r10, r10, r11
+	add r11, r8, #2
+	vmov s1, r10
+	add r10, r4, r8
+	mul r9, r9, r10
+	vcvt.f32.s32 s1, s1
+	add r9, r9, r9, lsr #31
+	asr r9, r9, #1
+	vdiv.f32 s1, s2, s1
+	add r9, r9, r11
+	vldr s2, [r5, #4]
+	add r11, r8, #3
+	vadd.f32 s0, s0, s1
+	vmov s1, r9
+	add r9, r6, r8
+	mul r10, r10, r9
+	vcvt.f32.s32 s1, s1
+	add r10, r10, r10, lsr #31
+	asr r10, r10, #1
+	vdiv.f32 s1, s2, s1
+	add r10, r10, r11
+	vldr s2, [r5, #8]
+	vadd.f32 s0, s0, s1
+	vmov s1, r10
+	add r10, r7, r8
+	add r8, r8, #4
+	mul r9, r9, r10
+	vcvt.f32.s32 s1, s1
+	add r9, r9, r9, lsr #31
+	asr r9, r9, #1
+	vdiv.f32 s1, s2, s1
+	add r9, r9, r8
+	vldr s2, [r5, #12]
+	vadd.f32 s0, s0, s1
+	vmov s1, r9
+	movw r9, #34460
+	movt r9, #1
+	cmp r8, r9
+	vcvt.f32.s32 s1, s1
+	vdiv.f32 s1, s2, s1
+	vadd.f32 s0, s0, s1
+	bge label342
+	add r5, r5, #16
+	b label46

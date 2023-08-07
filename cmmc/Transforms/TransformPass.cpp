@@ -493,6 +493,11 @@ std::shared_ptr<PassManager<Module>> PassManager<Module>::get(OptimizationLevel 
             unrollBase->addPass(pass);
         unrollBase->addPass(iter);
         perFuncWithInline->addPass(std::make_shared<IterationPassWrapper>(std::move(unrollBase), 16, false));
+        for(const auto& pass : passesSource.collectFunctionPass({
+                "FuncInlining",  //
+            }))
+            perFuncWithInline->addPass(pass);
+        perFuncWithInline->addPass(iter);
     }
 
     root->addPass(globalOpt);

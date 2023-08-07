@@ -173,6 +173,12 @@ label57:
 	b label61
 .p2align 4
 label70:
+	vadd.f32 s4, s4, s7
+	add r2, r2, #1
+	cmp r2, #24
+	blt label57
+.p2align 4
+label72:
 	movw r0, #0
 	movt r0, #16832
 	vmov s0, r0
@@ -217,10 +223,10 @@ label61:
 	vmrs APSR_nzcv, FPSCR
 	vmovmi.f32 s0, s1
 	bl my_sin_impl
-	mov r0, #0
-	vcmp.f32 s6, s7
 	movw r1, #4059
 	movt r1, #49353
+	mov r0, #0
+	vcmp.f32 s6, s7
 	vmov.f32 s5, s0
 	vmrs APSR_nzcv, FPSCR
 	vmov s0, r1
@@ -231,18 +237,6 @@ label61:
 	movwmi r1, #1
 	orrs r0, r0, r1
 	bne label74
-	b label63
-.p2align 4
-label75:
-	movw r0, #4059
-	movt r0, #16585
-	vmov s1, r0
-	vdiv.f32 s2, s0, s1
-	vcvt.s32.f32 s2, s2
-	vcvt.f32.s32 s2, s2
-	vmul.f32 s1, s2, s1
-	vsub.f32 s0, s0, s1
-	b label61
 .p2align 4
 label63:
 	movw r0, #4059
@@ -276,17 +270,9 @@ label63:
 	vmrs APSR_nzcv, FPSCR
 	movwmi r3, #1
 	ands r1, r1, r3
-	bne label72
-	b label160
+	beq label160
 .p2align 4
 label68:
-	vadd.f32 s4, s4, s7
-	add r2, r2, #1
-	cmp r2, #24
-	blt label57
-	b label70
-.p2align 4
-label72:
 	vmul.f32 s2, s5, s1
 	mov r1, #1040187392
 	vadd.f32 s6, s3, s2
@@ -404,7 +390,7 @@ label72:
 	vmovmi.f32 s7, s8
 	vcmp.f32 s2, s6
 	vmrs APSR_nzcv, FPSCR
-	bmi label68
+	bmi label70
 	vadd.f32 s1, s1, s2
 	add r0, r0, #1
 	mov r3, #0
@@ -415,14 +401,8 @@ label72:
 	vmrs APSR_nzcv, FPSCR
 	movwmi r3, #1
 	ands r1, r1, r3
-	bne label72
-	mov r0, #0
-	add r2, r2, #1
-	vmov s7, r0
-	cmp r2, #24
-	vadd.f32 s4, s4, s7
-	blt label57
-	b label70
+	bne label68
+	b label340
 .p2align 4
 label74:
 	movw r0, #4059
@@ -437,5 +417,29 @@ label74:
 .p2align 4
 label160:
 	mov r0, #0
+	add r2, r2, #1
 	vmov s7, r0
-	b label68
+	cmp r2, #24
+	vadd.f32 s4, s4, s7
+	blt label57
+	b label72
+.p2align 4
+label340:
+	mov r0, #0
+	add r2, r2, #1
+	vmov s7, r0
+	cmp r2, #24
+	vadd.f32 s4, s4, s7
+	blt label57
+	b label72
+.p2align 4
+label75:
+	movw r0, #4059
+	movt r0, #16585
+	vmov s1, r0
+	vdiv.f32 s2, s0, s1
+	vcvt.s32.f32 s2, s2
+	vcvt.f32.s32 s2, s2
+	vmul.f32 s1, s2, s1
+	vsub.f32 s0, s0, s1
+	b label61

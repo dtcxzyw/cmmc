@@ -64,7 +64,7 @@ public:
             const auto handleTarget = [&](Block*& targetBlock) {
                 if(targetBlock->instructions().size() > maxInlineBlockSize)
                     return;
-                if(hasCall(*targetBlock))
+                if(hasCall(*targetBlock, false))
                     return;
                 const auto targetTerminator = targetBlock->getTerminator();
                 if(targetTerminator->isBranch()) {

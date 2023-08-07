@@ -36,9 +36,9 @@ label6:
 	sltiu a0, s0, 1
 	sltu a1, zero, s1
 	and a2, a0, a1
-	beq s2, zero, label8
+	beq s2, zero, label7
 	remw a2, a2, s2
-label8:
+label7:
 	lw t0, 64(sp)
 	lw a4, 68(sp)
 	lw a3, 72(sp)
@@ -71,9 +71,9 @@ label155:
 label157:
 	addiw a6, t5, 1
 	lw t3, 92(sp)
-	bne t3, zero, label24
-	j label79
-label10:
+	bne t3, zero, label23
+	j label78
+label9:
 	lw t5, 96(sp)
 	mv s4, t5
 	lw t4, 100(sp)
@@ -81,9 +81,9 @@ label10:
 	addw a7, t5, s5
 	bne t4, zero, label159
 	j label158
-label24:
+label23:
 	remw a2, t4, t3
-	j label10
+	j label9
 label158:
 	mv s4, a7
 label159:
@@ -105,9 +105,9 @@ label163:
 	mv s4, a2
 label165:
 	addiw t6, s4, 1
-	beq t6, zero, label13
+	beq t6, zero, label12
 	remw s1, s1, t6
-label13:
+label12:
 	addw a2, a7, s1
 	mv a6, a7
 	beq s1, zero, label167
@@ -115,24 +115,22 @@ label13:
 label167:
 	addiw t6, a6, 1
 	subw a2, t0, a4
-	mv a7, t0
+	mv a6, t0
 	beq a4, zero, label169
-	mv a7, a2
+	mv a6, a2
 label169:
-	mulw a2, t6, a7
-	beq a3, zero, label16
+	mulw a2, t6, a6
+	beq a3, zero, label14
 	remw a2, a2, a3
-label16:
+label14:
 	subw a3, t1, a5
 	mv a4, t1
 	beq a5, zero, label171
 	mv a4, a3
 label171:
 	addiw a3, a4, 1
-	beq t2, zero, label19
-	subw a4, zero, t2
-	remw a3, a3, a4
-label19:
+	bne t2, zero, label16
+label17:
 	sltiu t0, t5, 1
 	mv a4, t3
 	subw a5, t3, t0
@@ -140,22 +138,22 @@ label19:
 	mv a4, a5
 label173:
 	mulw a3, a3, a4
-	beq t4, zero, label21
+	beq t4, zero, label19
 	subw a4, zero, t4
 	remw a3, a3, a4
-label21:
-	addw a5, s0, a3
-	mv a4, a3
+label19:
+	addw a4, s0, a3
+	mv a5, a3
 	bne a0, zero, label175
-	mv a4, a5
+	mv a5, a4
 label175:
-	addiw a0, a4, 1
-	mv a5, a1
+	addiw a0, a5, 1
+	mv a4, a1
 	subw a3, a1, a0
 	beq a0, zero, label177
-	mv a5, a3
+	mv a4, a3
 label177:
-	mulw a0, a2, a5
+	mulw a0, a2, a4
 	ld ra, 0(sp)
 	ld s4, 8(sp)
 	ld s0, 16(sp)
@@ -166,6 +164,10 @@ label177:
 	ld s3, 56(sp)
 	addi sp, sp, 104
 	ret
-label79:
+label16:
+	subw a4, zero, t2
+	remw a3, a3, a4
+	j label17
+label78:
 	mv a2, t4
-	j label10
+	j label9

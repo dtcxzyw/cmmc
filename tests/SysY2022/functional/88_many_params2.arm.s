@@ -443,21 +443,21 @@ label33:
 	add r0, r6, #3
 	add r0, r0, r0, lsl #1
 	cmn r0, #1
-	ble label34
+	ble label39
 	add r4, r5, r0, lsl #2
 	mov r5, r0
 .p2align 4
-label36:
+label35:
 	ldr r0, [r4, #0]
 	bl putint
 	mov r0, #32
 	bl putch
 	sub r5, r5, #1
 	cmn r5, #1
-	ble label34
+	ble label39
 	sub r4, r4, #4
-	b label36
-label34:
+	b label35
+label39:
 	mov r0, #10
 	bl putch
 	ldr r0, [sp, #0]

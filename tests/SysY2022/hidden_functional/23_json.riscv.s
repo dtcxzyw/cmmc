@@ -822,7 +822,7 @@ label1195:
 	sw a0, 48(sp)
 	j label1193
 label1202:
-	bne a1, zero, label1203
+	bne a1, zero, label1205
 	li a0, 110
 	jal putch
 	li a0, 111
@@ -838,16 +838,7 @@ label1202:
 	li a0, 10
 	jal putch
 	li a0, 1
-	j label1204
 label1203:
-	li a0, 111
-	jal putch
-	li a0, 107
-	jal putch
-	li a0, 10
-	jal putch
-	mv a0, zero
-label1204:
 	ld ra, 0(sp)
 	ld s1, 8(sp)
 	ld s0, 16(sp)
@@ -856,6 +847,15 @@ label1204:
 	ld s4, 40(sp)
 	addi sp, sp, 56
 	ret
+label1205:
+	li a0, 111
+	jal putch
+	li a0, 107
+	jal putch
+	li a0, 10
+	jal putch
+	mv a0, zero
+	j label1203
 label1213:
 	mv a0, zero
 	mv t3, zero

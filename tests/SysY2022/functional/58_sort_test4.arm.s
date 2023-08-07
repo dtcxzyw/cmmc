@@ -70,7 +70,7 @@ label7:
 	cmp r9, r10
 	movgt r7, r8
 	cmp r6, #6
-	bge label11
+	bge label86
 	add r5, r5, #16
 	b label7
 .p2align 4
@@ -97,7 +97,7 @@ label23:
 	add r5, r5, #4
 	b label23
 .p2align 4
-label11:
+label86:
 	add r5, r0, r6, lsl #2
 	mov r8, r6
 	mov r6, r7
@@ -108,7 +108,7 @@ label11:
 	add r8, r8, #1
 	cmp r8, #10
 	blt label21
-	b label145
+	b label149
 .p2align 4
 label14:
 	ldr r7, [r0, r6, lsl #2]
@@ -132,7 +132,7 @@ label18:
 	blt label5
 	b label40
 .p2align 4
-label145:
+label149:
 	cmp r3, r6
 	bne label19
 	add r1, r1, #4

@@ -60,7 +60,7 @@ public:
                 continue;
             if(loop.header->getTransformMetadata().scalarBlock)
                 continue;
-            if(hasCall(*loop.header))
+            if(hasCall(*loop.header, true))
                 continue;
             if((std::max(2U, estimateBlockSize(loop.header, true)) - 1U) * heuristic.unrollBlockSize >
                heuristic.maxUnrollBodySize)

@@ -48,23 +48,23 @@ label7:
 	jal putint
 	li a0, 3
 	addiw s2, s2, 1
-	bge s2, a0, label10
+	bge s2, a0, label11
 	addi s1, s1, 4
 	j label7
-label10:
+label11:
 	li a0, 10
 	jal putch
 	mv s1, zero
-label11:
+label12:
 	flw f10, 0(s0)
 	fcvt.w.s a0, f10, rtz
 	jal putint
 	li a0, 3
 	addiw s1, s1, 1
-	bge s1, a0, label15
+	bge s1, a0, label16
 	addi s0, s0, 4
-	j label11
-label15:
+	j label12
+label16:
 	li a0, 10
 	jal putch
 	ld ra, 0(sp)

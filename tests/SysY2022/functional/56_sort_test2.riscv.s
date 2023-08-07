@@ -32,20 +32,15 @@ main:
 	sd a3, 56(sp)
 	addi a3, a4, 7
 	sd a3, 64(sp)
-	blt a2, s0, label11
-label5:
-	mv s1, a0
-	mv s2, zero
-	j label6
+label2:
+	bge a2, s0, label5
 .p2align 2
 label11:
 	lw a3, 0(a1)
 	addiw a5, a2, -1
 	sh2add a4, a5, a0
 	addiw t0, a5, 1
-	bge a5, zero, label16
-.p2align 2
-label15:
+	bge a5, zero, label15
 	sh2add a4, t0, a0
 	addiw a2, a2, 1
 	addi a1, a1, 4
@@ -53,21 +48,23 @@ label15:
 	blt a2, s0, label11
 	j label5
 .p2align 2
-label16:
+label15:
 	lw t1, 0(a4)
-	bge a3, t1, label15
+	bge a3, t1, label52
 	sh2add t2, t0, a0
 	addiw a5, a5, -1
 	addi a4, a4, -4
 	addiw t0, a5, 1
 	sw t1, 0(t2)
-	bge a5, zero, label16
+	bge a5, zero, label15
 	sh2add a4, t0, a0
 	addiw a2, a2, 1
 	addi a1, a1, 4
 	sw a3, 0(a4)
 	blt a2, s0, label11
-	j label5
+label5:
+	mv s1, a0
+	mv s2, zero
 .p2align 2
 label6:
 	lw a0, 0(s1)
@@ -86,3 +83,9 @@ label10:
 	ld s2, 24(sp)
 	addi sp, sp, 72
 	ret
+label52:
+	sh2add a4, t0, a0
+	addiw a2, a2, 1
+	addi a1, a1, 4
+	sw a3, 0(a4)
+	j label2

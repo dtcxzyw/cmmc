@@ -52,7 +52,7 @@ public:
             const auto blockSize = std::max(2U, estimateBlockSize(loop.header, false)) - 1U;
             if(blockSize * 2 > heuristic.maxUnrollBodySize)
                 continue;
-            if(hasCall(*loop.header))
+            if(hasCall(*loop.header, true))
                 continue;
             if(!loop.bound->is<ConstantInteger>())
                 continue;

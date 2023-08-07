@@ -62,6 +62,7 @@
 #include <llvm/Support/TargetSelect.h>
 #include <llvm/Support/ToolOutputFile.h>
 #include <llvm/Support/raw_ostream.h>
+#include <string>
 #include <system_error>
 #include <variant>
 
@@ -117,8 +118,10 @@ class LLVMConversionContext final {
         mTypeMap.insert({ type, llvmType });
         return llvmType;
     }
-    static llvm::StringRef convertStr(const String& str) {
-        return str.prefix();
+    static std::string convertStr(const String& str) {
+        if(str.id() < 0)
+            return std::string{ str.prefix() };
+        return std::string{ str.prefix() } + std::to_string(str.id());
     }
     llvm::Constant* convertConstant(const Value* value) {
         if(value->isUndefined()) {

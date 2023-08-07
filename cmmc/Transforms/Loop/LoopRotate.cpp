@@ -87,7 +87,7 @@ public:
         for(auto loop : detectLoops(func, dom)) {
             if(loop.header == loop.latch)
                 continue;
-            if(hasCall(*loop.header))
+            if(hasCall(*loop.header, false))
                 continue;
             // auto& pred = cfg.predecessors(loop.latch);
             // if(!(pred.size() == 1 && pred.front() == loop.header))

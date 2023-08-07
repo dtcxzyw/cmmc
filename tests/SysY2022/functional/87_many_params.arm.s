@@ -94,13 +94,13 @@ label9:
 	str r4, [r2, #0]
 	add r3, r3, #1
 	cmp r3, #16
-	blt label12
+	blt label11
 	add r0, r0, #4
 	cmp r1, #15
 	blt label5
 	b label13
 .p2align 4
-label12:
+label11:
 	add r2, r2, #4
 	ldr r4, [r0, #0]
 	ldr r5, [r2, #0]
@@ -108,7 +108,7 @@ label12:
 	blt label9
 	add r3, r3, #1
 	cmp r3, #16
-	blt label12
+	blt label11
 	add r0, r0, #4
 	cmp r1, #15
 	blt label5
@@ -283,7 +283,7 @@ label14:
 label92:
 	add r3, r3, #1
 	cmp r3, #16
-	blt label12
+	blt label11
 	add r0, r0, #4
 	cmp r1, #15
 	blt label5

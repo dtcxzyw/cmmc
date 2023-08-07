@@ -25,23 +25,17 @@ label13:
 	bge label17
 	ldr r7, [r3, #0]
 	cmp r7, #0
-	bne label19
-label58:
+	bne label20
+label19:
 	add r5, r5, #1
 	add r3, r3, #4
 	add r2, r2, #4
 	b label13
-label19:
-	ldr r7, [r2, #0]
-	ldr r8, [r4, r6, lsl #2]
-	cmp r7, r8
-	beq label67
-	b label58
 label32:
 	mov r7, #1
-label23:
+label21:
 	cmp r7, #4
-	bge label67
+	bge label70
 	str r7, [r4, r6, lsl #2]
 	add r2, r6, #1
 	mov r1, #3
@@ -49,15 +43,19 @@ label23:
 	mov r3, r4
 	bl graphColoring
 	cmp r0, #0
-	bne label82
+	beq label81
+	mov r0, #1
+	b label25
+label70:
 	mov r0, #0
-	add r7, r7, #1
-	str r0, [r4, r6, lsl #2]
-	b label23
-label67:
-	mov r0, #0
-label21:
+label25:
 	pop { r4, r5, r6, r7, r8, pc }
+label20:
+	ldr r7, [r2, #0]
+	ldr r8, [r4, r6, lsl #2]
+	cmp r7, r8
+	beq label70
+	b label19
 label17:
 	add r0, r0, #16
 	mov r6, r1
@@ -78,9 +76,11 @@ label11:
 	mov r0, #10
 	bl putch
 	mov r0, #1
-	b label21
-label82:
-	mov r0, #1
+	b label25
+label81:
+	mov r0, #0
+	add r7, r7, #1
+	str r0, [r4, r6, lsl #2]
 	b label21
 .p2align 4
 .globl main
@@ -115,7 +115,7 @@ main:
 	mov r2, r4
 	bl graphColoring
 	cmp r0, #0
-	bne label103
+	bne label104
 	mov r0, #78
 	bl putch
 	mov r0, #111
@@ -134,7 +134,7 @@ main:
 	bl putch
 	mov r0, #116
 	bl putch
-label103:
+label104:
 	mov r0, r4
 	add sp, sp, #80
 	pop { r4, pc }
