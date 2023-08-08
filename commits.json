@@ -440,6 +440,11 @@
       "parent": "69691ffe05325859c09ffdf2c52e25cb30c3594f",
       "time": "2023-07-22 16:28:08 +0800"
     },
+    "585045d5bb19d320ea39ca6cdb4de014cb68a7a1": {
+      "message": "feat(transform): add mod opt",
+      "parent": "89b6ae2d896b2eb9f6f435f6d3701a3ca6bc54fd",
+      "time": "2023-08-08 20:54:30 +0800"
+    },
     "595c7daef141f61de457cf8e66a861437dddbb34": {
       "message": "feat(support): add mimalloc support",
       "parent": "cae14d83d374b5e515f1d88de99ae22c47600b6c",
@@ -1151,5 +1156,5 @@
       "time": "2023-07-06 01:05:50 +0800"
     }
   },
-  "head": "89b6ae2d896b2eb9f6f435f6d3701a3ca6bc54fd"
+  "head": "585045d5bb19d320ea39ca6cdb4de014cb68a7a1"
 }
