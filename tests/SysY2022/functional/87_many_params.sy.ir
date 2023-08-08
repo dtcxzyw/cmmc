@@ -54,14 +54,14 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     store i32* %31 with i32 %15;
     ubr ^while.header;
   ^while.header:
-    i32 %32 = phi [^entry, i32 0] [^b1, i32 %35];
+    i32 %32 = phi [^entry, i32 0] [^b2, i32 %35];
     i1 %33 = icmp slt i32 %32, i32 15;
-    cbr i1 %33(prob = 0.984615), ^while.body, ^entry1;
+    cbr i1 %33(prob = 0.984615), ^while.body, ^b;
   ^while.body:
     i32* %34 = getelementptr &(i32* %16)[i32 %32];
     i32 %35 = add i32 %32, i32 1;
     ubr ^while.body1;
-  ^entry1:
+  ^b:
     i32 %36 = load i32* %16;
     i1 %37 = icmp eq i32 %36, i32 0;
     i32 %38 = load i32* %17;
@@ -79,54 +79,54 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i32 %50 = load i32* %29;
     i32 %51 = load i32* %30;
     i32 %52 = load i32* %31;
-    cbr i1 %37(prob = 0.5), ^b, ^if.else;
+    cbr i1 %37(prob = 0.5), ^b1, ^if.else;
   ^while.body1:
-    i32 %53 = phi [^while.body, i32 %35] [^b1, i32 %97];
+    i32 %53 = phi [^while.body, i32 %35] [^b2, i32 %97];
     i32* %54 = getelementptr &(i32* %16)[i32 %53];
     i32 %55 = load i32* %34;
     i32 %56 = load i32* %54;
     i1 %57 = icmp slt i32 %55, i32 %56;
-    cbr i1 %57(prob = 0.5), ^if.then, ^b1;
+    cbr i1 %57(prob = 0.5), ^if.then, ^b2;
   ^if.else:
-    i32 %58 = phi [^entry1, i32 %36] [^if.else, i32 %92];
-    i32 %59 = phi [^entry1, i32 %38] [^if.else, i32 %91];
-    i32 %60 = phi [^entry1, i32 %39] [^if.else, i32 %61];
-    i32 %61 = phi [^entry1, i32 %40] [^if.else, i32 %62];
-    i32 %62 = phi [^entry1, i32 %41] [^if.else, i32 %63];
-    i32 %63 = phi [^entry1, i32 %42] [^if.else, i32 %64];
-    i32 %64 = phi [^entry1, i32 %43] [^if.else, i32 %65];
-    i32 %65 = phi [^entry1, i32 %44] [^if.else, i32 %66];
-    i32 %66 = phi [^entry1, i32 %45] [^if.else, i32 %67];
-    i32 %67 = phi [^entry1, i32 %46] [^if.else, i32 %68];
-    i32 %68 = phi [^entry1, i32 %47] [^if.else, i32 %69];
-    i32 %69 = phi [^entry1, i32 %48] [^if.else, i32 %70];
-    i32 %70 = phi [^entry1, i32 %49] [^if.else, i32 %71];
-    i32 %71 = phi [^entry1, i32 %50] [^if.else, i32 %72];
-    i32 %72 = phi [^entry1, i32 %51] [^if.else, i32 %73];
-    i32 %73 = phi [^entry1, i32 %52] [^if.else, i32 %74];
-    i32 %74 = phi [^entry1, i32 %0] [^if.else, i32 %75];
-    i32 %75 = phi [^entry1, i32 %1] [^if.else, i32 %76];
-    i32 %76 = phi [^entry1, i32 %2] [^if.else, i32 %77];
-    i32 %77 = phi [^entry1, i32 %3] [^if.else, i32 %78];
-    i32 %78 = phi [^entry1, i32 %4] [^if.else, i32 %79];
-    i32 %79 = phi [^entry1, i32 %5] [^if.else, i32 %80];
-    i32 %80 = phi [^entry1, i32 %6] [^if.else, i32 %81];
-    i32 %81 = phi [^entry1, i32 %7] [^if.else, i32 %82];
-    i32 %82 = phi [^entry1, i32 %8] [^if.else, i32 %83];
-    i32 %83 = phi [^entry1, i32 %9] [^if.else, i32 %84];
-    i32 %84 = phi [^entry1, i32 %10] [^if.else, i32 %85];
-    i32 %85 = phi [^entry1, i32 %11] [^if.else, i32 %86];
-    i32 %86 = phi [^entry1, i32 %12] [^if.else, i32 %87];
-    i32 %87 = phi [^entry1, i32 %13] [^if.else, i32 %88];
-    i32 %88 = phi [^entry1, i32 %14] [^if.else, i32 %89];
-    i32 %89 = phi [^entry1, i32 %15] [^if.else, i32 0];
+    i32 %58 = phi [^b, i32 %36] [^if.else, i32 %92];
+    i32 %59 = phi [^b, i32 %38] [^if.else, i32 %91];
+    i32 %60 = phi [^b, i32 %39] [^if.else, i32 %61];
+    i32 %61 = phi [^b, i32 %40] [^if.else, i32 %62];
+    i32 %62 = phi [^b, i32 %41] [^if.else, i32 %63];
+    i32 %63 = phi [^b, i32 %42] [^if.else, i32 %64];
+    i32 %64 = phi [^b, i32 %43] [^if.else, i32 %65];
+    i32 %65 = phi [^b, i32 %44] [^if.else, i32 %66];
+    i32 %66 = phi [^b, i32 %45] [^if.else, i32 %67];
+    i32 %67 = phi [^b, i32 %46] [^if.else, i32 %68];
+    i32 %68 = phi [^b, i32 %47] [^if.else, i32 %69];
+    i32 %69 = phi [^b, i32 %48] [^if.else, i32 %70];
+    i32 %70 = phi [^b, i32 %49] [^if.else, i32 %71];
+    i32 %71 = phi [^b, i32 %50] [^if.else, i32 %72];
+    i32 %72 = phi [^b, i32 %51] [^if.else, i32 %73];
+    i32 %73 = phi [^b, i32 %52] [^if.else, i32 %74];
+    i32 %74 = phi [^b, i32 %0] [^if.else, i32 %75];
+    i32 %75 = phi [^b, i32 %1] [^if.else, i32 %76];
+    i32 %76 = phi [^b, i32 %2] [^if.else, i32 %77];
+    i32 %77 = phi [^b, i32 %3] [^if.else, i32 %78];
+    i32 %78 = phi [^b, i32 %4] [^if.else, i32 %79];
+    i32 %79 = phi [^b, i32 %5] [^if.else, i32 %80];
+    i32 %80 = phi [^b, i32 %6] [^if.else, i32 %81];
+    i32 %81 = phi [^b, i32 %7] [^if.else, i32 %82];
+    i32 %82 = phi [^b, i32 %8] [^if.else, i32 %83];
+    i32 %83 = phi [^b, i32 %9] [^if.else, i32 %84];
+    i32 %84 = phi [^b, i32 %10] [^if.else, i32 %85];
+    i32 %85 = phi [^b, i32 %11] [^if.else, i32 %86];
+    i32 %86 = phi [^b, i32 %12] [^if.else, i32 %87];
+    i32 %87 = phi [^b, i32 %13] [^if.else, i32 %88];
+    i32 %88 = phi [^b, i32 %14] [^if.else, i32 %89];
+    i32 %89 = phi [^b, i32 %15] [^if.else, i32 0];
     i32 %90 = add i32 %59, i32 %60;
     i32 %91 = srem i32 %90, i32 998244353;
     i32 %92 = add i32 %58, i32 -1;
     i1 %93 = icmp neq i32 %92, i32 0;
-    cbr i1 %93(prob = 0.5), ^if.else, ^b;
-  ^b:
-    i32 %94 = phi [^entry1, i32 %38] [^if.else, i32 %91];
+    cbr i1 %93(prob = 0.5), ^if.else, ^b1;
+  ^b1:
+    i32 %94 = phi [^b, i32 %38] [^if.else, i32 %91];
     i32 %95 = mul i32 %94, i32 32;
     i32 %96 = add i32 %95, i32 281648;
     call (i32) -> void @putint(i32 %96);
@@ -135,8 +135,8 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
   ^if.then:
     store i32* %34 with i32 %56;
     store i32* %54 with i32 %55;
-    ubr ^b1;
-  ^b1:
+    ubr ^b2;
+  ^b2:
     i32 %97 = add i32 %53, i32 1;
     i1 %98 = icmp slt i32 %97, i32 16;
     cbr i1 %98(prob = 0.984615), ^while.body1, ^while.header;

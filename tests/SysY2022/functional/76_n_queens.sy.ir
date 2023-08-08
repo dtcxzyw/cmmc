@@ -49,8 +49,8 @@ internal func @f(i32 %step, i32* %0, i32* %1) -> void {
   ^if.then:
     store i32* %3 with i32 %10;
     i1 %28 = icmp eq i32 %step, i32 %19;
-    cbr i1 %28(prob = 0.5), ^entry1, ^indirect1;
-  ^entry1:
+    cbr i1 %28(prob = 0.5), ^if.then1, ^indirect1;
+  ^if.then1:
     i32 %29 = load i32* %0;
     i32 %30 = add i32 %29, i32 1;
     store i32* %0 with i32 %30;
@@ -76,7 +76,7 @@ internal func @f(i32 %step, i32* %0, i32* %1) -> void {
     store i32* %39 with i32 0;
     ubr ^b3;
   ^while.header:
-    i32 %40 = phi [^entry1, i32 1] [^if.else, i32 %46];
+    i32 %40 = phi [^if.then1, i32 1] [^if.else, i32 %46];
     i32 %41 = load i32* %1;
     i1 %42 = icmp sle i32 %40, i32 %41;
     cbr i1 %42(prob = 0.984615), ^while.body1, ^b4;
@@ -85,8 +85,8 @@ internal func @f(i32 %step, i32* %0, i32* %1) -> void {
     i32 %44 = load i32* %43;
     call (i32) -> void @putint(i32 %44);
     i1 %45 = icmp eq i32 %40, i32 %41;
-    cbr i1 %45(prob = 0.5), ^if.then1, ^if.else;
-  ^if.then1:
+    cbr i1 %45(prob = 0.5), ^if.then2, ^if.else;
+  ^if.then2:
     call (i32) -> void @putch(i32 10);
     ubr ^indirect1;
   ^if.else:

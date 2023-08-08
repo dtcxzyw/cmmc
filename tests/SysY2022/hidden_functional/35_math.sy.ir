@@ -364,9 +364,9 @@ internal func @my_exp(f32 %x) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect S
     i32 %17 = sdiv i32 %11, i32 2;
     i1 %18 = icmp neq i32 %17, i32 0;
     f32 %19 = fmul f32 %13, f32 %13;
-    cbr i1 %18(prob = 0.984615), ^while.body, ^if.then2;
+    cbr i1 %18(prob = 0.984615), ^while.body, ^b4;
   ^b3:
-    f32 %20 = phi [^b1, f32 1] [^while.body1, f32 %28] [^if.then2, f32 %32];
+    f32 %20 = phi [^b1, f32 1] [^while.body1, f32 %28] [^b4, f32 %32];
     f32 %21 = call (f32) -> f32 @eee(f32 %6);
     f32 %22 = fmul f32 %20, f32 %21;
     ubr ^b2;
@@ -381,7 +381,7 @@ internal func @my_exp(f32 %x) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect S
     i1 %30 = icmp neq i32 %29, i32 0;
     f32 %31 = fmul f32 %25, f32 %25;
     cbr i1 %30(prob = 0.984615), ^while.body1, ^b3;
-  ^if.then2:
+  ^b4:
     f32 %32 = fdiv f32 1, f32 %16;
     ubr ^b3;
 }
@@ -431,8 +431,8 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     f32 %25 = fmul f32 %24, f32 %17;
     f32 %26 = fdiv f32 %25, f32 6;
     i1 %27 = fcmp ogt f32 %3, f32 0;
-    cbr i1 %27(prob = 0.5), ^entry1, ^if.else;
-  ^entry1:
+    cbr i1 %27(prob = 0.5), ^if.then, ^if.else;
+  ^if.then:
     f32 %28 = call (f32, f32, f32, f32, i32) -> f32 @asr5(f32 1, f32 %3, f32 1e-08, f32 %26, i32 1);
     call (f32) -> void @putfloat(f32 %28);
     ubr ^b2;
@@ -443,8 +443,8 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     call (i32) -> void @putch(i32 32);
     i1 %29 = fcmp ogt f32 %5, f32 0;
     i1 %30 = and i1 %27, i1 %29;
-    cbr i1 %30(prob = 0.5), ^entry2, ^if.else1;
-  ^entry2:
+    cbr i1 %30(prob = 0.5), ^if.then1, ^if.else1;
+  ^if.then1:
     f32 %31 = fsub f32 %5, f32 1;
     f32 %32 = fmul f32 %31, f32 0.5;
     f32 %33 = fadd f32 %32, f32 1;
@@ -465,8 +465,8 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     ubr ^b3;
   ^b3:
     call (i32) -> void @putch(i32 32);
-    cbr i1 %27(prob = 0.5), ^entry3, ^if.else2;
-  ^entry3:
+    cbr i1 %27(prob = 0.5), ^if.then2, ^if.else2;
+  ^if.then2:
     f32 %44 = call (f32, f32, f32, f32, i32) -> f32 @asr5(f32 1, f32 %3, f32 1e-08, f32 %26, i32 1);
     f32 %45 = fmul f32 %5, f32 %44;
     f32 %46 = call (f32) -> f32 @my_exp(f32 %45);

@@ -28,14 +28,14 @@ main:
 	jal read
 	mv a1, a0
 	li a0, 1
-	ble a1, a0, label6
+	ble a1, a0, label5
 	mv a2, a0
 label2:
 	mulw a2, a1, a2
 	addiw a1, a1, -1
 	bne a1, a0, label2
-	mulw a0, a2, a1
-label6:
+	mv a0, a2
+label5:
 	jal write
 	ld ra, 0(sp)
 	mv a0, zero

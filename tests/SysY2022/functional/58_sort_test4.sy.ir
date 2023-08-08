@@ -90,8 +90,8 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
   ^b:
     ret i32 0;
   ^b1:
-    i1 %61 = icmp neq i32 %10, i32 %58;
-    cbr i1 %61(prob = 0.5), ^if.then, ^while.header;
+    i1 %61 = icmp eq i32 %10, i32 %58;
+    cbr i1 %61(prob = 0.5), ^while.header, ^if.then;
   ^if.then:
     i32* %62 = getelementptr &(i32* %0)[i32 %58];
     i32 %63 = load i32* %62;

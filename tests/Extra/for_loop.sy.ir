@@ -20,8 +20,8 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i1 %8 = icmp eq i32 %7, i32 5;
     cbr i1 %8(prob = 0.5), ^for.body2, ^b;
   ^b:
-    i1 %9 = icmp sgt i32 %7, i32 9;
-    cbr i1 %9(prob = 0.5), ^b1, ^for.body2;
+    i1 %9 = icmp slt i32 %7, i32 10;
+    cbr i1 %9(prob = 0.5), ^for.body2, ^b1;
   ^b1:
     ret i32 %7;
 }

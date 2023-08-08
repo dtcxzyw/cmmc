@@ -5,8 +5,8 @@ func @caller1(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Statel
 func @caller2(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i1 %0 = icmp neq i32 %var0, i32 0;
-    cbr i1 %0(prob = 0.5), ^entry1, ^b;
-  ^entry1:
+    cbr i1 %0(prob = 0.5), ^if.then, ^b;
+  ^if.then:
     i1 %1 = icmp neq i32 %var1, i32 0;
     i32 %2 = select i1 %1 ? i32 10 : i32 -10;
     i32 %3 = strunc i32 %2 to i32;
@@ -22,14 +22,14 @@ func @caller2(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEf
     i32 %13 = add i32 %8, i32 %12;
     ubr ^b;
   ^b:
-    i32 %14 = phi [^entry, i32 1570] [^entry1, i32 %13];
+    i32 %14 = phi [^entry, i32 1570] [^if.then, i32 %13];
     ret i32 %14;
 }
 func @caller3(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i1 %0 = icmp neq i32 %var1, i32 0;
-    cbr i1 %0(prob = 0.5), ^entry1, ^b;
-  ^entry1:
+    cbr i1 %0(prob = 0.5), ^if.then, ^b;
+  ^if.then:
     i1 %1 = icmp eq i32 %var0, i32 0;
     i32 %2 = zext i1 %1 to i32;
     i32 %3 = ztrunc i32 %2 to i32;
@@ -70,7 +70,7 @@ func @caller3(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEf
     i32 %38 = add i32 %31, i32 %37;
     ubr ^b;
   ^b:
-    i32 %39 = phi [^entry, i32 1570] [^entry1, i32 %38];
+    i32 %39 = phi [^entry, i32 1570] [^if.then, i32 %38];
     ret i32 %39;
 }
 func @f1(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {

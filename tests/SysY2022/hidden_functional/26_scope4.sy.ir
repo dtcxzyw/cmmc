@@ -3,13 +3,13 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
   ^entry:
     ubr ^while.header;
   ^while.header:
-    i32 %0 = phi [^entry, i32 49] [^entry2, i32 %19] [^entry3, i32 %19];
-    i32 %1 = phi [^entry, i32 1352] [^entry2, i32 %28] [^entry3, i32 %35];
-    i32 %2 = phi [^entry, i32 2] [^entry2, i32 %2] [^entry3, i32 %19];
-    i32 %3 = phi [^entry, i32 0] [^entry2, i32 2] [^entry3, i32 %36];
+    i32 %0 = phi [^entry, i32 49] [^if.then, i32 %19] [^if.else, i32 %19];
+    i32 %1 = phi [^entry, i32 1352] [^if.then, i32 %28] [^if.else, i32 %35];
+    i32 %2 = phi [^entry, i32 2] [^if.then, i32 %2] [^if.else, i32 %19];
+    i32 %3 = phi [^entry, i32 0] [^if.then, i32 2] [^if.else, i32 %36];
     i1 %4 = icmp slt i32 %3, i32 3;
-    cbr i1 %4(prob = 0.984615), ^entry1, ^b;
-  ^entry1:
+    cbr i1 %4(prob = 0.984615), ^while.header1, ^b;
+  ^while.header1:
     i32 %5 = add i32 %2, i32 10;
     i32 %6 = add i32 %1, i32 %5;
     i32 %7 = add i32 %0, i32 1;
@@ -25,11 +25,11 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i32 %17 = add i32 %0, i32 6;
     i1 %18 = icmp eq i32 %3, i32 1;
     i32 %19 = add i32 %0, i32 13;
-    cbr i1 %18(prob = 0.5), ^entry2, ^entry3;
+    cbr i1 %18(prob = 0.5), ^if.then, ^if.else;
   ^b:
     call (i32) -> void @putint(i32 %1);
     ret i32 0;
-  ^entry2:
+  ^if.then:
     i32 %20 = add i32 %14, i32 10;
     i32 %21 = add i32 %15, i32 %20;
     i32 %22 = add i32 %16, i32 %21;
@@ -40,7 +40,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i32 %27 = mul i32 %26, i32 3;
     i32 %28 = add i32 %25, i32 %27;
     ubr ^while.header;
-  ^entry3:
+  ^if.else:
     i32 %29 = add i32 %5, i32 %14;
     i32 %30 = add i32 %16, i32 %29;
     i32 %31 = mul i32 %17, i32 2;

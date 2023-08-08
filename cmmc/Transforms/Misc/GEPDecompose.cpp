@@ -12,6 +12,7 @@
     limitations under the License.
 */
 
+#include <cmmc/Analysis/DominateAnalysis.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/Instruction.hpp>
@@ -24,19 +25,63 @@
 CMMC_NAMESPACE_BEGIN
 
 class GEPDecompose final : public TransformPass<Function> {
-    static bool runBlock(Block& block) {
+    static bool isUsedByGEP(Value* val) {
+        if(auto track = dynamic_cast<TrackableValue*>(val)) {
+            for(auto user : track->users()) {
+                if(user->getInstID() == InstructionID::GetElementPtr)
+                    return true;
+            }
+        }
+        return false;
+    }
+
+    static bool decompose(Value* val, Value*& base, Value*& off, const DominateAnalysisResult& dom) {
+        MatchContext<Value> matchCtx{ val };
+        Value *v1, *v2;  //, *v3, *v4;
+        // if(oneUse(add(capture(mul(any(v1), any(v2)), v3), any(v4)))() && !v4->isConstant()) {
+        //     v3 = base;
+        //     v4 = off;
+        //     return true;
+        // }
+        if(oneUse(add(any(v1), any(v2)))(matchCtx)) {
+            if(v1->getBlock() && v2->getBlock() && v1->getBlock() != v2->getBlock()) {
+                if(dom.dominate(v1->getBlock(), v2->getBlock())) {
+                    base = v1;
+                    off = v2;
+                    return true;
+                }
+                if(dom.dominate(v2->getBlock(), v1->getBlock())) {
+                    base = v2;
+                    off = v1;
+                    return true;
+                }
+            }
+            if(v2->isConstant() && isUsedByGEP(v1)) {
+                base = v1;
+                off = v2;
+                return true;
+            }
+            if(v1->isConstant() && isUsedByGEP(v2)) {
+                base = v2;
+                off = v1;
+                return true;
+            }
+        }
+        return false;
+    }
+    static bool runBlock(Block& block, const DominateAnalysisResult& dom) {
         bool modified = false;
 
         for(auto& inst : block.instructions()) {
             if(inst.getInstID() != InstructionID::GetElementPtr)
                 continue;
             const auto lastIdx = inst.arguments().back();
-            Value *v1, *v2, *v3, *v4;
-            if(oneUse(add(capture(mul(any(v1), any(v2)), v3), any(v4)))(MatchContext<Value>{ lastIdx }) && !v4->isConstant()) {
+            Value *base, *off;
+            if(decompose(lastIdx, base, off, dom)) {
                 const auto commonBase = inst.clone();
                 commonBase->insertBefore(&block, inst.asIterator());
-                commonBase->mutableOperands()[commonBase->mutableOperands().size() - 2]->resetValue(v3);
-                const auto offset = make<GetElementPtrInst>(commonBase, std::vector<Value*>{ v4 });
+                commonBase->mutableOperands()[commonBase->mutableOperands().size() - 2]->resetValue(base);
+                const auto offset = make<GetElementPtrInst>(commonBase, std::vector<Value*>{ off });
                 offset->insertBefore(&block, inst.asIterator());
                 inst.replaceWith(offset);
                 modified = true;
@@ -47,10 +92,11 @@ class GEPDecompose final : public TransformPass<Function> {
     }
 
 public:
-    bool run(Function& func, AnalysisPassManager&) const override {
+    bool run(Function& func, AnalysisPassManager& analysis) const override {
+        auto& dom = analysis.get<DominateAnalysis>(func);
         bool modified = false;
         for(auto block : func.blocks())
-            modified |= runBlock(*block);
+            modified |= runBlock(*block, dom);
 
         return modified;
     }

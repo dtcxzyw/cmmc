@@ -23,7 +23,7 @@ foo:
 	push { r4, r5 }
 	cmp r0, #0
 	mov r1, r0
-	ble label2
+	ble label8
 	movw r0, #:lower16:B
 	movt r0, #:upper16:B
 	movw r3, #:lower16:A
@@ -36,10 +36,10 @@ foo:
 	vadd.f32 s0, s0, s0
 	vstr s0, [r3, #0]
 	str r2, [r4, #0]
-	beq label2
+	beq label8
 	add r0, r0, #4
 	mov r2, #1
-label5:
+label4:
 	vldr s0, [r0, #0]
 	add r5, r3, r2, lsl #2
 	vadd.f32 s0, s0, s0
@@ -49,9 +49,9 @@ label5:
 	str r5, [r4, r2, lsl #2]
 	add r2, r2, #1
 	cmp r1, r2
-	beq label2
+	beq label8
 	add r0, r0, #4
-	b label5
-label2:
+	b label4
+label8:
 	pop { r4, r5 }
 	bx lr

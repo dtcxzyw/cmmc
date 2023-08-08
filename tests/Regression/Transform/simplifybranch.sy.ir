@@ -15,8 +15,8 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
     ret i32 %4;
   ^if.else:
     i32 %5 = call () -> i32 @getint();
-    i1 %6 = icmp neq i32 %5, i32 0;
-    cbr i1 %6(prob = 0.5), ^if.then, ^while.header;
+    i1 %6 = icmp eq i32 %5, i32 0;
+    cbr i1 %6(prob = 0.5), ^while.header, ^if.then;
   ^if.then:
     i32 %7 = call () -> i32 @getint();
     i32 %8 = call () -> i32 @getint();

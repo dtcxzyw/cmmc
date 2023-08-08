@@ -78,7 +78,7 @@ public:
             const auto terminatorBranch = terminator->as<BranchInst>();
             if(terminatorBranch->getTrueTarget() != terminatorBranch->getFalseTarget() && cmp->hasExactlyOneUse() &&
                dom.dominate(terminatorBranch->getFalseTarget(), block) &&
-               !dom.dominate(terminatorBranch->getFalseTarget(), terminatorBranch->getTrueTarget())) {
+               !dom.dominate(terminatorBranch->getTrueTarget(), block)) {
                 terminatorBranch->updateBranchProb(1.0 - terminatorBranch->getBranchProb());
                 std::swap(terminatorBranch->getTrueTarget(), terminatorBranch->getFalseTarget());
                 cmp->setOp(getInvertedOp(cmp->getOp()));

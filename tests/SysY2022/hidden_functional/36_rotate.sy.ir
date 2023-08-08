@@ -94,10 +94,10 @@ func @main() -> i32 { NoRecurse Entry } {
     [1048576 * i32]* %18 = ptrcast [1048576 * i32]* @image to [1048576 * i32]*;
     cbr i1 %12(prob = 0.5), ^b1, ^while.header;
   ^while.header:
-    i32 %19 = phi [^b4, i32 0] [^b5, i32 %56];
+    i32 %19 = phi [^b4, i32 0] [^b6, i32 %56];
     i1 %20 = icmp sgt i32 %9, i32 %19;
-    cbr i1 %20(prob = 0.984615), ^while.body, ^entry1;
-  ^entry1:
+    cbr i1 %20(prob = 0.984615), ^while.body, ^b5;
+  ^b5:
     f32 %21 = fadd f32 %0, f32 1.5708;
     f32 %22 = fdiv f32 %21, f32 6.28319;
     i32 %23 = f2s f32 %22 to i32;
@@ -142,16 +142,16 @@ func @main() -> i32 { NoRecurse Entry } {
     call (i32) -> void @putch(i32 10);
     ubr ^while.header1;
   ^while.body:
-    cbr i1 %17(prob = 0.984615), ^prebody, ^b5;
+    cbr i1 %17(prob = 0.984615), ^prebody, ^b6;
   ^prebody:
     i32 %54 = mul i32 %7, i32 %19;
     i32* %55 = getelementptr &([1048576 * i32]* %18)[i64 0][i32 %54];
     ubr ^while.body1;
-  ^b5:
+  ^b6:
     i32 %56 = add i32 %19, i32 1;
     ubr ^while.header;
   ^while.header1:
-    i32 %57 = phi [^entry1, i32 0] [^b6, i32 %68];
+    i32 %57 = phi [^b5, i32 0] [^b7, i32 %68];
     i1 %58 = icmp sgt i32 %9, i32 %57;
     cbr i1 %58(prob = 0.984615), ^while.body2, ^b1;
   ^while.body1:
@@ -161,19 +161,19 @@ func @main() -> i32 { NoRecurse Entry } {
     store i32* %61 with i32 %60;
     i32 %62 = add i32 %59, i32 1;
     i1 %63 = icmp sgt i32 %7, i32 %62;
-    cbr i1 %63(prob = 0.984615), ^while.body1, ^b5;
+    cbr i1 %63(prob = 0.984615), ^while.body1, ^b6;
   ^while.body2:
     i32 %64 = sub i32 %57, i32 %15;
     f32 %65 = s2f i32 %64 to f32;
     f32 %66 = fmul f32 %65, f32 %37;
     f32 %67 = fmul f32 %65, f32 %53;
-    cbr i1 %17(prob = 0.984615), ^while.body3, ^b6;
-  ^b6:
+    cbr i1 %17(prob = 0.984615), ^while.body3, ^b7;
+  ^b7:
     call (i32) -> void @putch(i32 10);
     i32 %68 = add i32 %57, i32 1;
     ubr ^while.header1;
   ^while.body3:
-    i32 %69 = phi [^while.body2, i32 0] [^b7, i32 %86];
+    i32 %69 = phi [^while.body2, i32 0] [^b8, i32 %86];
     i32 %70 = sub i32 %69, i32 %13;
     f32 %71 = s2f i32 %70 to f32;
     f32 %72 = fmul f32 %71, f32 %37;
@@ -189,21 +189,21 @@ func @main() -> i32 { NoRecurse Entry } {
     i32 %82 = f2s f32 %81 to i32;
     i1 %83 = icmp slt i32 %82, i32 0;
     i1 %84 = or i1 %78, i1 %83;
-    cbr i1 %84(prob = 0.5), ^b7, ^b8;
-  ^b7:
-    i32 %85 = phi [^while.body3, i32 0] [^b8, i32 0] [^b9, i32 %92];
+    cbr i1 %84(prob = 0.5), ^b8, ^b9;
+  ^b8:
+    i32 %85 = phi [^while.body3, i32 0] [^b9, i32 0] [^b10, i32 %92];
     call (i32) -> void @putint(i32 %85);
     call (i32) -> void @putch(i32 32);
     i32 %86 = add i32 %69, i32 1;
     i1 %87 = icmp sgt i32 %7, i32 %86;
-    cbr i1 %87(prob = 0.984615), ^while.body3, ^b6;
-  ^b8:
-    i1 %88 = icmp sle i32 %9, i32 %82;
-    cbr i1 %88(prob = 0.5), ^b7, ^b9;
+    cbr i1 %87(prob = 0.984615), ^while.body3, ^b7;
   ^b9:
+    i1 %88 = icmp sle i32 %9, i32 %82;
+    cbr i1 %88(prob = 0.5), ^b8, ^b10;
+  ^b10:
     i32 %89 = mul i32 %7, i32 %82;
-    i32* %90 = getelementptr &([1048576 * i32]* %18)[i64 0][i32 %89];
-    i32* %91 = getelementptr &(i32* %90)[i32 %75];
+    i32* %90 = getelementptr &([1048576 * i32]* %18)[i64 0][i32 %75];
+    i32* %91 = getelementptr &(i32* %90)[i32 %89];
     i32 %92 = load i32* %91;
-    ubr ^b7;
+    ubr ^b8;
 }

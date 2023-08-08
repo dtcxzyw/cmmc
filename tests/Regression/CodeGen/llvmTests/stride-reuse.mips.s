@@ -16,7 +16,7 @@ P:
 .p2align 2
 .globl foo
 foo:
-	blez $a0, label2
+	blez $a0, label8
 	nop
 	lui $t1, %hi(B)
 	addiu $t0, $t1, %lo(B)
@@ -30,10 +30,10 @@ foo:
 	li $t4, 64
 	sw $t4, %lo(P)($t1)
 	li $t1, 1
-	beq $a0, $t1, label2
+	beq $a0, $t1, label8
 	nop
 	addiu $t0, $t0, 4
-label5:
+label4:
 	lwc1 $f4, 0($t0)
 	add.s $f4, $f4, $f4
 	sll $t4, $t1, 2
@@ -44,11 +44,11 @@ label5:
 	addiu $t5, $t5, 64
 	sw $t5, 0($t4)
 	addiu $t1, $t1, 1
-	beq $a0, $t1, label2
+	beq $a0, $t1, label8
 	nop
 	addiu $t0, $t0, 4
-	b label5
+	b label4
 	nop
-label2:
+label8:
 	jr $ra
 	nop

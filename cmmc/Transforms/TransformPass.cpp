@@ -317,6 +317,7 @@ std::shared_ptr<PassManager<Module>> PassManager<Module>::get(OptimizationLevel 
             "BlockSort",              //
             "ConstantPropagation",    //
             "ScalarMem2Reg",          //
+            "SimpleStoreEliminate",   // clean up
             "NoSideEffectEliminate",  // clean up
             // Constant
             "ConstexprFuncEval",       //
@@ -327,6 +328,7 @@ std::shared_ptr<PassManager<Module>> PassManager<Module>::get(OptimizationLevel 
             "GEPCombine",              //
             "GEPDecompose",            //
             "GlobalUse2PlaceHolder",   //
+            "SimpleCSE",               // clean up
             "NoSideEffectEliminate",   // clean up
             // Arithmetic
             "IPConstantPropagation",     //
@@ -342,9 +344,14 @@ std::shared_ptr<PassManager<Module>> PassManager<Module>::get(OptimizationLevel 
             // Loop
             "LoopRotate",               //
             "ConstantPropagation",      // clean up
+            "SimplifyBranch",           // clean up
+            "BlockMerge",               // clean up
+            "CombineBranch",            // clean up
+            "BlockEliminate",           // clean up
             "GVN",                      // clean up
             "LoopCanonicalize",         //
             "FinalValueReplacement",    //
+            "LoopInterchange",          //
             "LoopStrengthReduction",    //
             "ArithmeticReduce",         //
             "RangeAwareArithReduce",    //
@@ -360,6 +367,8 @@ std::shared_ptr<PassManager<Module>> PassManager<Module>::get(OptimizationLevel 
             "CombineBranch",        //
             "ForwardBranch",        //
             "BlockMerge",           //
+            "ConstantPropagation",  // clean up
+            "ArithmeticReduce",     // clean up
             "PhiMerge",             //
             "ShortCircuitCombine",  //
             "UnifyReturn",          //
@@ -367,6 +376,7 @@ std::shared_ptr<PassManager<Module>> PassManager<Module>::get(OptimizationLevel 
             // Load/Store
             "LoadReduce",             //
             "LUT2Expr",               //
+            "SimpleStoreEliminate",   //
             "StoreEliminate",         //
             "PhiEliminate",           // clean up
             "NoSideEffectEliminate",  // clean up
@@ -376,9 +386,10 @@ std::shared_ptr<PassManager<Module>> PassManager<Module>::get(OptimizationLevel 
             "BlockMerge",      //
             "BlockEliminate",  // clean up
             // Code Move
-            "CodeMove",               //
-            "CodeSink",               //
-            "NoSideEffectEliminate",  // clean up
+            "LoopInvariantCodeMotion",  //
+            "CodeMove",                 //
+            "CodeSink",                 //
+            "NoSideEffectEliminate",    // clean up
             // MemoryOp
             "MemoryIntrinsicOpt",  //
             // Postprocess

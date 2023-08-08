@@ -155,6 +155,30 @@ class StoreEliminate final : public TransformPass<Function> {
         return insts.size() != size;
     }
 
+public:
+    bool run(Function& func, AnalysisPassManager& analysis) const override {
+        auto& aliasSet = analysis.get<AliasAnalysis>(func);
+        auto& addressSpace = analysis.get<PointerAddressSpaceAnalysis>(func);
+        auto& leak = analysis.get<StackAddressLeakAnalysis>(func);
+        auto& dom = analysis.get<DominateAnalysis>(func);
+        auto& pointerBase = analysis.get<PointerBaseAnalysis>(func);
+
+        bool modified = false;
+        for(auto block : func.blocks()) {
+            Stage stage{ "per-block store elimination"sv };
+            modified |= runOnBlock(*block, aliasSet, dom, addressSpace, leak, pointerBase);
+        }
+        return modified;
+    }
+
+    [[nodiscard]] std::string_view name() const noexcept override {
+        return "StoreEliminate"sv;
+    }
+};
+
+CMMC_TRANSFORM_PASS(StoreEliminate);
+
+class SimpleStoreEliminate final : public TransformPass<Function> {
     static bool removeStoreOnlyAlloca(Function& func, const PointerBaseAnalysisResult& pointerBase) {
         Stage stage{ "remove store-only alloca"sv };
         std::unordered_map<Value*, std::vector<Instruction*>> interested;
@@ -220,25 +244,15 @@ class StoreEliminate final : public TransformPass<Function> {
 
 public:
     bool run(Function& func, AnalysisPassManager& analysis) const override {
-        auto& aliasSet = analysis.get<AliasAnalysis>(func);
-        auto& addressSpace = analysis.get<PointerAddressSpaceAnalysis>(func);
-        auto& leak = analysis.get<StackAddressLeakAnalysis>(func);
-        auto& dom = analysis.get<DominateAnalysis>(func);
         auto& pointerBase = analysis.get<PointerBaseAnalysis>(func);
-
-        bool modified = removeStoreOnlyAlloca(func, pointerBase);
-        for(auto block : func.blocks()) {
-            Stage stage{ "per-block store elimination"sv };
-            modified |= runOnBlock(*block, aliasSet, dom, addressSpace, leak, pointerBase);
-        }
-        return modified;
+        return removeStoreOnlyAlloca(func, pointerBase);
     }
 
     [[nodiscard]] std::string_view name() const noexcept override {
-        return "StoreEliminate"sv;
+        return "SimpleStoreEliminate"sv;
     }
 };
 
-CMMC_TRANSFORM_PASS(StoreEliminate);
+CMMC_TRANSFORM_PASS(SimpleStoreEliminate);
 
 CMMC_NAMESPACE_END
