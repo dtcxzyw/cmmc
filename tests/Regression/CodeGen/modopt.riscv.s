@@ -81,3 +81,35 @@ test4:
 	subw a4, a0, a3
 	sh1add a0, a0, a4
 	ret
+.p2align 2
+.globl test5
+test5:
+	bgt a0, zero, label104
+	mv a0, zero
+	j label99
+label104:
+	addi a3, a0, -1
+	lui a4, 16
+	mul a2, a0, a3
+	addiw a3, a4, -1
+	srli a1, a2, 1
+	rem a2, a1, a3
+	sext.w a0, a2
+label99:
+	ret
+.p2align 2
+.globl test6
+test6:
+	bgt a0, zero, label122
+	mv a0, zero
+	j label117
+label122:
+	addi a3, a0, -1
+	lui a4, 16
+	mul a2, a0, a3
+	addiw a3, a4, -1
+	srli a1, a2, 1
+	rem a2, a1, a3
+	sext.w a0, a2
+label117:
+	ret

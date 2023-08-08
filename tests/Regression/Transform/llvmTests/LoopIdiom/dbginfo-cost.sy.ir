@@ -2,24 +2,24 @@ func @CeilLog2(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect State
   ^entry:
     i32 %0 = add i32 %var0, i32 -1;
     i1 %1 = icmp eq i32 %0, i32 0;
-    cbr i1 %1(prob = 0.5), ^b, ^block2;
-  ^block2:
+    cbr i1 %1(prob = 0.5), ^b, ^if.else;
+  ^if.else:
     i32 %2 = lshr i32 %0, i32 1;
     i1 %3 = icmp eq i32 %2, i32 0;
-    cbr i1 %3(prob = 0.5), ^if.then, ^if.else;
+    cbr i1 %3(prob = 0.5), ^if.then, ^if.else1;
   ^b:
     i32 %4 = phi [^entry, i32 0] [^if.then, i32 %6];
     ret i32 %4;
   ^if.then:
-    i32 %5 = phi [^block2, i32 1] [^if.else, i32 %10];
+    i32 %5 = phi [^if.else, i32 1] [^if.else1, i32 %10];
     i32 %6 = ztrunc i32 %5 to i32;
     ubr ^b;
-  ^if.else:
-    i32 %7 = phi [^block2, i32 1] [^if.else, i32 %10];
-    i32 %8 = phi [^block2, i32 %2] [^if.else, i32 %11];
+  ^if.else1:
+    i32 %7 = phi [^if.else, i32 1] [^if.else1, i32 %10];
+    i32 %8 = phi [^if.else, i32 %2] [^if.else1, i32 %11];
     i32 %9 = strunc i32 %7 to i32;
     i32 %10 = add i32 %9, i32 1;
     i32 %11 = lshr i32 %8, i32 1;
     i1 %12 = icmp neq i32 %11, i32 0;
-    cbr i1 %12(prob = 0.5), ^if.else, ^if.then;
+    cbr i1 %12(prob = 0.5), ^if.else1, ^if.then;
 }

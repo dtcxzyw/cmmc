@@ -281,7 +281,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i1 %141 = icmp neq i32 %140, i32 0;
     cbr i1 %141(prob = 0.5), ^entry29, ^b2;
   ^entry25:
-    i32 %142 = phi [^entry21, i32 %128] [^entry24, i32 %139] [^entry28, i32 %153] [^entry32, i32 %170];
+    i32 %142 = phi [^entry21, i32 %128] [^entry24, i32 %139] [^entry28, i32 %153] [^entry32, i32 %169];
     i32 %143 = load i32* %5;
     i1 %144 = icmp neq i32 %143, i32 0;
     i32 %145 = add i32 %142, i32 3;
@@ -322,20 +322,20 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i1 %165 = icmp neq i32 %164, i32 0;
     cbr i1 %165(prob = 0.5), ^b8, ^entry35;
   ^b22:
-    i32 %166 = phi [^entry25, i32 %145] [^entry32, i32 %170] [^entry33, i32 %174] [^entry34, i32 %179];
-    i1 %167 = phi [^entry25, i1 true] [^entry32, i1 true] [^entry33, i1 %173] [^entry34, i1 true];
-    i32 %168 = zext i1 %167 to i32;
-    i32 %169 = add i32 %166, i32 %168;
-    call (i32) -> void @putint(i32 %169);
+    i32 %166 = phi [^entry25, i32 %145] [^entry32, i32 %169] [^entry33, i32 %174] [^entry34, i32 %179];
+    i32 %167 = phi [^entry25, i32 1] [^entry32, i32 1] [^entry33, i32 %173] [^entry34, i32 1];
+    i32 %168 = add i32 %166, i32 %167;
+    call (i32) -> void @putint(i32 %168);
     ret i32 0;
   ^entry32:
-    i32 %170 = add i32 %127, i32 12;
+    i32 %169 = add i32 %127, i32 12;
     cbr i1 %91(prob = 0.5), ^b22, ^entry25;
   ^entry33:
-    i32 %171 = phi [^entry30, i32 %158] [^entry34, i32 %179];
-    i32 %172 = load i32* %8;
-    i1 %173 = icmp neq i32 %172, i32 0;
-    i32 %174 = add i32 %171, i32 3;
+    i32 %170 = phi [^entry30, i32 %158] [^entry34, i32 %179];
+    i32 %171 = load i32* %8;
+    i1 %172 = icmp neq i32 %171, i32 0;
+    i32 %173 = zext i1 %172 to i32;
+    i32 %174 = add i32 %170, i32 3;
     ubr ^b22;
   ^b23:
     store i32* %7 with i32 1;

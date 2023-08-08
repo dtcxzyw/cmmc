@@ -18,7 +18,7 @@ test:
 	mov r2, r0
 	mov r5, #0
 .p2align 4
-label4:
+label8:
 	ldr r6, [r2, #0]
 	add r5, r5, #4
 	cmp r4, r5
@@ -37,12 +37,10 @@ label4:
 	smmul r6, r6, r3
 	add r6, r6, r6, lsr #31
 	str r6, [r2, #12]
-	ble label39
+	ble label47
 	add r2, r2, #16
-	b label4
-label39:
-	add r0, r0, r5, lsl #2
-label9:
+	b label8
+label3:
 	ldr r2, [r0, #0]
 	add r5, r5, #1
 	cmp r1, r5
@@ -51,10 +49,13 @@ label9:
 	str r2, [r0, #0]
 	ble label14
 	add r0, r0, #4
-	b label9
+	b label3
+label47:
+	add r0, r0, r5, lsl #2
+	b label3
 label14:
 	pop { r4, r5, r6 }
 	bx lr
 label23:
 	mov r5, #0
-	b label9
+	b label3

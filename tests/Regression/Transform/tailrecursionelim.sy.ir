@@ -58,19 +58,69 @@ func @fib(i32 %a) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless } {
     i1 %21 = icmp slt i32 %20, i32 3;
     cbr i1 %21(prob = 0.5), ^b6, ^b7;
   ^b6:
-    i32 %22 = phi [^b5, i32 0] [^b7, i32 %29];
+    i32 %22 = phi [^b5, i32 0] [^b8, i32 %32];
     i32 %23 = add i32 %16, i32 %22;
     i32 %24 = add i32 %14, i32 -2;
     ubr ^entry1;
   ^b7:
-    i32 %25 = phi [^b5, i32 %20] [^b7, i32 %30];
-    i32 %26 = phi [^b5, i32 0] [^b7, i32 %29];
+    i32 %25 = phi [^b5, i32 %20] [^b8, i32 %33];
+    i32 %26 = phi [^b5, i32 0] [^b8, i32 %32];
     i32 %27 = add i32 %25, i32 -1;
-    i32 %28 = call (i32) -> i32 @fib(i32 %27);
-    i32 %29 = add i32 %26, i32 %28;
-    i32 %30 = add i32 %25, i32 -2;
-    i1 %31 = icmp sgt i32 %30, i32 2;
-    cbr i1 %31(prob = 0.5), ^b7, ^b6;
+    ubr ^entry2;
+  ^entry2:
+    i32 %28 = phi [^b7, i32 0] [^b10, i32 %38];
+    i32 %29 = phi [^b7, i32 %27] [^b10, i32 %39];
+    i1 %30 = icmp slt i32 %29, i32 3;
+    i32 %31 = add i32 %28, i32 1;
+    cbr i1 %30(prob = 0.5), ^b8, ^b9;
+  ^b8:
+    i32 %32 = add i32 %26, i32 %31;
+    i32 %33 = add i32 %25, i32 -2;
+    i1 %34 = icmp sgt i32 %33, i32 2;
+    cbr i1 %34(prob = 0.5), ^b7, ^b6;
+  ^b9:
+    i32 %35 = add i32 %29, i32 -1;
+    i1 %36 = icmp slt i32 %35, i32 3;
+    cbr i1 %36(prob = 0.5), ^b10, ^b11;
+  ^b10:
+    i32 %37 = phi [^b9, i32 0] [^b12, i32 %47];
+    i32 %38 = add i32 %31, i32 %37;
+    i32 %39 = add i32 %29, i32 -2;
+    ubr ^entry2;
+  ^b11:
+    i32 %40 = phi [^b9, i32 %35] [^b12, i32 %48];
+    i32 %41 = phi [^b9, i32 0] [^b12, i32 %47];
+    i32 %42 = add i32 %40, i32 -1;
+    ubr ^entry3;
+  ^entry3:
+    i32 %43 = phi [^b11, i32 0] [^b14, i32 %53];
+    i32 %44 = phi [^b11, i32 %42] [^b14, i32 %54];
+    i1 %45 = icmp slt i32 %44, i32 3;
+    i32 %46 = add i32 %43, i32 1;
+    cbr i1 %45(prob = 0.5), ^b12, ^b13;
+  ^b12:
+    i32 %47 = add i32 %41, i32 %46;
+    i32 %48 = add i32 %40, i32 -2;
+    i1 %49 = icmp sgt i32 %48, i32 2;
+    cbr i1 %49(prob = 0.5), ^b11, ^b10;
+  ^b13:
+    i32 %50 = add i32 %44, i32 -1;
+    i1 %51 = icmp slt i32 %50, i32 3;
+    cbr i1 %51(prob = 0.5), ^b14, ^b15;
+  ^b14:
+    i32 %52 = phi [^b13, i32 0] [^b15, i32 %59];
+    i32 %53 = add i32 %46, i32 %52;
+    i32 %54 = add i32 %44, i32 -2;
+    ubr ^entry3;
+  ^b15:
+    i32 %55 = phi [^b13, i32 %50] [^b15, i32 %60];
+    i32 %56 = phi [^b13, i32 0] [^b15, i32 %59];
+    i32 %57 = add i32 %55, i32 -1;
+    i32 %58 = call (i32) -> i32 @fib(i32 %57);
+    i32 %59 = add i32 %56, i32 %58;
+    i32 %60 = add i32 %55, i32 -2;
+    i1 %61 = icmp sgt i32 %60, i32 2;
+    cbr i1 %61(prob = 0.5), ^b15, ^b14;
 }
 func @gcd(i32 %a, i32 %b) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^0:

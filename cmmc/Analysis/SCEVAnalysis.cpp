@@ -286,6 +286,36 @@ SCEVAnalysisResult SCEVAnalysis::run(Function& func, AnalysisPassManager& analys
                     }
                     break;
                 }
+                case InstructionID::SDiv: {
+                    const auto lhsSCEV = res.query(inst.getOperand(0));
+                    if(!lhsSCEV)
+                        break;
+                    if(!(lhsSCEV->loop && lhsSCEV->instID == SCEVInstID::AddRec && lhsSCEV->operands.size() == 2 &&
+                         lhsSCEV->operands[0]->instID == SCEVInstID::Constant &&
+                         lhsSCEV->operands[1]->instID == SCEVInstID::Constant))
+                        break;
+                    const auto rhs = inst.getOperand(1);
+                    intmax_t i1;
+                    if(int_(i1)(MatchContext<Value>{ rhs }) && i1 != 0 && lhsSCEV->operands[1]->constant % i1 == 0) {
+                        auto initial = makeUnique<SCEV>();
+                        initial->instID = SCEVInstID::Constant;
+                        initial->constant = lhsSCEV->operands[0]->constant / i1;
+
+                        auto inc = makeUnique<SCEV>();
+                        inc->instID = SCEVInstID::Constant;
+                        inc->constant = lhsSCEV->operands[1]->constant / i1;
+
+                        auto scev = makeUnique<SCEV>();
+                        scev->instID = SCEVInstID::AddRec;
+                        scev->loop = lhsSCEV->loop;
+                        scev->operands = { initial.get(), inc.get() };
+
+                        res.addSCEV(nullptr, std::move(initial));
+                        res.addSCEV(nullptr, std::move(inc));
+                        res.addSCEV(&inst, std::move(scev));
+                    }
+                    break;
+                }
                 default:
                     break;
             }

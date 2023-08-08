@@ -23,6 +23,7 @@
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <cmmc/Transforms/Util/PatternMatch.hpp>
 #include <cstdint>
+#include <iostream>
 #include <iterator>
 #include <limits>
 
@@ -62,13 +63,21 @@ class FinalValueReplacement final : public TransformPass<Function> {
         return false;
     }
 
-    static bool replaceOuterUse(const Loop& loop, TrackableValue* trackable, Value* rep) {
+    static bool replaceOuterUse(const Loop& loop, TrackableValue* trackable, Value* rep, intmax_t offset) {
         bool modified = false;
         for(auto iter = trackable->users().begin(); iter != trackable->users().end();) {
             const auto nextIter = std::next(iter);
+            const auto userBlock = iter.ref()->user->getBlock();
 
-            if(iter.ref()->user->getBlock() != loop.header) {
-                iter.ref()->resetValue(rep);
+            if(userBlock != loop.header) {
+                if(offset) {
+                    const auto offsetVal = ConstantInteger::get(rep->getType(), offset);
+                    const auto val = make<BinaryInst>(InstructionID::Add, rep, offsetVal);
+                    val->insertBefore(userBlock, iter.ref()->user->asIterator());
+                    iter.ref()->resetValue(val);
+                } else {
+                    iter.ref()->resetValue(rep);
+                }
                 modified = true;
             }
 
@@ -89,10 +98,11 @@ public:
                 continue;
             if(loop.step != 1 && loop.step != -1)
                 continue;
+            modified |= replaceOuterUse(loop, loop.inductionVar->as<TrackableValue>(), loop.bound, -loop.step);
             const auto next = loop.next;
             if(!next->is<TrackableValue>())
                 continue;
-            modified |= replaceOuterUse(loop, next->as<TrackableValue>(), loop.bound);
+            modified |= replaceOuterUse(loop, next->as<TrackableValue>(), loop.bound, 0);
 
             // TODO
             if(cint_(0)(MatchContext<Value>{ loop.initial })) {
@@ -130,7 +140,7 @@ public:
                                 builder.makeOp<CompareInst>(InstructionID::ICmp, CompareOp::ICmpSignedLessThan, loop.bound,
                                                             ConstantInteger::get(loop.bound->getType(), bound1));
                             const auto finalDiv = builder.makeOp<SelectInst>(cond, div, ConstantInteger::get(div->getType(), 0));
-                            replaceOuterUse(loop, &inst, finalDiv);
+                            replaceOuterUse(loop, &inst, finalDiv, 0);
                             modified = true;
                         }
                     }

@@ -23,6 +23,7 @@
 #include <cmmc/IR/IRBuilder.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/Support/Arena.hpp>
+#include <cmmc/Support/IntrusiveList.hpp>
 #include <cmmc/Support/StringFlyWeight.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
@@ -259,7 +260,7 @@ class TailCallEliminate final : public TransformPass<Function> {
         const auto termiantor = block.getTerminator();
         // case 1:
         // call
-        // ret            bool modified = false;
+        // ret
         if(termiantor->getInstID() == InstructionID::Ret) {
             if(auto call = getLastRecursiveCall(block, self))
                 return eliminateCall(call, self);
@@ -317,8 +318,28 @@ public:
         }
 
         for(auto block : func.blocks()) {
-            if(block == func.entryBlock())
-                continue;  // TODO: mark as unreachable?
+            if(block == func.entryBlock()) {
+                auto firstRecursiveCall = block->instructions().end();
+                for(auto iter = block->instructions().begin(); iter != block->instructions().end(); ++iter) {
+                    if(isRecursiveCall(*iter, &func)) {
+                        firstRecursiveCall = iter;
+                        break;
+                    }
+                }
+                if(firstRecursiveCall != block->instructions().end()) {
+                    for(auto it = firstRecursiveCall; it != block->instructions().end(); ++it) {
+                        auto& inst = *it;
+                        if(inst.canbeOperand()) {
+                            inst.replaceWith(make<UndefinedValue>(inst.getType()));
+                        }
+                    }
+                    block->instructions().erase(firstRecursiveCall, block->instructions().end());
+                    const auto unreachable = make<UnreachableInst>();
+                    unreachable->insertBefore(block, block->instructions().end());
+                    return true;
+                }
+                continue;
+            }
             if(handleBlock(*block, &func))
                 return true;
         }

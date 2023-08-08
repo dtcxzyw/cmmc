@@ -107,15 +107,7 @@ func @negative5(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSide
 }
 func @negative5_logical(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i32 %0 = and i32 %var1, i32 2147483647;
-    i32 %1 = strunc i32 %0 to i32;
-    i32 %2 = strunc i32 %var0 to i32;
-    i1 %3 = icmp sgt i32 %1, i32 %2;
-    i1 %4 = icmp sgt i32 %2, i32 -1;
-    i1 %5 = or i1 %3, i1 %4;
-    i32 %6 = zext i1 %5 to i32;
-    i32 %7 = ztrunc i32 %6 to i32;
-    ret i32 %7;
+    ret i32 1;
 }
 func @test_and1(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:

@@ -3,6 +3,6 @@ func @test_different_type() -> i16 { NoMemoryRead NoMemoryWrite NoSideEffect Sta
     ret i16 0;
 }
 func @test_same_type() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
-  ^entry:
+  ^b:
     ret i32 0;
 }

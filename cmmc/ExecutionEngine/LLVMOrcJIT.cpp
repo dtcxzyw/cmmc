@@ -160,10 +160,12 @@ struct LUTEntry final {
     int hasVal;
 };
 static_assert(sizeof(LUTEntry) == sizeof(uint32_t) * 4);
-LUTEntry* cmmcCacheLookup(LUTEntry* table, int key1, int key2) {
+static LUTEntry* cmmcCacheLookup(LUTEntry* table, int key1, int key2) {
     const auto key = static_cast<uint64_t>(key1) << 32 | static_cast<uint64_t>(key2);
     const auto ha = key % m1, hb = 1 + key % m2;
     auto cur = ha;
+    constexpr uint32_t maxLookupCount = 5;
+    uint32_t count = maxLookupCount;
     while(true) {
         auto& ref = table[cur];
         if(!ref.hasVal) {
@@ -173,10 +175,21 @@ LUTEntry* cmmcCacheLookup(LUTEntry* table, int key1, int key2) {
         if(ref.key == key) {
             return &ref;
         }
+        if(++count >= maxLookupCount)
+            break;
         cur += hb;
         if(cur >= m1)
             cur -= m1;
     }
+    // evict, FIFO
+    auto& ref = table[ha];
+    ref.hasVal = 0;
+    ref.key = key;
+    return &ref;
+}
+static int32_t cmmcAddRec3SRem(int32_t x, int32_t rem) {
+    const auto n64 = static_cast<int64_t>(x);
+    return static_cast<int32_t>(n64 * (n64 - 1) / 2 % rem);
 }
 
 std::variant<int, SimulationFailReason> llvmExecMain(Module& module, const std::string& srcPath, SimulationIOContext& ioCtx) {
@@ -262,6 +275,7 @@ std::variant<int, SimulationFailReason> llvmExecMain(Module& module, const std::
         CMMC_NATIVE_FUNC(starttime, sysy::startTime),
         CMMC_NATIVE_FUNC(stoptime, sysy::stopTime),
         CMMC_NATIVE_FUNC(cmmcCacheLookup, cmmcCacheLookup),
+        CMMC_NATIVE_FUNC(cmmcAddRec3SRem, cmmcAddRec3SRem),
         // Memory operations
         CMMC_NATIVE_FUNC(memset, ::memset),
         CMMC_NATIVE_FUNC(memcpy, ::memcpy),

@@ -4,43 +4,37 @@ func @main() -> i32 { NoRecurse } {
     i32 %1 = load i32* %0;
     ubr ^block1;
   ^block1:
-    i32 %2 = phi [^entry, i32 %1] [^if.else1, i32 %10];
+    i32 %2 = phi [^entry, i32 %1] [^if.else1, i32 %18];
     i32 %3 = strunc i32 %2 to i32;
     i1 %4 = icmp slt i32 %3, i32 1;
-    cbr i1 %4(prob = 0.5), ^indirect, ^if.else;
-  ^indirect:
-    i32 %5 = load i32* %0;
-    i32 %6 = strunc i32 %5 to i32;
-    i1 %7 = icmp slt i32 %6, i32 1;
-    cbr i1 %7(prob = 0.5), ^if.then, ^if.else1;
+    cbr i1 %4(prob = 0.5), ^if.then, ^if.else;
+  ^if.then:
+    i32 %5 = phi [^block1, i32 %3] [^block5, i32 %15];
+    i32 %6 = phi [^block1, i32 %2] [^block5, i32 %14];
+    i1 %7 = icmp neq i32 %6, i32 0;
+    cbr i1 %7(prob = 0.5), ^if.then1, ^indirect;
   ^if.else:
     ret i32 %3;
-  ^if.else1:
-    i32 %8 = phi [^indirect, i32 %6] [^block5, i32 %21];
-    i32 %9 = add i32 %8, i32 1;
-    i32 %10 = ztrunc i32 %9 to i32;
-    store i32* %0 with i32 %10;
-    ubr ^block1;
-  ^if.then:
-    i32 %11 = phi [^indirect, i32 %6] [^block5, i32 %21];
-    i32 %12 = phi [^indirect, i32 %5] [^block5, i32 %20];
-    i1 %13 = icmp neq i32 %12, i32 0;
-    cbr i1 %13(prob = 0.5), ^if.then1, ^indirect1;
   ^if.then1:
-    i32 %14 = add i32 %11, i32 1;
-    i32 %15 = ztrunc i32 %14 to i32;
+    i32 %8 = add i32 %5, i32 1;
+    i32 %9 = ztrunc i32 %8 to i32;
     ubr ^block5;
-  ^indirect1:
-    i32 %16 = load i32* %0;
+  ^indirect:
+    i32 %10 = load i32* %0;
     ubr ^block5;
   ^block5:
-    i32 %17 = phi [^if.then1, i32 %15] [^indirect1, i32 %16];
-    i32 %18 = strunc i32 %17 to i32;
-    i32 %19 = add i32 %18, i32 1;
-    i32 %20 = ztrunc i32 %19 to i32;
-    store i32* %0 with i32 %20;
-    i32 %21 = strunc i32 %19 to i32;
-    i1 %22 = icmp slt i32 %21, i32 1;
-    cbr i1 %22(prob = 0.5), ^if.then, ^if.else1;
+    i32 %11 = phi [^if.then1, i32 %9] [^indirect, i32 %10];
+    i32 %12 = strunc i32 %11 to i32;
+    i32 %13 = add i32 %12, i32 1;
+    i32 %14 = ztrunc i32 %13 to i32;
+    store i32* %0 with i32 %14;
+    i32 %15 = strunc i32 %13 to i32;
+    i1 %16 = icmp slt i32 %15, i32 1;
+    cbr i1 %16(prob = 0.5), ^if.then, ^if.else1;
+  ^if.else1:
+    i32 %17 = add i32 %15, i32 1;
+    i32 %18 = ztrunc i32 %17 to i32;
+    store i32* %0 with i32 %18;
+    ubr ^block1;
 }
 i32* @a, align 4 = 0;

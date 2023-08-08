@@ -11,7 +11,7 @@ test:
 	move $t0, $a0
 	move $t2, $zero
 .p2align 2
-label4:
+label8:
 	lw $t4, 0($t0)
 	li $t3, 3
 	div $zero, $t4, $t3
@@ -31,15 +31,12 @@ label4:
 	sw $t3, 12($t0)
 	addiu $t2, $t2, 4
 	subu $t3, $t1, $t2
-	blez $t3, label39
+	blez $t3, label47
 	nop
 	addiu $t0, $t0, 16
-	b label4
+	b label8
 	nop
-label39:
-	sll $t0, $t2, 2
-	addu $a0, $a0, $t0
-label9:
+label3:
 	lw $t0, 0($a0)
 	li $t1, 3
 	div $zero, $t0, $t1
@@ -50,12 +47,17 @@ label9:
 	blez $t0, label14
 	nop
 	addiu $a0, $a0, 4
-	b label9
+	b label3
+	nop
+label47:
+	sll $t0, $t2, 2
+	addu $a0, $a0, $t0
+	b label3
 	nop
 label14:
 	jr $ra
 	nop
 label23:
 	move $t2, $zero
-	b label9
+	b label3
 	nop

@@ -3,6 +3,6 @@ func @main() -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecur
     ret;
 }
 func @test() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
-  ^entry:
+  ^b:
     ret i32 0;
 }

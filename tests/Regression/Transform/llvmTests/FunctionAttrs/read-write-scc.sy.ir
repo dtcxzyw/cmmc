@@ -1,15 +1,9 @@
-func @bar() -> void { NoMemoryRead NoRecurse } {
+func @bar() -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i32* %0 = ptrcast i32* @i to i32*;
-    store i32* %0 with i32 1;
-    call () -> void @foo();
     ret;
 }
-func @foo() -> void { NoMemoryRead NoRecurse } {
+func @foo() -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoReturn NoRecurse } {
   ^entry:
-    i32* %0 = ptrcast i32* @i to i32*;
-    store i32* %0 with i32 1;
-    call () -> void @foo();
-    ret;
+    unreachable;
 }
 i32* @i, align 4 = 0;

@@ -17,3 +17,21 @@ int test3(int x) {
 int test4(int x) {
     return x * 2 + x % 2;
 }
+int test5(int x) {
+    if(x <= 0) 
+        return 0;
+    int sum = 0;
+    for(int i = 0; i < x; ++i)
+        sum = (sum + i) % 65535;
+    return sum;
+}
+int test6(int x) {
+    if(x <= 0) 
+        return 0;
+    int sum = 0, y = 0;
+    for(int i = 0; i < x; ++i) {
+        sum = (sum + y / 2) % 65535;
+        y += 2;
+    }
+    return sum;
+}

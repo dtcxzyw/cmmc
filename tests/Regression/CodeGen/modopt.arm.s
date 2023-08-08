@@ -148,3 +148,33 @@ test4:
 	sub r1, r0, r1, lsl #1
 	add r0, r1, r0, lsl #1
 	bx lr
+.p2align 4
+.globl test5
+test5:
+	push { lr }
+	cmp r0, #1
+	sub sp, sp, #4
+	bge label178
+	mov r0, #0
+label176:
+	add sp, sp, #4
+	pop { pc }
+label178:
+	movw r1, #65535
+	bl cmmcAddRec3SRem
+	b label176
+.p2align 4
+.globl test6
+test6:
+	push { lr }
+	cmp r0, #1
+	sub sp, sp, #4
+	bge label167
+	mov r0, #0
+label165:
+	add sp, sp, #4
+	pop { pc }
+label167:
+	movw r1, #65535
+	bl cmmcAddRec3SRem
+	b label165

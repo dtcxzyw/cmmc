@@ -123,3 +123,43 @@ test4:
 	addu $v0, $t0, $t1
 	jr $ra
 	nop
+.p2align 2
+.globl test5
+test5:
+	addiu $sp, $sp, -24
+	sw $ra, 16($sp)
+	addiu $t0, $a0, -1
+	bgez $t0, label150
+	nop
+	move $v0, $zero
+label148:
+	lw $ra, 16($sp)
+	addiu $sp, $sp, 24
+	jr $ra
+	nop
+label150:
+	li $a1, 65535
+	jal cmmcAddRec3SRem
+	nop
+	b label148
+	nop
+.p2align 2
+.globl test6
+test6:
+	addiu $sp, $sp, -24
+	sw $ra, 16($sp)
+	addiu $t0, $a0, -1
+	bgez $t0, label136
+	nop
+	move $v0, $zero
+label134:
+	lw $ra, 16($sp)
+	addiu $sp, $sp, 24
+	jr $ra
+	nop
+label136:
+	li $a1, 65535
+	jal cmmcAddRec3SRem
+	nop
+	b label134
+	nop

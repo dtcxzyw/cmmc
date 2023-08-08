@@ -18,6 +18,8 @@
 #include <cmmc/Analysis/IntegerRange.hpp>
 #include <cmmc/Analysis/IntegerRangeAnalysis.hpp>
 #include <cmmc/Analysis/LoopAnalysis.hpp>
+#include <cmmc/Analysis/SCEVAnalysis.hpp>
+#include <cmmc/Analysis/SCEVExpr.hpp>
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/Function.hpp>
@@ -191,10 +193,29 @@ class ModuloOpt final : public TransformPass<Function> {
         mod.add(func);
         return func;
     }
+    static Function* getAddRec3SRem(Module& mod) {
+        for(auto global : mod.globals())
+            if(global->getSymbol().prefix() == "cmmcAddRec3SRem") {
+                return global->as<Function>();
+            }
+        const auto i32 = IntegerType::get(32);
+        const auto funcType = make<FunctionType>(i32, Vector<const Type*>{ i32, i32 });
+        const auto func = make<Function>(String::get("cmmcAddRec3SRem"), funcType, Intrinsic::none);
+        func->setLinkage(Linkage::Internal);
+        func->attr()
+            .addAttr(FunctionAttribute::Builtin)
+            .addAttr(FunctionAttribute::Stateless)
+            .addAttr(FunctionAttribute::NoMemoryRead)
+            .addAttr(FunctionAttribute::NoMemoryWrite)
+            .addAttr(FunctionAttribute::NoRecurse)
+            .addAttr(FunctionAttribute::NoSideEffect);
+        mod.add(func);
+        return func;
+    }
 
-    static bool foldAddRecSRem(const IntegerRangeAnalysisResult& range, const DominateAnalysisResult& dom,
-                               const CFGAnalysisResult& cfg, const LoopAnalysisResult& loopInfo, IRBuilder& builder,
-                               Module& mod) {
+    static bool foldAddRec2SRem(const IntegerRangeAnalysisResult& range, const DominateAnalysisResult& dom,
+                                const CFGAnalysisResult& cfg, const LoopAnalysisResult& loopInfo, IRBuilder& builder,
+                                Module& mod) {
         bool modified = false;
         for(auto& loop : loopInfo.loops) {
             if(loop.header != loop.latch)
@@ -321,6 +342,99 @@ class ModuloOpt final : public TransformPass<Function> {
         return modified;
     }
 
+    static bool foldAddRec3SRem(const IntegerRangeAnalysisResult& range, const DominateAnalysisResult& dom,
+                                const SCEVAnalysisResult& scev, const CFGAnalysisResult& cfg, const LoopAnalysisResult& loopInfo,
+                                IRBuilder& builder, Module& mod) {
+        bool modified = false;
+        for(auto& loop : loopInfo.loops) {
+            if(loop.header != loop.latch)
+                continue;
+            if(loop.step != 1)
+                continue;
+            // TODO
+            if(cfg.predecessors(loop.header).size() != 2)
+                continue;
+            const auto initial = loop.initial;
+            const auto end = loop.bound;
+            // trip count = end - initial
+
+            for(auto& inst : loop.header->instructions()) {
+                PhiInst* rec;
+                Value *inc, *rem;
+
+                if(srem(add(phi(rec), any(inc)), any(rem))(MatchContext<Value>{ &inst })) {
+                    if(inst.getType()->as<IntegerType>()->getBitwidth() != 32)
+                        continue;
+                    if(rec->getBlock() != loop.header)
+                        continue;
+                    if(rec->incomings().at(loop.header)->value != &inst)
+                        continue;
+                    auto remRange = IntegerRange{}.srem(range.query(rem, dom, &inst, depth));
+                    if(!(remRange + remRange).isNoSignedOverflow())
+                        continue;
+
+                    // (c0, + , c1)
+                    const auto scevExpr = scev.query(inc);
+                    if(!scevExpr)
+                        continue;
+                    if(!(scevExpr->loop == &loop && scevExpr->instID == SCEVInstID::AddRec && scevExpr->operands.size() == 2 &&
+                         scevExpr->operands[0]->instID == SCEVInstID::Constant &&
+                         scevExpr->operands[1]->instID == SCEVInstID::Constant))
+                        continue;
+
+                    // FIXME
+                    bool invalid = false;
+                    for(auto& [pred, val] : rec->incomings()) {
+                        if(pred == loop.header) {
+                            if(val->value != &inst) {
+                                invalid = true;
+                                break;
+                            }
+                        } else if(!cint_(0)(MatchContext<Value>{ val->value })) {
+                            invalid = true;
+                            break;
+                        }
+                    }
+                    if(invalid)
+                        continue;
+
+                    // TODO: check overflow
+                    if(scevExpr->operands[0]->constant != 0 || scevExpr->operands[1]->constant != 1)
+                        continue;
+                    // sum inc = n * (c0 + c0 + (n - 1) * c1) / 2
+                    builder.setInsertPoint(loop.header, inst.asIterator());
+                    if(mod.getTarget().getOptHeuristic().registerLength == 64) {
+                        // O(1)
+                        const auto tripCount = builder.makeOp<BinaryInst>(InstructionID::Sub, end, initial);
+                        const auto i64 = IntegerType::get(64);
+                        const auto tripCount64 = builder.makeOp<CastInst>(InstructionID::SExt, i64, tripCount);
+                        const auto rem64 = builder.makeOp<CastInst>(InstructionID::SExt, i64, rem);
+                        const auto one = ConstantInteger::get(i64, 1);
+                        const auto res64 = builder.makeOp<BinaryInst>(
+                            InstructionID::SRem,
+                            builder.makeOp<BinaryInst>(
+                                InstructionID::LShr,
+                                builder.makeOp<BinaryInst>(InstructionID::Mul,
+                                                           builder.makeOp<BinaryInst>(InstructionID::Sub, tripCount64, one),
+                                                           tripCount64),
+                                one),
+                            rem64);
+                        const auto res32 = builder.makeOp<CastInst>(InstructionID::SignedTrunc, inst.getType(), res64);
+                        inst.replaceWith(res32);
+                        modified = true;
+                    } else {
+                        const auto tripCount = builder.makeOp<BinaryInst>(InstructionID::Sub, end, initial);
+                        const auto func = getAddRec3SRem(mod);
+                        const auto call = builder.makeOp<FunctionCallInst>(func, std::vector<Value*>{ tripCount, rem });
+                        inst.replaceWith(call);
+                        modified = true;
+                    }
+                }
+            }
+        }
+        return modified;
+    }
+
     static bool srem2select(Block* block, const IntegerRangeAnalysisResult& range, const DominateAnalysisResult& dom,
                             IRBuilder& builder) {
         auto modified = reduceBlock(builder, *block, [&](Instruction* inst) -> Value* {
@@ -391,6 +505,7 @@ public:
         auto& dom = analysis.get<DominateAnalysis>(func);
         auto& cfg = analysis.get<CFGAnalysis>(func);
         auto& loop = analysis.get<LoopAnalysis>(func);
+        auto& scev = analysis.get<SCEVAnalysis>(func);
         bool modified = false;
 
         IRBuilder builder{ analysis.module().getTarget() };
@@ -398,7 +513,8 @@ public:
             modified |= mergeSum(block, range, dom, builder);
             modified |= srem2select(block, range, dom, builder);
         }
-        modified |= foldAddRecSRem(range, dom, cfg, loop, builder, analysis.module());
+        modified |= foldAddRec2SRem(range, dom, cfg, loop, builder, analysis.module());
+        modified |= foldAddRec3SRem(range, dom, scev, cfg, loop, builder, analysis.module());
 
         return modified;
     }

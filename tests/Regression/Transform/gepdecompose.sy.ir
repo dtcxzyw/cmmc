@@ -10,33 +10,33 @@ func @test(i32* %x, i32 %n, i32 %m) -> i32 { NoMemoryWrite NoSideEffect NoRecurs
     i32 %5 = phi [^entry, i32 0] [^for.iteration, i32 %8];
     i32 %6 = phi [^entry, i32 0] [^for.iteration, i32 %9];
     i1 %7 = icmp sgt i32 %n, i32 %6;
-    cbr i1 %7(prob = 0.984615), ^for.header1, ^b;
-  ^for.header1:
+    cbr i1 %7(prob = 0.984615), ^for.body, ^b;
+  ^for.body:
     cbr i1 %2(prob = 0.984615), ^prebody, ^for.iteration;
   ^b:
     ret i32 %5;
   ^for.iteration:
-    i32 %8 = phi [^for.header1, i32 %5] [^for.body, i32 %16];
+    i32 %8 = phi [^for.body, i32 %5] [^for.body1, i32 %16];
     i32 %9 = add i32 %6, i32 1;
     ubr ^for.header;
   ^prebody:
     i32 %10 = mul i32 %m, i32 %6;
     i32* %11 = getelementptr &(i32* %x)[i32 %10];
-    cbr i1 %3(prob = 0.941176), ^super.header, ^for.body;
+    cbr i1 %3(prob = 0.941176), ^super.header, ^for.body1;
   ^super.header:
-    cbr i1 %1(prob = 0.941176), ^for.body1, ^for.body2;
-  ^for.body {scalar}:
-    i32 %12 = phi [^prebody, i32 0] [^for.body, i32 %17] [^for.body2, i32 %85];
-    i32 %13 = phi [^prebody, i32 %5] [^for.body, i32 %16] [^for.body2, i32 %84];
+    cbr i1 %1(prob = 0.941176), ^for.body2, ^for.body3;
+  ^for.body1 {scalar}:
+    i32 %12 = phi [^prebody, i32 0] [^for.body1, i32 %17] [^for.body3, i32 %85];
+    i32 %13 = phi [^prebody, i32 %5] [^for.body1, i32 %16] [^for.body3, i32 %84];
     i32* %14 = getelementptr &(i32* %11)[i32 %12];
     i32 %15 = load i32* %14;
     i32 %16 = add i32 %13, i32 %15;
     i32 %17 = add i32 %12, i32 1;
     i1 %18 = icmp sgt i32 %m, i32 %17;
-    cbr i1 %18(prob = 0.75), ^for.body, ^for.iteration;
-  ^for.body1:
-    i32 %19 = phi [^super.header, i32 0] [^for.body1, i32 %69];
-    i32 %20 = phi [^super.header, i32 %5] [^for.body1, i32 %68];
+    cbr i1 %18(prob = 0.75), ^for.body1, ^for.iteration;
+  ^for.body2:
+    i32 %19 = phi [^super.header, i32 0] [^for.body2, i32 %69];
+    i32 %20 = phi [^super.header, i32 %5] [^for.body2, i32 %68];
     i32* %21 = getelementptr &(i32* %11)[i32 %19];
     i32 %22 = load i32* %21;
     i32 %23 = add i32 %20, i32 %22;
@@ -87,10 +87,10 @@ func @test(i32* %x, i32 %n, i32 %m) -> i32 { NoMemoryWrite NoSideEffect NoRecurs
     i32 %68 = add i32 %65, i32 %67;
     i32 %69 = add i32 %19, i32 16;
     i1 %70 = icmp sgt i32 %4, i32 %69;
-    cbr i1 %70(prob = 0.941176), ^for.body1, ^for.body2;
-  ^for.body2 {scalar}:
-    i32 %71 = phi [^super.header, i32 %5] [^for.body1, i32 %68] [^for.body2, i32 %84];
-    i32 %72 = phi [^super.header, i32 0] [^for.body1, i32 %69] [^for.body2, i32 %85];
+    cbr i1 %70(prob = 0.941176), ^for.body2, ^for.body3;
+  ^for.body3 {scalar}:
+    i32 %71 = phi [^super.header, i32 %5] [^for.body2, i32 %68] [^for.body3, i32 %84];
+    i32 %72 = phi [^super.header, i32 0] [^for.body2, i32 %69] [^for.body3, i32 %85];
     i32* %73 = getelementptr &(i32* %11)[i32 %72];
     i32 %74 = load i32* %73;
     i32 %75 = add i32 %71, i32 %74;
@@ -105,5 +105,5 @@ func @test(i32* %x, i32 %n, i32 %m) -> i32 { NoMemoryWrite NoSideEffect NoRecurs
     i32 %84 = add i32 %81, i32 %83;
     i32 %85 = add i32 %72, i32 4;
     i1 %86 = icmp sgt i32 %0, i32 %85;
-    cbr i1 %86(prob = 0.75), ^for.body2, ^for.body;
+    cbr i1 %86(prob = 0.75), ^for.body3, ^for.body1;
 }

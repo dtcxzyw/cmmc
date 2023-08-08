@@ -30,9 +30,11 @@
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/IR/Value.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
+#include <cmmc/Support/Profiler.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
 #include <cstdint>
+#include <iostream>
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
@@ -124,15 +126,19 @@ class StoreEliminate final : public TransformPass<Function> {
                            const PointerBaseAnalysisResult& pointerBase) {
         auto& insts = block.instructions();
         const auto size = insts.size();
-        insts.remove_if([&](Instruction* inst) {
-            if(inst->getInstID() != InstructionID::Store)
-                return false;
-            const auto addr = inst->getOperand(0);
-            std::unordered_set<Block*> visited;
-            uint32_t lookaheadCount = 0;
-            return isInvisible(addr, block, aliasSet, dom, addressSpace, inst, visited, leak, lookaheadCount);
-        });
+        {
+            Stage stage{ "remove invisible stores"sv };
+            insts.remove_if([&](Instruction* inst) {
+                if(inst->getInstID() != InstructionID::Store)
+                    return false;
+                const auto addr = inst->getOperand(0);
+                std::unordered_set<Block*> visited;
+                uint32_t lookaheadCount = 0;
+                return isInvisible(addr, block, aliasSet, dom, addressSpace, inst, visited, leak, lookaheadCount);
+            });
+        }
         // remove self assign
+        Stage stage{ "remove self assign"sv };
         SimpleValueAnalysis valueAnalysis{ &block, aliasSet, pointerBase };
         std::unordered_set<Instruction*> removeList;
         for(auto& inst : insts) {
@@ -150,6 +156,7 @@ class StoreEliminate final : public TransformPass<Function> {
     }
 
     static bool removeStoreOnlyAlloca(Function& func, const PointerBaseAnalysisResult& pointerBase) {
+        Stage stage{ "remove store-only alloca"sv };
         std::unordered_map<Value*, std::vector<Instruction*>> interested;
         for(auto block : func.blocks()) {
             for(auto& inst : block->instructions()) {
@@ -221,6 +228,7 @@ public:
 
         bool modified = removeStoreOnlyAlloca(func, pointerBase);
         for(auto block : func.blocks()) {
+            Stage stage{ "per-block store elimination"sv };
             modified |= runOnBlock(*block, aliasSet, dom, addressSpace, leak, pointerBase);
         }
         return modified;
