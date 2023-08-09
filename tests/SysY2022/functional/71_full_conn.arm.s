@@ -12,15 +12,10 @@ main:
 	bl getint
 	str r0, [sp, #100]
 	cmp r0, #0
-	ble label15
+	bgt label4
+	b label15
 .p2align 4
-label4:
-	add r4, sp, #112
-	mov r5, #0
-	cmp r5, #5
-	blt label9
-.p2align 4
-label8:
+label14:
 	ldr r5, [sp, #112]
 	mov r0, #85
 	mov r2, #23
@@ -283,12 +278,12 @@ label8:
 	ldr r6, [sp, #84]
 	add r3, r3, r4
 	mvn r4, #98
-	mla r3, r6, r4, r3
+	mla r4, r6, r4, r3
 	ldr r6, [sp, #88]
-	add r6, r6, r6, lsl #6
-	add r3, r3, r6
-	str r6, [sp, #56]
+	add r3, r6, r6, lsl #6
+	str r3, [sp, #56]
 	ldr r6, [sp, #92]
+	add r3, r4, r3
 	rsb r4, r6, r6, lsl #4
 	ldr r6, [sp, #96]
 	add r3, r3, r4, lsl #3
@@ -351,10 +346,10 @@ label8:
 	add r8, r7, r6
 	mvn r7, #122
 	ldr r6, [sp, #236]
-	mla r7, r6, r7, r8
-	mov r8, #83
+	mla r8, r6, r7, r8
+	mov r7, #83
 	ldr r6, [sp, #232]
-	mla r7, r6, r8, r7
+	mla r7, r6, r7, r8
 	ldr r6, [sp, #228]
 	mov r8, #122
 	mla r7, r6, r8, r7
@@ -367,7 +362,6 @@ label8:
 	ldr r6, [sp, #88]
 	mvn r8, #46
 	mla r7, r6, r8, r7
-	mov r8, #83
 	ldr r6, [sp, #92]
 	lsl r6, r6, #5
 	rsb r6, r6, #0
@@ -641,8 +635,8 @@ label8:
 	mvn r4, #94
 	mla r4, r5, r4, r3
 	ldr r5, [sp, #224]
-	ldr r6, [sp, #56]
-	mla r3, r5, r7, r6
+	ldr r3, [sp, #56]
+	mla r3, r5, r7, r3
 	mov r7, #67
 	ldr r5, [sp, #260]
 	add r5, r5, r5, lsl #5
@@ -704,9 +698,10 @@ label8:
 	ldr r6, [sp, #92]
 	mov r7, #97
 	mla r5, r6, r7, r5
-	mvn r7, #83
+	mov r7, #83
 	ldr r6, [sp, #96]
-	mla r6, r6, r8, r5
+	mla r6, r6, r7, r5
+	mvn r7, #83
 	ldr r5, [sp, #104]
 	mla r6, r5, r2, r6
 	ldr r5, [sp, #68]
@@ -879,30 +874,34 @@ label8:
 	ldr r0, [sp, #100]
 	subs r0, r0, #1
 	str r0, [sp, #100]
-	bgt label4
-	b label15
+	ble label15
+.p2align 4
+label4:
+	add r4, sp, #112
+	mov r5, #0
+	cmp r5, #5
+	blt label8
+	b label14
+.p2align 4
+label12:
+	add r6, r6, #4
+	mov r7, r0
 .p2align 4
 label9:
-	mov r6, r4
-	mov r7, #0
-	b label10
-.p2align 4
-label606:
-	add r5, r5, #1
-	add r4, r4, #20
-	cmp r5, #5
-	blt label9
-	b label8
-.p2align 4
-label10:
 	bl getint
 	str r0, [r6, #0]
 	add r0, r7, #1
 	cmp r0, #5
-	bge label606
-	add r6, r6, #4
-	mov r7, r0
-	b label10
+	blt label12
+	add r5, r5, #1
+	add r4, r4, #20
+	cmp r5, #5
+	bge label14
+.p2align 4
+label8:
+	mov r6, r4
+	mov r7, #0
+	b label9
 label15:
 	mov r0, #0
 	add sp, sp, #280

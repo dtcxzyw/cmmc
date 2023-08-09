@@ -13,10 +13,10 @@ lut_fibFP:
 fibFP:
 	addi sp, sp, -32
 	fmv.x.w a1, f10
-pcrel155:
+pcrel157:
 	auipc a2, %pcrel_hi(lut_fibFP)
 	sd ra, 0(sp)
-	addi a0, a2, %pcrel_lo(pcrel155)
+	addi a0, a2, %pcrel_lo(pcrel157)
 	fsw f8, 8(sp)
 	mv a2, zero
 	fmv.s f8, f10
@@ -25,30 +25,27 @@ pcrel155:
 	jal cmmcCacheLookup
 	lw a1, 12(a0)
 	mv s0, a0
-	bne a1, zero, label108
-	j label105
-label103:
+	beq a1, zero, label107
+	flw f10, 8(a0)
+label105:
 	ld ra, 0(sp)
 	flw f8, 8(sp)
 	ld s0, 16(sp)
 	flw f9, 24(sp)
 	addi sp, sp, 32
 	ret
-label108:
-	flw f10, 8(s0)
-	j label103
-label105:
+label107:
 	lui a1, 262144
 	fmv.w.x f10, a1
 	flt.s a0, f8, f10
-	beq a0, zero, label107
+	beq a0, zero, label109
 	li a0, 1
 	lui a1, 260096
 	sw a0, 12(s0)
 	fmv.w.x f10, a1
 	fsw f10, 8(s0)
-	j label103
-label107:
+	j label105
+label109:
 	lui a0, 262144
 	fmv.w.x f11, a0
 	fsub.s f10, f8, f11
@@ -62,7 +59,7 @@ label107:
 	sw a0, 12(s0)
 	fadd.s f10, f9, f10
 	fsw f10, 8(s0)
-	j label103
+	j label105
 .p2align 2
 takFP:
 	addi sp, sp, -48
@@ -140,10 +137,29 @@ label9:
 	fmv.w.x f10, a1
 	fsub.s f8, f8, f10
 	flt.s a0, f18, f8
-	bne a0, zero, label11
-	fmv.s f8, f9
-	fmv.s f18, f19
+	beq a0, zero, label50
+label11:
+	lui a0, 260096
+	fmv.s f11, f18
+	fmv.w.x f23, a0
+	fmv.s f12, f9
+	fsub.s f10, f8, f23
+	jal takFP
+	fmv.s f11, f9
+	fmv.s f20, f10
+	fmv.s f12, f8
+	fsub.s f10, f18, f23
+	jal takFP
+	fmv.s f11, f8
+	fmv.s f22, f10
+	fmv.s f12, f18
+	fsub.s f10, f9, f23
+	jal takFP
+	flt.s a0, f22, f20
+	bne a0, zero, label63
+	fmv.s f8, f10
 	fmv.s f9, f21
+	fmv.s f18, f19
 	j label2
 label43:
 	fmv.s f21, f8
@@ -169,28 +185,10 @@ label15:
 	bne a0, zero, label75
 	fmv.s f21, f10
 	j label9
-label11:
-	lui a0, 260096
-	fmv.s f11, f18
-	fmv.w.x f23, a0
-	fmv.s f12, f9
-	fsub.s f10, f8, f23
-	jal takFP
-	fmv.s f11, f9
-	fmv.s f20, f10
-	fmv.s f12, f8
-	fsub.s f10, f18, f23
-	jal takFP
-	fmv.s f11, f8
-	fmv.s f22, f10
-	fmv.s f12, f18
-	fsub.s f10, f9, f23
-	jal takFP
-	flt.s a0, f22, f20
-	bne a0, zero, label63
-	fmv.s f8, f10
-	fmv.s f9, f21
+label50:
+	fmv.s f8, f9
 	fmv.s f18, f19
+	fmv.s f9, f21
 	j label2
 label63:
 	fmv.s f8, f20
@@ -234,21 +232,22 @@ main:
 	fmv.w.x f12, a0
 	fadd.s f10, f11, f12
 	jal fibFP
-pcrel193:
+pcrel195:
 	auipc a2, %pcrel_hi(__cmmc_fp_constant_pool)
-	addi a0, a2, %pcrel_lo(pcrel193)
+	addi a0, a2, %pcrel_lo(pcrel195)
 	flw f11, 0(a0)
 	feq.s a1, f10, f11
-	bne a1, zero, label161
-	j label162
-label157:
-	lui a1, 262144
-	fmv.w.x f10, a1
-	feq.s a0, f8, f10
-	beq a0, zero, label160
+	beq a1, zero, label164
 	li a0, 112
 	jal putch
 label159:
+	lui a1, 262144
+	fmv.w.x f10, a1
+	feq.s a0, f8, f10
+	beq a0, zero, label162
+	li a0, 112
+	jal putch
+label161:
 	li a0, 40
 	jal _sysy_stoptime
 	ld ra, 0(sp)
@@ -258,15 +257,11 @@ label159:
 	flw f8, 20(sp)
 	addi sp, sp, 24
 	ret
-label161:
-	li a0, 112
-	jal putch
-	j label157
-label162:
-	li a0, 1
-	jal putint
-	j label157
-label160:
+label164:
 	li a0, 1
 	jal putint
 	j label159
+label162:
+	li a0, 1
+	jal putint
+	j label161

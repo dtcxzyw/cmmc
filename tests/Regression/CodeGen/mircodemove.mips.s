@@ -36,6 +36,9 @@ label8:
 	addiu $t0, $t0, 16
 	b label8
 	nop
+label47:
+	sll $t0, $t2, 2
+	addu $a0, $a0, $t0
 label3:
 	lw $t0, 0($a0)
 	li $t1, 3
@@ -47,11 +50,6 @@ label3:
 	blez $t0, label14
 	nop
 	addiu $a0, $a0, 4
-	b label3
-	nop
-label47:
-	sll $t0, $t2, 2
-	addu $a0, $a0, $t0
 	b label3
 	nop
 label14:

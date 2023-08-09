@@ -12,7 +12,7 @@ c:
 .globl main
 main:
 	addi sp, sp, -16
-pcrel276:
+pcrel246:
 	auipc a0, %pcrel_hi(c)
 	li a3, 2
 	mv a4, zero
@@ -22,8 +22,8 @@ pcrel276:
 	addi a2, a1, 1
 	sd s0, 8(sp)
 	li a1, 3
-	sd a2, %pcrel_lo(pcrel276)(a0)
-	addi s0, a0, %pcrel_lo(pcrel276)
+	sd a2, %pcrel_lo(pcrel246)(a0)
+	addi s0, a0, %pcrel_lo(pcrel246)
 	li a0, 4
 	sd zero, 8(s0)
 	slli a2, a0, 32
@@ -35,7 +35,7 @@ pcrel276:
 .p2align 2
 label2:
 	sd zero, 0(a0)
-	addi a5, a4, 64
+	addi a4, a4, 64
 	sd zero, 8(a0)
 	sd zero, 16(a0)
 	sd zero, 24(a0)
@@ -67,14 +67,17 @@ label2:
 	sd zero, 232(a0)
 	sd zero, 240(a0)
 	sd zero, 248(a0)
-	bge a5, a3, label5
+	bge a4, a3, label6
 	addi a0, a0, 256
-	mv a4, a5
 	j label2
-label5:
-	sh2add a0, a5, a2
-	addi a3, a4, 112
+label6:
+	sh2add a0, a4, a2
+	li a5, 125
 	sw zero, 0(a0)
+pcrel247:
+	auipc a4, %pcrel_hi(a)
+	slli a3, a5, 5
+	addi a2, a4, %pcrel_lo(pcrel247)
 	sw zero, 4(a0)
 	sw zero, 8(a0)
 	sw zero, 12(a0)
@@ -122,40 +125,21 @@ label5:
 	sw zero, 180(a0)
 	sw zero, 184(a0)
 	sw zero, 188(a0)
-	sh2add a0, a3, a2
-.p2align 2
-label6:
-	sw zero, 0(a0)
-	addi a3, a3, 4
-	li a5, 2043
-	sw zero, 4(a0)
-	slli a4, a5, 1
-	sw zero, 8(a0)
-	sw zero, 12(a0)
-	bge a3, a4, label151
-	addi a0, a0, 16
-	j label6
-label151:
-	sh2add a0, a3, a2
-.p2align 2
-label11:
-	sw zero, 0(a0)
-	addi a3, a3, 1
-	li a4, 2045
-	slli a2, a4, 1
-	bge a3, a2, label15
-	addi a0, a0, 4
-	j label11
-label15:
-	auipc a2, %pcrel_hi(a)
-	li a4, 125
-	addi a0, a2, %pcrel_lo(label15)
-	slli a3, a4, 5
-	slli a2, a3, 2
-	sw a3, 20(a0)
-	addi a4, a2, 380
-	add a5, a0, a2
-	add a3, a0, a4
+	sw zero, 192(a0)
+	sw zero, 196(a0)
+	sw zero, 200(a0)
+	sw zero, 204(a0)
+	sw zero, 208(a0)
+	sw zero, 212(a0)
+	sw zero, 216(a0)
+	sw zero, 220(a0)
+	sw zero, 224(a0)
+	sw zero, 228(a0)
+	slli a0, a3, 2
+	sw a3, 20(a2)
+	addi a4, a0, 380
+	add a5, a2, a0
+	add a3, a2, a4
 	sw a1, 0(a5)
 	li a5, 7
 	sw a5, 0(a3)

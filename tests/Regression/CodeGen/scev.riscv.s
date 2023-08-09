@@ -14,6 +14,10 @@ foo4:
 	mv a2, a0
 	mv a4, zero
 	mv t0, zero
+	j label19
+.p2align 2
+label24:
+	addi a2, a2, 64
 .p2align 2
 label19:
 	sw a4, 0(a2)
@@ -49,11 +53,11 @@ label19:
 	sw t1, 56(a2)
 	addiw a4, a4, 64
 	sw t2, 60(a2)
-	ble a5, t0, label23
-	addi a2, a2, 64
-	j label19
-label23:
+	bgt a5, t0, label24
 	sh2add a2, t0, a0
+	j label12
+label17:
+	addi a2, a2, 16
 label12:
 	sw a4, 0(a2)
 	addiw a5, a4, 4
@@ -64,19 +68,15 @@ label12:
 	sw t1, 8(a2)
 	addiw a4, a4, 16
 	sw a5, 12(a2)
-	ble a3, t0, label16
-	addi a2, a2, 16
-	j label12
+	bgt a3, t0, label17
+	sh2add a0, t0, a0
+	mv a2, a4
 label5:
 	sw a2, 0(a0)
 	addiw t0, t0, 1
 	addiw a2, a2, 4
 	ble a1, t0, label2
 	addi a0, a0, 4
-	j label5
-label16:
-	sh2add a0, t0, a0
-	mv a2, a4
 	j label5
 label2:
 	ret

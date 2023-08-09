@@ -107,8 +107,6 @@ static BlockSeq solvePettisHansen(const std::vector<uint32_t>& weights, const st
     constexpr auto dumpCFG = false;
     if(dumpCFG) {
         std::cerr << "digraph G {\n";
-        for(uint32_t idx = 0; idx < blockCount; ++idx)
-            std::cerr << idx << " [label=\"" << idx << " @ " << freq[idx] << "\"]\n";
     }
 
     for(auto& [e, f] : edgeInfo) {
@@ -129,20 +127,30 @@ static BlockSeq solvePettisHansen(const std::vector<uint32_t>& weights, const st
                 std::cerr << "blue]\n";
             continue;  // merged
         }
-        auto& [pu, cu] = chains[findFa(u)];
+        const auto fu = findFa(u);
+        if(fu == v) {
+            if(dumpCFG)
+                std::cerr << "blue]\n";
+            continue;  // merged
+        }
+        auto& [pu, cu] = chains[fu];
         if(cu.back() != u) {
             if(dumpCFG)
                 std::cerr << "blue]\n";
             continue;  // merged
         }
         pu = std::min(std::min(pu, pv), ++p);
-        cu.merge(cv);
-        fa[v] = findFa(u);
+        cu.splice(cu.cend(), cv);
+        fa[v] = fu;
+        // std::cerr << "merge " << u << " " << v << '\n';
         if(dumpCFG)
             std::cerr << "red]\n";
     }
 
     if(dumpCFG) {
+        for(uint32_t idx = 0; idx < blockCount; ++idx)
+            std::cerr << idx << " [label=\"" << idx << " @ " << freq[idx]
+                      << "\", color = " << (findFa(idx) == idx ? "green" : "black") << "]\n";
         std::cerr << "}\n";
     }
 

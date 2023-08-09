@@ -71,8 +71,8 @@ label155:
 label157:
 	addiw a6, t5, 1
 	lw t3, 92(sp)
-	bne t3, zero, label23
-	j label78
+	beq t3, zero, label78
+	remw a2, t4, t3
 label9:
 	lw t5, 96(sp)
 	mv s4, t5
@@ -80,11 +80,6 @@ label9:
 	sltiu s5, t4, 1
 	addw a7, t5, s5
 	bne t4, zero, label159
-	j label158
-label23:
-	remw a2, t4, t3
-	j label9
-label158:
 	mv s4, a7
 label159:
 	addiw a7, s4, 1

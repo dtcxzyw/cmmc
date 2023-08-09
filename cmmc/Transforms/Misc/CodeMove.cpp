@@ -28,8 +28,8 @@
 #include <unordered_set>
 #include <vector>
 
-// Only processing inter-block code moving
-// Intra-block code moving will be handled at the code generation stage.
+// Only process inter-block code moving
+// Intra-block code moving will be handled at the code generation prepare stage.
 
 CMMC_NAMESPACE_BEGIN
 

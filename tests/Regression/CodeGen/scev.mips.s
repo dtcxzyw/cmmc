@@ -16,6 +16,11 @@ foo4:
 	move $t0, $a0
 	move $t2, $zero
 	move $t4, $zero
+	b label13
+	nop
+.p2align 2
+label18:
+	addiu $t0, $t0, 64
 .p2align 2
 label13:
 	sw $t2, 0($t0)
@@ -52,14 +57,14 @@ label13:
 	addiu $t4, $t4, 16
 	addiu $t2, $t2, 64
 	subu $t5, $t3, $t4
-	blez $t5, label17
+	bgtz $t5, label18
 	nop
-	addiu $t0, $t0, 64
-	b label13
-	nop
-label17:
 	sll $t0, $t4, 2
 	addu $t0, $a0, $t0
+	b label6
+	nop
+label11:
+	addiu $t0, $t0, 16
 label6:
 	sw $t2, 0($t0)
 	addiu $t3, $t2, 4
@@ -71,23 +76,20 @@ label6:
 	addiu $t4, $t4, 4
 	addiu $t2, $t2, 16
 	subu $t3, $t1, $t4
-	blez $t3, label10
+	bgtz $t3, label11
 	nop
-	addiu $t0, $t0, 16
-	b label6
-	nop
-label10:
 	sll $t0, $t4, 2
 	addu $a0, $a0, $t0
+	b label19
+	nop
+label23:
+	addiu $a0, $a0, 4
 label19:
 	sw $t2, 0($a0)
 	addiu $t4, $t4, 1
 	addiu $t2, $t2, 4
 	subu $t0, $a1, $t4
-	blez $t0, label24
-	nop
-	addiu $a0, $a0, 4
-	b label19
+	bgtz $t0, label23
 	nop
 label24:
 	jr $ra

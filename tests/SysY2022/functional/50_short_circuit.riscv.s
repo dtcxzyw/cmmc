@@ -23,32 +23,25 @@ label3:
 label6:
 	jal getint
 	li a1, 100
-	bge a0, a1, label15
+	blt a0, a1, label8
+	addw s0, s0, a0
+	mv a0, s0
+	jal putint
 label8:
 	jal getint
 	li a1, 101
 	blt a0, a1, label10
-	j label14
-label15:
 	addw s0, s0, a0
 	mv a0, s0
 	jal putint
-	j label8
 label10:
 	addiw s1, s0, 99
 	mv a0, s1
 	jal putint
-	beq s1, zero, label12
-	j label13
-label14:
-	addw s0, s0, a0
-	mv a0, s0
-	jal putint
-	j label10
-label12:
+	bne s1, zero, label12
 	addiw a0, s0, 199
 	jal putint
-label13:
+label12:
 	mv a0, zero
 	ld ra, 0(sp)
 	ld s0, 8(sp)

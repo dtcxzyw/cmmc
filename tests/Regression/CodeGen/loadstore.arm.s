@@ -122,6 +122,10 @@ memset_impl:
 	ble label108
 	mov r3, r1
 	mov r6, r0
+	b label115
+.p2align 4
+label119:
+	add r3, r3, #64
 .p2align 4
 label115:
 	str r0, [r3, #0]
@@ -142,11 +146,11 @@ label115:
 	str r0, [r3, #52]
 	str r0, [r3, #56]
 	str r0, [r3, #60]
-	ble label118
-	add r3, r3, #64
-	b label115
-label118:
+	bgt label119
 	add r3, r1, r6, lsl #2
+	b label109
+label113:
+	add r3, r3, #16
 label109:
 	str r0, [r3, #0]
 	add r6, r6, #4
@@ -154,19 +158,15 @@ label109:
 	cmp r4, r6
 	str r0, [r3, #8]
 	str r0, [r3, #12]
-	ble label112
-	add r3, r3, #16
-	b label109
+	bgt label113
+	add r1, r1, r6, lsl #2
+	mov r3, r6
 label103:
 	str r0, [r1, #0]
 	add r3, r3, #1
 	cmp r2, r3
 	ble label120
 	add r1, r1, #4
-	b label103
-label112:
-	add r1, r1, r6, lsl #2
-	mov r3, r6
 	b label103
 label120:
 	pop { r4, r5, r6 }

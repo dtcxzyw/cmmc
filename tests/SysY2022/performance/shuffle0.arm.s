@@ -121,18 +121,6 @@ label27:
 	cmp r10, #0
 	bne label27
 	b label26
-label77:
-	mov r0, #0
-	ldr r1, [r4, #0]
-	movw r9, #:lower16:head
-	movt r9, #:upper16:head
-	ldr r3, [sp, #0]
-	sdiv r2, r1, r3
-	mls r2, r2, r3, r1
-	ldr r2, [r9, r2, lsl #2]
-	cmp r2, #0
-	bne label15
-	b label87
 .p2align 4
 label29:
 	movw r7, #:lower16:nextvalue
@@ -147,20 +135,15 @@ label29:
 	str r2, [r8, #0]
 	str r3, [r7, r2, lsl #2]
 	bgt label8
-	b label77
-label87:
-	mov r2, #0
-	b label20
-.p2align 4
-label15:
-	movw r11, #:lower16:key
-	movt r11, #:upper16:key
-	ldr r3, [r11, r2, lsl #2]
-	cmp r1, r3
-	beq label95
-	movw r11, #:lower16:next
-	movt r11, #:upper16:next
-	ldr r2, [r11, r2, lsl #2]
+label77:
+	mov r0, #0
+	ldr r1, [r4, #0]
+	movw r9, #:lower16:head
+	movt r9, #:upper16:head
+	ldr r3, [sp, #0]
+	sdiv r2, r1, r3
+	mls r2, r2, r3, r1
+	ldr r2, [r9, r2, lsl #2]
 	cmp r2, #0
 	bne label15
 	b label87
@@ -207,6 +190,18 @@ label20:
 	mls r2, r2, r3, r1
 	ldr r2, [r9, r2, lsl #2]
 	cmp r2, #0
+	beq label87
+.p2align 4
+label15:
+	movw r11, #:lower16:key
+	movt r11, #:upper16:key
+	ldr r3, [r11, r2, lsl #2]
+	cmp r1, r3
+	beq label95
+	movw r11, #:lower16:next
+	movt r11, #:upper16:next
+	ldr r2, [r11, r2, lsl #2]
+	cmp r2, #0
 	bne label15
 	b label87
 label22:
@@ -220,6 +215,9 @@ label22:
 	add sp, sp, #12
 	mov r0, #0
 	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
+label87:
+	mov r2, #0
+	b label20
 label26:
 	movw r11, #:lower16:next
 	movt r11, #:upper16:next

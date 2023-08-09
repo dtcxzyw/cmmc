@@ -53,64 +53,53 @@ pcrel156:
 	addi s2, a1, 4
 	mv s7, s0
 	lw a0, 0(s2)
-	bne a0, s0, label10
+	bne a0, s0, label7
 	lw a0, 0(s1)
 	addiw s7, s0, 1
-	blt a0, s7, label23
-.p2align 2
-label9:
-	addi s2, s2, 4
-	lw a0, 0(s2)
-	bne a0, s0, label10
-	lw a0, 0(s1)
-	addiw s7, s7, 1
-	bge a0, s7, label9
+	bge a0, s7, label22
 	j label23
 .p2align 2
-label10:
+label146:
+	lw a0, 0(s1)
+	addiw s7, s7, 1
+	blt a0, s7, label23
+.p2align 2
+label22:
+	addi s2, s2, 4
+	lw a0, 0(s2)
+	beq a0, s0, label146
+.p2align 2
+label7:
 	ld s9, 112(sp)
 	addw s8, s9, s7
 	sh2add a0, s8, s5
 	lw a1, 0(a0)
-	beq a1, zero, label11
+	beq a1, zero, label8
 	lw a0, 0(s1)
 	addiw s7, s7, 1
-	bge a0, s7, label9
+	bge a0, s7, label22
 	j label23
 .p2align 2
-label11:
+label8:
 	lw a0, 0(s1)
 	ld s9, 112(sp)
-	addw a1, s9, a0
-	subw a2, a1, s7
-	sh2add a4, a2, s6
-	lw a3, 0(a4)
-	bne a3, zero, label69
+	addw a4, s9, a0
+	subw a3, a4, s7
+	sh2add a2, a3, s6
+	lw a1, 0(a2)
+	beq a1, zero, label9
+	addiw s7, s7, 1
+	bge a0, s7, label22
+	j label23
+.p2align 2
+label9:
+	ld s9, 112(sp)
 	sh2add a1, s9, s4
 	sw s7, 0(a1)
-	bne s9, a0, label75
-	ld a1, 104(sp)
-	addi s9, s4, 4
-	mv s10, s0
-	lw a0, 0(a1)
-	addi a2, a0, 1
-	sw a2, 0(a1)
-	lw s11, 0(s1)
-	bgt s0, s11, label83
-.p2align 2
-label17:
-	lw a0, 0(s9)
-	jal putint
-	bne s10, s11, label18
-	li a0, 10
-	jal putch
-	lw a0, 0(s1)
-	j label20
-.p2align 2
-label75:
+	beq s9, a0, label13
 	lw a0, 0(s1)
 .p2align 2
-label20:
+label10:
 	ld s9, 112(sp)
 	sh2add s10, s8, s5
 	sw s0, 0(s2)
@@ -126,24 +115,42 @@ label20:
 	sw zero, 0(s2)
 	sw zero, 0(s10)
 	lw a0, 0(s1)
-	addw a3, s9, a0
-	subw a1, a3, s7
+	addw a2, s9, a0
+	subw a1, a2, s7
 	addiw s7, s7, 1
-	sh2add a2, a1, s6
-	sw zero, 0(a2)
-	bge a0, s7, label9
+	sh2add a3, a1, s6
+	sw zero, 0(a3)
+	bge a0, s7, label22
 	j label23
-label83:
-	mv a0, s11
-	j label20
+.p2align 2
+label13:
+	ld a1, 104(sp)
+	addi s9, s4, 4
+	mv s10, s0
+	lw a2, 0(a1)
+	addi a0, a2, 1
+	sw a0, 0(a1)
+	lw s11, 0(s1)
+	bgt s0, s11, label89
+.p2align 2
+label17:
+	lw a0, 0(s9)
+	jal putint
+	bne s10, s11, label18
+	li a0, 10
+	jal putch
+	lw a0, 0(s1)
+	j label10
 label18:
 	li a0, 32
 	jal putch
+	lw s11, 0(s1)
 	addi s9, s9, 4
 	addiw s10, s10, 1
-	lw s11, 0(s1)
 	ble s10, s11, label17
-	j label83
+label89:
+	mv a0, s11
+	j label10
 label23:
 	ld ra, 0(sp)
 	ld s9, 8(sp)
@@ -160,11 +167,6 @@ label23:
 	ld s11, 96(sp)
 	addi sp, sp, 120
 	ret
-.p2align 2
-label69:
-	addiw s7, s7, 1
-	bge a0, s7, label9
-	j label23
 .p2align 2
 .globl main
 main:

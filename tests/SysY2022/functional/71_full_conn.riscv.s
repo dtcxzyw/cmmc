@@ -12,24 +12,8 @@ main:
 	sd s3, 32(sp)
 	jal getint
 	sd a0, 168(sp)
-	ble a0, zero, label15
-.p2align 2
-label4:
-	addi s0, sp, 192
-	mv s1, zero
-	li a0, 5
-	bge zero, a0, label14
-.p2align 2
-label8:
-	mv s2, s0
-	mv s3, zero
-	j label9
-.p2align 2
-label30:
-	addiw s1, s1, 1
-	addi s0, s0, 20
-	li a0, 5
-	blt s1, a0, label8
+	bgt a0, zero, label4
+	j label15
 .p2align 2
 label14:
 	lw t5, 192(sp)
@@ -225,14 +209,14 @@ label14:
 	ld t5, 328(sp)
 	li a6, 105
 	mulw t1, t6, t4
-	ld t6, 320(sp)
 	li t4, -42
 	addw t3, t2, t1
+	ld t6, 320(sp)
 	mulw t2, t5, a6
-	mulw t5, t6, t4
 	addw t1, t3, t2
-	ld t4, 312(sp)
 	li t3, 87
+	mulw t5, t6, t4
+	ld t4, 312(sp)
 	addw t2, t1, t5
 	ld t5, 112(sp)
 	mulw t6, t4, t3
@@ -264,8 +248,8 @@ label14:
 	li t3, -75
 	addw t1, t2, t4
 	mulw t4, t5, t3
-	li t3, -125
 	li t5, 127
+	li t3, -125
 	addw t2, t1, t4
 	mulw t4, t6, t3
 	li t3, 26
@@ -508,9 +492,9 @@ label14:
 	addw a2, t4, t6
 	ld t6, 96(sp)
 	mulw a3, t5, t3
+	ld t5, 128(sp)
 	li t3, 75
 	addw t2, a2, a3
-	ld t5, 128(sp)
 	mulw a2, t6, t3
 	ld t6, 104(sp)
 	slli t3, t5, 5
@@ -776,8 +760,8 @@ label14:
 	addw a3, a5, t1
 	ld t3, 72(sp)
 	subw t1, t5, t0
-	addw t0, a2, t6
 	li t5, 127
+	addw t0, a2, t6
 	addw a5, a3, t1
 	sh1add t1, t0, a5
 	max a3, t1, zero
@@ -935,8 +919,8 @@ label14:
 	addw a4, a1, a5
 	mulw a5, t5, t3
 	mulw t0, t6, a3
-	ld t5, 184(sp)
 	li t3, -13
+	ld t5, 184(sp)
 	addw a1, a4, a5
 	li a3, 53
 	addw a4, a1, t0
@@ -945,17 +929,17 @@ label14:
 	ld t5, 176(sp)
 	addw a1, a4, a5
 	mulw t0, t6, a3
-	mulw a5, t5, a0
-	li a3, -103
 	ld t6, 152(sp)
+	li a3, -103
 	addw a4, a1, t0
+	mulw a5, t5, a0
 	ld t5, 160(sp)
 	addw a1, a4, a5
 	li a5, 42
 	mulw a4, t6, a3
 	ld t6, 120(sp)
-	mulw a3, t5, t3
 	addw a0, a1, a4
+	mulw a3, t5, t3
 	li t5, 127
 	li t3, -114
 	addw a1, a0, a3
@@ -978,17 +962,17 @@ label14:
 	mulw a2, a6, a5
 	mulw a5, t6, a4
 	addw a3, a1, a2
-	ld t6, 360(sp)
 	li a4, -92
 	li a2, -123
 	addw a1, a3, a5
-	ld t3, 352(sp)
+	ld t6, 360(sp)
 	mulw a5, t5, a2
-	ld a6, 304(sp)
+	ld t3, 352(sp)
 	addw a3, a1, a5
-	ld t5, 344(sp)
+	ld a6, 304(sp)
 	li a5, -51
 	mulw a1, t6, a4
+	ld t5, 344(sp)
 	sh2add a4, t3, t3
 	addw a2, a3, a1
 	li t3, 75
@@ -1086,7 +1070,33 @@ label1013:
 	ld a0, 168(sp)
 	addiw a0, a0, -1
 	sd a0, 168(sp)
-	bgt a0, zero, label4
+	ble a0, zero, label15
+.p2align 2
+label4:
+	addi s0, sp, 192
+	mv s1, zero
+	li a0, 5
+	blt zero, a0, label8
+	j label14
+.p2align 2
+label12:
+	addi s2, s2, 4
+	mv s3, a1
+.p2align 2
+label9:
+	jal getint
+	addiw a1, s3, 1
+	sw a0, 0(s2)
+	li a0, 5
+	blt a1, a0, label12
+	addiw s1, s1, 1
+	addi s0, s0, 20
+	bge s1, a0, label14
+.p2align 2
+label8:
+	mv s2, s0
+	mv s3, zero
+	j label9
 label15:
 	mv a0, zero
 	ld ra, 0(sp)
@@ -1096,13 +1106,3 @@ label15:
 	ld s3, 32(sp)
 	addi sp, sp, 424
 	ret
-.p2align 2
-label9:
-	jal getint
-	addiw a1, s3, 1
-	sw a0, 0(s2)
-	li a0, 5
-	bge a1, a0, label30
-	addi s2, s2, 4
-	mv s3, a1
-	j label9

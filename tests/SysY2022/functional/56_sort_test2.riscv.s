@@ -6,76 +6,83 @@
 main:
 	addi sp, sp, -72
 	li a4, 3
-	li a5, 2
-	li t0, 1
-	addi a0, sp, 32
-	slli a3, a4, 32
+	addi a1, sp, 32
+	slli a0, a4, 32
 	sd ra, 0(sp)
-	addi a1, a0, 4
-	addi a2, a3, 4
+	addi a2, a1, 4
+	li a4, 2
+	addi a3, a0, 4
 	sd s0, 8(sp)
-	slli a3, a5, 32
+	slli a5, a4, 32
 	li s0, 10
-	li a5, 5
-	addi a4, a3, 9
+	li a4, 1
+	addi a0, a5, 9
 	sd s1, 16(sp)
-	slli a3, t0, 32
+	li a5, 5
 	sd s2, 24(sp)
-	sd a2, 32(sp)
-	li a2, 1
-	sd a4, 40(sp)
-	slli a4, a5, 32
-	sd a3, 48(sp)
+	sd a3, 32(sp)
+	li a3, 1
+	sd a0, 40(sp)
+	slli a0, a3, 32
+	slli a3, a5, 32
+	sd a0, 48(sp)
 	li a5, 8
-	addi a3, a4, 6
-	slli a4, a5, 32
-	sd a3, 56(sp)
-	addi a3, a4, 7
-	sd a3, 64(sp)
-label2:
-	bge a2, s0, label5
+	addi a0, a3, 6
+	slli a3, a5, 32
+	sd a0, 56(sp)
+	addi a0, a3, 7
+	sd a0, 64(sp)
+	blt a4, s0, label5
+	j label33
 .p2align 2
-label11:
-	lw a3, 0(a1)
-	addiw a5, a2, -1
-	sh2add a4, a5, a0
-	addiw t0, a5, 1
-	bge a5, zero, label15
-	sh2add a4, t0, a0
-	addiw a2, a2, 1
-	addi a1, a1, 4
-	sw a3, 0(a4)
-	blt a2, s0, label11
-	j label5
+label41:
+	mv t0, zero
+	addiw a4, a4, 1
+	addi a2, a2, 4
+	sw a0, 4(a3)
+	bge a4, s0, label33
+.p2align 2
+label5:
+	lw a0, 0(a2)
+	addiw a5, a4, -1
+	sh2add a3, a5, a1
+	blt a5, zero, label41
+.p2align 2
+label9:
+	lw t1, 0(a3)
+	slt t0, a0, t1
+	beq t0, zero, label12
+	lw t0, 0(a3)
+	addiw a5, a5, -1
+	sw t0, 4(a3)
+	addi a3, a3, -4
+	bge a5, zero, label9
+	mv t0, zero
+	addiw a4, a4, 1
+	addi a2, a2, 4
+	sw a0, 4(a3)
+	blt a4, s0, label5
+	j label33
+label12:
+	sw a0, 4(a3)
+	addiw a4, a4, 1
+	addi a2, a2, 4
+	blt a4, s0, label5
+label33:
+	mv s1, a1
+	mv s2, zero
+	j label15
+.p2align 2
+label18:
+	addi s1, s1, 4
 .p2align 2
 label15:
-	lw t1, 0(a4)
-	bge a3, t1, label52
-	sh2add t2, t0, a0
-	addiw a5, a5, -1
-	addi a4, a4, -4
-	addiw t0, a5, 1
-	sw t1, 0(t2)
-	bge a5, zero, label15
-	sh2add a4, t0, a0
-	addiw a2, a2, 1
-	addi a1, a1, 4
-	sw a3, 0(a4)
-	blt a2, s0, label11
-label5:
-	mv s1, a0
-	mv s2, zero
-.p2align 2
-label6:
 	lw a0, 0(s1)
 	jal putint
 	mv a0, s0
 	jal putch
 	addiw s2, s2, 1
-	bge s2, s0, label10
-	addi s1, s1, 4
-	j label6
-label10:
+	blt s2, s0, label18
 	mv a0, zero
 	ld ra, 0(sp)
 	ld s0, 8(sp)
@@ -83,9 +90,3 @@ label10:
 	ld s2, 24(sp)
 	addi sp, sp, 72
 	ret
-label52:
-	sh2add a4, t0, a0
-	addiw a2, a2, 1
-	addi a1, a1, 4
-	sw a3, 0(a4)
-	j label2

@@ -17,41 +17,23 @@ label2:
 	sub r6, r0, #48
 	cmp r6, #9
 	bhi label2
+	b label3
+label5:
+	add r1, r6, r6, lsl #2
+	add r6, r0, r1, lsl #1
 label3:
 	bl getch
 	sub r0, r0, #48
 	cmp r0, #10
-	bhs label6
-	add r1, r6, r6, lsl #2
-	add r6, r0, r1, lsl #1
-	b label3
-label6:
+	blo label5
 	cmp r6, #0
-	ble label25
-.p2align 4
-label9:
-	bl getch
-	sub r7, r0, #48
-	cmp r7, #9
-	bhi label9
-.p2align 4
-label10:
-	bl getch
-	sub r0, r0, #48
-	cmp r0, #10
-	bhs label55
-	add r1, r7, r7, lsl #2
-	add r7, r0, r1, lsl #1
-	b label10
-.p2align 4
-label55:
-	cmp r7, #0
-	ble label110
-	mov r0, r4
-	mov r2, r7
-	mov r1, #0
+	bgt label10
+	b label7
 .p2align 4
 label20:
+	add r0, r0, #4
+.p2align 4
+label16:
 	smmul r3, r2, r5
 	add r1, r1, #1
 	asr r7, r3, #2
@@ -62,35 +44,54 @@ label20:
 	add r2, r2, #48
 	str r2, [r0, #0]
 	mov r2, r3
-	ble label86
-	add r0, r0, #4
-	b label20
+	bgt label20
+	cmp r1, #0
+	ble label23
 .p2align 4
-label16:
-	mov r0, #10
-	bl putch
-	subs r6, r6, #1
-	bgt label9
-	b label25
+label75:
+	mov r7, r1
 .p2align 4
-label17:
+label24:
 	sub r7, r7, #1
 	ldr r0, [r4, r7, lsl #2]
 	bl putch
 	cmp r7, #0
-	bgt label17
-	b label16
+	bgt label24
 .p2align 4
-label86:
-	movs r7, r1
-	bgt label17
+label23:
+	mov r0, #10
+	bl putch
+	subs r6, r6, #1
+	ble label7
+.p2align 4
+label10:
+	bl getch
+	sub r7, r0, #48
+	cmp r7, #9
+	bhi label10
+	b label11
+.p2align 4
+label13:
+	add r1, r7, r7, lsl #2
+	add r7, r0, r1, lsl #1
+.p2align 4
+label11:
+	bl getch
+	sub r0, r0, #48
+	cmp r0, #10
+	blo label13
+	cmp r7, #0
+	ble label110
+	mov r0, r4
+	mov r2, r7
+	mov r1, #0
 	b label16
-label25:
+label110:
+	mov r1, #0
+	cmp r1, #0
+	bgt label75
+	b label23
+label7:
 	mov r0, #0
 	add sp, sp, #68
 	pop { r4, r5, r6, r7, pc }
-label110:
-	mov r7, #0
-	cmp r7, #0
-	bgt label17
-	b label16

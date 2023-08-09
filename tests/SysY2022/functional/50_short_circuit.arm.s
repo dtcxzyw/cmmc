@@ -24,33 +24,26 @@ label3:
 label6:
 	bl getint
 	cmp r0, #100
-	bge label15
+	blt label8
+	add r4, r4, r0
+	mov r0, r4
+	bl putint
 label8:
 	bl getint
 	cmp r0, #101
 	blt label10
-	b label14
-label15:
 	add r4, r4, r0
 	mov r0, r4
 	bl putint
-	b label8
 label10:
 	add r5, r4, #99
 	mov r0, r5
 	bl putint
 	cmp r5, #0
-	beq label12
-	b label13
-label14:
-	add r4, r4, r0
-	mov r0, r4
-	bl putint
-	b label10
-label12:
+	bne label12
 	add r0, r4, #199
 	bl putint
-label13:
+label12:
 	mov r0, #0
 	add sp, sp, #4
 	pop { r4, r5, pc }

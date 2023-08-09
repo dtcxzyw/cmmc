@@ -42,6 +42,8 @@ label8:
 	ble a4, a5, label47
 	addi a2, a2, 16
 	j label8
+label47:
+	sh2add a0, a5, a0
 label3:
 	lw t0, 0(a0)
 	addiw a5, a5, 1
@@ -52,9 +54,6 @@ label3:
 	sw t0, 0(a0)
 	ble a1, a5, label14
 	addi a0, a0, 4
-	j label3
-label47:
-	sh2add a0, a5, a0
 	j label3
 label14:
 	ret

@@ -6,19 +6,22 @@
 main:
 	addi sp, sp, -8
 	li a2, 112
-	li a0, 1000
+	li a0, 999
 	li a1, 10
 	sd ra, 0(sp)
+	j label2
+.p2align 2
+label20:
+	ble a2, a1, label4
 .p2align 2
 label2:
 	addiw a3, a2, -88
 	addiw a4, a2, -76
-	mv a2, a4
-	blt a3, a0, label19
 	mv a2, a3
-.p2align 2
-label19:
-	bgt a2, a1, label2
+	bgt a3, a0, label20
+	mv a2, a4
+	j label20
+label4:
 	mv a0, a2
 	jal putint
 	ld ra, 0(sp)

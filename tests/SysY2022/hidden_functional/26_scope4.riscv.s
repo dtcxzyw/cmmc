@@ -12,7 +12,20 @@ main:
 	li a0, 3
 	li a1, 1
 	sd ra, 0(sp)
-	bge zero, a0, label10
+	blt zero, a0, label7
+	j label10
+.p2align 2
+label30:
+	addw t5, a5, t1
+	addiw a4, a4, 1
+	addiw a5, a2, 9
+	addw t2, t3, t5
+	mv a2, t0
+	sh1add t3, a5, a5
+	sh1add a3, t4, t2
+	addw t1, a3, t3
+	mv a3, t0
+	bge a4, a0, label10
 .p2align 2
 label7:
 	addiw a5, a3, 10
@@ -27,20 +40,7 @@ label7:
 	addw t1, t0, t4
 	addiw t0, a2, 13
 	addiw t4, a2, 6
-	beq a4, a1, label8
-	addw t5, a5, t1
-	addiw a4, a4, 1
-	addiw a5, a2, 9
-	addw t2, t3, t5
-	mv a2, t0
-	sh1add t3, a5, a5
-	sh1add a3, t4, t2
-	addw t1, a3, t3
-	mv a3, t0
-	blt a4, a0, label7
-	j label10
-.p2align 2
-label8:
+	bne a4, a1, label30
 	addiw a4, t1, 10
 	addiw t1, a2, 8
 	addw t4, t2, a4

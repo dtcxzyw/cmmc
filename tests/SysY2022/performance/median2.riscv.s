@@ -9,11 +9,11 @@ a:
 .globl main
 main:
 	addi sp, sp, -32
-pcrel117:
+pcrel112:
 	auipc a1, %pcrel_hi(a)
 	sd ra, 0(sp)
 	sd s0, 8(sp)
-	addi s0, a1, %pcrel_lo(pcrel117)
+	addi s0, a1, %pcrel_lo(pcrel112)
 	sd s1, 16(sp)
 	sd s2, 24(sp)
 	mv a0, s0
@@ -29,6 +29,14 @@ pcrel117:
 	addiw a3, a1, 1
 	lw a2, 0(s0)
 	mv a4, zero
+	j label7
+label66:
+	mv a1, a4
+	addiw a3, a4, 1
+	sh2add a4, a0, s0
+	lw a2, 0(a4)
+	mv a4, a0
+.p2align 2
 label7:
 	ble a3, a4, label11
 .p2align 2
@@ -36,18 +44,14 @@ label10:
 	addiw a3, a3, -1
 	sh2add a5, a3, s0
 	lw t0, 0(a5)
-	bgt a2, t0, label11
-	bgt a3, a4, label10
+	ble a2, t0, label7
 .p2align 2
 label11:
 	ble a3, a4, label15
-.p2align 2
-label14:
 	addiw a4, a4, 1
 	sh2add a5, a4, s0
 	lw t0, 0(a5)
-	ble a2, t0, label15
-	bgt a3, a4, label14
+	bgt a2, t0, label11
 .p2align 2
 label15:
 	bne a3, a4, label56
@@ -84,7 +88,6 @@ label20:
 	addi sp, sp, 32
 	subw a0, a1, a2
 	ret
-.p2align 2
 label56:
 	sh2add a5, a3, s0
 	sh2add t0, a4, s0
@@ -93,12 +96,4 @@ label56:
 	sw t2, 0(t0)
 	sw t1, 0(a5)
 	bgt a3, a4, label10
-	j label11
-label66:
-	mv a1, a4
-	addiw a3, a4, 1
-	sh2add a4, a0, s0
-	lw a2, 0(a4)
-	mv a4, a0
-	bgt a3, a0, label10
 	j label11

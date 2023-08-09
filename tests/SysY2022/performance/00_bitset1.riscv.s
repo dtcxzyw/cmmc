@@ -27,14 +27,14 @@ main:
 	lui t5, 458130
 	lui t4, 281475
 	lui t3, 559241
-pcrel174:
+pcrel173:
 	auipc a2, %pcrel_hi(a)
 	lui a0, 4876
 	lui a3, 4878
 	li a5, 1
 	lui a4, 244141
 	addiw t1, t3, -1911
-	addi s0, a2, %pcrel_lo(pcrel174)
+	addi s0, a2, %pcrel_lo(pcrel173)
 	addiw a1, a0, -865
 	addiw t3, t5, -635
 	addiw a2, a3, 725
@@ -47,6 +47,13 @@ pcrel174:
 	addiw a4, t4, -103
 	ble s1, zero, label8
 	mv t4, s2
+	j label2
+.p2align 2
+label155:
+	addw t5, a6, s2
+	sh2add a7, t6, s0
+	sw t5, 0(a7)
+	ble s1, zero, label8
 .p2align 2
 label2:
 	mulw a6, t4, a1
@@ -105,13 +112,7 @@ label151:
 	add s6, s2, s7
 	andi s4, s6, -2
 	subw s3, s2, s4
-	bne t5, s3, label6
-	sh2add t5, t6, s0
-	sw a6, 0(t5)
-	bgt s1, zero, label2
-	j label8
-.p2align 2
-label6:
+	beq t5, s3, label41
 	andi s5, s2, 1
 	xori s6, t5, 1
 	mv s3, a7
@@ -126,12 +127,7 @@ label153:
 	or s4, t5, s5
 	bne s4, zero, label155
 	subw s2, s3, a7
-.p2align 2
-label155:
-	addw t5, a6, s2
-	sh2add a7, t6, s0
-	sw t5, 0(a7)
-	bgt s1, zero, label2
+	j label155
 label8:
 	mv a0, a3
 	jal _sysy_stoptime
@@ -151,3 +147,9 @@ label8:
 	ld s7, 64(sp)
 	addi sp, sp, 72
 	ret
+.p2align 2
+label41:
+	sh2add t5, t6, s0
+	sw a6, 0(t5)
+	bgt s1, zero, label2
+	j label8

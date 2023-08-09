@@ -7,71 +7,155 @@ array:
 .text
 .p2align 2
 findfa:
-	addi sp, sp, -48
-pcrel75:
+	addi sp, sp, -80
+pcrel142:
 	auipc a1, %pcrel_hi(array)
 	sd ra, 0(sp)
 	sd s0, 8(sp)
 	mv s0, a0
-	sd s4, 16(sp)
-	addi s4, a1, %pcrel_lo(pcrel75)
-	sd s1, 24(sp)
-	sh2add a0, a0, s4
-	sd s2, 32(sp)
-	sd s3, 40(sp)
+	sd s5, 16(sp)
+	sd s3, 24(sp)
+	addi s3, a1, %pcrel_lo(pcrel142)
+	sd s1, 32(sp)
+	sh2add a0, a0, s3
+	sd s6, 40(sp)
+	sd s2, 48(sp)
+	sd s4, 56(sp)
+	sd s7, 64(sp)
+	sd s8, 72(sp)
 	lw s1, 0(a0)
-	beq s0, s1, label22
-	sh2add a1, s1, s4
+	beq s0, s1, label34
+	sh2add a1, s1, s3
 	lw s2, 0(a1)
-	bne s1, s2, label5
+	bne s1, s2, label7
 	mv a0, s1
-	sh2add a1, s0, s4
+	sh2add a1, s0, s3
 	sw s1, 0(a1)
-	j label12
-label22:
+	j label2
+label34:
 	mv a0, s0
-label12:
+label2:
 	ld ra, 0(sp)
 	ld s0, 8(sp)
-	ld s4, 16(sp)
-	ld s1, 24(sp)
-	ld s2, 32(sp)
-	ld s3, 40(sp)
-	addi sp, sp, 48
+	ld s5, 16(sp)
+	ld s3, 24(sp)
+	ld s1, 32(sp)
+	ld s6, 40(sp)
+	ld s2, 48(sp)
+	ld s4, 56(sp)
+	ld s7, 64(sp)
+	ld s8, 72(sp)
+	addi sp, sp, 80
 	ret
-label5:
-	sh2add a1, s2, s4
-	lw s3, 0(a1)
-	beq s2, s3, label38
-	sh2add a1, s3, s4
-	lw a0, 0(a1)
-	bne s3, a0, label11
-	mv a0, s3
-	sh2add a1, s2, s4
-	sw s3, 0(a1)
-	sh2add a1, s1, s4
-	sw s3, 0(a1)
-	sh2add a1, s0, s4
-	sw s3, 0(a1)
-	j label12
-label38:
+label7:
+	sh2add a1, s2, s3
+	lw s4, 0(a1)
+	beq s2, s4, label50
+	sh2add a1, s4, s3
+	lw s5, 0(a1)
+	bne s4, s5, label11
+	mv a0, s4
+	sh2add a1, s2, s3
+	sw s4, 0(a1)
+	sh2add a1, s1, s3
+	sw s4, 0(a1)
+	sh2add a1, s0, s3
+	sw s4, 0(a1)
+	j label2
+label50:
 	mv a0, s2
-	sh2add a1, s1, s4
+	sh2add a1, s1, s3
 	sw s2, 0(a1)
-	sh2add a1, s0, s4
+	sh2add a1, s0, s3
 	sw s2, 0(a1)
-	j label12
+	j label2
 label11:
+	sh2add a1, s5, s3
+	lw s6, 0(a1)
+	bne s5, s6, label12
+	mv a0, s5
+	sh2add a1, s4, s3
+	sw s5, 0(a1)
+	sh2add a1, s2, s3
+	sw s5, 0(a1)
+	sh2add a1, s1, s3
+	sw s5, 0(a1)
+	sh2add a1, s0, s3
+	sw s5, 0(a1)
+	j label2
+label12:
+	sh2add a1, s6, s3
+	lw s7, 0(a1)
+	bne s6, s7, label13
+	mv a0, s6
+	sh2add a1, s5, s3
+	sw s6, 0(a1)
+	sh2add a1, s4, s3
+	sw s6, 0(a1)
+	sh2add a1, s2, s3
+	sw s6, 0(a1)
+	sh2add a1, s1, s3
+	sw s6, 0(a1)
+	sh2add a1, s0, s3
+	sw s6, 0(a1)
+	j label2
+label13:
+	sh2add a1, s7, s3
+	lw s8, 0(a1)
+	bne s7, s8, label14
+	mv a0, s7
+	sh2add a1, s6, s3
+	sw s7, 0(a1)
+	sh2add a1, s5, s3
+	sw s7, 0(a1)
+	sh2add a1, s4, s3
+	sw s7, 0(a1)
+	sh2add a1, s2, s3
+	sw s7, 0(a1)
+	sh2add a1, s1, s3
+	sw s7, 0(a1)
+	sh2add a1, s0, s3
+	sw s7, 0(a1)
+	j label2
+label14:
+	sh2add a1, s8, s3
+	lw a0, 0(a1)
+	beq s8, a0, label87
 	jal findfa
-	sh2add a1, s3, s4
+	sh2add a1, s8, s3
 	sw a0, 0(a1)
-	sh2add a1, s2, s4
+	sh2add a1, s7, s3
 	sw a0, 0(a1)
-	sh2add a1, s1, s4
+	sh2add a1, s6, s3
 	sw a0, 0(a1)
-	sh2add a1, s0, s4
+	sh2add a1, s5, s3
 	sw a0, 0(a1)
-	j label12
+	sh2add a1, s4, s3
+	sw a0, 0(a1)
+	sh2add a1, s2, s3
+	sw a0, 0(a1)
+	sh2add a1, s1, s3
+	sw a0, 0(a1)
+	sh2add a1, s0, s3
+	sw a0, 0(a1)
+	j label2
+label87:
+	mv a0, s8
+	sh2add a1, s7, s3
+	sw s8, 0(a1)
+	sh2add a1, s6, s3
+	sw s8, 0(a1)
+	sh2add a1, s5, s3
+	sw s8, 0(a1)
+	sh2add a1, s4, s3
+	sw s8, 0(a1)
+	sh2add a1, s2, s3
+	sw s8, 0(a1)
+	sh2add a1, s1, s3
+	sw s8, 0(a1)
+	sh2add a1, s0, s3
+	sw s8, 0(a1)
+	j label2
 .p2align 2
 .globl main
 main:
@@ -79,28 +163,40 @@ main:
 	li a0, -1
 	sd ra, 0(sp)
 	sd s5, 8(sp)
-pcrel489:
+pcrel543:
 	auipc s5, %pcrel_hi(array)
 	sd s0, 16(sp)
-	addi s0, s5, %pcrel_lo(pcrel489)
+	addi s0, s5, %pcrel_lo(pcrel543)
 	sd s7, 24(sp)
 	li s7, 1
 	sd s4, 32(sp)
 	li s4, 10
-	sd s3, 40(sp)
-	li s3, 4
-	sd s2, 48(sp)
+	sd s2, 40(sp)
 	mv s2, s7
-	sd s1, 56(sp)
+	sd s1, 48(sp)
 	li s1, -1
-	sd s6, 64(sp)
+	sd s6, 56(sp)
 	slli s6, a0, 32
+	sd s3, 64(sp)
+	li s3, 4
 	sd s9, 72(sp)
 	sd s8, 80(sp)
 	sd s10, 88(sp)
-	beq s7, zero, label113
+	j label144
 .p2align 2
-label79:
+label302:
+	auipc s5, %pcrel_hi(array)
+	lw a0, %pcrel_lo(label302)(s5)
+	bne a0, s1, label164
+	blt s9, s4, label147
+.p2align 2
+label457:
+	beq s8, zero, label179
+.p2align 2
+label144:
+	beq s7, zero, label180
+.p2align 2
+label146:
 	addiw s7, s7, -1
 	add.uw a0, s1, s6
 	mv s9, zero
@@ -114,348 +210,321 @@ label79:
 	sd a0, 48(s0)
 	sd a0, 56(s0)
 	sd a0, 64(s0)
-	j label80
+	j label147
 .p2align 2
-label383:
-	bne s8, zero, label406
+label209:
+	bge s9, s4, label449
 .p2align 2
-label112:
+label147:
+	jal getint
+	mv s10, a0
+	jal getint
+	addiw s9, s9, 1
+	mv a3, a0
+	bne s8, zero, label209
+	addiw a0, s10, -1
+	sh2add a2, a0, a3
+	sh2add a4, a2, s0
+	sw a2, 0(a4)
+	beq s10, s2, label151
+	bne s10, s3, label450
+.p2align 2
+label154:
+	li a5, 17
+	sw a5, 68(s0)
+	mv a0, a2
+	jal findfa
+	mv t0, a0
+	mv a0, a5
+	jal findfa
+	bne t0, a0, label155
+	blt a3, s3, label157
+	bgt a3, s2, label173
+	blt s10, s3, label170
+	bgt s10, s2, label167
+pcrel544:
+	auipc s5, %pcrel_hi(array)
+	lw a0, %pcrel_lo(pcrel544)(s5)
+	bne a0, s1, label164
+	blt s9, s4, label147
+	j label457
+.p2align 2
+label155:
+	sh2add a1, t0, s0
+	sw a0, 0(a1)
+	blt a3, s3, label157
+	bgt a3, s2, label173
+	blt s10, s3, label170
+	bgt s10, s2, label167
+pcrel545:
+	auipc s5, %pcrel_hi(array)
+	lw a0, %pcrel_lo(pcrel545)(s5)
+	bne a0, s1, label164
+	blt s9, s4, label147
+	j label457
+.p2align 2
+label151:
+	auipc s5, %pcrel_hi(array)
+	sw zero, %pcrel_lo(label151)(s5)
+	mv a0, a2
+	jal findfa
+	mv a5, a0
+	mv a0, zero
+	jal findfa
+	bne a5, a0, label152
+	beq s10, s3, label154
+	bge a3, s3, label473
+.p2align 2
+label157:
+	addiw a5, a2, 1
+	sh2add a0, a5, s0
+	lw a1, 0(a0)
+	bne a1, s1, label158
+	ble a3, s2, label455
+.p2align 2
+label173:
+	addiw a3, a2, -1
+	sh2add a1, a3, s0
+	lw a0, 0(a1)
+	beq a0, s1, label327
+	mv a0, a2
+	jal findfa
+	mv a5, a0
+	mv a0, a3
+	jal findfa
+	beq a5, a0, label333
+	sh2add a1, a5, s0
+	sw a0, 0(a1)
+	blt s10, s3, label170
+	bgt s10, s2, label167
+pcrel546:
+	auipc s5, %pcrel_hi(array)
+	lw a0, %pcrel_lo(pcrel546)(s5)
+	bne a0, s1, label164
+	blt s9, s4, label147
+	j label457
+.p2align 2
+label455:
+	bge s10, s3, label477
+.p2align 2
+label170:
+	lw a1, 16(a4)
+	bne a1, s1, label171
+	ble s10, s2, label464
+.p2align 2
+label167:
+	addiw a3, a2, -4
+	sh2add a1, a3, s0
+	lw a0, 0(a1)
+	bne a0, s1, label168
+pcrel547:
+	auipc s5, %pcrel_hi(array)
+	lw a0, %pcrel_lo(pcrel547)(s5)
+	beq a0, s1, label461
+.p2align 2
+label164:
+	lw a0, 68(s0)
+	bne a0, s1, label165
+	blt s9, s4, label147
+	bne s8, zero, label144
+	j label179
+.p2align 2
+label152:
+	sh2add a1, a5, s0
+	sw a0, 0(a1)
+	beq s10, s3, label154
+	blt a3, s3, label157
+	bgt a3, s2, label173
+	blt s10, s3, label170
+	bgt s10, s2, label167
+pcrel548:
+	auipc s5, %pcrel_hi(array)
+	lw a0, %pcrel_lo(pcrel548)(s5)
+	bne a0, s1, label164
+label518:
+	blt s9, s4, label147
+	j label457
+.p2align 2
+label158:
+	mv a0, a2
+	jal findfa
+	mv t0, a0
+	mv a0, a5
+	jal findfa
+	bne t0, a0, label159
+	bgt a3, s2, label173
+	blt s10, s3, label170
+	bgt s10, s2, label167
+pcrel549:
+	auipc s5, %pcrel_hi(array)
+	lw a0, %pcrel_lo(pcrel549)(s5)
+	bne a0, s1, label164
+	blt s9, s4, label147
+	j label457
+.p2align 2
+label450:
+	blt a3, s3, label157
+	bgt a3, s2, label173
+	blt s10, s3, label170
+	bgt s10, s2, label167
+pcrel550:
+	auipc s5, %pcrel_hi(array)
+	lw a0, %pcrel_lo(pcrel550)(s5)
+	bne a0, s1, label164
+	blt s9, s4, label147
+	j label457
+.p2align 2
+label168:
+	mv a0, a2
+	jal findfa
+	mv a4, a0
+	mv a0, a3
+	jal findfa
+	beq a4, a0, label302
+	sh2add a2, a4, s0
+	sw a0, 0(a2)
+pcrel551:
+	auipc s5, %pcrel_hi(array)
+	lw a0, %pcrel_lo(pcrel551)(s5)
+	bne a0, s1, label164
+	blt s9, s4, label147
+	j label457
+.p2align 2
+label327:
+	blt s10, s3, label170
+	bgt s10, s2, label167
+pcrel552:
+	auipc s5, %pcrel_hi(array)
+	lw a0, %pcrel_lo(pcrel552)(s5)
+	bne a0, s1, label164
+	blt s9, s4, label147
+	j label457
+.p2align 2
+label165:
+	mv a0, zero
+	jal findfa
+	li a5, 17
+	mv a2, a0
+	mv a0, a5
+	jal findfa
+	bne a2, a0, label288
+	mv a0, s9
+	jal putint
+	mv a0, s4
+	jal putch
+	mv s8, s2
+	blt s9, s4, label147
+	bne s2, zero, label144
+	j label179
+.p2align 2
+label159:
+	sh2add a1, t0, s0
+	sw a0, 0(a1)
+	bgt a3, s2, label173
+	blt s10, s3, label170
+	bgt s10, s2, label167
+pcrel553:
+	auipc s5, %pcrel_hi(array)
+	lw a0, %pcrel_lo(pcrel553)(s5)
+	bne a0, s1, label164
+	blt s9, s4, label147
+	j label457
+.p2align 2
+label171:
+	mv a0, a2
+	jal findfa
+	mv a3, a0
+	addiw a0, a2, 4
+	jal findfa
+	bne a3, a0, label172
+	bgt s10, s2, label167
+pcrel554:
+	auipc s5, %pcrel_hi(array)
+	lw a0, %pcrel_lo(pcrel554)(s5)
+	bne a0, s1, label164
+	blt s9, s4, label147
+	j label457
+.p2align 2
+label172:
+	sh2add a1, a3, s0
+	sw a0, 0(a1)
+	bgt s10, s2, label167
+pcrel555:
+	auipc s5, %pcrel_hi(array)
+	lw a0, %pcrel_lo(pcrel555)(s5)
+	bne a0, s1, label164
+	blt s9, s4, label147
+	j label457
+.p2align 2
+label333:
+	blt s10, s3, label170
+	bgt s10, s2, label167
+pcrel556:
+	auipc s5, %pcrel_hi(array)
+	lw a0, %pcrel_lo(pcrel556)(s5)
+	bne a0, s1, label164
+	blt s9, s4, label147
+	j label457
+.p2align 2
+label464:
+	auipc s5, %pcrel_hi(array)
+	lw a0, %pcrel_lo(label464)(s5)
+	bne a0, s1, label164
+	blt s9, s4, label147
+	j label457
+.p2align 2
+label449:
+	bne s8, zero, label144
+.p2align 2
+label179:
 	mv a0, s1
 	jal putint
 	mv a0, s4
 	jal putch
-	bne s7, zero, label79
-label113:
+	bne s7, zero, label146
+	j label180
+.p2align 2
+label473:
+	bgt a3, s2, label173
+	blt s10, s3, label170
+	bgt s10, s2, label167
+pcrel557:
+	auipc s5, %pcrel_hi(array)
+	lw a0, %pcrel_lo(pcrel557)(s5)
+	bne a0, s1, label164
+	j label518
+.p2align 2
+label477:
+	bgt s10, s2, label167
+pcrel558:
+	auipc s5, %pcrel_hi(array)
+	lw a0, %pcrel_lo(pcrel558)(s5)
+	bne a0, s1, label164
+	blt s9, s4, label147
+	j label457
+.p2align 2
+label288:
+	blt s9, s4, label147
+	bne s8, zero, label144
+	j label179
+.p2align 2
+label461:
+	blt s9, s4, label147
+	bne s8, zero, label144
+	j label179
+label180:
 	mv a0, zero
 	ld ra, 0(sp)
 	ld s5, 8(sp)
 	ld s0, 16(sp)
 	ld s7, 24(sp)
 	ld s4, 32(sp)
-	ld s3, 40(sp)
-	ld s2, 48(sp)
-	ld s1, 56(sp)
-	ld s6, 64(sp)
+	ld s2, 40(sp)
+	ld s1, 48(sp)
+	ld s6, 56(sp)
+	ld s3, 64(sp)
 	ld s9, 72(sp)
 	ld s8, 80(sp)
 	ld s10, 88(sp)
 	addi sp, sp, 96
 	ret
-.p2align 2
-label80:
-	jal getint
-	mv s10, a0
-	jal getint
-	addiw s9, s9, 1
-	mv a3, a0
-	beq s8, zero, label83
-	blt s9, s4, label80
-	j label383
-.p2align 2
-label83:
-	addiw a1, s10, -1
-	sh2add a2, a1, a3
-	sh2add a0, a2, s0
-	sw a2, 0(a0)
-	bne s10, s2, label151
-pcrel490:
-	auipc s5, %pcrel_hi(array)
-	sw zero, %pcrel_lo(pcrel490)(s5)
-	mv a0, a2
-	jal findfa
-	mv a4, a0
-	mv a0, zero
-	jal findfa
-	beq a4, a0, label157
-	sh2add a1, a4, s0
-	sw a0, 0(a1)
-	bne s10, s3, label163
-.p2align 2
-label87:
-	li a4, 17
-	sw a4, 68(s0)
-	mv a0, a2
-	jal findfa
-	mv a5, a0
-	mv a0, a4
-	jal findfa
-	beq a5, a0, label170
-	sh2add a1, a5, s0
-	sw a0, 0(a1)
-	blt a3, s3, label106
-	j label90
-.p2align 2
-label100:
-	addiw a3, a2, 4
-	sh2add a1, a3, s0
-	lw a0, 0(a1)
-	beq a0, s1, label229
-	mv a0, a2
-	jal findfa
-	mv a4, a0
-	mv a0, a3
-	jal findfa
-	bne a4, a0, label102
-	bgt s10, s2, label97
-	j label396
-.p2align 2
-label106:
-	addiw a4, a2, 1
-	sh2add a1, a4, s0
-	lw a0, 0(a1)
-	bne a0, s1, label107
-	bgt a3, s2, label103
-	blt s10, s3, label100
-	bgt s10, s2, label97
-pcrel491:
-	auipc s5, %pcrel_hi(array)
-	lw a0, %pcrel_lo(pcrel491)(s5)
-	bne a0, s1, label94
-	blt s9, s4, label80
-	j label388
-.p2align 2
-label103:
-	addiw a3, a2, -1
-	sh2add a1, a3, s0
-	lw a0, 0(a1)
-	bne a0, s1, label104
-	blt s10, s3, label100
-	bgt s10, s2, label97
-	j label421
-.p2align 2
-label107:
-	mv a0, a2
-	jal findfa
-	mv a5, a0
-	mv a0, a4
-	jal findfa
-	beq a5, a0, label267
-	sh2add a1, a5, s0
-	sw a0, 0(a1)
-	bgt a3, s2, label103
-	blt s10, s3, label100
-	bgt s10, s2, label97
-pcrel492:
-	auipc s5, %pcrel_hi(array)
-	lw a0, %pcrel_lo(pcrel492)(s5)
-	bne a0, s1, label94
-	blt s9, s4, label80
-	j label388
-.p2align 2
-label94:
-	lw a0, 68(s0)
-	beq a0, s1, label199
-	mv a0, zero
-	jal findfa
-	li a4, 17
-	mv a2, a0
-	mv a0, a4
-	jal findfa
-	beq a2, a0, label96
-	j label205
-.p2align 2
-label213:
-	auipc s5, %pcrel_hi(array)
-	lw a0, %pcrel_lo(label213)(s5)
-	bne a0, s1, label94
-	blt s9, s4, label80
-	beq s8, zero, label112
-	j label411
-.p2align 2
-label97:
-	addiw a3, a2, -4
-	sh2add a1, a3, s0
-	lw a0, 0(a1)
-	beq a0, s1, label213
-	mv a0, a2
-	jal findfa
-	mv a4, a0
-	mv a0, a3
-	jal findfa
-	beq a4, a0, label219
-	sh2add a1, a4, s0
-	sw a0, 0(a1)
-pcrel493:
-	auipc s5, %pcrel_hi(array)
-	lw a0, %pcrel_lo(pcrel493)(s5)
-	bne a0, s1, label94
-	blt s9, s4, label80
-	j label417
-.p2align 2
-label105:
-	sh2add a1, a4, s0
-	sw a0, 0(a1)
-	blt s10, s3, label100
-	bgt s10, s2, label97
-pcrel494:
-	auipc s5, %pcrel_hi(array)
-	lw a0, %pcrel_lo(pcrel494)(s5)
-	bne a0, s1, label94
-	blt s9, s4, label80
-	j label388
-.p2align 2
-label151:
-	beq s10, s3, label87
-	blt a3, s3, label106
-	bgt a3, s2, label103
-	blt s10, s3, label100
-	bgt s10, s2, label97
-pcrel495:
-	auipc s5, %pcrel_hi(array)
-	lw a0, %pcrel_lo(pcrel495)(s5)
-	bne a0, s1, label94
-	blt s9, s4, label80
-	j label388
-.p2align 2
-label90:
-	bgt a3, s2, label103
-	blt s10, s3, label100
-	bgt s10, s2, label97
-pcrel496:
-	auipc s5, %pcrel_hi(array)
-	lw a0, %pcrel_lo(pcrel496)(s5)
-	bne a0, s1, label94
-	blt s9, s4, label80
-	j label388
-.p2align 2
-label104:
-	mv a0, a2
-	jal findfa
-	mv a4, a0
-	mv a0, a3
-	jal findfa
-	bne a4, a0, label105
-	blt s10, s3, label100
-	bgt s10, s2, label97
-pcrel497:
-	auipc s5, %pcrel_hi(array)
-	lw a0, %pcrel_lo(pcrel497)(s5)
-	bne a0, s1, label94
-	blt s9, s4, label80
-	j label388
-.p2align 2
-label157:
-	beq s10, s3, label87
-	blt a3, s3, label106
-	bgt a3, s2, label103
-	blt s10, s3, label100
-	bgt s10, s2, label97
-pcrel498:
-	auipc s5, %pcrel_hi(array)
-	lw a0, %pcrel_lo(pcrel498)(s5)
-	bne a0, s1, label94
-label460:
-	blt s9, s4, label80
-	j label388
-.p2align 2
-label170:
-	blt a3, s3, label106
-	bgt a3, s2, label103
-	blt s10, s3, label100
-	bgt s10, s2, label97
-pcrel499:
-	auipc s5, %pcrel_hi(array)
-	lw a0, %pcrel_lo(pcrel499)(s5)
-	bne a0, s1, label94
-	blt s9, s4, label80
-.p2align 2
-label388:
-	beq s8, zero, label112
-.p2align 2
-label411:
-	bne s7, zero, label79
-	j label113
-.p2align 2
-label229:
-	bgt s10, s2, label97
-pcrel500:
-	auipc s5, %pcrel_hi(array)
-	lw a0, %pcrel_lo(pcrel500)(s5)
-	bne a0, s1, label94
-	blt s9, s4, label80
-	j label388
-.p2align 2
-label102:
-	sh2add a1, a4, s0
-	sw a0, 0(a1)
-	bgt s10, s2, label97
-pcrel501:
-	auipc s5, %pcrel_hi(array)
-	lw a0, %pcrel_lo(pcrel501)(s5)
-	bne a0, s1, label94
-	blt s9, s4, label80
-	j label388
-.p2align 2
-label219:
-	auipc s5, %pcrel_hi(array)
-	lw a0, %pcrel_lo(label219)(s5)
-	bne a0, s1, label94
-	blt s9, s4, label80
-	beq s8, zero, label112
-	j label411
-.p2align 2
-label267:
-	bgt a3, s2, label103
-	blt s10, s3, label100
-	bgt s10, s2, label97
-pcrel502:
-	auipc s5, %pcrel_hi(array)
-	lw a0, %pcrel_lo(pcrel502)(s5)
-	bne a0, s1, label94
-	blt s9, s4, label80
-	j label388
-.p2align 2
-label163:
-	blt a3, s3, label106
-	bgt a3, s2, label103
-	blt s10, s3, label100
-	bgt s10, s2, label97
-pcrel503:
-	auipc s5, %pcrel_hi(array)
-	lw a0, %pcrel_lo(pcrel503)(s5)
-	bne a0, s1, label94
-	j label460
-.p2align 2
-label396:
-	auipc s5, %pcrel_hi(array)
-	lw a0, %pcrel_lo(label396)(s5)
-	bne a0, s1, label94
-	blt s9, s4, label80
-	j label388
-.p2align 2
-label421:
-	auipc s5, %pcrel_hi(array)
-	lw a0, %pcrel_lo(label421)(s5)
-	bne a0, s1, label94
-	blt s9, s4, label80
-	j label388
-.p2align 2
-label199:
-	blt s9, s4, label80
-	beq s8, zero, label112
-	bne s7, zero, label79
-	j label113
-.p2align 2
-label205:
-	blt s9, s4, label80
-	beq s8, zero, label112
-	bne s7, zero, label79
-	j label113
-.p2align 2
-label96:
-	mv a0, s9
-	jal putint
-	mv a0, s4
-	jal putch
-	mv s8, s2
-	blt s9, s4, label80
-	beq s2, zero, label112
-	bne s7, zero, label79
-	j label113
-label417:
-	beq s8, zero, label112
-	j label411
-.p2align 2
-label406:
-	bne s7, zero, label79
-	j label113

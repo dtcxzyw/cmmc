@@ -28,6 +28,14 @@ main:
 	cmp r5, #0
 	ble label8
 	mov r3, r5
+	b label2
+.p2align 4
+label41:
+	movw r9, #:lower16:a
+	movt r9, #:upper16:a
+	cmp r3, #0
+	str r7, [r9, r6, lsl #2]
+	ble label8
 .p2align 4
 label2:
 	mla r5, r4, r2, r1
@@ -78,15 +86,7 @@ label2:
 	asr r10, r10, #1
 	sub r10, r9, r10, lsl #1
 	cmp r5, r10
-	bne label6
-	movw r9, #:lower16:a
-	movt r9, #:upper16:a
-	str r7, [r9, r6, lsl #2]
-	cmp r3, #0
-	bgt label2
-	b label8
-.p2align 4
-label6:
+	beq label41
 	and r10, r9, #1
 	eor r11, r5, #1
 	and r9, r9, #-2147483647
@@ -100,9 +100,9 @@ label6:
 	movt r9, #:upper16:a
 	mov r5, r10
 	moveq r5, r8
-	cmp r3, #0
 	add r5, r7, r5
 	str r5, [r9, r6, lsl #2]
+	cmp r3, #0
 	bgt label2
 label8:
 	mov r0, #64

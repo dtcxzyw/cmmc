@@ -40,6 +40,8 @@ label8:
 	ble label47
 	add r2, r2, #16
 	b label8
+label47:
+	add r0, r0, r5, lsl #2
 label3:
 	ldr r2, [r0, #0]
 	add r5, r5, #1
@@ -49,9 +51,6 @@ label3:
 	str r2, [r0, #0]
 	ble label14
 	add r0, r0, #4
-	b label3
-label47:
-	add r0, r0, r5, lsl #2
 	b label3
 label14:
 	pop { r4, r5, r6 }

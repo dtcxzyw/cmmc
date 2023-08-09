@@ -37,6 +37,15 @@ main:
 	addiw a4, t1, -2
 	addiw t0, t1, 1
 	mv a5, a2
+	blt t0, s0, label8
+.p2align 2
+label13:
+	addiw a2, a2, -1
+	blt a2, zero, label81
+	mv t1, a4
+	mv a5, a2
+	addiw t0, a4, 1
+	addiw a4, a4, -2
 	bge t0, s0, label13
 .p2align 2
 label8:
@@ -58,15 +67,6 @@ label8:
 	slliw t2, t1, 1
 	sw t0, 0(t4)
 	addiw t0, t2, 1
-	blt t0, s0, label8
-.p2align 2
-label13:
-	addiw a2, a2, -1
-	blt a2, zero, label81
-	mv t1, a4
-	mv a5, a2
-	addiw t0, a4, 1
-	addiw a4, a4, -2
 	blt t0, s0, label8
 	j label13
 .p2align 2
@@ -153,6 +153,10 @@ label33:
 label93:
 	mv s1, a0
 	mv s2, zero
+	j label24
+.p2align 2
+label27:
+	addi s1, s1, 4
 .p2align 2
 label24:
 	lw a0, 0(s1)
@@ -160,10 +164,7 @@ label24:
 	mv a0, s0
 	jal putch
 	addiw s2, s2, 1
-	bge s2, s0, label27
-	addi s1, s1, 4
-	j label24
-label27:
+	blt s2, s0, label27
 	mv a0, zero
 	ld ra, 0(sp)
 	ld s0, 8(sp)

@@ -141,16 +141,18 @@ main:
 	str r4, [sp, #16]
 	ldr r0, [r6, #0]
 	cmp r0, #0
-	beq label40
+	bne label3
+	b label40
+.p2align 4
+label5:
+	add r6, r6, #4
 .p2align 4
 label3:
 	ldr r0, [r6, #0]
 	bl putch
 	ldr r0, [r6, #4]
 	cmp r0, #0
-	beq label40
-	add r6, r6, #4
-	b label3
+	bne label5
 label40:
 	mov r6, r4
 label6:
@@ -167,6 +169,17 @@ label6:
 	ldr r0, [r9, #0]
 	cmp r0, #0
 	bne label12
+	b label15
+.p2align 4
+label14:
+	add r9, r9, #4
+.p2align 4
+label12:
+	ldr r0, [r9, #0]
+	bl putch
+	ldr r0, [r9, #4]
+	cmp r0, #0
+	bne label14
 label15:
 	movw r9, #:lower16:saY_HeI10_To
 	movt r9, #:upper16:saY_HeI10_To
@@ -182,15 +195,6 @@ label27:
 	beq label16
 	add r9, r9, #4
 	b label27
-.p2align 4
-label12:
-	ldr r0, [r9, #0]
-	bl putch
-	ldr r0, [r9, #4]
-	cmp r0, #0
-	beq label15
-	add r9, r9, #4
-	b label12
 label16:
 	mov r0, #200
 	mla r7, r7, r0, r8
