@@ -80,6 +80,11 @@
       "parent": "1f59ecf03b60013c8fede43a47937e42df1bfca6",
       "time": "2023-07-04 23:09:07 +0800"
     },
+    "12b7535ea9444b8950ed115c80d15b8b3857c94a": {
+      "message": "fix(runtime): use syscall instead of gettid",
+      "parent": "da46b29c365f638fd4cf12f30c97734b42a6d897",
+      "time": "2023-08-10 02:55:11 +0800"
+    },
     "135b238b0776b7504d31c84e4071edb1e760f91c": {
       "message": "feat(transform): replace outer use of loop vars with final value",
       "parent": "48fc6979e4aa331d1f9c9ea955cc0134c53f3938",
@@ -1191,5 +1196,5 @@
       "time": "2023-07-06 01:05:50 +0800"
     }
   },
-  "head": "da46b29c365f638fd4cf12f30c97734b42a6d897"
+  "head": "12b7535ea9444b8950ed115c80d15b8b3857c94a"
 }
