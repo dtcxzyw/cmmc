@@ -29,6 +29,7 @@
 #include <cmmc/Transforms/Hyperparameters.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
+#include <cstdint>
 #include <cstdlib>
 #include <iostream>
 #include <new>
@@ -92,7 +93,7 @@ public:
             std::vector<Block*> insertedBlocks;
             std::unordered_map<Block*, ReplaceMap> replaceMap;
 
-            Block* prev = loop.latch;
+            Block* prev = nullptr;
             // TODO: remove duplicate code
             const auto retarget = [&](Block* block, bool nocheck) {
                 if(nocheck) {
@@ -153,9 +154,11 @@ public:
             };
 
             // super blocks
-            Block* head;
+            Block *head, *scalarHead, *scalarFinal;
 
             {
+                scalarHead = make<Block>(&func);
+                scalarFinal = make<Block>(&func);
                 head = make<Block>(&func);
                 Value* indvar = loop.inductionVar;
                 Value* bound = loop.bound;
@@ -163,6 +166,10 @@ public:
                 constexpr auto header = "super.header"sv;
                 head->setLabel(String::get(header));
                 insertedBlocks.push_back(head);
+                scalarHead->setLabel(String::get("scalar.header"sv));
+                insertedBlocks.push_back(scalarHead);
+                scalarFinal->setLabel(String::get("scalar.final"sv));
+                insertedBlocks.push_back(scalarFinal);
                 for(auto block : cfg.predecessors(loop.latch)) {
                     if(block != loop.latch) {
                         resetTarget(block->getTerminator()->as<BranchInst>(), loop.latch, head);
@@ -186,19 +193,17 @@ public:
 
                 const auto batchEnd = builder.makeOp<BinaryInst>(
                     InstructionID::Add, replace.at(indvar),
-                    ConstantInteger::get(indvar->getType(),
-                                         loop.step * heuristic.unrollBlockSize));  // larger bound to keep one exiting edge
+                    ConstantInteger::get(indvar->getType(), loop.step * heuristic.unrollBlockSize + (loop.step > 0 ? -1 : 1)));
                 replaceMap[head] = std::move(replace);
 
-                const auto batchCond = cond->as<CompareInst>()->clone();
+                const auto batchCond = cond->as<CompareInst>()->clone()->as<CompareInst>();
                 batchCond->insertBefore(head, head->instructions().end());
-                // TODO: batchCond->setOperand(idx, val)
                 batchCond->mutableOperands()[0]->resetValue(batchEnd);
                 batchCond->mutableOperands()[1]->resetValue(bound);
                 builder.setInsertPoint(head, head->instructions().end());
 
                 auto exitProb = 1.0 / (1 + static_cast<double>(loopTripCount) / static_cast<double>(heuristic.unrollBlockSize));
-                builder.makeOp<BranchInst>(batchCond, 1.0 - exitProb, loop.latch /*place holder*/, loop.latch);
+                builder.makeOp<BranchInst>(batchCond, 1.0 - exitProb, loop.latch /*place holder*/, scalarHead);
                 prev = head;
             }
 
@@ -228,6 +233,80 @@ public:
                 }
             }
 
+            // build scalar head
+            {
+                IRBuilder builder{ target, scalarHead };
+                auto& replace = replaceMap.at(head);
+                const auto indVar = replace.at(loop.inductionVar);
+                const auto scalarCond =
+                    builder.makeOp<CompareInst>(InstructionID::ICmp, cond->as<CompareInst>()->getOp(), indVar, loop.bound);
+                builder.makeOp<BranchInst>(scalarCond, 1.0 - 1.0 / static_cast<double>(heuristic.unrollBlockSize), loop.latch,
+                                           scalarFinal);
+            }
+
+            // build scalar final
+            {
+                IRBuilder builder{ target, scalarFinal };
+                auto& replaceHead = replaceMap.at(head);
+                auto& replacePrev = replaceMap.at(prev);
+                for(auto& inst : loop.latch->instructions()) {
+                    bool usedByOuter = false;
+                    for(auto user : inst.users()) {
+                        if(user->getBlock() != loop.latch) {
+                            usedByOuter = true;
+                            break;
+                        }
+                    }
+
+                    if(!usedByOuter)
+                        continue;
+
+                    const auto phi = builder.createPhi(inst.getType());
+                    if(inst.getInstID() == InstructionID::Phi)
+                        phi->addIncoming(scalarHead, replaceHead.at(&inst));
+                    else {
+                        const auto val = replacePrev.at(&inst);
+                        const auto refPhi = head->instructions().front()->as<PhiInst>();
+                        const auto undef = make<UndefinedValue>(val->getType());
+                        const auto headPhi = make<PhiInst>(val->getType());
+                        headPhi->insertBefore(head, head->instructions().begin());
+                        for(auto& [pred, v] : refPhi->incomings()) {
+                            if(pred == prev) {
+                                headPhi->addIncoming(prev, val);
+                            } else {
+                                headPhi->addIncoming(pred, undef);
+                            }
+                        }
+                        phi->addIncoming(scalarHead, headPhi);
+                    }
+                    phi->addIncoming(loop.latch, &inst);
+
+                    for(auto it = inst.users().begin(); it != inst.users().end();) {
+                        auto next = std::next(it);
+                        const auto userBlock = it.ref()->user->getBlock();
+                        if(userBlock != loop.latch && userBlock != scalarFinal) {
+                            it.ref()->resetValue(phi);
+                        }
+                        it = next;
+                    }
+                }
+
+                // fix terminator
+                const auto latchTerminator = loop.latch->getTerminator()->as<BranchInst>();
+                const auto exit = latchTerminator->getFalseTarget();
+                latchTerminator->getFalseTarget() = scalarFinal;
+
+                double prob = 0;
+                for(uint32_t i = 1; i < heuristic.unrollBlockSize; ++i) {
+                    prob += 1.0 - 1.0 / static_cast<double>(heuristic.unrollBlockSize);
+                }
+                prob /= (static_cast<double>(heuristic.unrollBlockSize) - 1.0);
+                latchTerminator->updateBranchProb(prob);
+                builder.makeOp<BranchInst>(exit);
+
+                retargetBlock(exit, loop.latch, scalarFinal);
+            }
+
             // fix phi nodes of the scalar block
             {
                 const auto& replaceHeader = replaceMap.at(head);
@@ -236,17 +315,10 @@ public:
                         const auto phi = inst.as<PhiInst>();
                         const auto headerPhi = replaceHeader.at(&inst)->as<PhiInst>();
                         phi->keepOneIncoming(loop.latch);
-                        phi->addIncoming(head, headerPhi);
+                        phi->addIncoming(scalarHead, headerPhi);
                     } else
                         break;
                 }
-            }
-
-            // fix branch prob of the scalar block
-            {
-                auto scalarTerminator = loop.header->getTerminator()->as<BranchInst>();
-                const auto exitProb = 1.0 / static_cast<double>(heuristic.unrollBlockSize);
-                scalarTerminator->updateBranchProb(1.0 - exitProb);
             }
 
             auto& blocks = func.blocks();

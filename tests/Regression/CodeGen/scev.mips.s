@@ -3,26 +3,26 @@
 .p2align 2
 .globl foo4
 foo4:
-	blez $a1, label24
+	blez $a1, label2
 	nop
-	addiu $t0, $a1, -4
-	blez $t0, label3
+	addiu $t0, $a1, -3
+	blez $t0, label38
 	nop
-	addiu $t1, $a1, -4
-	addiu $t3, $a1, -20
-	addiu $t0, $t1, -16
-	blez $t0, label5
+	addiu $t1, $a1, -3
+	addiu $t3, $a1, -18
+	addiu $t0, $t1, -15
+	blez $t0, label57
 	nop
 	move $t0, $a0
 	move $t2, $zero
 	move $t4, $zero
-	b label13
+	b label26
 	nop
 .p2align 2
-label18:
+label30:
 	addiu $t0, $t0, 64
 .p2align 2
-label13:
+label26:
 	sw $t2, 0($t0)
 	addiu $t5, $t2, 4
 	sw $t5, 4($t0)
@@ -57,51 +57,70 @@ label13:
 	addiu $t4, $t4, 16
 	addiu $t2, $t2, 64
 	subu $t5, $t3, $t4
-	bgtz $t5, label18
+	bgtz $t5, label30
 	nop
-	sll $t0, $t4, 2
+	move $t5, $t2
+	move $t3, $t4
+label14:
+	subu $t0, $t1, $t3
+	blez $t0, label61
+	nop
+	sll $t0, $t3, 2
 	addu $t0, $a0, $t0
-	b label6
-	nop
-label11:
-	addiu $t0, $t0, 16
-label6:
-	sw $t2, 0($t0)
-	addiu $t3, $t2, 4
-	sw $t3, 4($t0)
-	addiu $t3, $t2, 8
-	sw $t3, 8($t0)
-	addiu $t3, $t2, 12
-	sw $t3, 12($t0)
-	addiu $t4, $t4, 4
-	addiu $t2, $t2, 16
-	subu $t3, $t1, $t4
-	bgtz $t3, label11
-	nop
-	sll $t0, $t4, 2
-	addu $a0, $a0, $t0
-	b label19
-	nop
-label23:
-	addiu $a0, $a0, 4
-label19:
-	sw $t2, 0($a0)
-	addiu $t4, $t4, 1
-	addiu $t2, $t2, 4
-	subu $t0, $a1, $t4
-	bgtz $t0, label23
+	move $t2, $t5
+	b label20
 	nop
 label24:
+	addiu $t0, $t0, 16
+label20:
+	sw $t2, 0($t0)
+	addiu $t4, $t2, 4
+	sw $t4, 4($t0)
+	addiu $t4, $t2, 8
+	sw $t4, 8($t0)
+	addiu $t4, $t2, 12
+	sw $t4, 12($t0)
+	addiu $t3, $t3, 4
+	addiu $t2, $t2, 16
+	subu $t4, $t1, $t3
+	bgtz $t4, label24
+	nop
+	move $t0, $t3
+	move $t1, $t2
+label4:
+	subu $t2, $a1, $t0
+	blez $t2, label2
+	nop
+	sll $t2, $t0, 2
+	addu $t2, $a0, $t2
+	b label8
+	nop
+label12:
+	addiu $t2, $t2, 4
+label8:
+	sw $t1, 0($t2)
+	addiu $t0, $t0, 1
+	addiu $t1, $t1, 4
+	subu $t3, $a1, $t0
+	bgtz $t3, label12
+	nop
+label2:
 	jr $ra
 	nop
-label3:
-	move $t2, $zero
-	move $t4, $zero
-	b label19
+label38:
+	move $t0, $zero
+	move $t1, $zero
+	b label4
 	nop
-label5:
-	move $t0, $a0
-	move $t4, $zero
+label57:
+	move $t5, $zero
+	move $t3, $zero
 	move $t2, $zero
-	b label6
+	move $t4, $zero
+	b label14
+	nop
+label61:
+	move $t0, $t4
+	move $t1, $t2
+	b label4
 	nop

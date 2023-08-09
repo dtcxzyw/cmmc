@@ -1,0 +1,13 @@
+void test(int n) {
+    int state = 0;
+    for(int i = 0; i < n; ++i) {
+        if(state == 0) {
+            putint(1);
+            state = 1;
+        }
+        else {
+            putint(0);
+            state = 0;
+        }
+    }
+}

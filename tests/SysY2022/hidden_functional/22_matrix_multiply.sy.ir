@@ -9,8 +9,8 @@ func @main() -> i32 { NoRecurse Entry } {
     i32 %0 = call () -> i32 @getint();
     i32 %1 = call () -> i32 @getint();
     i1 %2 = icmp sgt i32 %1, i32 0;
-    i1 %3 = icmp sgt i32 %1, i32 4;
-    i32 %4 = add i32 %1, i32 -4;
+    i1 %3 = icmp sgt i32 %1, i32 3;
+    i32 %4 = add i32 %1, i32 -3;
     [100 * [100 * i32]]* %5 = ptrcast [100 * [100 * i32]]* @a to [100 * [100 * i32]]*;
     [100 * [100 * i32]]* %6 = ptrcast [100 * [100 * i32]]* @b to [100 * [100 * i32]]*;
     [100 * [100 * i32]]* %7 = ptrcast [100 * [100 * i32]]* @res to [100 * [100 * i32]]*;
@@ -86,7 +86,7 @@ func @main() -> i32 { NoRecurse Entry } {
   ^prebody:
     i32* %40 = getelementptr &([100 * i32]* %25)[i64 0][i32 %33];
     i32 %41 = load i32* %40;
-    cbr i1 %3(prob = 0.941176), ^while.body5, ^while.body6;
+    cbr i1 %3(prob = 0.941176), ^while.body5, ^scalar.header;
   ^b6:
     call (i32) -> void @putch(i32 10);
     i32 %42 = add i32 %35, i32 1;
@@ -133,21 +133,28 @@ func @main() -> i32 { NoRecurse Entry } {
     i32 %77 = add i32 %49, i32 %76;
     i32 %78 = add i32 %48, i32 4;
     i1 %79 = icmp sgt i32 %4, i32 %78;
-    cbr i1 %79(prob = 0.941176), ^while.body5, ^while.body6;
-  ^while.body6 {scalar}:
-    i32 %80 = phi [^prebody, i32 %41] [^while.body5, i32 %77] [^while.body6, i32 %88];
-    i32 %81 = phi [^prebody, i32 0] [^while.body5, i32 %78] [^while.body6, i32 %89];
-    [100 * i32]* %82 = getelementptr &([100 * [100 * i32]]* %6)[i64 0][i32 %81];
-    i32* %83 = getelementptr &([100 * i32]* %82)[i64 0][i32 %33];
-    i32* %84 = getelementptr &([100 * i32]* %26)[i64 0][i32 %81];
-    i32 %85 = load i32* %84;
-    i32 %86 = load i32* %83;
-    i32 %87 = mul i32 %85, i32 %86;
-    i32 %88 = add i32 %80, i32 %87;
-    i32 %89 = add i32 %81, i32 1;
-    i1 %90 = icmp sgt i32 %1, i32 %89;
-    cbr i1 %90(prob = 0.75), ^while.body6, ^postbody;
-  ^postbody:
-    store i32* %40 with i32 %88;
+    cbr i1 %79(prob = 0.941176), ^while.body5, ^scalar.header;
+  ^scalar.header:
+    i32 %80 = phi [^prebody, i32 0] [^while.body5, i32 %78];
+    i32 %81 = phi [^prebody, i32 %41] [^while.body5, i32 %77];
+    i32 %82 = phi [^prebody, i32 undef] [^while.body5, i32 %77];
+    i1 %83 = icmp sgt i32 %1, i32 %80;
+    cbr i1 %83(prob = 0.75), ^while.body6, ^scalar.final;
+  ^scalar.final:
+    i32 %84 = phi [^scalar.header, i32 %82] [^while.body6, i32 %93];
+    store i32* %40 with i32 %84;
     ubr ^b5;
+  ^while.body6 {scalar}:
+    i32 %85 = phi [^scalar.header, i32 %81] [^while.body6, i32 %93];
+    i32 %86 = phi [^scalar.header, i32 %80] [^while.body6, i32 %94];
+    [100 * i32]* %87 = getelementptr &([100 * [100 * i32]]* %6)[i64 0][i32 %86];
+    i32* %88 = getelementptr &([100 * i32]* %87)[i64 0][i32 %33];
+    i32* %89 = getelementptr &([100 * i32]* %26)[i64 0][i32 %86];
+    i32 %90 = load i32* %89;
+    i32 %91 = load i32* %88;
+    i32 %92 = mul i32 %90, i32 %91;
+    i32 %93 = add i32 %85, i32 %92;
+    i32 %94 = add i32 %86, i32 1;
+    i1 %95 = icmp sgt i32 %1, i32 %94;
+    cbr i1 %95(prob = 0.75), ^while.body6, ^scalar.final;
 }

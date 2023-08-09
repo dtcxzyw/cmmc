@@ -1,0 +1,24 @@
+internal func @putint(i32) -> void { NoMemoryRead NoMemoryWrite };
+func @test(i32 %n) -> void { NoMemoryRead NoMemoryWrite NoRecurse } {
+  ^entry:
+    i1 %0 = icmp sgt i32 %n, i32 0;
+    cbr i1 %0(prob = 0.984615), ^for.body, ^b;
+  ^for.body:
+    i32 %1 = phi [^entry, i32 0] [^for.iteration, i32 %5];
+    i32 %2 = phi [^entry, i32 0] [^for.iteration, i32 %4];
+    i1 %3 = icmp eq i32 %2, i32 0;
+    cbr i1 %3(prob = 0.5), ^if.then, ^if.else;
+  ^b:
+    ret;
+  ^if.then:
+    call (i32) -> void @putint(i32 1);
+    ubr ^for.iteration;
+  ^if.else:
+    call (i32) -> void @putint(i32 0);
+    ubr ^for.iteration;
+  ^for.iteration:
+    i32 %4 = phi [^if.then, i32 1] [^if.else, i32 0];
+    i32 %5 = add i32 %1, i32 1;
+    i1 %6 = icmp sgt i32 %n, i32 %5;
+    cbr i1 %6(prob = 0.984615), ^for.body, ^b;
+}

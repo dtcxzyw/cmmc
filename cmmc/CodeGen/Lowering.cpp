@@ -163,7 +163,8 @@ MIROperand LoweringContext::mapOperand(Value* operand) {
     // NOTICE: loaded constant cannot be cached
     const auto operandType = getOperandType(operand->getType(), mPtrType);
     if(operand->getType()->isFloatingPoint()) {
-        const auto fpv = operand->as<ConstantFloatingPoint>();
+        const auto fpv =
+            operand->isUndefined() ? make<ConstantFloatingPoint>(operand->getType(), 0.0) : operand->as<ConstantFloatingPoint>();
 
         auto& blockCache = mFPLoadedConstantCache[getCurrentBasicBlock()];
         if(auto it = blockCache.find(fpv); it != blockCache.cend())

@@ -1,0 +1,24 @@
+int reduce_sum2d(int A[1024][1024], int n, int m) {
+    int sum = 0;
+    for(int i = 0; i < n; ++i)
+        for(int j = 0; j < m; ++j)
+            sum += A[i][j];
+    return sum;
+}
+void memset_2d(int A[1024][1024], int n, int m) {
+    for(int i = 0; i < n; ++i)
+        for(int j = 0; j < m; ++j)
+            A[i][j] = 0;
+}
+int reduce_sum1d_static(int a[]) {
+    int sum = 0;
+    for(int i = 0; i < 1024; ++i)
+        sum += a[i];
+    return sum;
+}
+int reduce_sum1d_dynamic(int a[], int n) {
+    int sum = 0;
+    for(int i = 0; i < n; ++i)
+        sum += a[i];
+    return sum;
+}

@@ -12,11 +12,11 @@ a:
 radixSort:
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
 	mov r5, #0
+	sub sp, sp, #220
 	mov r8, r0
 	mov r7, r1
-	mov r6, r2
-	sub sp, sp, #220
 	str r2, [sp, #144]
+	mov r6, r2
 	str r0, [sp, #0]
 	add r0, r2, #1
 	str r1, [sp, #8]
@@ -76,7 +76,7 @@ radixSort:
 	str r5, [sp, #204]
 	str r5, [sp, #208]
 	str r5, [sp, #212]
-	bne label38
+	bne label2
 	ldr r8, [sp, #0]
 	mov r2, #0
 	cmp r8, #8
@@ -86,14 +86,14 @@ radixSort:
 	str r6, [sp, #4]
 	ldr r6, [sp, #144]
 	cmp r6, r3
-	bge label11
+	bge label4
 	ldr r7, [sp, #8]
 	add r4, r7, r6, lsl #2
 	ldr r7, [r4, #0]
 	cmp r8, #0
-	ble label8
+	ble label36
 .p2align 4
-label7:
+label35:
 	asr r8, r7, #31
 	rsb r9, r0, #32
 	cmp r2, #0
@@ -102,7 +102,7 @@ label7:
 	mov r7, #0
 	movne r7, r8
 .p2align 4
-label8:
+label36:
 	and r7, r7, #15
 	add r8, sp, #152
 	add r6, r6, #1
@@ -111,14 +111,14 @@ label8:
 	ldr r8, [r7, #0]
 	add r8, r8, #1
 	str r8, [r7, #0]
-	ble label11
+	ble label4
 	add r4, r4, #4
 	ldr r7, [r4, #0]
 	ldr r8, [sp, #0]
 	cmp r8, #0
-	bgt label7
-	b label8
-label11:
+	bgt label35
+	b label36
+label4:
 	ldr r6, [sp, #144]
 	str r6, [sp, #16]
 	ldr r3, [sp, #152]
@@ -188,29 +188,29 @@ label11:
 	str r3, [sp, #140]
 	mov r3, r5
 	cmp r5, #16
-	blt label16
-	b label207
+	blt label9
+	b label187
 .p2align 4
 label351:
 	add r3, r3, #1
 	add r4, r4, #4
 	add r6, r6, #4
 	cmp r3, #16
-	bge label207
+	bge label187
 .p2align 4
-label16:
+label9:
 	ldr r8, [r4, #0]
 	ldr r7, [r6, #0]
 	cmp r8, r7
-	blt label19
+	blt label12
 	add r3, r3, #1
 	add r4, r4, #4
 	add r6, r6, #4
 	cmp r3, #16
-	blt label16
-	b label207
+	blt label9
+	b label187
 .p2align 4
-label345:
+label344:
 	asr r8, r9, #31
 	add r8, r9, r8, lsr #28
 	asr r8, r8, #4
@@ -218,7 +218,7 @@ label345:
 	cmp r3, r7
 	beq label352
 .p2align 4
-label25:
+label18:
 	add r8, r1, r7, lsl #2
 	ldr r10, [r8, #0]
 	ldr r7, [sp, #8]
@@ -230,9 +230,9 @@ label25:
 	ldr r8, [sp, #0]
 	mov r9, r7
 	cmp r8, #0
-	ble label345
+	ble label344
 .p2align 4
-label26:
+label19:
 	asr r7, r9, #31
 	rsb r8, r0, #32
 	cmp r2, #0
@@ -246,7 +246,7 @@ label26:
 	asr r8, r8, #4
 	sub r7, r7, r8, lsl #4
 	cmp r3, r7
-	bne label25
+	bne label18
 	ldr r8, [r4, #0]
 	ldr r7, [sp, #8]
 	str r9, [r7, r8, lsl #2]
@@ -256,18 +256,18 @@ label26:
 	cmp r8, r7
 	bge label351
 .p2align 4
-label19:
+label12:
 	ldr r7, [sp, #8]
 	ldr r9, [r7, r8, lsl #2]
 	ldr r8, [sp, #0]
 	cmp r8, #0
-	bgt label26
+	bgt label19
 	asr r8, r9, #31
 	add r8, r9, r8, lsr #28
 	asr r8, r8, #4
 	sub r7, r9, r8, lsl #4
 	cmp r3, r7
-	bne label25
+	bne label18
 	ldr r8, [r4, #0]
 	ldr r7, [sp, #8]
 	str r9, [r7, r8, lsl #2]
@@ -275,9 +275,9 @@ label19:
 	str r8, [r4, #0]
 	ldr r7, [r6, #0]
 	cmp r8, r7
-	blt label19
-	b label344
-label207:
+	blt label12
+	b label343
+label187:
 	ldr r6, [sp, #144]
 	mov r4, r1
 	str r6, [sp, #16]
@@ -285,8 +285,8 @@ label207:
 	add r0, r6, r0
 	str r0, [sp, #80]
 	cmp r5, #0
-	ble label32
-label33:
+	ble label25
+label26:
 	add r6, sp, #80
 	add r8, sp, #152
 	add r0, r6, r5, lsl #2
@@ -296,7 +296,7 @@ label33:
 	add r3, r2, r1
 	str r3, [r0, #0]
 .p2align 4
-label34:
+label27:
 	ldr r7, [sp, #8]
 	ldr r6, [sp, #4]
 	mov r0, r6
@@ -304,16 +304,16 @@ label34:
 	bl radixSort
 	add r5, r5, #1
 	cmp r5, #16
-	bge label38
+	bge label2
 	add r4, r4, #4
 	cmp r5, #0
-	bgt label33
-label32:
+	bgt label26
+label25:
 	ldr r2, [r4, #0]
 	add r6, sp, #80
 	ldr r3, [r6, r5, lsl #2]
-	b label34
-label38:
+	b label27
+label2:
 	add sp, sp, #220
 	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
 .p2align 4
@@ -325,35 +325,35 @@ label352:
 	str r8, [r4, #0]
 	ldr r7, [r6, #0]
 	cmp r8, r7
-	blt label19
-label344:
+	blt label12
+label343:
 	add r3, r3, #1
 	add r4, r4, #4
 	add r6, r6, #4
 	cmp r3, #16
-	blt label16
-	b label207
+	blt label9
+	b label187
 .p2align 4
 .globl main
 main:
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
-	movw r4, #:lower16:a
-	movt r4, #:upper16:a
+	movw r5, #:lower16:a
+	movt r5, #:upper16:a
 	sub sp, sp, #4
-	mov r0, r4
+	mov r0, r5
 	bl getarray
-	mov r5, r0
+	mov r4, r0
 	mov r0, #90
 	bl _sysy_starttime
 	mov r2, #0
-	mov r1, r4
+	mov r1, r5
 	mov r0, #8
-	mov r3, r5
+	mov r3, r4
 	bl radixSort
-	cmp r5, #4
-	sub r1, r5, #4
-	ble label386
-	mov r0, r4
+	cmp r4, #3
+	sub r1, r4, #3
+	ble label390
+	mov r0, r5
 	mov r3, #0
 	mov r2, r3
 .p2align 4
@@ -380,29 +380,32 @@ label368:
 	mls r3, r10, r3, r9
 	mla r3, r7, r3, r8
 	add r2, r2, r3
-	ble label372
+	ble label418
 	add r0, r0, #16
 	mov r3, r6
 	b label368
-label372:
-	add r4, r4, r6, lsl #2
-.p2align 4
-label374:
-	ldr r0, [r4, #0]
-	add r1, r6, #2
-	sdiv r3, r0, r1
-	mls r0, r3, r1, r0
-	mla r2, r6, r0, r2
+label418:
+	mov r0, r2
+label373:
+	cmp r4, r6
+	ble label423
+	add r1, r5, r6, lsl #2
+label378:
+	ldr r2, [r1, #0]
+	add r3, r6, #2
+	sdiv r5, r2, r3
+	mls r2, r5, r3, r2
+	mla r0, r6, r2, r0
 	add r6, r6, #1
-	cmp r5, r6
-	ble label379
-	add r4, r4, #4
-	b label374
-label379:
-	cmp r2, #0
-	mov r4, r2
+	cmp r4, r6
+	ble label383
+	add r1, r1, #4
+	b label378
+label383:
+	cmp r0, #0
+	mov r4, r0
+	rsbmi r4, r0, #0
 	mov r0, #102
-	rsbmi r4, r2, #0
 	bl _sysy_stoptime
 	mov r0, r4
 	bl putint
@@ -411,7 +414,11 @@ label379:
 	add sp, sp, #4
 	mov r0, #0
 	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
-label386:
-	mov r2, #0
-	mov r6, r2
-	b label374
+label423:
+	mov r0, r2
+	b label383
+label390:
+	mov r6, #0
+	mov r2, r6
+	mov r0, r6
+	b label373

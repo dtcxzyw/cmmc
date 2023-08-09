@@ -3,9 +3,9 @@ func @test(i32* %x, i32 %n) -> void { NoRecurse } {
     i1 %0 = icmp sgt i32 %n, i32 1;
     cbr i1 %0(prob = 0.984615), ^super.header, ^b;
   ^super.header:
-    i32 %1 = add i32 %n, i32 -4;
-    i1 %2 = icmp sgt i32 %n, i32 5;
-    cbr i1 %2(prob = 0.941176), ^for.body, ^for.body1;
+    i32 %1 = add i32 %n, i32 -3;
+    i1 %2 = icmp sgt i32 %n, i32 4;
+    cbr i1 %2(prob = 0.941176), ^for.body, ^scalar.header;
   ^b:
     ret;
   ^for.body:
@@ -30,16 +30,20 @@ func @test(i32* %x, i32 %n) -> void { NoRecurse } {
     store i32* %15 with i32 %17;
     i32 %18 = add i32 %3, i32 4;
     i1 %19 = icmp sgt i32 %1, i32 %18;
-    cbr i1 %19(prob = 0.941176), ^for.body, ^for.body1;
+    cbr i1 %19(prob = 0.941176), ^for.body, ^scalar.header;
+  ^scalar.header:
+    i32 %20 = phi [^super.header, i32 1] [^for.body, i32 %18];
+    i1 %21 = icmp sgt i32 %n, i32 %20;
+    cbr i1 %21(prob = 0.75), ^for.body1, ^b;
   ^for.body1 {scalar}:
-    i32 %20 = phi [^super.header, i32 1] [^for.body, i32 %18] [^for.body1, i32 %26];
-    i32* %21 = getelementptr &(i32* %x)[i32 %20];
-    i32 %22 = load i32* %21;
-    i32* %23 = getelementptr &(i32* %21)[i64 -1];
+    i32 %22 = phi [^scalar.header, i32 %20] [^for.body1, i32 %28];
+    i32* %23 = getelementptr &(i32* %x)[i32 %22];
     i32 %24 = load i32* %23;
-    i32 %25 = add i32 %22, i32 %24;
-    store i32* %21 with i32 %25;
-    i32 %26 = add i32 %20, i32 1;
-    i1 %27 = icmp sgt i32 %n, i32 %26;
-    cbr i1 %27(prob = 0.75), ^for.body1, ^b;
+    i32* %25 = getelementptr &(i32* %23)[i64 -1];
+    i32 %26 = load i32* %25;
+    i32 %27 = add i32 %24, i32 %26;
+    store i32* %23 with i32 %27;
+    i32 %28 = add i32 %22, i32 1;
+    i1 %29 = icmp sgt i32 %n, i32 %28;
+    cbr i1 %29(prob = 0.75), ^for.body1, ^b;
 }
