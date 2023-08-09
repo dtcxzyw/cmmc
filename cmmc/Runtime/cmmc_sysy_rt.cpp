@@ -76,7 +76,7 @@ namespace {
         {
             cpu_set_t set;
             CPU_SET(worker.core, &set);
-            auto pid = gettid();
+            auto pid = static_cast<pid_t>(syscall(SYS_gettid));
             sched_setaffinity(pid, sizeof(set), &set);
         }
         while(worker.run) {
