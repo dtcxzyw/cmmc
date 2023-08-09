@@ -127,11 +127,12 @@ saY_HeI10_To:
 .p2align 4
 .globl main
 main:
+	@ stack usage: CalleeArg[0] Local[20] RegSpill[0] CalleeSaved[0]
 	push { r4, r5, r6, r7, r8, r9, lr }
-	mov r4, #0
 	movw r6, #:lower16:__HELLO
 	movt r6, #:upper16:__HELLO
 	mov r0, #10
+	mov r4, #0
 	sub sp, sp, #28
 	str r0, [sp, #0]
 	mov r5, sp
@@ -141,19 +142,17 @@ main:
 	str r4, [sp, #16]
 	ldr r0, [r6, #0]
 	cmp r0, #0
-	bne label3
-	b label40
-.p2align 4
-label5:
-	add r6, r6, #4
+	beq label41
 .p2align 4
 label3:
 	ldr r0, [r6, #0]
 	bl putch
 	ldr r0, [r6, #4]
 	cmp r0, #0
-	bne label5
-label40:
+	beq label41
+	add r6, r6, #4
+	b label3
+label41:
 	mov r6, r4
 label6:
 	mov r0, #6
@@ -161,70 +160,8 @@ label6:
 	add r1, r0, r0, lsl #1
 	sub r7, r6, r1, lsl #1
 	cmp r0, r7
-	beq label8
-	movw r8, #:lower16:N4__mE___
-	movt r8, #:upper16:N4__mE___
-	mov r1, #200
-	mla r9, r0, r1, r8
-	ldr r0, [r9, #0]
-	cmp r0, #0
-	bne label12
-	b label15
-.p2align 4
-label14:
-	add r9, r9, #4
-.p2align 4
-label12:
-	ldr r0, [r9, #0]
-	bl putch
-	ldr r0, [r9, #4]
-	cmp r0, #0
-	bne label14
-label15:
-	movw r9, #:lower16:saY_HeI10_To
-	movt r9, #:upper16:saY_HeI10_To
-	ldr r0, [r9, #0]
-	cmp r0, #0
-	beq label16
-.p2align 4
-label27:
-	ldr r0, [r9, #0]
-	bl putch
-	ldr r0, [r9, #4]
-	cmp r0, #0
-	beq label16
-	add r9, r9, #4
-	b label27
-label16:
-	mov r0, #200
-	mla r7, r7, r0, r8
-	ldr r0, [r7, #0]
-	cmp r0, #0
-	beq label21
-.p2align 4
-label18:
-	ldr r0, [r7, #0]
-	bl putch
-	ldr r0, [r7, #4]
-	cmp r0, #0
-	beq label21
-	add r7, r7, #4
-	b label18
-label21:
-	ldr r0, [sp, #0]
-	cmp r0, #0
-	beq label8
-	mov r7, r5
-.p2align 4
-label23:
-	ldr r0, [r7, #0]
-	bl putch
-	ldr r0, [r7, #4]
-	cmp r0, #0
-	beq label8
-	add r7, r7, #4
-	b label23
-label8:
+	bne label8
+label28:
 	add r0, r6, r6, lsl #4
 	add r0, r0, #23
 	asr r1, r0, #31
@@ -236,3 +173,73 @@ label8:
 	mov r0, r4
 	add sp, sp, #28
 	pop { r4, r5, r6, r7, r8, r9, pc }
+label8:
+	movw r8, #:lower16:N4__mE___
+	movt r8, #:upper16:N4__mE___
+	mov r1, #200
+	mla r9, r0, r1, r8
+	ldr r0, [r9, #0]
+	cmp r0, #0
+	bne label10
+	b label13
+.p2align 4
+label12:
+	add r9, r9, #4
+.p2align 4
+label10:
+	ldr r0, [r9, #0]
+	bl putch
+	ldr r0, [r9, #4]
+	cmp r0, #0
+	bne label12
+label13:
+	movw r9, #:lower16:saY_HeI10_To
+	movt r9, #:upper16:saY_HeI10_To
+	ldr r0, [r9, #0]
+	cmp r0, #0
+	bne label25
+	b label14
+.p2align 4
+label27:
+	add r9, r9, #4
+.p2align 4
+label25:
+	ldr r0, [r9, #0]
+	bl putch
+	ldr r0, [r9, #4]
+	cmp r0, #0
+	bne label27
+label14:
+	mov r0, #200
+	mla r7, r7, r0, r8
+	ldr r0, [r7, #0]
+	cmp r0, #0
+	bne label16
+	b label19
+.p2align 4
+label18:
+	add r7, r7, #4
+.p2align 4
+label16:
+	ldr r0, [r7, #0]
+	bl putch
+	ldr r0, [r7, #4]
+	cmp r0, #0
+	bne label18
+label19:
+	ldr r0, [sp, #0]
+	cmp r0, #0
+	beq label28
+	mov r7, r5
+	b label21
+.p2align 4
+label23:
+	add r7, r7, #4
+.p2align 4
+label21:
+	ldr r0, [r7, #0]
+	bl putch
+	ldr r0, [r7, #4]
+	cmp r0, #0
+	bne label23
+	b label28

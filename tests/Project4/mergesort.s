@@ -165,10 +165,10 @@ label309:
 	sll $t0, $s2, 2
 	addu $t0, $s4, $t0
 label38:
-	lw $t1, 0($t0)
-	sll $t2, $s2, 2
-	addu $t2, $s0, $t2
-	sw $t1, 0($t2)
+	sll $t1, $s2, 2
+	addu $t1, $s0, $t1
+	lw $t2, 0($t0)
+	sw $t2, 0($t1)
 	addiu $s2, $s2, 1
 	beq $s1, $s2, label64
 	nop
@@ -322,10 +322,10 @@ label306:
 label19:
 	addiu $t0, $t0, 4
 label16:
-	lw $t2, 0($t0)
-	sll $t3, $t1, 2
-	addu $t3, $s0, $t3
-	sw $t2, 0($t3)
+	sll $t2, $t1, 2
+	addu $t2, $s0, $t2
+	lw $t3, 0($t0)
+	sw $t3, 0($t2)
 	addiu $t1, $t1, 1
 	bne $s3, $t1, label19
 	nop
@@ -340,10 +340,10 @@ label312:
 label61:
 	addiu $t0, $t0, 4
 label58:
-	lw $t2, 0($t0)
-	sll $t3, $t1, 2
-	addu $t3, $s0, $t3
-	sw $t2, 0($t3)
+	sll $t2, $t1, 2
+	addu $t2, $s0, $t2
+	lw $t3, 0($t0)
+	sw $t3, 0($t2)
 	addiu $t1, $t1, 1
 	bne $s1, $t1, label61
 	nop
@@ -384,6 +384,7 @@ label298:
 	nop
 .globl main
 main:
+	# stack usage: CalleeArg[0] Local[800] RegSpill[0] CalleeSaved[4]
 	addiu $sp, $sp, -824
 	sw $ra, 16($sp)
 	addiu $a1, $sp, 424

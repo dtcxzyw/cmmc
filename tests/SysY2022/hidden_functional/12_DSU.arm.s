@@ -213,15 +213,16 @@ label161:
 	cmp r5, #0
 	ble label284
 	add r0, r4, #4
-	mov r2, #1
+	mov r3, #1
 	b label215
 .p2align 4
 label218:
 	add r0, r0, #4
+	mov r3, r2
 .p2align 4
 label215:
-	str r2, [r0, #0]
-	add r2, r2, #1
+	add r2, r3, #1
+	str r3, [r0, #0]
 	cmp r5, r2
 	bge label218
 label284:

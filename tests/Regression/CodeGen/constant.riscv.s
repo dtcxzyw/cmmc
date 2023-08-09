@@ -18,10 +18,10 @@ cse_imm:
 .p2align 2
 .globl cse_global
 cse_global:
-pcrel24:
+pcrel25:
 	auipc a2, %pcrel_hi(x)
-	lw a3, %pcrel_lo(pcrel24)(a2)
-	addi a1, a2, %pcrel_lo(pcrel24)
+	lw a3, %pcrel_lo(pcrel25)(a2)
+	addi a1, a2, %pcrel_lo(pcrel25)
 	lw a4, 4(a1)
 	addw a0, a3, a4
 	ret

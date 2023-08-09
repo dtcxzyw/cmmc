@@ -124,6 +124,7 @@ saY_HeI10_To:
 .p2align 2
 .globl main
 main:
+	# stack usage: CalleeArg[0] Local[20] RegSpill[0] CalleeSaved[48]
 	addi sp, sp, -72
 	li a1, 10
 	sd ra, 0(sp)
@@ -135,22 +136,22 @@ main:
 	sd s3, 32(sp)
 	sd s4, 40(sp)
 	sd a0, 48(sp)
-pcrel166:
+pcrel165:
 	auipc a0, %pcrel_hi(__HELLO)
 	sd zero, 56(sp)
-	addi s2, a0, %pcrel_lo(pcrel166)
+	addi s2, a0, %pcrel_lo(pcrel165)
 	sw zero, 64(sp)
-	lw a1, %pcrel_lo(pcrel166)(a0)
-	beq a1, zero, label40
+	lw a1, %pcrel_lo(pcrel165)(a0)
+	beq a1, zero, label41
 .p2align 2
 label3:
 	lw a0, 0(s2)
 	jal putch
 	lw a1, 4(s2)
-	beq a1, zero, label40
+	beq a1, zero, label41
 	addi s2, s2, 4
 	j label3
-label40:
+label41:
 	mv s1, zero
 label6:
 	lui a3, 174763
@@ -163,14 +164,14 @@ label6:
 	add a0, a3, a2
 	bne a0, s2, label8
 label28:
-	slliw a3, s1, 4
-	addw a1, a3, s1
+	slliw a2, s1, 4
+	addw a1, a2, s1
 	addiw a0, a1, 23
-	slli a2, a0, 1
-	srli a3, a2, 59
+	slli a4, a0, 1
+	srli a3, a4, 59
 	add a1, a0, a3
-	andi a4, a1, -32
-	subw s1, a0, a4
+	andi a2, a1, -32
+	subw s1, a0, a2
 	bne s1, zero, label6
 	mv a0, zero
 	ld ra, 0(sp)
@@ -188,54 +189,55 @@ label8:
 	mul a1, a0, a3
 	add s4, s3, a1
 	lw a2, 0(s4)
-	beq a2, zero, label13
+	bne a2, zero, label10
+	j label13
+.p2align 2
+label12:
+	addi s4, s4, 4
 .p2align 2
 label10:
 	lw a0, 0(s4)
 	jal putch
 	lw a1, 4(s4)
-	beq a1, zero, label13
-	addi s4, s4, 4
-	j label10
+	bne a1, zero, label12
 label13:
 	auipc a0, %pcrel_hi(saY_HeI10_To)
 	lw a1, %pcrel_lo(label13)(a0)
 	addi s4, a0, %pcrel_lo(label13)
-	beq a1, zero, label14
+	bne a1, zero, label15
+	j label18
 .p2align 2
-label25:
+label17:
+	addi s4, s4, 4
+.p2align 2
+label15:
 	lw a0, 0(s4)
 	jal putch
 	lw a1, 4(s4)
-	beq a1, zero, label14
-	addi s4, s4, 4
-	j label25
-label14:
+	bne a1, zero, label17
+label18:
 	li a2, 200
 	mul a0, s2, a2
 	add s2, s3, a0
 	lw a1, 0(s2)
-	beq a1, zero, label15
+	beq a1, zero, label23
 .p2align 2
-label21:
+label20:
 	lw a0, 0(s2)
 	jal putch
 	lw a1, 4(s2)
-	beq a1, zero, label15
+	beq a1, zero, label23
 	addi s2, s2, 4
-	j label21
-label15:
+	j label20
+label23:
 	lw a0, 48(sp)
 	beq a0, zero, label28
 	mv s2, s0
-	j label17
 .p2align 2
-label19:
-	addi s2, s2, 4
-.p2align 2
-label17:
+label25:
 	lw a0, 0(s2)
 	jal putch
 	lw a1, 4(s2)
-	bne a1, zero, label19
-	j label28
+	beq a1, zero, label28
+	addi s2, s2, 4
+	j label25

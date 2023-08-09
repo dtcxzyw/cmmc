@@ -93,6 +93,7 @@ public:
     virtual void redirectBranch(MIRInst& inst, MIRBasicBlock* target) const;
     virtual MIRInst emitGoto(MIRBasicBlock* target) const = 0;
     virtual void inverseBranch(MIRInst& inst, MIRBasicBlock* newTarget) const = 0;
+    [[nodiscard]] virtual std::pair<intmax_t, intmax_t> getAddressingImmRange() const = 0;
 };
 
 bool checkISASpecificOperands(const MIRInst& inst, const CodeGenContext& ctx, uint32_t count);

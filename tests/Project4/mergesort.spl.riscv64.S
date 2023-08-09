@@ -144,11 +144,11 @@ label23:
 	bne t1, zero, label43
 	beq s5, s3, label295
 label42:
-	sh2add a5, a2, s0
+	sh2add a4, a2, s0
 	addiw a1, a1, 1
 	addiw a2, a2, 1
-	lw a4, 0(a5)
-	sw a4, 0(a0)
+	lw a5, 0(a4)
+	sw a5, 0(a0)
 	beq s1, a1, label308
 label39:
 	addi a0, a0, 4
@@ -174,10 +174,10 @@ label308:
 	sh2add a0, s3, s4
 	mv a1, s3
 label35:
-	lw a2, 0(a0)
-	sh2add a3, a1, s0
+	sh2add a2, a1, s0
+	lw a3, 0(a0)
 	addiw a1, a1, 1
-	sw a2, 0(a3)
+	sw a3, 0(a2)
 	beq s1, a1, label44
 	addi a0, a0, 4
 	j label35
@@ -196,26 +196,26 @@ label44:
 	mv a1, s2
 	mv a2, s2
 	mv a3, s3
-	xor t0, s3, s2
-	xor t1, s1, s3
-	sltu a4, zero, t0
-	sltu a5, zero, t1
-	and t0, a4, a5
-	bne t0, zero, label51
+	xor t1, s3, s2
+	xor t0, s1, s3
+	sltu a4, zero, t1
+	sltu a5, zero, t0
+	and t1, a4, a5
+	bne t1, zero, label51
 	bne s3, s2, label52
-	sh2add a4, s3, s0
+	sh2add a5, s3, s0
 	addiw a1, s2, 1
 	addiw a3, s3, 1
-	lw a5, 0(a4)
-	sw a5, 0(a0)
+	lw a4, 0(a5)
+	sw a4, 0(a0)
 	bne s1, a1, label56
 	j label310
 label51:
-	sh2add t1, a2, s0
-	sh2add a5, a3, s0
-	lw a4, 0(t1)
-	lw t0, 0(a5)
-	bge a4, t0, label208
+	sh2add t0, a2, s0
+	sh2add t1, a3, s0
+	lw a4, 0(t0)
+	lw a5, 0(t1)
+	bge a4, a5, label208
 label52:
 	sh2add a5, a2, s0
 	addiw a2, a2, 1
@@ -225,18 +225,18 @@ label52:
 	beq s1, a1, label310
 label56:
 	addi a0, a0, 4
-	xor t0, s3, a2
-	xor t1, s1, a3
-	sltu a4, zero, t0
-	sltu a5, zero, t1
-	and t0, a4, a5
-	bne t0, zero, label51
+	xor t1, s3, a2
+	xor t0, s1, a3
+	sltu a4, zero, t1
+	sltu a5, zero, t0
+	and t1, a4, a5
+	bne t1, zero, label51
 	bne s3, a2, label52
-	sh2add a4, a3, s0
+	sh2add a5, a3, s0
 	addiw a1, a1, 1
 	addiw a3, a3, 1
-	lw a5, 0(a4)
-	sw a5, 0(a0)
+	lw a4, 0(a5)
+	sw a4, 0(a0)
 	bne s1, a1, label56
 label310:
 	sh2add a0, s2, s4
@@ -244,10 +244,10 @@ label310:
 label61:
 	addi a0, a0, 4
 label58:
-	lw a1, 0(a0)
-	sh2add a2, s2, s0
+	sh2add a1, s2, s0
+	lw a2, 0(a0)
 	addiw s2, s2, 1
-	sw a1, 0(a2)
+	sw a2, 0(a1)
 	bne s1, s2, label61
 	j label64
 label305:
@@ -257,18 +257,18 @@ label305:
 label19:
 	addi a0, a0, 4
 label16:
-	lw a2, 0(a0)
-	sh2add a3, a1, s0
+	sh2add a2, a1, s0
+	lw a3, 0(a0)
 	addiw a1, a1, 1
-	sw a2, 0(a3)
+	sw a3, 0(a2)
 	bne s3, a1, label19
 	j label23
 label208:
-	sh2add a4, a3, s0
+	sh2add a5, a3, s0
 	addiw a1, a1, 1
 	addiw a3, a3, 1
-	lw a5, 0(a4)
-	sw a5, 0(a0)
+	lw a4, 0(a5)
+	sw a4, 0(a0)
 	bne s1, a1, label56
 	j label310
 label307:
@@ -289,6 +289,7 @@ label295:
 	j label308
 .globl main
 main:
+	# stack usage: CalleeArg[0] Local[800] RegSpill[0] CalleeSaved[8]
 	addi sp, sp, -808
 	addi t3, sp, 8
 	addi a4, sp, 408

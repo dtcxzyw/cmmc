@@ -231,13 +231,14 @@ public:
                 out << ".arm" << std::endl;
                 // out << ".thumb" << std::endl;
                 out << ".fpu vfpv4" << std::endl;
-            });
+            },
+            '@');
     }
     void transformModuleBeforeCodeGen(Module& module, AnalysisPassManager& analysis) const override {
         PassManager<Module> modulePassManager;
         auto perFunc = std::make_shared<PassManager<Function>>();
-        for(auto& pass : PassRegistry::get().collectFunctionPass(
-                { "SCEVGEP2Phi", "DuplicateGEP", "DuplicateCmp", "SDivWithPowerOf2", "NoSideEffectEliminate" }))
+        for(auto& pass : PassRegistry::get().collectFunctionPass({ "CommonBaseOpt", "SCEVGEP2Phi", "DuplicateGEP", "DuplicateCmp",
+                                                                   "SDivWithPowerOf2", "NoSideEffectEliminate", "InstReorder" }))
             perFunc->addPass(pass);
         modulePassManager.addPass(createWrapper(std::move(perFunc)));
         modulePassManager.run(module, analysis);

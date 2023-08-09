@@ -8,6 +8,7 @@ __cmmc_fp_constant_pool:
 .p2align 2
 .globl main
 main:
+	# stack usage: CalleeArg[0] Local[40] RegSpill[0] CalleeSaved[80]
 	addi sp, sp, -120
 	li a0, 111
 	sd ra, 0(sp)
@@ -90,9 +91,9 @@ main:
 	li s7, 1
 	mv s1, s0
 	mv s2, a0
-pcrel73:
+pcrel74:
 	auipc a0, %pcrel_hi(__cmmc_fp_constant_pool)
-	addi s3, a0, %pcrel_lo(pcrel73)
+	addi s3, a0, %pcrel_lo(pcrel74)
 	lui a0, 244141
 	addiw s6, a0, -1536
 .p2align 2

@@ -4,14 +4,15 @@
 .p2align 2
 .globl main
 main:
+	# stack usage: CalleeArg[0] Local[64] RegSpill[176] CalleeSaved[104]
 	addi sp, sp, -344
 	sd ra, 0(sp)
 	sd s0, 8(sp)
 	sd s5, 16(sp)
-	addi s0, sp, 240
-	sd s2, 24(sp)
-	sd s1, 32(sp)
-	sd s6, 40(sp)
+	addi s0, sp, 224
+	sd s1, 24(sp)
+	sd s6, 32(sp)
+	sd s2, 40(sp)
 	sd s3, 48(sp)
 	sd s4, 56(sp)
 	sd s7, 64(sp)
@@ -21,13 +22,13 @@ main:
 	sd s11, 96(sp)
 	jal getint
 	mv t2, a0
-	sd a0, 224(sp)
+	sd a0, 288(sp)
 	jal getint
 	mv t3, a0
-	sd a0, 216(sp)
+	sd a0, 208(sp)
 	jal getint
 	mv t4, a0
-	sd a0, 208(sp)
+	sd a0, 200(sp)
 	jal getint
 	mv t5, a0
 	sd a0, 104(sp)
@@ -35,14 +36,14 @@ main:
 	mv t6, a0
 	sd a0, 112(sp)
 	jal getint
-	sd a0, 192(sp)
+	sd a0, 120(sp)
 	mv a6, a0
 	jal getint
-	sd a0, 120(sp)
+	sd a0, 128(sp)
 	mv a7, a0
 	jal getint
-	sd a0, 128(sp)
-	mv s2, a0
+	sd a0, 192(sp)
+	mv s1, a0
 	jal getint
 	sd a0, 136(sp)
 	mv s1, a0
@@ -67,53 +68,53 @@ main:
 	jal getint
 	mv a3, zero
 	mv s10, a0
-	sd a0, 200(sp)
-	ld t3, 216(sp)
-	ld t2, 224(sp)
+	sd a0, 216(sp)
+	ld t3, 208(sp)
+	ld t2, 288(sp)
 	slli a0, t3, 32
 	add.uw a1, t2, a0
-	sd a1, 240(sp)
+	sd a1, 224(sp)
 	ld t5, 104(sp)
-	ld t4, 208(sp)
+	ld t4, 200(sp)
 	slli a0, t5, 32
 	add.uw a1, t4, a0
-	sd a1, 248(sp)
-	ld a6, 192(sp)
+	sd a1, 232(sp)
+	ld a6, 120(sp)
 	ld t6, 112(sp)
 	slli a0, a6, 32
 	add.uw a1, t6, a0
-	sd a1, 256(sp)
-	ld s2, 128(sp)
-	ld a7, 120(sp)
-	slli a0, s2, 32
+	sd a1, 240(sp)
+	ld s1, 192(sp)
+	ld a7, 128(sp)
+	slli a0, s1, 32
 	add.uw a1, a7, a0
-	sd a1, 264(sp)
+	sd a1, 248(sp)
 	ld s2, 144(sp)
 	ld s1, 136(sp)
 	slli a0, s2, 32
 	add.uw a1, s1, a0
-	sd a1, 272(sp)
+	sd a1, 256(sp)
 	ld s4, 160(sp)
 	ld s3, 152(sp)
 	slli a0, s4, 32
 	add.uw a1, s3, a0
-	sd a1, 280(sp)
+	sd a1, 264(sp)
 	slli a1, s10, 32
 	ld s6, 176(sp)
 	ld s5, 168(sp)
 	slli a0, s6, 32
 	add.uw a2, s5, a0
 	mv a0, s0
-	sd a2, 288(sp)
+	sd a2, 272(sp)
 	ld s7, 184(sp)
 	add.uw a2, s7, a1
 	li a1, 16
-	sd a2, 296(sp)
+	sd a2, 280(sp)
 	li a2, 15
 	blt zero, a2, label5
 	j label13
 .p2align 2
-label246:
+label248:
 	addi a0, a0, 4
 	bge a3, a2, label13
 .p2align 2
@@ -129,7 +130,7 @@ label12:
 	sw t1, 0(a0)
 	addiw a5, a5, 1
 	sw t0, 0(a4)
-	bge a5, a1, label246
+	bge a5, a1, label248
 .p2align 2
 label10:
 	addi a4, a4, 4
@@ -148,59 +149,59 @@ label9:
 	addi a0, a0, 4
 	blt a3, a2, label5
 label13:
-	lw s9, 240(sp)
-	lw s8, 244(sp)
-	lw a0, 248(sp)
-	lw s11, 252(sp)
+	lw s9, 224(sp)
+	lw s8, 228(sp)
+	lw a0, 232(sp)
+	lw s11, 236(sp)
+	lw a2, 240(sp)
+	lw a3, 244(sp)
+	lw a1, 248(sp)
+	lw a4, 252(sp)
 	lw a5, 256(sp)
-	lw a2, 260(sp)
-	lw a1, 264(sp)
-	lw a3, 268(sp)
-	lw a4, 272(sp)
-	lw t0, 276(sp)
-	lw t1, 280(sp)
-	lw t6, 284(sp)
-	lw t5, 288(sp)
-	lw t4, 292(sp)
-	lw t3, 296(sp)
-	lw t2, 300(sp)
+	lw t0, 260(sp)
+	lw t1, 264(sp)
+	lw t6, 268(sp)
+	lw t5, 272(sp)
+	lw t4, 276(sp)
+	lw t3, 280(sp)
+	lw t2, 284(sp)
 	beq s9, zero, label14
-	sd s9, 232(sp)
+	sd s9, 296(sp)
 	sd s11, 304(sp)
 	mv s9, a0
-	mv s11, a3
-	mv a0, a4
-	sd a5, 312(sp)
-	mv a4, t5
+	mv s11, a4
+	mv a0, a5
+	sd a2, 312(sp)
 	mv a5, t4
-	sd a2, 320(sp)
 	mv a2, t1
-	sd a1, 328(sp)
+	sd a3, 320(sp)
 	mv t1, t2
-	mv a1, t0
-	sd a3, 336(sp)
-	mv t0, t3
-	ld t2, 224(sp)
 	mv a3, t6
-	ld t3, 216(sp)
-	ld t4, 208(sp)
+	sd a1, 328(sp)
+	mv a1, t0
+	sd a4, 336(sp)
+	mv t0, t3
+	ld t2, 288(sp)
+	mv a4, t5
+	ld t3, 208(sp)
+	ld t4, 200(sp)
 	ld t5, 104(sp)
 	ld t6, 112(sp)
-	ld a6, 192(sp)
-	ld a7, 120(sp)
-	ld s2, 128(sp)
+	ld a6, 120(sp)
+	ld a7, 128(sp)
+	ld s1, 192(sp)
+	mv s0, s1
 	ld s1, 136(sp)
-	mv s0, s2
 	ld s2, 144(sp)
 	ld s3, 152(sp)
 	ld s4, 160(sp)
 	ld s5, 168(sp)
 	ld s6, 176(sp)
 	ld s7, 184(sp)
-	ld s10, 200(sp)
+	ld s10, 216(sp)
 	j label16
-label144:
-	sd s9, 232(sp)
+label146:
+	sd s9, 296(sp)
 	ld s11, 304(sp)
 	mv s9, s11
 	ld s11, 312(sp)
@@ -248,10 +249,10 @@ label16:
 	lui s8, 243712
 	addiw s8, s8, 1
 	mulw s8, s9, s8
-	ld s9, 232(sp)
+	ld s9, 296(sp)
 	subw s8, s11, s8
 	addiw s9, s9, -1
-	bne s9, zero, label144
+	bne s9, zero, label146
 label14:
 	slliw a1, s8, 5
 	lui a3, 69
@@ -264,9 +265,9 @@ label14:
 	mv a0, zero
 	ld s0, 8(sp)
 	ld s5, 16(sp)
-	ld s2, 24(sp)
-	ld s1, 32(sp)
-	ld s6, 40(sp)
+	ld s1, 24(sp)
+	ld s6, 32(sp)
+	ld s2, 40(sp)
 	ld s3, 48(sp)
 	ld s4, 56(sp)
 	ld s7, 64(sp)

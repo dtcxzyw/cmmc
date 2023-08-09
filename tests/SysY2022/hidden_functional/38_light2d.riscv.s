@@ -120,6 +120,7 @@ label13:
 .p2align 2
 .globl main
 main:
+	# stack usage: CalleeArg[0] Local[0] RegSpill[8] CalleeSaved[100]
 	addi sp, sp, -112
 	li a0, 80
 	sd ra, 0(sp)

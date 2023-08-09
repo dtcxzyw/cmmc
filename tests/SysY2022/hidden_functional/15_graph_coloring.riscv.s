@@ -32,8 +32,8 @@ label15:
 	bgt a4, t0, label52
 	lw t0, 0(a3)
 	beq t0, zero, label57
-	lw t0, 0(a2)
 	sh2add t1, a5, s0
+	lw t0, 0(a2)
 	lw t2, 0(t1)
 	bne t0, t2, label57
 label66:
@@ -89,6 +89,7 @@ label52:
 .p2align 2
 .globl main
 main:
+	# stack usage: CalleeArg[0] Local[80] RegSpill[0] CalleeSaved[8]
 	addi sp, sp, -88
 	li a4, 1
 	li a2, 1

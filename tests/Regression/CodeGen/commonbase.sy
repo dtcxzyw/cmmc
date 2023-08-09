@@ -1,0 +1,3 @@
+int commonbase(int a[500][500], int i, int j) {
+    return a[i-1][j-1] + a[i-1][j] + a[i-1][j+1] + a[i][j-1] + a[i][j] + a[i][j+1] + a[i+1][j-1] + a[i+1][j] + a[i+1][j+1];
+}

@@ -69,6 +69,7 @@ label7:
 .p2align 2
 .globl main
 main:
+	# stack usage: CalleeArg[0] Local[8] RegSpill[0] CalleeSaved[8]
 	addi sp, sp, -16
 	li a4, 1
 	li a0, 7

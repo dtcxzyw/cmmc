@@ -16,6 +16,7 @@ rev:
 .fpu vfpv4
 .p2align 4
 dfs:
+	@ stack usage: CalleeArg[4] Local[0] RegSpill[60] CalleeSaved[0]
 	push { r4, r5, r6, r7, r8, r9, r10, lr }
 	cmp r0, r1
 	mov r4, r0
@@ -25,21 +26,22 @@ dfs:
 	str r1, [sp, #20]
 	str r0, [sp, #32]
 	beq label58
-	mov r0, #1
-	ldr r4, [sp, #32]
-	movw r2, #:lower16:to
-	movt r2, #:upper16:to
-	ldr r1, [sp, #104]
-	str r0, [r1, r4, lsl #2]
+	movw r0, #:lower16:to
+	movt r0, #:upper16:to
 	movw r1, #:lower16:cap
 	movt r1, #:upper16:cap
-	add r0, r4, r4, lsl #2
-	add r1, r1, r0, lsl #3
-	add r0, r2, r0, lsl #3
-	str r1, [sp, #52]
+	mov r3, #1
+	add r2, r4, r4, lsl #2
+	add r0, r0, r2, lsl #3
+	add r2, r1, r2, lsl #3
+	ldr r1, [sp, #104]
+	str r3, [r1, r4, lsl #2]
 	mov r1, #0
+	str r2, [sp, #52]
 	str r0, [sp, #48]
 	str r1, [sp, #44]
+	ldr r4, [sp, #32]
+	ldr r3, [sp, #36]
 	ldr r0, [r3, r4, lsl #2]
 	cmp r1, r0
 	blt label9
@@ -115,19 +117,19 @@ label2:
 	pop { r4, r5, r6, r7, r8, r9, r10, pc }
 label15:
 	ldr r4, [sp, #56]
+	movw r0, #:lower16:to
+	movt r0, #:upper16:to
 	movw r1, #:lower16:cap
 	movt r1, #:upper16:cap
-	movw r2, #:lower16:to
-	movt r2, #:upper16:to
-	add r3, r4, r4, lsl #2
-	add r2, r2, r3, lsl #3
-	add r0, r1, r3, lsl #3
-	ldr r1, [sp, #104]
 	mov r3, #1
+	add r2, r4, r4, lsl #2
+	add r0, r0, r2, lsl #3
+	add r2, r1, r2, lsl #3
+	ldr r1, [sp, #104]
 	str r3, [r1, r4, lsl #2]
 	mov r1, #0
-	str r0, [sp, #16]
-	str r2, [sp, #28]
+	str r2, [sp, #16]
+	str r0, [sp, #28]
 	str r1, [sp, #64]
 	ldr r3, [sp, #36]
 	ldr r0, [r3, r4, lsl #2]
@@ -170,13 +172,13 @@ label20:
 	ldr r1, [sp, #20]
 	cmp r1, r2
 	beq label144
+	movw r0, #:lower16:to
+	movt r0, #:upper16:to
 	movw r1, #:lower16:cap
 	movt r1, #:upper16:cap
-	add r0, r2, r2, lsl #2
-	movw r2, #:lower16:to
-	movt r2, #:upper16:to
-	add r4, r1, r0, lsl #3
-	add r5, r2, r0, lsl #3
+	add r2, r2, r2, lsl #2
+	add r4, r1, r2, lsl #3
+	add r5, r0, r2, lsl #3
 	ldr r1, [sp, #104]
 	mov r0, #1
 	ldr r2, [sp, #24]
@@ -219,16 +221,16 @@ label28:
 	ldr r1, [sp, #20]
 	cmp r1, r9
 	beq label175
-	add r0, r9, r9, lsl #2
+	add r2, r9, r9, lsl #2
+	movw r0, #:lower16:to
+	movt r0, #:upper16:to
 	movw r1, #:lower16:cap
 	movt r1, #:upper16:cap
-	movw r2, #:lower16:to
-	movt r2, #:upper16:to
 	mov r10, #0
-	add r6, r1, r0, lsl #3
-	add r7, r2, r0, lsl #3
-	ldr r1, [sp, #104]
+	add r7, r0, r2, lsl #3
+	add r6, r1, r2, lsl #3
 	mov r0, #1
+	ldr r1, [sp, #104]
 	str r0, [r1, r9, lsl #2]
 	ldr r3, [sp, #36]
 	ldr r0, [r3, r9, lsl #2]
@@ -358,6 +360,7 @@ label40:
 .p2align 4
 .globl main
 main:
+	@ stack usage: CalleeArg[4] Local[80] RegSpill[4] CalleeSaved[0]
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
 	sub sp, sp, #100
 	bl getint
@@ -376,7 +379,7 @@ main:
 	str r9, [sp, #44]
 	str r9, [sp, #48]
 	str r9, [sp, #52]
-	ble label395
+	ble label396
 	movw r4, #:lower16:to
 	movt r4, #:upper16:to
 	movw r5, #:lower16:cap
@@ -393,9 +396,9 @@ label373:
 	bl getint
 	mov r10, r0
 	bl getint
+	subs r7, r7, #1
 	mov r1, r0
 	add r2, r9, r9, lsl #2
-	subs r7, r7, #1
 	ldr r0, [r8, #0]
 	add r3, r4, r2, lsl #3
 	str r10, [r3, r0, lsl #2]
@@ -419,7 +422,7 @@ label373:
 	add r0, r0, #1
 	str r0, [r1, #0]
 	bgt label373
-label395:
+label396:
 	mov r9, #0
 	mov r4, r9
 label375:
@@ -443,7 +446,7 @@ label375:
 	mov r3, r11
 	bl dfs
 	cmp r0, #0
-	bne label457
+	bne label459
 	mov r0, r4
 	bl putint
 	mov r0, #10
@@ -452,6 +455,6 @@ label375:
 	mov r9, #0
 	mov r0, r9
 	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
-label457:
+label459:
 	add r4, r4, r0
 	b label375

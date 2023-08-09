@@ -122,6 +122,7 @@ label4:
 	j label5
 .p2align 2
 asr5:
+	# stack usage: CalleeArg[0] Local[0] RegSpill[4] CalleeSaved[96]
 	addi sp, sp, -112
 	fsub.s f15, f11, f10
 	sd ra, 0(sp)

@@ -26,6 +26,7 @@ write:
     jr $ra
     nop
 gcd:
+	# stack usage: CalleeArg[0] Local[8] RegSpill[0] CalleeSaved[4]
 	addiu $sp, $sp, -32
 	sw $ra, 16($sp)
 	move $t0, $a0
@@ -51,6 +52,7 @@ label3:
 	nop
 .globl main
 main:
+	# stack usage: CalleeArg[0] Local[8] RegSpill[0] CalleeSaved[4]
 	addiu $sp, $sp, -32
 	sw $ra, 16($sp)
 	addiu $t0, $sp, 24

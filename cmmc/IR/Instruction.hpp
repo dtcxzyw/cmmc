@@ -104,6 +104,7 @@ enum class InstructionID {
     PtrCast,
     PtrToInt,
     IntToPtr,
+    PtrAdd,
     Select,
     Call,
     Phi
@@ -709,6 +710,17 @@ public:
     void dumpInst(std::ostream& out) const override;
     bool verify(std::ostream& out) const override;
     [[nodiscard]] std::pair<intptr_t, std::vector<std::pair<size_t, Value*>>> gatherOffsets(const DataLayout& dataLayout) const;
+    [[nodiscard]] Instruction* clone() const override;
+};
+
+class PtrAddInst final : public Instruction {
+public:
+    explicit PtrAddInst(Value* base, Value* offset, const Type* targetType)
+        : Instruction{ InstructionID::PtrAdd, targetType, { base, offset } } {
+        assert(base->getType()->isPointer());
+        assert(offset->getType()->isInteger() && offset->isConstant());
+    }
+    void dumpInst(std::ostream& out) const override;
     [[nodiscard]] Instruction* clone() const override;
 };
 

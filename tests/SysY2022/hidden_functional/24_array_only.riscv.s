@@ -4,6 +4,7 @@
 .p2align 2
 .globl main
 main:
+	# stack usage: CalleeArg[0] Local[8] RegSpill[0] CalleeSaved[56]
 	addi sp, sp, -64
 	li a0, -1
 	sd ra, 0(sp)
@@ -38,7 +39,7 @@ label9:
 	beq s0, zero, label19
 	addiw a0, s0, -1
 	slliw s4, s4, 1
-	beq a0, zero, label145
+	beq a0, zero, label154
 .p2align 2
 label16:
 	addiw a0, a0, -1
@@ -47,7 +48,7 @@ label16:
 .p2align 2
 label19:
 	addw s4, s1, s4
-	bne s0, zero, label78
+	bne s0, zero, label83
 .p2align 2
 label27:
 	lw a1, 56(sp)
@@ -68,7 +69,7 @@ label6:
 	lw a1, 56(sp)
 	addiw a0, s0, -1
 	slliw a1, a1, 1
-	beq a0, zero, label143
+	beq a0, zero, label152
 .p2align 2
 label11:
 	addiw a0, a0, -1
@@ -80,7 +81,7 @@ label11:
 	mv a0, s0
 	j label16
 .p2align 2
-label78:
+label83:
 	lw a1, 56(sp)
 	mv a0, s0
 .p2align 2
@@ -89,13 +90,13 @@ label24:
 	slliw a1, a1, 1
 	bne a0, zero, label24
 .p2align 2
-label90:
+label97:
 	subw s5, a1, s1
 	sw s5, 56(sp)
 	blt s4, s3, label6
 	j label28
 .p2align 2
-label143:
+label152:
 	addw a2, s1, a1
 	sw a2, 56(sp)
 	beq s0, zero, label19
@@ -105,9 +106,9 @@ label143:
 	addw s4, s1, s4
 	lw a1, 56(sp)
 	slliw a1, a1, 1
-	j label90
+	j label97
 .p2align 2
-label145:
+label154:
 	addw s4, s1, s4
 	beq s0, zero, label27
 	lw a1, 56(sp)
@@ -121,12 +122,12 @@ label28:
 	beq s0, zero, label32
 	mv a1, s0
 	j label29
-label101:
+label109:
 	mv s2, a0
 label29:
 	addiw a1, a1, -1
 	slliw a0, s2, 1
-	bne a1, zero, label101
+	bne a1, zero, label109
 	mv s2, a0
 label32:
 	addiw a0, s2, 1

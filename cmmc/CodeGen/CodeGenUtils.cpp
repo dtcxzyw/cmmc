@@ -39,7 +39,7 @@ void forEachDefOperands(MIRBasicBlock& block, const CodeGenContext& ctx, const s
 }
 
 void dumpAssembly(std::ostream& out, const CodeGenContext& ctx, const MIRModule& module, const std::function<void()>& emitData,
-                  const std::function<void()>& emitText, bool emitAlignment) {
+                  const std::function<void()>& emitText, char dumpStackUsageComment, bool emitAlignment) {
     out << ".data\n"sv;
     emitData();
     const auto dumpSymbol = [&](const MIRGlobal& global) {
@@ -100,7 +100,33 @@ void dumpAssembly(std::ostream& out, const CodeGenContext& ctx, const MIRModule&
                     out << ":\n";
                 } else {
                     dumpSymbol(*global);
+                    if(dumpStackUsageComment && !func.stackObjects().empty()) {
+                        uint32_t calleeArgument = 0, local = 0, regSpill = 0, calleeSaved = 0;
+                        for(auto& [op, obj] : func.stackObjects()) {
+                            switch(obj.usage) {
+                                case StackObjectUsage::CalleeArgument:
+                                    calleeArgument += obj.size;
+                                    break;
+                                case StackObjectUsage::Local:
+                                    local += obj.size;
+                                    break;
+                                case StackObjectUsage::RegSpill:
+                                    regSpill += obj.size;
+                                    break;
+                                case StackObjectUsage::CalleeSaved:
+                                    calleeSaved += obj.size;
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+
+                        if(calleeArgument || local || regSpill)
+                            out << "\t" << dumpStackUsageComment << " stack usage: CalleeArg[" << calleeArgument << "] Local["
+                                << local << "] RegSpill[" << regSpill << "] CalleeSaved[" << calleeSaved << "]\n";
+                    }
                 }
+
                 for(auto& inst : block->instructions()) {
                     out << '\t';
                     auto& instInfo = ctx.instInfo.getInstInfo(inst);

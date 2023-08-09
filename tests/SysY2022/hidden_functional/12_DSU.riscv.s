@@ -270,13 +270,14 @@ label536:
 	addi s4, a0, %pcrel_lo(label536)
 	ble s6, zero, label164
 	addi a0, s4, 4
-	li a1, 1
+	li a2, 1
 .p2align 2
 label216:
-	sw a1, 0(a0)
-	addiw a1, a1, 1
+	addiw a1, a2, 1
+	sw a2, 0(a0)
 	blt s6, a1, label164
 	addi a0, a0, 4
+	mv a2, a1
 	j label216
 label164:
 	bne s5, zero, label166

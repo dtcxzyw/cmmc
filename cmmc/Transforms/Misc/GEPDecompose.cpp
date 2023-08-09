@@ -43,7 +43,7 @@ class GEPDecompose final : public TransformPass<Function> {
         //     v4 = off;
         //     return true;
         // }
-        if(oneUse(add(any(v1), any(v2)))(matchCtx)) {
+        if(add(any(v1), any(v2))(matchCtx)) {
             if(v1->getBlock() && v2->getBlock() && v1->getBlock() != v2->getBlock()) {
                 if(dom.dominate(v1->getBlock(), v2->getBlock())) {
                     base = v1;

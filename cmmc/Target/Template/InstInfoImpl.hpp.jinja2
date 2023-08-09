@@ -89,6 +89,9 @@ public:
     void inverseBranch(MIRInst& inst, MIRBasicBlock* newTarget) const override {
         inverseBranchImpl(inst, newTarget);
     }
+    std::pair<intmax_t, intmax_t> getAddressingImmRange() const override {
+        return getAddressingImmRangeImpl();
+    }
 };
 
 const TargetInstInfo& get{{target}}InstInfo() {

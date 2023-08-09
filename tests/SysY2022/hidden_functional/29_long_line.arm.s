@@ -10,6 +10,7 @@ lut_fib:
 .fpu vfpv4
 .p2align 4
 fib:
+	@ stack usage: CalleeArg[0] Local[0] RegSpill[420] CalleeSaved[0]
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
 	mov r2, #0
 	mov r4, r0

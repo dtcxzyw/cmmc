@@ -7,6 +7,7 @@ lut_fib:
 .text
 .p2align 2
 fib:
+	# stack usage: CalleeArg[0] Local[0] RegSpill[576] CalleeSaved[104]
 	addi sp, sp, -680
 pcrel874:
 	auipc a1, %pcrel_hi(lut_fib)

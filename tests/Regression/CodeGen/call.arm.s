@@ -164,6 +164,7 @@ callee16_cmmc_noinline:
 .p2align 4
 .globl calling_convention
 calling_convention:
+	@ stack usage: CalleeArg[0] Local[40] RegSpill[0] CalleeSaved[0]
 	push { lr }
 	vpush { s16 }
 	sub sp, sp, #40

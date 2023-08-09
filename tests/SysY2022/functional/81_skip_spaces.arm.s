@@ -7,6 +7,7 @@
 .p2align 4
 .globl main
 main:
+	@ stack usage: CalleeArg[0] Local[400] RegSpill[0] CalleeSaved[0]
 	push { r4, r5, r6, lr }
 	mov r6, #0
 	sub sp, sp, #400

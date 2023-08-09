@@ -152,6 +152,7 @@ callee16_cmmc_noinline:
 .p2align 2
 .globl calling_convention
 calling_convention:
+	# stack usage: CalleeArg[0] Local[40] RegSpill[0] CalleeSaved[12]
 	addi sp, sp, -56
 	sd ra, 0(sp)
 	addi a2, sp, 16

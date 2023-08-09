@@ -151,6 +151,10 @@ static void inverseBranchImpl(MIRInst&, MIRBasicBlock*) {
     reportUnreachable(CMMC_LOCATION());
 }
 
+static std::pair<intmax_t, intmax_t> getAddressingImmRangeImpl() {
+    reportUnreachable(CMMC_LOCATION());
+}
+
 CMMC_TARGET_NAMESPACE_END
 
 #include <Generic/InstInfoImpl.hpp>

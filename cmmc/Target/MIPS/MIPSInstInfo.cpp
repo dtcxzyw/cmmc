@@ -158,6 +158,9 @@ static bool verifyInstMOVT_S(const MIRInst& inst) {
 static bool verifyInstMOVZ_S(const MIRInst& inst) {
     return verifyConditonalMove(inst);
 }
+static std::pair<intmax_t, intmax_t> getAddressingImmRangeImpl() {
+    return { -32768, 32767 };
+}
 
 CMMC_TARGET_NAMESPACE_END
 

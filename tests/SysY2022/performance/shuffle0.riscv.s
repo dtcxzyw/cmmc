@@ -147,28 +147,27 @@ label67:
 	j label77
 .p2align 2
 label85:
-	sh2add t3, t1, a1
-	sh2add t4, t1, a0
-	lw t5, 0(t3)
-	lw t1, 0(t4)
-	mv t2, t5
+	sh2add t4, t1, a1
+	sh2add t5, t1, a0
+	lw t3, 0(t4)
+	lw t1, 0(t5)
+	mv t2, t3
 	beq t1, zero, label19
 .p2align 2
 label16:
-	sh2add t3, t1, a1
-	sh2add t4, t1, a0
-	lw t5, 0(t3)
-	lw t1, 0(t4)
-	addw t2, t2, t5
+	sh2add t4, t1, a1
+	sh2add t5, t1, a0
+	lw t3, 0(t4)
+	lw t1, 0(t5)
+	addw t2, t2, t3
 	bne t1, zero, label16
 .p2align 2
 label19:
-	addiw t1, t0, 1
-	sh2add t3, t0, s2
-	sw t2, 0(t3)
-	ble s1, t1, label21
+	sh2add t1, t0, s2
+	addiw t0, t0, 1
+	sw t2, 0(t1)
+	ble s1, t0, label21
 	addi a5, a5, 4
-	mv t0, t1
 	lw t2, 0(a5)
 	remw t3, t2, s0
 	sh2add t4, t3, a3

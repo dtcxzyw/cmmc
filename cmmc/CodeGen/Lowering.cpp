@@ -997,6 +997,17 @@ static void lower(GetElementPtrInst* inst, LoweringContext& ctx) {
     }
     ctx.addOperand(inst, ptr);
 }
+static void lower(PtrAddInst* inst, LoweringContext& ctx) {
+    const auto src = ctx.mapOperand(inst->getOperand(0));
+    const auto ptr = ctx.newVReg(inst->getType());
+    const auto offset = inst->getOperand(1)->as<ConstantInteger>()->getSignExtended();
+    if(offset)
+        ctx.emitInst(
+            MIRInst{ InstAdd }.setOperand<0>(ptr).setOperand<1>(src).setOperand<2>(MIROperand::asImm(offset, ctx.getPtrType())));
+    else
+        ctx.emitCopy(ptr, src);
+    ctx.addOperand(inst, ptr);
+}
 static void emitCopy(Instruction* inst, LoweringContext& ctx) {
     auto vreg = ctx.newVReg(inst->getType());
     const auto src = ctx.mapOperand(inst->getOperand(0));
@@ -1095,6 +1106,9 @@ static void lowerInst(Instruction* inst, LoweringContext& ctx, const PointerAlig
             break;
         case InstructionID::IntToPtr:
             lower(inst->as<IntToPtrInst>(), ctx);
+            break;
+        case InstructionID::PtrAdd:
+            lower(inst->as<PtrAddInst>(), ctx);
             break;
         case InstructionID::Select:
             lower(inst->as<SelectInst>(), ctx);

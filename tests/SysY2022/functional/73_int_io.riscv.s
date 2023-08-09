@@ -4,6 +4,7 @@
 .p2align 2
 .globl main
 main:
+	# stack usage: CalleeArg[0] Local[64] RegSpill[0] CalleeSaved[56]
 	addi sp, sp, -120
 	lui a0, 419430
 	sd ra, 0(sp)

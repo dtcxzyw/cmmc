@@ -224,95 +224,86 @@ label2:
 	add r0, r0, #400
 	b label2
 label6:
-	movw r0, #7692
-	movw r2, #7200
-	add r0, r1, r0
-	add r2, r1, r2
-	ldr r0, [r0, #0]
-	ldr r0, [r2, r0, lsl #2]
-	movw r2, #6800
-	add r2, r1, r2
-	ldr r0, [r2, r0, lsl #2]
-	add r2, r1, #6400
-	ldr r0, [r2, r0, lsl #2]
-	movw r2, #6000
-	add r2, r1, r2
-	ldr r0, [r2, r0, lsl #2]
-	movw r2, #5600
-	add r2, r1, r2
-	ldr r0, [r2, r0, lsl #2]
-	movw r2, #5200
-	add r2, r1, r2
-	ldr r0, [r2, r0, lsl #2]
-	add r2, r1, #4800
-	ldr r0, [r2, r0, lsl #2]
-	movw r2, #4400
-	add r2, r1, r2
-	ldr r0, [r2, r0, lsl #2]
-	add r2, r1, #4000
-	ldr r0, [r2, r0, lsl #2]
-	add r2, r1, #3600
-	ldr r0, [r2, r0, lsl #2]
-	add r2, r1, #3200
-	ldr r0, [r2, r0, lsl #2]
-	add r2, r1, #2800
-	ldr r0, [r2, r0, lsl #2]
-	add r2, r1, #2400
-	ldr r0, [r2, r0, lsl #2]
-	add r2, r1, #2000
-	ldr r0, [r2, r0, lsl #2]
-	add r2, r1, #1600
-	ldr r0, [r2, r0, lsl #2]
-	add r2, r1, #1200
-	ldr r0, [r2, r0, lsl #2]
-	add r2, r1, #800
-	ldr r0, [r2, r0, lsl #2]
-	add r2, r1, #400
-	ldr r0, [r2, r0, lsl #2]
-	movw r2, #7672
-	add r2, r1, r2
-	ldr r0, [r1, r0, lsl #2]
-	ldr r3, [r2, #0]
-	mov r2, #400
-	mla r3, r3, r2, r1
+	add r0, r1, #3600
+	add r3, r0, #3600
+	ldr r2, [r0, #4092]
+	ldr r2, [r3, r2, lsl #2]
+	add r3, r0, #3200
+	ldr r2, [r3, r2, lsl #2]
+	add r3, r0, #2800
+	ldr r2, [r3, r2, lsl #2]
+	add r3, r0, #2400
+	ldr r2, [r3, r2, lsl #2]
+	add r3, r0, #2000
+	ldr r2, [r3, r2, lsl #2]
+	add r3, r0, #1600
+	ldr r2, [r3, r2, lsl #2]
+	add r3, r0, #1200
+	ldr r2, [r3, r2, lsl #2]
+	add r3, r0, #800
+	ldr r2, [r3, r2, lsl #2]
+	add r3, r0, #400
+	ldr r2, [r3, r2, lsl #2]
+	sub r3, r0, #400
+	ldr r2, [r0, r2, lsl #2]
+	ldr r2, [r3, r2, lsl #2]
+	sub r3, r0, #800
+	ldr r2, [r3, r2, lsl #2]
+	sub r3, r0, #1200
+	ldr r2, [r3, r2, lsl #2]
+	sub r3, r0, #1600
+	ldr r2, [r3, r2, lsl #2]
+	sub r3, r0, #2000
+	ldr r2, [r3, r2, lsl #2]
+	sub r3, r0, #2400
+	ldr r2, [r3, r2, lsl #2]
+	sub r3, r0, #2800
+	ldr r2, [r3, r2, lsl #2]
+	sub r3, r0, #3200
+	ldr r2, [r3, r2, lsl #2]
+	sub r3, r0, #3600
+	ldr r2, [r3, r2, lsl #2]
+	ldr r3, [r0, #4072]
+	mov r0, #400
+	mla r3, r3, r0, r1
 	ldr r3, [r3, #68]
-	mla r3, r3, r2, r1
+	mla r3, r3, r0, r1
 	ldr r3, [r3, #64]
-	mla r3, r3, r2, r1
+	mla r3, r3, r0, r1
 	ldr r3, [r3, #60]
-	mla r3, r3, r2, r1
+	mla r3, r3, r0, r1
 	ldr r3, [r3, #56]
-	mla r3, r3, r2, r1
+	mla r3, r3, r0, r1
 	ldr r3, [r3, #52]
-	mla r3, r3, r2, r1
+	mla r3, r3, r0, r1
 	ldr r3, [r3, #48]
-	mla r3, r3, r2, r1
+	mla r3, r3, r0, r1
 	ldr r3, [r3, #44]
-	mla r3, r3, r2, r1
+	mla r3, r3, r0, r1
 	ldr r3, [r3, #40]
-	mla r3, r3, r2, r1
+	mla r3, r3, r0, r1
 	ldr r3, [r3, #36]
-	mla r3, r3, r2, r1
+	mla r3, r3, r0, r1
 	ldr r3, [r3, #32]
-	mla r3, r3, r2, r1
+	mla r3, r3, r0, r1
 	ldr r3, [r3, #28]
-	mla r3, r3, r2, r1
+	mla r3, r3, r0, r1
 	ldr r3, [r3, #24]
-	mla r3, r3, r2, r1
+	mla r3, r3, r0, r1
 	ldr r3, [r3, #20]
-	mla r3, r3, r2, r1
+	mla r3, r3, r0, r1
 	ldr r3, [r3, #16]
-	mla r3, r3, r2, r1
+	mla r3, r3, r0, r1
 	ldr r3, [r3, #12]
-	mla r3, r3, r2, r1
+	mla r3, r3, r0, r1
 	ldr r3, [r3, #8]
-	mla r3, r3, r2, r1
+	mla r3, r3, r0, r1
 	ldr r3, [r3, #4]
-	mul r3, r3, r2
+	mul r3, r3, r0
 	ldr r3, [r1, r3]
-	mla r1, r3, r2, r1
-	ldr r1, [r1, #224]
-	add r0, r0, r1
+	mla r0, r3, r0, r1
+	ldr r0, [r0, #224]
+	add r0, r2, r0
 	bl putint
 	mov r0, r4
 	pop { r4, r5, r6, pc }

@@ -13,6 +13,7 @@ rev:
 .text
 .p2align 2
 dfs:
+	# stack usage: CalleeArg[0] Local[0] RegSpill[112] CalleeSaved[104]
 	addi sp, sp, -216
 	mv a5, a0
 	sd ra, 0(sp)
@@ -21,12 +22,12 @@ dfs:
 	sd s1, 24(sp)
 	sd s6, 32(sp)
 	sd s4, 40(sp)
-	sd s2, 48(sp)
-	sd s3, 56(sp)
+	sd s3, 48(sp)
+	sd s2, 56(sp)
 	sd s10, 64(sp)
 	sd s9, 72(sp)
-	sd s7, 80(sp)
-	sd s8, 88(sp)
+	sd s8, 80(sp)
+	sd s7, 88(sp)
 	sd s11, 96(sp)
 	sd a2, 152(sp)
 	sd a3, 144(sp)
@@ -34,20 +35,21 @@ dfs:
 	sd a4, 128(sp)
 	sd a0, 120(sp)
 	beq a0, a1, label57
-	li a3, 1
 pcrel378:
-	auipc a2, %pcrel_hi(cap)
-	addi a1, a2, %pcrel_lo(pcrel378)
-	sh2add a0, a0, a4
+	auipc a1, %pcrel_hi(to)
 pcrel379:
-	auipc a4, %pcrel_hi(to)
-	sw a3, 0(a0)
+	auipc a4, %pcrel_hi(cap)
+	addi a2, a1, %pcrel_lo(pcrel378)
 	addi a3, a4, %pcrel_lo(pcrel379)
-	sh2add a0, a5, a5
-	sd a1, 112(sp)
-	sh3add a2, a0, a1
-	sd a3, 160(sp)
-	sh3add a1, a0, a3
+	sd a2, 160(sp)
+	sd a3, 112(sp)
+	sh2add a0, a0, a0
+	ld a4, 128(sp)
+	sh3add a1, a0, a2
+	sh2add t0, a5, a4
+	sh3add a2, a0, a3
+	li a0, 1
+	sw a0, 0(t0)
 	sd a2, 176(sp)
 	sd a1, 168(sp)
 	sd zero, 184(sp)
@@ -100,12 +102,13 @@ pcrel380:
 	ld a2, 200(sp)
 	beq a1, a2, label94
 	mv s1, zero
-	ld a1, 112(sp)
 	sh2add a0, a2, a2
-	ld a3, 160(sp)
-	sh3add s0, a0, a1
+	ld a2, 160(sp)
+	ld a3, 112(sp)
+	sh3add a1, a0, a2
 	ld a4, 128(sp)
-	sh3add a1, a0, a3
+	sh3add s0, a0, a3
+	ld a2, 200(sp)
 	li a3, 1
 	sh2add a0, a2, a4
 	sw a3, 0(a0)
@@ -160,25 +163,25 @@ label2:
 	ld s1, 24(sp)
 	ld s6, 32(sp)
 	ld s4, 40(sp)
-	ld s2, 48(sp)
-	ld s3, 56(sp)
+	ld s3, 48(sp)
+	ld s2, 56(sp)
 	ld s10, 64(sp)
 	ld s9, 72(sp)
-	ld s7, 80(sp)
-	ld s8, 88(sp)
+	ld s8, 80(sp)
+	ld s7, 88(sp)
 	ld s11, 96(sp)
 	addi sp, sp, 216
 	ret
 label23:
-	sh2add a2, s5, s5
-	ld a1, 112(sp)
+	sh2add a1, s5, s5
+	ld a2, 160(sp)
 	mv s6, zero
-	sh3add s2, a2, a1
-	ld a3, 160(sp)
-	li a1, 1
+	sh3add s3, a1, a2
+	ld a3, 112(sp)
 	ld a4, 128(sp)
-	sh3add s3, a2, a3
+	sh3add s2, a1, a3
 	sh2add a0, s5, a4
+	li a1, 1
 	sw a1, 0(a0)
 	ld a3, 144(sp)
 	sh2add a1, s5, a3
@@ -208,14 +211,14 @@ label28:
 	min s9, s4, a0
 	ld a1, 136(sp)
 	beq a1, s10, label177
-	sh2add a2, s10, s10
-	ld a1, 112(sp)
+	sh2add a1, s10, s10
+	ld a2, 160(sp)
 	mv s11, zero
-	sh3add s7, a2, a1
-	ld a3, 160(sp)
-	li a1, 1
-	sh3add s8, a2, a3
+	sh3add s8, a1, a2
+	ld a3, 112(sp)
+	sh3add s7, a1, a3
 	sh2add a0, s10, a4
+	li a1, 1
 	sw a1, 0(a0)
 	ld a3, 144(sp)
 	sh2add a1, s10, a3
@@ -233,9 +236,9 @@ label41:
 label40:
 	lw a0, 0(s8)
 	ld a4, 128(sp)
-	sh2add a1, a0, a4
-	lw a2, 0(a1)
-	bne a2, zero, label41
+	sh2add a2, a0, a4
+	lw a1, 0(a2)
+	bne a1, zero, label41
 	lw a1, 0(s7)
 	ble a1, zero, label41
 	min a2, s9, a1
@@ -243,22 +246,22 @@ label40:
 	ld a3, 144(sp)
 	jal dfs
 	ble a0, zero, label41
-	lw a2, 0(s7)
+	lw a3, 0(s7)
 	sh2add a1, s10, s10
-	subw a4, a2, a0
-	sw a4, 0(s7)
+	subw a2, a3, a0
+	sw a2, 0(s7)
 	ld a3, 192(sp)
-	lw a4, 0(s8)
-	sh3add a5, a1, a3
-	sh2add t0, s11, a5
-	sh2add a5, a4, a4
-	lw a2, 0(t0)
-	ld a1, 112(sp)
-	sh3add t0, a5, a1
-	sh2add a3, a2, t0
-	lw a4, 0(a3)
-	addw a1, a0, a4
-	sw a1, 0(a3)
+	lw a2, 0(s8)
+	sh3add a4, a1, a3
+	sh2add a5, s11, a4
+	sh2add a4, a2, a2
+	lw a1, 0(a5)
+	ld a3, 112(sp)
+	sh3add t0, a4, a3
+	sh2add a2, a1, t0
+	lw a5, 0(a2)
+	addw a3, a0, a5
+	sw a3, 0(a2)
 	j label32
 label73:
 	mv a0, zero
@@ -278,17 +281,17 @@ label34:
 	subw a2, a3, a0
 	sw a2, 0(s2)
 	ld a3, 192(sp)
-	lw a4, 0(s3)
-	sh3add a5, a1, a3
-	sh2add t0, s6, a5
-	sh2add a5, a4, a4
-	lw a2, 0(t0)
-	ld a1, 112(sp)
-	sh3add t0, a5, a1
-	sh2add a3, a2, t0
-	lw a4, 0(a3)
-	addw a1, a0, a4
-	sw a1, 0(a3)
+	lw a2, 0(s3)
+	sh3add a4, a1, a3
+	sh2add a5, s6, a4
+	sh2add a4, a2, a2
+	lw a1, 0(a5)
+	ld a3, 112(sp)
+	sh3add t0, a4, a3
+	sh2add a2, a1, t0
+	lw a5, 0(a2)
+	addw a3, a0, a5
+	sw a3, 0(a2)
 	j label20
 label22:
 	lw a3, 0(s0)
@@ -300,15 +303,15 @@ label22:
 	ld a1, 104(sp)
 	sh3add t0, a5, a3
 	sh2add a4, s1, t0
-	lw a3, 0(a1)
-	sh2add a5, a3, a3
+	lw a5, 0(a1)
+	sh2add t0, a5, a5
 	lw a2, 0(a4)
-	ld a1, 112(sp)
-	sh3add t0, a5, a1
-	sh2add a3, a2, t0
-	lw a4, 0(a3)
-	addw a1, a0, a4
-	sw a1, 0(a3)
+	ld a3, 112(sp)
+	sh3add t1, t0, a3
+	sh2add a1, a2, t1
+	lw a4, 0(a1)
+	addw a3, a0, a4
+	sw a3, 0(a1)
 	j label46
 label48:
 	ld a2, 176(sp)
@@ -322,19 +325,20 @@ label48:
 	sh3add a2, t0, a3
 	sh2add a4, a1, a2
 	ld a1, 168(sp)
-	lw a3, 0(a1)
-	sh2add a5, a3, a3
+	lw a5, 0(a1)
+	sh2add t0, a5, a5
 	lw a2, 0(a4)
-	ld a1, 112(sp)
-	sh3add a4, a5, a1
-	sh2add a3, a2, a4
-	lw t0, 0(a3)
-	addw a1, a0, t0
-	sw a1, 0(a3)
+	ld a3, 112(sp)
+	sh3add a4, t0, a3
+	sh2add a1, a2, a4
+	lw a5, 0(a1)
+	addw a3, a0, a5
+	sw a3, 0(a1)
 	j label2
 .p2align 2
 .globl main
 main:
+	# stack usage: CalleeArg[0] Local[80] RegSpill[0] CalleeSaved[88]
 	addi sp, sp, -168
 	sd ra, 0(sp)
 	sd s2, 8(sp)
@@ -357,17 +361,17 @@ main:
 	sd zero, 104(sp)
 	sd zero, 112(sp)
 	sd zero, 120(sp)
-	ble a0, zero, label405
-pcrel516:
-	auipc a1, %pcrel_hi(to)
-pcrel517:
-	auipc a2, %pcrel_hi(cap)
-	mv s6, a0
-	addi s3, a1, %pcrel_lo(pcrel516)
-	addi s4, a2, %pcrel_lo(pcrel517)
+	ble a0, zero, label406
 pcrel518:
-	auipc a1, %pcrel_hi(rev)
-	addi s5, a1, %pcrel_lo(pcrel518)
+	auipc a2, %pcrel_hi(to)
+pcrel519:
+	auipc a1, %pcrel_hi(cap)
+	mv s6, a0
+	addi s3, a2, %pcrel_lo(pcrel518)
+	addi s4, a1, %pcrel_lo(pcrel519)
+pcrel520:
+	auipc a2, %pcrel_hi(rev)
+	addi s5, a2, %pcrel_lo(pcrel520)
 .p2align 2
 label383:
 	jal getint
@@ -376,13 +380,13 @@ label383:
 	jal getint
 	mv s9, a0
 	jal getint
-	lw a1, 0(s7)
-	sh2add a2, s8, s8
 	addiw s6, s6, -1
-	sh3add t0, a2, s4
-	sh3add a4, a2, s3
-	sh2add a5, a1, t0
-	sh2add a3, a1, a4
+	sh2add a2, s8, s8
+	lw a1, 0(s7)
+	sh3add a4, a2, s4
+	sh3add a5, a2, s3
+	sh2add a3, a1, a5
+	sh2add a5, a1, a4
 	sw s9, 0(a3)
 	sh3add a3, a2, s5
 	sw a0, 0(a5)
@@ -390,24 +394,24 @@ label383:
 	sh2add a0, s9, s0
 	sh2add a3, s9, s9
 	lw a2, 0(a0)
-	sh3add a5, a3, s3
-	sh2add t0, a2, a5
+	sh3add t0, a3, s4
+	sh3add t1, a3, s3
 	sw a2, 0(a4)
-	sh3add a4, a3, s4
-	sw s8, 0(t0)
-	sh2add a5, a2, a4
-	sh3add t0, a3, s5
-	sw zero, 0(a5)
-	addi a3, a1, 1
+	sh2add a5, a2, t1
 	sh2add a4, a2, t0
-	sw a1, 0(a4)
+	sw s8, 0(a5)
+	sh3add t1, a3, s5
+	sw zero, 0(a4)
+	addi a3, a1, 1
+	sh2add a5, a2, t1
+	sw a1, 0(a5)
 	sw a3, 0(s7)
 	lw a2, 0(a0)
 	addi a1, a2, 1
 	sw a1, 0(a0)
 	bgt s6, zero, label383
-label405:
-	mv t1, zero
+label406:
+	mv t2, zero
 label385:
 	sd zero, 128(sp)
 	li a0, 1
@@ -420,13 +424,13 @@ label385:
 	mv a3, s0
 	mv a4, s2
 	jal dfs
-	bne a0, zero, label466
-	mv a0, t1
+	bne a0, zero, label468
+	mv a0, t2
 	jal putint
 	li a0, 10
 	jal putch
-	ld ra, 0(sp)
 	mv a0, zero
+	ld ra, 0(sp)
 	ld s2, 8(sp)
 	ld s0, 16(sp)
 	ld s5, 24(sp)
@@ -439,6 +443,6 @@ label385:
 	ld s9, 80(sp)
 	addi sp, sp, 168
 	ret
-label466:
-	addw t1, t1, a0
+label468:
+	addw t2, t2, a0
 	j label385

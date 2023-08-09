@@ -84,6 +84,7 @@ label81:
 .p2align 4
 .globl main
 main:
+	@ stack usage: CalleeArg[0] Local[80] RegSpill[0] CalleeSaved[0]
 	push { r4, lr }
 	mov r4, #0
 	sub sp, sp, #80

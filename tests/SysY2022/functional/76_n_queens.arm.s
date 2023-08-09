@@ -19,6 +19,7 @@ line2:
 .fpu vfpv4
 .p2align 4
 f:
+	@ stack usage: CalleeArg[0] Local[0] RegSpill[8] CalleeSaved[0]
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
 	mov r5, r0
 	mov r4, r2
@@ -102,16 +103,16 @@ label75:
 .p2align 4
 label13:
 	add r0, r5, r11
-	mov r2, #1
 	movw r1, #:lower16:line1
 	movt r1, #:upper16:line1
 	movw r9, #:lower16:line2
 	movt r9, #:upper16:line2
-	str r2, [r6, #0]
 	sub r0, r0, r7
 	add r8, r1, r8, lsl #2
-	str r2, [r8, #0]
-	str r2, [r9, r0, lsl #2]
+	mov r1, #1
+	str r1, [r6, #0]
+	str r1, [r8, #0]
+	str r1, [r9, r0, lsl #2]
 	ldr r0, [sp, #4]
 	ldr r1, [sp, #0]
 	mov r2, r4
@@ -151,6 +152,7 @@ label69:
 .p2align 4
 .globl main
 main:
+	@ stack usage: CalleeArg[0] Local[8] RegSpill[0] CalleeSaved[0]
 	push { r4, r5, r6, lr }
 	mov r6, #0
 	sub sp, sp, #8

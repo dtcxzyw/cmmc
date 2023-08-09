@@ -27,6 +27,7 @@ write:
     nop
 .globl main
 main:
+	# stack usage: CalleeArg[0] Local[400] RegSpill[0] CalleeSaved[4]
 	addiu $sp, $sp, -424
 	sw $ra, 16($sp)
 	addiu $t1, $sp, 24
@@ -49,16 +50,16 @@ label3:
 	b label3
 	nop
 label33:
-	addiu $t3, $t1, 4
-	li $t4, 1
-	subu $t2, $t0, $t4
-	bgtz $t2, label18
+	addiu $t2, $t1, 4
+	li $t3, 1
+	subu $t4, $t0, $t3
+	bgtz $t4, label18
 	nop
 	b label11
 	nop
 label26:
 	lw $t7, 0($t5)
-	slt $t7, $t2, $t7
+	slt $t7, $t4, $t7
 	beq $t7, $zero, label90
 	nop
 	lw $t7, 0($t5)
@@ -69,26 +70,26 @@ label26:
 	bgtz $t7, label26
 	nop
 	move $t7, $zero
-	sw $t2, 4($t5)
-	addiu $t4, $t4, 1
-	addiu $t3, $t3, 4
-	subu $t2, $t0, $t4
-	blez $t2, label11
+	sw $t4, 4($t5)
+	addiu $t3, $t3, 1
+	addiu $t2, $t2, 4
+	subu $t4, $t0, $t3
+	blez $t4, label11
 	nop
 label18:
-	lw $t2, 0($t3)
-	addiu $t6, $t4, -1
-	sll $t5, $t6, 2
-	addu $t5, $t1, $t5
+	addiu $t6, $t3, -1
+	sll $t4, $t6, 2
+	addu $t5, $t1, $t4
+	lw $t4, 0($t2)
 	addiu $t7, $t6, 1
 	bgtz $t7, label26
 	nop
 	move $t7, $zero
-	sw $t2, 4($t5)
-	addiu $t4, $t4, 1
-	addiu $t3, $t3, 4
-	subu $t2, $t0, $t4
-	bgtz $t2, label18
+	sw $t4, 4($t5)
+	addiu $t3, $t3, 1
+	addiu $t2, $t2, 4
+	subu $t4, $t0, $t3
+	bgtz $t4, label18
 	nop
 label11:
 	blez $t0, label12
@@ -113,11 +114,11 @@ label12:
 	jr $ra
 	nop
 label90:
-	sw $t2, 4($t5)
-	addiu $t4, $t4, 1
-	addiu $t3, $t3, 4
-	subu $t2, $t0, $t4
-	bgtz $t2, label18
+	sw $t4, 4($t5)
+	addiu $t3, $t3, 1
+	addiu $t2, $t2, 4
+	subu $t4, $t0, $t3
+	bgtz $t4, label18
 	nop
 	b label11
 	nop

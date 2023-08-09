@@ -238,7 +238,7 @@ bool isLegalAddrImm(intmax_t imm, AddressingImmRange range) {
             return isSignedImm<9>(imm);
         }
         default: {
-            return 0 <= imm && imm <= 1020 && imm % 4 == 0;
+            return -1020 <= imm && imm <= 1020 && imm % 4 == 0;
         }
     }
 }
@@ -275,6 +275,10 @@ static void inverseBranchImpl(MIRInst& inst, MIRBasicBlock* newTarget) {
     inst.setOperand<0>(getInvertedCondField(inst.getOperand(0)));
     inst.setOperand<1>(MIROperand::asReloc(newTarget));
     inst.setOperand<3>(MIROperand::asProb(1.0 - inst.getOperand(3).prob()));
+}
+
+static std::pair<intmax_t, intmax_t> getAddressingImmRangeImpl() {
+    return { -4096, 4095 };
 }
 
 CMMC_TARGET_NAMESPACE_END

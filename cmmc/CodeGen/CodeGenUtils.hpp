@@ -43,7 +43,7 @@ std::unordered_map<MIROperand, uint32_t, MIROperandHasher> collectDefCount(MIRFu
 bool redirectGoto(MIRFunction& func, const CodeGenContext& ctx);
 
 void dumpAssembly(std::ostream& out, const CodeGenContext& ctx, const MIRModule& module, const std::function<void()>& emitData,
-                  const std::function<void()>& emitText, bool emitAlignment = true);
+                  const std::function<void()>& emitText, char dumpStackUsageComment = '#', bool emitAlignment = true);
 
 [[noreturn]] void reportLegalizationFailure(const MIRInst& inst, const CodeGenContext& ctx, const DiagLocation& location);
 

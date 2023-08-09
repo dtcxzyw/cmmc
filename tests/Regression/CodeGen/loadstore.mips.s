@@ -144,13 +144,13 @@ memset_impl:
 	addiu $t0, $a0, -3
 	blez $t0, label138
 	nop
-	addiu $t2, $a0, -3
-	addiu $t3, $a0, -18
-	addiu $t0, $t2, -15
+	addiu $t3, $a0, -3
+	addiu $t4, $a0, -18
+	addiu $t0, $t3, -15
 	blez $t0, label156
 	nop
 	move $t0, $t1
-	move $t4, $zero
+	move $t2, $zero
 	b label125
 	nop
 .p2align 2
@@ -158,6 +158,7 @@ label128:
 	addiu $t0, $t0, 64
 .p2align 2
 label125:
+	addiu $t2, $t2, 16
 	sw $zero, 0($t0)
 	sw $zero, 4($t0)
 	sw $zero, 8($t0)
@@ -174,61 +175,57 @@ label125:
 	sw $zero, 52($t0)
 	sw $zero, 56($t0)
 	sw $zero, 60($t0)
-	addiu $t4, $t4, 16
-	subu $t5, $t3, $t4
+	subu $t5, $t4, $t2
 	bgtz $t5, label128
 	nop
-	move $t3, $t4
+	move $t4, $t2
 label116:
-	subu $t0, $t2, $t3
+	subu $t0, $t3, $t4
 	blez $t0, label160
 	nop
-	sll $t0, $t3, 2
+	sll $t0, $t4, 2
 	addu $t0, $t1, $t0
+	move $t2, $t4
 	b label120
 	nop
 label123:
 	addiu $t0, $t0, 16
 label120:
+	addiu $t2, $t2, 4
 	sw $zero, 0($t0)
 	sw $zero, 4($t0)
 	sw $zero, 8($t0)
 	sw $zero, 12($t0)
-	addiu $t3, $t3, 4
-	subu $t4, $t2, $t3
+	subu $t4, $t3, $t2
 	bgtz $t4, label123
 	nop
-	move $t0, $t3
+label160:
+	move $t0, $t2
 label108:
 	subu $t2, $a0, $t0
 	blez $t2, label129
 	nop
 	sll $t2, $t0, 2
 	addu $t1, $t1, $t2
-	b label111
-	nop
-label114:
-	addiu $t1, $t1, 4
 label111:
-	sw $zero, 0($t1)
 	addiu $t0, $t0, 1
+	sw $zero, 0($t1)
 	subu $t2, $a0, $t0
-	bgtz $t2, label114
+	blez $t2, label129
+	nop
+	addiu $t1, $t1, 4
+	b label111
 	nop
 label129:
 	jr $ra
 	nop
-label138:
-	move $t0, $zero
-	b label108
-	nop
 label156:
-	move $t3, $zero
 	move $t4, $zero
+	move $t2, $zero
 	b label116
 	nop
-label160:
-	move $t0, $t4
+label138:
+	move $t0, $zero
 	b label108
 	nop
 .p2align 2

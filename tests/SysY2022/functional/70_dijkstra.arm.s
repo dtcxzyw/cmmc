@@ -11,6 +11,7 @@ e:
 .p2align 4
 .globl main
 main:
+	@ stack usage: CalleeArg[0] Local[128] RegSpill[0] CalleeSaved[0]
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
 	mov r9, #0
 	sub sp, sp, #132
@@ -60,7 +61,7 @@ main:
 	bge label5
 	b label11
 .p2align 4
-label101:
+label103:
 	add r0, r0, #1
 	add r1, r1, #64
 	cmp r4, r0
@@ -77,7 +78,7 @@ label6:
 	moveq r9, #0
 	cmp r4, r3
 	str r9, [r2, #0]
-	blt label101
+	blt label103
 	add r2, r2, #4
 	b label6
 label11:
@@ -118,19 +119,18 @@ label47:
 label13:
 	mov r1, #1
 	str r1, [sp, #4]
-label14:
 	cmp r0, r1
 	bge label16
 	b label39
 .p2align 4
-label270:
+label274:
 	add r1, r1, #1
 	cmp r0, r1
 	blt label39
 .p2align 4
 label16:
 	cmp r4, #0
-	ble label122
+	ble label124
 	add r2, r5, #4
 	mov r3, #1
 	mov r9, #0
@@ -146,7 +146,7 @@ label38:
 	moveq r8, r10
 	add r3, r3, #1
 	cmp r4, r3
-	blt label267
+	blt label270
 .p2align 4
 label37:
 	add r2, r2, #4
@@ -161,54 +161,63 @@ label37:
 	cmp r4, #0
 	str r3, [r6, r9, lsl #2]
 	add r3, r7, r9, lsl #6
-	bgt label19
-	b label129
+	bgt label20
+	b label19
 .p2align 4
-label267:
+label270:
 	mov r2, r9
 	mov r3, #1
 	cmp r4, #0
 	str r3, [r6, r9, lsl #2]
 	add r3, r7, r9, lsl #6
-	ble label129
+	ble label19
 .p2align 4
-label19:
+label20:
 	add r3, r3, #4
 	mov r8, #1
 	ldr r9, [r3, #0]
 	movw r10, #65535
 	cmp r9, r10
-	blt label23
+	blt label24
 	add r8, r8, #1
 	cmp r4, r8
-	bge label26
+	bge label27
 	add r1, r1, #1
 	cmp r0, r1
 	bge label16
 	b label39
 .p2align 4
-label263:
+label267:
 	add r8, r8, #1
 	cmp r4, r8
-	blt label270
+	blt label274
 .p2align 4
-label26:
+label27:
 	add r3, r3, #4
 	movw r10, #65535
 	ldr r9, [r3, #0]
 	cmp r9, r10
-	bge label263
+	bge label267
 .p2align 4
-label23:
+label24:
 	ldr r10, [r5, r8, lsl #2]
 	ldr r11, [r5, r2, lsl #2]
 	add r9, r9, r11
 	cmp r10, r9
-	ble label146
+	bgt label25
+	add r8, r8, #1
+	cmp r4, r8
+	bge label27
+	add r1, r1, #1
+	cmp r0, r1
+	bge label16
+	b label39
+.p2align 4
+label25:
 	str r9, [r5, r8, lsl #2]
 	add r8, r8, #1
 	cmp r4, r8
-	bge label26
+	bge label27
 	add r1, r1, #1
 	cmp r0, r1
 	bge label16
@@ -238,26 +247,17 @@ label34:
 	cmp r4, #0
 	str r3, [r6, r9, lsl #2]
 	add r3, r7, r9, lsl #6
-	bgt label19
-	b label129
-.p2align 4
-label146:
-	add r8, r8, #1
-	cmp r4, r8
-	bge label26
-	add r1, r1, #1
-	cmp r0, r1
-	bge label16
-	b label39
-label122:
+	bgt label20
+	b label19
+label124:
 	mov r9, #0
 	mov r2, r9
 	mov r3, #1
 	cmp r4, #0
 	str r3, [r6, r9, lsl #2]
 	add r3, r7, r9, lsl #6
-	bgt label19
-	b label129
+	bgt label20
+	b label19
 label45:
 	mov r0, #10
 	bl putch
@@ -265,6 +265,8 @@ label45:
 	mov r9, #0
 	mov r0, r9
 	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
-label129:
+label19:
 	add r1, r1, #1
-	b label14
+	cmp r0, r1
+	bge label16
+	b label39

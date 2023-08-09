@@ -149,9 +149,10 @@ label117:
 	sh2add a1, s0, s3
 	lw a0, 0(a1)
 	beq a0, a2, label119
+	sh2add a3, s0, s2
+	lw a1, 0(a3)
+	beq a1, a2, label96
 	sh2add a1, s0, s2
-	lw a3, 0(a1)
-	beq a3, a2, label96
 	lw s1, 0(a1)
 	mv a0, s1
 label123:
@@ -284,10 +285,10 @@ label155:
 	bne a1, a2, label437
 	mv a2, a0
 label158:
-	sh2add t0, a2, a4
-	sh2add a5, s1, a4
-	lw a1, 0(t0)
-	sw a1, 0(a5)
+	sh2add a5, a2, a4
+	sh2add t0, s1, a4
+	lw a1, 0(a5)
+	sw a1, 0(t0)
 	mv a0, a3
 	jal delete
 	mv a2, s1
@@ -400,6 +401,7 @@ label590:
 .p2align 2
 .globl main
 main:
+	# stack usage: CalleeArg[0] Local[4] RegSpill[0] CalleeSaved[32]
 	addi sp, sp, -40
 	sd ra, 0(sp)
 	sd s0, 8(sp)

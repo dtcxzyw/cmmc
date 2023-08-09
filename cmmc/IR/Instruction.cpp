@@ -328,6 +328,8 @@ static std::string_view getInstName(InstructionID instID) {
             return "ptrtoint"sv;
         case InstructionID::IntToPtr:
             return "inttoptr"sv;
+        case InstructionID::PtrAdd:
+            return "ptradd"sv;
         case InstructionID::Select:
             return "select"sv;
         case InstructionID::Call:
@@ -946,5 +948,13 @@ bool CastInst::verify(std::ostream& out) const {
             return true;
     }
 }
+
+void PtrAddInst::dumpInst(std::ostream& out) const {
+    dumpBinary(out);
+}
+[[nodiscard]] Instruction* PtrAddInst::clone() const {
+    return make<PtrAddInst>(getOperand(0), getOperand(1), getType());
+}
+
 CMMC_NAMESPACE_END
 cmmc::TrackableValue::TrackableValue(const Type* type) : Value{ type }, mUsers{ this } {}

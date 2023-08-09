@@ -35,6 +35,7 @@ ans:
 .p2align 4
 .globl main
 main:
+	@ stack usage: CalleeArg[0] Local[0] RegSpill[8] CalleeSaved[0]
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
 	sub sp, sp, #12
 	bl getint
@@ -54,6 +55,7 @@ main:
 	mov r0, r4
 	bl getarray
 	str r0, [sp, #4]
+	mov r2, r0
 	mov r0, #78
 	bl _sysy_starttime
 	mov r2, #0
@@ -173,15 +175,14 @@ label17:
 	bne label17
 .p2align 4
 label20:
-	add r1, r0, #1
-	movw r3, #:lower16:ans
-	movt r3, #:upper16:ans
-	str r2, [r3, r0, lsl #2]
-	ldr r0, [sp, #4]
-	cmp r0, r1
+	movw r1, #:lower16:ans
+	movt r1, #:upper16:ans
+	str r2, [r1, r0, lsl #2]
+	ldr r2, [sp, #4]
+	add r0, r0, #1
+	cmp r2, r0
 	ble label22
 	add r4, r4, #4
-	mov r0, r1
 	movw r9, #:lower16:head
 	movt r9, #:upper16:head
 	ldr r1, [r4, #0]
@@ -207,10 +208,10 @@ label15:
 label22:
 	mov r0, #90
 	bl _sysy_stoptime
-	ldr r0, [sp, #4]
-	movw r3, #:lower16:ans
-	movt r3, #:upper16:ans
-	mov r1, r3
+	ldr r2, [sp, #4]
+	movw r1, #:lower16:ans
+	movt r1, #:upper16:ans
+	mov r0, r2
 	bl putarray
 	add sp, sp, #12
 	mov r0, #0

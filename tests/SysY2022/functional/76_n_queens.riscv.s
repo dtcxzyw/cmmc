@@ -16,43 +16,44 @@ line2:
 .text
 .p2align 2
 f:
+	# stack usage: CalleeArg[0] Local[0] RegSpill[16] CalleeSaved[104]
 	addi sp, sp, -120
 pcrel153:
-	auipc a3, %pcrel_hi(line1)
+	auipc a4, %pcrel_hi(line1)
 	sd ra, 0(sp)
-	sd s9, 8(sp)
-	mv s9, a0
+	sd s2, 8(sp)
+	mv s2, a0
 	sd s1, 16(sp)
+	addiw a0, a0, 1
 	mv s1, a2
 	sd s6, 24(sp)
+	sd s5, 32(sp)
+	sd s0, 40(sp)
+	li s0, 1
+	sd s4, 48(sp)
+	addi s4, a4, %pcrel_lo(pcrel153)
+	sd s3, 56(sp)
+	sd s7, 64(sp)
+	sd s8, 72(sp)
+	sd s9, 80(sp)
+	sd s11, 88(sp)
+	sd s10, 96(sp)
+	sd a1, 112(sp)
 pcrel154:
-	auipc a2, %pcrel_hi(ans)
-	sd s4, 32(sp)
-	addi s4, a2, %pcrel_lo(pcrel154)
-	sd s3, 40(sp)
+	auipc a1, %pcrel_hi(ans)
+	lw a3, 0(a2)
+	addi s5, a1, %pcrel_lo(pcrel154)
 pcrel155:
 	auipc a2, %pcrel_hi(row)
-	addiw s3, a0, 1
-	sd s5, 48(sp)
-	addi s5, a3, %pcrel_lo(pcrel153)
-	sd s0, 56(sp)
-	li s0, 1
-	sd s2, 64(sp)
-	sd s7, 72(sp)
-	sd s8, 80(sp)
-	sd s10, 88(sp)
-	sd s11, 96(sp)
-	sd a0, 112(sp)
-	sd a1, 104(sp)
-	addi a1, a2, %pcrel_lo(pcrel155)
-	lw a0, 0(s1)
 pcrel156:
-	auipc a2, %pcrel_hi(line2)
-	addi s6, a2, %pcrel_lo(pcrel156)
-	ble a0, zero, label23
-	addi s2, a1, 4
+	auipc a1, %pcrel_hi(line2)
+	sd a0, 104(sp)
+	addi s6, a1, %pcrel_lo(pcrel156)
+	addi a0, a2, %pcrel_lo(pcrel155)
+	ble a3, zero, label23
+	addi s3, a0, 4
 	mv s7, s0
-	lw a0, 0(s2)
+	lw a0, 0(s3)
 	bne a0, s0, label7
 	lw a0, 0(s1)
 	addiw s7, s0, 1
@@ -65,16 +66,15 @@ label146:
 	blt a0, s7, label23
 .p2align 2
 label22:
-	addi s2, s2, 4
-	lw a0, 0(s2)
+	addi s3, s3, 4
+	lw a0, 0(s3)
 	beq a0, s0, label146
 .p2align 2
 label7:
-	ld s9, 112(sp)
-	addw s8, s9, s7
-	sh2add a0, s8, s5
-	lw a1, 0(a0)
-	beq a1, zero, label8
+	addw s8, s2, s7
+	sh2add a1, s8, s4
+	lw a0, 0(a1)
+	beq a0, zero, label8
 	lw a0, 0(s1)
 	addiw s7, s7, 1
 	bge a0, s7, label22
@@ -82,8 +82,7 @@ label7:
 .p2align 2
 label8:
 	lw a0, 0(s1)
-	ld s9, 112(sp)
-	addw a4, s9, a0
+	addw a4, s2, a0
 	subw a3, a4, s7
 	sh2add a2, a3, s6
 	lw a1, 0(a2)
@@ -93,29 +92,27 @@ label8:
 	j label23
 .p2align 2
 label9:
-	ld s9, 112(sp)
-	sh2add a1, s9, s4
+	sh2add a1, s2, s5
 	sw s7, 0(a1)
-	beq s9, a0, label13
-	lw a0, 0(s1)
+	beq s2, a0, label13
+	lw s11, 0(s1)
 .p2align 2
 label10:
-	ld s9, 112(sp)
-	sh2add s10, s8, s5
-	sw s0, 0(s2)
-	addw a3, s9, a0
-	sw s0, 0(s10)
-	subw a1, a3, s7
-	sh2add a2, a1, s6
+	addw a1, s2, s11
+	sh2add s9, s8, s4
+	sw s0, 0(s3)
+	subw a0, a1, s7
+	sw s0, 0(s9)
+	sh2add a2, a0, s6
 	sw s0, 0(a2)
-	ld a1, 104(sp)
-	mv a0, s3
+	ld a0, 104(sp)
+	ld a1, 112(sp)
 	mv a2, s1
 	jal f
-	sw zero, 0(s2)
-	sw zero, 0(s10)
+	sw zero, 0(s3)
+	sw zero, 0(s9)
 	lw a0, 0(s1)
-	addw a2, s9, a0
+	addw a2, s2, a0
 	subw a1, a2, s7
 	addiw s7, s7, 1
 	sh2add a3, a1, s6
@@ -124,14 +121,14 @@ label10:
 	j label23
 .p2align 2
 label13:
-	ld a1, 104(sp)
-	addi s9, s4, 4
+	ld a1, 112(sp)
+	addi s9, s5, 4
 	mv s10, s0
 	lw a2, 0(a1)
 	addi a0, a2, 1
 	sw a0, 0(a1)
 	lw s11, 0(s1)
-	bgt s0, s11, label89
+	bgt s0, s11, label10
 .p2align 2
 label17:
 	lw a0, 0(s9)
@@ -139,7 +136,7 @@ label17:
 	bne s10, s11, label18
 	li a0, 10
 	jal putch
-	lw a0, 0(s1)
+	lw s11, 0(s1)
 	j label10
 label18:
 	li a0, 32
@@ -148,28 +145,27 @@ label18:
 	addi s9, s9, 4
 	addiw s10, s10, 1
 	ble s10, s11, label17
-label89:
-	mv a0, s11
 	j label10
 label23:
 	ld ra, 0(sp)
-	ld s9, 8(sp)
+	ld s2, 8(sp)
 	ld s1, 16(sp)
 	ld s6, 24(sp)
-	ld s4, 32(sp)
-	ld s3, 40(sp)
-	ld s5, 48(sp)
-	ld s0, 56(sp)
-	ld s2, 64(sp)
-	ld s7, 72(sp)
-	ld s8, 80(sp)
-	ld s10, 88(sp)
-	ld s11, 96(sp)
+	ld s5, 32(sp)
+	ld s0, 40(sp)
+	ld s4, 48(sp)
+	ld s3, 56(sp)
+	ld s7, 64(sp)
+	ld s8, 72(sp)
+	ld s9, 80(sp)
+	ld s11, 88(sp)
+	ld s10, 96(sp)
 	addi sp, sp, 120
 	ret
 .p2align 2
 .globl main
 main:
+	# stack usage: CalleeArg[0] Local[8] RegSpill[0] CalleeSaved[32]
 	addi sp, sp, -40
 	sd ra, 0(sp)
 	sd s0, 8(sp)

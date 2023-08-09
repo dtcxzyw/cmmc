@@ -7,10 +7,11 @@
 .p2align 4
 .globl main
 main:
+	@ stack usage: CalleeArg[0] Local[100] RegSpill[172] CalleeSaved[0]
 	push { r4, r5, r6, r7, r8, lr }
 	sub sp, sp, #280
 	bl getint
-	str r0, [sp, #100]
+	str r0, [sp, #104]
 	cmp r0, #0
 	bgt label4
 	b label15
@@ -118,7 +119,7 @@ label14:
 	rsb r3, r3, #0
 	ldr r5, [sp, #204]
 	add r2, r2, r3
-	str r5, [sp, #104]
+	str r5, [sp, #100]
 	add r3, r5, r5, lsl #2
 	ldr r5, [sp, #208]
 	add r3, r2, r3, lsl #4
@@ -202,15 +203,15 @@ label14:
 	mla r3, r6, r4, r3
 	ldr r6, [sp, #96]
 	mvn r4, #21
-	ldr r5, [sp, #104]
+	ldr r5, [sp, #100]
 	mla r4, r6, r4, r3
 	mvn r3, #74
 	mla r3, r5, r3, r4
 	ldr r5, [sp, #68]
 	ldr r4, [sp, #4]
 	mla r3, r5, r7, r3
-	mvn r7, #69
 	mov r5, #77
+	mvn r7, #69
 	usat r3, #7, r3
 	mla r3, r3, r5, r4
 	mov r4, #76
@@ -278,16 +279,16 @@ label14:
 	ldr r6, [sp, #84]
 	add r3, r3, r4
 	mvn r4, #98
-	mla r4, r6, r4, r3
+	mla r3, r6, r4, r3
 	ldr r6, [sp, #88]
-	add r3, r6, r6, lsl #6
-	str r3, [sp, #56]
+	add r6, r6, r6, lsl #6
+	add r3, r3, r6
+	str r6, [sp, #56]
 	ldr r6, [sp, #92]
-	add r3, r4, r3
 	rsb r4, r6, r6, lsl #4
 	ldr r6, [sp, #96]
 	add r3, r3, r4, lsl #3
-	ldr r5, [sp, #104]
+	ldr r5, [sp, #100]
 	mvn r4, #38
 	mla r3, r6, r4, r3
 	mov r6, #49
@@ -368,7 +369,7 @@ label14:
 	add r7, r7, r6
 	ldr r6, [sp, #96]
 	mla r6, r6, r5, r7
-	ldr r5, [sp, #104]
+	ldr r5, [sp, #100]
 	mov r7, #95
 	mla r6, r5, r7, r6
 	ldr r5, [sp, #68]
@@ -445,7 +446,7 @@ label14:
 	mov r4, #79
 	mla r3, r6, r4, r3
 	ldr r6, [sp, #96]
-	ldr r5, [sp, #104]
+	ldr r5, [sp, #100]
 	add r4, r6, r6, lsl #1
 	mov r6, #49
 	add r3, r3, r4
@@ -539,7 +540,7 @@ label14:
 	mla r3, r6, r4, r3
 	ldr r6, [sp, #96]
 	mvn r4, #53
-	ldr r5, [sp, #104]
+	ldr r5, [sp, #100]
 	mla r3, r6, r4, r3
 	mla r3, r5, r7, r3
 	mvn r7, #76
@@ -623,7 +624,7 @@ label14:
 	add r5, r6, r6, lsl #1
 	ldr r6, [sp, #96]
 	add r4, r4, r5, lsl #4
-	ldr r5, [sp, #104]
+	ldr r5, [sp, #100]
 	mla r4, r6, r7, r4
 	mov r7, #82
 	sub r5, r5, r5, lsl #4
@@ -635,8 +636,8 @@ label14:
 	mvn r4, #94
 	mla r4, r5, r4, r3
 	ldr r5, [sp, #224]
-	ldr r3, [sp, #56]
-	mla r3, r5, r7, r3
+	ldr r6, [sp, #56]
+	mla r3, r5, r7, r6
 	mov r7, #67
 	ldr r5, [sp, #260]
 	add r5, r5, r5, lsl #5
@@ -702,7 +703,7 @@ label14:
 	ldr r6, [sp, #96]
 	mla r6, r6, r7, r5
 	mvn r7, #83
-	ldr r5, [sp, #104]
+	ldr r5, [sp, #100]
 	mla r6, r5, r2, r6
 	ldr r5, [sp, #68]
 	mla r5, r5, r7, r6
@@ -771,7 +772,7 @@ label14:
 	ldr r6, [sp, #92]
 	mla r3, r6, r5, r3
 	ldr r6, [sp, #96]
-	ldr r5, [sp, #104]
+	ldr r5, [sp, #100]
 	mla r3, r6, r7, r3
 	mvn r7, #12
 	mla r3, r5, r7, r3
@@ -847,7 +848,7 @@ label14:
 	ldr r6, [sp, #92]
 	mla r1, r6, r5, r1
 	ldr r6, [sp, #96]
-	ldr r5, [sp, #104]
+	ldr r5, [sp, #100]
 	add r4, r6, r6, lsl #3
 	add r1, r1, r4, lsl #2
 	mvn r4, #48
@@ -871,9 +872,9 @@ label14:
 	bl putch
 	mov r0, #10
 	bl putch
-	ldr r0, [sp, #100]
+	ldr r0, [sp, #104]
 	subs r0, r0, #1
-	str r0, [sp, #100]
+	str r0, [sp, #104]
 	ble label15
 .p2align 4
 label4:

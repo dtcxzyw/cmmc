@@ -7,6 +7,7 @@
 .p2align 4
 .globl main
 main:
+	@ stack usage: CalleeArg[0] Local[48] RegSpill[0] CalleeSaved[0]
 	push { r4, r5, r6, r7, r8, lr }
 	sub sp, sp, #56
 	mov r4, #0
@@ -31,15 +32,15 @@ label2:
 	bl putint
 	add r8, r8, #1
 	cmp r8, #3
-	bge label6
+	bge label5
 	add r6, r6, #4
 	b label2
-label6:
+label5:
 	mov r0, #10
 	bl putch
 	mov r6, r7
 	mov r7, r4
-label7:
+label6:
 	vldr s0, [r6, #0]
 	vcvt.s32.f32 s0, s0
 	vmov r0, s0
@@ -48,7 +49,7 @@ label7:
 	cmp r7, #3
 	bge label10
 	add r6, r6, #4
-	b label7
+	b label6
 label10:
 	mov r0, #10
 	bl putch

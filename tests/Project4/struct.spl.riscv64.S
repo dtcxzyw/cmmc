@@ -22,6 +22,7 @@ write:
     mv a0, x0
     ret
 gcd:
+	# stack usage: CalleeArg[0] Local[8] RegSpill[0] CalleeSaved[8]
 	addi sp, sp, -16
 	addi a1, sp, 8
 	sd ra, 0(sp)
@@ -30,11 +31,11 @@ gcd:
 	mv a0, a4
 	mv a3, a2
 	beq a2, zero, label3
-	divw t1, a4, a2
-	mulw a5, a2, t1
+	divw a5, a4, a2
+	mulw t0, a2, a5
 	zext.w a3, a2
-	subw t0, a4, a5
-	zext.w a4, t0
+	subw t1, a4, t0
+	zext.w a4, t1
 	slli a5, a4, 32
 	add.uw t0, a3, a5
 	sd t0, 8(sp)
@@ -46,6 +47,7 @@ label3:
 	ret
 .globl main
 main:
+	# stack usage: CalleeArg[0] Local[8] RegSpill[0] CalleeSaved[8]
 	addi sp, sp, -16
 	addi a1, sp, 8
 	sd ra, 0(sp)

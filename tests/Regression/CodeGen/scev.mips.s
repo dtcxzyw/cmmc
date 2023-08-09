@@ -3,7 +3,7 @@
 .p2align 2
 .globl foo4
 foo4:
-	blez $a1, label2
+	blez $a1, label30
 	nop
 	addiu $t0, $a1, -3
 	blez $t0, label38
@@ -16,13 +16,13 @@ foo4:
 	move $t0, $a0
 	move $t2, $zero
 	move $t4, $zero
-	b label26
+	b label25
 	nop
 .p2align 2
-label30:
+label29:
 	addiu $t0, $t0, 64
 .p2align 2
-label26:
+label25:
 	sw $t2, 0($t0)
 	addiu $t5, $t2, 4
 	sw $t5, 4($t0)
@@ -57,22 +57,22 @@ label26:
 	addiu $t4, $t4, 16
 	addiu $t2, $t2, 64
 	subu $t5, $t3, $t4
-	bgtz $t5, label30
+	bgtz $t5, label29
 	nop
 	move $t5, $t2
 	move $t3, $t4
-label14:
+label13:
 	subu $t0, $t1, $t3
 	blez $t0, label61
 	nop
 	sll $t0, $t3, 2
 	addu $t0, $a0, $t0
 	move $t2, $t5
-	b label20
+	b label19
 	nop
-label24:
+label23:
 	addiu $t0, $t0, 16
-label20:
+label19:
 	sw $t2, 0($t0)
 	addiu $t4, $t2, 4
 	sw $t4, 4($t0)
@@ -83,44 +83,44 @@ label20:
 	addiu $t3, $t3, 4
 	addiu $t2, $t2, 16
 	subu $t4, $t1, $t3
-	bgtz $t4, label24
+	bgtz $t4, label23
 	nop
 	move $t0, $t3
 	move $t1, $t2
-label4:
+label3:
 	subu $t2, $a1, $t0
-	blez $t2, label2
+	blez $t2, label30
 	nop
 	sll $t2, $t0, 2
 	addu $t2, $a0, $t2
-	b label8
+	b label7
 	nop
-label12:
+label11:
 	addiu $t2, $t2, 4
-label8:
-	sw $t1, 0($t2)
+label7:
 	addiu $t0, $t0, 1
+	sw $t1, 0($t2)
 	addiu $t1, $t1, 4
 	subu $t3, $a1, $t0
-	bgtz $t3, label12
+	bgtz $t3, label11
 	nop
-label2:
+label30:
 	jr $ra
 	nop
 label38:
 	move $t0, $zero
 	move $t1, $zero
-	b label4
+	b label3
 	nop
 label57:
 	move $t5, $zero
 	move $t3, $zero
 	move $t2, $zero
 	move $t4, $zero
-	b label14
+	b label13
 	nop
 label61:
 	move $t0, $t4
 	move $t1, $t2
-	b label4
+	b label3
 	nop

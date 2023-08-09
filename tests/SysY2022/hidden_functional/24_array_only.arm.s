@@ -7,6 +7,7 @@
 .p2align 4
 .globl main
 main:
+	@ stack usage: CalleeArg[0] Local[8] RegSpill[0] CalleeSaved[0]
 	push { r4, r5, r6, r7, r8, r9, lr }
 	mov r7, #0
 	mvn r0, #0
@@ -38,7 +39,7 @@ label9:
 	beq label19
 	subs r0, r4, #1
 	lsl r8, r8, #1
-	beq label140
+	beq label149
 .p2align 4
 label16:
 	subs r0, r0, #1
@@ -48,7 +49,7 @@ label16:
 label19:
 	add r8, r5, r8
 	cmp r4, #0
-	bne label78
+	bne label83
 .p2align 4
 label27:
 	ldr r1, [sp, #0]
@@ -71,7 +72,7 @@ label6:
 	ldr r1, [sp, #0]
 	subs r0, r4, #1
 	lsl r1, r1, #1
-	beq label138
+	beq label147
 .p2align 4
 label11:
 	subs r0, r0, #1
@@ -84,7 +85,7 @@ label11:
 	mov r0, r4
 	b label16
 .p2align 4
-label78:
+label83:
 	ldr r1, [sp, #0]
 	mov r0, r4
 .p2align 4
@@ -93,14 +94,14 @@ label24:
 	lsl r1, r1, #1
 	bne label24
 .p2align 4
-label90:
+label97:
 	sub r9, r1, r5
 	cmp r8, #5
 	str r9, [sp, #0]
 	blt label6
 	b label28
 .p2align 4
-label138:
+label147:
 	add r0, r5, r1
 	cmp r4, #0
 	str r0, [sp, #0]
@@ -114,9 +115,9 @@ label138:
 	subs r0, r4, #1
 	lsl r1, r1, #1
 	bne label24
-	b label90
+	b label97
 .p2align 4
-label140:
+label149:
 	add r8, r5, r8
 	cmp r4, #0
 	beq label27
@@ -133,13 +134,13 @@ label28:
 	beq label32
 	mov r0, r4
 	b label29
-label101:
+label109:
 	mov r6, r0
 	mov r0, r1
 label29:
 	subs r1, r0, #1
 	lsl r0, r6, #1
-	bne label101
+	bne label109
 	mov r6, r0
 label32:
 	add r0, r6, #1

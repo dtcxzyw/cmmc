@@ -146,8 +146,8 @@ label29:
 	add r8, r8, #16
 .p2align 4
 label25:
-	vldr s4, [r8, #0]
 	add r10, r0, r9, lsl #2
+	vldr s4, [r8, #0]
 	add r9, r9, #4
 	vldr s5, [r10, #0]
 	cmp r1, r9
@@ -175,8 +175,8 @@ label18:
 	vmov.f32 s3, s4
 .p2align 4
 label19:
-	vldr s4, [r8, #0]
 	add r10, r0, r9, lsl #2
+	vldr s4, [r8, #0]
 	add r9, r9, #1
 	vldr s5, [r10, #0]
 	cmp r4, r9

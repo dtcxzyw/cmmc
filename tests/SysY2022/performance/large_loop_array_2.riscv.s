@@ -26,6 +26,7 @@ main:
 	mv s0, a0
 	li a0, 22
 	jal _sysy_starttime
+	lui t3, 419430
 	lui t1, 122
 	addiw a1, s0, -3
 pcrel267:
@@ -35,7 +36,6 @@ pcrel268:
 	auipc a5, %pcrel_hi(y)
 	fmv.w.x f12, zero
 	mv t4, zero
-	lui t3, 419430
 	mv t2, zero
 pcrel269:
 	auipc t0, %pcrel_hi(__cmmc_fp_constant_pool)
@@ -74,10 +74,10 @@ label8:
 	fmv.s f10, f13
 .p2align 2
 label242:
-	flw f15, 4(a3)
-	fmv.w.x f14, zero
-	fadd.s f13, f11, f15
-	fmv.s f11, f14
+	flw f14, 4(a3)
+	fmv.w.x f15, zero
+	fadd.s f13, f11, f14
+	fmv.s f11, f15
 	bne t3, zero, label244
 	fmv.s f11, f13
 .p2align 2
@@ -100,21 +100,21 @@ label11:
 	fcvt.s.w f13, t6
 	addiw t6, t4, 2
 	fsw f15, 0(t3)
-	fadd.s f15, f10, f13
+	fadd.s f15, f11, f13
 	fsw f14, 0(t5)
-	fadd.s f14, f11, f13
+	fadd.s f14, f10, f13
 	fcvt.s.w f13, t6
 	addiw t6, t4, 3
 	addiw t4, t4, 4
-	fsw f14, 4(t3)
-	fadd.s f14, f10, f13
-	fsw f15, 4(t5)
-	fadd.s f15, f11, f13
-	fcvt.s.w f13, t6
-	fsw f15, 8(t3)
+	fsw f15, 4(t3)
 	fadd.s f15, f10, f13
-	fsw f14, 8(t5)
+	fsw f14, 4(t5)
 	fadd.s f14, f11, f13
+	fcvt.s.w f13, t6
+	fsw f14, 8(t3)
+	fadd.s f14, f11, f13
+	fsw f15, 8(t5)
+	fadd.s f15, f10, f13
 	fsw f14, 12(t3)
 	fsw f15, 12(t5)
 	bgt a1, t4, label14
@@ -150,24 +150,24 @@ label40:
 	addi t4, t4, 16
 .p2align 2
 label36:
-	flw f15, 0(t4)
 	sh2add t6, t5, a0
+	flw f15, 0(t4)
 	addiw t5, t5, 4
 	flw f2, 0(t6)
 	flw f0, 4(t4)
 	fmul.s f1, f15, f2
 	flw f2, 4(t6)
-	fmul.s f15, f0, f2
+	flw f15, 8(t4)
+	fmul.s f3, f0, f2
 	fadd.s f14, f13, f1
-	flw f1, 8(t4)
-	flw f0, 8(t6)
-	fmul.s f2, f1, f0
-	fadd.s f13, f14, f15
-	flw f15, 12(t4)
-	flw f0, 12(t6)
-	fmul.s f1, f15, f0
+	flw f1, 8(t6)
+	flw f0, 12(t4)
+	fmul.s f2, f15, f1
+	flw f1, 12(t6)
+	fadd.s f13, f14, f3
+	fmul.s f15, f0, f1
 	fadd.s f14, f13, f2
-	fadd.s f13, f14, f1
+	fadd.s f13, f14, f15
 	bgt a1, t5, label40
 	fmv.s f14, f13
 	ble s0, t5, label251
@@ -177,8 +177,8 @@ label29:
 	fmv.s f13, f14
 .p2align 2
 label30:
-	flw f14, 0(t4)
 	sh2add t6, t5, a0
+	flw f14, 0(t4)
 	addiw t5, t5, 1
 	flw f15, 0(t6)
 	fmul.s f0, f14, f15

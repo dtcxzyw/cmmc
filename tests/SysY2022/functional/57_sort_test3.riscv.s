@@ -277,30 +277,31 @@ label240:
 .p2align 2
 .globl main
 main:
+	# stack usage: CalleeArg[0] Local[40] RegSpill[0] CalleeSaved[32]
 	addi sp, sp, -72
 	li a2, 3
 	li a3, 2
-	li a4, 1
+	li a4, 5
 	addi t1, sp, 32
 	slli a1, a2, 32
 	sd ra, 0(sp)
 	li a2, 9
 	addi a0, a1, 4
 	sd s0, 8(sp)
+	slli a1, a3, 32
 	sd s1, 16(sp)
+	li a3, 1
 	sd s2, 24(sp)
 	sd a0, 32(sp)
-	slli a0, a3, 32
-	li a3, 5
-	addi a1, a0, 9
-	slli a0, a4, 32
-	sd a1, 40(sp)
-	li a4, 8
+	addi a0, a1, 9
 	slli a1, a3, 32
-	sd a0, 48(sp)
-	addi a0, a1, 6
+	sd a0, 40(sp)
+	slli a0, a4, 32
+	sd a1, 48(sp)
+	li a4, 8
+	addi a3, a0, 6
 	slli a1, a4, 32
-	sd a0, 56(sp)
+	sd a3, 56(sp)
 	addi a3, a1, 7
 	mv a1, zero
 	sd a3, 64(sp)

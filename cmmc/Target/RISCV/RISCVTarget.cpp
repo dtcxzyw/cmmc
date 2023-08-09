@@ -272,7 +272,7 @@ public:
                     out << rarsRuntimeText;
                 }
             },
-            runtime != RuntimeType::SplRuntime);
+            '#', runtime != RuntimeType::SplRuntime);
     }
     void addExternalFuncIPRAInfo(MIRRelocable* symbol, IPRAUsageCache& infoIPRA) const override {
         const auto symbolName = symbol->symbol();
@@ -288,8 +288,8 @@ public:
     void transformModuleBeforeCodeGen(Module& module, AnalysisPassManager& analysis) const override {
         PassManager<Module> modulePassManager;
         auto perFunc = std::make_shared<PassManager<Function>>();
-        for(auto& pass : PassRegistry::get().collectFunctionPass(
-                { "SCEVGEP2Phi", "DuplicateGEP", "DuplicateCmp", "SDivWithPowerOf2", "NoSideEffectEliminate" }))
+        for(auto& pass : PassRegistry::get().collectFunctionPass({ "CommonBaseOpt", "SCEVGEP2Phi", "DuplicateGEP", "DuplicateCmp",
+                                                                   "SDivWithPowerOf2", "NoSideEffectEliminate", "InstReorder" }))
             perFunc->addPass(pass);
         modulePassManager.addPass(createWrapper(std::move(perFunc)));
         modulePassManager.run(module, analysis);

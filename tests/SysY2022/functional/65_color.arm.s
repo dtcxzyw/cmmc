@@ -10,6 +10,7 @@ dp:
 .fpu vfpv4
 .p2align 4
 dfs:
+	@ stack usage: CalleeArg[40] Local[0] RegSpill[0] CalleeSaved[0]
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
 	mov r5, r0
 	mov r6, r1
@@ -180,6 +181,7 @@ label12:
 .p2align 4
 .globl main
 main:
+	@ stack usage: CalleeArg[8] Local[80] RegSpill[0] CalleeSaved[0]
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
 	sub sp, sp, #92
 	mov r4, #0
@@ -214,7 +216,7 @@ main:
 	blt label209
 	b label205
 .p2align 4
-label581:
+label584:
 	add r3, r3, #1
 	movw r1, #55744
 	movt r1, #44
@@ -226,7 +228,7 @@ label209:
 	mov r7, r2
 	mov r8, r4
 	cmp r4, #18
-	blt label214
+	blt label213
 	add r3, r3, #1
 	movw r1, #55744
 	movt r1, #44
@@ -235,25 +237,25 @@ label209:
 	blt label209
 	b label205
 .p2align 4
-label579:
+label580:
 	add r8, r8, #1
 	movw r1, #32224
 	movt r1, #2
 	cmp r8, #18
 	add r7, r7, r1
-	bge label581
+	bge label584
 .p2align 4
-label214:
+label213:
 	mov r9, r7
 	mov r10, r4
 	cmp r4, #18
-	blt label219
+	blt label218
 	add r8, r8, #1
 	movw r1, #32224
 	movt r1, #2
 	cmp r8, #18
 	add r7, r7, r1
-	blt label214
+	blt label213
 	add r3, r3, #1
 	movw r1, #55744
 	movt r1, #44
@@ -262,10 +264,10 @@ label214:
 	blt label209
 	b label205
 .p2align 4
-label224:
+label223:
 	add r1, r1, #504
 .p2align 4
-label220:
+label219:
 	str r0, [r1, #0]
 	add r11, r11, #1
 	str r0, [r1, #4]
@@ -394,17 +396,17 @@ label220:
 	str r0, [r1, #492]
 	str r0, [r1, #496]
 	str r0, [r1, #500]
-	blt label224
+	blt label223
 	add r10, r10, #1
 	movw r1, #9072
 	cmp r10, #18
 	add r9, r9, r1
-	bge label579
+	bge label580
 .p2align 4
-label219:
+label218:
 	mov r1, r9
 	mov r11, r4
-	b label220
+	b label219
 label205:
 	cmp r5, #0
 	ble label206

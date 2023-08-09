@@ -17,13 +17,16 @@
 #include <cmmc/Analysis/AnalysisPass.hpp>
 #include <cmmc/Analysis/DominateAnalysis.hpp>
 #include <cmmc/Analysis/SCEVAnalysis.hpp>
+#include <cmmc/CodeGen/DataLayout.hpp>
 #include <cmmc/CodeGen/MultiplyByConstant.hpp>
 #include <cmmc/CodeGen/Target.hpp>
+#include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/Function.hpp>
 #include <cmmc/IR/IRBuilder.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/IR/Type.hpp>
 #include <cmmc/IR/Value.hpp>
+#include <cmmc/Support/IntrusiveList.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
 #include <cmmc/Transforms/Util/PatternMatch.hpp>
@@ -40,7 +43,6 @@ class DuplicateGEP final : public TransformPass<Function> {
 public:
     bool run(Function& func, AnalysisPassManager&) const override {
         bool modified = false;
-        // TODO: common base opt
 
         for(auto k = 0; k < 2; ++k)
             for(auto block : func.blocks()) {
@@ -59,7 +61,7 @@ public:
                         if(addr->isInstruction() && addr->getBlock() != block) {
                             const auto addrInst = addr->as<Instruction>();
                             if(addrInst->getInstID() != InstructionID::GetElementPtr &&
-                               addrInst->getInstID() != InstructionID::PtrCast)
+                               addrInst->getInstID() != InstructionID::PtrCast && addrInst->getInstID() != InstructionID::PtrAdd)
                                 continue;
 
                             if(addrInst->getInstID() == InstructionID::PtrCast) {
@@ -273,5 +275,231 @@ public:
 };
 
 CMMC_TRANSFORM_PASS(SCEVGEP2Phi);
+
+class CommonBaseOpt final : public TransformPass<Function> {
+    static bool isFree(Block* block, Value* val, uint32_t& cost) {
+        if(val->getBlock() != block)
+            return true;
+        const auto inst = val->as<Instruction>();
+        switch(inst->getInstID()) {
+            case InstructionID::Phi:
+            case InstructionID::Alloc:
+                return true;
+            case InstructionID::Call:
+            case InstructionID::Load:
+                return false;
+            default: {
+                for(auto operand : inst->operands())
+                    if(!isFree(block, operand, cost))
+                        return false;
+                ++cost;
+                break;
+            }
+        }
+        return true;
+    }
+    static Value* makeAvailableImpl(Block* block, Value* val, std::unordered_map<Value*, Value*>& cache,
+                                    IntrusiveListIterator<Instruction>& insertPoint, bool& modified) {
+        if(val->getBlock() != block)
+            return val;
+        const auto inst = val->as<Instruction>();
+        if(inst->getInstID() == InstructionID::Phi)
+            return val;
+        if(inst->getInstID() == InstructionID::Alloc)
+            return val;
+
+        const auto newInst = inst->clone();
+        for(auto& operand : newInst->mutableOperands())
+            operand->resetValue(makeAvailable(block, operand->value, cache, insertPoint, modified));
+        newInst->insertBefore(block, insertPoint);
+        insertPoint = std::next(newInst->asIterator());
+        return newInst;
+    }
+    static Value* makeAvailable(Block* block, Value* val, std::unordered_map<Value*, Value*>& cache,
+                                IntrusiveListIterator<Instruction>& insertPoint, bool& modified) {
+        if(auto iter = cache.find(val); iter != cache.end())
+            return iter->second;
+        return cache[val] = makeAvailableImpl(block, val, cache, insertPoint, modified);
+    }
+    static bool handleBlock(Block* block, const mir::Target& target, ReplaceMap& replace) {
+        // std::cerr << "processing block ";
+        // block->dumpAsTarget(std::cerr);
+        // std::cerr << '\n';
+
+        auto& dataLayout = target.getDataLayout();
+        // u = v + w
+        std::unordered_map<Value*, std::unordered_map<Value*, intptr_t>> graph;
+        auto addEdge = [&](Value* v1, Value* v2, intptr_t w) {
+            graph[v1][v2] = w;
+            graph[v2][v1] = -w;
+        };
+        auto addToGraph = [&](Instruction* inst) {
+            switch(inst->getInstID()) {
+                case InstructionID::GetElementPtr: {
+                    const auto [constant, offset] = inst->as<GetElementPtrInst>()->gatherOffsets(dataLayout);
+                    if(offset.empty()) {
+                        addEdge(inst, inst->lastOperand(), constant);
+                    }
+                    break;
+                }
+                // case InstructionID::PtrAdd: {
+                //     addEdge(inst, inst->getOperand(0), inst->getOperand(1)->as<ConstantInteger>()->getSignExtended());
+                //     break;
+                // }
+                // case InstructionID::PtrCast: {
+                //     addEdge(inst, inst->getOperand(0), 0);
+                //     break;
+                // }
+                default:
+                    break;
+            }
+        };
+        std::vector<Instruction*> gepInsts;
+        for(auto& inst : block->instructions()) {
+            if(inst.getType()->isPointer())
+                addToGraph(&inst);
+            if(inst.getInstID() == InstructionID::GetElementPtr)
+                gepInsts.push_back(&inst);
+        }
+        uint32_t incBeg = 0;
+        while(true) {
+            bool updated = false;
+            while(incBeg < gepInsts.size()) {
+                const auto base = gepInsts[incBeg]->lastOperand();
+                if(base->is<GetElementPtrInst>() && !graph.count(base)) {
+                    updated = true;
+                    addToGraph(base->as<Instruction>());
+                    gepInsts.push_back(base->as<Instruction>());
+                }
+                ++incBeg;
+            }
+            for(uint32_t i = 0; i < gepInsts.size(); ++i)
+                for(uint32_t j = i + 1; j < gepInsts.size(); ++j) {
+                    const auto baseU = gepInsts[i]->lastOperand();
+                    const auto baseV = gepInsts[j]->lastOperand();
+
+                    const auto argU = gepInsts[i]->arguments();
+                    const auto argV = gepInsts[j]->arguments();
+                    if(argU.size() != argV.size())
+                        continue;
+
+                    bool equal = true;
+                    for(auto it1 = argU.begin(), it2 = argV.begin(); it1 != argU.end(); ++it1, ++it2) {
+                        if(*it1 != *it2) {
+                            equal = false;
+                            break;
+                        }
+                    }
+                    if(!equal)
+                        continue;
+
+                    if(const auto it = graph[baseU].find(baseV); it != graph[baseU].end()) {
+                        if(graph[gepInsts[i]].count(gepInsts[j]))
+                            continue;
+                        updated = true;
+                        addEdge(gepInsts[i], gepInsts[j], it->second);
+                    }
+                }
+            if(!updated)
+                break;
+        }
+        if(graph.empty())
+            return false;
+
+        const auto [minOffset, maxOffset] = target.getInstInfo().getAddressingImmRange();
+        std::unordered_set<Value*> visited;
+        using Cluster = std::vector<std::pair<Value*, intmax_t>>;
+        auto visit = [&](auto&& self, Value* u, Cluster& cluster, intptr_t offset) {
+            if(visited.count(u))
+                return;
+            visited.insert(u);
+            cluster.emplace_back(u, offset);
+            for(auto [v, w] : graph[u])
+                self(self, v, cluster, offset - w);
+        };
+        bool modified = false;
+        for(auto& [u, e] : graph) {
+            if(!visited.count(u)) {
+                Cluster cluster;
+                visit(visit, u, cluster, 0);
+                if(cluster.size() <= 2)
+                    continue;
+
+                std::sort(cluster.begin(), cluster.end(), [](auto& lhs, auto& rhs) { return lhs.second < rhs.second; });
+                // for(auto [ptr, offset] : cluster) {
+                //     ptr->dumpAsOperand(std::cerr);
+                //     std::cerr << ": " << offset << "\n";
+                // }
+                Value* pivot = nullptr;
+                intptr_t requiredMin = std::numeric_limits<intptr_t>::max();
+                intptr_t requiredMax = std::numeric_limits<intptr_t>::min();
+                for(auto [k, v] : cluster)
+                    if(k->getBlock() == block) {
+                        requiredMin = std::min(requiredMin, v);
+                        requiredMax = std::max(requiredMax, v);
+                    }
+                if(requiredMin > requiredMax)
+                    continue;
+
+                intptr_t base = 0;
+                uint32_t bestCost = std::numeric_limits<uint32_t>::max();
+                for(auto& [k, off] : cluster) {
+                    if(requiredMin - off >= minOffset && requiredMax - off <= maxOffset) {
+                        uint32_t cost = 0;
+                        if(isFree(block, k, cost)) {
+                            // k->dumpAsOperand(std::cerr);
+                            // std::cerr << " costs " << cost << '\n';
+                            if(cost < bestCost) {
+                                bestCost = cost;
+                                pivot = k;
+                                base = off;
+                            }
+                        }
+                    }
+                }
+                if(!pivot)
+                    continue;
+
+                auto insertPoint = block->instructions().begin();
+                while(insertPoint->getInstID() == InstructionID::Alloc || insertPoint->getInstID() == InstructionID::Phi)
+                    ++insertPoint;
+                std::unordered_map<Value*, Value*> cache;
+                const auto basePtr = makeAvailable(block, pivot, cache, insertPoint, modified);
+
+                for(auto [k, off] : cluster) {
+                    if(k->getBlock() != block)
+                        continue;
+                    if(k == pivot) {
+                        modified = true;
+                        replace.emplace(k, basePtr);
+                        continue;
+                    }
+                    const auto offset = off - base;
+                    const auto ptr = make<PtrAddInst>(basePtr, ConstantInteger::get(IntegerType::get(32), offset), k->getType());
+                    ptr->insertBefore(block, insertPoint);
+                    replace.emplace(k, ptr);
+                    modified = true;
+                }
+            }
+        }
+
+        return modified;
+    }
+
+public:
+    bool run(Function& func, AnalysisPassManager& analysis) const override {
+        bool modified = false;
+        ReplaceMap rep;
+        for(auto block : func.blocks())
+            modified |= handleBlock(block, analysis.module().getTarget(), rep);
+        for(auto [k, v] : rep)
+            k->as<Instruction>()->replaceWith(v);
+        return modified;
+    }
+    [[nodiscard]] std::string_view name() const noexcept override {
+        return "CommonBaseOpt"sv;
+    }
+};
+CMMC_TRANSFORM_PASS(CommonBaseOpt);
 
 CMMC_NAMESPACE_END

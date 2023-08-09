@@ -91,6 +91,10 @@ static void inverseBranchImpl(MIRInst& inst, MIRBasicBlock* newTarget) {
     inst.setOperand<3>(MIROperand::asProb(1.0 - inst.getOperand(3).prob()));
 }
 
+static std::pair<intmax_t, intmax_t> getAddressingImmRangeImpl() {
+    reportUnreachable(CMMC_LOCATION());
+}
+
 CMMC_TARGET_NAMESPACE_END
 
 #include <TAC/InstInfoImpl.hpp>

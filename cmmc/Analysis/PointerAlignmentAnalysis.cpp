@@ -156,6 +156,16 @@ PointerAlignmentAnalysisResult PointerAlignmentAnalysis::run(Function& func, Ana
                 update(u, result.lookup(u->getOperand(0), dataLayout));
                 break;
             }
+            case InstructionID::PtrAdd: {
+                const auto base = result.lookup(u->getOperand(0), dataLayout);
+                const auto offset = u->getOperand(1)->as<ConstantInteger>()->getSignExtended();
+                const auto align = static_cast<uint32_t>(offset & -offset);
+                if(align)
+                    update(u, std::min(base, align));
+                else
+                    update(u, base);
+                break;
+            }
             default:
                 break;
         }
