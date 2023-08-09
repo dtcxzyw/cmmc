@@ -773,6 +773,29 @@ public:
                         if(auto res = solve(op->value, ctx); res.has_value()) {
                             modified = true;
                             op->resetValue(*res ? trueVal : falseVal);
+                            continue;
+                        }
+                        CompareOp cmp;
+                        PhiInst* v1;
+                        Value* v2;
+                        if(icmp(cmp, phi(v1), any(v2))(MatchContext<Value>{ op->value })) {
+                            uint32_t res = 0;
+                            for(auto& [pred, val] : v1->incomings()) {
+                                auto& ctxEdge = edgeSets[v1->getBlock()][pred];
+                                auto resEdge = solveCmp(val->value, v2, cmp, ctxEdge);
+                                if(!resEdge.has_value())
+                                    res = 3;
+                                else {
+                                    res |= (*resEdge ? 1 : 2);
+                                }
+                            }
+                            if(res == 1) {
+                                op->resetValue(trueVal);
+                                modified = true;
+                            } else if(res == 2) {
+                                op->resetValue(falseVal);
+                                modified = true;
+                            }
                         }
                     }
                 }

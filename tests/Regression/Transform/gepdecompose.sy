@@ -5,3 +5,19 @@ int test(int x[], int n, int m) {
             sum += x[i * m + j];
     return sum;
 }
+int getvalue(int a[], int n, int i, int j)
+{
+    if (i < 0 || i >= n || j < 0 || j >= n) return -1;
+    return a[i*n + j];
+}
+void assign2d(int w[], int out[], int n) {
+    int k = 0;
+    while (k < n) {
+        int i = 0;
+        while (i < n) {
+            out[i*n + k] = getvalue(w, n, i, k);
+            i = i + 1;
+        }
+        k = k + 1;
+    }
+}
