@@ -33,7 +33,6 @@
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
 #include <cmmc/Transforms/Util/PatternMatch.hpp>
-#include <compare>
 #include <cstdint>
 #include <initializer_list>
 #include <iostream>
