@@ -1634,6 +1634,23 @@
         "task-clock:u": 1656.95
       }
     ],
+    "9bd324a45edb75c22fe242589f9bcfb7e43a24bd": [
+      {
+        "sysy_time": 5e-06
+      },
+      {
+        "sysy_time": 5e-06
+      },
+      {
+        "sysy_time": 5e-06
+      },
+      {
+        "sysy_time": 5e-06
+      },
+      {
+        "sysy_time": 5e-06
+      }
+    ],
     "a91e65b0fca3872769dbf87485e5f29b11066c21": [
       {
         "branch-load-misses:u": 17,
