@@ -1115,6 +1115,11 @@
       "parent": "fa954375b25c648c0d9469b2f5ce25015248317f",
       "time": "2023-07-03 01:44:34 +0800"
     },
+    "eef26de4fa92e7e3a8f1196d4a3d9964c967d1a8": {
+      "message": "feat(transform): optimize dynamic unroll",
+      "parent": "c7b77d54e6c9906b6b0cd6452c17311b8bb8cf99",
+      "time": "2023-08-09 17:15:39 +0800"
+    },
     "ef576f2eb05f90cf3110c6e42127e43c77f11818": {
       "message": "feat(transform): handle scev with loop invariant",
       "parent": "3f15a8e12be3f0a9f2da522670f88d019a19ffec",
@@ -1171,5 +1176,5 @@
       "time": "2023-07-06 01:05:50 +0800"
     }
   },
-  "head": "c7b77d54e6c9906b6b0cd6452c17311b8bb8cf99"
+  "head": "eef26de4fa92e7e3a8f1196d4a3d9964c967d1a8"
 }
