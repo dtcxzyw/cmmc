@@ -78,6 +78,7 @@ public:
     virtual void legalizeInstWithStackOperand(const InstLegalizeContext& ctx, MIROperand& op, const StackObject& obj) const = 0;
     virtual MIROperand materializeFPConstant(ConstantFloatingPoint* fp, LoweringContext& loweringCtx) const = 0;
     virtual bool lowerInst(Instruction* inst, LoweringContext& loweringCtx) const = 0;
+    virtual void lowerIndirectJump(MIRJumpTable* jumpTable, const MIROperand& offset, LoweringContext& ctx) const = 0;
 };
 
 uint32_t selectCopyOpcode(const MIROperand& dst, const MIROperand& src);

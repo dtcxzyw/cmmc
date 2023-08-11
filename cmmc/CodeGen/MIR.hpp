@@ -435,6 +435,19 @@ public:
     void dump(std::ostream& out, const CodeGenContext& ctx) const override;
 };
 
+class MIRJumpTable final : public MIRRelocable {
+private:
+    std::vector<MIRRelocable*> mData;
+
+public:
+    explicit MIRJumpTable(String symbol) : MIRRelocable{ symbol } {}
+    auto& data() {
+        return mData;
+    }
+    bool verify(std::ostream& out, const CodeGenContext& ctx) const override;
+    void dump(std::ostream& out, const CodeGenContext& ctx) const override;
+};
+
 struct MIRGlobal final {
     Linkage linkage;
     size_t alignment;

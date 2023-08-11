@@ -127,6 +127,14 @@ void MIRDataStorage::dump(std::ostream& out, const CodeGenContext&) const {
                              [&](const std::byte byte) { out << "\t.byte\t" << static_cast<uint32_t>(byte) << '\n'; } },
                    val);
 }
+bool MIRJumpTable::verify(std::ostream&, const CodeGenContext&) const {
+    return true;
+}
+void MIRJumpTable::dump(std::ostream& out, const CodeGenContext&) const {
+    for(const auto label : mData) {
+        out << "\t.word\t" << label->symbol() << '-' << symbol() << '\n';
+    }
+}
 
 MIROperand MIRFunction::addStackObject(CodeGenContext& ctx, uint32_t size, uint32_t alignment, int32_t offset,
                                        StackObjectUsage usage) {

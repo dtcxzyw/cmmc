@@ -122,4 +122,10 @@ bool TACISelInfo::lowerInst(Instruction* inst, LoweringContext& loweringCtx) con
     }
     return false;
 }
+void TACISelInfo::lowerIndirectJump(MIRJumpTable* jumpTable, const MIROperand& offset, LoweringContext& ctx) const {
+    CMMC_UNUSED(jumpTable);
+    CMMC_UNUSED(offset);
+    CMMC_UNUSED(ctx);
+    reportUnreachable(CMMC_LOCATION());
+}
 CMMC_TARGET_NAMESPACE_END

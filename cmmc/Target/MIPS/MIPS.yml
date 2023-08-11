@@ -137,6 +137,9 @@ InstInfo:
   JR:
     Format: jr $Rs:GPR[Use]
     Flag: [Terminator, NoFallthrough, Return, WithDelaySlot]
+  JR_IndirectJump:
+    Format: jr $Tgt:GPR[Use] @ $Table:Reloc[Metadata]
+    Flag: [Terminator, NoFallthrough, IndirectJump, WithDelaySlot]
 
   Load:
     Format: $Mnemonic:Template $Rd:GPR[Def], $Imm:Imm16[Metadata]($Rs:BaseLike[Use])

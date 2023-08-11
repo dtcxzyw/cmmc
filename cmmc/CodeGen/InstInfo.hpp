@@ -48,8 +48,9 @@ enum InstFlag : uint32_t {
     InstFlagMultiDef = 1 << 16,
     InstFlagInOrder = 1 << 17,
     InstFlagPadding = 1 << 18,
+    InstFlagIndirectJump = 1 << 19,
     InstFlagSideEffect = InstFlagLoad | InstFlagStore | InstFlagTerminator | InstFlagBranch | InstFlagCall | InstFlagPush |
-        InstFlagRegDef | InstFlagReturn | InstFlagWithDelaySlot | InstFlagPadding,
+        InstFlagRegDef | InstFlagReturn | InstFlagWithDelaySlot | InstFlagPadding | InstFlagIndirectJump,
 };
 
 constexpr InstFlag operator|(InstFlag lhs, InstFlag rhs) noexcept {

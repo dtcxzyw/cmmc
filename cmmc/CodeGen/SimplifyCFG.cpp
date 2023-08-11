@@ -21,6 +21,7 @@
 #include <cmmc/CodeGen/MIR.hpp>
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/Support/Dispatch.hpp>
+#include <iostream>
 #include <queue>
 #include <unordered_map>
 #include <unordered_set>
@@ -53,6 +54,14 @@ bool redirectGoto(MIRFunction& func, const CodeGenContext& ctx) {
                 if(auto iter = redirect.find(targetBlock); iter != redirect.cend()) {
                     ctx.instInfo.redirectBranch(inst, iter->second);
                     modified = true;
+                }
+            } else if(requireFlag(ctx.instInfo.getInstInfo(inst).getInstFlag(), InstFlagIndirectJump)) {
+                const auto jumpTable = dynamic_cast<MIRJumpTable*>(inst.getOperand(1).reloc());
+                for(auto& item : jumpTable->data()) {
+                    if(auto iter = redirect.find(dynamic_cast<MIRBasicBlock*>(item)); iter != redirect.cend()) {
+                        item = iter->second;
+                        modified = true;
+                    }
                 }
             }
         }
@@ -99,6 +108,14 @@ static bool removeUnreachableCode(MIRFunction& func, const CodeGenContext& ctx) 
                 if(visit.emplace(targetBlock).second) {
                     q.push(targetBlock);
                 }
+            } else if(requireFlag(ctx.instInfo.getInstInfo(inst).getInstFlag(), InstFlagIndirectJump)) {
+                const auto jumpTable = dynamic_cast<MIRJumpTable*>(inst.getOperand(1).reloc());
+                for(auto item : jumpTable->data()) {
+                    targetBlock = dynamic_cast<MIRBasicBlock*>(item);
+                    if(visit.emplace(targetBlock).second) {
+                        q.push(targetBlock);
+                    }
+                }
             }
             if(requireFlag(ctx.instInfo.getInstInfo(inst).getInstFlag(), InstFlagTerminator | InstFlagNoFallthrough)) {
                 stop = true;
@@ -135,6 +152,10 @@ static bool removeUnusedLabels(MIRFunction& func, const CodeGenContext& ctx) {
         for(auto& inst : block->instructions()) {
             if(ctx.instInfo.matchBranch(inst, targetBlock, prob)) {
                 usedLabels.insert(targetBlock);
+            } else if(requireFlag(ctx.instInfo.getInstInfo(inst).getInstFlag(), InstFlagIndirectJump)) {
+                const auto jumpTable = dynamic_cast<MIRJumpTable*>(inst.getOperand(1).reloc());
+                for(auto item : jumpTable->data())
+                    usedLabels.insert(dynamic_cast<MIRBasicBlock*>(item));
             }
         }
     }
@@ -216,6 +237,12 @@ static bool removeEmptyBlocks(MIRFunction& func, const CodeGenContext& ctx) {
             if(ctx.instInfo.matchBranch(inst, targetBlock, prob)) {
                 if(const auto iter = redirects.find(targetBlock); iter != redirects.cend())
                     ctx.instInfo.redirectBranch(inst, iter->second);
+            } else if(requireFlag(ctx.instInfo.getInstInfo(inst).getInstFlag(), InstFlagIndirectJump)) {
+                const auto jumpTable = dynamic_cast<MIRJumpTable*>(inst.getOperand(1).reloc());
+                for(auto& item : jumpTable->data()) {
+                    if(const auto iter = redirects.find(dynamic_cast<MIRBasicBlock*>(item)); iter != redirects.cend())
+                        item = iter->second;
+                }
             }
         }
     }

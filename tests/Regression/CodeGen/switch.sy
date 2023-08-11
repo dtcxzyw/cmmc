@@ -1,0 +1,7 @@
+int test(int a, int b) {
+    if(b == 0) a += 100;
+    else if(b == 1) a -= 100;
+    else if(b == 2) a *= 100;
+    else if(b == 3) a /= 100;
+    return a;
+}

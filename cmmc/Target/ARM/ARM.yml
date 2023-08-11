@@ -194,6 +194,10 @@ InstInfo:
     Format: bx $Rm:GPR[Use]
     Flag: [Terminator, NoFallthrough, Return]
 
+  BX_IndirectJump:
+    Format: bx $Tgt:GPR[Use] @ $Table:Reloc[Metadata]
+    Flag: [Terminator, NoFallthrough, IndirectJump]
+
   VLDR:
     Format: vldr $Fd:FPR[Def], [$Rn:BaseLike[Use], $Imm:AddrImmVFP[Metadata]]
     Flag: [Load]
@@ -1821,6 +1825,7 @@ ScheduleModel:
         - B
         - B_Cond
         - BX
+        - BX_IndirectJump
       BranchLink: # latency: 1, throughput: 1, pipeline: B + I0/I1
         - BL
       FPLoad: # latency: 4+N, throughput: 1/N, pipeline: L

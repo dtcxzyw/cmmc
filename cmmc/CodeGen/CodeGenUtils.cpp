@@ -60,6 +60,8 @@ void dumpAssembly(std::ostream& out, const CodeGenContext& ctx, const MIRModule&
             return data->isReadOnly() ? DataSection::RoData : DataSection::Data;
         if(const auto zero = dynamic_cast<MIRZeroStorage*>(reloc))
             return DataSection::Bss;
+        if(const auto jumpTable = dynamic_cast<MIRJumpTable*>(reloc))
+            return DataSection::RoData;
         reportUnreachable(CMMC_LOCATION());
     };
     static const char* directives[3] = { ".data", ".section .rodata", ".bss" };  // NOLINT

@@ -744,4 +744,20 @@ bool MIPSISelInfo::lowerInst(Instruction* inst, LoweringContext& loweringCtx) co
     }
     return false;
 }
+void MIPSISelInfo::lowerIndirectJump(MIRJumpTable* jumpTable, const MIROperand& offset, LoweringContext& ctx) const {
+    const auto tablePtr = ctx.newVReg(ctx.getPtrType());
+    ctx.emitInst(MIRInst{ InstLoadGlobalAddress }.setOperand<0>(tablePtr).setOperand<1>(MIROperand::asReloc(jumpTable)));
+    const auto byteOffset = ctx.newVReg(ctx.getPtrType());
+    ctx.emitInst(MIRInst{ InstShl }
+                     .setOperand<0>(byteOffset)
+                     .setOperand<1>(offset)
+                     .setOperand<2>(MIROperand::asImm(2, OperandType::Int32)));
+    const auto offsetPtr = ctx.newVReg(ctx.getPtrType());
+    ctx.emitInst(MIRInst{ InstAdd }.setOperand<0>(offsetPtr).setOperand<1>(tablePtr).setOperand<2>(byteOffset));
+    const auto offsetVal = ctx.newVReg(OperandType::Int32);
+    ctx.emitInst(MIRInst{ InstLoad }.setOperand<0>(offsetVal).setOperand<1>(offsetPtr));
+    const auto targetAddress = ctx.newVReg(ctx.getPtrType());
+    ctx.emitInst(MIRInst{ InstAdd }.setOperand<0>(targetAddress).setOperand<1>(tablePtr).setOperand<2>(offsetVal));
+    ctx.emitInst(MIRInst{ JR_IndirectJump }.setOperand<0>(targetAddress).setOperand<1>(MIROperand::asReloc(jumpTable)));
+}
 CMMC_TARGET_NAMESPACE_END

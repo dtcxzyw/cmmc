@@ -94,6 +94,9 @@ InstInfo:
         Mnemonic: bgtu
       BGEU:
         Mnemonic: bgeu
+  JR:
+    Format: "jr $Tgt:GPR[Use] # $Table:Reloc[Metadata]"
+    Flag: [Terminator, IndirectJump, NoFallthrough]
   J:
     Format: j $Tgt:Reloc[Metadata]
     Flag: [Terminator, Branch, NoFallthrough]
@@ -2134,6 +2137,7 @@ ScheduleModel:
           BGTU,
           BGEU,
           J,
+          JR,
           UNIMP,
         ]
       LoadStore:

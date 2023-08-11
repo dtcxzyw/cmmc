@@ -61,6 +61,7 @@ public:
     void legalizeInstWithStackOperand(const InstLegalizeContext& ctx, MIROperand& op, const StackObject& obj) const override;
     MIROperand materializeFPConstant(ConstantFloatingPoint* fp, LoweringContext& loweringCtx) const override;
     bool lowerInst(Instruction* inst, LoweringContext& loweringCtx) const override;
+    void lowerIndirectJump(MIRJumpTable* jumpTable, const MIROperand& offset, LoweringContext& ctx) const override;
 };
 
 const TargetISelInfo& get{{target}}ISelInfo() {

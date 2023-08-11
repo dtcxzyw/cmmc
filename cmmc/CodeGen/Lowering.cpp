@@ -1029,10 +1029,73 @@ static void lower(ReturnInst* inst, LoweringContext& ctx) {
 static void lower(FunctionCallInst* inst, LoweringContext& ctx) {
     ctx.getCodeGenContext().frameInfo.emitCall(inst, ctx);
 }
-static void lower(SwitchInst* inst, LoweringContext& ctx) {
-    CMMC_UNUSED(inst);
-    CMMC_UNUSED(ctx);
-    reportNotImplemented(CMMC_LOCATION());
+static void lower(SwitchInst* inst, LoweringContext& ctx, const IntegerRangeAnalysisResult& range,
+                  const DominateAnalysisResult& dom) {
+    const auto valRange = range.query(inst->getOperand(0), dom, inst, 5);
+    auto jumpTable = std::make_unique<MIRJumpTable>(
+        String::get("__cmmc_jumptable"sv).withID(static_cast<int32_t>(ctx.getCodeGenContext().nextId())));
+    auto& table = jumpTable->data();
+    auto fillTable = [&](intmax_t base, intmax_t size, MIRBasicBlock* fill) {
+        table.resize(static_cast<size_t>(size));
+        for(intmax_t i = 0; i < size; ++i) {
+            const auto key = base + i;
+            if(auto iter = inst->edges().find(key); iter != inst->edges().cend()) {
+                // no phi
+                table[static_cast<size_t>(i)] = ctx.mapBlock(iter->second);
+            } else {
+                table[static_cast<size_t>(i)] = fill;
+            }
+        }
+    };
+    const auto defaultPrepare = ctx.addBlockAfter();
+    const auto val = ctx.mapOperand(inst->getOperand(0));
+    auto& iselInfo = ctx.getCodeGenContext().iselInfo;
+
+    if(valRange.maxSignedValue() - valRange.minSignedValue() < 256) {
+        // hole -> default label
+        const auto base = valRange.minSignedValue();
+        const auto size = valRange.maxSignedValue() - valRange.minSignedValue() + 1;
+        fillTable(base, size, defaultPrepare);
+        const auto offset = ctx.newVReg(val.type());
+        if(base == 0)
+            ctx.emitCopy(offset, val);
+        else
+            ctx.emitInst(
+                MIRInst{ InstSub }.setOperand<0>(offset).setOperand<1>(val).setOperand<2>(MIROperand::asImm(base, val.type())));
+        iselInfo.lowerIndirectJump(jumpTable.get(), offset, ctx);
+    } else {
+        // range check
+        // hole -> default label
+        const auto base = inst->edges().begin()->first;
+        const auto size = inst->edges().rbegin()->first - base + 1;
+        fillTable(base, size, defaultPrepare);
+        // range check
+        const auto offset = ctx.newVReg(val.type());
+        if(base == 0)
+            ctx.emitCopy(offset, val);
+        else
+            ctx.emitInst(
+                MIRInst{ InstSub }.setOperand<0>(offset).setOperand<1>(val).setOperand<2>(MIROperand::asImm(base, val.type())));
+        const auto cond = ctx.newVReg(OperandType::Bool);
+        ctx.emitInst(MIRInst{ InstICmp }
+                         .setOperand<0>(cond)
+                         .setOperand<1>(offset)
+                         .setOperand<2>(MIROperand::asImm(size, offset.type()))
+                         .setOperand<3>(MIROperand::asImm(CompareOp::ICmpUnsignedGreaterEqual, OperandType::Special)));
+        ctx.emitInst(MIRInst{ InstBranch }
+                         .setOperand<0>(cond)
+                         .setOperand<1>(MIROperand::asReloc(defaultPrepare))
+                         .setOperand<2>(MIROperand::asProb(1.0 / static_cast<double>(inst->edges().size() + 1))));
+        const auto switchBlock = ctx.addBlockAfter();
+        ctx.setCurrentBasicBlock(switchBlock);
+        // indirect jump
+        iselInfo.lowerIndirectJump(jumpTable.get(), offset, ctx);
+    }
+
+    ctx.setCurrentBasicBlock(defaultPrepare);
+    emitBranch(inst->defaultTarget(), inst->getBlock(), ctx);
+    ctx.getModule().globals().push_back(
+        std::make_unique<MIRGlobal>(Linkage::Internal, ctx.getDataLayout().getStorageAlignment(), std::move(jumpTable)));
 }
 static void lowerInst(Instruction* inst, LoweringContext& ctx, const PointerAlignmentAnalysisResult& alignment,
                       const IntegerRangeAnalysisResult& range, const DominateAnalysisResult& dom) {
@@ -1081,7 +1144,7 @@ static void lowerInst(Instruction* inst, LoweringContext& ctx, const PointerAlig
             lower(inst->as<UnreachableInst>(), ctx);
             break;
         case InstructionID::Switch:
-            lower(inst->as<SwitchInst>(), ctx);
+            lower(inst->as<SwitchInst>(), ctx, range, dom);
             break;
         case InstructionID::Load:
             lower(inst->as<LoadInst>(), ctx, alignment);

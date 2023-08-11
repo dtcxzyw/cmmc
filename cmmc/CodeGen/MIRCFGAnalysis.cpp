@@ -68,6 +68,12 @@ CFGAnalysisResult calcCFG(const MIRFunction& func, const CodeGenContext& ctx) {
                 } else
                     connect(block.get(), targetBlock, prob);
             }
+        } else if(requireFlag(ctx.instInfo.getInstInfo(terminator).getInstFlag(), InstFlagIndirectJump)) {
+            const auto jumpTable = dynamic_cast<MIRJumpTable*>(terminator.getOperand(1).reloc());
+            auto& table = jumpTable->data();
+            prob = 1.0 / static_cast<double>(table.size());
+            for(auto item : table)
+                connect(block.get(), dynamic_cast<MIRBasicBlock*>(item), prob);
         }
     }
 
