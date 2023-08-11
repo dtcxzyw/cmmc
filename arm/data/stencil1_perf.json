@@ -196,6 +196,23 @@
         "sysy_time": 0.016454
       }
     ],
+    "13e4309bf0119dcbfff341a7f0c4bb1fa1658786": [
+      {
+        "sysy_time": 0.017613
+      },
+      {
+        "sysy_time": 0.017455
+      },
+      {
+        "sysy_time": 0.016556
+      },
+      {
+        "sysy_time": 0.017411
+      },
+      {
+        "sysy_time": 0.017347
+      }
+    ],
     "15c54ccbc7f3ccee2471389b56e2dd6b6b8b2996": [
       {
         "branch-load-misses:u": 972,
