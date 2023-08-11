@@ -180,4 +180,7 @@ int32_t cmmcAddRec3SRem(int32_t x, int32_t rem) {
     const auto n64 = static_cast<int64_t>(x);
     return static_cast<int32_t>(n64 * (n64 - 1) / 2 % rem);
 }
+void cmmcReduceAddI32(std::atomic_int32_t& x, int32_t val) {
+    x += val;
+}
 }

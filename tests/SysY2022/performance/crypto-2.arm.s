@@ -31,7 +31,7 @@ main:
 	bgt label5
 	b label52
 .p2align 4
-label51:
+label50:
 	ldr r0, [sp, #32]
 	add r0, r1, r0
 	rsb r0, r0, #0
@@ -138,9 +138,9 @@ label6:
 	add r1, r2, #1
 	and r3, r1, #63
 	cmp r3, #60
-	beq label16
+	beq label15
 .p2align 4
-label15:
+label51:
 	add r0, r0, #4
 	mov r2, r1
 	add r1, r1, #1
@@ -148,9 +148,9 @@ label15:
 	and r3, r1, #63
 	str r9, [r0, #0]
 	cmp r3, #60
-	bne label15
+	bne label51
 .p2align 4
-label16:
+label15:
 	mov r9, #0
 	mov r1, #125
 	add r2, r2, #5
@@ -259,10 +259,10 @@ label16:
 	str r8, [sp, #24]
 	str r7, [sp, #4]
 	cmp r2, r9
-	bgt label25
-	b label51
+	bgt label24
+	b label50
 .p2align 4
-label49:
+label48:
 	add r1, r1, r9
 	ldr r7, [sp, #4]
 	add r0, r0, #64
@@ -284,14 +284,14 @@ label49:
 	str r2, [sp, #4]
 	ldr r2, [sp, #8]
 	cmp r2, r0
-	ble label51
+	ble label50
 .p2align 4
-label25:
+label24:
 	add r2, sp, #56
 	mov r9, #0
 	mov r3, r9
 .p2align 4
-label26:
+label25:
 	ldr r5, [sp, #0]
 	add r9, r9, #4
 	cmp r9, #16
@@ -333,16 +333,16 @@ label26:
 	add r5, r5, r6, lsl #8
 	add r4, r5, r4
 	str r4, [r2, #12]
-	bge label260
+	bge label259
 	add r2, r2, #16
-	b label26
+	b label25
 .p2align 4
-label260:
+label259:
 	add r2, sp, #56
 	mov r3, #16
 	add r2, r2, #64
 .p2align 4
-label32:
+label31:
 	ldr r4, [r2, #-12]
 	add r3, r3, #4
 	ldr r5, [r2, #-32]
@@ -390,11 +390,11 @@ label32:
 	sub r5, r4, r5, lsl #1
 	add r4, r5, r4, lsl #1
 	str r4, [r2, #12]
-	bge label36
+	bge label35
 	add r2, r2, #16
-	b label32
+	b label31
 .p2align 4
-label36:
+label35:
 	add r2, sp, #56
 	mov r9, #0
 	ldr r7, [sp, #4]
@@ -406,9 +406,9 @@ label36:
 	mov r5, r8
 	ldr r8, [sp, #52]
 	cmp r9, #20
-	blt label326
+	blt label325
 .p2align 4
-label45:
+label44:
 	add r9, r7, r3
 	cmp r6, #60
 	movw r11, #48348
@@ -427,7 +427,7 @@ label45:
 	movt r11, #28377
 	movlt r10, r11
 .p2align 4
-label46:
+label45:
 	add r8, r8, r4, lsl #5
 	add r6, r6, #1
 	cmp r6, #80
@@ -445,7 +445,7 @@ label46:
 	asr r8, r8, #30
 	sub r8, r7, r8, lsl #30
 	add r10, r8, r7, lsl #30
-	bge label49
+	bge label48
 	add r2, r2, #4
 	mov r7, r4
 	mov r8, r5
@@ -453,13 +453,13 @@ label46:
 	mov r4, r9
 	mov r5, r3
 	mov r3, r10
-	bge label45
+	bge label44
 .p2align 4
-label326:
+label325:
 	movw r10, #31129
 	movt r10, #23170
 	mov r9, #0
-	b label46
+	b label45
 label52:
 	mov r0, #184
 	bl _sysy_stoptime

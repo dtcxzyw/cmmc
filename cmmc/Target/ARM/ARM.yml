@@ -505,6 +505,17 @@ InstSelection:
         Op2: $XorLhs
 
   - Pattern:
+      InstXor:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        $Predicate: isOperandIReg($Lhs) && isNegativeOne($Rhs)
+    Replace:
+      MVN:
+        Rd: $Dst
+        Op2: $Lhs
+
+  - Pattern:
       $Template:
         Dst: $Dst
         Lhs: $Lhs

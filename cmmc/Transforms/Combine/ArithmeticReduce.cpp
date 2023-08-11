@@ -1232,6 +1232,9 @@ class ArithmeticReduce final : public TransformPass<Function> {
             //                                        make<ConstantFloatingPoint>(v1->getType(), f1 + f2));
             // }
 
+            if(sub(capture(cint_(-1), v1), any(v2))(matchCtx))
+                return builder.makeOp<BinaryInst>(InstructionID::Xor, v2, v1);
+
             return nullptr;
         });
         return ret || modified;

@@ -578,7 +578,7 @@ func @foo113(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless 
 }
 func @foo114(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i32 %0 = sub i32 -1, i32 %x;
+    i32 %0 = xor i32 %x, i32 -1;
     ret i32 %0;
 }
 func @foo115(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {

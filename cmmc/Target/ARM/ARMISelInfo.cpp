@@ -736,7 +736,8 @@ static bool legalizeInst(MIRInst& inst, ISelContext& ctx) {
             imm2reg(lhs);
 
             // bypass for and -> bic
-            if(inst.opcode() != InstAnd || (!rhs.isImm() || !isOperandOp2Constant(MIROperand::asImm(~rhs.imm(), rhs.type()))))
+            if((inst.opcode() != InstAnd || (!rhs.isImm() || !isOperandOp2Constant(MIROperand::asImm(~rhs.imm(), rhs.type())))) &&
+               !(inst.opcode() == InstXor && isNegativeOne(rhs)))
                 nonOp2Imm2reg(rhs);
             if(isOperandIReg(lhs) && isOperandIReg(rhs)) {
                 const auto isShift = [&](const MIROperand& op) {
