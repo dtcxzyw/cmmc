@@ -48,12 +48,17 @@ public:
                 const auto inst = block->getTerminator();
                 if(!inst->isBranch())
                     continue;
-                const auto branch = inst->as<BranchInst>();
-                ++blockRef[branch->getTrueTarget()];
-                if(branch->getFalseTarget() && branch->getTrueTarget() != branch->getFalseTarget())
-                    ++blockRef[branch->getFalseTarget()];
+                if(inst->getInstID() == InstructionID::Switch) {
+                    auto targets = inst->as<SwitchInst>()->getUniqueSuccessors();
+                    for(auto target : targets)
+                        ++blockRef[target];
+                } else {
+                    const auto branch = inst->as<BranchInst>();
+                    ++blockRef[branch->getTrueTarget()];
+                    if(branch->getFalseTarget() && branch->getTrueTarget() != branch->getFalseTarget())
+                        ++blockRef[branch->getFalseTarget()];
+                }
             }
-
             std::unordered_set<Block*> deferred;
             for(auto block : func.blocks()) {
                 if(deferred.count(block))
@@ -85,10 +90,17 @@ public:
 
                     const auto newTerminator = block->getTerminator();
                     if(newTerminator->isBranch()) {
-                        const auto newBranch = newTerminator->as<BranchInst>();
-                        retargetBlock(newBranch->getTrueTarget(), target, block);
-                        if(newBranch->getFalseTarget() && newBranch->getTrueTarget() != newBranch->getFalseTarget())
-                            retargetBlock(newBranch->getFalseTarget(), target, block);
+                        if(newTerminator->getInstID() == InstructionID::Switch) {
+                            const auto newSwitch = newTerminator->as<SwitchInst>();
+                            auto targets = newSwitch->getUniqueSuccessors();
+                            for(auto succ : targets)
+                                retargetBlock(succ, target, block);  // NOLINT
+                        } else {
+                            const auto newBranch = newTerminator->as<BranchInst>();
+                            retargetBlock(newBranch->getTrueTarget(), target, block);
+                            if(newBranch->getFalseTarget() && newBranch->getTrueTarget() != newBranch->getFalseTarget())
+                                retargetBlock(newBranch->getFalseTarget(), target, block);
+                        }
                     }
                     deferred.insert(target);
                 }

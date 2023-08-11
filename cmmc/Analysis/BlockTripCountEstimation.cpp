@@ -115,13 +115,22 @@ BlockTripCountEstimationResult BlockTripCountEstimation::run(Function& func, Ana
         if(!terminator->isBranch())
             continue;
         const auto u = nodeMap.at(block);
-        const auto branch = terminator->as<BranchInst>();
-        if(branch->getInstID() == InstructionID::ConditionalBranch) {
-            const auto prob = branch->getBranchProb();
-            addEdge(u, branch->getTrueTarget(), prob);
-            addEdge(u, branch->getFalseTarget(), 1.0 - prob);
+        if(terminator->getInstID() == InstructionID::Switch) {
+            const auto switchInst = terminator->as<SwitchInst>();
+            const auto prob = 1.0 / static_cast<double>(switchInst->edges().size() + 1);
+            for(auto [val, target] : switchInst->edges()) {
+                addEdge(u, target, prob);
+            }
+            addEdge(u, switchInst->defaultTarget(), prob);
         } else {
-            addEdge(u, branch->getTrueTarget(), 1.0);
+            const auto branch = terminator->as<BranchInst>();
+            if(branch->getInstID() == InstructionID::ConditionalBranch) {
+                const auto prob = branch->getBranchProb();
+                addEdge(u, branch->getTrueTarget(), prob);
+                addEdge(u, branch->getFalseTarget(), 1.0 - prob);
+            } else {
+                addEdge(u, branch->getTrueTarget(), 1.0);
+            }
         }
     }
 

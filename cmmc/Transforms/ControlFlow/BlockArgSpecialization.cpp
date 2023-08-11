@@ -50,6 +50,9 @@ public:
 
             if(!terminator->isBranch())
                 continue;
+            // FIXME
+            if(terminator->getInstID() == InstructionID::Switch)
+                continue;
 
             const auto freq = blockTripCount.query(block);
             if(freq < coldBlockThreshold)
@@ -68,6 +71,9 @@ public:
                     return;
                 const auto targetTerminator = targetBlock->getTerminator();
                 if(targetTerminator->isBranch()) {
+                    // FIXME
+                    if(targetTerminator->getInstID() == InstructionID::Switch)
+                        return;
                     const auto targetBranch = targetTerminator->as<BranchInst>();
                     if(targetBranch->getTrueTarget() == targetBlock || targetBranch->getFalseTarget() == targetBlock) {
                         return;  // handled by loop rotate
@@ -126,6 +132,9 @@ public:
                 }
 
                 if(targetTerminator->isBranch()) {
+                    // FIXME
+                    if(targetTerminator->getInstID() == InstructionID::Switch)
+                        return;
                     const auto targetBranch = targetTerminator->as<BranchInst>();
                     applyForSuccessors(targetBranch, [&](Block* target) {
                         copyTarget(target, targetBlock, newBlock);  // NOLINT
@@ -137,7 +146,9 @@ public:
                 modified = true;
             };
 
-            applyForSuccessors(branch, handleTarget);
+            handleTarget(branch->getTrueTarget());
+            if(branch->getFalseTarget())
+                handleTarget(branch->getFalseTarget());
         }
 
         return modified;

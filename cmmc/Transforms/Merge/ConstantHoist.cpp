@@ -111,6 +111,9 @@ class ConstantHoist final : public TransformPass<Function> {
 
         const auto terminator = lhs->getTerminator();
         if(terminator->isBranch()) {
+            if(terminator->getInstID() == InstructionID::Switch)
+                return false;
+
             const auto branch = terminator->as<BranchInst>();
             if(!checkTarget(branch->getTrueTarget())) {
                 return false;

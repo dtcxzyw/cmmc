@@ -142,7 +142,7 @@ public:
                 if(cu == cv)
                     continue;
 
-                const auto terminator = bu->getTerminator()->as<BranchInst>();
+                const auto terminator = bu->getTerminator();
                 auto& e = edges[cu][cv];
 
                 if(terminator->getInstID() == InstructionID::ConditionalBranch) {
@@ -151,7 +151,7 @@ public:
                     if(branch->getTrueTarget() == branch->getFalseTarget()) {
                         e.push_back({ nullptr, false });
                     } else
-                        e.push_back({ cond, next == terminator->getTrueTarget() });
+                        e.push_back({ cond, next == branch->getTrueTarget() });
                 } else {
                     e.push_back({ nullptr, false });
                 }

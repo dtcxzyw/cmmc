@@ -46,14 +46,24 @@ public:
 
             const auto terminator = u->getTerminator();
             if(terminator->isBranch()) {
-                const auto inst = terminator->as<BranchInst>();
-                const auto trueTarget = inst->getTrueTarget();
-                if(reachable.insert(trueTarget).second) {
-                    q.push(trueTarget);
-                }
-                const auto falseTarget = inst->getFalseTarget();
-                if(falseTarget && reachable.insert(falseTarget).second) {
-                    q.push(falseTarget);
+                auto addSucc = [&](Block* block) {
+                    if(reachable.insert(block).second) {
+                        q.push(block);
+                    }
+                };
+                if(terminator->getInstID() == InstructionID::Switch) {
+                    const auto switchInst = terminator->as<SwitchInst>();
+                    addSucc(switchInst->defaultTarget());
+                    for(auto [val, target] : switchInst->edges()) {
+                        addSucc(target);
+                    }
+                } else {
+                    const auto inst = terminator->as<BranchInst>();
+                    const auto trueTarget = inst->getTrueTarget();
+                    addSucc(trueTarget);
+                    const auto falseTarget = inst->getFalseTarget();
+                    if(falseTarget)
+                        addSucc(falseTarget);
                 }
             }
         }
@@ -76,14 +86,22 @@ public:
                     inst.replaceWith(make<UndefinedValue>(inst.getType()));
             const auto terminator = block->getTerminator();
             if(terminator->isBranch()) {
-                const auto branch = terminator->as<BranchInst>();
                 auto handleTarget = [&](Block* target) {
                     if(!target || !reachable.count(target))
                         return;
                     removePhi(block, target);
                 };
-                handleTarget(branch->getTrueTarget());
-                handleTarget(branch->getFalseTarget());
+                if(terminator->getInstID() == InstructionID::Switch) {
+                    const auto switchInst = terminator->as<SwitchInst>();
+                    handleTarget(switchInst->defaultTarget());
+                    for(auto [val, target] : switchInst->edges()) {
+                        handleTarget(target);
+                    }
+                } else {
+                    const auto branch = terminator->as<BranchInst>();
+                    handleTarget(branch->getTrueTarget());
+                    handleTarget(branch->getFalseTarget());
+                }
             }
             // remove references
             block->instructions().clear();

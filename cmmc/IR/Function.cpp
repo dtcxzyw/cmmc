@@ -164,22 +164,32 @@ bool Function::verify(std::ostream& out) const {
     for(auto block : mBlocks) {
         auto terminator = block->getTerminator();
         if(terminator->isBranch()) {
-            const auto branch = terminator->as<BranchInst>();
-            auto& trueTarget = branch->getTrueTarget();
-            auto& falseTarget = branch->getFalseTarget();
-            if(!blocks.count(trueTarget)) {
-                out << "invalid use of deleted block "sv;
-                trueTarget->dumpAsTarget(out);
-                out << std::endl;
-                terminator->dump(out, Noop{});
-                return false;
-            }
-            if(falseTarget && !blocks.count(falseTarget)) {
-                out << "invalid use of deleted block "sv;
-                falseTarget->dumpAsTarget(out);
-                out << std::endl;
-                terminator->dump(out, Noop{});
-                return false;
+            auto checkBlock = [&](Block* target) {
+                if(!blocks.count(target)) {
+                    out << "invalid use of deleted block "sv;
+                    target->dumpAsTarget(out);
+                    out << std::endl;
+                    terminator->dump(out, Noop{});
+                    return false;
+                }
+                return true;
+            };
+
+            if(terminator->getInstID() == InstructionID::Switch) {
+                auto switchInst = terminator->as<SwitchInst>();
+                for(auto [key, target] : switchInst->edges())
+                    if(!checkBlock(target))
+                        return false;
+                if(!checkBlock(switchInst->defaultTarget()))
+                    return false;
+            } else {
+                const auto branch = terminator->as<BranchInst>();
+                auto& trueTarget = branch->getTrueTarget();
+                auto& falseTarget = branch->getFalseTarget();
+                if(!checkBlock(trueTarget))
+                    return false;
+                if(falseTarget && !checkBlock(falseTarget))
+                    return false;
             }
         }
         if(!block->verify(out))

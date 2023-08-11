@@ -27,6 +27,7 @@
 #include <memory>
 #include <ostream>
 #include <unordered_map>
+#include <unordered_set>
 #include <utility>
 
 CMMC_NAMESPACE_BEGIN
@@ -43,6 +44,7 @@ enum class InstructionID {
     Branch,
     ConditionalBranch,
     Unreachable,
+    Switch,
     TerminatorEnd,
     // memory ops
     MemoryOpBegin,
@@ -372,7 +374,7 @@ public:
 
     void dumpAsOperand(std::ostream& out) const final;
 
-    void dumpWithNoOperand(std::ostream& out) const;
+    void dumpWithoutOperand(std::ostream& out) const;
     void dumpBinary(std::ostream& out) const;
     void dumpUnary(std::ostream& out) const;
     virtual void dumpInst(std::ostream& out) const = 0;
@@ -394,7 +396,8 @@ public:
 #undef CMMC_GET_INST_CATEGORY
 
     [[nodiscard]] bool isBranch() const noexcept {
-        return mInstID == InstructionID::Branch || mInstID == InstructionID::ConditionalBranch;
+        return mInstID == InstructionID::Branch || mInstID == InstructionID::ConditionalBranch ||
+            mInstID == InstructionID::Switch;
     }
     [[nodiscard]] bool canbeOperand() const noexcept;
 
@@ -648,6 +651,25 @@ public:
 class UnreachableInst final : public Instruction {
 public:
     explicit UnreachableInst() : Instruction{ InstructionID::Unreachable, VoidType::get(), {} } {}
+    void dumpInst(std::ostream& out) const override;
+    [[nodiscard]] Instruction* clone() const override;
+};
+
+class SwitchInst final : public Instruction {
+    Block* mDefaultBlock;
+    Map<intmax_t, Block*, std::less<intmax_t>, ArenaAllocator<Arena::Source::IR, std::pair<const intmax_t, Block*>>> mEdges;
+
+public:
+    explicit SwitchInst(Value* val, Block* defaultBlock)
+        : Instruction{ InstructionID::Switch, VoidType::get(), { val } }, mDefaultBlock{ defaultBlock } {}
+    void addEdge(intmax_t key, Block* label);
+    auto& edges() {
+        return mEdges;
+    }
+    Block*& defaultTarget() {
+        return mDefaultBlock;
+    }
+    std::unordered_set<Block*> getUniqueSuccessors() const;
     void dumpInst(std::ostream& out) const override;
     [[nodiscard]] Instruction* clone() const override;
 };

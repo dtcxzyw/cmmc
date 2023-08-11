@@ -18,6 +18,7 @@
 #include <cstdint>
 #include <deque>
 #include <list>
+#include <map>
 #include <memory>
 #include <string>
 #include <type_traits>
@@ -119,6 +120,10 @@ using Vector = std::vector<T, Allocator>;
 
 template <typename T, typename Allocator = ArenaSourceHint<T>>
 using Deque = std::deque<T, Allocator>;
+
+template <typename Key, typename Value, typename Cmp = std::less<Key>,
+          typename Allocator = ArenaSourceHint<std::pair<const Key, Value>>>
+using Map = std::map<Key, Value, Cmp, Allocator>;
 
 template <typename Key, typename Value, Arena::Source Src, typename Hash = std::hash<Key>, typename Equal = std::equal_to<Key>>
 using HashTable = std::unordered_map<Key, Value, Hash, Equal,

@@ -22,6 +22,7 @@
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/IRBuilder.hpp>
 #include <cmmc/IR/Instruction.hpp>
+#include <cmmc/IR/Value.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/Graph.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
@@ -357,6 +358,7 @@ public:
         const auto i32 = IntegerType::get(32);
 
         std::unordered_map<Block*, std::unordered_map<Block*, std::unordered_map<Value*, bool>>> edges;
+        std::unordered_map<Block*, std::unordered_map<Block*, CondSet>> edgeSets;
         std::unordered_map<Block*, CondSet> conditions;
         auto addToSet = [](CondSet& set, Value* lhs, Value* rhs, KnownRelations relations) {
             if(lhs == rhs)
@@ -373,6 +375,13 @@ public:
 
         constexpr uint32_t maxAdditionalFacts = 32;
         uint32_t additionalFact = 0;
+        std::unordered_map<intmax_t, ConstantInteger*> imm2Constant;
+        auto getImm = [&](intmax_t v) {
+            if(auto iter = imm2Constant.find(v); iter != imm2Constant.end())
+                return iter->second;
+            return imm2Constant[v] = ConstantInteger::get(i32, v);
+        };
+
         for(auto block : func.blocks()) {
             auto& condSet = conditions[block];
             for(auto& inst : block->instructions()) {
@@ -413,6 +422,39 @@ public:
                         addEdge(edges[falseTarget][block], cond, false);
                         break;
                     }
+                    case InstructionID::Switch: {
+                        const auto val = inst.getOperand(0);
+                        const auto defaultTarget = inst.as<SwitchInst>()->defaultTarget();
+                        std::unordered_map<Block*, std::vector<intmax_t>> valueMap;
+                        for(auto [key, target] : inst.as<SwitchInst>()->edges()) {
+                            if(target == defaultTarget)
+                                continue;
+                            valueMap[target].push_back(key);
+                        }
+                        auto& defaultSet = edgeSets[defaultTarget][block];
+                        for(auto& [target, values] : valueMap) {
+                            auto& set = edgeSets[target][block];
+                            if(values.size() == 1) {
+                                addToSet(set, val, getImm(values.front()),
+                                         KnownRelations{ KnownRelation::True, KnownRelation::False, KnownRelation::False });
+                            } else {
+                                // range
+                                const auto minVal = values.front();
+                                const auto maxVal = values.back();
+                                addToSet(set, val, getImm(minVal),
+                                         KnownRelations{ KnownRelation::Unknown, KnownRelation::False, KnownRelation::Unknown });
+                                addToSet(set, val, getImm(maxVal),
+                                         KnownRelations{ KnownRelation::Unknown, KnownRelation::Unknown, KnownRelation::False });
+                            }
+
+                            // to default
+                            for(auto value : values) {
+                                addToSet(defaultSet, val, getImm(value),
+                                         KnownRelations{ KnownRelation::False, KnownRelation::Unknown, KnownRelation::Unknown });
+                            }
+                        }
+                        break;
+                    }
                     case InstructionID::SMin: {
                         addToSet(condSet, &inst, inst.getOperand(0),
                                  { KnownRelation::Unknown, KnownRelation::Unknown, KnownRelation::False });
@@ -433,7 +475,6 @@ public:
             }
         }
 
-        std::unordered_map<Block*, std::unordered_map<Block*, CondSet>> edgeSets;
         std::unordered_set<Block*> inQueue;
         constexpr uint32_t maxEnqueueCount = 60;
         std::unordered_map<Block*, uint32_t> enqueueCount;

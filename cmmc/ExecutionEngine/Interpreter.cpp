@@ -764,6 +764,24 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
             }
             case InstructionID::Unreachable:
                 return SimulationFailReason::Unreachable;
+            case InstructionID::Switch: {
+                ++branchCount;
+                auto switchInst = inst.as<SwitchInst>();
+
+                Block* targetBlock = switchInst->defaultTarget();
+                const auto val = getInt(0);
+                if(auto it = switchInst->edges().find(val); it != switchInst->edges().end()) {
+                    targetBlock = it->second;
+                }
+
+                currentExecCtx.predBlock = currentExecCtx.block;
+                currentExecCtx.block = targetBlock;
+                currentExecCtx.execIter = targetBlock->instructions().begin();
+                if(step.get()) {
+                    currentExecCtx.block->dumpLabeled(std::cerr, Noop{});
+                }
+                break;
+            }
             case InstructionID::Load: {
                 ++loadCount;
 

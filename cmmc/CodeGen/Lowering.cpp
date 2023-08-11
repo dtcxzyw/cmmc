@@ -1029,6 +1029,11 @@ static void lower(ReturnInst* inst, LoweringContext& ctx) {
 static void lower(FunctionCallInst* inst, LoweringContext& ctx) {
     ctx.getCodeGenContext().frameInfo.emitCall(inst, ctx);
 }
+static void lower(SwitchInst* inst, LoweringContext& ctx) {
+    CMMC_UNUSED(inst);
+    CMMC_UNUSED(ctx);
+    reportNotImplemented(CMMC_LOCATION());
+}
 static void lowerInst(Instruction* inst, LoweringContext& ctx, const PointerAlignmentAnalysisResult& alignment,
                       const IntegerRangeAnalysisResult& range, const DominateAnalysisResult& dom) {
     switch(inst->getInstID()) {
@@ -1074,6 +1079,9 @@ static void lowerInst(Instruction* inst, LoweringContext& ctx, const PointerAlig
             break;
         case InstructionID::Unreachable:
             lower(inst->as<UnreachableInst>(), ctx);
+            break;
+        case InstructionID::Switch:
+            lower(inst->as<SwitchInst>(), ctx);
             break;
         case InstructionID::Load:
             lower(inst->as<LoadInst>(), ctx, alignment);

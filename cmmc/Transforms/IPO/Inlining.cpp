@@ -151,6 +151,15 @@ class FuncInlining final : public TransformPass<Function> {
                         falseTarget = replace.at(falseTarget);
                     break;
                 }
+                case InstructionID::Switch: {
+                    auto switchInst = terminator->as<SwitchInst>();
+                    auto& defaultTarget = switchInst->defaultTarget();
+                    defaultTarget = replace.at(defaultTarget);
+                    for(auto& [val, target] : switchInst->edges()) {
+                        target = replace.at(target);
+                    }
+                    break;
+                }
                 default:
                     break;
             }

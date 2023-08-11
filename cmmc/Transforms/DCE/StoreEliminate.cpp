@@ -65,9 +65,6 @@ class StoreEliminate final : public TransformPass<Function> {
             if(isAfterStore) {
                 if(inst.isBranch()) {
                     // TODO: leak querying by block
-                    const auto branch = inst.as<BranchInst>();
-                    const auto trueTarget = branch->getTrueTarget();
-                    const auto falseTarget = branch->getFalseTarget();
                     auto handleTarget = [&](Block* target) {
                         if(addr->getBlock()) {
                             // addr may be changed
@@ -76,9 +73,15 @@ class StoreEliminate final : public TransformPass<Function> {
                         }
                         return isInvisible(addr, *target, aliasSet, dom, addressSpace, nullptr, visited, leak, lookaheadCount);
                     };
-                    if(!handleTarget(trueTarget))
-                        return false;
-                    if(falseTarget && trueTarget != falseTarget && !handleTarget(falseTarget))
+                    bool failed = false;
+                    auto handleTargetFastFail = [&](Block* target) {
+                        if(failed)
+                            return;
+                        if(!handleTarget(target))
+                            failed = true;
+                    };
+                    applyForSuccessors(&inst, handleTargetFastFail);
+                    if(failed)
                         return false;
                 } else if(inst.getInstID() == InstructionID::Call) {
                     // TODO: store gep?

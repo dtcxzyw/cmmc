@@ -242,6 +242,8 @@ static std::string_view getInstName(InstructionID instID) {
             return "cbr"sv;
         case InstructionID::Unreachable:
             return "unreachable"sv;
+        case InstructionID::Switch:
+            return "switch"sv;
         case InstructionID::Load:
             return "load"sv;
         case InstructionID::Store:
@@ -341,7 +343,7 @@ static std::string_view getInstName(InstructionID instID) {
     }
 }
 
-void Instruction::dumpWithNoOperand(std::ostream& out) const {
+void Instruction::dumpWithoutOperand(std::ostream& out) const {
     if(!getType()->isVoid()) {
         dumpAsOperand(out);
         out << " = "sv;
@@ -354,7 +356,7 @@ void Instruction::dumpBinary(std::ostream& out) const {
     getOperand(1)->dumpAsOperand(out);
 }
 void Instruction::dumpUnary(std::ostream& out) const {
-    dumpWithNoOperand(out);
+    dumpWithoutOperand(out);
     out << ' ';
     getOperand(0)->dumpAsOperand(out);
 }
@@ -427,7 +429,7 @@ void UnaryInst::dumpInst(std::ostream& out) const {
 }
 
 void CastInst::dumpInst(std::ostream& out) const {
-    dumpWithNoOperand(out);
+    dumpWithoutOperand(out);
     out << ' ';
     getOperand(0)->dumpAsOperand(out);
     out << " to "sv;
@@ -507,7 +509,7 @@ void UnreachableInst::dumpInst(std::ostream& out) const {
 
 void FunctionCallInst::dumpInst(std::ostream& out) const {
     const auto callee = lastOperand();
-    dumpWithNoOperand(out);
+    dumpWithoutOperand(out);
     out << ' ';
     callee->dumpAsOperand(out);
     out << '(';
@@ -535,7 +537,7 @@ bool FunctionCallInst::verify(std::ostream&) const {
 }
 
 void SelectInst::dumpInst(std::ostream& out) const {
-    dumpWithNoOperand(out);
+    dumpWithoutOperand(out);
     out << ' ';
     getOperand(0)->dumpAsOperand(out);
     out << " ? "sv;
@@ -545,7 +547,7 @@ void SelectInst::dumpInst(std::ostream& out) const {
 }
 
 void StackAllocInst::dumpInst(std::ostream& out) const {
-    dumpWithNoOperand(out);
+    dumpWithoutOperand(out);
     out << ' ';
     getType()->as<PointerType>()->getPointee()->dumpName(out);
     out << ", align " << mAlignment;
@@ -619,7 +621,7 @@ std::pair<intptr_t, std::vector<std::pair<size_t, Value*>>> GetElementPtrInst::g
 }
 
 void GetElementPtrInst::dumpInst(std::ostream& out) const {
-    dumpWithNoOperand(out);
+    dumpWithoutOperand(out);
     const auto base = lastOperand();
     out << " &("sv;
     base->dumpAsOperand(out);
@@ -839,7 +841,7 @@ void PhiInst::addIncoming(Block* block, Value* value) {
     mIncomings.emplace(block, addOperand(value));
 }
 void PhiInst::dumpInst(std::ostream& out) const {
-    dumpWithNoOperand(out);
+    dumpWithoutOperand(out);
     std::vector<std::pair<Block*, ValueRef*>> incomings{ mIncomings.cbegin(), mIncomings.cend() };
     std::sort(incomings.begin(), incomings.end(),
               [](auto lhs, auto rhs) { return lhs.first->getIndex() < rhs.first->getIndex(); });
@@ -954,6 +956,34 @@ void PtrAddInst::dumpInst(std::ostream& out) const {
 }
 [[nodiscard]] Instruction* PtrAddInst::clone() const {
     return make<PtrAddInst>(getOperand(0), getOperand(1), getType());
+}
+
+void SwitchInst::addEdge(intmax_t key, Block* label) {
+    assert(!mEdges.count(key));
+    mEdges.emplace(key, label);
+}
+void SwitchInst::dumpInst(std::ostream& out) const {
+    dumpWithoutOperand(out);
+    for(auto [k, v] : mEdges) {
+        out << " [ "sv << k << ", "sv;
+        v->dumpAsTarget(out);
+        out << "]\n";
+    }
+    out << " default "sv;
+    mDefaultBlock->dumpAsTarget(out);
+}
+[[nodiscard]] Instruction* SwitchInst::clone() const {
+    auto inst = make<SwitchInst>(getOperand(0), mDefaultBlock);
+    inst->edges() = mEdges;
+    return inst;
+}
+std::unordered_set<Block*> SwitchInst::getUniqueSuccessors() const {
+    std::unordered_set<Block*> blocks;
+    for(auto [k, v] : mEdges) {
+        blocks.insert(v);
+    }
+    blocks.insert(mDefaultBlock);
+    return blocks;
 }
 
 CMMC_NAMESPACE_END

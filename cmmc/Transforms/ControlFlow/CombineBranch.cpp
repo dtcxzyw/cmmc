@@ -74,6 +74,10 @@ public:
         for(auto block : func.blocks()) {
             const auto terminator = block->getTerminator();
             if(terminator->isBranch()) {
+                // FIXME
+                if(terminator->getInstID() == InstructionID::Switch) {
+                    continue;
+                }
                 auto branch = terminator->as<BranchInst>();
                 auto& trueTarget = branch->getTrueTarget();
                 auto& falseTarget = branch->getFalseTarget();

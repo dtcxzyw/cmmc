@@ -45,8 +45,7 @@ public:
                        calleeFunc && calleeFunc->attr().hasAttr(FunctionAttribute::NoReturn)) {
                         const auto terminator = block->getTerminator();
                         if(terminator->isBranch()) {
-                            const auto branch = terminator->as<BranchInst>();
-                            applyForSuccessors(branch, [&](Block* target) { removePhi(block, target); });
+                            applyForSuccessors(terminator, [&](Block* target) { removePhi(block, target); });
                         }
                         DisableValueRefCheckScope scope;
                         for(auto it = std::next(iter); it != insts.end(); ++it)

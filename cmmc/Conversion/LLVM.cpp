@@ -199,6 +199,14 @@ class LLVMConversionContext final {
                 builder.CreateIntrinsic(llvm::Intrinsic::trap, {}, {});
                 return builder.CreateUnreachable();
             }
+            case InstructionID::Switch: {
+                auto switchInst = inst.as<SwitchInst>();
+                auto newSwitchInst = builder.CreateSwitch(getOperand(0), blockMap.lookup(switchInst->defaultTarget()));
+                for(auto& [value, target] : switchInst->edges()) {
+                    newSwitchInst->addCase(builder.getInt64(static_cast<uint64_t>(value)), blockMap.lookup(target));
+                }
+                return newSwitchInst;
+            }
             case InstructionID::Load:
                 return builder.CreateAlignedLoad(getType(inst.getType()), getOperand(0),
                                                  llvm::MaybeAlign{ inst.getType()->getAlignment(dataLayout) });

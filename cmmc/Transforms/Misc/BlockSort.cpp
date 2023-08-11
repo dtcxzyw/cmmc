@@ -38,6 +38,7 @@ bool sortBlocks(Function& func) {
     constexpr uint32_t branchFalseCost = 101;
     constexpr uint32_t ubrCost = 2;
     constexpr uint32_t brCost = 0;
+    constexpr uint32_t switchCost = 3;
     constexpr uint32_t retCost = 10;
     constexpr uint32_t unreachableCost = 1'000'000;
 
@@ -64,6 +65,17 @@ bool sortBlocks(Function& func) {
                 addTarget(branch->getTrueTarget(), val + branchTrueCost);
                 addTarget(branch->getFalseTarget(), val + branchFalseCost);
                 val += ubrCost;
+                break;
+            }
+            case InstructionID::Switch: {
+                const auto& switchInst = terminator->as<SwitchInst>();
+                const auto& edges = switchInst->edges();
+                uint32_t cost = branchTrueCost;
+                for(auto [key, target] : edges) {
+                    addTarget(target, cost++);
+                }
+                addTarget(switchInst->defaultTarget(), cost++);
+                val += switchCost;
                 break;
             }
             case InstructionID::Unreachable: {

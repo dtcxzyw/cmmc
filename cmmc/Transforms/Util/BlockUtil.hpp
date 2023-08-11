@@ -36,12 +36,12 @@ Block* createIndirectBlock(const Module& module, Function& func, Block* sourceBl
 bool isNoSideEffectExpr(const Instruction& inst);
 bool isMovableExpr(const Instruction& inst, bool relaxedCtx);
 bool hasCall(Block& block, bool excludeLoopBody);
-void resetTarget(BranchInst* branch, Block* oldTarget, Block* newTarget);
+void resetTarget(Instruction* branchOrSwitch, Block* oldTarget, Block* newTarget);
 void retargetBlock(Block* target, Block* oldSource, Block* newSource);
 void copyTarget(Block* target, Block* oldSource, Block* newSource);
 bool hasSamePhiValue(Block* target, Block* sourceLhs, Block* sourceRhs);
 bool removePhi(Block* source, Block* target);
-void applyForSuccessors(BranchInst* branch, const std::function<void(Block*&)>& functor);
+void applyForSuccessors(Instruction* branchOrSwitch, const std::function<void(Block*)>& functor);
 uint32_t estimateBlockSize(Block* block, bool dynamic);
 bool collectLoopBody(Block* header, Block* latch, const DominateAnalysisResult& dom, const CFGAnalysisResult& cfg,
                      std::unordered_set<Block*>& body);

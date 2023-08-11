@@ -76,12 +76,22 @@ class ShrinkWrapping final : public TransformPass<Function> {
 
             auto terminator = block->getTerminator();
             if(terminator->isBranch()) {
-                auto branchInst = terminator->as<BranchInst>();
-                auto& trueTarget = branchInst->getTrueTarget();
-                auto& falseTarget = branchInst->getFalseTarget();
-                trueTarget = blockMap.at(trueTarget);
-                if(falseTarget)
-                    falseTarget = blockMap.at(falseTarget);
+                if(terminator->getInstID() == InstructionID::Switch) {
+                    auto switchInst = terminator->as<SwitchInst>();
+                    auto& defaultTarget = switchInst->defaultTarget();
+                    defaultTarget = blockMap.at(defaultTarget);
+                    for(auto& [k, v] : switchInst->edges()) {
+                        CMMC_UNUSED(k);
+                        v = blockMap.at(v);
+                    }
+                } else {
+                    auto branchInst = terminator->as<BranchInst>();
+                    auto& trueTarget = branchInst->getTrueTarget();
+                    auto& falseTarget = branchInst->getFalseTarget();
+                    trueTarget = blockMap.at(trueTarget);
+                    if(falseTarget)
+                        falseTarget = blockMap.at(falseTarget);
+                }
             }
         }
 

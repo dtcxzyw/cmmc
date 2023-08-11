@@ -515,6 +515,19 @@ IntegerRangeAnalysisResult IntegerRangeAnalysis::run(Function& func, AnalysisPas
                 }
                 break;
             }
+            case InstructionID::Switch: {
+                const auto switchInst = inst->as<SwitchInst>();
+                const auto val = switchInst->getOperand(0);
+                if(!val->getType()->isSame(i32))
+                    break;
+                const auto block = switchInst->getBlock();
+                for(auto [key, target] : switchInst->edges()) {
+                    if(block != target && dom.dominate(block, target) && cfg.predecessors(target).size() == 1) {
+                        updateContextual(val, target, IntegerRange{ key });
+                    }
+                }
+                break;
+            }
             case InstructionID::ICmp: {
                 const auto setCompareContextual = [&](Value* lhs, Value* rhs, CompareOp op, auto updateFunc) {
                     const auto lhsRange = getRange(lhs, inst);

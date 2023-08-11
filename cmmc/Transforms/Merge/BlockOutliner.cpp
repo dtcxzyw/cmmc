@@ -97,14 +97,16 @@ class BlockOutliner final : public TransformPass<Function> {
         // TODO: A->A,C B->B,D C=D ??? SubCFGIsomorphism
         const auto terminator = lhs->getTerminator();
         if(terminator->isBranch()) {
-            const auto branch = terminator->as<BranchInst>();
-            if(!checkTarget(branch->getTrueTarget())) {
+            bool failed = false;
+            auto checkTargetFastFail = [&](Block* target) {
+                if(failed)
+                    return;
+                if(!checkTarget(target))
+                    failed = true;
+            };
+            applyForSuccessors(terminator, checkTargetFastFail);
+            if(failed)
                 return false;
-            }
-            if(branch->getFalseTarget() && branch->getTrueTarget() != branch->getFalseTarget() &&
-               !checkTarget(branch->getFalseTarget())) {
-                return false;
-            }
         }
 
         return true;
@@ -173,14 +175,11 @@ public:
         for(auto [src, dst] : replace) {
             const auto terminator = src->getTerminator();
             if(terminator->isBranch()) {
-                auto branch = terminator->as<BranchInst>();
-                retargetBlock(branch->getTrueTarget(), src, dst);
-                if(branch->getFalseTarget() && branch->getFalseTarget() != branch->getTrueTarget())
-                    retargetBlock(branch->getFalseTarget(), src, dst);
+                applyForSuccessors(terminator, [src = src, dst = dst](Block* block) { retargetBlock(block, src, dst); });
             }
             for(auto lhsIter = src->instructions().begin(), rhsIter = dst->instructions().begin();
                 lhsIter != src->instructions().end(); ++lhsIter, ++rhsIter) {
-                lhsIter.get()->replaceWith(rhsIter.get());
+                lhsIter->replaceWith(rhsIter.get());
             }
         }
 
@@ -188,7 +187,6 @@ public:
         for(auto block : func.blocks()) {
             auto terminator = block->getTerminator();
             if(terminator->isBranch()) {
-                auto branch = terminator->as<BranchInst>();
                 auto handleTarget = [&](Block*& target) {
                     if(!target)
                         return;
@@ -197,8 +195,18 @@ public:
                         modified = true;
                     }
                 };
-                handleTarget(branch->getTrueTarget());
-                handleTarget(branch->getFalseTarget());
+                if(terminator->getInstID() == InstructionID::Switch) {
+                    auto switchInst = terminator->as<SwitchInst>();
+                    handleTarget(switchInst->defaultTarget());
+                    for(auto& [val, target] : switchInst->edges()) {
+                        handleTarget(target);
+                    }
+                } else {
+                    auto branch = terminator->as<BranchInst>();
+
+                    handleTarget(branch->getTrueTarget());
+                    handleTarget(branch->getFalseTarget());
+                }
             }
         }
 

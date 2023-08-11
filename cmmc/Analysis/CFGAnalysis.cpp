@@ -30,14 +30,23 @@ CFGAnalysisResult CFGAnalysis::run(Function& func, AnalysisPassManager&) {
         auto& self = storage[block];
         const auto terminator = block->getTerminator();
         if(terminator->isBranch()) {
-            const auto branch = terminator->as<BranchInst>();
-            const auto trueTarget = branch->getTrueTarget();
-            const auto falseTarget = branch->getFalseTarget();
-            self.successors.emplace_back(trueTarget);
-            storage[trueTarget].predecessors.emplace_back(block);
-            if(falseTarget && falseTarget != trueTarget) {
-                self.successors.emplace_back(falseTarget);
-                storage[falseTarget].predecessors.emplace_back(block);
+            if(terminator->getInstID() == InstructionID::Switch) {
+                const auto switchInst = terminator->as<SwitchInst>();
+                auto targets = switchInst->getUniqueSuccessors();
+                for(auto target : targets) {
+                    self.successors.emplace_back(target);
+                    storage[target].predecessors.emplace_back(block);
+                }
+            } else {
+                const auto branch = terminator->as<BranchInst>();
+                const auto trueTarget = branch->getTrueTarget();
+                const auto falseTarget = branch->getFalseTarget();
+                self.successors.emplace_back(trueTarget);
+                storage[trueTarget].predecessors.emplace_back(block);
+                if(falseTarget && falseTarget != trueTarget) {
+                    self.successors.emplace_back(falseTarget);
+                    storage[falseTarget].predecessors.emplace_back(block);
+                }
             }
         }
     }

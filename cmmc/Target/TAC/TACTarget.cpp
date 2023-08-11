@@ -158,6 +158,7 @@ public:
             case InstructionID::Select:
             case InstructionID::ICmp:
             case InstructionID::FCmp:
+            case InstructionID::Switch:
                 return false;
             default:
                 return true;

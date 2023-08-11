@@ -91,8 +91,6 @@ Block* splitBlock(List<Block*>& blocks, List<Block*>::iterator block, IntrusiveL
 void fixPhiNode(Block* oldPred, Block* newPred) {
     const auto terminator = newPred->getTerminator();
     if(terminator->isBranch()) {
-        const auto branch = terminator->as<BranchInst>();
-
         auto handleTarget = [&](Block* target) {
             for(auto& phiInst : target->instructions()) {
                 if(phiInst.getInstID() == InstructionID::Phi) {
@@ -102,9 +100,7 @@ void fixPhiNode(Block* oldPred, Block* newPred) {
             }
         };
 
-        handleTarget(branch->getTrueTarget());
-        if(branch->getFalseTarget() && branch->getFalseTarget() != branch->getTrueTarget())
-            handleTarget(branch->getFalseTarget());
+        applyForSuccessors(terminator, handleTarget);
     }
 }
 
@@ -200,14 +196,23 @@ void retargetBlock(Block* target, Block* oldSource, Block* newSource) {
             break;
     }
 }
-void resetTarget(BranchInst* branch, Block* oldTarget, Block* newTarget) {
-    assert(branch->getTrueTarget() == oldTarget || branch->getFalseTarget() == oldTarget);
+void resetTarget(Instruction* branchOrSwitch, Block* oldTarget, Block* newTarget) {
     const auto handleTarget = [=](Block*& target) {
         if(target == oldTarget)
             target = newTarget;
     };
-    handleTarget(branch->getTrueTarget());
-    handleTarget(branch->getFalseTarget());
+    if(branchOrSwitch->getInstID() == InstructionID::Switch) {
+        const auto switchInst = branchOrSwitch->as<SwitchInst>();
+        handleTarget(switchInst->defaultTarget());
+        for(auto& [val, target] : switchInst->edges()) {
+            handleTarget(target);
+        }
+    } else {
+        const auto branch = branchOrSwitch->as<BranchInst>();
+        assert(branch->getTrueTarget() == oldTarget || branch->getFalseTarget() == oldTarget);
+        handleTarget(branch->getTrueTarget());
+        handleTarget(branch->getFalseTarget());
+    }
 }
 void copyTarget(Block* target, Block* oldSource, Block* newSource) {
     for(auto& inst : target->instructions()) {
@@ -244,13 +249,22 @@ bool hasSamePhiValue(Block* target, Block* sourceLhs, Block* sourceRhs) {
     }
     return true;
 }
-void applyForSuccessors(BranchInst* branch, const std::function<void(Block*&)>& functor) {
+void applyForSuccessors(Instruction* branchOrSwitch, const std::function<void(Block*)>& functor) {
     // immutable
-    const auto trueTarget = branch->getTrueTarget();
-    const auto falseTarget = branch->getFalseTarget();
-    functor(branch->getTrueTarget());
-    if(falseTarget && trueTarget != falseTarget)
-        functor(branch->getFalseTarget());
+    if(branchOrSwitch->getInstID() == InstructionID::Switch) {
+        const auto switchInst = branchOrSwitch->as<SwitchInst>();
+        const auto targets = switchInst->getUniqueSuccessors();
+        for(auto target : targets) {
+            functor(target);
+        }
+    } else {
+        const auto branch = branchOrSwitch->as<BranchInst>();
+        const auto trueTarget = branch->getTrueTarget();
+        const auto falseTarget = branch->getFalseTarget();
+        functor(trueTarget);
+        if(falseTarget && trueTarget != falseTarget)
+            functor(falseTarget);
+    }
 }
 uint32_t estimateBlockSize(Block* block, bool dynamic) {
     uint32_t count = 0;

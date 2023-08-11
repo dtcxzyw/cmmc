@@ -62,9 +62,7 @@ public:
             const auto u = blocks[idx];
             const auto terminator = u->getTerminator();
             if(terminator->isBranch()) {
-                const auto branch = terminator->as<BranchInst>();
-
-                applyForSuccessors(branch, [&](Block* v) {
+                applyForSuccessors(terminator, [&](Block* v) {
                     if(u != v)
                         graph[idx].push_back(nodeMap.at(v));
                 });
@@ -88,9 +86,23 @@ public:
                 const auto block = blocks[groups[cu].front()];
                 if(!block->getTerminator()->isBranch())
                     continue;
-                const auto branch = block->getTerminator()->as<BranchInst>();
-                if(branch->getTrueTarget() != block && branch->getFalseTarget() != block)
-                    continue;
+                if(block->getTerminator()->getInstID() == InstructionID::Switch) {
+                    const auto switchInst = block->getTerminator()->as<SwitchInst>();
+                    bool hasLoop = switchInst->defaultTarget() == block;
+                    if(!hasLoop)
+                        for(auto [val, target] : switchInst->edges()) {
+                            if(target == block) {
+                                hasLoop = true;
+                                break;
+                            }
+                        }
+                    if(!hasLoop)
+                        continue;
+                } else {
+                    const auto branch = block->getTerminator()->as<BranchInst>();
+                    if(branch->getTrueTarget() != block && branch->getFalseTarget() != block)
+                        continue;
+                }
             }
 
             constexpr auto undef = std::numeric_limits<NodeIndex>::max();
