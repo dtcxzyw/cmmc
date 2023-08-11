@@ -10,7 +10,7 @@
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
     limitations under the License.
-*/
+*
 
 #include <algorithm>
 #include <cmmc/Analysis/AnalysisPass.hpp>
@@ -22,6 +22,7 @@
 #include <cmmc/IR/Value.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/LabelAllocator.hpp>
+#include <cmmc/Transforms/Util/BlockUtil.hpp>
 #include <cstdint>
 #include <iostream>
 #include <memory>
@@ -353,12 +354,8 @@ void Function::dumpCFG(std::ostream& out) const {
     for(auto block : mBlocks) {
         auto terminator = block->getTerminator();
         if(terminator->isBranch()) {
-            auto branch = terminator->as<BranchInst>();
-            auto& trueTarget = branch->getTrueTarget();
-            out << ids[block] << "->"sv << ids[trueTarget] << ';' << std::endl;
-            auto& falseTarget = branch->getFalseTarget();
-            if(falseTarget)
-                out << ids[block] << "->"sv << ids[falseTarget] << ';' << std::endl;
+            applyForSuccessors(terminator,
+                               [&](Block* target) { out << ids[block] << "->"sv << ids[target] << ';' << std::endl; });
         }
     }
 

@@ -203,7 +203,10 @@ class LLVMConversionContext final {
                 auto switchInst = inst.as<SwitchInst>();
                 auto newSwitchInst = builder.CreateSwitch(getOperand(0), blockMap.lookup(switchInst->defaultTarget()));
                 for(auto& [value, target] : switchInst->edges()) {
-                    newSwitchInst->addCase(builder.getInt64(static_cast<uint64_t>(value)), blockMap.lookup(target));
+                    newSwitchInst->addCase(
+                        llvm::ConstantInt::get(llvm::dyn_cast<llvm::IntegerType>(newSwitchInst->getOperand(0)->getType()),
+                                               static_cast<uint64_t>(value)),
+                        blockMap.lookup(target));
                 }
                 return newSwitchInst;
             }

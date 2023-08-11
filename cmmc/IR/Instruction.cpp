@@ -964,10 +964,13 @@ void SwitchInst::addEdge(intmax_t key, Block* label) {
 }
 void SwitchInst::dumpInst(std::ostream& out) const {
     dumpWithoutOperand(out);
+    out << ' ';
+    getOperand(0)->dumpAsOperand(out);
+    out << ',';
     for(auto [k, v] : mEdges) {
-        out << " [ "sv << k << ", "sv;
+        out << " ["sv << k << ", "sv;
         v->dumpAsTarget(out);
-        out << "]\n";
+        out << "],";
     }
     out << " default "sv;
     mDefaultBlock->dumpAsTarget(out);

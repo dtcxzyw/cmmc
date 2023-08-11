@@ -530,6 +530,17 @@ std::shared_ptr<PassManager<Module>> PassManager<Module>::get(OptimizationLevel 
         root->addPass(std::make_shared<FunctionPassWrapper>(perFuncWithInline));
     }
 
+    {
+        auto branch2Switch = std::make_shared<PassManager<Function>>();
+        for(const auto& pass : passesSource.collectFunctionPass({
+                "Branch2Switch",   //
+                "BlockEliminate",  // clean up
+                "BlockSort",       // clean up
+            }))
+            branch2Switch->addPass(pass);
+        root->addPass(std::make_shared<FunctionPassWrapper>(branch2Switch));
+    }
+
     // final cleanup
     for(const auto& pass : passesSource.collectModulePass({
             "UnusedTypeEliminate",  //
