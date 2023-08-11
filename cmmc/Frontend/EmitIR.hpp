@@ -93,6 +93,7 @@ class EmitContext final : public IRBuilder {
     std::unordered_map<String, std::deque<QualifiedValue>, StringHasher> mVariables;
 
     std::deque<std::pair<Block*, Block*>> mTerminatorTarget;
+    std::deque<SwitchInst*> mSwitchTarget;
     std::unordered_map<String, const StructType*, StringHasher> mStructTypes;
     std::unordered_map<const FunctionType*, FunctionCallInfo> mCallInfo;
     std::unordered_map<Value*, Value*> mConstantBinding;
@@ -154,6 +155,10 @@ public:
     void popLoop();
     Block* getContinueTarget();
     Block* getBreakTarget();
+
+    void pushSwitch(SwitchInst* inst, Block* breakTarget);
+    void popSwitch();
+    SwitchInst* getSwitchInst();
 
     Function* getMemcpy();
     Function* getMemset(const Type* type);

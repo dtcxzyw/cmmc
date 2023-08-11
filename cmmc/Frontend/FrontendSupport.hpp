@@ -71,7 +71,11 @@
 #define CMMC_CAST_OP(LOC, TYPE, VAL) make<CastExpr>(castLoc(LOC), TYPE, VAL)
 #define CMMC_COMMA_OP(LOC, LHS, RHS) make<CommaExpr>(castLoc(LOC), LHS, RHS)
 #define CMMC_GOTO(LOC, LABEL) make<GotoExpr>(castLoc(LOC), LABEL)
-#define CMMC_LABEL(LOC, LABEL) make<LabelExpr>(castLoc(LOC), LABEL)
+#define CMMC_LABEL(LOC, LABEL)                                                                        \
+    ((LABEL) != String::get("default"sv) ? static_cast<Expr*>(make<LabelExpr>(castLoc(LOC), LABEL)) : \
+                                           static_cast<Expr*>(make<CaseExpr>(castLoc(LOC), nullptr)))
+#define CMMC_SWITCH(LOC, VAL, BODY) make<SwitchExpr>(castLoc(LOC), VAL, BODY)
+#define CMMC_CASE(LOC, VAL) make<CaseExpr>(castLoc(LOC), VAL)
 
 #define CMMC_MISS_RP(LOC) driver.reportParserError((LOC), "Missing closing parenthesis ')'")
 #define CMMC_MISS_RB(LOC) driver.reportParserError((LOC), "Missing closing bracket ']'")

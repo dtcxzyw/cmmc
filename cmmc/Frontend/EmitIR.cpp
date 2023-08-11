@@ -2090,4 +2090,65 @@ QualifiedValue CommaExpr::emit(EmitContext& ctx) const {
     return mRhs->emitWithLoc(ctx);
 }
 
+SwitchInst* EmitContext::getSwitchInst() {
+    if(mSwitchTarget.empty())
+        DiagnosticsContext::get().attach<Reason>("need a switch statement").reportFatal();
+    return mSwitchTarget.back();
+}
+void EmitContext::pushSwitch(SwitchInst* inst, Block* breakTarget) {
+    pushLoop(mTerminatorTarget.empty() ? nullptr : mTerminatorTarget.back().first, breakTarget);
+    mSwitchTarget.push_back(inst);
+}
+void EmitContext::popSwitch() {
+    mSwitchTarget.pop_back();
+    popLoop();
+}
+
+QualifiedValue SwitchExpr::emit(EmitContext& ctx) const {
+    const auto key = ctx.getRValue(mKey);
+    if(!key.first->getType()->isInteger()) {
+        DiagnosticsContext::get().attach<Reason>("switch requires an integer").reportFatal();
+    }
+    const auto defaultBlock = ctx.addBlock();
+    const auto epilog = ctx.addBlock();
+    const auto switchInst = ctx.makeOp<SwitchInst>(key.first, defaultBlock);
+    ctx.pushSwitch(switchInst, epilog);
+    mBody->emitWithLoc(ctx);
+    ctx.popSwitch();
+    ctx.makeOp<BranchInst>(epilog);
+    ctx.setCurrentBlock(epilog);
+    return QualifiedValue::getNull();
+}
+QualifiedValue CaseExpr::emit(EmitContext& ctx) const {
+    const auto switchInst = ctx.getSwitchInst();
+    if(mValue) {
+        const auto val =
+            ctx.getRValue(mValue, switchInst->getOperand(0)->getType(), Qualifier::getDefault(), ConversionUsage::Implicit);
+        if(!val->getType()->isInteger()) {
+            DiagnosticsContext::get().attach<Reason>("case requires an integer").reportFatal();
+        }
+        if(!val->is<ConstantInteger>()) {
+            DiagnosticsContext::get().attach<Reason>("case requires a constant integer").reportFatal();
+        }
+        const auto imm = val->as<ConstantInteger>()->getSignExtended();
+        if(switchInst->edges().find(imm) != switchInst->edges().cend()) {
+            DiagnosticsContext::get().attach<Reason>("redefinition of case").reportFatal();
+        }
+        const auto newBlock = ctx.addBlock();
+        switchInst->addEdge(imm, newBlock);
+        // fallthrough
+        ctx.makeOp<BranchInst>(newBlock);
+        ctx.setCurrentBlock(newBlock);
+    } else {
+        // default:
+        const auto defaultBlock = switchInst->defaultTarget();
+        if(!defaultBlock->instructions().empty()) {
+            DiagnosticsContext::get().attach<Reason>("redefinition of default label").reportFatal();
+        }
+        ctx.setCurrentBlock(defaultBlock);
+    }
+
+    return QualifiedValue::getNull();
+}
+
 CMMC_NAMESPACE_END
