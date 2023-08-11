@@ -10,6 +10,11 @@
       "parent": "f2fd2172264d8a6e368c350464502093c909c048",
       "time": "2023-07-07 02:12:10 +0800"
     },
+    "03ca5ed62eaae7d5ae2a35a3a98d05c046bd644e": {
+      "message": "feat(transform): branch2switch",
+      "parent": "c4a4d4cc13fff086eb323ce78bd229c663ae9094",
+      "time": "2023-08-11 16:30:36 +0800"
+    },
     "06a1668979545faf5da61846bca1aa7c8bbe3728": {
       "message": "feat(analysis): add range analysis for shl/shr",
       "parent": "b642f635bd39964b79138897e82d1cd1ca8de9f6",
@@ -425,6 +430,11 @@
       "parent": "3bd7294b551f0cd4ce139f1943f6c4b15e3be191",
       "time": "2023-07-08 06:41:31 +0800"
     },
+    "554cabc494666286896d1529fe114640bf0a7173": {
+      "message": "feat(codegen): add switch support",
+      "parent": "03ca5ed62eaae7d5ae2a35a3a98d05c046bd644e",
+      "time": "2023-08-11 18:58:12 +0800"
+    },
     "569de15b0c73b5c4753a65e91196ec62cefc3958": {
       "message": "fix(codegen): fix constant multiplication and update llvm reference",
       "parent": "2a8d4a9919993d68163f8deca8328c69c80db012",
@@ -680,6 +690,11 @@
       "parent": "b099c5645c68f0df070ef9fe2173fd5d01d93e00",
       "time": "2023-07-06 19:29:22 +0800"
     },
+    "8ac2035830e0e06452d532cc2a8cd22fcb790232": {
+      "message": "feat(frontend): add switch support",
+      "parent": "554cabc494666286896d1529fe114640bf0a7173",
+      "time": "2023-08-11 19:42:45 +0800"
+    },
     "8bd479176093f2ff091a09a82fae0854053f90e9": {
       "message": "fmt: format code",
       "parent": "442bec9754bf5747015dacc32916e1a0c96dabe5",
@@ -914,6 +929,11 @@
       "message": "ci: fix commit information",
       "parent": "c58d6e3fcf2833166cd5a77a4339ea219c222756",
       "time": "2023-07-11 13:47:22 +0800"
+    },
+    "c4a4d4cc13fff086eb323ce78bd229c663ae9094": {
+      "message": "feat(ir): add switch",
+      "parent": "12b7535ea9444b8950ed115c80d15b8b3857c94a",
+      "time": "2023-08-11 15:06:47 +0800"
     },
     "c58d6e3fcf2833166cd5a77a4339ea219c222756": {
       "message": "fix(transform): don't emit ult for tac",
@@ -1196,5 +1216,5 @@
       "time": "2023-07-06 01:05:50 +0800"
     }
   },
-  "head": "12b7535ea9444b8950ed115c80d15b8b3857c94a"
+  "head": "8ac2035830e0e06452d532cc2a8cd22fcb790232"
 }
