@@ -25,6 +25,7 @@
 #include <cmmc/Support/Options.hpp>
 #include <cmmc/Support/Profiler.hpp>
 #include <cmmc/Support/StaticReflection.hpp>
+#include <cmmc/Support/Tune.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <cstdlib>
 #include <fstream>
@@ -102,6 +103,7 @@ int main(int argc, char** argv) {
         }
 
         CMMC_UNUSED(opt);
+        initTune(path, mir::targetName.get());
         return runIRPipeline(module, OptimizationLevel::O3 /* opt ? OptimizationLevel::O3 : OptimizationLevel::O0 */, outputPath);
     } catch(const std::exception& ex) {
         std::cerr << "Unexpected exception: "sv << ex.what() << std::endl;

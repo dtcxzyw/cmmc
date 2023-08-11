@@ -18,6 +18,7 @@
 #include <cmmc/CodeGen/MultiplyByConstant.hpp>
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
+#include <cmmc/Support/Tune.hpp>
 #include <cmmc/Target/RISCV/RISCV.hpp>
 #include <cstdint>
 #include <deque>
@@ -1004,7 +1005,7 @@ bool RISCVScheduleModel_sifive_u74::peepholeOpt(MIRFunction& func, CodeGenContex
     modified |= simplifyOpWithZero(func, ctx);
     modified |= relaxWInst(func, ctx);
     modified |= removeSExtW(func, ctx);
-    modified |= expandMulWithConstant(func, ctx, 2);
+    modified |= expandMulWithConstant(func, ctx, queryTuneOpt("max_mul_constant_cost", 2));
     return modified;
 }
 

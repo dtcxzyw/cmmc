@@ -25,6 +25,7 @@
 #include <cmmc/IR/Type.hpp>
 #include <cmmc/IR/Value.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
+#include <cmmc/Support/Tune.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
 #include <cstdint>
@@ -275,6 +276,9 @@ class LoopBodyExtract final : public TransformPass<Function> {
 
 public:
     bool run(Function& func, AnalysisPassManager& analysis) const override {
+        if(!queryTuneOpt("loop_extract", 1))
+            return false;
+
         bool modified = false;
         while(runImpl(func, analysis)) {
             modified = true;

@@ -22,6 +22,7 @@
 #include <cmmc/IR/IRBuilder.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
+#include <cmmc/Support/Tune.hpp>
 #include <cmmc/Transforms/Hyperparameters.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
@@ -36,6 +37,8 @@ CMMC_NAMESPACE_BEGIN
 class LoopUnroll final : public TransformPass<Function> {
 public:
     bool run(Function& func, AnalysisPassManager& analysis) const override {
+        if(!queryTuneOpt("loop_unroll", 1))
+            return false;
         // func.dump(std::cerr, Noop{});
         const auto& loopInfo = analysis.get<LoopAnalysis>(func);
         const auto& cfg = analysis.get<CFGAnalysis>(func);

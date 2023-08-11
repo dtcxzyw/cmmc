@@ -25,6 +25,7 @@
 #include <cmmc/Support/Options.hpp>
 #include <cmmc/Support/Profiler.hpp>
 #include <cmmc/Support/StaticReflection.hpp>
+#include <cmmc/Support/Tune.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <cstdlib>
 #include <fstream>
@@ -128,6 +129,7 @@ static std::string getOutputPath(const std::string& defaultPath) {
 }
 
 static int runIRPipeline(Module& module, const std::string& base, const std::string& filePath, FrontEndLang lang) {
+    initTune(filePath, mir::targetName.get());
     if(!module.verify(std::cerr)) {
         DiagnosticsContext::get().attach<Reason>("Invalid IR").reportFatal();
     }

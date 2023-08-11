@@ -22,6 +22,7 @@
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/Options.hpp>
+#include <cmmc/Support/Tune.hpp>
 #include <cmmc/Target/RISCV/RISCV.hpp>
 #include <cstdint>
 #include <iostream>
@@ -210,14 +211,14 @@ public:
     [[nodiscard]] const TargetOptHeuristic& getOptHeuristic() const noexcept override {
         static TargetOptHeuristic defaultHeuristic{
             .registerLength = 64U,
-            .unrollBlockSize = 4U,
-            .maxUnrollBodySize = 128U,
-            .duplicationThreshold = 10U,
-            .duplicationIterations = 10U,
-            .branchLimit = 400U,
+            .unrollBlockSize = static_cast<uint32_t>(queryTuneOpt("unroll_block_size", 4)),
+            .maxUnrollBodySize = static_cast<uint32_t>(queryTuneOpt("max_unroll_body_size", 128)),
+            .duplicationThreshold = static_cast<uint32_t>(queryTuneOpt("duplication_threshold", 10)),
+            .duplicationIterations = static_cast<uint32_t>(queryTuneOpt("duplication_iterations", 10)),
+            .branchLimit = static_cast<uint32_t>(queryTuneOpt("branch_limit", 400)),
             .disableSelectionOpt = true,
-            .branchPredictionWarmupThreshold = 2U,
-            .maxConstantHoistCount = 12U,
+            .branchPredictionWarmupThreshold = static_cast<uint32_t>(queryTuneOpt("branch_prediction_warmup_threshold", 2)),
+            .maxConstantHoistCount = static_cast<uint32_t>(queryTuneOpt("max_constant_hoist_count", 12)),
         };
 
         return defaultHeuristic;
