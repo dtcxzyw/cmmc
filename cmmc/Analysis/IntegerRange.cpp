@@ -222,6 +222,13 @@ IntegerRange IntegerRange::unionSet(const IntegerRange& rhs) const {
 }
 
 IntegerRange IntegerRange::operator+(const IntegerRange& rhs) const {
+    if(mKnownZeros == 0xffffffff) {
+        return rhs;
+    }
+    if(rhs.knownZeros() == 0xffffffff) {
+        return *this;
+    }
+
     IntegerRange ret;
     const auto signedLow = mMinSignedValue + rhs.mMinSignedValue, signedHigh = mMaxSignedValue + rhs.mMaxSignedValue;
     if(!signedOverflow(signedLow) && !signedOverflow(signedHigh))
@@ -229,6 +236,8 @@ IntegerRange IntegerRange::operator+(const IntegerRange& rhs) const {
     const auto unsignedLow = mMinUnsignedValue + rhs.mMinUnsignedValue, unsignedHigh = mMaxUnsignedValue + rhs.mMaxUnsignedValue;
     if(!unsignedOverflow(unsignedLow) && !unsignedOverflow(unsignedHigh))
         ret.setUnsignedRange(mMinUnsignedValue + rhs.mMinUnsignedValue, mMaxUnsignedValue + rhs.mMaxUnsignedValue);
+
+    ret.setKnownBits((1U << std::min(__builtin_ctz(~mKnownZeros), __builtin_ctz(~rhs.mKnownZeros))) - 1U, 0);
     ret.sync();
     return ret;
 }

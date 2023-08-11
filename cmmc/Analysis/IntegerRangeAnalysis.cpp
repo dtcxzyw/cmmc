@@ -49,6 +49,8 @@ IntegerRange::IntegerRange(ConstantInteger* integer) {
 
 IntegerRange IntegerRangeAnalysisResult::query(Value* val, const DominateAnalysisResult& dom, Instruction* ctx,
                                                uint32_t depth) const {
+    // if(val->isUndefined())
+    //     return IntegerRange(static_cast<intmax_t>(0));
     if(auto cint = dynamic_cast<ConstantInteger*>(val)) {
         if(cint->getType()->as<IntegerType>()->getBitwidth() == 32)
             return IntegerRange(cint);
@@ -191,13 +193,14 @@ IntegerRangeAnalysisResult IntegerRangeAnalysis::run(Function& func, AnalysisPas
             return;
         auto& range = ranges[inst];
 
-        // inst->dumpInst(std::cerr);
-        // std::cerr << " -> \n";
-        // newRange.print(std::cerr);
-
         const auto intersection = range.intersectSet(newRange);
         if(range != intersection) {
             range = intersection;
+
+            // inst->dumpInst(std::cerr);
+            // std::cerr << " -> \n";
+            // range.print(std::cerr);
+
             for(auto user : inst->users()) {
                 if(!inQueue.count(user) && ++enqueueCount[user] < maxEnqueueCount) {
                     q.push(user);
@@ -421,6 +424,8 @@ IntegerRangeAnalysisResult IntegerRangeAnalysis::run(Function& func, AnalysisPas
             case InstructionID::Phi: {
                 std::optional<IntegerRange> range;
                 for(auto operand : inst->operands()) {
+                    if(operand->isUndefined())
+                        continue;
                     const auto subRange = getRange(operand, inst);
                     if(range)
                         *range = range->unionSet(subRange);
@@ -430,6 +435,46 @@ IntegerRangeAnalysisResult IntegerRangeAnalysis::run(Function& func, AnalysisPas
 
                 if(range.has_value())
                     update(inst, *range);
+
+                // handle AddRec
+                range.reset();
+                std::vector<Instruction*> users;
+                for(auto operand : inst->operands()) {
+                    if(operand->isUndefined())
+                        continue;
+                    bool isUser = false;
+                    for(auto user : inst->users()) {
+                        if(user == operand) {
+                            isUser = true;
+                            break;
+                        }
+                    }
+
+                    if(isUser) {
+                        users.push_back(operand->as<Instruction>());
+                    } else {
+                        const auto subRange = getRange(operand, inst);
+                        if(range)
+                            *range = range->unionSet(subRange);
+                        else
+                            range = subRange;
+                    }
+                }
+
+                if(range.has_value() && users.size() == 1) {
+                    Value* phi = inst;
+                    intmax_t inc;
+                    if(add(exactly(phi), int_(inc))(MatchContext<Value>{ users.front() })) {
+                        const auto zeros = inc & -inc;
+                        const auto mask = zeros - 1;
+                        if(zeros > 1 && ((range->knownZeros() & mask) == mask)) {
+                            IntegerRange r;
+                            r.setKnownBits(static_cast<uint32_t>(mask), 0);
+                            r.sync();
+                            update(inst, r);
+                        }
+                    }
+                }
 
                 break;
             }
@@ -504,7 +549,7 @@ IntegerRangeAnalysisResult IntegerRangeAnalysis::run(Function& func, AnalysisPas
 
                     if(name.prefix() == "getch") {
                         IntegerRange r;
-                        r.setSignedRange(-1, 127);
+                        r.setSignedRange(0, 127);
                         r.sync();
                         update(inst, r);
                     } else if(name.prefix() == "getarray" || name.prefix() == "getfarray") {

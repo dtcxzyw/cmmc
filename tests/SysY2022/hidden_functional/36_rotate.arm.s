@@ -138,14 +138,14 @@ main:
 	bne label126
 	bl getch
 	cmp r0, #50
-	beq label98
+	beq label96
 label126:
 	mvn r0, #0
-label95:
+label119:
 	add sp, sp, #4
 	vpop { s16, s17, s18, s19, s20, s21 }
 	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
-label98:
+label96:
 	bl getint
 	mov r4, r0
 	bl getint
@@ -169,31 +169,31 @@ label98:
 	bne label126
 	mov r9, #0
 	cmp r5, r9
-	bgt label114
-	b label103
+	bgt label112
+	b label101
 .p2align 4
-label120:
+label118:
 	add r10, r10, #4
 	mov r11, r0
 .p2align 4
-label117:
+label115:
 	bl getint
 	str r0, [r10, #0]
 	add r0, r11, #1
 	cmp r4, r0
-	bgt label120
-label115:
+	bgt label118
+label113:
 	add r9, r9, #1
 	cmp r5, r9
-	ble label103
-label114:
+	ble label101
+label112:
 	cmp r4, #0
-	ble label115
+	ble label113
 	mul r0, r4, r9
 	mov r11, #0
 	add r10, r7, r0, lsl #2
-	b label117
-label103:
+	b label115
+label101:
 	movw r0, #4059
 	movt r0, #16329
 	movw r1, #4059
@@ -209,8 +209,8 @@ label103:
 	vdiv.f32 s1, s0, s3
 	vcmp.f32 s0, s3
 	vmrs APSR_nzcv, FPSCR
-	movwgt r0, #1
 	vcmp.f32 s0, s4
+	movwgt r0, #1
 	vmrs APSR_nzcv, FPSCR
 	movwmi r1, #1
 	orrs r9, r0, r1
@@ -234,15 +234,15 @@ label103:
 	vmrs APSR_nzcv, FPSCR
 	vmovmi.f32 s0, s1
 	bl my_sin_impl
+	mov r0, #0
 	vcmp.f32 s19, s3
 	mov r1, #0
-	mov r0, #0
 	vmov.f32 s1, s19
 	vmov.f32 s18, s0
 	vmrs APSR_nzcv, FPSCR
 	vdiv.f32 s0, s19, s3
-	vcmp.f32 s19, s4
 	movwgt r0, #1
+	vcmp.f32 s19, s4
 	vmrs APSR_nzcv, FPSCR
 	movwmi r1, #1
 	orrs r9, r0, r1
@@ -282,37 +282,37 @@ label103:
 	bl putch
 	mov r9, #0
 	cmp r5, r9
-	bgt label106
+	bgt label104
 	b label203
-label107:
+label105:
 	mov r0, #10
 	bl putch
 	add r9, r9, #1
 	cmp r5, r9
 	ble label203
-label106:
+label104:
 	sub r0, r9, r8
 	cmp r4, #0
 	vmov s0, r0
 	vcvt.f32.s32 s0, s0
 	vmul.f32 s21, s0, s19
 	vmul.f32 s20, s0, s18
-	ble label107
+	ble label105
 	mov r10, #0
-	b label108
+	b label106
 .p2align 4
 label230:
 	mov r0, #0
 .p2align 4
-label112:
+label110:
 	bl putint
 	mov r0, #32
 	bl putch
 	add r10, r10, #1
 	cmp r4, r10
-	ble label107
+	ble label105
 .p2align 4
-label108:
+label106:
 	sub r0, r10, r6
 	mov r1, #0
 	mov r3, #0
@@ -341,7 +341,7 @@ label108:
 	mul r1, r4, r2
 	add r0, r7, r0, lsl #2
 	ldr r0, [r0, r1, lsl #2]
-	b label112
+	b label110
 label203:
 	mov r0, #0
-	b label95
+	b label119

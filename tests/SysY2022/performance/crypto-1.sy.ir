@@ -159,13 +159,13 @@ func @main() -> i32 { NoRecurse Entry } {
     i1 %125 = icmp neq i32 %124, i32 60;
     cbr i1 %125(prob = 0.984615), ^while.body1, ^b1;
   ^b1:
-    i32* %126 = getelementptr &(i32* %8)[i32 %123];
+    i32* %126 = getelementptr &(i32* %122)[i64 1];
     store i32* %126 with i32 0;
-    i32* %127 = getelementptr &(i32* %126)[i64 1];
+    i32* %127 = getelementptr &(i32* %122)[i64 2];
     store i32* %127 with i32 0;
-    i32* %128 = getelementptr &(i32* %126)[i64 2];
+    i32* %128 = getelementptr &(i32* %122)[i64 3];
     store i32* %128 with i32 125;
-    i32* %129 = getelementptr &(i32* %126)[i64 3];
+    i32* %129 = getelementptr &(i32* %122)[i64 4];
     store i32* %129 with i32 0;
     i32 %130 = add i32 %121, i32 5;
     store i32* %9 with i32 0;

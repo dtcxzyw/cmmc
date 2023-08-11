@@ -10,10 +10,10 @@ array:
 main:
 	# stack usage: CalleeArg[0] Local[0] RegSpill[32] CalleeSaved[104]
 	addi sp, sp, -136
-pcrel644:
+pcrel645:
 	auipc a2, %pcrel_hi(array)
 	sd ra, 0(sp)
-	addi a0, a2, %pcrel_lo(pcrel644)
+	addi a0, a2, %pcrel_lo(pcrel645)
 	sd s10, 8(sp)
 	mv a2, zero
 	li s10, 2
@@ -32,10 +32,8 @@ pcrel644:
 	sd a0, 104(sp)
 	sd a1, 112(sp)
 	j label2
-.p2align 2
 label5:
 	addi a0, a0, 256
-.p2align 2
 label2:
 	sd zero, 0(a0)
 	addi a2, a2, 64
@@ -94,11 +92,96 @@ label12:
 	bge a4, s10, label162
 	mv t0, t1
 	mv a5, zero
+	j label17
+label84:
+	auipc a2, %pcrel_hi(array)
+	lui t1, 202
+	lw a1, %pcrel_lo(label84)(a2)
+	ld a0, 104(sp)
+	lw a4, 8(a0)
+	lw t0, 4(a0)
+	addw a3, a1, a4
+	lw a5, 40(a0)
+	addw a2, a3, t0
+	lw a3, 24(a0)
+	addw a4, a2, a5
+	lw a5, 228(a0)
+	addw a1, a4, a3
+	lw t0, 56(a0)
+	addw a2, a1, a5
+	lw a4, 964(a0)
+	addw a3, a2, t0
+	lw a5, 224(a0)
+	addw a1, a3, a4
+	lw a4, 804(a0)
+	addw a2, a1, a5
+	lw a5, 1996(a0)
+	addw a3, a2, a4
+	li a2, 403
+	addw a1, a3, a5
+	slli a4, a2, 3
+	add a5, a0, a4
+	li a4, 825
+	lw a3, 0(a5)
+	slli a5, a4, 5
+	addw a2, a1, a3
+	add a3, a0, a5
+	lw a1, 0(a3)
+	lw t0, 508(a0)
+	addw a4, a2, a1
+	lw a5, 124(a0)
+	addw a3, a4, t0
+	lui t0, 60
+	addw a1, a3, a5
+	addiw a2, t0, 912
+	add a4, a0, a2
+	lui a2, 4
+	lw a5, 0(a4)
+	addiw a4, a2, -428
+	addw a3, a1, a5
+	addiw a5, t1, 972
+	add a1, a0, a4
+	lw t0, 0(a1)
+	addw a2, a3, t0
+	add a3, a0, a5
+	li a5, 275
+	lw a4, 0(a3)
+	slli a3, a5, 10
+	addw a1, a2, a4
+	add a2, a0, a3
+	lw a4, 0(a2)
+	addw a0, a1, a4
+	jal putint
+	mv a0, zero
+	ld ra, 0(sp)
+	ld s10, 8(sp)
+	ld s0, 16(sp)
+	ld s5, 24(sp)
+	ld s1, 32(sp)
+	ld s6, 40(sp)
+	ld s2, 48(sp)
+	ld s3, 56(sp)
+	ld s4, 64(sp)
+	ld s7, 72(sp)
+	ld s8, 80(sp)
+	ld s9, 88(sp)
+	ld s11, 96(sp)
+	addi sp, sp, 136
+	ret
+label170:
+	addiw a5, a5, 1
+	lui a1, 64
+	add t0, t0, a1
 label17:
 	li s10, 2
 	bge a5, s10, label166
 	mv a2, t0
 	mv a3, zero
+	j label22
+label174:
+	addiw a3, a3, 1
+	lui a1, 32
+	add a2, a2, a1
 label22:
 	li s10, 2
 	bge a3, s10, label170
@@ -116,11 +199,7 @@ label36:
 	li s10, 2
 	add t2, t2, a1
 	blt t3, s10, label31
-label174:
-	addiw a3, a3, 1
-	lui a1, 32
-	add a2, a2, a1
-	j label22
+	j label174
 label42:
 	addiw t5, t5, 1
 	lui a1, 8
@@ -135,11 +214,6 @@ label37:
 label43:
 	mv a7, t6
 	mv s0, zero
-	j label44
-label196:
-	addiw s0, s0, 1
-	lui a1, 2
-	add a7, a7, a1
 label44:
 	li s10, 2
 	bge s0, s10, label48
@@ -150,16 +224,15 @@ label50:
 	bge s2, s10, label196
 	mv s3, s1
 	mv s4, zero
-	j label55
-label204:
-	addiw s4, s4, 1
-	ld a1, 112(sp)
-	add s3, s3, a1
 label55:
 	li s10, 2
 	bge s4, s10, label200
 	mv s5, s3
 	mv s6, zero
+	j label60
+label208:
+	addiw s6, s6, 1
+	addi s5, s5, 1024
 label60:
 	li s10, 2
 	bge s6, s10, label204
@@ -344,98 +417,6 @@ label48:
 	add t6, t6, a1
 	blt a6, s10, label43
 	j label42
-label84:
-	auipc a2, %pcrel_hi(array)
-	lui t1, 202
-	lw a1, %pcrel_lo(label84)(a2)
-	ld a0, 104(sp)
-	lw a4, 8(a0)
-	lw t0, 4(a0)
-	addw a3, a1, a4
-	lw a5, 40(a0)
-	addw a2, a3, t0
-	lw a3, 24(a0)
-	addw a4, a2, a5
-	lw a5, 228(a0)
-	addw a1, a4, a3
-	lw t0, 56(a0)
-	addw a2, a1, a5
-	lw a4, 964(a0)
-	addw a3, a2, t0
-	lw a5, 224(a0)
-	addw a1, a3, a4
-	lw a4, 804(a0)
-	addw a2, a1, a5
-	lw a5, 1996(a0)
-	addw a3, a2, a4
-	li a2, 403
-	addw a1, a3, a5
-	slli a4, a2, 3
-	add a5, a0, a4
-	li a4, 825
-	lw a3, 0(a5)
-	slli a5, a4, 5
-	addw a2, a1, a3
-	add a3, a0, a5
-	lw a1, 0(a3)
-	lw t0, 508(a0)
-	addw a4, a2, a1
-	lw a5, 124(a0)
-	addw a3, a4, t0
-	lui t0, 60
-	addw a1, a3, a5
-	addiw a2, t0, 912
-	add a4, a0, a2
-	lui a2, 4
-	lw a5, 0(a4)
-	addiw a4, a2, -428
-	addw a3, a1, a5
-	addiw a5, t1, 972
-	add a1, a0, a4
-	lw t0, 0(a1)
-	addw a2, a3, t0
-	add a3, a0, a5
-	li a5, 275
-	lw a4, 0(a3)
-	slli a3, a5, 10
-	addw a1, a2, a4
-	add a2, a0, a3
-	lw a4, 0(a2)
-	addw a0, a1, a4
-	jal putint
-	mv a0, zero
-	ld ra, 0(sp)
-	ld s10, 8(sp)
-	ld s0, 16(sp)
-	ld s5, 24(sp)
-	ld s1, 32(sp)
-	ld s6, 40(sp)
-	ld s2, 48(sp)
-	ld s3, 56(sp)
-	ld s4, 64(sp)
-	ld s7, 72(sp)
-	ld s8, 80(sp)
-	ld s9, 88(sp)
-	ld s11, 96(sp)
-	addi sp, sp, 136
-	ret
-label170:
-	addiw a5, a5, 1
-	lui a1, 64
-	add t0, t0, a1
-	j label17
-label200:
-	addiw s2, s2, 1
-	lui a1, 1
-	add s1, s1, a1
-	j label50
-label208:
-	addiw s6, s6, 1
-	addi s5, s5, 1024
-	j label60
-label74:
-	addi a1, a1, 256
-	j label70
 label162:
 	ld a1, 128(sp)
 	lui a2, 256
@@ -445,3 +426,21 @@ label162:
 	sd t1, 120(sp)
 	sd a1, 128(sp)
 	j label7
+label204:
+	addiw s4, s4, 1
+	ld a1, 112(sp)
+	add s3, s3, a1
+	j label55
+label74:
+	addi a1, a1, 256
+	j label70
+label200:
+	addiw s2, s2, 1
+	lui a1, 1
+	add s1, s1, a1
+	j label50
+label196:
+	addiw s0, s0, 1
+	lui a1, 2
+	add a7, a7, a1
+	j label44

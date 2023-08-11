@@ -110,11 +110,13 @@ public:
             std::map<intmax_t, Block*> chain;
             Block *defaultBlock, *parent;
             matchCaseChain(base, block, true, chain, visited, defaultBlock, parent);
-            if(chain.size() < 3)
+            if(chain.size() < 4)
                 continue;
             const auto minVal = chain.begin()->first;
             const auto maxVal = std::prev(chain.end())->first;
             if(maxVal - minVal > 256)
+                continue;
+            if(static_cast<double>(chain.size()) < 0.8 * static_cast<double>(maxVal - minVal))
                 continue;
 
             bool hasPhi = false;

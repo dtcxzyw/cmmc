@@ -23,10 +23,6 @@ main:
 	mov r0, r2
 	mov r1, r4
 	str r2, [sp, #0]
-	b label2
-.p2align 4
-label39:
-	add r1, r1, #256
 .p2align 4
 label2:
 	ldr r0, [sp, #0]
@@ -96,9 +92,13 @@ label2:
 	str r0, [r1, #244]
 	str r0, [r1, #248]
 	str r0, [r1, #252]
-	blt label39
+	bge label6
+	add r1, r1, #256
+	b label2
+label6:
 	movw r2, #:lower16:b
 	movt r2, #:upper16:b
+	ldr r0, [sp, #0]
 	mov r3, r0
 	str r0, [r1, #256]
 	str r0, [r1, #260]
@@ -156,8 +156,12 @@ label2:
 	str r0, [r1, #468]
 	str r0, [r1, #472]
 	mov r1, r2
+	b label7
 .p2align 4
-label6:
+label39:
+	add r1, r1, #256
+.p2align 4
+label7:
 	ldr r0, [sp, #0]
 	add r3, r3, #64
 	cmp r3, #3072
@@ -225,11 +229,7 @@ label6:
 	str r0, [r1, #244]
 	str r0, [r1, #248]
 	str r0, [r1, #252]
-	bge label10
-	add r1, r1, #256
-	b label6
-label10:
-	ldr r0, [sp, #0]
+	blt label39
 	mov r11, r0
 	str r0, [r1, #256]
 	str r0, [r1, #260]

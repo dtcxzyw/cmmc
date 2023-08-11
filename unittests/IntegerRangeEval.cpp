@@ -234,6 +234,15 @@ TEST(IntegerRangeEval, Add) {
     IntegerRange rem{ 1500000001 };
     const auto r = IntegerRange{}.srem(rem);
     ASSERT_FALSE((r + r).isNoSignedOverflow()) << "sum: " << (r + r);
+
+    IntegerRange base;
+    base.setKnownBits(0xf, 0);
+    base.sync();
+
+    ASSERT_EQ((base + IntegerRange{ 32 }).knownZeros(), 0xf);
+    ASSERT_EQ((base + IntegerRange{ 16 }).knownZeros(), 0xf);
+    ASSERT_EQ((base + IntegerRange{ 8 }).knownZeros(), 0x7);
+    ASSERT_EQ((base + IntegerRange{ 1 }).knownZeros(), 0);
 }
 
 TEST(IntegerRangeEval, Sub) {

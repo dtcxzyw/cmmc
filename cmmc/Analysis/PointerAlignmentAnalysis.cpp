@@ -12,6 +12,7 @@
     limitations under the License.
 */
 
+#include <cmmc/Analysis/IntegerRangeAnalysis.hpp>
 #include <cmmc/Analysis/PointerAlignmentAnalysis.hpp>
 #include <cmmc/Analysis/SCEVAnalysis.hpp>
 #include <cmmc/Analysis/SCEVExpr.hpp>
@@ -32,6 +33,9 @@ CMMC_NAMESPACE_BEGIN
 
 PointerAlignmentAnalysisResult PointerAlignmentAnalysis::run(Function& func, AnalysisPassManager& analysis) {
     auto& scev = analysis.get<SCEVAnalysis>(func);
+    auto& range = analysis.get<IntegerRangeAnalysis>(func);
+    auto& dom = analysis.get<DominateAnalysis>(func);
+
     PointerAlignmentAnalysisResult result;
     auto& storage = result.storage();
 
@@ -140,12 +144,20 @@ PointerAlignmentAnalysisResult PointerAlignmentAnalysis::run(Function& func, Ana
                     alignment = std::min(alignment, static_cast<uint32_t>(constantOffset & -constantOffset));
                 for(auto& [stride, idx] : offsets) {
                     auto times = static_cast<intmax_t>(stride);
+                    intmax_t scale = 1;
+
+                    const auto idxRange = range.query(idx, dom, u, 5);
+                    const auto mask = (idxRange.knownZeros() + 1);
+                    const auto lowBit = (mask & -mask);
+                    scale = std::max(scale, static_cast<intmax_t>(lowBit));
+
                     const auto scevExpr = scev.query(idx);
                     if(scevExpr && scevExpr->instID == SCEVInstID::AddRec &&
                        scevExpr->operands[0]->instID == SCEVInstID::Constant && scevExpr->operands[0]->constant == 0 &&
                        scevExpr->operands[1]->instID == SCEVInstID::Constant) {
-                        times *= scevExpr->operands[1]->constant;
+                        scale = std::max(scale, scevExpr->operands[1]->constant);
                     }
+                    times *= scale;
                     if(times)
                         alignment = std::min(alignment, static_cast<uint32_t>(times & -times));
                 }

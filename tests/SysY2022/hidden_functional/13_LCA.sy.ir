@@ -21,17 +21,17 @@ internal func @tree(i32 %x, i32 %d) -> void {
     [10005 * i32]* %9 = ptrcast [10005 * i32]* @next to [10005 * i32]*;
     cbr i1 %6(prob = 0.984615), ^while.body, ^b;
   ^while.body:
-    i32 %10 = phi [^entry, i32 0] [^while.body, i32 %16];
+    i32 %10 = phi [^entry, i32 0] [^while.body, i32 %18];
     i32* %11 = getelementptr &([20 * i32]* %3)[i64 0][i32 %10];
     i32 %12 = load i32* %11;
     [20 * i32]* %13 = getelementptr &([10005 * [20 * i32]]* %2)[i64 0][i32 %12];
     i32* %14 = getelementptr &([20 * i32]* %13)[i64 0][i32 %10];
     i32 %15 = load i32* %14;
-    i32 %16 = add i32 %10, i32 1;
-    i32* %17 = getelementptr &([20 * i32]* %3)[i64 0][i32 %16];
-    store i32* %17 with i32 %15;
-    i1 %18 = icmp neq i32 %15, i32 0;
-    cbr i1 %18(prob = 0.984615), ^while.body, ^b;
+    i32* %16 = getelementptr &(i32* %11)[i64 1];
+    store i32* %16 with i32 %15;
+    i1 %17 = icmp neq i32 %15, i32 0;
+    i32 %18 = add i32 %10, i32 1;
+    cbr i1 %17(prob = 0.984615), ^while.body, ^b;
   ^b:
     [10005 * i32]* %19 = ptrcast [10005 * i32]* @head to [10005 * i32]*;
     i32* %20 = getelementptr &([10005 * i32]* %19)[i64 0][i32 %x];

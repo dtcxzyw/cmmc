@@ -23,12 +23,12 @@ main:
 	sub r2, r4, #3
 	sub r6, r4, #18
 	cmp r2, #15
-	ble label46
+	ble label58
 	mov r3, #0
 	mov r7, r3
 	mov r5, r3
 .p2align 4
-label6:
+label15:
 	add r7, r3, r7
 	add r5, r5, #16
 	smmul r8, r7, r0
@@ -127,21 +127,21 @@ label6:
 	asr r9, r8, #29
 	add r8, r9, r8, lsr #31
 	mls r7, r8, r1, r7
-	bgt label6
+	bgt label15
 	mov r9, r3
 	mov r6, r5
 	mov r8, r7
 	mov r10, r5
-label10:
+label19:
 	cmp r2, r6
-	ble label103
+	ble label115
 	mov r7, r8
 	mov r5, r6
 	mov r3, r9
-	b label17
-label121:
+	b label26
+label133:
 	mov r5, r6
-label17:
+label26:
 	add r6, r7, r3
 	smmul r7, r6, r0
 	asr r8, r7, #29
@@ -168,16 +168,16 @@ label17:
 	mls r7, r7, r1, r6
 	add r6, r5, #4
 	cmp r2, r6
-	bgt label121
+	bgt label133
 	mov r5, r3
 	mov r2, r6
 	mov r3, r7
 	mov r6, r7
-label25:
+label5:
 	cmp r4, r2
-	ble label124
+	ble label44
 	mov r3, r6
-label30:
+label10:
 	add r3, r5, r3
 	add r2, r2, #1
 	add r5, r5, #1
@@ -186,8 +186,8 @@ label30:
 	asr r7, r6, #29
 	add r6, r7, r6, lsr #31
 	mls r3, r6, r1, r3
-	bgt label30
-label124:
+	bgt label10
+label44:
 	mov r4, r3
 label2:
 	movw r0, #1031
@@ -198,26 +198,26 @@ label2:
 	bl putch
 	mov r0, #0
 	pop { r4, r5, r6, r7, r8, r9, r10, pc }
-label46:
+label58:
 	mov r9, #0
 	mov r8, r9
 	mov r6, r9
 	mov r3, r9
 	mov r7, r9
 	mov r10, r9
-	b label10
+	b label19
 label40:
 	mov r6, #0
 	mov r5, r6
 	mov r2, r6
 	mov r3, r6
-	b label25
+	b label5
 label36:
 	mov r4, #0
 	b label2
-label103:
+label115:
 	mov r5, r3
 	mov r2, r10
 	mov r6, r7
 	mov r3, r7
-	b label25
+	b label5

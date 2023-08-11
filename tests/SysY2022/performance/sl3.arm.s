@@ -35,7 +35,7 @@ main:
 	bgt label24
 	b label5
 .p2align 4
-label242:
+label237:
 	add r4, r4, #1
 	movw r3, #63744
 	movt r3, #21
@@ -58,23 +58,35 @@ label24:
 	bgt label24
 	b label5
 .p2align 4
-label183:
+label37:
+	add r7, r7, #4
+.p2align 4
+label34:
+	add r8, r8, #1
+	mov r9, #1
+	str r9, [r7, #0]
+	ldr r6, [sp, #8]
+	cmp r6, r8
+	bgt label37
 	add r5, r5, #1
 	add r3, r3, #2400
-	ldr r6, [sp, #8]
 	cmp r6, r5
-	ble label242
+	ble label237
 .p2align 4
 label29:
 	ldr r6, [sp, #8]
 	cmp r6, #3
 	ble label130
 	cmp r1, #15
-	ble label134
+	ble label148
 	mov r6, r3
 	mov r7, #0
+	b label40
 .p2align 4
-label32:
+label43:
+	add r6, r6, #64
+.p2align 4
+label40:
 	add r7, r7, #16
 	mov r9, #1
 	cmp r0, r7
@@ -94,24 +106,20 @@ label32:
 	str r9, [r6, #52]
 	str r9, [r6, #56]
 	str r9, [r6, #60]
-	ble label154
-	add r6, r6, #64
-	b label32
-.p2align 4
-label154:
+	bgt label43
 	mov r8, r7
 	cmp r1, r7
-	ble label238
+	ble label239
 .p2align 4
-label39:
+label47:
 	add r6, r3, r8, lsl #2
 	mov r7, r8
-	b label40
+	b label48
 .p2align 4
-label43:
+label51:
 	add r6, r6, #16
 .p2align 4
-label40:
+label48:
 	add r7, r7, #4
 	mov r9, #1
 	cmp r1, r7
@@ -119,47 +127,21 @@ label40:
 	str r9, [r6, #4]
 	str r9, [r6, #8]
 	str r9, [r6, #12]
-	bgt label43
+	bgt label51
 	mov r8, r7
 	ldr r6, [sp, #8]
 	cmp r6, r7
-	ble label240
+	ble label241
 .p2align 4
-label47:
+label33:
 	add r7, r3, r8, lsl #2
-.p2align 4
-label48:
-	add r8, r8, #1
-	mov r9, #1
-	str r9, [r7, #0]
-	ldr r6, [sp, #8]
-	cmp r6, r8
-	ble label183
-	add r7, r7, #4
-	b label48
-.p2align 4
-label238:
-	mov r8, r7
-	ldr r6, [sp, #8]
-	cmp r6, r7
-	bgt label47
-	add r5, r5, #1
-	add r3, r3, #2400
-	cmp r6, r5
-	bgt label29
-	add r4, r4, #1
-	movw r3, #63744
-	movt r3, #21
-	add r2, r2, r3
-	cmp r6, r4
-	bgt label24
-	b label5
+	b label34
 .p2align 4
 label130:
 	mov r8, #0
 	ldr r6, [sp, #8]
 	cmp r6, r8
-	bgt label47
+	bgt label33
 	add r5, r5, #1
 	add r3, r3, #2400
 	cmp r6, r5
@@ -172,14 +154,31 @@ label130:
 	bgt label24
 	b label5
 .p2align 4
-label134:
+label239:
+	mov r8, r7
+	ldr r6, [sp, #8]
+	cmp r6, r7
+	bgt label33
+	add r5, r5, #1
+	add r3, r3, #2400
+	cmp r6, r5
+	bgt label29
+	add r4, r4, #1
+	movw r3, #63744
+	movt r3, #21
+	add r2, r2, r3
+	cmp r6, r4
+	bgt label24
+	b label5
+.p2align 4
+label148:
 	mov r8, #0
 	cmp r1, r8
 	mov r7, r8
-	bgt label39
+	bgt label47
 	ldr r6, [sp, #8]
 	cmp r6, r8
-	bgt label47
+	bgt label33
 	add r5, r5, #1
 	add r3, r3, #2400
 	cmp r6, r5
@@ -192,7 +191,7 @@ label134:
 	bgt label24
 	b label5
 .p2align 4
-label240:
+label241:
 	add r5, r5, #1
 	add r3, r3, #2400
 	ldr r6, [sp, #8]
@@ -222,10 +221,10 @@ label5:
 	movt r1, #21
 	add r3, r5, r1
 	cmp r9, r0
-	bgt label10
-	b label23
+	bgt label11
+	b label10
 .p2align 4
-label14:
+label15:
 	movw r1, #63744
 	movt r1, #21
 	mov r7, r0
@@ -240,22 +239,22 @@ label14:
 	movw r1, #63744
 	movt r1, #21
 	add r3, r5, r1
-	ble label23
+	ble label10
 .p2align 4
-label10:
+label11:
 	add r7, r5, #2400
 	mov r9, #1
 	mov r0, r9
 	ldr r9, [sp, #0]
 	cmp r9, r0
-	bgt label15
-	b label14
+	bgt label16
+	b label15
 .p2align 4
-label20:
+label22:
 	add r0, r0, #4
 	mov r9, r10
 .p2align 4
-label17:
+label19:
 	ldr r10, [r2, r9, lsl #2]
 	ldr r11, [r1, r9, lsl #2]
 	add r10, r10, r11
@@ -273,24 +272,32 @@ label17:
 	add r10, r9, #1
 	ldr r9, [sp, #0]
 	cmp r9, r10
-	bgt label20
+	bgt label22
 	add r7, r7, #2400
 	mov r0, r8
 	cmp r9, r8
-	ble label14
+	ble label15
 .p2align 4
-label15:
+label16:
 	mov r8, #2400
 	ldr r9, [sp, #0]
 	mla r2, r0, r8, r4
 	mla r1, r0, r8, r3
 	add r8, r0, #1
 	cmp r9, #2
-	blt label83
+	blt label17
 	add r0, r7, #4
 	mov r9, #1
-	b label17
-label23:
+	b label19
+.p2align 4
+label17:
+	add r7, r7, #2400
+	mov r0, r8
+	ldr r9, [sp, #0]
+	cmp r9, r8
+	bgt label16
+	b label15
+label10:
 	mov r0, #53
 	bl _sysy_stoptime
 	movw r5, #:lower16:x
@@ -315,11 +322,3 @@ label23:
 	add sp, sp, #20
 	mov r0, #0
 	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
-.p2align 4
-label83:
-	add r7, r7, #2400
-	mov r0, r8
-	ldr r9, [sp, #0]
-	cmp r9, r8
-	bgt label15
-	b label14
