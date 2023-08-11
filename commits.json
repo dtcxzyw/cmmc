@@ -635,6 +635,11 @@
       "parent": "43be4d9f3b3a4ab02e68f04af9d41f3b417f4758",
       "time": "2023-07-19 06:51:09 +0800"
     },
+    "7fa4c18d1ce860520cfb9ce22ab512a5fb36f377": {
+      "message": "feat(tune): add tuner",
+      "parent": "88e5c2a45608223637111a6b705862f1e355bb26",
+      "time": "2023-08-12 02:25:51 +0800"
+    },
     "80d6e89e289ec70a1f33edcd9a24c093f2a50a25": {
       "message": "feat(transform): merge blocks with phi insts",
       "parent": "075cfde698d64f95d0c80923a0ad7cf5e03dd6d4",
@@ -679,6 +684,11 @@
       "message": "test: add sccp tests",
       "parent": "97cc72f856cc319dc4b12d569da66b09a1abf5ea",
       "time": "2023-07-06 19:29:20 +0800"
+    },
+    "88e5c2a45608223637111a6b705862f1e355bb26": {
+      "message": "feat(transform): fold -1 - x into ~x",
+      "parent": "13e4309bf0119dcbfff341a7f0c4bb1fa1658786",
+      "time": "2023-08-11 23:07:54 +0800"
     },
     "89b6ae2d896b2eb9f6f435f6d3701a3ca6bc54fd": {
       "message": "feat(transform): decompose gep",
@@ -1221,5 +1231,5 @@
       "time": "2023-07-06 01:05:50 +0800"
     }
   },
-  "head": "13e4309bf0119dcbfff341a7f0c4bb1fa1658786"
+  "head": "7fa4c18d1ce860520cfb9ce22ab512a5fb36f377"
 }
