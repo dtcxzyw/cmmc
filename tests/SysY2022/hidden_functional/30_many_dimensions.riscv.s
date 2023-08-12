@@ -10,10 +10,10 @@ array:
 main:
 	# stack usage: CalleeArg[0] Local[0] RegSpill[32] CalleeSaved[104]
 	addi sp, sp, -136
-pcrel644:
+pcrel645:
 	auipc a2, %pcrel_hi(array)
 	sd ra, 0(sp)
-	addi a0, a2, %pcrel_lo(pcrel644)
+	addi a0, a2, %pcrel_lo(pcrel645)
 	sd s10, 8(sp)
 	mv a2, zero
 	li s10, 2
@@ -178,12 +178,6 @@ label17:
 	mv a2, t0
 	mv a3, zero
 	j label22
-label36:
-	addiw t3, t3, 1
-	lui a1, 16
-	li s10, 2
-	add t2, t2, a1
-	blt t3, s10, label31
 label174:
 	addiw a3, a3, 1
 	lui a1, 32
@@ -198,7 +192,20 @@ label31:
 	mv t4, t2
 	mv t5, zero
 	li s10, 2
-	bge zero, s10, label36
+	blt zero, s10, label37
+label36:
+	addiw t3, t3, 1
+	lui a1, 16
+	li s10, 2
+	add t2, t2, a1
+	blt t3, s10, label31
+	j label174
+label42:
+	addiw t5, t5, 1
+	lui a1, 8
+	li s10, 2
+	add t4, t4, a1
+	bge t5, s10, label36
 label37:
 	mv t6, t4
 	mv a6, zero
@@ -223,13 +230,6 @@ label55:
 	mv s5, s3
 	mv s6, zero
 	j label60
-label42:
-	addiw t5, t5, 1
-	lui a1, 8
-	li s10, 2
-	add t4, t4, a1
-	blt t5, s10, label37
-	j label36
 label208:
 	addiw s6, s6, 1
 	addi s5, s5, 1024
@@ -243,9 +243,6 @@ label65:
 	bge s8, s10, label208
 	mv a1, s7
 	mv s9, zero
-	j label70
-label74:
-	addi a1, a1, 256
 label70:
 	addiw s10, a0, 1
 	addiw s9, s9, 1
@@ -420,16 +417,6 @@ label48:
 	add t6, t6, a1
 	blt a6, s10, label43
 	j label42
-label200:
-	addiw s2, s2, 1
-	lui a1, 1
-	add s1, s1, a1
-	j label50
-label204:
-	addiw s4, s4, 1
-	ld a1, 112(sp)
-	add s3, s3, a1
-	j label55
 label162:
 	ld a1, 128(sp)
 	lui a2, 256
@@ -439,6 +426,19 @@ label162:
 	sd t1, 120(sp)
 	sd a1, 128(sp)
 	j label7
+label204:
+	addiw s4, s4, 1
+	ld a1, 112(sp)
+	add s3, s3, a1
+	j label55
+label74:
+	addi a1, a1, 256
+	j label70
+label200:
+	addiw s2, s2, 1
+	lui a1, 1
+	add s1, s1, a1
+	j label50
 label196:
 	addiw s0, s0, 1
 	lui a1, 2

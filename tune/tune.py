@@ -48,7 +48,7 @@ def parse_performance(stderr: str):
 
 cache = dict()
 stage = 0
-max_stages = 5
+max_stages = 6
 fixed = ""
 
 def objective_func(trail: optuna.Trial):
@@ -57,21 +57,23 @@ def objective_func(trail: optuna.Trial):
     opt = TuneOpt(trail)
     opt.str = fixed
     if stage == 0:
+        pass # baseline
+    if stage == 1:
         opt.add_pass("loop_extract")
         opt.add_pass("loop_unroll")
         opt.add_pass("dyn_loop_unroll")
-    if stage == 1:
+    if stage == 2:
         opt.add_select("unroll_block_size", [2, 4, 8, 16])
         opt.add_select("max_unroll_body_size", [8, 16, 24, 32, 48, 64, 96, 128])
-    # if stage == 2:
+    # if stage == 3:
     #     opt.add_param("duplication_threshold", 2, 20)
     #     opt.add_param("duplication_iterations", 0, 20)
     #     opt.add_param("branch_limit", 0, 1000)
     #     opt.add_param("branch_prediction_warmup_threshold", 0, 32)
-    if stage == 3:
-        opt.add_param("max_constant_hoist_count", 0, 16)
     if stage == 4:
-        opt.add_param("max_mul_constant_cost", 1, 5)
+        opt.add_param("max_constant_hoist_count", 0, 16)
+    # if stage == 5:
+    #     opt.add_param("max_mul_constant_cost", 1, 5)
 
     k = opt.key()
     if k in cache:
@@ -97,11 +99,16 @@ def objective_func(trail: optuna.Trial):
     return perf
 
 best = 1e10
+baseline = 0
 for i in range(max_stages):
     print("stage", i)
     stage = i
     study = optuna.create_study()
-    study.optimize(objective_func, n_trials=trail, show_progress_bar=False)
+    study.optimize(objective_func, n_trials=trail if i > 0 else 1, show_progress_bar=True)
+    if i == 0:
+        baseline = study.best_value
+        continue
+
     print("Best value: {} (params: {})\n".format(study.best_value, study.best_params))
     final_str = ""
     for k, v in study.best_params.items():
@@ -112,7 +119,9 @@ for i in range(max_stages):
         fixed = fixed + final_str
 
 print("final: ", fixed)
+print("baseline: ", baseline)
 print("best: ", best)
+print("improvement: {:.2f}%".format((baseline - best) / baseline * 100))
 
 sftp.close()
 ssh.close()
