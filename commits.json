@@ -910,6 +910,11 @@
       "parent": "68cba9aba7f9c31af280650e8b47dce79eaab030",
       "time": "2023-07-29 13:42:41 +0800"
     },
+    "bda746eee7306032bc887fda473ab396789e914b": {
+      "message": "perf(tune): add tune params for some test cases",
+      "parent": "7fa4c18d1ce860520cfb9ce22ab512a5fb36f377",
+      "time": "2023-08-13 00:04:26 +0800"
+    },
     "bdc17f3cdfd8836d1d37aba6c96d3542950bd8b8": {
       "message": "misc: relax time limitation",
       "parent": "31ee101773cca21aabbf09112fc6980d32b7be0c",
@@ -1231,5 +1236,5 @@
       "time": "2023-07-06 01:05:50 +0800"
     }
   },
-  "head": "7fa4c18d1ce860520cfb9ce22ab512a5fb36f377"
+  "head": "bda746eee7306032bc887fda473ab396789e914b"
 }
