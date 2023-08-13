@@ -1029,6 +1029,12 @@ static void lower(ReturnInst* inst, LoweringContext& ctx) {
 static void lower(FunctionCallInst* inst, LoweringContext& ctx) {
     ctx.getCodeGenContext().frameInfo.emitCall(inst, ctx);
 }
+static void lower(FunctionPtrInst* inst, LoweringContext& ctx) {
+    const auto ptr = ctx.newVReg(ctx.getPtrType());
+    ctx.emitInst(MIRInst{ InstLoadGlobalAddress }.setOperand<0>(ptr).setOperand<1>(
+        MIROperand::asReloc(ctx.mapGlobal(inst->getOperand(0)->as<Function>())->reloc.get())));
+    ctx.addOperand(inst, ptr);
+}
 static void lower(SwitchInst* inst, LoweringContext& ctx, const IntegerRangeAnalysisResult& range,
                   const DominateAnalysisResult& dom) {
     const auto valRange = range.query(inst->getOperand(0), dom, inst, 5);
@@ -1188,6 +1194,9 @@ static void lowerInst(Instruction* inst, LoweringContext& ctx, const PointerAlig
             lower(inst->as<FunctionCallInst>(), ctx);
             break;
         case InstructionID::Phi:  // noop
+            break;
+        case InstructionID::FunctionPtr:
+            lower(inst->as<FunctionPtrInst>(), ctx);
             break;
         default:
             reportUnreachable(CMMC_LOCATION());

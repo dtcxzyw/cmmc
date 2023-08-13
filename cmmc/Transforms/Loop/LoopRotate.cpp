@@ -111,7 +111,8 @@ public:
                 continue;
 
             std::unordered_set<Block*> body;
-            if(!collectLoopBody(loop.header, loop.latch, dom, cfg, body))
+            // FIXME: allow inner loop
+            if(!collectLoopBody(loop.header, loop.latch, dom, cfg, body, false))
                 continue;
             // for(auto b : body) {
             //     b->dumpAsTarget(std::cerr);

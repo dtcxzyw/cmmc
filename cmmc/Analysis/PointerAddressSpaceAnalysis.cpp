@@ -121,6 +121,13 @@ PointerAddressSpaceAnalysisResult PointerAddressSpaceAnalysis::run(Function& fun
                             result.addTag(&inst, space);
                         break;
                     }
+                    case InstructionID::PtrAdd: {
+                        inheritFrom(inst.getOperand(0), &inst);
+                        break;
+                    }
+                    case InstructionID::FunctionPtr: {
+                        break;
+                    }
                     default: {
                         block->dump(reportError() << "unimplemented inst "sv, HighlightInst{ &inst });
                         reportNotImplemented(CMMC_LOCATION());

@@ -54,6 +54,8 @@ public:
                     continue;
                 if(func->getLinkage() == Linkage::Global)
                     continue;
+                if(func->attr().hasAttr(FunctionAttribute::ParallelBody))
+                    continue;
 
                 auto& args = func->args();
                 uint32_t idx = 0;

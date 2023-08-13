@@ -109,7 +109,8 @@ enum class InstructionID {
     PtrAdd,
     Select,
     Call,
-    Phi
+    Phi,
+    FunctionPtr
 };
 
 struct ValueRef final {
@@ -794,6 +795,14 @@ public:
     void dumpInst(std::ostream& out) const override;
     bool verify(std::ostream& out) const override;
     bool isEqual(const Instruction* rhs) const override;
+    [[nodiscard]] Instruction* clone() const override;
+};
+
+class FunctionPtrInst final : public Instruction {
+public:
+    explicit FunctionPtrInst(Value* callee, const Type* dstType)
+        : Instruction{ InstructionID::FunctionPtr, dstType, { callee } } {}
+    void dumpInst(std::ostream& out) const override;
     [[nodiscard]] Instruction* clone() const override;
 };
 

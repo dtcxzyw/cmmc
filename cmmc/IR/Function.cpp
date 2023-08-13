@@ -106,6 +106,7 @@ void Function::dump(std::ostream& out, const HighlightSelector& selector) const 
         HANDLE_ATTR(Entry);
         HANDLE_ATTR(Builtin);
         HANDLE_ATTR(LoopBody);
+        HANDLE_ATTR(ParallelBody);
 
 #undef HANDLE_ATTR
         out << "}"sv;

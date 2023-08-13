@@ -44,6 +44,17 @@ bool removePhi(Block* source, Block* target);
 void applyForSuccessors(Instruction* branchOrSwitch, const std::function<void(Block*)>& functor);
 uint32_t estimateBlockSize(Block* block, bool dynamic);
 bool collectLoopBody(Block* header, Block* latch, const DominateAnalysisResult& dom, const CFGAnalysisResult& cfg,
-                     std::unordered_set<Block*>& body);
+                     std::unordered_set<Block*>& body, bool allowInnerLoop);
+struct LoopBodyInfo final {
+    Block* loop;
+    PhiInst* indvar;
+    Value* bound;
+    PhiInst* rec;
+    FunctionCallInst* recNext;
+    Block* exit;
+};
+bool extractLoopBody(Function& func, const class Loop& loop, const DominateAnalysisResult& dom, const CFGAnalysisResult& cfg,
+                     Module& mod, bool independent, const class PointerBaseAnalysisResult* pointerBase, bool allowInnermost,
+                     bool allowInnerLoop, bool onlyAddRec, bool estimateBlockSizeForUnroll, LoopBodyInfo* ret);
 
 CMMC_NAMESPACE_END

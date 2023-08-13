@@ -309,7 +309,7 @@ uint32_t estimateBlockSize(Block* block, bool dynamic) {
     return count;
 }
 bool collectLoopBody(Block* header, Block* latch, const DominateAnalysisResult& dom, const CFGAnalysisResult& cfg,
-                     std::unordered_set<Block*>& body) {
+                     std::unordered_set<Block*>& body, bool allowInnerLoop) {
     body.insert(header);
     std::stack<Block*> stack;
     stack.push(latch);
@@ -323,8 +323,8 @@ bool collectLoopBody(Block* header, Block* latch, const DominateAnalysisResult& 
         }
     }
 
-    if(body.size() <= 1)
-        return false;
+    // if(body.size() <= 1)
+    //     return false;
     for(auto block : body) {
         if(block == header)
             continue;
@@ -332,7 +332,7 @@ bool collectLoopBody(Block* header, Block* latch, const DominateAnalysisResult& 
             if(block != latch && !body.count(succ)) {
                 return false;
             }
-            if(dom.dominate(succ, block) && succ != header)
+            if(!allowInnerLoop && dom.dominate(succ, block) && succ != header)
                 return false;
             if(succ == header && block != latch)
                 return false;

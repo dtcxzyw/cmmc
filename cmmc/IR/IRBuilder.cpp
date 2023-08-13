@@ -64,8 +64,10 @@ Block* IRBuilder::getCurrentBlock() const {
     return mCurrentBlock;
 }
 void IRBuilder::setCurrentBlock(Block* block) {
-    if(mCurrentBlock == block)
+    if(mCurrentBlock == block) {
+        mInsertPoint = mCurrentBlock->instructions().end();
         return;
+    }
     mCurrentFunction = block ? block->getFunction() : nullptr;
     mCurrentBlock = block;
     if(block)

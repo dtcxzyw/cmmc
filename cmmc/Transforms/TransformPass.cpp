@@ -405,6 +405,7 @@ std::shared_ptr<PassManager<Module>> PassManager<Module>::get(OptimizationLevel 
                 // "CompareCombine",         //
                 "GVN",                    //
                 "NoSideEffectEliminate",  // clean up
+                // "LoopParallel",           //
                 "LoopUnroll",             //
                 "BlockMerge",             // clean up
                 "BlockEliminate",         // clean up

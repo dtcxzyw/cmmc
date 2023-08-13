@@ -331,6 +331,15 @@ AliasAnalysisResult AliasAnalysis::run(Function& func, AnalysisPassManager& anal
 
                     break;
                 }
+                case InstructionID::PtrAdd: {
+                    inheritGraph.emplace(&inst, inst.getOperand(0));
+                    result.addValue(&inst, {});
+                    break;
+                }
+                case InstructionID::FunctionPtr: {
+                    result.addValue(&inst, {});
+                    break;
+                }
                 default: {
                     reportNotImplemented(CMMC_LOCATION());
                 }

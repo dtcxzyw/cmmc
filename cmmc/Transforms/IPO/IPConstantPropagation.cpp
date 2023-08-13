@@ -47,6 +47,9 @@ public:
                 Value* commonArg = nullptr;
                 bool same = true;
                 for(auto user : func.users()) {
+                    if(user->getInstID() == InstructionID::FunctionPtr)
+                        return false;
+
                     auto val = user->getOperand(argIdx);
                     if(val == arg) {
                         continue;

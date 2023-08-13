@@ -84,6 +84,14 @@ public:
                 auto var = global->as<GlobalVariable>();
                 if(var->getLinkage() == Linkage::Global)
                     continue;
+                bool usedByParallelBody = false;
+                for(auto user : var->users())
+                    if(user->getBlock()->getFunction()->attr().hasAttr(FunctionAttribute::ParallelBody)) {
+                        usedByParallelBody = true;
+                        break;
+                    }
+                if(usedByParallelBody)
+                    continue;
 
                 const auto pointeeType = var->getType()->as<PointerType>()->getPointee();
                 if(pointeeType->isPrimitive() ||

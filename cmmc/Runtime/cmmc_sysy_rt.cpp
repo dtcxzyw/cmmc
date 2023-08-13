@@ -29,7 +29,7 @@
 constexpr uint32_t maxThreads = 4;
 constexpr auto stackSize = 1024 * 1024;  // 1MB
 constexpr auto threadCreationFlags = CLONE_VM | CLONE_FS | CLONE_FILES | CLONE_SIGHAND | CLONE_THREAD | CLONE_SYSVSEM;
-using CmmcForLoop = void (*)(int32_t beg, int32_t end, void* payload);
+using CmmcForLoop = void (*)(int32_t beg, int32_t end);
 
 namespace {
     class Futex final {
@@ -60,7 +60,6 @@ namespace {
         std::atomic<CmmcForLoop> func;
         std::atomic_int32_t beg;
         std::atomic_int32_t end;
-        std::atomic<void*> payload;
 
         Futex ready, done;
     };
@@ -85,7 +84,7 @@ namespace {
             if(!worker.run)
                 break;
             // exec task
-            worker.func.load()(worker.beg.load(), worker.end.load(), worker.payload.load());
+            worker.func.load()(worker.beg.load(), worker.end.load());
             // signal completion
             worker.done.post();
         }
@@ -113,15 +112,16 @@ __attribute((destructor)) void cmmcUninitRuntime() {
     // for(auto& worker : workers)
     //     munmap(worker.stack, stackSize);
 }
-void cmmcParallelFor(int32_t beg, int32_t end, CmmcForLoop func, void* payload) {
+void cmmcParallelFor(int32_t beg, int32_t end, CmmcForLoop func) {
     if(end <= beg)
         return;
     const auto size = static_cast<uint32_t>(end - beg);
     constexpr uint32_t smallTask = 16;
     if(size < smallTask) {
-        func(beg, end, payload);
+        func(beg, end);
         return;
     }
+    std::atomic_thread_fence(std::memory_order_seq_cst);
     constexpr uint32_t alignment = 4;
     const auto inc = static_cast<int32_t>(((size / maxThreads) + alignment - 1) / alignment * alignment);
     for(int32_t i = 0; i < static_cast<int32_t>(maxThreads); ++i) {
@@ -129,18 +129,20 @@ void cmmcParallelFor(int32_t beg, int32_t end, CmmcForLoop func, void* payload) 
         auto subEnd = std::min(subBeg + inc, end);
         if(i == maxThreads - 1)
             subEnd = end;
+        if(subBeg >= subEnd)
+            continue;
         // cmmc_exec_for(subBeg, subEnd, func, payload);
         auto& worker = workers[static_cast<size_t>(i)];
         worker.func = func;
         worker.beg = subBeg;
         worker.end = subEnd;
-        worker.payload = payload;
         // signal worker
         worker.ready.post();
     }
     for(auto& worker : workers) {
         worker.done.wait();
     }
+    std::atomic_thread_fence(std::memory_order_seq_cst);
 }
 constexpr uint32_t m1 = 1021, m2 = 1019;
 struct LUTEntry final {

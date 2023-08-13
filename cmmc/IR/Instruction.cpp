@@ -338,6 +338,8 @@ static std::string_view getInstName(InstructionID instID) {
             return "call"sv;
         case InstructionID::Phi:
             return "phi"sv;
+        case InstructionID::FunctionPtr:
+            return "functionptr"sv;
         default:
             reportUnreachable(CMMC_LOCATION());
     }
@@ -987,6 +989,17 @@ std::unordered_set<Block*> SwitchInst::getUniqueSuccessors() const {
     }
     blocks.insert(mDefaultBlock);
     return blocks;
+}
+
+void FunctionPtrInst::dumpInst(std::ostream& out) const {
+    dumpWithoutOperand(out);
+    out << ' ';
+    getOperand(0)->dumpAsOperand(out);
+    out << " as ";
+    getType()->dump(out);
+}
+[[nodiscard]] Instruction* FunctionPtrInst::clone() const {
+    return make<FunctionPtrInst>(getOperand(0), getType());
 }
 
 CMMC_NAMESPACE_END
