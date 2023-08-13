@@ -480,6 +480,11 @@
       "parent": "4986ac64fbab59affcafed05faee84a6ad13be0c",
       "time": "2023-07-29 21:09:50 +0800"
     },
+    "5ec58126300a6a4bd683ff43cb1ecf15ae12b4bb": {
+      "message": "feat(transform): add loop parallel",
+      "parent": "bda746eee7306032bc887fda473ab396789e914b",
+      "time": "2023-08-14 01:14:30 +0800"
+    },
     "601dbbbf9624a2514fd0de00e8f3469b48e3ff0d": {
       "message": "test: add scev cases",
       "parent": "78a95e6f941947103f9f1d6b8d70881e9f9c384a",
@@ -1236,5 +1241,5 @@
       "time": "2023-07-06 01:05:50 +0800"
     }
   },
-  "head": "bda746eee7306032bc887fda473ab396789e914b"
+  "head": "5ec58126300a6a4bd683ff43cb1ecf15ae12b4bb"
 }
