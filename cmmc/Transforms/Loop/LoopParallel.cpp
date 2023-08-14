@@ -13,8 +13,10 @@
 */
 
 #include <algorithm>
+#include <cmmc/Analysis/AnalysisPass.hpp>
 #include <cmmc/Analysis/CFGAnalysis.hpp>
 #include <cmmc/Analysis/DominateAnalysis.hpp>
+#include <cmmc/Analysis/IntegerRangeAnalysis.hpp>
 #include <cmmc/Analysis/LoopAnalysis.hpp>
 #include <cmmc/Analysis/PointerBaseAnalysis.hpp>
 #include <cmmc/CodeGen/Target.hpp>
@@ -28,6 +30,7 @@
 #include <cmmc/IR/Value.hpp>
 #include <cmmc/Support/Bits.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
+#include <cmmc/Support/Options.hpp>
 #include <cmmc/Support/Tune.hpp>
 #include <cmmc/Transforms/Hyperparameters.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
@@ -39,6 +42,14 @@
 #include <limits>
 
 CMMC_NAMESPACE_BEGIN
+
+Flag enableParallel;
+
+CMMC_INIT_OPTIONS_BEGIN
+
+enableParallel.withDefault(false).setName("enable-parallel", 'E').setDesc("enable parallel");
+
+CMMC_INIT_OPTIONS_END
 
 class LoopParallel final : public TransformPass<Function> {
     static Function* lookupParallelFor(Module& mod) {
@@ -68,28 +79,69 @@ class LoopParallel final : public TransformPass<Function> {
         return func;
     }
 
-public:
-    bool run(Function& func, AnalysisPassManager& analysis) const override {
-        if(!analysis.module().getTarget().isLibCallSupported(mir::CMMCLibCall::parallelFor))
-            return false;
-        if(func.attr().hasAttr(FunctionAttribute::LoopBody))
-            return false;
-        if(func.attr().hasAttr(FunctionAttribute::ParallelBody))
-            return false;
-        if(!queryTuneOpt("loop_parallel", 1))
-            return false;
+    static bool isConstant(Value* val) {
+        if(val->isConstant() || val->isGlobal())
+            return true;
+        if(val->isInstruction()) {
+            auto inst = val->as<Instruction>();
+            if(!isMovableExpr(*inst, false))
+                return false;
+            for(auto opreand : inst->operands()) {
+                if(!isConstant(opreand))
+                    return false;
+            }
+            return true;
+        }
+        return false;
+    }
+
+    static Value* expandConstant(Value* val, IRBuilder& builder) {
+        if(val->isConstant() || val->isGlobal())
+            return val;
+        if(val->isInstruction()) {
+            auto inst = val->as<Instruction>()->clone();
+            for(auto& operand : inst->mutableOperands())
+                operand->resetValue(expandConstant(operand->value, builder));
+            const auto point = builder.getInsertPoint();
+            const auto block = builder.getCurrentBlock();
+            inst->insertBefore(block, point);
+            return inst;
+        }
+        reportUnreachable(CMMC_LOCATION());
+    }
+
+    static bool runImpl(Function& func, AnalysisPassManager& analysis) {
+        // func.dumpCFG(std::cerr);
 
         auto& pointerBase = analysis.get<PointerBaseAnalysis>(func);
+        auto& rangeInfo = analysis.get<IntegerRangeAnalysis>(func);
         auto& loopInfo = analysis.get<LoopAnalysis>(func);
         auto& dom = analysis.get<DominateAnalysis>(func);
         auto& cfg = analysis.get<CFGAnalysis>(func);
         auto& mod = analysis.module();
 
+        auto loops = loopInfo.loops;
+        std::sort(loops.begin(), loops.end(),
+                  [&](Loop& lhs, Loop& rhs) { return dom.getIndex(lhs.header) < dom.getIndex(rhs.header); });
+
         bool modified = false;
-        for(auto& loop : loopInfo.loops) {
+        for(auto& loop : loops) {
+            // std::cerr << "processing ";
+            // loop.header->dumpAsTarget(std::cerr);
+            // std::cerr << " <-> ";
+            // loop.latch->dumpAsTarget(std::cerr);
+            // std::cerr << "\n";
+
             if(loop.step != 1)
                 continue;
 
+            auto initialRange = rangeInfo.query(loop.initial, dom, nullptr, 5);
+            const auto isAligned = (initialRange.knownZeros() & 3) == 3;
+            auto boundRange = rangeInfo.query(loop.bound, dom, nullptr, 5);
+            if((boundRange - initialRange).maxSignedValue() < 128)
+                continue;
+
+            // std::cerr << "collect\n";
             LoopBodyInfo bodyInfo;
             if(!extractLoopBody(func, loop, dom, cfg, mod,
                                 /*independent*/ true,
@@ -97,9 +149,12 @@ public:
                                 /*allow innermost*/ true,
                                 /*allow innerloop*/ true,
                                 /*only addrec*/ true,
-                                /*estimate block size*/ true,
+                                /*estimate block size*/ false,
                                 /*ret*/ &bodyInfo))
                 continue;
+            // func.dump(std::cerr, Noop{});
+            // std::cerr << "modify\n";
+
             const auto parallelFor = lookupParallelFor(mod);
             Function* reduceAddI32 = nullptr;
             if(bodyInfo.rec)
@@ -143,6 +198,8 @@ public:
             const auto bodyFunc = make<Function>(getUniqueID(), funcType);
             bodyFunc->setLinkage(Linkage::Internal);
             bodyFunc->attr().addAttr(FunctionAttribute::NoRecurse).addAttr(FunctionAttribute::ParallelBody);
+            if(isAligned)
+                bodyFunc->attr().addAttr(FunctionAttribute::AlignedParallelBody);
             mod.add(bodyFunc);
 
             auto& dataLayout = mod.getTarget().getDataLayout();
@@ -152,10 +209,17 @@ public:
             size_t maxAlignment = 0;
             Value* givOffset = nullptr;
             const auto i32 = IntegerType::get(32);
-            for(auto param : bodyInfo.recNext->arguments()) {
+            std::unordered_set<Value*> insertedParam;
+            auto addArgument = [&](Value* param) {
                 if(param == bodyInfo.indvar)
-                    continue;
+                    return;
+                if(isConstant(param))
+                    return;
+                if(param == bodyInfo.rec && !bodyInfo.recUsedByOuter && !bodyInfo.recUsedByInner)
+                    return;
 
+                if(!insertedParam.insert(param).second)
+                    return;
                 const auto align = param->getType()->getAlignment(dataLayout);
                 const auto size = param->getType()->getSize(dataLayout);
                 totalSize = (totalSize + align - 1) / align * align;
@@ -165,7 +229,11 @@ public:
                 else
                     payload.emplace_back(param, totalSize);
                 totalSize += size;
-            }
+            };
+            for(auto param : bodyInfo.recNext->arguments())
+                addArgument(param);
+            if(bodyInfo.recInnerStep)
+                addArgument(bodyInfo.recInnerStep);
 
             const auto payloadStorage =
                 make<GlobalVariable>(getUniqueIDStorage(), make<ArrayType>(IntegerType::get(8), static_cast<uint32_t>(totalSize)),
@@ -186,31 +254,55 @@ public:
             const auto indVar = make<PhiInst>(i32);
             indVar->addIncoming(entry, beg);
             const auto giv = (bodyInfo.rec ? make<PhiInst>(bodyInfo.rec->getType()) : nullptr);
-            for(auto& operand : bodyExec->mutableOperands()) {
+            auto remapArgument = [&](ValueRef* operand) {
                 if(operand->value == bodyInfo.indvar) {
                     operand->resetValue(indVar);
                 } else if(operand->value == bodyInfo.rec) {
                     operand->resetValue(giv);
                 } else {
-                    for(auto& [param, offset] : payload) {
-                        if(operand->value == param) {
-                            const auto ptr = builder.makeOp<PtrAddInst>(payloadStorage,
-                                                                        ConstantInteger::get(i32, static_cast<intmax_t>(offset)),
-                                                                        PointerType::get(param->getType()));
-                            const auto val = builder.makeOp<LoadInst>(ptr);
-                            operand->resetValue(val);
-                            break;
+                    if(isConstant(operand->value)) {
+                        operand->resetValue(expandConstant(operand->value, builder));
+                        builder.setCurrentBlock(entry);
+                    } else {
+                        bool replaced = false;
+                        for(auto& [param, offset] : payload) {
+                            if(operand->value == param) {
+                                const auto ptr = builder.makeOp<PtrAddInst>(
+                                    payloadStorage, ConstantInteger::get(i32, static_cast<intmax_t>(offset)),
+                                    PointerType::get(param->getType()));
+                                const auto val = builder.makeOp<LoadInst>(ptr);
+                                operand->resetValue(val);
+                                replaced = true;
+                                break;
+                            }
                         }
+                        if(!replaced)
+                            reportUnreachable(CMMC_LOCATION());
                     }
                 }
-            }
-            builder.makeOp<BranchInst>(subLoop);
+            };
+            for(auto& operand : bodyExec->mutableOperands())
+                remapArgument(operand.get());
+
             indVar->insertBefore(subLoop, subLoop->instructions().end());
             if(giv) {
                 giv->insertBefore(subLoop, subLoop->instructions().end());
-                giv->addIncoming(entry, ConstantInteger::get(i32, 0));
+                if(bodyInfo.recUsedByInner) {
+                    const auto ptr = builder.makeOp<PtrAddInst>(payloadStorage, givOffset, PointerType::get(i32));
+                    const auto initial = builder.makeOp<LoadInst>(ptr);
+                    const auto step = bodyInfo.recInnerStep;
+                    const auto offset = builder.makeOp<BinaryInst>(InstructionID::Mul, beg, step);
+                    builder.setInsertPoint(entry, offset->asIterator());
+                    remapArgument(offset->mutableOperands().back().get());
+                    builder.setCurrentBlock(entry);
+                    const auto realInitial = builder.makeOp<BinaryInst>(InstructionID::Add, initial, offset);
+                    giv->addIncoming(entry, realInitial);
+                } else
+                    giv->addIncoming(entry, ConstantInteger::get(i32, 0));
                 giv->addIncoming(subLoop, bodyExec);
             }
+            builder.makeOp<BranchInst>(subLoop);
+
             bodyExec->insertBefore(subLoop, subLoop->instructions().end());
             builder.setCurrentBlock(subLoop);
             const auto next = builder.makeOp<BinaryInst>(InstructionID::Add, indVar, ConstantInteger::get(i32, 1));
@@ -218,7 +310,7 @@ public:
             const auto cond = builder.makeOp<CompareInst>(InstructionID::ICmp, CompareOp::ICmpSignedLessThan, next, end);
             builder.makeOp<BranchInst>(cond, defaultLoopProb, subLoop, exit);
             builder.setCurrentBlock(exit);
-            if(giv) {
+            if(giv && bodyInfo.recUsedByOuter) {
                 const auto ptr = builder.makeOp<PtrAddInst>(payloadStorage, givOffset, PointerType::get(i32));
                 builder.makeOp<FunctionCallInst>(reduceAddI32, std::vector<Value*>{ ptr, bodyExec });
             }
@@ -226,7 +318,7 @@ public:
 
             builder.setInsertPoint(bodyInfo.loop, bodyInfo.recNext);
             Value* givPtr = nullptr;
-            if(giv) {
+            if(giv && (bodyInfo.recUsedByOuter || bodyInfo.recUsedByInner)) {
                 givPtr = builder.makeOp<PtrAddInst>(payloadStorage, givOffset, PointerType::get(i32));
                 builder.makeOp<StoreInst>(givPtr, bodyInfo.rec);
             }
@@ -240,7 +332,7 @@ public:
                 parallelFor,
                 std::vector<Value*>{ bodyInfo.indvar, bodyInfo.bound,
                                      builder.makeOp<FunctionPtrInst>(bodyFunc, PointerType::get(IntegerType::get(8))) });
-            if(giv) {
+            if(giv && bodyInfo.recUsedByOuter) {
                 const auto val = builder.makeOp<LoadInst>(givPtr);
                 bodyInfo.recNext->replaceWith(val);
             }
@@ -256,6 +348,30 @@ public:
 
             modified = true;
             break;
+        }
+        return modified;
+    }
+
+public:
+    bool run(Function& func, AnalysisPassManager& analysis) const override {
+        if(!analysis.module().getTarget().isLibCallSupported(mir::CMMCLibCall::parallelFor))
+            return false;
+        if(func.attr().hasAttr(FunctionAttribute::LoopBody))
+            return false;
+        if(func.attr().hasAttr(FunctionAttribute::ParallelBody))
+            return false;
+        // FIXME
+        if(!func.attr().hasAttr(FunctionAttribute::Entry))
+            return false;
+        if(!enableParallel.get())
+            return false;
+        if(!queryTuneOpt("loop_parallel", 1))
+            return false;
+
+        bool modified = false;
+        while(runImpl(func, analysis)) {
+            modified = true;
+            analysis.invalidateFunc(func);
         }
         return modified;
     }

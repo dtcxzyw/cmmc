@@ -22,25 +22,19 @@
 
 CMMC_NAMESPACE_BEGIN
 
-struct BlockCFGInfo final {
-    std::vector<Block*> predecessors;
-    std::vector<Block*> successors;
-};
-
-class CFGAnalysisResult final {
-    std::unordered_map<Block*, BlockCFGInfo> mInfo;
+class HotspotAnalysisResult final {
+    std::unordered_set<Block*> mColdBlocks;
 
 public:
-    std::unordered_map<Block*, BlockCFGInfo>& storage() {
-        return mInfo;
+    auto& storage() {
+        return mColdBlocks;
     }
-    const std::vector<Block*>& predecessors(Block* block) const;
-    const std::vector<Block*>& successors(Block* block) const;
+    bool isCold(Block* block) const;
 };
 
-class CFGAnalysis final : public FuncAnalysisPassWrapper<CFGAnalysis, CFGAnalysisResult> {
+class HotspotAnalysis final : public ModuleAnalysisPassWrapper<HotspotAnalysis, HotspotAnalysisResult> {
 public:
-    static CFGAnalysisResult run(Function& func, AnalysisPassManager& analysis);
+    static HotspotAnalysisResult run(Module& mod, AnalysisPassManager& analysis);
 };
 
 CMMC_NAMESPACE_END

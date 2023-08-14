@@ -96,7 +96,7 @@ def basename(filename: str):
     return os.path.splitext(filename)[0]
 
 
-def run_cmmc(source, *, target, output = '/dev/stdout', opt_level = None, emit_ir = False, hide_symbol = False, strict = False, input_file = None, no_runtime = False, more = [], check = True) -> subprocess.CompletedProcess:
+def run_cmmc(source, *, target, output = '/dev/stdout', opt_level = None, emit_ir = False, hide_symbol = False, strict = False, input_file = None, no_runtime = False, more = [], check = True, enable_parallel = False) -> subprocess.CompletedProcess:
     assert opt_level is None or 0 <= opt_level <= 3, "Invalid optimization level"
 
     command = [
@@ -113,9 +113,12 @@ def run_cmmc(source, *, target, output = '/dev/stdout', opt_level = None, emit_i
         command.append('--strict')
     if no_runtime:
         command.append('--with-runtime=false')
+    if enable_parallel:
+        command.append('--enable-parallel')
     if input_file is not None:
         command.extend(['-e', input_file])
     command = command + more + [source]
+    #print(command)
 
     process = subprocess.run(command, capture_output=True, text=True, check=check)
     assert not check or len(process.stderr) == 0, process.stderr
@@ -366,7 +369,7 @@ def spl_riscv64_ref(src):
     run_cmmc(src, target='riscv', output=src+'.riscv64.S', hide_symbol=True)
 
 def sysy_ref(src):
-    run_cmmc(src, target='sim', output=src+'.ir', hide_symbol=True, emit_ir=True)
+    run_cmmc(src, target='riscv', output=src+'.ir', hide_symbol=True, emit_ir=True, enable_parallel = 'performance' in src)
 
 
 def sysy_ref_clang(src: str):
@@ -396,6 +399,7 @@ def run_executable(command, src, sample_name):
             out = subprocess.run(command, stdin=f, capture_output=True, text=True)
     else:
         out = subprocess.run(command, capture_output=True, text=True)
+    #print(out.stderr)
     time_used = compare_and_parse_perf(src, out)
     add_sample(sample_name, src, time_used)
     return time_used
@@ -428,7 +432,7 @@ def sysy_cmmc_qemu(src, target):
     output = get_output_path(src) + "_cmmc"
     output_asm = output + '.s'
 
-    run_cmmc(src, target=target, output=output_asm, hide_symbol=True)
+    run_cmmc(src, target=target, output=output_asm, hide_symbol=True, enable_parallel= (target != "mips") and ("performance" in src))
     link_executable(output_asm, target, output)
     run_executable(qemu_command[target] + [output], src, f'cmmc_qemu_{target}')
 
@@ -445,7 +449,7 @@ def sysy_cmmc_native(src, target):
 def sysy_cmmc_compile_only(src, target):
     output = get_output_path(src) + "_cmmc"
     output_asm = f'{output}.{target}.s'
-    run_cmmc(src, target=target, output=output_asm, hide_symbol=True)
+    run_cmmc(src, target=target, output=output_asm, hide_symbol=True, enable_parallel="performance" in src)
     # link_executable(output_asm, target, output)
 
 
@@ -486,7 +490,7 @@ def sysy_regression_ref_codegen(src, target):
 
 def sysy_perf_ref_codegen(src, target):
     output_asm = f'{basename(src)}.{target}.s'
-    run_cmmc(src, target=target, output=output_asm, hide_symbol=True, no_runtime=True)
+    run_cmmc(src, target=target, output=output_asm, hide_symbol=True, no_runtime=True, enable_parallel = 'performance' in src)
 
 def sysy_codegen_llvm(src):
     input_file = basename(src) + ".in"

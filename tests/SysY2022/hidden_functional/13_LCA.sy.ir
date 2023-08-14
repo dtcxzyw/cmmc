@@ -324,14 +324,14 @@ func @main() -> i32 { NoRecurse Entry } {
   ^b9:
     i32 %205 = phi [^b8, i32 %192] [^b12, i32 %396];
     i1 %206 = icmp eq i32 %195, i32 %205;
-    cbr i1 %206(prob = 0.5), ^b11, ^while.header;
+    cbr i1 %206(prob = 0.5), ^b11, ^while.body16;
   ^b10:
     i32* %207 = getelementptr &([10005 * i32]* %56)[i64 0][i32 %203];
     i32 %208 = load i32* %207;
     i1 %209 = icmp sle i32 %197, i32 %208;
     i32 %210 = select i1 %209 ? i32 %203 : i32 %199;
     ubr ^b12;
-  ^while.header:
+  ^while.body16:
     [20 * i32]* %211 = getelementptr &([10005 * [20 * i32]]* %65)[i64 0][i32 %205];
     i32* %212 = getelementptr &([20 * i32]* %211)[i64 0][i64 19];
     i32 %213 = load i32* %212;
@@ -516,7 +516,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i32 %392 = load i32* %391;
     ubr ^b11;
   ^b11:
-    i32 %393 = phi [^b9, i32 %205] [^while.header, i32 %392];
+    i32 %393 = phi [^b9, i32 %205] [^while.body16, i32 %392];
     call (i32) -> void @putint(i32 %393);
     call (i32) -> void @putch(i32 10);
     i32 %394 = add i32 %79, i32 -1;

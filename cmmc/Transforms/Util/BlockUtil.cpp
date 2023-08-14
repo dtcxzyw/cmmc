@@ -326,6 +326,9 @@ bool collectLoopBody(Block* header, Block* latch, const DominateAnalysisResult& 
     // if(body.size() <= 1)
     //     return false;
     for(auto block : body) {
+        // block->dumpAsTarget(std::cerr);
+        // std::cerr << '\n';
+
         if(block == header)
             continue;
         for(auto succ : cfg.successors(block)) {

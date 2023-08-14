@@ -40,6 +40,42 @@
 
 CMMC_NAMESPACE_BEGIN
 
+static bool matchAddRec(Value* giv, Block* latch, std::unordered_set<Value*>& values) {
+    if(!giv->is<PhiInst>())
+        return false;
+    if(!giv->as<PhiInst>()->incomings().count(latch))
+        return false;
+    const auto givNext = giv->as<PhiInst>()->incomings().at(latch)->value;
+
+    if(givNext->isInstruction()) {
+        Value* v2;
+        if(givNext->is<PhiInst>()) {
+            for(auto& [pred, val] : givNext->as<PhiInst>()->incomings()) {
+                if(val->value == giv) {
+                    continue;
+                }
+                PhiInst* base;
+                if(!add(phi(base), any(v2))(MatchContext<Value>{ val->value }))
+                    return false;
+                if(!matchAddRec(base, pred, values))
+                    return false;
+                values.insert(val->value);
+                values.insert(base);
+            }
+            values.insert(giv);
+            values.insert(givNext);
+            return true;
+        }
+        if(add(exactly(giv), any(v2))(MatchContext<Value>{ givNext })) {
+            values.insert(giv);
+            values.insert(givNext);
+            return true;
+        }
+    }
+
+    return false;
+}
+
 bool extractLoopBody(Function& func, const Loop& loop, const DominateAnalysisResult& dom, const CFGAnalysisResult& cfg,
                      Module& mod, bool independent, const PointerBaseAnalysisResult* pointerBase, bool allowInnermost,
                      bool allowInnerLoop, bool onlyAddRec, bool estimateBlockSizeForUnroll, LoopBodyInfo* ret) {
@@ -56,6 +92,7 @@ bool extractLoopBody(Function& func, const Loop& loop, const DominateAnalysisRes
     // FIXME: support more GIV
     if(phiCount > 2)
         return false;
+
     // loop.header->dumpAsTarget(std::cerr);
     // std::cerr << '\n';
     // loop.latch->dumpAsTarget(std::cerr);
@@ -64,23 +101,25 @@ bool extractLoopBody(Function& func, const Loop& loop, const DominateAnalysisRes
     std::unordered_set<Block*> body;
     if(!collectLoopBody(loop.header, loop.latch, dom, cfg, body, allowInnerLoop))
         return false;
+
     if(independent) {
         std::unordered_map<Value*, uint32_t> loadStoreMap;
-        for(auto& inst : loop.header->instructions()) {
-            if(inst.isTerminator())
-                continue;
-            if(inst.getInstID() == InstructionID::Load || inst.getInstID() == InstructionID::Store) {
-                const auto ptr = inst.getOperand(0);
-                const auto base = pointerBase->lookup(ptr);
-                if(!base) {
+        for(auto b : body)
+            for(auto& inst : b->instructions()) {
+                if(inst.isTerminator())
+                    continue;
+                if(inst.getInstID() == InstructionID::Load || inst.getInstID() == InstructionID::Store) {
+                    const auto ptr = inst.getOperand(0);
+                    const auto base = pointerBase->lookup(ptr);
+                    if(!base) {
+                        return false;
+                    }
+
+                    loadStoreMap[base] |= (inst.getInstID() == InstructionID::Load ? 1 : 2);
+                } else if(!isNoSideEffectExpr(inst)) {
                     return false;
                 }
-
-                loadStoreMap[base] |= (inst.getInstID() == InstructionID::Load ? 1 : 2);
-            } else if(!isNoSideEffectExpr(inst)) {
-                return false;
             }
-        }
         for(auto [k, v] : loadStoreMap) {
             if(v == 3) {
                 return false;
@@ -113,17 +152,57 @@ bool extractLoopBody(Function& func, const Loop& loop, const DominateAnalysisRes
     //   br cmp, new_loop, exit
 
     Value* giv = nullptr;
+    bool givUsedByOuter = false;
     for(auto& inst : loop.header->instructions())
         if(inst.getInstID() == InstructionID::Phi) {
-            if(&inst != loop.inductionVar)
+            if(&inst != loop.inductionVar) {
                 giv = &inst;
+            }
         } else
             break;
+    if(giv) {
+        for(auto inst : { giv, giv->as<PhiInst>()->incomings().at(loop.latch)->value }) {
+            for(auto user : inst->as<Instruction>()->users()) {
+                if(!body.count(user->getBlock())) {
+                    givUsedByOuter = true;
+                    break;
+                }
+            }
+            if(givUsedByOuter)
+                break;
+        }
+    }
+    bool givUsedByInner = false;
+    Value* givAddRecInnerStep = nullptr;
     if(giv && onlyAddRec) {
-        const auto givNext = giv->as<PhiInst>()->incomings().at(loop.latch)->value;
-        Value* v2;
-        if(!add(exactly(giv), any(v2))(MatchContext<Value>{ givNext }))
+        // std::cerr << "matching\n";
+        std::unordered_set<Value*> values;
+        if(!matchAddRec(giv, loop.latch, values))
             return false;
+        for(auto inst : values) {
+            for(auto user : inst->as<Instruction>()->users()) {
+                if(!values.count(user) && body.count(user->getBlock())) {
+                    givUsedByInner = true;
+                    break;
+                }
+            }
+        }
+        if(givUsedByInner) {
+            if(givUsedByOuter)
+                return false;
+
+            // The initial value of giv should be inferred from the indvar
+            const auto givNext = giv->as<PhiInst>()->incomings().at(loop.latch)->value;
+            Value* v2;
+            if(add(exactly(giv), any(v2))(MatchContext<Value>{ givNext })) {
+                // scev addrec
+                if(v2->getBlock() && (v2->getBlock() == loop.header || !dom.dominate(v2->getBlock(), loop.header)))
+                    return false;
+                givAddRecInnerStep = v2;
+            } else
+                return false;
+        }
+        // std::cerr << "matched\n";
     }
     // TODO
     std::unordered_set<Value*> allowedToBeUsedByOuter;
@@ -294,6 +373,9 @@ bool extractLoopBody(Function& func, const Loop& loop, const DominateAnalysisRes
         ret->indvar = loop.inductionVar->as<PhiInst>();
         ret->bound = loop.bound;
         ret->rec = (giv ? giv->as<PhiInst>() : nullptr);
+        ret->recUsedByOuter = givUsedByOuter;
+        ret->recUsedByInner = givUsedByInner;
+        ret->recInnerStep = givAddRecInnerStep;
         ret->recNext = call;
         ret->exit = exit;
     }

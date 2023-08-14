@@ -1372,7 +1372,7 @@ InstSelection:
       InstLoad:
         Dst: $Dst
         Addr: $Addr
-        $Predicate: selectAddrOffset($Addr, ctx, [$Base], [$Offset], getLoadOpcode($Dst))
+        $Predicate: selectAddrOffset($Addr, ctx, [$Base], [$Offset], getLoadOpcode($Dst), ($Dst).type())
     Replace:
       Load:
         $Opcode: getLoadOpcode($Dst)
@@ -1388,7 +1388,7 @@ InstSelection:
           InstLoad:
             Dst: $Val
             Addr: $Addr
-            $Predicate: ctx.isSafeToUse($Addr, $Val) && selectAddrOffset($Addr, ctx, [$Base], [$Offset], getZExtLoadOpcode($Val))
+            $Predicate: ctx.isSafeToUse($Addr, $Val) && selectAddrOffset($Addr, ctx, [$Base], [$Offset], getZExtLoadOpcode($Val), ($Val).type())
     Replace:
       Load:
         $Opcode: getZExtLoadOpcode($Val)
@@ -1437,7 +1437,7 @@ InstSelection:
             Src: $Src
             $Predicate: ctx.isSafeToUse($Src, $Dst)
         Addr: $Addr
-        $Predicate: isOperandVRegOrISAReg($Src) && selectAddrOffset($Addr, ctx, [$Base], [$Offset], getStoreOpcode($Dst))
+        $Predicate: isOperandVRegOrISAReg($Src) && selectAddrOffset($Addr, ctx, [$Base], [$Offset], getStoreOpcode($Dst), ($Dst).type())
     Replace:
       Store:
         $Opcode: getStoreOpcode($Dst)
@@ -1450,7 +1450,7 @@ InstSelection:
       InstStore:
         Src: $Src
         Addr: $Addr
-        $Predicate: isOperandVRegOrISAReg($Src) && selectAddrOffset($Addr, ctx, [$Base], [$Offset], getStoreOpcode($Src))
+        $Predicate: isOperandVRegOrISAReg($Src) && selectAddrOffset($Addr, ctx, [$Base], [$Offset], getStoreOpcode($Src), ($Src).type())
     Replace:
       Store:
         $Opcode: getStoreOpcode($Src)

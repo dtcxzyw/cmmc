@@ -19,285 +19,266 @@ func @main() -> i32 { NoRecurse Entry } {
     i32 %8 = call (i32*) -> i32 @getarray(i32* %7);
     call (i32) -> void @starttime(i32 109);
     i32 %9 = mul i32 %1, i32 %2;
-    i32 %10 = add i32 %9, i32 -3;
-    i1 %11 = icmp sgt i32 %10, i32 15;
-    i1 %12 = icmp sgt i32 %9, i32 0;
-    i1 %13 = icmp sgt i32 %9, i32 3;
-    i32 %14 = add i32 %9, i32 -18;
-    i32 %15 = sdiv i32 %0, i32 2;
-    [10000000 * i32]* %16 = ptrcast [10000000 * i32]* @b to [10000000 * i32]*;
-    i32* %17 = getelementptr &([10000000 * i32]* %16)[i64 0][i64 0];
+    i1 %10 = icmp sgt i32 %9, i32 0;
+    i32 %11 = sdiv i32 %0, i32 2;
+    [27 * i8]* %12 = ptrcast [27 * i8]* @cmmc_parallel_body_payload_0 to [27 * i8]*;
+    i32* %13 = ptradd [27 * i8]* %12, i32 0;
+    i32* %14 = ptradd [27 * i8]* %12, i32 4;
+    i32* %15 = ptradd [27 * i8]* %12, i32 8;
+    i32* %16 = ptradd [27 * i8]* %12, i32 12;
+    i1* %17 = ptradd [27 * i8]* %12, i32 16;
+    i32* %18 = ptradd [27 * i8]* %12, i32 20;
+    i1* %19 = ptradd [27 * i8]* %12, i32 24;
+    i1* %20 = ptradd [27 * i8]* %12, i32 25;
+    i1* %21 = ptradd [27 * i8]* %12, i32 26;
+    [4 * i8]* %22 = ptrcast [4 * i8]* @cmmc_parallel_body_payload_1 to [4 * i8]*;
+    i32* %23 = ptradd [4 * i8]* %22, i32 0;
+    i8* %24 = functionptr () -> void @cmmc_parallel_body_0 as i8*;
+    i8* %25 = functionptr () -> void @cmmc_parallel_body_1 as i8*;
     ubr ^while.body;
   ^while.body:
-    i32 %18 = phi [^entry, i32 0] [^b15, i32 %113];
-    i32* %19 = getelementptr &([10000 * i32]* %6)[i64 0][i32 %18];
-    i32 %20 = load i32* %19;
-    i1 %21 = icmp eq i32 %20, i32 0;
-    i1 %22 = icmp eq i32 %20, i32 1;
-    i1 %23 = icmp eq i32 %20, i32 2;
-    i1 %24 = icmp eq i32 %20, i32 3;
-    ubr ^while.body1;
-  ^while.body1:
-    i32 %25 = phi [^while.body, i32 0] [^b13, i32 %112];
-    i32 %26 = phi [^while.body, i32 0] [^b13, i32 %110];
-    i32 %27 = sub i32 %26, i32 %15;
-    i32 %28 = add i32 %15, i32 %26;
-    i32* %29 = getelementptr &(i32* %17)[i32 %25];
-    ubr ^while.body2;
-  ^while.body2:
-    i32 %30 = phi [^while.body1, i32 0] [^b10, i32 %99];
-    i32 %31 = sub i32 %30, i32 %15;
-    i32 %32 = add i32 %15, i32 %30;
-    ubr ^while.body3;
-  ^while.body3:
-    i32 %33 = phi [^while.body2, i32 %27] [^b6, i32 %81];
-    i32 %34 = phi [^while.body2, i32 0] [^b6, i32 %73];
-    i1 %35 = icmp sle i32 %1, i32 %33;
-    ubr ^while.body4;
-  ^while.body4:
-    i32 %36 = phi [^while.body3, i32 %31] [^b4, i32 %74];
-    i32 %37 = phi [^while.body3, i32 %34] [^b4, i32 %73];
-    i32 %38 = or i32 %33, i32 %36;
-    i32 %39 = lshr i32 %38, i32 31;
-    i1 %40 = ztrunc i32 %39 to i1;
-    i1 %41 = or i1 %35, i1 %40;
-    i1 %42 = icmp sle i32 %2, i32 %36;
-    i1 %43 = or i1 %41, i1 %42;
-    cbr i1 %43(prob = 0.5), ^b1, ^b;
+    i32 %26 = phi [^entry, i32 0] [^b1, i32 %33];
+    i32* %27 = getelementptr &([10000 * i32]* %6)[i64 0][i32 %26];
+    i32 %28 = load i32* %27;
+    i1 %29 = icmp eq i32 %28, i32 1;
+    store i32* %13 with i32 0;
+    store i32* %14 with i32 %2;
+    store i32* %15 with i32 %1;
+    store i32* %16 with i32 %11;
+    store i1* %17 with i1 %29;
+    store i32* %18 with i32 %28;
+    i1 %30 = icmp eq i32 %28, i32 2;
+    store i1* %19 with i1 %30;
+    i1 %31 = icmp eq i32 %28, i32 3;
+    store i1* %20 with i1 %31;
+    i1 %32 = icmp eq i32 %28, i32 0;
+    store i1* %21 with i1 %32;
+    call (i32, i32, i8*) -> void @cmmcParallelFor(i32 0, i32 %1, i8* %24);
+    cbr i1 %10(prob = 0.984615), ^b, ^b1;
   ^b:
-    i32 %44 = mul i32 %2, i32 %33;
-    i32* %45 = getelementptr &(i32* %4)[i32 %36];
-    i32* %46 = getelementptr &(i32* %45)[i32 %44];
-    i32 %47 = load i32* %46;
+    store i32* %23 with i32 %9;
+    call (i32, i32, i8*) -> void @cmmcParallelFor(i32 0, i32 %9, i8* %25);
     ubr ^b1;
   ^b1:
-    i32 %48 = phi [^while.body4, i32 0] [^b, i32 %47];
-    cbr i1 %21(prob = 0.5), ^if.then, ^b2;
-  ^if.then:
-    i32 %49 = add i32 %37, i32 %48;
-    i1 %50 = icmp sgt i32 %49, i32 1073741824;
-    cbr i1 %50(prob = 0.984615), ^while.body5, ^while.header;
+    i32 %33 = add i32 %26, i32 1;
+    i1 %34 = icmp sgt i32 %8, i32 %33;
+    cbr i1 %34(prob = 0.984615), ^while.body, ^b2;
   ^b2:
-    cbr i1 %22(prob = 0.5), ^while.body6, ^b3;
-  ^while.body5:
-    i32 %51 = phi [^if.then, i32 %49] [^while.body5, i32 %52];
-    i32 %52 = add i32 %51, i32 -1073741824;
-    i1 %53 = icmp sgt i32 %52, i32 1073741824;
-    cbr i1 %53(prob = 0.984615), ^while.body5, ^while.header;
-  ^while.body6:
-    i32 %54 = phi [^b2, i32 1] [^while.body6, i32 %65];
-    i32 %55 = phi [^b2, i32 0] [^while.body6, i32 %64];
-    i32 %56 = sdiv i32 %37, i32 %54;
-    i32 %57 = srem i32 %56, i32 2;
-    i32 %58 = sdiv i32 %48, i32 %54;
-    i32 %59 = srem i32 %58, i32 2;
-    i1 %60 = icmp eq i32 %57, i32 %59;
-    i32 %61 = zext i1 %60 to i32;
-    i32 %62 = mul i32 %55, i32 2;
-    i32 %63 = add i32 %62, i32 1;
-    i32 %64 = sub i32 %63, i32 %61;
-    i32 %65 = mul i32 %54, i32 2;
-    i1 %66 = icmp slt i32 %65, i32 1073741824;
-    cbr i1 %66(prob = 0.984615), ^while.body6, ^b4;
-  ^while.header:
-    i32 %67 = phi [^if.then, i32 %49] [^while.body5, i32 %52];
-    i1 %68 = icmp slt i32 %67, i32 0;
-    cbr i1 %68(prob = 0.984615), ^while.body7, ^b4;
-  ^b3:
-    cbr i1 %23(prob = 0.5), ^if.then1, ^b5;
-  ^if.then1:
-    i32 %69 = smax i32 %37, i32 %48;
-    ubr ^b4;
-  ^while.body7:
-    i32 %70 = phi [^while.header, i32 %67] [^while.body7, i32 %71];
-    i32 %71 = add i32 %70, i32 1073741824;
-    i1 %72 = icmp slt i32 %71, i32 0;
-    cbr i1 %72(prob = 0.984615), ^while.body7, ^b4;
-  ^b4:
-    i32 %73 = phi [^while.body6, i32 %64] [^while.header, i32 %67] [^if.then1, i32 %69] [^while.body7, i32 %71] [^b7, i32 0] [^b9, i32 %90] [^b12, i32 %107];
-    i32 %74 = add i32 %36, i32 1;
-    i1 %75 = icmp sgt i32 %32, i32 %74;
-    cbr i1 %75(prob = 0.5), ^while.body4, ^b6;
-  ^b5:
-    cbr i1 %24(prob = 0.5), ^while.body8, ^b7;
-  ^while.body8:
-    i32 %76 = phi [^b5, i32 1] [^b9, i32 %91];
-    i32 %77 = phi [^b5, i32 0] [^b9, i32 %90];
-    i32 %78 = sdiv i32 %37, i32 %76;
-    i32 %79 = and i32 %78, i32 -2147483647;
-    i1 %80 = icmp eq i32 %79, i32 1;
-    cbr i1 %80(prob = 0.5), ^b9, ^b8;
-  ^b6:
-    i32 %81 = add i32 %33, i32 1;
-    i1 %82 = icmp sgt i32 %28, i32 %81;
-    cbr i1 %82(prob = 0.5), ^while.body3, ^b10;
-  ^b7:
-    i1 %83 = icmp eq i32 %20, i32 4;
-    cbr i1 %83(prob = 0.5), ^while.body9, ^b4;
-  ^b8:
-    i32 %84 = sdiv i32 %48, i32 %76;
-    i32 %85 = and i32 %84, i32 -2147483647;
-    i1 %86 = icmp eq i32 %85, i32 1;
-    ubr ^b9;
-  ^b9:
-    i1 %87 = phi [^while.body8, i1 true] [^b8, i1 %86];
-    i32 %88 = mul i32 %77, i32 2;
-    i32 %89 = zext i1 %87 to i32;
-    i32 %90 = add i32 %88, i32 %89;
-    i32 %91 = mul i32 %76, i32 2;
-    i1 %92 = icmp slt i32 %91, i32 1073741824;
-    cbr i1 %92(prob = 0.984615), ^while.body8, ^b4;
-  ^while.body9:
-    i32 %93 = phi [^b7, i32 1] [^b12, i32 %108];
-    i32 %94 = phi [^b7, i32 0] [^b12, i32 %107];
-    i32 %95 = sdiv i32 %37, i32 %93;
-    i32 %96 = and i32 %95, i32 -2147483647;
-    i1 %97 = icmp eq i32 %96, i32 1;
-    cbr i1 %97(prob = 0.5), ^b11, ^b12;
-  ^b10:
-    i32* %98 = getelementptr &(i32* %29)[i32 %30];
-    store i32* %98 with i32 %73;
-    i32 %99 = add i32 %30, i32 1;
-    i1 %100 = icmp sgt i32 %2, i32 %99;
-    cbr i1 %100(prob = 0.5), ^while.body2, ^b13;
-  ^b11:
-    i32 %101 = sdiv i32 %48, i32 %93;
-    i32 %102 = and i32 %101, i32 -2147483647;
-    i1 %103 = icmp eq i32 %102, i32 1;
-    ubr ^b12;
-  ^b12:
-    i1 %104 = phi [^while.body9, i1 false] [^b11, i1 %103];
-    i32 %105 = mul i32 %94, i32 2;
-    i32 %106 = zext i1 %104 to i32;
-    i32 %107 = add i32 %105, i32 %106;
-    i32 %108 = mul i32 %93, i32 2;
-    i1 %109 = icmp slt i32 %108, i32 1073741824;
-    cbr i1 %109(prob = 0.984615), ^while.body9, ^b4;
-  ^b13:
-    i32 %110 = add i32 %26, i32 1;
-    i1 %111 = icmp sgt i32 %1, i32 %110;
-    i32 %112 = add i32 %2, i32 %25;
-    cbr i1 %111(prob = 0.5), ^while.body1, ^b14;
-  ^b14:
-    cbr i1 %12(prob = 0.984615), ^super.header, ^b15;
-  ^super.header:
-    cbr i1 %13(prob = 0.941176), ^super.header1, ^scalar.header;
-  ^b15:
-    i32 %113 = add i32 %18, i32 1;
-    i1 %114 = icmp sgt i32 %8, i32 %113;
-    cbr i1 %114(prob = 0.984615), ^while.body, ^b16;
-  ^super.header1:
-    cbr i1 %11(prob = 0.941176), ^while.body10, ^scalar.header1;
-  ^scalar.header:
-    i32 %115 = phi [^super.header, i32 0] [^scalar.header1, i32 %169] [^while.body12, i32 %190];
-    i1 %116 = icmp sgt i32 %9, i32 %115;
-    cbr i1 %116(prob = 0.75), ^while.body11, ^b15;
-  ^b16:
     call (i32) -> void @stoptime(i32 116);
     call (i32, i32*) -> void @putarray(i32 %9, i32* %4);
     ret i32 0;
-  ^while.body10:
-    i32 %117 = phi [^super.header1, i32 0] [^while.body10, i32 %166];
-    i32* %118 = getelementptr &(i32* %17)[i32 %117];
-    i32 %119 = load i32* %118;
-    i32* %120 = getelementptr &(i32* %4)[i32 %117];
-    store i32* %120 with i32 %119;
-    i32* %121 = getelementptr &(i32* %118)[i64 1];
-    i32 %122 = load i32* %121;
-    i32* %123 = getelementptr &(i32* %120)[i64 1];
-    store i32* %123 with i32 %122;
-    i32* %124 = getelementptr &(i32* %118)[i64 2];
-    i32 %125 = load i32* %124;
-    i32* %126 = getelementptr &(i32* %120)[i64 2];
-    store i32* %126 with i32 %125;
-    i32* %127 = getelementptr &(i32* %118)[i64 3];
-    i32 %128 = load i32* %127;
-    i32* %129 = getelementptr &(i32* %120)[i64 3];
-    store i32* %129 with i32 %128;
-    i32* %130 = getelementptr &(i32* %118)[i64 4];
-    i32 %131 = load i32* %130;
-    i32* %132 = getelementptr &(i32* %120)[i64 4];
-    store i32* %132 with i32 %131;
-    i32* %133 = getelementptr &(i32* %118)[i64 5];
-    i32 %134 = load i32* %133;
-    i32* %135 = getelementptr &(i32* %120)[i64 5];
-    store i32* %135 with i32 %134;
-    i32* %136 = getelementptr &(i32* %118)[i64 6];
-    i32 %137 = load i32* %136;
-    i32* %138 = getelementptr &(i32* %120)[i64 6];
-    store i32* %138 with i32 %137;
-    i32* %139 = getelementptr &(i32* %118)[i64 7];
-    i32 %140 = load i32* %139;
-    i32* %141 = getelementptr &(i32* %120)[i64 7];
-    store i32* %141 with i32 %140;
-    i32* %142 = getelementptr &(i32* %118)[i64 8];
-    i32 %143 = load i32* %142;
-    i32* %144 = getelementptr &(i32* %120)[i64 8];
-    store i32* %144 with i32 %143;
-    i32* %145 = getelementptr &(i32* %118)[i64 9];
-    i32 %146 = load i32* %145;
-    i32* %147 = getelementptr &(i32* %120)[i64 9];
-    store i32* %147 with i32 %146;
-    i32* %148 = getelementptr &(i32* %118)[i64 10];
-    i32 %149 = load i32* %148;
-    i32* %150 = getelementptr &(i32* %120)[i64 10];
-    store i32* %150 with i32 %149;
-    i32* %151 = getelementptr &(i32* %118)[i64 11];
-    i32 %152 = load i32* %151;
-    i32* %153 = getelementptr &(i32* %120)[i64 11];
-    store i32* %153 with i32 %152;
-    i32* %154 = getelementptr &(i32* %118)[i64 12];
-    i32 %155 = load i32* %154;
-    i32* %156 = getelementptr &(i32* %120)[i64 12];
-    store i32* %156 with i32 %155;
-    i32* %157 = getelementptr &(i32* %118)[i64 13];
-    i32 %158 = load i32* %157;
-    i32* %159 = getelementptr &(i32* %120)[i64 13];
-    store i32* %159 with i32 %158;
-    i32* %160 = getelementptr &(i32* %118)[i64 14];
-    i32 %161 = load i32* %160;
-    i32* %162 = getelementptr &(i32* %120)[i64 14];
-    store i32* %162 with i32 %161;
-    i32* %163 = getelementptr &(i32* %118)[i64 15];
-    i32 %164 = load i32* %163;
-    i32* %165 = getelementptr &(i32* %120)[i64 15];
-    store i32* %165 with i32 %164;
-    i32 %166 = add i32 %117, i32 16;
-    i1 %167 = icmp sgt i32 %14, i32 %166;
-    cbr i1 %167(prob = 0.941176), ^while.body10, ^scalar.header1;
-  ^scalar.header1:
-    i32 %168 = phi [^super.header1, i32 0] [^while.body10, i32 %166];
-    i32 %169 = phi [^super.header1, i32 undef] [^while.body10, i32 %166];
-    i1 %170 = icmp sgt i32 %10, i32 %168;
-    cbr i1 %170(prob = 0.75), ^while.body12, ^scalar.header;
-  ^while.body11 {scalar}:
-    i32 %171 = phi [^scalar.header, i32 %115] [^while.body11, i32 %175];
-    i32* %172 = getelementptr &(i32* %17)[i32 %171];
-    i32 %173 = load i32* %172;
-    i32* %174 = getelementptr &(i32* %4)[i32 %171];
-    store i32* %174 with i32 %173;
-    i32 %175 = add i32 %171, i32 1;
-    i1 %176 = icmp sgt i32 %9, i32 %175;
-    cbr i1 %176(prob = 0.75), ^while.body11, ^b15;
-  ^while.body12 {scalar}:
-    i32 %177 = phi [^scalar.header1, i32 %168] [^while.body12, i32 %190];
-    i32* %178 = getelementptr &(i32* %17)[i32 %177];
-    i32 %179 = load i32* %178;
-    i32* %180 = getelementptr &(i32* %4)[i32 %177];
-    store i32* %180 with i32 %179;
-    i32* %181 = getelementptr &(i32* %178)[i64 1];
-    i32 %182 = load i32* %181;
-    i32* %183 = getelementptr &(i32* %180)[i64 1];
-    store i32* %183 with i32 %182;
-    i32* %184 = getelementptr &(i32* %178)[i64 2];
-    i32 %185 = load i32* %184;
-    i32* %186 = getelementptr &(i32* %180)[i64 2];
-    store i32* %186 with i32 %185;
-    i32* %187 = getelementptr &(i32* %178)[i64 3];
-    i32 %188 = load i32* %187;
-    i32* %189 = getelementptr &(i32* %180)[i64 3];
-    store i32* %189 with i32 %188;
-    i32 %190 = add i32 %177, i32 4;
-    i1 %191 = icmp sgt i32 %10, i32 %190;
-    cbr i1 %191(prob = 0.75), ^while.body12, ^scalar.header;
 }
+internal func @cmmcParallelFor(i32, i32, i8*) -> void { NoRecurse };
+internal func @cmmc_parallel_body_0(i32 %0, i32 %1) -> void { NoRecurse ParallelBody AlignedParallelBody } {
+  ^b:
+    [27 * i8]* %2 = ptrcast [27 * i8]* @cmmc_parallel_body_payload_0 to [27 * i8]*;
+    i32* %3 = ptradd [27 * i8]* %2, i32 4;
+    i32 %4 = load i32* %3;
+    i32 %5 = mul i32 %0, i32 %4;
+    i32* %6 = ptradd [27 * i8]* %2, i32 8;
+    i32 %7 = load i32* %6;
+    i32* %8 = ptradd [27 * i8]* %2, i32 12;
+    i32 %9 = load i32* %8;
+    i1* %10 = ptradd [27 * i8]* %2, i32 16;
+    i1 %11 = load i1* %10;
+    i32* %12 = ptradd [27 * i8]* %2, i32 20;
+    i32 %13 = load i32* %12;
+    i1* %14 = ptradd [27 * i8]* %2, i32 24;
+    i1 %15 = load i1* %14;
+    i1* %16 = ptradd [27 * i8]* %2, i32 25;
+    i1 %17 = load i1* %16;
+    i1* %18 = ptradd [27 * i8]* %2, i32 26;
+    i1 %19 = load i1* %18;
+    i32* %20 = ptradd [27 * i8]* %2, i32 0;
+    i32 %21 = load i32* %20;
+    i32 %22 = add i32 %5, i32 %21;
+    i1 %23 = icmp eq i32 %13, i32 4;
+    [10000000 * i32]* %24 = ptrcast [10000000 * i32]* @a to [10000000 * i32]*;
+    i32* %25 = getelementptr &([10000000 * i32]* %24)[i64 0][i64 0];
+    [10000000 * i32]* %26 = ptrcast [10000000 * i32]* @b to [10000000 * i32]*;
+    i32* %27 = getelementptr &([10000000 * i32]* %26)[i64 0][i64 0];
+    ubr ^b1;
+  ^b1:
+    i32 %28 = phi [^b, i32 %0] [^b14, i32 %107];
+    i32 %29 = phi [^b, i32 %22] [^b14, i32 %109];
+    i32 %30 = sub i32 %28, i32 %9;
+    i32 %31 = add i32 %9, i32 %28;
+    i32* %32 = getelementptr &(i32* %27)[i32 %29];
+    ubr ^while.body;
+  ^while.body:
+    i32 %33 = phi [^b1, i32 0] [^b12, i32 %97];
+    i32 %34 = sub i32 %33, i32 %9;
+    i32 %35 = add i32 %9, i32 %33;
+    ubr ^while.body1;
+  ^while.body1:
+    i32 %36 = phi [^while.body, i32 %30] [^b8, i32 %85];
+    i32 %37 = phi [^while.body, i32 0] [^b8, i32 %77];
+    i1 %38 = icmp sle i32 %7, i32 %36;
+    ubr ^while.body2;
+  ^while.body2:
+    i32 %39 = phi [^while.body1, i32 %34] [^b6, i32 %78];
+    i32 %40 = phi [^while.body1, i32 %37] [^b6, i32 %77];
+    i32 %41 = or i32 %36, i32 %39;
+    i32 %42 = lshr i32 %41, i32 31;
+    i1 %43 = ztrunc i32 %42 to i1;
+    i1 %44 = or i1 %38, i1 %43;
+    i1 %45 = icmp sle i32 %4, i32 %39;
+    i1 %46 = or i1 %44, i1 %45;
+    cbr i1 %46(prob = 0.5), ^b3, ^b2;
+  ^b2:
+    i32 %47 = mul i32 %4, i32 %36;
+    i32* %48 = getelementptr &(i32* %25)[i32 %39];
+    i32* %49 = getelementptr &(i32* %48)[i32 %47];
+    i32 %50 = load i32* %49;
+    ubr ^b3;
+  ^b3:
+    i32 %51 = phi [^while.body2, i32 0] [^b2, i32 %50];
+    cbr i1 %19(prob = 0.5), ^if.then, ^b4;
+  ^if.then:
+    i32 %52 = add i32 %40, i32 %51;
+    i1 %53 = icmp sgt i32 %52, i32 1073741824;
+    cbr i1 %53(prob = 0.984615), ^while.body3, ^70;
+  ^b4:
+    cbr i1 %11(prob = 0.5), ^while.body4, ^b5;
+  ^while.body3:
+    i32 %54 = phi [^if.then, i32 %52] [^while.body3, i32 %55];
+    i32 %55 = add i32 %54, i32 -1073741824;
+    i1 %56 = icmp sgt i32 %55, i32 1073741824;
+    cbr i1 %56(prob = 0.984615), ^while.body3, ^70;
+  ^while.body4:
+    i32 %57 = phi [^b4, i32 1] [^while.body4, i32 %68];
+    i32 %58 = phi [^b4, i32 0] [^while.body4, i32 %67];
+    i32 %59 = sdiv i32 %40, i32 %57;
+    i32 %60 = srem i32 %59, i32 2;
+    i32 %61 = sdiv i32 %51, i32 %57;
+    i32 %62 = srem i32 %61, i32 2;
+    i1 %63 = icmp eq i32 %60, i32 %62;
+    i32 %64 = zext i1 %63 to i32;
+    i32 %65 = mul i32 %58, i32 2;
+    i32 %66 = add i32 %65, i32 1;
+    i32 %67 = sub i32 %66, i32 %64;
+    i32 %68 = mul i32 %57, i32 2;
+    i1 %69 = icmp slt i32 %68, i32 1073741824;
+    cbr i1 %69(prob = 0.984615), ^while.body4, ^b6;
+  ^70:
+    i32 %71 = phi [^if.then, i32 %52] [^while.body3, i32 %55];
+    i1 %72 = icmp slt i32 %71, i32 0;
+    cbr i1 %72(prob = 0.984615), ^while.body5, ^b6;
+  ^b5:
+    cbr i1 %15(prob = 0.5), ^if.then1, ^b7;
+  ^if.then1:
+    i32 %73 = smax i32 %40, i32 %51;
+    ubr ^b6;
+  ^while.body5:
+    i32 %74 = phi [^70, i32 %71] [^while.body5, i32 %75];
+    i32 %75 = add i32 %74, i32 1073741824;
+    i1 %76 = icmp slt i32 %75, i32 0;
+    cbr i1 %76(prob = 0.984615), ^while.body5, ^b6;
+  ^b6:
+    i32 %77 = phi [^while.body4, i32 %67] [^70, i32 %71] [^if.then1, i32 %73] [^while.body5, i32 %75] [^b9, i32 0] [^b11, i32 %93] [^b15, i32 %113];
+    i32 %78 = add i32 %39, i32 1;
+    i1 %79 = icmp sgt i32 %35, i32 %78;
+    cbr i1 %79(prob = 0.5), ^while.body2, ^b8;
+  ^b7:
+    cbr i1 %17(prob = 0.5), ^while.body6, ^b9;
+  ^while.body6:
+    i32 %80 = phi [^b7, i32 1] [^b11, i32 %94];
+    i32 %81 = phi [^b7, i32 0] [^b11, i32 %93];
+    i32 %82 = sdiv i32 %40, i32 %80;
+    i32 %83 = and i32 %82, i32 -2147483647;
+    i1 %84 = icmp eq i32 %83, i32 1;
+    cbr i1 %84(prob = 0.5), ^b11, ^b10;
+  ^b8:
+    i32 %85 = add i32 %36, i32 1;
+    i1 %86 = icmp sgt i32 %31, i32 %85;
+    cbr i1 %86(prob = 0.5), ^while.body1, ^b12;
+  ^b9:
+    cbr i1 %23(prob = 0.5), ^while.body7, ^b6;
+  ^b10:
+    i32 %87 = sdiv i32 %51, i32 %80;
+    i32 %88 = and i32 %87, i32 -2147483647;
+    i1 %89 = icmp eq i32 %88, i32 1;
+    ubr ^b11;
+  ^b11:
+    i1 %90 = phi [^while.body6, i1 true] [^b10, i1 %89];
+    i32 %91 = mul i32 %81, i32 2;
+    i32 %92 = zext i1 %90 to i32;
+    i32 %93 = add i32 %91, i32 %92;
+    i32 %94 = mul i32 %80, i32 2;
+    i1 %95 = icmp slt i32 %94, i32 1073741824;
+    cbr i1 %95(prob = 0.984615), ^while.body6, ^b6;
+  ^b12:
+    i32* %96 = getelementptr &(i32* %32)[i32 %33];
+    store i32* %96 with i32 %77;
+    i32 %97 = add i32 %33, i32 1;
+    i1 %98 = icmp sgt i32 %4, i32 %97;
+    cbr i1 %98(prob = 0.5), ^while.body, ^b14;
+  ^while.body7:
+    i32 %99 = phi [^b9, i32 1] [^b15, i32 %114];
+    i32 %100 = phi [^b9, i32 0] [^b15, i32 %113];
+    i32 %101 = sdiv i32 %40, i32 %99;
+    i32 %102 = and i32 %101, i32 -2147483647;
+    i1 %103 = icmp eq i32 %102, i32 1;
+    cbr i1 %103(prob = 0.5), ^b13, ^b15;
+  ^b13:
+    i32 %104 = sdiv i32 %51, i32 %99;
+    i32 %105 = and i32 %104, i32 -2147483647;
+    i1 %106 = icmp eq i32 %105, i32 1;
+    ubr ^b15;
+  ^b14:
+    i32 %107 = add i32 %28, i32 1;
+    i1 %108 = icmp sgt i32 %1, i32 %107;
+    i32 %109 = add i32 %4, i32 %29;
+    cbr i1 %108(prob = 0.984615), ^b1, ^b16;
+  ^b15:
+    i1 %110 = phi [^while.body7, i1 false] [^b13, i1 %106];
+    i32 %111 = mul i32 %100, i32 2;
+    i32 %112 = zext i1 %110 to i32;
+    i32 %113 = add i32 %111, i32 %112;
+    i32 %114 = mul i32 %99, i32 2;
+    i1 %115 = icmp slt i32 %114, i32 1073741824;
+    cbr i1 %115(prob = 0.984615), ^while.body7, ^b6;
+  ^b16:
+    ret;
+}
+internal [27 * i8]* @cmmc_parallel_body_payload_0, align 8;
+internal func @cmmc_parallel_body_1(i32 %0, i32 %1) -> void { NoRecurse ParallelBody AlignedParallelBody } {
+  ^b:
+    i32 %2 = add i32 %0, i32 1;
+    i1 %3 = icmp sgt i32 %1, i32 %2;
+    [10000000 * i32]* %4 = ptrcast [10000000 * i32]* @a to [10000000 * i32]*;
+    i32* %5 = getelementptr &([10000000 * i32]* %4)[i64 0][i64 0];
+    [10000000 * i32]* %6 = ptrcast [10000000 * i32]* @b to [10000000 * i32]*;
+    i32* %7 = getelementptr &([10000000 * i32]* %6)[i64 0][i64 0];
+    i32 %8 = add i32 %1, i32 -1;
+    cbr i1 %3(prob = 0.969697), ^b1, ^scalar.header;
+  ^b1:
+    i32 %9 = phi [^b, i32 %0] [^b1, i32 %16];
+    i32* %10 = getelementptr &(i32* %7)[i32 %9];
+    i32 %11 = load i32* %10;
+    i32* %12 = getelementptr &(i32* %5)[i32 %9];
+    store i32* %12 with i32 %11;
+    i32* %13 = getelementptr &(i32* %10)[i64 1];
+    i32 %14 = load i32* %13;
+    i32* %15 = getelementptr &(i32* %12)[i64 1];
+    store i32* %15 with i32 %14;
+    i32 %16 = add i32 %9, i32 2;
+    i1 %17 = icmp sgt i32 %8, i32 %16;
+    cbr i1 %17(prob = 0.969697), ^b1, ^scalar.header;
+  ^scalar.header:
+    i32 %18 = phi [^b, i32 %0] [^b1, i32 %16];
+    i1 %19 = icmp sgt i32 %1, i32 %18;
+    cbr i1 %19(prob = 0.5), ^b2, ^scalar.final;
+  ^b2 {scalar}:
+    i32 %20 = phi [^scalar.header, i32 %18] [^b2, i32 %24];
+    i32* %21 = getelementptr &(i32* %7)[i32 %20];
+    i32 %22 = load i32* %21;
+    i32* %23 = getelementptr &(i32* %5)[i32 %20];
+    store i32* %23 with i32 %22;
+    i32 %24 = add i32 %20, i32 1;
+    i1 %25 = icmp sgt i32 %1, i32 %24;
+    cbr i1 %25(prob = 0.5), ^b2, ^scalar.final;
+  ^scalar.final:
+    ret;
+}
+internal [4 * i8]* @cmmc_parallel_body_payload_1, align 8;

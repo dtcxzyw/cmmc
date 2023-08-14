@@ -403,14 +403,19 @@ std::shared_ptr<PassManager<Module>> PassManager<Module>::get(OptimizationLevel 
     if(level >= OptimizationLevel::O2) {
         for(const auto& pass : passesSource.collectFunctionPass({
                 // "CompareCombine",         //
-                "GVN",                    //
-                "NoSideEffectEliminate",  // clean up
-                // "LoopParallel",           //
-                "LoopUnroll",             //
-                "BlockMerge",             // clean up
-                "BlockEliminate",         // clean up
-                "LoopGEPCombine",         //
-                "NoSideEffectEliminate",  // clean up
+                "GVN",                      //
+                "NoSideEffectEliminate",    // clean up
+                "ConstantPropagation",      // clean up
+                "LoopInvariantCodeMotion",  // clean up
+                "LoopEliminate",            // clean up
+                "FinalValueReplacement",    // clean up
+                "SCCEliminate",             // clean up
+                "LoopParallel",             //
+                "LoopUnroll",               //
+                "BlockMerge",               // clean up
+                "BlockEliminate",           // clean up
+                "LoopGEPCombine",           //
+                "NoSideEffectEliminate",    // clean up
                 "SROA",
             }))
             basic->addPass(pass);

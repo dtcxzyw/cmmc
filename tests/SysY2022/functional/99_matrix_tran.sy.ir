@@ -44,20 +44,20 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     call (i32) -> void @putint(i32 %18);
     i32 %19 = add i32 %15, i32 1;
     i1 %20 = icmp slt i32 %19, i32 3;
-    cbr i1 %20(prob = 0.666667), ^while.body1, ^b;
-  ^b:
+    cbr i1 %20(prob = 0.666667), ^while.body1, ^indirect1;
+  ^indirect1:
     call (i32) -> void @putch(i32 10);
     ubr ^while.body2;
   ^while.body2:
-    i32 %21 = phi [^b, i32 0] [^while.body2, i32 %25];
+    i32 %21 = phi [^indirect1, i32 0] [^while.body2, i32 %25];
     f32* %22 = getelementptr &([3 * f32]* %c2)[i64 0][i32 %21];
     f32 %23 = load f32* %22;
     i32 %24 = f2s f32 %23 to i32;
     call (i32) -> void @putint(i32 %24);
     i32 %25 = add i32 %21, i32 1;
     i1 %26 = icmp slt i32 %25, i32 3;
-    cbr i1 %26(prob = 0.666667), ^while.body2, ^b1;
-  ^b1:
+    cbr i1 %26(prob = 0.666667), ^while.body2, ^b;
+  ^b:
     call (i32) -> void @putch(i32 10);
     ret i32 0;
 }

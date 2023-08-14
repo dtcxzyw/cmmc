@@ -232,10 +232,10 @@ AddressingImmRange getAddressingImmRange(OperandType type, uint32_t opcode) {
 bool isLegalAddrImm(intmax_t imm, AddressingImmRange range) {
     switch(range) {
         case AddressingImmRange::Imm13: {
-            return isSignedImm<13>(imm);
+            return -4095 <= imm && imm <= 4095;
         }
         case AddressingImmRange::Imm9: {
-            return isSignedImm<9>(imm);
+            return -255 <= imm && imm <= 255;
         }
         default: {
             return -1020 <= imm && imm <= 1020 && imm % 4 == 0;

@@ -3,9 +3,9 @@ internal [20 * [100 * i32]]* @array, align 8 { Flexible };
 func @main() -> i32 { NoRecurse Entry } {
   ^entry:
     [20 * [100 * i32]]* %0 = ptrcast [20 * [100 * i32]]* @array to [20 * [100 * i32]]*;
-    ubr ^prebody;
-  ^prebody:
-    i32 %1 = phi [^entry, i32 0] [^prebody, i32 %103];
+    ubr ^while.body;
+  ^while.body:
+    i32 %1 = phi [^entry, i32 0] [^while.body, i32 %103];
     [100 * i32]* %2 = getelementptr &([20 * [100 * i32]]* %0)[i64 0][i32 %1];
     i32* %3 = getelementptr &([100 * i32]* %2)[i64 0][i64 0];
     store i32* %3 with i32 0;
@@ -209,7 +209,7 @@ func @main() -> i32 { NoRecurse Entry } {
     store i32* %102 with i32 99;
     i32 %103 = add i32 %1, i32 1;
     i1 %104 = icmp slt i32 %103, i32 20;
-    cbr i1 %104(prob = 0.95), ^prebody, ^b;
+    cbr i1 %104(prob = 0.95), ^while.body, ^b;
   ^b:
     i32* %105 = getelementptr &([20 * [100 * i32]]* %0)[i64 0][i64 19][i64 23];
     i32 %106 = load i32* %105;

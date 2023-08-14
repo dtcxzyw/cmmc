@@ -217,7 +217,8 @@ MIROperand getInvertedCondField(const MIROperand& operand) {
     return MIROperand::asImm(field, OperandType::CondField);
 }
 
-static bool selectAddrOffset(const MIROperand& addr, ISelContext& ctx, MIROperand& base, MIROperand& offset, uint32_t opcode) {
+static bool selectAddrOffset(const MIROperand& addr, ISelContext& ctx, MIROperand& base, MIROperand& offset, uint32_t opcode,
+                             OperandType type) {
     const auto addrInst = ctx.lookupDef(addr);
     if(addrInst) {
         if(addrInst->opcode() == InstLoadStackObjectAddr) {
@@ -228,8 +229,7 @@ static bool selectAddrOffset(const MIROperand& addr, ISelContext& ctx, MIROperan
         if(addrInst->opcode() == InstAdd) {
             base = addrInst->getOperand(1);
             const auto off = addrInst->getOperand(2);
-            if(isOperandIReg(base) && isOperandImm(off) &&
-               isLegalAddrImm(off.imm(), getAddressingImmRange(OperandType::Int32, opcode))) {
+            if(isOperandIReg(base) && isOperandImm(off) && isLegalAddrImm(off.imm(), getAddressingImmRange(type, opcode))) {
                 base = addrInst->getOperand(1);
                 offset = off;
                 if(auto baseReg = ctx.getRegRef(base, *addrInst)) {

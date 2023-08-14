@@ -93,6 +93,12 @@ IntegerRange IntegerRangeAnalysisResult::query(Value* val, const DominateAnalysi
 static IntegerRange analysisArgSCEV(Function& func, FuncArgument* arg, uint32_t idx) {
     if(func.getLinkage() == Linkage::Global)
         return IntegerRange{};
+    if(func.attr().hasAttr(FunctionAttribute::AlignedParallelBody) && idx == 0) {
+        IntegerRange r;
+        r.setKnownBits(3, 0);
+        r.sync();
+        return r;
+    }
     if(func.attr().hasAttr(FunctionAttribute::ParallelBody))
         return IntegerRange{};
 

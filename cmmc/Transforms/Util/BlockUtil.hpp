@@ -50,6 +50,9 @@ struct LoopBodyInfo final {
     PhiInst* indvar;
     Value* bound;
     PhiInst* rec;
+    bool recUsedByOuter;
+    bool recUsedByInner;
+    Value* recInnerStep;
     FunctionCallInst* recNext;
     Block* exit;
 };

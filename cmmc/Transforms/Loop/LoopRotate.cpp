@@ -77,8 +77,7 @@ class LoopRotate final : public TransformPass<Function> {
         return ret;
     }
 
-public:
-    bool run(Function& func, AnalysisPassManager& analysis) const override {
+    static bool runImpl(Function& func, AnalysisPassManager& analysis) {
         auto& cfg = analysis.get<CFGAnalysis>(func);
         auto& dom = analysis.get<DominateAnalysis>(func);
         // func.dumpCFG(std::cerr);
@@ -111,8 +110,7 @@ public:
                 continue;
 
             std::unordered_set<Block*> body;
-            // FIXME: allow inner loop
-            if(!collectLoopBody(loop.header, loop.latch, dom, cfg, body, false))
+            if(!collectLoopBody(loop.header, loop.latch, dom, cfg, body, true))
                 continue;
             // for(auto b : body) {
             //     b->dumpAsTarget(std::cerr);
@@ -121,6 +119,11 @@ public:
             // std::cerr << '\n';
 
             const auto exiting = succHeader.front() == phiLoc ? succHeader.back() : succHeader.front();
+            if(body.count(exiting))
+                continue;
+            // exiting->dumpAsTarget(std::cerr);
+            // std::cerr << '\n';
+
             auto& rotateCount = loop.latch->getTransformMetadata().rotateCount;
             if(rotateCount < maxRotateCount) {
                 ++rotateCount;
@@ -128,6 +131,16 @@ public:
             } else
                 continue;
 
+            if(cfg.predecessors(phiLoc).size() != 1 || phiLoc->instructions().front()->getInstID() == InstructionID::Phi) {
+                const auto newPhiLoc = make<Block>(&func);
+                func.blocks().push_back(newPhiLoc);
+                const auto term = make<BranchInst>(phiLoc);
+                term->insertBefore(newPhiLoc, newPhiLoc->instructions().end());
+                resetTarget(loop.header->getTerminator(), phiLoc, newPhiLoc);
+                retargetBlock(phiLoc, loop.header, newPhiLoc);
+                body.insert(newPhiLoc);
+                phiLoc = newPhiLoc;
+            }
             // reset target
             Block* indirectBlock = nullptr;
             if(cfg.predecessors(exiting).size() != 1) {
@@ -244,6 +257,16 @@ public:
 
             modified = true;
             break;
+        }
+        return modified;
+    }
+
+public:
+    bool run(Function& func, AnalysisPassManager& analysis) const override {
+        bool modified = false;
+        while(runImpl(func, analysis)) {
+            modified = true;
+            analysis.invalidateFunc(func);
         }
         return modified;
     }

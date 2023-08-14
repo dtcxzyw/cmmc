@@ -59,10 +59,16 @@ constexpr bool isOperandUImm5(const MIROperand& operand) {
 }
 
 constexpr bool isOperandAddrImm13(const MIROperand& operand) {
-    return operand.isImm() && isSignedImm<13>(operand.imm());
+    if(!operand.isImm())
+        return false;
+    const auto imm = operand.imm();
+    return -4095 <= imm && imm <= 4095;
 }
 constexpr bool isOperandAddrImm9(const MIROperand& operand) {
-    return operand.isImm() && isSignedImm<9>(operand.imm());
+    if(!operand.isImm())
+        return false;
+    const auto imm = operand.imm();
+    return -255 <= imm && imm <= 255;
 }
 constexpr bool isOperandAddrImmVFP(const MIROperand& operand) {
     if(!operand.isImm())

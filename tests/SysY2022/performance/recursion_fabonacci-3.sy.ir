@@ -40,65 +40,68 @@ internal func @fibFP(f32 %n) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect St
 }
 internal func @takFP(f32 %x, f32 %y, f32 %z) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless } {
   ^0:
-    ubr ^entry;
-  ^entry:
-    f32 %1 = phi [^0, f32 %z] [^b2, f32 %2] [^if.then3, f32 %42];
-    f32 %2 = phi [^0, f32 %y] [^b2, f32 %30] [^if.then3, f32 %30];
-    f32 %3 = phi [^0, f32 %x] [^b2, f32 %17] [^if.then3, f32 %17];
-    i1 %4 = fcmp olt f32 %2, f32 %3;
-    cbr i1 %4(prob = 0.5), ^if.then, ^b;
+    i1 %1 = fcmp olt f32 %y, f32 %x;
+    cbr i1 %1(prob = 0.5), ^if.then, ^b;
   ^if.then:
-    f32 %5 = fsub f32 %3, f32 1;
-    i1 %6 = fcmp olt f32 %2, f32 %5;
+    f32 %2 = phi [^0, f32 %x] [^b3, f32 %18];
+    f32 %3 = phi [^0, f32 %y] [^b3, f32 %31];
+    f32 %4 = phi [^0, f32 %z] [^b3, f32 %44];
+    f32 %5 = fsub f32 %2, f32 1;
+    i1 %6 = fcmp olt f32 %3, f32 %5;
     cbr i1 %6(prob = 0.5), ^if.then1, ^b1;
   ^b:
-    ret f32 %1;
+    f32 %7 = phi [^0, f32 %z] [^b3, f32 %44];
+    ret f32 %7;
   ^if.then1:
-    f32 %7 = phi [^if.then, f32 %5] [^if.then1, f32 %11];
-    f32 %8 = phi [^if.then, f32 %2] [^if.then1, f32 %13];
-    f32 %9 = phi [^if.then, f32 %1] [^if.then1, f32 %16];
-    f32 %10 = fsub f32 %7, f32 1;
-    f32 %11 = call (f32, f32, f32) -> f32 @takFP(f32 %10, f32 %8, f32 %9);
-    f32 %12 = fsub f32 %8, f32 1;
-    f32 %13 = call (f32, f32, f32) -> f32 @takFP(f32 %12, f32 %9, f32 %7);
-    i1 %14 = fcmp olt f32 %13, f32 %11;
-    f32 %15 = fsub f32 %9, f32 1;
-    f32 %16 = call (f32, f32, f32) -> f32 @takFP(f32 %15, f32 %7, f32 %8);
-    cbr i1 %14(prob = 0.5), ^if.then1, ^b1;
+    f32 %8 = phi [^if.then, f32 %5] [^if.then1, f32 %12];
+    f32 %9 = phi [^if.then, f32 %3] [^if.then1, f32 %14];
+    f32 %10 = phi [^if.then, f32 %4] [^if.then1, f32 %17];
+    f32 %11 = fsub f32 %8, f32 1;
+    f32 %12 = call (f32, f32, f32) -> f32 @takFP(f32 %11, f32 %9, f32 %10);
+    f32 %13 = fsub f32 %9, f32 1;
+    f32 %14 = call (f32, f32, f32) -> f32 @takFP(f32 %13, f32 %10, f32 %8);
+    i1 %15 = fcmp olt f32 %14, f32 %12;
+    f32 %16 = fsub f32 %10, f32 1;
+    f32 %17 = call (f32, f32, f32) -> f32 @takFP(f32 %16, f32 %8, f32 %9);
+    cbr i1 %15(prob = 0.5), ^if.then1, ^b1;
   ^b1:
-    f32 %17 = phi [^if.then, f32 %1] [^if.then1, f32 %16];
-    f32 %18 = fsub f32 %2, f32 1;
-    i1 %19 = fcmp olt f32 %1, f32 %18;
-    cbr i1 %19(prob = 0.5), ^if.then2, ^b2;
+    f32 %18 = phi [^if.then, f32 %4] [^if.then1, f32 %17];
+    f32 %19 = fsub f32 %3, f32 1;
+    i1 %20 = fcmp olt f32 %4, f32 %19;
+    cbr i1 %20(prob = 0.5), ^if.then2, ^b2;
   ^if.then2:
-    f32 %20 = phi [^b1, f32 %18] [^if.then2, f32 %24];
-    f32 %21 = phi [^b1, f32 %1] [^if.then2, f32 %26];
-    f32 %22 = phi [^b1, f32 %3] [^if.then2, f32 %29];
-    f32 %23 = fsub f32 %20, f32 1;
-    f32 %24 = call (f32, f32, f32) -> f32 @takFP(f32 %23, f32 %21, f32 %22);
-    f32 %25 = fsub f32 %21, f32 1;
-    f32 %26 = call (f32, f32, f32) -> f32 @takFP(f32 %25, f32 %22, f32 %20);
-    i1 %27 = fcmp olt f32 %26, f32 %24;
-    f32 %28 = fsub f32 %22, f32 1;
-    f32 %29 = call (f32, f32, f32) -> f32 @takFP(f32 %28, f32 %20, f32 %21);
-    cbr i1 %27(prob = 0.5), ^if.then2, ^b2;
+    f32 %21 = phi [^b1, f32 %19] [^if.then2, f32 %25];
+    f32 %22 = phi [^b1, f32 %4] [^if.then2, f32 %27];
+    f32 %23 = phi [^b1, f32 %2] [^if.then2, f32 %30];
+    f32 %24 = fsub f32 %21, f32 1;
+    f32 %25 = call (f32, f32, f32) -> f32 @takFP(f32 %24, f32 %22, f32 %23);
+    f32 %26 = fsub f32 %22, f32 1;
+    f32 %27 = call (f32, f32, f32) -> f32 @takFP(f32 %26, f32 %23, f32 %21);
+    i1 %28 = fcmp olt f32 %27, f32 %25;
+    f32 %29 = fsub f32 %23, f32 1;
+    f32 %30 = call (f32, f32, f32) -> f32 @takFP(f32 %29, f32 %21, f32 %22);
+    cbr i1 %28(prob = 0.5), ^if.then2, ^b2;
   ^b2:
-    f32 %30 = phi [^b1, f32 %3] [^if.then2, f32 %29];
-    f32 %31 = fsub f32 %1, f32 1;
-    i1 %32 = fcmp uge f32 %3, f32 %31;
-    cbr i1 %32(prob = 0.5), ^entry, ^if.then3;
+    f32 %31 = phi [^b1, f32 %2] [^if.then2, f32 %30];
+    f32 %32 = fsub f32 %4, f32 1;
+    i1 %33 = fcmp olt f32 %2, f32 %32;
+    cbr i1 %33(prob = 0.5), ^if.then3, ^b3;
   ^if.then3:
-    f32 %33 = phi [^b2, f32 %31] [^if.then3, f32 %37];
-    f32 %34 = phi [^b2, f32 %3] [^if.then3, f32 %39];
-    f32 %35 = phi [^b2, f32 %2] [^if.then3, f32 %42];
-    f32 %36 = fsub f32 %33, f32 1;
-    f32 %37 = call (f32, f32, f32) -> f32 @takFP(f32 %36, f32 %34, f32 %35);
-    f32 %38 = fsub f32 %34, f32 1;
-    f32 %39 = call (f32, f32, f32) -> f32 @takFP(f32 %38, f32 %35, f32 %33);
-    i1 %40 = fcmp olt f32 %39, f32 %37;
-    f32 %41 = fsub f32 %35, f32 1;
-    f32 %42 = call (f32, f32, f32) -> f32 @takFP(f32 %41, f32 %33, f32 %34);
-    cbr i1 %40(prob = 0.5), ^if.then3, ^entry;
+    f32 %34 = phi [^b2, f32 %32] [^if.then3, f32 %38];
+    f32 %35 = phi [^b2, f32 %2] [^if.then3, f32 %40];
+    f32 %36 = phi [^b2, f32 %3] [^if.then3, f32 %43];
+    f32 %37 = fsub f32 %34, f32 1;
+    f32 %38 = call (f32, f32, f32) -> f32 @takFP(f32 %37, f32 %35, f32 %36);
+    f32 %39 = fsub f32 %35, f32 1;
+    f32 %40 = call (f32, f32, f32) -> f32 @takFP(f32 %39, f32 %36, f32 %34);
+    i1 %41 = fcmp olt f32 %40, f32 %38;
+    f32 %42 = fsub f32 %36, f32 1;
+    f32 %43 = call (f32, f32, f32) -> f32 @takFP(f32 %42, f32 %34, f32 %35);
+    cbr i1 %41(prob = 0.5), ^if.then3, ^b3;
+  ^b3:
+    f32 %44 = phi [^b2, f32 %3] [^if.then3, f32 %43];
+    i1 %45 = fcmp olt f32 %31, f32 %18;
+    cbr i1 %45(prob = 0.5), ^if.then, ^b;
 }
 func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
   ^entry:

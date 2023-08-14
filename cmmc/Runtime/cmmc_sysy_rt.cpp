@@ -84,7 +84,10 @@ namespace {
             if(!worker.run)
                 break;
             // exec task
+            std::atomic_thread_fence(std::memory_order_seq_cst);
             worker.func.load()(worker.beg.load(), worker.end.load());
+            std::atomic_thread_fence(std::memory_order_seq_cst);
+            // fprintf(stderr, "finish %d %d\n", worker.beg.load(), worker.end.load());
             // signal completion
             worker.done.post();
         }
@@ -121,6 +124,7 @@ void cmmcParallelFor(int32_t beg, int32_t end, CmmcForLoop func) {
         func(beg, end);
         return;
     }
+    // fprintf(stderr, "parallel for %d %d\n", beg, end);
     std::atomic_thread_fence(std::memory_order_seq_cst);
     constexpr uint32_t alignment = 4;
     const auto inc = static_cast<int32_t>(((size / maxThreads) + alignment - 1) / alignment * alignment);
@@ -131,6 +135,7 @@ void cmmcParallelFor(int32_t beg, int32_t end, CmmcForLoop func) {
             subEnd = end;
         if(subBeg >= subEnd)
             continue;
+        // fprintf(stderr, "launch %d %d\n", subBeg, subEnd);
         // cmmc_exec_for(subBeg, subEnd, func, payload);
         auto& worker = workers[static_cast<size_t>(i)];
         worker.func = func;

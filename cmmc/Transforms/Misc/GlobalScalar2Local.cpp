@@ -78,8 +78,10 @@ public:
                 if(func->attr().hasAttr(FunctionAttribute::Entry)) {
                     assert(!entryFunc);
                     entryFunc = func;
-                } else
-                    funcs.push_back(func);
+                } else {
+                    if(!func->attr().hasAttr(FunctionAttribute::ParallelBody))
+                        funcs.push_back(func);
+                }
             } else {
                 auto var = global->as<GlobalVariable>();
                 if(var->getLinkage() == Linkage::Global)
