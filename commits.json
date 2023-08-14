@@ -1230,6 +1230,11 @@
       "parent": "3c395100b1a8eeedc5c4b917358fe89562891bc4",
       "time": "2023-07-23 21:28:26 +0800"
     },
+    "fc51ed9d1183177677f50d89b11962e08f703fc7": {
+      "message": "feat(transform): basic loop parallel",
+      "parent": "5ec58126300a6a4bd683ff43cb1ecf15ae12b4bb",
+      "time": "2023-08-15 00:14:50 +0800"
+    },
     "fd09d81a7f01e2eea69cfec9e186c92b254fc584": {
       "message": "misc: update ref",
       "parent": "dab395f5471c2e2abcc130aed1055c5f889f99a1",
@@ -1241,5 +1246,5 @@
       "time": "2023-07-06 01:05:50 +0800"
     }
   },
-  "head": "5ec58126300a6a4bd683ff43cb1ecf15ae12b4bb"
+  "head": "fc51ed9d1183177677f50d89b11962e08f703fc7"
 }
