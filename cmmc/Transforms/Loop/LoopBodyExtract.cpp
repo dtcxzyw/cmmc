@@ -224,38 +224,46 @@ bool extractLoopBody(Function& func, const Loop& loop, const DominateAnalysisRes
         for(auto [k, v] : loadStoreMap) {
             if(v == 3) {
                 if(convertReduceToAtomic) {
+                    // match load-store pair
+                    // FIXME: check pointer aliasing
                     // v0 = load ptr
                     // v1 = v0 + inc
                     // store v1, ptr
                     // ==>
                     // atomicadd ptr, inc
 
-                    std::optional<Instruction*> load, store;
-                    uint32_t count = 0;
+                    Instruction* load = nullptr;
                     for(auto b : body)
                         for(auto& inst : b->instructions()) {
                             if(inst.getInstID() == InstructionID::Load || inst.getInstID() == InstructionID::Store) {
                                 const auto base = pointerBase->lookup(inst.getOperand(0));
                                 if(base == k) {
-                                    if(inst.getInstID() == InstructionID::Load)
+                                    if(inst.getInstID() == InstructionID::Load) {
+                                        if(load)
+                                            return false;
                                         load = &inst;
-                                    else
-                                        store = &inst;
-                                    ++count;
+                                    } else {
+                                        if(!load)
+                                            return false;
+                                        const auto store = &inst;
+                                        if(load->getOperand(0) == store->getOperand(0) && load->hasExactlyOneUse() &&
+                                           load->getBlock() == store->getBlock()) {
+                                            const auto val = store->getOperand(1);
+                                            Value *loadVal = load, *rhs;
+                                            if(oneUse(add(exactly(loadVal), any(rhs)))(MatchContext<Value>{ val })) {
+                                                workList.emplace_back(load, store);
+                                                load = nullptr;
+                                            } else
+                                                return false;
+                                        } else
+                                            return false;
+                                    }
                                 }
                             }
                         }
-                    if(count == 2 && load.has_value() && store.has_value()) {
-                        if((*load)->getOperand(0) == (*store)->getOperand(0) && (*load)->hasExactlyOneUse() &&
-                           (*load)->getBlock() == (*store)->getBlock()) {
-                            const auto val = (*store)->getOperand(1);
-                            Value *loadVal = *load, *rhs;
-                            if(oneUse(add(exactly(loadVal), any(rhs)))(MatchContext<Value>{ val })) {
-                                workList.emplace_back(*load, *store);
-                                continue;
-                            }
-                        }
-                    }
+                    if(load)
+                        return false;
+                    continue;
                 }
                 return false;
             }

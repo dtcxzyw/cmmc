@@ -128,6 +128,7 @@ void cmmcParallelFor(int32_t beg, int32_t end, CmmcForLoop func) {
     std::atomic_thread_fence(std::memory_order_seq_cst);
     constexpr uint32_t alignment = 4;
     const auto inc = static_cast<int32_t>(((size / maxThreads) + alignment - 1) / alignment * alignment);
+    std::array<bool, maxThreads> assigned{};
     for(int32_t i = 0; i < static_cast<int32_t>(maxThreads); ++i) {
         const auto subBeg = beg + i * inc;
         auto subEnd = std::min(subBeg + inc, end);
@@ -143,9 +144,11 @@ void cmmcParallelFor(int32_t beg, int32_t end, CmmcForLoop func) {
         worker.end = subEnd;
         // signal worker
         worker.ready.post();
+        assigned[static_cast<size_t>(i)] = true;
     }
-    for(auto& worker : workers) {
-        worker.done.wait();
+    for(uint32_t i = 0; i < maxThreads; ++i) {
+        if(assigned[i])
+            workers[i].done.wait();
     }
     std::atomic_thread_fence(std::memory_order_seq_cst);
 }
