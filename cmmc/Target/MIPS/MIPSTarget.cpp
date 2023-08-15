@@ -16,7 +16,6 @@
 // See also https://courses.cs.washington.edu/courses/cse410/09sp/examples/MIPSCallingConventionsSummary.pdf for the o32 calling
 // convention
 
-#include "cmmc/IR/Instruction.hpp"
 #include <MIPS/ISelInfoDecl.hpp>
 #include <MIPS/InstInfoDecl.hpp>
 #include <MIPS/ScheduleModelDecl.hpp>
@@ -26,6 +25,7 @@
 #include <cmmc/CodeGen/RegisterInfo.hpp>
 #include <cmmc/CodeGen/ScheduleModel.hpp>
 #include <cmmc/CodeGen/Target.hpp>
+#include <cmmc/IR/Instruction.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/Options.hpp>
 #include <cmmc/Target/MIPS/MIPS.hpp>

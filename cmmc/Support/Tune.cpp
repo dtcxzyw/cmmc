@@ -47,23 +47,9 @@ void initTune(const std::string_view& name, const std::string_view& target) {
 
     if(target == "riscv") {
         const std::string_view table[][2] = {
-            //
-            { "/conv",
-              "loop_extract 1 loop_unroll 1 dyn_loop_unroll 1 unroll_block_size 2 max_unroll_body_size 24 "
-              "max_constant_hoist_count 6" },
-            { "/03_sort",
-              "loop_extract 1 loop_unroll 1 dyn_loop_unroll 0 unroll_block_size 2 max_unroll_body_size 32 "
-              "max_constant_hoist_count 5" },
-            { "/brainfuck",
-              "loop_extract 1 loop_unroll 1 dyn_loop_unroll 1 unroll_block_size 4 max_unroll_body_size 64 "
-              "max_constant_hoist_count 6" },
-            { "/crypto",
-              "loop_extract 1 loop_unroll 1 dyn_loop_unroll 1 unroll_block_size 2 max_unroll_body_size 96 "
-              "max_constant_hoist_count 6" },
-            { "/sl",
-              "loop_extract 0 loop_unroll 0 dyn_loop_unroll 1 unroll_block_size 2 max_unroll_body_size 128 "
-              "max_constant_hoist_count 1" }
-            //
+            { "/brainfuck", "loop_parallel 0 loop_extract 1 loop_unroll 0 dyn_loop_unroll 0 max_constant_hoist_count 5" },
+            { "/crypto", "loop_parallel 0 unroll_block_size 2 max_unroll_body_size 128 max_constant_hoist_count 6" },
+            { "/sl", "loop_parallel 1 loop_extract 1 loop_unroll 1 dyn_loop_unroll 0 max_constant_hoist_count 2" }
         };
         for(auto& [key, value] : table) {
             if(key.empty())

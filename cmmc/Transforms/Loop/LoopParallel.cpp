@@ -150,6 +150,7 @@ class LoopParallel final : public TransformPass<Function> {
                                 /*only addrec*/ true,
                                 /*estimate block size*/ false,
                                 /*need sub-loop*/ needSubLoop,
+                                /*convert reduce to atomic*/ mod.getTarget().isNativeSupported(InstructionID::AtomicAdd),
                                 /*ret*/ &bodyInfo))
                 continue;
             // func.dump(std::cerr, Noop{});

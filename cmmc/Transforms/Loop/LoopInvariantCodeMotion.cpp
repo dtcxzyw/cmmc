@@ -94,7 +94,7 @@ class LoopInvariantCodeMotion final : public TransformPass<Function> {
 
         bool modified = false;
 
-        if(invariantInst.size() > 0) {
+        if(!invariantInst.empty()) {
             modified = true;
             auto pre = builder.addBlock();
             pre->setLabel(String::get("prebody"));

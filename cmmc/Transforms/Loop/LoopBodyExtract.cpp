@@ -78,7 +78,8 @@ static bool matchAddRec(Value* giv, Block* latch, std::unordered_set<Value*>& va
 
 bool extractLoopBody(Function& func, const Loop& loop, const DominateAnalysisResult& dom, const CFGAnalysisResult& cfg,
                      Module& mod, bool independent, const PointerBaseAnalysisResult* pointerBase, bool allowInnermost,
-                     bool allowInnerLoop, bool onlyAddRec, bool estimateBlockSizeForUnroll, bool needSubLoop, LoopBodyInfo* ret) {
+                     bool allowInnerLoop, bool onlyAddRec, bool estimateBlockSizeForUnroll, bool needSubLoop,
+                     bool convertReduceToAtomic, LoopBodyInfo* ret) {
     if(!allowInnermost && loop.header == loop.latch)
         return false;
 
@@ -102,30 +103,6 @@ bool extractLoopBody(Function& func, const Loop& loop, const DominateAnalysisRes
     if(!collectLoopBody(loop.header, loop.latch, dom, cfg, body, allowInnerLoop, needSubLoop))
         return false;
 
-    if(independent) {
-        std::unordered_map<Value*, uint32_t> loadStoreMap;
-        for(auto b : body)
-            for(auto& inst : b->instructions()) {
-                if(inst.isTerminator())
-                    continue;
-                if(inst.getInstID() == InstructionID::Load || inst.getInstID() == InstructionID::Store) {
-                    const auto ptr = inst.getOperand(0);
-                    const auto base = pointerBase->lookup(ptr);
-                    if(!base) {
-                        return false;
-                    }
-
-                    loadStoreMap[base] |= (inst.getInstID() == InstructionID::Load ? 1 : 2);
-                } else if(!isNoSideEffectExpr(inst)) {
-                    return false;
-                }
-            }
-        for(auto [k, v] : loadStoreMap) {
-            if(v == 3) {
-                return false;
-            }
-        }
-    }
     // std::cerr << "detect body\n";
     // for(auto b : body) {
     //     b->dump(std::cerr, Noop{});
@@ -222,6 +199,79 @@ bool extractLoopBody(Function& func, const Loop& loop, const DominateAnalysisRes
                     continue;
                 return false;
             }
+        }
+    }
+
+    if(independent) {
+        std::unordered_map<Value*, uint32_t> loadStoreMap;
+        for(auto b : body)
+            for(auto& inst : b->instructions()) {
+                if(inst.isTerminator())
+                    continue;
+                if(inst.getInstID() == InstructionID::Load || inst.getInstID() == InstructionID::Store) {
+                    const auto ptr = inst.getOperand(0);
+                    const auto base = pointerBase->lookup(ptr);
+                    if(!base) {
+                        return false;
+                    }
+
+                    loadStoreMap[base] |= (inst.getInstID() == InstructionID::Load ? 1 : 2);
+                } else if(!isNoSideEffectExpr(inst)) {
+                    return false;
+                }
+            }
+        std::vector<std::pair<Instruction*, Instruction*>> workList;
+        for(auto [k, v] : loadStoreMap) {
+            if(v == 3) {
+                if(convertReduceToAtomic) {
+                    // v0 = load ptr
+                    // v1 = v0 + inc
+                    // store v1, ptr
+                    // ==>
+                    // atomicadd ptr, inc
+
+                    std::optional<Instruction*> load, store;
+                    uint32_t count = 0;
+                    for(auto b : body)
+                        for(auto& inst : b->instructions()) {
+                            if(inst.getInstID() == InstructionID::Load || inst.getInstID() == InstructionID::Store) {
+                                const auto base = pointerBase->lookup(inst.getOperand(0));
+                                if(base == k) {
+                                    if(inst.getInstID() == InstructionID::Load)
+                                        load = &inst;
+                                    else
+                                        store = &inst;
+                                    ++count;
+                                }
+                            }
+                        }
+                    if(count == 2 && load.has_value() && store.has_value()) {
+                        if((*load)->getOperand(0) == (*store)->getOperand(0) && (*load)->hasExactlyOneUse() &&
+                           (*load)->getBlock() == (*store)->getBlock()) {
+                            const auto val = (*store)->getOperand(1);
+                            Value *loadVal = *load, *rhs;
+                            if(oneUse(add(exactly(loadVal), any(rhs)))(MatchContext<Value>{ val })) {
+                                workList.emplace_back(*load, *store);
+                                continue;
+                            }
+                        }
+                    }
+                }
+                return false;
+            }
+        }
+
+        for(auto [load, store] : workList) {
+            const auto block = load->getBlock();
+            const auto ptr = store->getOperand(0);
+            const auto val = store->getOperand(1)->as<Instruction>();
+            const auto inc = val->getOperand(0) == load ? val->getOperand(1) : val->getOperand(0);
+            const auto atomicAdd = make<AtomicAddInst>(ptr, inc);
+            auto& insts = block->instructions();
+            insts.erase(load->asNode());
+            insts.erase(val->asNode());
+            atomicAdd->insertBefore(block, store->asIterator());
+            insts.erase(store->asNode());
         }
     }
 
@@ -398,6 +448,7 @@ class LoopBodyExtract final : public TransformPass<Function> {
                                         /*only addrec*/ false,
                                         /*estimate block size*/ true,
                                         /*need sub-loop*/ false,
+                                        /*convert reduce to atomic*/ false,
                                         /*ret*/ nullptr);
         }
         return modified;

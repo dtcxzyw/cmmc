@@ -58,6 +58,7 @@ struct LoopBodyInfo final {
 };
 bool extractLoopBody(Function& func, const class Loop& loop, const DominateAnalysisResult& dom, const CFGAnalysisResult& cfg,
                      Module& mod, bool independent, const class PointerBaseAnalysisResult* pointerBase, bool allowInnermost,
-                     bool allowInnerLoop, bool onlyAddRec, bool estimateBlockSizeForUnroll, bool needSubLoop, LoopBodyInfo* ret);
+                     bool allowInnerLoop, bool onlyAddRec, bool estimateBlockSizeForUnroll, bool needSubLoop,
+                     bool convertReduceToAtomic, LoopBodyInfo* ret);
 
 CMMC_NAMESPACE_END

@@ -24,7 +24,7 @@ class TuneOpt:
         self.str = ""
         self.trail = trail
     def generate_build_cmd(self):
-        return [cmmc_bin, '-O', '3','-H','-o','/dev/stdout','-t','riscv','--tune="{}"'.format(self.str), test_case]
+        return [cmmc_bin, '-O', '3','-H','-o','/dev/stdout','-t','riscv','--enable-parallel','--tune={}'.format(self.str), test_case]
     def key(self):
         return self.str
     def add_pass(self, name):
@@ -48,7 +48,7 @@ def parse_performance(stderr: str):
 
 cache = dict()
 stage = 0
-max_stages = 6
+max_stages = 5
 fixed = ""
 
 def objective_func(trail: optuna.Trial):
@@ -59,27 +59,29 @@ def objective_func(trail: optuna.Trial):
     if stage == 0:
         pass # baseline
     if stage == 1:
+        opt.add_pass("loop_parallel")
+    if stage == 2:
         opt.add_pass("loop_extract")
         opt.add_pass("loop_unroll")
         opt.add_pass("dyn_loop_unroll")
-    if stage == 2:
+    if stage == 3:
         opt.add_select("unroll_block_size", [2, 4, 8, 16])
         opt.add_select("max_unroll_body_size", [8, 16, 24, 32, 48, 64, 96, 128])
-    # if stage == 3:
-    #     opt.add_param("duplication_threshold", 2, 20)
-    #     opt.add_param("duplication_iterations", 0, 20)
-    #     opt.add_param("branch_limit", 0, 1000)
-    #     opt.add_param("branch_prediction_warmup_threshold", 0, 32)
     if stage == 4:
         opt.add_param("max_constant_hoist_count", 0, 16)
-    # if stage == 5:
-    #     opt.add_param("max_mul_constant_cost", 1, 5)
+    # opt.add_param("duplication_threshold", 2, 20)
+    # opt.add_param("duplication_iterations", 0, 20)
+    # opt.add_param("branch_limit", 0, 1000)
+    # opt.add_param("branch_prediction_warmup_threshold", 0, 32)
+    # opt.add_param("max_mul_constant_cost", 1, 5)
 
     k = opt.key()
     if k in cache:
+        #print("hit cache", k)
         return cache[k]
 
     cmd = opt.generate_build_cmd()
+    #print(cmd)
     asm = subprocess.check_output(cmd)
     hash_asm = str(hash(asm))
     if hash_asm in cache:
