@@ -2,7 +2,7 @@ internal func @putint(i32) -> void { NoMemoryRead NoMemoryWrite };
 internal func @exgcd(i32 %a, i32 %b, i32* %x, i32* %y) -> i32 {
   ^entry:
     i1 %0 = icmp eq i32 %b, i32 0;
-    cbr i1 %0(prob = 0.5), ^if.then, ^if.else;
+    cbr i1 %0(prob = 0.49), ^if.then, ^if.else;
   ^if.then:
     store i32* %x with i32 1;
     store i32* %y with i32 0;
@@ -10,7 +10,7 @@ internal func @exgcd(i32 %a, i32 %b, i32* %x, i32* %y) -> i32 {
   ^if.else:
     i32 %1 = srem i32 %a, i32 %b;
     i1 %2 = icmp eq i32 %1, i32 0;
-    cbr i1 %2(prob = 0.5), ^if.then1, ^if.else1;
+    cbr i1 %2(prob = 0.49), ^if.then1, ^if.else1;
   ^if.then1:
     store i32* %x with i32 1;
     store i32* %y with i32 0;

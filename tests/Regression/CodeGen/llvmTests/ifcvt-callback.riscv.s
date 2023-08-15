@@ -4,10 +4,10 @@
 .p2align 2
 .globl test_ifcvt
 test_ifcvt:
-	bne a0, zero, label9
-	addiw a0, a1, -1
-	j label3
-label9:
+	beq a0, zero, label2
 	addiw a0, a1, 1
 label3:
 	ret
+label2:
+	addiw a0, a1, -1
+	j label3

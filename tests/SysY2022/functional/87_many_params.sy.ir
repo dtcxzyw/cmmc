@@ -95,7 +95,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i32 %58 = load i32* %29;
     i32 %59 = load i32* %30;
     i32 %60 = load i32* %31;
-    cbr i1 %45(prob = 0.5), ^b4, ^if.else;
+    cbr i1 %45(prob = 0.49), ^b4, ^if.else;
   ^if.else:
     i32 %61 = phi [^b3, i32 %44] [^if.else, i32 %95];
     i32 %62 = phi [^b3, i32 %46] [^if.else, i32 %94];

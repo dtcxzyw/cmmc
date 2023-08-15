@@ -18,38 +18,38 @@ P:
 .globl foo
 foo:
 	ble a0, zero, label5
-pcrel60:
-	auipc a1, %pcrel_hi(B)
 pcrel61:
-	auipc t0, %pcrel_hi(A)
-	lb a3, %pcrel_lo(pcrel60)(a1)
-	addi a2, a1, %pcrel_lo(pcrel60)
-	andi a4, a3, 255
-	addi a3, t0, %pcrel_lo(pcrel61)
-	slliw a5, a4, 1
-	andi a1, a5, 255
+	auipc a1, %pcrel_hi(B)
 pcrel62:
+	auipc t0, %pcrel_hi(A)
+	lb a5, %pcrel_lo(pcrel61)(a1)
+	addi a2, a1, %pcrel_lo(pcrel61)
+	andi a3, a5, 255
+pcrel63:
 	auipc a5, %pcrel_hi(P)
-	addi a4, a5, %pcrel_lo(pcrel62)
-	sb a1, %pcrel_lo(pcrel61)(t0)
+	slliw a4, a3, 1
+	addi a3, t0, %pcrel_lo(pcrel62)
+	andi a1, a4, 255
+	addi a4, a5, %pcrel_lo(pcrel63)
+	sb a1, %pcrel_lo(pcrel62)(t0)
 	li t0, 1
 	li a1, 17
-	sb a1, %pcrel_lo(pcrel62)(a5)
+	sb a1, %pcrel_lo(pcrel63)(a5)
 	beq a0, t0, label5
 	li a1, 1
 label3:
 	zext.w a5, a1
+	add t3, a3, a5
 	add t0, a2, a5
 	lb t2, 0(t0)
 	andi t1, t2, 255
-	add t2, a3, a5
-	slliw t3, t1, 1
+	slliw t4, t1, 1
 	sh3add t1, a1, a1
-	andi t0, t3, 255
+	andi t0, t4, 255
 	addiw a1, a1, 1
-	zext.w t3, t1
-	add a5, a4, t3
-	sb t0, 0(t2)
+	zext.w t2, t1
+	add a5, a4, t2
+	sb t0, 0(t3)
 	li t0, 17
 	sb t0, 0(a5)
 	bne a0, a1, label3

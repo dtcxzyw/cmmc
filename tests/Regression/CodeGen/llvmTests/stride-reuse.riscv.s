@@ -18,21 +18,21 @@ P:
 .globl foo
 foo:
 	ble a0, zero, label5
-pcrel52:
-	auipc a1, %pcrel_hi(B)
 pcrel53:
+	auipc a1, %pcrel_hi(B)
+pcrel54:
 	auipc a5, %pcrel_hi(A)
 	li t0, 64
-	addi a2, a1, %pcrel_lo(pcrel52)
-	addi a3, a5, %pcrel_lo(pcrel53)
-	flw f11, %pcrel_lo(pcrel52)(a1)
-pcrel54:
+	addi a2, a1, %pcrel_lo(pcrel53)
+	addi a3, a5, %pcrel_lo(pcrel54)
+	flw f11, %pcrel_lo(pcrel53)(a1)
+pcrel55:
 	auipc a1, %pcrel_hi(P)
 	fadd.s f10, f11, f11
-	addi a4, a1, %pcrel_lo(pcrel54)
-	fsw f10, %pcrel_lo(pcrel53)(a5)
+	addi a4, a1, %pcrel_lo(pcrel55)
+	fsw f10, %pcrel_lo(pcrel54)(a5)
 	li a5, 1
-	sw t0, %pcrel_lo(pcrel54)(a1)
+	sw t0, %pcrel_lo(pcrel55)(a1)
 	beq a0, a5, label5
 	li a1, 1
 label3:

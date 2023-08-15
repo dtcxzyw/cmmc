@@ -41,24 +41,8 @@ hanoi:
 	mflo $t0
 	addu $s2, $a3, $t0
 	li $s6, 1
-	bne $a0, $s6, label16
+	beq $a0, $s6, label16
 	nop
-	move $a0, $s2
-label2:
-	jal write
-	nop
-	lw $ra, 16($sp)
-	lw $s3, 20($sp)
-	lw $s5, 24($sp)
-	lw $s2, 28($sp)
-	lw $s6, 32($sp)
-	lw $s0, 36($sp)
-	lw $s1, 40($sp)
-	lw $s4, 44($sp)
-	addiu $sp, $sp, 48
-	jr $ra
-	nop
-label16:
 	move $s0, $a1
 	move $s1, $a2
 label4:
@@ -83,6 +67,24 @@ label4:
 	move $s0, $s1
 	move $s1, $t0
 	b label4
+	nop
+label2:
+	jal write
+	nop
+	lw $ra, 16($sp)
+	lw $s3, 20($sp)
+	lw $s5, 24($sp)
+	lw $s2, 28($sp)
+	lw $s6, 32($sp)
+	lw $s0, 36($sp)
+	lw $s1, 40($sp)
+	lw $s4, 44($sp)
+	addiu $sp, $sp, 48
+	jr $ra
+	nop
+label16:
+	move $a0, $s2
+	b label2
 	nop
 .globl main
 main:

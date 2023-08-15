@@ -329,6 +329,7 @@ public:
             const auto iter = std::find(blocks.cbegin(), blocks.cend(), loop.latch);
             for(auto block : insertedBlocks)
                 blocks.insert(iter, block);
+            break;
         }
 
         return modified;

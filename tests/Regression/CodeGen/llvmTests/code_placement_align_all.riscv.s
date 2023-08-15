@@ -4,15 +4,15 @@
 .p2align 2
 .globl foo
 foo:
-	bne a0, zero, label9
+	beq a0, zero, label2
+	addiw a1, a0, 2
+	zext.w a0, a1
+label3:
+	ret
+label2:
 	mv a2, zero
 	beq a1, zero, label19
 	li a2, 5
 label19:
 	zext.w a0, a2
 	j label3
-label9:
-	addiw a1, a0, 2
-	zext.w a0, a1
-label3:
-	ret

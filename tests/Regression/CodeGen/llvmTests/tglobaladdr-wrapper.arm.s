@@ -24,15 +24,15 @@ foo:
 	movt r1, #:upper16:x
 	ldr r0, [r1, #0]
 	cmp r0, #0
-	bne label10
-	movw r0, #:lower16:a
-	movt r0, #:upper16:a
-	ldr r0, [r0, #0]
-	b label3
-label10:
+	beq label2
 	movw r0, #:lower16:b
 	movt r0, #:upper16:b
 	ldr r0, [r0, #0]
 label3:
 	str r0, [r1, #0]
 	bx lr
+label2:
+	movw r0, #:lower16:a
+	movt r0, #:upper16:a
+	ldr r0, [r0, #0]
+	b label3

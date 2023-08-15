@@ -25,6 +25,7 @@
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
 #include <cstdint>
 #include <iostream>
+#include <unordered_set>
 #include <vector>
 
 // Reference: https://www.cs.utexas.edu/~pingali/CS380C/2020/assignments/assignment5/index.html
@@ -158,17 +159,31 @@ class LICMMemory final : public TransformPass<Function> {
 public:
     bool run(Function& func, AnalysisPassManager& analysis) const override {
         const auto& target = analysis.module().getTarget();
-        auto& loops = analysis.get<LoopAnalysis>(func);
-        auto& cfg = analysis.get<CFGAnalysis>(func);
-        auto& aliasSet = analysis.get<AliasAnalysis>(func);
 
         IRBuilder builder{ target };
         builder.setCurrentFunction(&func);
 
         bool modified = false;
-        for(auto& loop : loops.loops) {
-            if(loop.header == loop.latch)
-                modified |= runOnLoop(loop.latch, cfg, aliasSet, builder);
+        std::unordered_set<Block*> visited;
+        while(true) {
+            auto& loops = analysis.get<LoopAnalysis>(func);
+            auto& cfg = analysis.get<CFGAnalysis>(func);
+            auto& aliasSet = analysis.get<AliasAnalysis>(func);
+            bool changed = false;
+            for(auto& loop : loops.loops) {
+                if(loop.header == loop.latch) {
+                    if(!visited.insert(loop.latch).second)
+                        continue;
+                    if(runOnLoop(loop.latch, cfg, aliasSet, builder)) {
+                        changed = true;
+                        modified = true;
+                        analysis.invalidateFunc(func);
+                        break;
+                    }
+                }
+            }
+            if(!changed)
+                break;
         }
         return modified;
     }

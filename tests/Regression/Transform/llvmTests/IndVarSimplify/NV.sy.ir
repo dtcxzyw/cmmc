@@ -3,7 +3,7 @@ func @main() -> i32 { NoMemoryWrite NoSideEffect NoRecurse } {
     i32* %0 = ptrcast i32* @c to i32*;
     i32 %1 = load i32* %0;
     i1 %2 = icmp eq i32 %1, i32 0;
-    cbr i1 %2(prob = 0.5), ^if.then, ^b;
+    cbr i1 %2(prob = 0.49), ^if.then, ^b;
   ^if.then:
     i32 %3 = phi [^entry, i32 1] [^if.then, i32 %5];
     i32 %4 = strunc i32 %3 to i32;

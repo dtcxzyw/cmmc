@@ -16,18 +16,21 @@ test1:
 pcrel38:
 	auipc a2, %pcrel_hi(g0)
 	lw a1, %pcrel_lo(pcrel38)(a2)
-	bne a0, zero, label14
-	addiw a3, a1, 11
+	beq a0, zero, label2
+	addiw a3, a1, 1
 pcrel39:
 	auipc a4, %pcrel_hi(g1)
 	zext.w a0, a3
 	sw a0, %pcrel_lo(pcrel38)(a2)
-	lw a1, %pcrel_lo(pcrel39)(a4)
-	addiw a2, a1, 23
-	zext.w a0, a2
-	j label3
-label14:
-	addiw a3, a1, 1
+	lw a3, %pcrel_lo(pcrel39)(a4)
+	addiw a1, a3, 23
+	zext.w a0, a1
+label3:
+	auipc a1, %pcrel_hi(g1)
+	sw a0, %pcrel_lo(label3)(a1)
+	ret
+label2:
+	addiw a3, a1, 11
 pcrel40:
 	auipc a4, %pcrel_hi(g1)
 	zext.w a0, a3
@@ -37,7 +40,4 @@ pcrel41:
 	lw a3, %pcrel_lo(pcrel40)(a4)
 	addiw a1, a3, 23
 	zext.w a0, a1
-label3:
-	auipc a1, %pcrel_hi(g1)
-	sw a0, %pcrel_lo(label3)(a1)
-	ret
+	j label3

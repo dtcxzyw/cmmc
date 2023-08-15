@@ -17,50 +17,50 @@ func @main() -> i32 { NoRecurse Entry } {
     i32 %5 = add i32 %3, i32 -18;
     i1 %6 = icmp sgt i32 %0, i32 0;
     [20000000 * i32]* %7 = ptrcast [20000000 * i32]* @matrix to [20000000 * i32]*;
-    cbr i1 %6(prob = 0.984615), ^prebody, ^prebody1;
-  ^prebody:
+    cbr i1 %6(prob = 0.984615), ^b, ^prebody;
+  ^b:
     [4 * i8]* %8 = ptrcast [4 * i8]* @cmmc_parallel_body_payload_0 to [4 * i8]*;
     i32* %9 = ptradd [4 * i8]* %8, i32 0;
     store i32* %9 with i32 %0;
     i8* %10 = functionptr () -> void @cmmc_parallel_body_0 as i8*;
     call (i32, i32, i8*) -> void @cmmcParallelFor(i32 0, i32 %0, i8* %10);
-    ubr ^prebody1;
-  ^prebody1:
+    ubr ^prebody;
+  ^prebody:
     i32* %11 = getelementptr &([20000000 * i32]* %7)[i64 0][i64 0];
     ubr ^while.body;
   ^while.body:
-    i32 %12 = phi [^prebody1, i32 0] [^b, i32 %21];
+    i32 %12 = phi [^prebody, i32 0] [^b1, i32 %21];
     i32* %13 = getelementptr &([100000 * i32]* %1)[i64 0][i32 %12];
     i32 %14 = load i32* %13;
     i32 %15 = sdiv i32 %0, i32 %14;
     i1 %16 = icmp sgt i32 %15, i32 0;
-    cbr i1 %16(prob = 0.984615), ^while.body1, ^b;
+    cbr i1 %16(prob = 0.984615), ^while.body1, ^b1;
   ^while.body1:
-    i32 %17 = phi [^while.body, i32 0] [^b1, i32 %30];
-    i32 %18 = phi [^while.body, i32 0] [^b1, i32 %28];
+    i32 %17 = phi [^while.body, i32 0] [^b2, i32 %30];
+    i32 %18 = phi [^while.body, i32 0] [^b2, i32 %28];
     i32* %19 = getelementptr &(i32* %11)[i32 %17];
     i32* %20 = getelementptr &(i32* %11)[i32 %18];
     ubr ^while.header;
-  ^b:
+  ^b1:
     i32 %21 = add i32 %12, i32 1;
     i1 %22 = icmp sgt i32 %3, i32 %21;
     cbr i1 %22(prob = 0.984615), ^while.body, ^super.header;
   ^while.header:
-    i32 %23 = phi [^while.body1, i32 0] [^while.body2, i32 %27] [^b2, i32 %27];
+    i32 %23 = phi [^while.body1, i32 0] [^while.body2, i32 %27] [^b3, i32 %27];
     i1 %24 = icmp sgt i32 %14, i32 %23;
-    cbr i1 %24(prob = 0.984615), ^while.body2, ^b1;
+    cbr i1 %24(prob = 0.984615), ^while.body2, ^b2;
   ^super.header:
     i1 %25 = icmp sgt i32 %3, i32 3;
     cbr i1 %25(prob = 0.941176), ^super.header1, ^scalar.header;
   ^while.body2:
     i1 %26 = icmp slt i32 %18, i32 %23;
     i32 %27 = add i32 %23, i32 1;
-    cbr i1 %26(prob = 0.5), ^while.header, ^b2;
-  ^b1:
+    cbr i1 %26(prob = 0.5), ^while.header, ^b3;
+  ^b2:
     i32 %28 = add i32 %18, i32 1;
     i1 %29 = icmp sgt i32 %15, i32 %28;
     i32 %30 = add i32 %14, i32 %17;
-    cbr i1 %29(prob = 0.984615), ^while.body1, ^b;
+    cbr i1 %29(prob = 0.984615), ^while.body1, ^b1;
   ^super.header1:
     i1 %31 = icmp sgt i32 %4, i32 15;
     cbr i1 %31(prob = 0.941176), ^while.body3, ^scalar.header1;
@@ -72,7 +72,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i32 %36 = phi [^super.header, i32 undef] [^scalar.final1, i32 %189];
     i1 %37 = icmp sgt i32 %3, i32 %33;
     cbr i1 %37(prob = 0.75), ^while.body4, ^scalar.final;
-  ^b2:
+  ^b3:
     i32 %38 = mul i32 %15, i32 %23;
     i32* %39 = getelementptr &(i32* %20)[i32 %38];
     i32* %40 = getelementptr &(i32* %19)[i32 %23];

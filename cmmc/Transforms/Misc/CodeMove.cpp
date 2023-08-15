@@ -114,6 +114,8 @@ public:
                 if(!valid)
                     continue;
 
+                // inst->dumpInst(std::cerr);
+                // std::cerr << " : " << freq << " => " << blockTripCount.query(targetBlock) << '\n';
                 if(blockTripCount.query(targetBlock) + significantBlockTripCountDifference >= freq)
                     continue;
 

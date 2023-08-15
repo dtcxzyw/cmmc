@@ -40,7 +40,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i32 %15 = add i32 %14, i32 99;
     call (i32) -> void @putint(i32 %15);
     i1 %16 = icmp eq i32 %15, i32 0;
-    cbr i1 %16(prob = 0.5), ^b8, ^b9;
+    cbr i1 %16(prob = 0.49), ^b8, ^b9;
   ^b8:
     i32 %17 = add i32 %14, i32 199;
     call (i32) -> void @putint(i32 %17);

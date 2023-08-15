@@ -47,12 +47,10 @@ pcrel56:
 	lb a0, %pcrel_lo(pcrel55)(a1)
 	andi a4, a0, 255
 	subw a2, zero, a4
-	bne a3, zero, label26
-	mv a0, zero
-	j label2
-label26:
+	beq a3, zero, label26
+pcrel57:
 	auipc a5, %pcrel_hi(b)
-	lw a3, %pcrel_lo(label26)(a5)
+	lw a3, %pcrel_lo(pcrel57)(a5)
 	sltu a4, zero, a3
 	zext.w a0, a4
 label2:
@@ -61,7 +59,10 @@ label2:
 	mv a0, zero
 	or a5, a3, t0
 	andi a4, a5, 255
-pcrel57:
+pcrel58:
 	auipc a1, %pcrel_hi(d)
-	sb a4, %pcrel_lo(pcrel57)(a1)
+	sb a4, %pcrel_lo(pcrel58)(a1)
 	ret
+label26:
+	mv a0, zero
+	j label2

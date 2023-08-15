@@ -97,6 +97,14 @@ struct KnownRelations final {
             lessThan = KnownRelation::False;
             greaterThan = KnownRelation::False;
         }
+        if(lessThan == KnownRelation::True) {
+            equal = KnownRelation::False;
+            greaterThan = KnownRelation::False;
+        }
+        if(greaterThan == KnownRelation::True) {
+            equal = KnownRelation::False;
+            lessThan = KnownRelation::False;
+        }
         if(lessThan == KnownRelation::False && greaterThan == KnownRelation::False)
             equal = KnownRelation::True;
 
@@ -171,6 +179,22 @@ class ConstraintReduce final : public TransformPass<Function> {
             else if(relations.equal == KnownRelation::False)
                 eqMat[i][j] = eqMat[j][i] = 2;
         }
+        for(uint32_t i = 0; i < values.size(); ++i) {
+            if(values[i]->getType()->isBoolean())
+                continue;
+            if(auto lhs = dynamic_cast<ConstantInteger*>(values[i])) {
+                for(uint32_t j = i + 1; j < values.size(); ++j) {
+                    if(values[j]->getType()->isBoolean())
+                        continue;
+                    if(auto rhs = dynamic_cast<ConstantInteger*>(values[j])) {
+                        if(lhs->getSignExtended() == rhs->getSignExtended())
+                            eqMat[i][j] = eqMat[j][i] = 1;
+                        else
+                            eqMat[i][j] = eqMat[j][i] = 2;
+                    }
+                }
+            }
+        }
         floyd(eqMat, [](uint8_t v1, uint8_t v2) { return equalLUT[v1][v2]; });
 
         Matrix ltMat{};  // 1 -> i <= j 2 -> i < j
@@ -218,6 +242,8 @@ class ConstraintReduce final : public TransformPass<Function> {
         for(size_t i = 0; i < values.size(); i++)
             for(size_t j = i + 1; j < values.size(); j++) {
                 if(eqMat[i][j] || ltMat[i][j]) {
+                    if(values[i]->isConstant() && values[j]->isConstant())
+                        continue;
                     VarPair pair{ values[i], values[j] };
                     KnownRelations relations{};
                     if(eqMat[i][j] == 1 || eqMat[j][i] == 1)
@@ -333,20 +359,23 @@ class ConstraintReduce final : public TransformPass<Function> {
         }
     }
 
+    [[maybe_unused]] static void dumpSet(const CondSet& set) {
+        for(auto& [pair, rel] : set) {
+            std::cerr << '[';
+            pair.v1->dumpAsOperand(std::cerr);
+            std::cerr << " , ";
+            pair.v2->dumpAsOperand(std::cerr);
+            std::cerr << ']';
+
+            std::cerr << relName(rel.equal) << ' ' << relName(rel.lessThan) << ' ' << relName(rel.greaterThan) << '\n';
+        }
+    }
     [[maybe_unused]] static void dumpSystem(const std::unordered_map<Block*, CondSet>& conditions) {
         for(auto& [block, set] : conditions) {
             std::cerr << "block ";
             block->dumpAsTarget(std::cerr);
             std::cerr << '\n';
-            for(auto& [pair, rel] : set) {
-                std::cerr << '[';
-                pair.v1->dumpAsOperand(std::cerr);
-                std::cerr << " , ";
-                pair.v2->dumpAsOperand(std::cerr);
-                std::cerr << ']';
-
-                std::cerr << relName(rel.equal) << ' ' << relName(rel.lessThan) << ' ' << relName(rel.greaterThan) << '\n';
-            }
+            dumpSet(set);
         }
     }
 
@@ -577,6 +606,8 @@ public:
             }
         }
 
+        // dumpSystem(conditions);
+
         auto solveCmp = [](Value* v1, Value* v2, CompareOp op, const CondSet& set) -> std::optional<bool> {
             if(v1 == v2) {
                 switch(op) {
@@ -637,14 +668,16 @@ public:
             return std::nullopt;
         };
 
-        // dumpSystem(conditions);
-
         auto solveAtomic = [&](Value* val, const CondSet& set) -> std::optional<bool> {
             if(auto res = solveCmp(val, trueVal, CompareOp::ICmpEqual, set); res.has_value())
                 return res;
             CompareOp cmp;
             Value *v1, *v2;
             if(icmp(cmp, any(v1), any(v2))(MatchContext<Value>{ val })) {
+                // std::cerr << "solve cmp ";
+                // val->dump(std::cerr, Noop{});
+                // std::cerr << '\n';
+                // dumpSet(set);
                 return solveCmp(v1, v2, cmp, set);
             }
 
@@ -800,6 +833,10 @@ public:
         };
         bool modified = false;
         for(auto block : func.blocks()) {
+            // std::cerr << "Context: ";
+            // block->dumpAsTarget(std::cerr);
+            // std::cerr << '\n';
+
             auto& ctx = conditions[block];
             for(auto& inst : block->instructions()) {
                 if(inst.getType()->isBoolean()) {

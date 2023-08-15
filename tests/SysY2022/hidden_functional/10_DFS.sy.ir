@@ -32,7 +32,7 @@ internal func @same(i32 %x, i32 %tar) -> i32 {
     i32* %13 = getelementptr &([1005 * i32]* %0)[i64 0][i32 %12];
     i32 %14 = load i32* %13;
     i1 %15 = icmp eq i32 %14, i32 0;
-    cbr i1 %15(prob = 0.5), ^b3, ^b2;
+    cbr i1 %15(prob = 0.49), ^b3, ^b2;
   ^b2:
     i32* %16 = getelementptr &([5005 * i32]* %6)[i64 0][i32 %9];
     i32 %17 = load i32* %16;
@@ -55,7 +55,7 @@ internal func @same(i32 %x, i32 %tar) -> i32 {
     i32* %25 = getelementptr &([1005 * i32]* %0)[i64 0][i32 %24];
     i32 %26 = load i32* %25;
     i1 %27 = icmp eq i32 %26, i32 0;
-    cbr i1 %27(prob = 0.5), ^b6, ^b5;
+    cbr i1 %27(prob = 0.49), ^b6, ^b5;
   ^b5:
     i32* %28 = getelementptr &([5005 * i32]* %6)[i64 0][i32 %21];
     i32 %29 = load i32* %28;
@@ -78,7 +78,7 @@ internal func @same(i32 %x, i32 %tar) -> i32 {
     i32* %37 = getelementptr &([1005 * i32]* %0)[i64 0][i32 %36];
     i32 %38 = load i32* %37;
     i1 %39 = icmp eq i32 %38, i32 0;
-    cbr i1 %39(prob = 0.5), ^b9, ^b8;
+    cbr i1 %39(prob = 0.49), ^b9, ^b8;
   ^b8:
     i32* %40 = getelementptr &([5005 * i32]* %6)[i64 0][i32 %33];
     i32 %41 = load i32* %40;
@@ -101,7 +101,7 @@ internal func @same(i32 %x, i32 %tar) -> i32 {
     i32* %49 = getelementptr &([1005 * i32]* %0)[i64 0][i32 %48];
     i32 %50 = load i32* %49;
     i1 %51 = icmp eq i32 %50, i32 0;
-    cbr i1 %51(prob = 0.5), ^b12, ^b11;
+    cbr i1 %51(prob = 0.49), ^b12, ^b11;
   ^b11:
     i32* %52 = getelementptr &([5005 * i32]* %6)[i64 0][i32 %45];
     i32 %53 = load i32* %52;
@@ -124,7 +124,7 @@ internal func @same(i32 %x, i32 %tar) -> i32 {
     i32* %61 = getelementptr &([1005 * i32]* %0)[i64 0][i32 %60];
     i32 %62 = load i32* %61;
     i1 %63 = icmp eq i32 %62, i32 0;
-    cbr i1 %63(prob = 0.5), ^b15, ^b14;
+    cbr i1 %63(prob = 0.49), ^b15, ^b14;
   ^b14:
     i32* %64 = getelementptr &([5005 * i32]* %6)[i64 0][i32 %57];
     i32 %65 = load i32* %64;
@@ -147,7 +147,7 @@ internal func @same(i32 %x, i32 %tar) -> i32 {
     i32* %73 = getelementptr &([1005 * i32]* %0)[i64 0][i32 %72];
     i32 %74 = load i32* %73;
     i1 %75 = icmp eq i32 %74, i32 0;
-    cbr i1 %75(prob = 0.5), ^b18, ^b17;
+    cbr i1 %75(prob = 0.49), ^b18, ^b17;
   ^b17:
     i32* %76 = getelementptr &([5005 * i32]* %6)[i64 0][i32 %69];
     i32 %77 = load i32* %76;
@@ -170,7 +170,7 @@ internal func @same(i32 %x, i32 %tar) -> i32 {
     i32* %85 = getelementptr &([1005 * i32]* %0)[i64 0][i32 %84];
     i32 %86 = load i32* %85;
     i1 %87 = icmp eq i32 %86, i32 0;
-    cbr i1 %87(prob = 0.5), ^b21, ^b20;
+    cbr i1 %87(prob = 0.49), ^b21, ^b20;
   ^b20:
     i32* %88 = getelementptr &([5005 * i32]* %6)[i64 0][i32 %81];
     i32 %89 = load i32* %88;
@@ -193,7 +193,7 @@ internal func @same(i32 %x, i32 %tar) -> i32 {
     i32* %97 = getelementptr &([1005 * i32]* %0)[i64 0][i32 %96];
     i32 %98 = load i32* %97;
     i1 %99 = icmp eq i32 %98, i32 0;
-    cbr i1 %99(prob = 0.5), ^b24, ^b23;
+    cbr i1 %99(prob = 0.49), ^b24, ^b23;
   ^b23:
     i32* %100 = getelementptr &([5005 * i32]* %6)[i64 0][i32 %93];
     i32 %101 = load i32* %100;
@@ -517,7 +517,7 @@ func @main() -> i32 { NoRecurse Entry } {
     ret i32 0;
   ^b3:
     i1 %178 = icmp eq i32 %174, i32 81;
-    cbr i1 %178(prob = 0.5), ^if.then, ^if.else;
+    cbr i1 %178(prob = 0.49), ^if.then, ^if.else;
   ^if.then:
     i32 %179 = call () -> i32 @getch();
     i32 %180 = add i32 %179, i32 -48;

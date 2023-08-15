@@ -79,7 +79,7 @@ static bool matchAddRec(Value* giv, Block* latch, std::unordered_set<Value*>& va
 bool extractLoopBody(Function& func, const Loop& loop, const DominateAnalysisResult& dom, const CFGAnalysisResult& cfg,
                      Module& mod, bool independent, const PointerBaseAnalysisResult* pointerBase, bool allowInnermost,
                      bool allowInnerLoop, bool onlyAddRec, bool estimateBlockSizeForUnroll, bool needSubLoop,
-                     bool convertReduceToAtomic, LoopBodyInfo* ret) {
+                     bool convertReduceToAtomic, bool duplicateCmp, LoopBodyInfo* ret) {
     if(!allowInnermost && loop.header == loop.latch)
         return false;
 
@@ -102,6 +102,15 @@ bool extractLoopBody(Function& func, const Loop& loop, const DominateAnalysisRes
     std::unordered_set<Block*> body;
     if(!collectLoopBody(loop.header, loop.latch, dom, cfg, body, allowInnerLoop, needSubLoop))
         return false;
+    // latch -> exit
+    for(auto block : body) {
+        if(block == loop.latch)
+            continue;
+        for(auto succ : cfg.successors(block)) {
+            if(!body.count(succ))
+                return false;
+        }
+    }
 
     // std::cerr << "detect body\n";
     // for(auto b : body) {
@@ -309,6 +318,24 @@ bool extractLoopBody(Function& func, const Loop& loop, const DominateAnalysisRes
     if(giv) {
         val2arg.emplace(giv, bodyFunc->addArg(giv->getType()));
     }
+    // duplicate cmp
+    if(duplicateCmp)
+        for(auto block : body) {
+            const auto terminator = block->getTerminator();
+            if(terminator->getInstID() != InstructionID::ConditionalBranch)
+                continue;
+            const auto cond = terminator->getOperand(0);
+            if(body.count(cond->getBlock()))
+                continue;
+            CompareOp cmp;
+            Value* v1;
+            intmax_t i1;
+            if(icmp(cmp, any(v1), int_(i1))(MatchContext<Value>{ cond })) {
+                const auto newCond = cond->as<Instruction>()->clone();
+                newCond->insertBefore(block, terminator->asIterator());
+                terminator->mutableOperands().front()->resetValue(newCond);
+            }
+        }
     for(auto block : body) {
         for(auto& inst : block->instructions()) {
             for(auto operand : inst.operands()) {
@@ -395,8 +422,8 @@ bool extractLoopBody(Function& func, const Loop& loop, const DominateAnalysisRes
         giv->as<PhiInst>()->removeSource(loop.latch);
         giv->as<PhiInst>()->addIncoming(newLoop, call);
     }
-    for(auto inst :
-        std::initializer_list<Instruction*>{ cond, next, loop.inductionVar->as<Instruction>(), giv->as<Instruction>() }) {
+    for(auto inst : std::initializer_list<Instruction*>{ cond, next, loop.inductionVar->as<Instruction>(),
+                                                         giv ? giv->as<Instruction>() : nullptr }) {
         if(!inst)
             continue;
         for(auto& operand : inst->mutableOperands()) {
@@ -457,6 +484,7 @@ class LoopBodyExtract final : public TransformPass<Function> {
                                         /*estimate block size*/ true,
                                         /*need sub-loop*/ false,
                                         /*convert reduce to atomic*/ false,
+                                        /*duplicate cmp*/ false,
                                         /*ret*/ nullptr);
         }
         return modified;

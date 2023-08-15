@@ -3,7 +3,7 @@ func @fn3() -> void { NoRecurse } {
     i32* %0 = ptrcast i32* @c to i32*;
     i32 %1 = load i32* %0;
     i1 %2 = icmp eq i32 %1, i32 0;
-    cbr i1 %2(prob = 0.5), ^if.then, ^rhsBlock;
+    cbr i1 %2(prob = 0.49), ^if.then, ^rhsBlock;
   ^rhsBlock:
     i16* %3 = ptrcast i16* @a to i16*;
     i16 %4 = load i16* %3;
@@ -21,7 +21,7 @@ func @fn3() -> void { NoRecurse } {
     i32 %14 = zext i1 %13 to i32;
     i32 %15 = ztrunc i32 %14 to i32;
     i1 %16 = icmp eq i32 %15, i32 0;
-    cbr i1 %16(prob = 0.5), ^b, ^rhsBlock;
+    cbr i1 %16(prob = 0.49), ^b, ^rhsBlock;
   ^b:
     i32 %17 = phi [^rhsBlock, i32 %7] [^if.then, i32 0];
     i32 %18 = ztrunc i32 %17 to i32;

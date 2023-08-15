@@ -307,7 +307,7 @@ func @main() -> i32 { NoRecurse Entry } {
     ret i32 0;
   ^b3:
     i1 %165 = icmp eq i32 %161, i32 81;
-    cbr i1 %165(prob = 0.5), ^if.then, ^if.else;
+    cbr i1 %165(prob = 0.49), ^if.then, ^if.else;
   ^if.then:
     i32 %166 = call () -> i32 @getch();
     i32 %167 = add i32 %166, i32 -48;
@@ -493,7 +493,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i32* %303 = getelementptr &([1005 * i32]* %7)[i64 0][i32 %302];
     i32 %304 = load i32* %303;
     i1 %305 = icmp eq i32 %304, i32 0;
-    cbr i1 %305(prob = 0.5), ^if.then1, ^b9;
+    cbr i1 %305(prob = 0.49), ^if.then1, ^b9;
   ^306:
     i32 %307 = phi [^while.body15, i32 %285] [^b9, i32 %311];
     i1 %308 = icmp slt i32 %288, i32 %307;

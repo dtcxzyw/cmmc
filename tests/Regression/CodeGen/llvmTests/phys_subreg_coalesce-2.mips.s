@@ -11,12 +11,8 @@ label2:
 	jr $ra
 	nop
 label4:
-	bne $a1, $zero, label5
+	beq $a1, $zero, label16
 	nop
-	li $v0, 1
-	b label2
-	nop
-label5:
 	sltiu $t0, $a1, 2
 	beq $t0, $zero, label20
 	nop
@@ -38,5 +34,9 @@ label6:
 	xori $t1, $t1, 1
 	bne $t1, $zero, label6
 	nop
+	b label2
+	nop
+label16:
+	li $v0, 1
 	b label2
 	nop

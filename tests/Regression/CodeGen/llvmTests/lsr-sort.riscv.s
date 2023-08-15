@@ -16,14 +16,7 @@ pcrel33:
 	auipc a0, %pcrel_hi(X)
 	li a2, 1
 	sh zero, %pcrel_lo(pcrel33)(a0)
-	bne a1, a2, label16
-	li a0, 1
-	j label5
-label10:
-	mv a0, zero
-label5:
-	ret
-label16:
+	beq a1, a2, label16
 	li a0, 1
 label3:
 	zext.h a2, a0
@@ -32,4 +25,11 @@ pcrel34:
 	addiw a0, a0, 1
 	sh a2, %pcrel_lo(pcrel34)(a3)
 	bne a1, a0, label3
+	j label5
+label10:
+	mv a0, zero
+label5:
+	ret
+label16:
+	li a0, 1
 	j label5

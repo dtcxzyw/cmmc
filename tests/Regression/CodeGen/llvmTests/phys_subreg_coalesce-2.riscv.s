@@ -10,10 +10,7 @@ binomial:
 label2:
 	ret
 label4:
-	bne a2, zero, label5
-	li a0, 1
-	j label2
-label5:
+	beq a2, zero, label16
 	li a4, 2
 	bltu a2, a4, label2
 	mv a1, a0
@@ -26,4 +23,7 @@ label6:
 	divuw a1, a4, a3
 	bleu a3, a5, label6
 	mv a0, a1
+	j label2
+label16:
+	li a0, 1
 	j label2

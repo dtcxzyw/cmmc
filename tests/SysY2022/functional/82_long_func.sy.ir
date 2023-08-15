@@ -262,18 +262,18 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
   ^if.then10:
     i32 %147 = and i32 %103, i32 1;
     i1 %148 = icmp eq i32 %147, i32 0;
-    cbr i1 %148(prob = 0.5), ^if.then14, ^b17;
+    cbr i1 %148(prob = 0.49), ^if.then14, ^b17;
   ^if.else3:
     i1 %149 = ztrunc i32 %103 to i1;
     cbr i1 %149(prob = 0.5), ^if.then14, ^b17;
   ^if.then11:
     i32 %150 = and i32 %120, i32 1;
     i1 %151 = icmp eq i32 %150, i32 0;
-    cbr i1 %151(prob = 0.5), ^if.then15, ^b18;
+    cbr i1 %151(prob = 0.49), ^if.then15, ^b18;
   ^if.then12:
     i32 %152 = and i32 %126, i32 1;
     i1 %153 = icmp eq i32 %152, i32 0;
-    cbr i1 %153(prob = 0.5), ^if.then16, ^b19;
+    cbr i1 %153(prob = 0.49), ^if.then16, ^b19;
   ^b14:
     i32 %154 = phi [^while.body13, i32 %112] [^if.then9, i32 %146];
     i32 %155 = add i32 %111, i32 1;
@@ -289,7 +289,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
   ^if.then13:
     i32 %160 = and i32 %139, i32 1;
     i1 %161 = icmp eq i32 %160, i32 0;
-    cbr i1 %161(prob = 0.5), ^if.then17, ^b21;
+    cbr i1 %161(prob = 0.49), ^if.then17, ^b21;
   ^b15:
     i32 %162 = phi [^if.then7, i32 %110] [^if.else1, i32 %130];
     i1 %163 = icmp neq i32 %162, i32 0;
@@ -734,18 +734,18 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
   ^if.then34:
     i32 %437 = and i32 %399, i32 1;
     i1 %438 = icmp eq i32 %437, i32 0;
-    cbr i1 %438(prob = 0.5), ^if.then38, ^b51;
+    cbr i1 %438(prob = 0.49), ^if.then38, ^b51;
   ^if.else10:
     i1 %439 = ztrunc i32 %399 to i1;
     cbr i1 %439(prob = 0.5), ^if.then38, ^b51;
   ^if.then35:
     i32 %440 = and i32 %411, i32 1;
     i1 %441 = icmp eq i32 %440, i32 0;
-    cbr i1 %441(prob = 0.5), ^if.then39, ^b52;
+    cbr i1 %441(prob = 0.49), ^if.then39, ^b52;
   ^if.then36:
     i32 %442 = and i32 %416, i32 1;
     i1 %443 = icmp eq i32 %442, i32 0;
-    cbr i1 %443(prob = 0.5), ^if.then40, ^b53;
+    cbr i1 %443(prob = 0.49), ^if.then40, ^b53;
   ^b48:
     i32 %444 = add i32 %370, i32 1;
     ubr ^while.header;
@@ -766,7 +766,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
   ^if.then37:
     i32 %453 = and i32 %430, i32 1;
     i1 %454 = icmp eq i32 %453, i32 0;
-    cbr i1 %454(prob = 0.5), ^if.then42, ^b55;
+    cbr i1 %454(prob = 0.49), ^if.then42, ^b55;
   ^b49:
     i32 %455 = phi [^if.then32, i32 %407] [^if.else8, i32 %421];
     i1 %456 = icmp neq i32 %455, i32 0;
@@ -1200,18 +1200,18 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
   ^if.then59:
     i32 %727 = and i32 %692, i32 1;
     i1 %728 = icmp eq i32 %727, i32 0;
-    cbr i1 %728(prob = 0.5), ^if.then63, ^b83;
+    cbr i1 %728(prob = 0.49), ^if.then63, ^b83;
   ^if.else17:
     i1 %729 = ztrunc i32 %692 to i1;
     cbr i1 %729(prob = 0.5), ^if.then63, ^b83;
   ^if.then60:
     i32 %730 = and i32 %702, i32 1;
     i1 %731 = icmp eq i32 %730, i32 0;
-    cbr i1 %731(prob = 0.5), ^if.then64, ^b84;
+    cbr i1 %731(prob = 0.49), ^if.then64, ^b84;
   ^if.then61:
     i32 %732 = and i32 %709, i32 1;
     i1 %733 = icmp eq i32 %732, i32 0;
-    cbr i1 %733(prob = 0.5), ^if.then65, ^b85;
+    cbr i1 %733(prob = 0.49), ^if.then65, ^b85;
   ^if.else18:
     i1 %734 = ztrunc i32 %702 to i1;
     cbr i1 %734(prob = 0.5), ^if.then64, ^b84;
@@ -1221,7 +1221,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
   ^if.then62:
     i32 %736 = and i32 %722, i32 1;
     i1 %737 = icmp eq i32 %736, i32 0;
-    cbr i1 %737(prob = 0.5), ^if.then66, ^b86;
+    cbr i1 %737(prob = 0.49), ^if.then66, ^b86;
   ^b81:
     i32 %738 = phi [^if.then57, i32 %699] [^if.else15, i32 %713];
     i1 %739 = icmp neq i32 %738, i32 0;

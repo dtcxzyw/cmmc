@@ -262,7 +262,7 @@ func @main() -> i32 { NoRecurse Entry } {
     store i32* %22 with i32 0;
     i32 %27 = call (i32, i32, i32, [10 * i32]*, [10 * i32]*) -> i32 @dfs(i32 1, i32 %0, i32 1879048192, [10 * i32]* %size, [10 * i32]* %used);
     i1 %28 = icmp eq i32 %27, i32 0;
-    cbr i1 %28(prob = 0.5), ^if.then, ^b;
+    cbr i1 %28(prob = 0.49), ^if.then, ^b;
   ^while.body:
     i32 %29 = phi [^prebody, i32 %1] [^while.body, i32 %52];
     i32 %30 = call () -> i32 @getint();

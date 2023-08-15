@@ -16,10 +16,8 @@ foo:
 	movt r0, #:upper16:g
 	ldr r1, [r0, #0]
 	cmp r1, #0
-	bne label8
-label2:
-	bx lr
-label8:
+	beq label2
 	add r1, r1, #10
 	str r1, [r0, #0]
-	b label2
+label2:
+	bx lr

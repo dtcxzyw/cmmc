@@ -59,6 +59,7 @@ def objective_func(trail: optuna.Trial):
     if stage == 0:
         pass # baseline
     if stage == 1:
+        opt.add_pass("loop_unswitch")
         opt.add_pass("loop_parallel")
     if stage == 2:
         opt.add_pass("loop_extract")

@@ -20,15 +20,15 @@ foo:
 pcrel27:
 	auipc a1, %pcrel_hi(x)
 	lw a0, %pcrel_lo(pcrel27)(a1)
-	bne a0, zero, label10
+	beq a0, zero, label2
 pcrel28:
-	auipc a2, %pcrel_hi(a)
-	lw a0, %pcrel_lo(pcrel28)(a2)
-	j label3
-label10:
 	auipc a2, %pcrel_hi(b)
-	lw a0, %pcrel_lo(label10)(a2)
+	lw a0, %pcrel_lo(pcrel28)(a2)
 label3:
 	auipc a1, %pcrel_hi(x)
 	sw a0, %pcrel_lo(label3)(a1)
 	ret
+label2:
+	auipc a2, %pcrel_hi(a)
+	lw a0, %pcrel_lo(label2)(a2)
+	j label3

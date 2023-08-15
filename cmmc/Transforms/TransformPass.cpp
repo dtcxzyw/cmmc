@@ -293,7 +293,7 @@ std::shared_ptr<PassManager<Module>> PassManager<Module>::get(OptimizationLevel 
 
     // preprocess to improve transform performance
     for(auto& pass : passesSource.collectFunctionPass({
-            // "ProbPrediction",         //
+            "ProbPrediction",         //
             "BlockSort",              //
             "NoSideEffectEliminate",  // clean up
             "ConstantMerge",          //
@@ -416,6 +416,12 @@ std::shared_ptr<PassManager<Module>> PassManager<Module>::get(OptimizationLevel 
                 "BlockEliminate",           // clean up
                 "LoopGEPCombine",           //
                 "NoSideEffectEliminate",    // clean up
+                "LoopUnswitch",
+                "ConstantPropagation",  // clean up
+                "SimplifyBranch",       // clean up
+                "CombineBranch",        // clean up
+                "BlockMerge",           // clean up
+                "BlockEliminate",       // clean up
                 "SROA",
             }))
             basic->addPass(pass);

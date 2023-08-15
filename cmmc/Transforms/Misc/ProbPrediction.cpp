@@ -17,34 +17,56 @@
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/Transforms/Hyperparameters.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
+#include <cmmc/Transforms/Util/PatternMatch.hpp>
+#include <cstdint>
 
 CMMC_NAMESPACE_BEGIN
 
 class ProbPrediction final : public TransformPass<Function> {
 public:
     bool run(Function& func, AnalysisPassManager& analysis) const override {
-        auto& dom = analysis.get<DominateAnalysis>(func);
+        CMMC_UNUSED(analysis);
+        // auto& dom = analysis.get<DominateAnalysis>(func);
         bool modified = false;
         for(auto block : func.blocks()) {
             const auto terminator = block->getTerminator();
             if(terminator->getInstID() == InstructionID::ConditionalBranch) {
                 const auto branch = terminator->as<BranchInst>();
-                const auto trueTarget = branch->getTrueTarget();
-                const auto falseTarget = branch->getFalseTarget();
+                const auto cond = branch->getOperand(0);
                 const auto prob = branch->getBranchProb();
                 if(std::fabs(prob - defaultIfThenProb) < 1e-5) {
-                    if(trueTarget == falseTarget)
-                        continue;
-                    if(!dom.reachable(trueTarget) || !dom.reachable(falseTarget))
-                        continue;
-                    const auto d1 = dom.subTreeSize(trueTarget);
-                    const auto d2 = dom.subTreeSize(falseTarget);
-                    if(d1 != d2) {
-                        const auto biasedProb = 0.8;
-                        branch->updateBranchProb(d1 > d2 ? biasedProb : 1.0 - biasedProb);
-                        modified = true;
+                    // FIXME
+                    Value* v1;
+                    intmax_t i1;
+                    CompareOp cmp;
+                    if(icmp(cmp, any(v1), int_(i1))(MatchContext<Value>{ cond })) {
+                        const auto biasedProb = 0.51;
+                        if(cmp == CompareOp::ICmpEqual) {
+                            branch->updateBranchProb(1.0 - biasedProb);
+                            modified = true;
+                        }
+                        // if(cmp == CompareOp::ICmpNotEqual) {
+                        //     branch->updateBranchProb(biasedProb);
+                        //     modified = true;
+                        // }
                     }
                 }
+                // const auto trueTarget = branch->getTrueTarget();
+                // const auto falseTarget = branch->getFalseTarget();
+                // const auto prob = branch->getBranchProb();
+                // if(std::fabs(prob - defaultIfThenProb) < 1e-5) {
+                //     if(trueTarget == falseTarget)
+                //         continue;
+                //     if(!dom.reachable(trueTarget) || !dom.reachable(falseTarget))
+                //         continue;
+                //     const auto d1 = dom.subTreeSize(trueTarget);
+                //     const auto d2 = dom.subTreeSize(falseTarget);
+                //     if(d1 != d2) {
+                //         const auto biasedProb = 0.8;
+                //         branch->updateBranchProb(d1 > d2 ? biasedProb : 1.0 - biasedProb);
+                //         modified = true;
+                //     }
+                // }
             }
         }
 
