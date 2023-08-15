@@ -216,6 +216,11 @@ class LLVMConversionContext final {
             case InstructionID::Store:
                 return builder.CreateAlignedStore(getOperand(1), getOperand(0),
                                                   llvm::MaybeAlign{ inst.getOperand(1)->getType()->getAlignment(dataLayout) });
+            case InstructionID::AtomicAdd: {
+                return builder.CreateAtomicRMW(llvm::AtomicRMWInst::Add, getOperand(0), getOperand(1),
+                                               llvm::MaybeAlign{ inst.getOperand(1)->getType()->getAlignment(dataLayout) },
+                                               llvm::AtomicOrdering::SequentiallyConsistent);
+            }
             case InstructionID::Add:
                 return builder.CreateAdd(getOperand(0), getOperand(1));
             case InstructionID::Sub:

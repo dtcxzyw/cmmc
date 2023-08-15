@@ -118,6 +118,9 @@ class LoadReduce final : public TransformPass<Function> {
                             continue;
                     }
                     break;  // may store before load
+                } else if(inst.getInstID() == InstructionID::AtomicAdd) {
+                    auto ptr = inst.getOperand(0);
+                    storePointers.push_back(ptr);
                 }
             }
             if(loadInsts.empty())

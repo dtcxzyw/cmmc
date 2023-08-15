@@ -159,6 +159,7 @@ public:
             case InstructionID::ICmp:
             case InstructionID::FCmp:
             case InstructionID::Switch:
+            case InstructionID::AtomicAdd:
                 return false;
             default:
                 return true;

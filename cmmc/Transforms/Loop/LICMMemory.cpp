@@ -37,7 +37,8 @@ class LICMMemory final : public TransformPass<Function> {
         for(auto& inst : block->instructions()) {
             if(inst.getInstID() == InstructionID::Call)  // TODO: allow no-side-effect call
                 return false;
-            if(inst.getInstID() == InstructionID::Store || inst.getInstID() == InstructionID::Load) {
+            if(inst.getInstID() == InstructionID::Store || inst.getInstID() == InstructionID::Load ||
+               inst.getInstID() == InstructionID::AtomicAdd) {
                 auto addr = inst.getOperand(0);
                 if(addr->getBlock() != block)  // static address memory instruction
                     memoryInst[addr].push_back(&inst);
@@ -68,7 +69,8 @@ class LICMMemory final : public TransformPass<Function> {
         for(auto& [addr, insts] : memoryInst) {
             bool isDistinct = true;
             for(auto& inst : block->instructions())
-                if(inst.getInstID() == InstructionID::Store || inst.getInstID() == InstructionID::Load) {
+                if(inst.getInstID() == InstructionID::Store || inst.getInstID() == InstructionID::Load ||
+                   inst.getInstID() == InstructionID::AtomicAdd) {
                     auto thatAddr = inst.getOperand(0);
                     if(thatAddr != addr && !aliasSet.isDistinct(addr, thatAddr)) {
                         isDistinct = false;
@@ -79,6 +81,10 @@ class LICMMemory final : public TransformPass<Function> {
             if(!isDistinct)
                 continue;
 
+            bool hasAtomic = std::any_of(insts.begin(), insts.end(),
+                                         [](Instruction* inst) { return inst->getInstID() == InstructionID::AtomicAdd; });
+            if(hasAtomic)
+                continue;
             bool hasLoad = std::any_of(insts.begin(), insts.end(),
                                        [](Instruction* inst) { return inst->getInstID() == InstructionID::Load; });
             bool hasStore = std::any_of(insts.begin(), insts.end(),

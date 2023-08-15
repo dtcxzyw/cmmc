@@ -16,6 +16,7 @@
 // See also https://courses.cs.washington.edu/courses/cse410/09sp/examples/MIPSCallingConventionsSummary.pdf for the o32 calling
 // convention
 
+#include "cmmc/IR/Instruction.hpp"
 #include <MIPS/ISelInfoDecl.hpp>
 #include <MIPS/InstInfoDecl.hpp>
 #include <MIPS/ScheduleModelDecl.hpp>
@@ -200,7 +201,7 @@ class MIPSTarget final : public Target {
 
 public:
     [[nodiscard]] bool isNativeSupported(InstructionID inst) const noexcept override {
-        return inst != InstructionID::SMin && inst != InstructionID::SMax;
+        return inst != InstructionID::SMin && inst != InstructionID::SMax && inst != InstructionID::AtomicAdd;
     }
     [[nodiscard]] const DataLayout& getDataLayout() const noexcept override {
         return mDataLayout;

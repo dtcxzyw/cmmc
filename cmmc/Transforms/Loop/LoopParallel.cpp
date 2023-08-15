@@ -156,9 +156,6 @@ class LoopParallel final : public TransformPass<Function> {
             // std::cerr << "modify\n";
 
             const auto parallelFor = lookupParallelFor(mod);
-            Function* reduceAddI32 = nullptr;
-            if(bodyInfo.rec)
-                reduceAddI32 = lookupReduceAddI32(mod);
 
             bodyInfo.indvar->removeSource(bodyInfo.loop);
             if(bodyInfo.rec)
@@ -312,7 +309,12 @@ class LoopParallel final : public TransformPass<Function> {
             builder.setCurrentBlock(exit);
             if(giv && bodyInfo.recUsedByOuter) {
                 const auto ptr = builder.makeOp<PtrAddInst>(payloadStorage, givOffset, PointerType::get(i32));
-                builder.makeOp<FunctionCallInst>(reduceAddI32, std::vector<Value*>{ ptr, bodyExec });
+                if(mod.getTarget().isNativeSupported(InstructionID::AtomicAdd)) {
+                    builder.makeOp<AtomicAddInst>(ptr, bodyExec);
+                } else {
+                    Function* reduceAddI32 = lookupReduceAddI32(mod);
+                    builder.makeOp<FunctionCallInst>(reduceAddI32, std::vector<Value*>{ ptr, bodyExec });
+                }
             }
             builder.makeOp<ReturnInst>();
 

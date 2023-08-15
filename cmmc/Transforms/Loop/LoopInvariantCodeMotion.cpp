@@ -53,11 +53,14 @@ class LoopInvariantCodeMotion final : public TransformPass<Function> {
                 return false;
             case InstructionID::Store:  // TODO: handle memory
                 return false;
+            case InstructionID::AtomicAdd:
+                return false;
             case InstructionID::Load: {
                 auto addr = inst->getOperand(0);
                 auto inverseOp = inst->getInstID() == InstructionID::Store ? InstructionID::Load : InstructionID::Store;
                 for(auto& subInst : block->instructions()) {
-                    if(subInst.getInstID() == inverseOp && !aliasSet.isDistinct(addr, subInst.getOperand(0)))
+                    if((subInst.getInstID() == inverseOp || subInst.getInstID() == InstructionID::AtomicAdd) &&
+                       !aliasSet.isDistinct(addr, subInst.getOperand(0)))
                         return false;
                     if(subInst.getInstID() == InstructionID::Call && !isDistinctCall(inst, &subInst))
                         return false;

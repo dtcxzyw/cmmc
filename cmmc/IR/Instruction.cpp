@@ -248,6 +248,8 @@ static std::string_view getInstName(InstructionID instID) {
             return "load"sv;
         case InstructionID::Store:
             return "store"sv;
+        case InstructionID::AtomicAdd:
+            return "atomicadd"sv;
         case InstructionID::Add:
             return "add"sv;
         case InstructionID::Sub:
@@ -1000,6 +1002,17 @@ void FunctionPtrInst::dumpInst(std::ostream& out) const {
 }
 [[nodiscard]] Instruction* FunctionPtrInst::clone() const {
     return make<FunctionPtrInst>(getOperand(0), getType());
+}
+
+void AtomicAddInst::dumpInst(std::ostream& out) const {
+    dumpWithoutOperand(out);
+    out << ' ';
+    getOperand(0)->dumpAsOperand(out);
+    out << ", ";
+    getOperand(1)->dumpAsOperand(out);
+}
+[[nodiscard]] Instruction* AtomicAddInst::clone() const {
+    return make<AtomicAddInst>(getOperand(0), getOperand(1));
 }
 
 CMMC_NAMESPACE_END

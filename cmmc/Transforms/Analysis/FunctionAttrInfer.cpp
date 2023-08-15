@@ -47,7 +47,8 @@ public:
                 for(auto block : func.blocks()) {
                     for(auto& inst : block->instructions()) {
                         switch(inst.getInstID()) {
-                            case InstructionID::Load: {
+                            case InstructionID::Load:
+                            case InstructionID::AtomicAdd: {
                                 const auto addr = inst.getOperand(0);
                                 if(addressSpace.mustBe(addr, AddressSpaceType::InternalStack))
                                     continue;
@@ -83,7 +84,8 @@ public:
                 for(auto block : func.blocks()) {
                     for(auto& inst : block->instructions()) {
                         switch(inst.getInstID()) {
-                            case InstructionID::Store: {
+                            case InstructionID::Store:
+                            case InstructionID::AtomicAdd: {
                                 const auto addr = inst.getOperand(0);
                                 if(addressSpace.mustBe(addr, AddressSpaceType::InternalStack))
                                     continue;

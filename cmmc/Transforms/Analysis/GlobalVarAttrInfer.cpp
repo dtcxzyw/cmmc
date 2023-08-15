@@ -51,7 +51,7 @@ class GlobalVarAttrInfer final : public TransformPass<Module> {
                 auto& alias = analysis.get<AliasAnalysis>(*func);
                 for(auto block : func->blocks()) {
                     for(auto& inst : block->instructions()) {
-                        if(inst.getInstID() == InstructionID::Store) {
+                        if(inst.getInstID() == InstructionID::Store || inst.getInstID() == InstructionID::AtomicAdd) {
                             const auto address = inst.getOperand(0);
                             todo.remove_if([&](GlobalVariable* gv) { return !alias.isDistinct(gv, address); });
                         } else if(inst.getInstID() == InstructionID::Call) {

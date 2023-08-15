@@ -136,12 +136,12 @@ main:
 	sd s3, 32(sp)
 	sd s4, 40(sp)
 	sd a0, 48(sp)
-pcrel165:
+pcrel168:
 	auipc a0, %pcrel_hi(__HELLO)
 	sd zero, 56(sp)
-	addi s2, a0, %pcrel_lo(pcrel165)
+	addi s2, a0, %pcrel_lo(pcrel168)
 	sw zero, 64(sp)
-	lw a1, %pcrel_lo(pcrel165)(a0)
+	lw a1, %pcrel_lo(pcrel168)(a0)
 	beq a1, zero, label41
 .p2align 2
 label3:
@@ -168,10 +168,10 @@ label28:
 	addw a1, a2, s1
 	addiw a0, a1, 23
 	slli a4, a0, 1
-	srli a3, a4, 59
-	add a1, a0, a3
-	andi a2, a1, -32
-	subw s1, a0, a2
+	srli a2, a4, 59
+	add a1, a0, a2
+	andi a3, a1, -32
+	subw s1, a0, a3
 	bne s1, zero, label6
 	mv a0, zero
 	ld ra, 0(sp)
@@ -189,55 +189,54 @@ label8:
 	mul a1, a0, a3
 	add s4, s3, a1
 	lw a2, 0(s4)
-	bne a2, zero, label10
-	j label13
-.p2align 2
-label12:
-	addi s4, s4, 4
+	beq a2, zero, label13
 .p2align 2
 label10:
 	lw a0, 0(s4)
 	jal putch
 	lw a1, 4(s4)
-	bne a1, zero, label12
+	beq a1, zero, label13
+	addi s4, s4, 4
+	j label10
 label13:
 	auipc a0, %pcrel_hi(saY_HeI10_To)
 	lw a1, %pcrel_lo(label13)(a0)
 	addi s4, a0, %pcrel_lo(label13)
-	bne a1, zero, label15
-	j label18
+	beq a1, zero, label14
 .p2align 2
-label17:
-	addi s4, s4, 4
-.p2align 2
-label15:
+label25:
 	lw a0, 0(s4)
 	jal putch
 	lw a1, 4(s4)
-	bne a1, zero, label17
-label18:
+	beq a1, zero, label14
+	addi s4, s4, 4
+	j label25
+label14:
 	li a2, 200
 	mul a0, s2, a2
 	add s2, s3, a0
 	lw a1, 0(s2)
-	beq a1, zero, label23
+	beq a1, zero, label15
 .p2align 2
-label20:
+label21:
 	lw a0, 0(s2)
 	jal putch
 	lw a1, 4(s2)
-	beq a1, zero, label23
+	beq a1, zero, label15
 	addi s2, s2, 4
-	j label20
-label23:
+	j label21
+label15:
 	lw a0, 48(sp)
 	beq a0, zero, label28
 	mv s2, s0
+	j label17
 .p2align 2
-label25:
+label19:
+	addi s2, s2, 4
+.p2align 2
+label17:
 	lw a0, 0(s2)
 	jal putch
 	lw a1, 4(s2)
-	beq a1, zero, label28
-	addi s2, s2, 4
-	j label25
+	bne a1, zero, label19
+	j label28

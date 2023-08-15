@@ -50,6 +50,7 @@ enum class InstructionID {
     MemoryOpBegin,
     Load,
     Store,
+    AtomicAdd,
     MemoryOpEnd,
     // integer arithmetic ops
     IntegerOpBegin,
@@ -802,6 +803,13 @@ class FunctionPtrInst final : public Instruction {
 public:
     explicit FunctionPtrInst(Value* callee, const Type* dstType)
         : Instruction{ InstructionID::FunctionPtr, dstType, { callee } } {}
+    void dumpInst(std::ostream& out) const override;
+    [[nodiscard]] Instruction* clone() const override;
+};
+
+class AtomicAddInst final : public Instruction {
+public:
+    explicit AtomicAddInst(Value* dst, Value* value) : Instruction{ InstructionID::AtomicAdd, VoidType::get(), { dst, value } } {}
     void dumpInst(std::ostream& out) const override;
     [[nodiscard]] Instruction* clone() const override;
 };

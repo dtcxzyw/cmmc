@@ -130,6 +130,9 @@ InstInfo:
       Mnemonic: sh
     SW:
       Mnemonic: sw
+  AMOADD_W:
+    Format: amoadd.w.aqrl $Rd:GPR[Def], $Val:GPR[Use], ($Rs1:GPR[Use])
+    Flag: [Load, Store]
   # RV64I Base Integer Instruction Set
   ## 5.2 Integer Computational Instructions
   InstanceRIW:
@@ -2141,7 +2144,21 @@ ScheduleModel:
           UNIMP,
         ]
       LoadStore:
-        [LB, LH, LW, LBU, LHU, SB, SH, SW, LD, LWU, SD, InstStoreRegToStack]
+        [
+          LB,
+          LH,
+          LW,
+          LBU,
+          LHU,
+          SB,
+          SH,
+          SW,
+          LD,
+          LWU,
+          SD,
+          InstStoreRegToStack,
+          AMOADD_W,
+        ]
       Multi: [MUL, MULH, MULHSU, MULHU, MULW]
       DivRem: [DIV, DIVU, REM, REMU, DIVUW, REMUW]
       SDivRemW: [DIVW, REMW]

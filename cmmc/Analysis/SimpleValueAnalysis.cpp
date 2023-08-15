@@ -99,12 +99,14 @@ void SimpleValueAnalysis::next(Instruction* inst) {
                     continue;
                 invalidate(values, addr, val);
             }
-            replace(mLastValue[nullptr], addr, val, forceReplace);
+            if(val)
+                replace(mLastValue[nullptr], addr, val, forceReplace);
         } else {
             auto& lastValue = mLastValue[base];
             invalidate(lastValue, addr, val);
             invalidate(mLastValue[nullptr], addr, val);
-            replace(lastValue, addr, val, forceReplace);
+            if(val)
+                replace(lastValue, addr, val, forceReplace);
         }
     };
 
@@ -129,6 +131,13 @@ void SimpleValueAnalysis::next(Instruction* inst) {
             const auto addr = inst->getOperand(0);
             if(const auto base = mPointerBase.lookup(addr))
                 update(base, addr, inst->getOperand(1), true);
+            else
+                mLastValue.clear();  // discard all cached values
+        } break;
+        case InstructionID::AtomicAdd: {
+            const auto addr = inst->getOperand(0);
+            if(const auto base = mPointerBase.lookup(addr))
+                update(base, addr, nullptr, false);
             else
                 mLastValue.clear();  // discard all cached values
         } break;

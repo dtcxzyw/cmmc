@@ -7,71 +7,69 @@ main:
 	# stack usage: CalleeArg[0] Local[40] RegSpill[0] CalleeSaved[32]
 	addi sp, sp, -72
 	li a3, 3
-	li a4, 2
-	li a5, 5
+	li a4, 9
+	li a5, 1
+	li t0, 5
 	addi a2, sp, 32
-	slli a0, a3, 32
 	sd ra, 0(sp)
-	li a3, 9
-	addi a1, a0, 4
+	slli a1, a3, 32
 	sd s0, 8(sp)
+	li a3, 2
+	addi a0, a1, 4
 	li s0, 10
 	sd s1, 16(sp)
+	slli a1, a3, 32
 	sd s2, 24(sp)
-	sd a1, 32(sp)
-	slli a1, a4, 32
-	li a4, 1
+	slli a3, a5, 32
+	sd a0, 32(sp)
 	addi a0, a1, 9
-	slli a1, a4, 32
+	slli a1, t0, 32
 	sd a0, 40(sp)
-	li a4, 8
-	slli a0, a5, 32
-	sd a1, 48(sp)
-	addi a1, a0, 6
-	slli a0, a4, 32
-	sd a1, 56(sp)
-	mv a4, zero
-	addi a1, a0, 7
-	sd a1, 64(sp)
-	blt zero, a3, label4
-	j label31
+	addi a0, a1, 6
+	sd a3, 48(sp)
+	li a3, 8
+	sd a0, 56(sp)
+	slli a1, a3, 32
+	mv a3, zero
+	addi a0, a1, 7
+	sd a0, 64(sp)
+	j label2
 .p2align 2
-label10:
-	addiw a4, a4, 1
-	bge a4, a3, label31
+label46:
+	addiw a3, a3, 1
+	bge a3, a4, label102
 .p2align 2
-label4:
-	subw t0, s0, a4
+label2:
+	subw a0, s0, a3
+	addiw a1, a0, -1
+	ble a1, zero, label11
 	mv a0, a2
 	mv a5, zero
-	addi a1, t0, -1
 	lw t0, 0(a2)
 	lw t1, 4(a2)
-	ble t0, t1, label40
+	bgt t0, t1, label8
+	li a5, 1
+	bgt a1, a5, label10
+	addiw a3, a3, 1
+	blt a3, a4, label2
+	j label102
 .p2align 2
 label8:
 	sw t0, 4(a0)
 	sw t1, 0(a0)
 	addiw a5, a5, 1
-	ble a1, a5, label10
+	ble a1, a5, label46
 .p2align 2
-label11:
+label10:
 	addi a0, a0, 4
 	lw t0, 0(a0)
 	lw t1, 4(a0)
 	bgt t0, t1, label8
 	addiw a5, a5, 1
-	bgt a1, a5, label11
-	addiw a4, a4, 1
-	blt a4, a3, label4
-	j label31
-.p2align 2
-label40:
-	addiw a5, a5, 1
-	bgt a1, a5, label11
-	addiw a4, a4, 1
-	blt a4, a3, label4
-label31:
+	bgt a1, a5, label10
+	addiw a3, a3, 1
+	blt a3, a4, label2
+label102:
 	mv s1, a2
 	mv s2, zero
 	j label13
@@ -93,3 +91,7 @@ label13:
 	ld s2, 24(sp)
 	addi sp, sp, 72
 	ret
+label11:
+	addiw a3, a3, 1
+	blt a3, a4, label2
+	j label102

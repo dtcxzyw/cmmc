@@ -56,7 +56,7 @@ public:
 
                 for(auto& inst : block->instructions()) {
                     if(inst.getInstID() == InstructionID::Load || inst.getInstID() == InstructionID::Store ||
-                       inst.getInstID() == InstructionID::PtrCast) {
+                       inst.getInstID() == InstructionID::PtrCast || inst.getInstID() == InstructionID::AtomicAdd) {
                         const auto addr = inst.getOperand(0);
                         if(addr->isInstruction() && addr->getBlock() != block) {
                             const auto addrInst = addr->as<Instruction>();

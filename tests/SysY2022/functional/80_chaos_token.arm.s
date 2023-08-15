@@ -180,66 +180,60 @@ label8:
 	mla r9, r0, r1, r8
 	ldr r0, [r9, #0]
 	cmp r0, #0
-	bne label10
-	b label13
-.p2align 4
-label12:
-	add r9, r9, #4
+	beq label13
 .p2align 4
 label10:
 	ldr r0, [r9, #0]
 	bl putch
 	ldr r0, [r9, #4]
 	cmp r0, #0
-	bne label12
+	beq label13
+	add r9, r9, #4
+	b label10
 label13:
 	movw r9, #:lower16:saY_HeI10_To
 	movt r9, #:upper16:saY_HeI10_To
 	ldr r0, [r9, #0]
 	cmp r0, #0
-	bne label25
-	b label14
-.p2align 4
-label27:
-	add r9, r9, #4
+	beq label14
 .p2align 4
 label25:
 	ldr r0, [r9, #0]
 	bl putch
 	ldr r0, [r9, #4]
 	cmp r0, #0
-	bne label27
+	beq label14
+	add r9, r9, #4
+	b label25
 label14:
 	mov r0, #200
 	mla r7, r7, r0, r8
 	ldr r0, [r7, #0]
 	cmp r0, #0
-	bne label16
-	b label19
-.p2align 4
-label18:
-	add r7, r7, #4
-.p2align 4
-label16:
-	ldr r0, [r7, #0]
-	bl putch
-	ldr r0, [r7, #4]
-	cmp r0, #0
-	bne label18
-label19:
-	ldr r0, [sp, #0]
-	cmp r0, #0
-	beq label28
-	mov r7, r5
-	b label21
-.p2align 4
-label23:
-	add r7, r7, #4
+	beq label15
 .p2align 4
 label21:
 	ldr r0, [r7, #0]
 	bl putch
 	ldr r0, [r7, #4]
 	cmp r0, #0
-	bne label23
+	beq label15
+	add r7, r7, #4
+	b label21
+label15:
+	ldr r0, [sp, #0]
+	cmp r0, #0
+	beq label28
+	mov r7, r5
+	b label17
+.p2align 4
+label19:
+	add r7, r7, #4
+.p2align 4
+label17:
+	ldr r0, [r7, #0]
+	bl putch
+	ldr r0, [r7, #4]
+	cmp r0, #0
+	bne label19
 	b label28

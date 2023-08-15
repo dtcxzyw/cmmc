@@ -39,7 +39,7 @@ public:
         for(auto block : func.blocks())
             for(auto& inst : block->instructions()) {
                 const auto instID = inst.getInstID();
-                if(inst.isTerminator() || instID == InstructionID::Store) {
+                if(inst.isTerminator() || instID == InstructionID::Store || instID == InstructionID::AtomicAdd) {
                     used.insert(&inst);
                     q.push(&inst);
                 } else if(instID == InstructionID::Call) {

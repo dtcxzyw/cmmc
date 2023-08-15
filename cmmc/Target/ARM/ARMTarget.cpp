@@ -183,7 +183,7 @@ public:
     }
 
     [[nodiscard]] bool isNativeSupported(InstructionID inst) const noexcept override {
-        return inst != InstructionID::SRem && inst != InstructionID::URem;
+        return inst != InstructionID::SRem && inst != InstructionID::URem && inst != InstructionID::AtomicAdd;
     }
     [[nodiscard]] const DataLayout& getDataLayout() const noexcept override {
         return mDataLayout;

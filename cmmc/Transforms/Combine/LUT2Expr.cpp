@@ -267,6 +267,15 @@ class LUT2Expr final : public TransformPass<Function> {
                 const auto callee = inst.lastOperand();
                 if(!callee->as<Function>()->attr().hasAttr(FunctionAttribute::NoMemoryWrite))
                     lut.clear();
+            } else if(inst.getInstID() == InstructionID::AtomicAdd) {
+                const auto addr = inst.getOperand(0);
+                const auto baseAddr = base.lookup(addr);
+                if(!baseAddr) {
+                    // TODO: use alias analysis?
+                    lut.clear();
+                } else if(lutAddr.count(baseAddr)) {
+                    lut.erase(baseAddr);
+                }
             }
         }
 
@@ -346,7 +355,8 @@ public:
                                     lut.clear();
                                 break;
                             }
-                            case InstructionID::Store: {
+                            case InstructionID::Store:
+                            case InstructionID::AtomicAdd: {
                                 const auto base = pointerBase.lookup(inst.getOperand(0));
                                 if(base) {
                                     lut.erase(base);

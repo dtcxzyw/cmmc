@@ -1134,6 +1134,22 @@ bool RISCVISelInfo::lowerInst(Instruction* inst, LoweringContext& loweringCtx) c
             return true;
         }
     }
+    if(inst->getInstID() == InstructionID::AtomicAdd) {
+        const auto dst = loweringCtx.mapOperand(inst->getOperand(0));
+        auto src = loweringCtx.mapOperand(inst->getOperand(1));
+        if(src.type() != OperandType::Int32)
+            reportNotImplemented(CMMC_LOCATION());
+
+        if(src.isImm()) {
+            const auto srcReg = loweringCtx.newVReg(src.type());
+            loweringCtx.emitCopy(srcReg, src);
+            src = srcReg;
+        }
+        const auto val = loweringCtx.newVReg(src.type());
+
+        loweringCtx.emitInst(MIRInst{ AMOADD_W }.setOperand<0>(val).setOperand<1>(src).setOperand<2>(dst));
+        return true;
+    }
     return false;
 }
 void RISCVISelInfo::lowerIndirectJump(MIRJumpTable* jumpTable, const MIROperand& offset, LoweringContext& ctx) const {

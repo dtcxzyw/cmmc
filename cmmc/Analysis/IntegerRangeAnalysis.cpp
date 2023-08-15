@@ -525,7 +525,8 @@ IntegerRangeAnalysisResult IntegerRangeAnalysis::run(Function& func, AnalysisPas
                         range.sync();
 
                         for(auto user : inst->users())
-                            if(user->getInstID() == InstructionID::Load || user->getInstID() == InstructionID::Store)
+                            if(user->getInstID() == InstructionID::Load || user->getInstID() == InstructionID::Store ||
+                               user->getInstID() == InstructionID::AtomicAdd)
                                 updateContextual(arg, user->getBlock(), range);
                     }
 

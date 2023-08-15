@@ -12,21 +12,21 @@ a:
 .globl main
 main:
 	addi sp, sp, -104
-pcrel729:
+pcrel728:
 	auipc a0, %pcrel_hi(a)
 	mv a3, zero
-	li a5, 63
-	lui a4, 31
-	slli a2, a5, 6
+	li a4, 63
+	lui a5, 31
+	slli a2, a4, 6
 	sd ra, 0(sp)
+	lui a4, 576660
 	sd s4, 8(sp)
-	addi s4, a0, %pcrel_lo(pcrel729)
+	addi s4, a0, %pcrel_lo(pcrel728)
 	sd s0, 16(sp)
 	addi a0, a2, -960
 	mv a1, s4
-	addiw s0, a4, 1899
+	addiw s0, a5, 1899
 	sd s5, 24(sp)
-	lui a4, 576660
 	sd s3, 32(sp)
 	li s3, 7
 	sd s1, 40(sp)
@@ -74,15 +74,15 @@ label2:
 	sd zero, 232(a1)
 	sd zero, 240(a1)
 	sd zero, 248(a1)
-	bge a3, a2, label5
+	bge a3, a2, label6
 	addi a1, a1, 256
 	j label2
-label5:
-	auipc a3, %pcrel_hi(b)
-	sd zero, 256(a1)
-	addi a2, a3, %pcrel_lo(label5)
-	sd zero, 264(a1)
+label6:
+	auipc a4, %pcrel_hi(b)
 	mv a3, zero
+	sd zero, 256(a1)
+	addi a2, a4, %pcrel_lo(label6)
+	sd zero, 264(a1)
 	sd zero, 272(a1)
 	sd zero, 280(a1)
 	sd zero, 288(a1)
@@ -110,8 +110,12 @@ label5:
 	sd zero, 464(a1)
 	sw zero, 472(a1)
 	mv a1, a2
+	j label7
 .p2align 2
-label6:
+label39:
+	addi a1, a1, 256
+.p2align 2
+label7:
 	sd zero, 0(a1)
 	addi a3, a3, 64
 	sd zero, 8(a1)
@@ -145,10 +149,7 @@ label6:
 	sd zero, 232(a1)
 	sd zero, 240(a1)
 	sd zero, 248(a1)
-	bge a3, a0, label9
-	addi a1, a1, 256
-	j label6
-label9:
+	blt a3, a0, label39
 	sd zero, 256(a1)
 	li a4, 573
 	li a0, 9
@@ -194,32 +195,32 @@ label9:
 	sd a3, 1424(a2)
 	li a3, 1005
 	sw a0, 1452(a2)
-	slli a1, a3, 3
+	slli a0, a3, 3
 	lw s6, 1416(a2)
 	lui a3, 3
-	add a0, a2, a1
-	addiw a1, a3, -180
-	lw s8, 0(a0)
-	add a0, a2, a1
-	lw s9, 0(a0)
+	add a1, a2, a0
+	addiw a0, a3, -180
+	lw s8, 0(a1)
+	add a1, a2, a0
+	lw s9, 0(a1)
+	j label11
 .p2align 2
-label10:
+label38:
+	addi s10, s10, 4
+	mv s11, a1
+.p2align 2
+label11:
 	lw a0, 0(s10)
 	jal putint
 	addiw a1, s11, 1
 	li s11, 10
-	bge a1, s11, label14
-	addi s10, s10, 4
-	mv s11, a1
-	j label10
-label14:
-	li s11, 10
+	blt a1, s11, label38
 	mv a0, s11
 	jal putch
 	li a3, 573
-	slli a2, a3, 3
-	add a1, s4, a2
-	lw a0, 0(a1)
+	slli a1, a3, 3
+	add a2, s4, a1
+	lw a0, 0(a2)
 	jal putint
 	mv a0, s11
 	jal putch
@@ -230,34 +231,34 @@ label14:
 	sh2add a0, s9, s7
 	mv a1, s8
 	mv a2, s9
-	j label33
+	j label24
 .p2align 2
-label37:
+label28:
 	addi a0, a0, 16
 .p2align 2
-label33:
+label24:
 	mulw a3, a1, s0
 	addiw a2, a2, 4
+	mul t0, a3, s2
+	srli t1, t0, 32
+	add a4, t1, a3
+	srliw t3, a4, 31
+	sraiw a5, a4, 11
+	addiw a4, a1, 7
+	add t1, t3, a5
+	mulw t2, t1, s1
+	subw t0, a3, t2
+	mulw a3, a4, s0
+	sw t0, 0(a0)
 	mul t1, a3, s2
 	srli t0, t1, 32
 	add a4, t0, a3
 	srliw t2, a4, 31
 	sraiw a5, a4, 11
-	add t0, t2, a5
-	addiw a5, a1, 7
-	mulw t1, t0, s1
-	subw a4, a3, t1
-	mulw a3, a5, s0
-	sw a4, 0(a0)
-	mul t0, a3, s2
-	srli t2, t0, 32
-	add a4, t2, a3
-	srliw t1, a4, 31
-	sraiw a5, a4, 11
 	addiw a4, a1, 14
-	add t2, t1, a5
-	mulw t0, t2, s1
-	subw t3, a3, t0
+	add t0, t2, a5
+	mulw t1, t0, s1
+	subw t3, a3, t1
 	mulw a3, a4, s0
 	sw t3, 4(a0)
 	mul t1, a3, s2
@@ -266,44 +267,43 @@ label33:
 	srliw t3, a4, 31
 	sraiw a5, a4, 11
 	addiw a4, a1, 21
-	add t1, t3, a5
+	add t0, t3, a5
 	addiw a1, a1, 28
-	mulw t2, t1, s1
-	subw t0, a3, t2
-	mulw a3, a4, s0
-	sw t0, 8(a0)
-	mul t1, a3, s2
-	srli t0, t1, 32
-	add a4, t0, a3
-	srliw t2, a4, 31
-	sraiw a5, a4, 11
-	add t0, t2, a5
 	mulw t1, t0, s1
-	subw a4, a3, t1
+	subw t2, a3, t1
+	mulw a3, a4, s0
+	sw t2, 8(a0)
+	mul t0, a3, s2
+	srli t2, t0, 32
+	add a4, t2, a3
+	srliw t1, a4, 31
+	sraiw a5, a4, 11
+	add t2, t1, a5
+	mulw t0, t2, s1
+	subw a4, a3, t0
 	sw a4, 12(a0)
-	blt a2, s3, label37
-label23:
+	blt a2, s3, label28
+label29:
 	li s11, 10
 	bge a2, s11, label15
 	sh2add a0, a2, s7
-	j label27
-label31:
-	addi a0, a0, 4
-label27:
+label33:
 	mulw a3, a1, s0
 	addiw a2, a2, 1
 	li s11, 10
 	addiw a1, a1, 7
-	mul t1, a3, s2
-	srli t0, t1, 32
-	add a4, t0, a3
+	mul t0, a3, s2
+	srli t2, t0, 32
+	add a4, t2, a3
 	srliw t1, a4, 31
 	sraiw a5, a4, 11
 	add t0, t1, a5
 	mulw t2, t0, s1
 	subw a4, a3, t2
 	sw a4, 0(a0)
-	blt a2, s11, label31
+	bge a2, s11, label15
+	addi a0, a0, 4
+	j label33
 label15:
 	addiw a1, s6, 3
 	sh1add a0, a1, a1
@@ -345,4 +345,4 @@ label16:
 label334:
 	mv a1, s8
 	mv a2, s9
-	j label23
+	j label29

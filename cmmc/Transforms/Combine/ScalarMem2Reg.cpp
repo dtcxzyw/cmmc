@@ -219,6 +219,10 @@ class ScalarMem2Reg final : public TransformPass<Function> {
                             interested.erase(operand);
                         break;
                     }
+                    case InstructionID::AtomicAdd: {
+                        interested.erase(inst.getOperand(0));
+                        break;
+                    }
                     default:
                         break;
                 }

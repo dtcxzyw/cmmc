@@ -96,7 +96,7 @@ class StoreEliminate final : public TransformPass<Function> {
                         } else
                             return false;
                     }
-                } else if(inst.getInstID() == InstructionID::Store) {
+                } else if(inst.getInstID() == InstructionID::Store || inst.getInstID() == InstructionID::AtomicAdd) {
                     const auto storeAddr = inst.getOperand(0);
                     const auto storeValue = inst.getOperand(1);
 

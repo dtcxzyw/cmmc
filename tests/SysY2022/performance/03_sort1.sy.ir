@@ -307,7 +307,6 @@ func @main() -> i32 { NoRecurse Entry } {
     ret i32 0;
 }
 internal func @cmmcParallelFor(i32, i32, i8*) -> void { NoRecurse };
-internal func @cmmcReduceAddI32(i32*, i32) -> void { NoRecurse };
 internal func @cmmc_parallel_body_0(i32 %0, i32 %1) -> void { NoRecurse ParallelBody AlignedParallelBody } {
   ^b:
     [30000010 * i32]* %2 = ptrcast [30000010 * i32]* @a to [30000010 * i32]*;
@@ -327,7 +326,7 @@ internal func @cmmc_parallel_body_0(i32 %0, i32 %1) -> void { NoRecurse Parallel
   ^b2:
     [12 * i8]* %13 = ptrcast [12 * i8]* @cmmc_parallel_body_payload_0 to [12 * i8]*;
     i32* %14 = ptradd [12 * i8]* %13, i32 0;
-    call (i32*, i32) -> void @cmmcReduceAddI32(i32* %14, i32 %10);
+    atomicadd i32* %14, i32 %10;
     ret;
 }
 internal [12 * i8]* @cmmc_parallel_body_payload_0, align 8;

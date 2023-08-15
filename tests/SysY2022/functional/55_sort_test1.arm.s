@@ -9,12 +9,12 @@
 main:
 	@ stack usage: CalleeArg[0] Local[40] RegSpill[0] CalleeSaved[0]
 	push { r4, r5, r6, r7, lr }
-	sub sp, sp, #44
 	mov r0, #4
 	mov r4, #0
-	mov r2, sp
-	str r0, [sp, #0]
+	sub sp, sp, #44
 	mov r3, r4
+	str r0, [sp, #0]
+	mov r2, sp
 	mov r0, #3
 	str r0, [sp, #4]
 	mov r0, #9
@@ -32,33 +32,39 @@ main:
 	str r0, [sp, #32]
 	mov r0, #8
 	str r0, [sp, #36]
-	cmp r4, #9
-	blt label4
-	b label31
+	b label2
 .p2align 4
-label10:
+label46:
 	add r3, r3, #1
 	cmp r3, #9
-	bge label31
+	bge label75
 .p2align 4
-label4:
+label2:
 	rsb r0, r3, #10
-	mov r5, r4
-	sub r1, r0, #1
+	subs r1, r0, #1
+	ble label11
 	mov r0, r2
+	mov r5, r4
 	ldr r6, [r2, #0]
 	ldr r7, [r2, #4]
 	cmp r6, r7
-	ble label40
+	bgt label8
+	add r5, r4, #1
+	cmp r1, r5
+	bgt label10
+	add r3, r3, #1
+	cmp r3, #9
+	blt label2
+	b label75
 .p2align 4
 label8:
 	str r6, [r0, #4]
 	str r7, [r0, #0]
 	add r5, r5, #1
 	cmp r1, r5
-	ble label10
+	ble label46
 .p2align 4
-label11:
+label10:
 	add r0, r0, #4
 	ldr r6, [r0, #0]
 	ldr r7, [r0, #4]
@@ -66,20 +72,11 @@ label11:
 	bgt label8
 	add r5, r5, #1
 	cmp r1, r5
-	bgt label11
+	bgt label10
 	add r3, r3, #1
 	cmp r3, #9
-	blt label4
-	b label31
-.p2align 4
-label40:
-	add r5, r5, #1
-	cmp r1, r5
-	bgt label11
-	add r3, r3, #1
-	cmp r3, #9
-	blt label4
-label31:
+	blt label2
+label75:
 	mov r5, r2
 	mov r6, r4
 	b label13
@@ -98,3 +95,8 @@ label13:
 	mov r0, r4
 	add sp, sp, #44
 	pop { r4, r5, r6, r7, pc }
+label11:
+	add r3, r3, #1
+	cmp r3, #9
+	blt label2
+	b label75

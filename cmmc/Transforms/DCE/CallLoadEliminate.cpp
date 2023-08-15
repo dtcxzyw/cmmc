@@ -208,6 +208,7 @@ protected:
         CMMC_UNUSED(end);
 
         switch(inst->getInstID()) {
+            case InstructionID::AtomicAdd:
             case InstructionID::Store:
                 return true;
             case InstructionID::Call:
@@ -236,6 +237,7 @@ protected:
         CMMC_UNUSED(end);
 
         switch(inst->getInstID()) {
+            case InstructionID::AtomicAdd:
             case InstructionID::Store: {
                 const auto storeAddr = inst->getOperand(0);
                 return !aliasSet.isDistinct(storeAddr, start->getOperand(0));

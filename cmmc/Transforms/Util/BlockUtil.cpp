@@ -128,7 +128,8 @@ bool isNoSideEffectExpr(const Instruction& inst) {
     if(inst.isTerminator())
         return false;
     switch(inst.getInstID()) {
-        case InstructionID::Store: {
+        case InstructionID::Store:
+        case InstructionID::AtomicAdd: {
             return false;
         }
         case InstructionID::Call: {
@@ -287,6 +288,9 @@ uint32_t estimateBlockSize(Block* block, bool dynamic) {
             case InstructionID::Load:
             case InstructionID::Store:
                 count += dynamic ? 4 : 1;
+                break;
+            case InstructionID::AtomicAdd:
+                count += 4;
                 break;
             case InstructionID::FDiv:
             case InstructionID::SDiv:

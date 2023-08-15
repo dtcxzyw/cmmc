@@ -35,7 +35,7 @@ CMMC_NAMESPACE_BEGIN
 class SCCEliminate final : public TransformPass<Function> {
     static bool hasSideEffect(Block& block) {
         for(auto& inst : block.instructions()) {
-            if(inst.getInstID() == InstructionID::Store)
+            if(inst.getInstID() == InstructionID::Store || inst.getInstID() == InstructionID::AtomicAdd)
                 return true;
             if(inst.getInstID() == InstructionID::Call) {
                 const auto callee = inst.lastOperand()->as<Function>();

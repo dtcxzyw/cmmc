@@ -37,6 +37,7 @@ class SROA final : public TransformPass<Function> {
             switch(user->getInstID()) {
                 case InstructionID::Load:
                 case InstructionID::Store:
+                case InstructionID::AtomicAdd:
                     break;
                 case InstructionID::GetElementPtr: {
                     // unbounded

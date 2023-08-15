@@ -86,6 +86,9 @@ public:
                                     }
                                 }
                             }
+                        } else if(inst.getInstID() == InstructionID::AtomicAdd) {
+                            auto ptr = inst.getOperand(0);
+                            touchPtr(ptr);
                         }
                     }
                 }
