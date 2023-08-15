@@ -1045,6 +1045,11 @@
       "parent": "0e074d4a00394405947f6ffe832756d20f133681",
       "time": "2023-07-31 13:26:49 +0800"
     },
+    "d030b9d81e8e070a3421157dd86fa59cc23d9763": {
+      "message": "feat(transform): add loop unswitch",
+      "parent": "b4be37665b16e4af3da8a1654692874b10c3a64f",
+      "time": "2023-08-16 05:23:58 +0800"
+    },
     "d14b52d28598b2b77cc92531c8da1bcdc6847663": {
       "message": "feat(transform): tune gvn",
       "parent": "72dd6f694d06ea99ad98ba6b78a9a5cc3c897bce",
@@ -1266,5 +1271,5 @@
       "time": "2023-07-06 01:05:50 +0800"
     }
   },
-  "head": "b4be37665b16e4af3da8a1654692874b10c3a64f"
+  "head": "d030b9d81e8e070a3421157dd86fa59cc23d9763"
 }
