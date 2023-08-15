@@ -525,6 +525,11 @@
       "parent": "dbb1591ab79e9718b0364472a585d7063d3c167e",
       "time": "2023-08-02 02:00:34 +0800"
     },
+    "6bf62d9462b3ee4e55012ff7aa06fa37d84e2e2a": {
+      "message": "feat(transform): recognize reduction in LoopParallel",
+      "parent": "864df1e72c2739f43c06eded9b0425d80c8e973e",
+      "time": "2023-08-15 19:56:08 +0800"
+    },
     "6d44124a80e777712e32d41c7e9e197da7e0edd5": {
       "message": "fix(transform): fix estimated loop trip count",
       "parent": "2682f7828e46506eb8e5fd18762092fb42654a4d",
@@ -679,6 +684,11 @@
       "message": "misc: update ref",
       "parent": "e08641d29e96a13eb5410e28160018520c77dfcb",
       "time": "2023-07-05 23:26:48 +0800"
+    },
+    "864df1e72c2739f43c06eded9b0425d80c8e973e": {
+      "message": "feat(ir): add atomicadd inst",
+      "parent": "9562559e943f53dbf2581fb3d8d3436b1f774030",
+      "time": "2023-08-15 18:16:47 +0800"
     },
     "87086b928542a06962fd01d27cb2f028c9ade88a": {
       "message": "feat(codegen): fold arm cmp with zero",
@@ -889,6 +899,11 @@
       "message": "feat(transform): basic LSR",
       "parent": "091e2e9d39eefcb23258052624b61f043d6ffbae",
       "time": "2023-07-23 16:21:59 +0800"
+    },
+    "b4be37665b16e4af3da8a1654692874b10c3a64f": {
+      "message": "fix(runtime): fix join",
+      "parent": "6bf62d9462b3ee4e55012ff7aa06fa37d84e2e2a",
+      "time": "2023-08-15 21:04:57 +0800"
     },
     "b642f635bd39964b79138897e82d1cd1ca8de9f6": {
       "message": "feat(codegen): add and-not folding on riscv and arm",
@@ -1251,5 +1266,5 @@
       "time": "2023-07-06 01:05:50 +0800"
     }
   },
-  "head": "9562559e943f53dbf2581fb3d8d3436b1f774030"
+  "head": "b4be37665b16e4af3da8a1654692874b10c3a64f"
 }
