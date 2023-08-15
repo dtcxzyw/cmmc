@@ -2398,6 +2398,23 @@
         "task-clock:u": 76.58
       }
     ],
+    "b4be37665b16e4af3da8a1654692874b10c3a64f": [
+      {
+        "sysy_time": 0.005474
+      },
+      {
+        "sysy_time": 0.00542
+      },
+      {
+        "sysy_time": 0.005479
+      },
+      {
+        "sysy_time": 0.005482
+      },
+      {
+        "sysy_time": 0.005568
+      }
+    ],
     "b642f635bd39964b79138897e82d1cd1ca8de9f6": [
       {
         "branch-load-misses:u": 849,
