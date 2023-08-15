@@ -22,6 +22,7 @@
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/IRBuilder.hpp>
 #include <cmmc/IR/Instruction.hpp>
+#include <cmmc/Support/Bits.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <cmmc/Transforms/Util/PatternMatch.hpp>
 #include <cstdint>
@@ -53,10 +54,28 @@ class LoopStrengthReduction final : public TransformPass<Function> {
         return phi;
     }
 
+    static uint32_t getPhiCount(Block* block) {
+        uint32_t phiCount = 0;
+        for(auto& phi : block->instructions()) {
+            if(phi.getInstID() == InstructionID::Phi) {
+                ++phiCount;
+            } else
+                break;
+        }
+        return phiCount;
+    }
+
+    static constexpr uint32_t maxPhiCount = 9;
+
     static bool tryExpandSCEV(const SCEVAnalysisResult& scev, const DominateAnalysisResult& dom, Block* block,
                               Instruction& inst) {
         if(inst.getInstID() == InstructionID::Add || inst.getInstID() == InstructionID::Phi)
             return false;
+        Value* v1;
+        intmax_t i1;
+        if(mul(any(v1), int_(i1))(MatchContext<Value>{ &inst }) && isPowerOf2(static_cast<size_t>(i1)))
+            return false;
+
         auto scevExpr = scev.query(&inst);
         if(scevExpr && scevExpr->loop && scevExpr->instID == SCEVInstID::AddRec) {
             if(!dom.dominate(block, scevExpr->loop->latch))
@@ -78,6 +97,11 @@ class LoopStrengthReduction final : public TransformPass<Function> {
             auto refPhi = scevExpr->loop->header->instructions().front();
             if(refPhi->getInstID() != InstructionID::Phi)
                 return false;
+
+            const auto phiCount = getPhiCount(scevExpr->loop->header);
+            if(phiCount + scevExpr->operands.size() - 1 > maxPhiCount)
+                return false;
+
             auto refPhiInst = refPhi->as<PhiInst>();
             // FIXME
             if(refPhiInst->incomings().size() != 2)
@@ -131,6 +155,10 @@ class LoopStrengthReduction final : public TransformPass<Function> {
             auto refPhi = loop->header->instructions().front();
             if(refPhi->getInstID() != InstructionID::Phi)
                 return false;
+            const auto phiCount = getPhiCount(loop->header);
+            if(phiCount + 1 > maxPhiCount)
+                return false;
+
             auto refPhiInst = refPhi->as<PhiInst>();
             // FIXME
             if(refPhiInst->incomings().size() != 2)
@@ -174,6 +202,10 @@ public:
             auto& instructions = block->instructions();
 
             for(auto& inst : instructions) {
+                if((inst.getInstID() == InstructionID::Add || inst.getInstID() == InstructionID::Phi) &&
+                   inst.users().useCount() < 4)
+                    continue;
+
                 if(tryExpandSCEV(scev, dom, block, inst)) {
                     modified = true;
                     continue;

@@ -309,7 +309,7 @@ uint32_t estimateBlockSize(Block* block, bool dynamic) {
     return count;
 }
 bool collectLoopBody(Block* header, Block* latch, const DominateAnalysisResult& dom, const CFGAnalysisResult& cfg,
-                     std::unordered_set<Block*>& body, bool allowInnerLoop) {
+                     std::unordered_set<Block*>& body, bool allowInnerLoop, bool needSubLoop) {
     body.insert(header);
     std::stack<Block*> stack;
     stack.push(latch);
@@ -325,6 +325,7 @@ bool collectLoopBody(Block* header, Block* latch, const DominateAnalysisResult& 
 
     // if(body.size() <= 1)
     //     return false;
+    bool hasSubLoop = false;
     for(auto block : body) {
         // block->dumpAsTarget(std::cerr);
         // std::cerr << '\n';
@@ -335,14 +336,17 @@ bool collectLoopBody(Block* header, Block* latch, const DominateAnalysisResult& 
             if(block != latch && !body.count(succ)) {
                 return false;
             }
-            if(!allowInnerLoop && dom.dominate(succ, block) && succ != header)
-                return false;
+
+            if(dom.dominate(succ, block) && succ != header) {
+                if(!allowInnerLoop)
+                    return false;
+                hasSubLoop = true;
+            }
             if(succ == header && block != latch)
                 return false;
         }
     }
-
-    return true;
+    return !(needSubLoop && !hasSubLoop);
 }
 
 CMMC_NAMESPACE_END

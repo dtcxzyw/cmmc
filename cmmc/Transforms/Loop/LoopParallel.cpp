@@ -138,8 +138,7 @@ class LoopParallel final : public TransformPass<Function> {
             auto initialRange = rangeInfo.query(loop.initial, dom, nullptr, 5);
             const auto isAligned = (initialRange.knownZeros() & 3) == 3;
             auto boundRange = rangeInfo.query(loop.bound, dom, nullptr, 5);
-            if((boundRange - initialRange).maxSignedValue() < 128)
-                continue;
+            const auto needSubLoop = (boundRange - initialRange).maxSignedValue() < 400;
 
             // std::cerr << "collect\n";
             LoopBodyInfo bodyInfo;
@@ -150,6 +149,7 @@ class LoopParallel final : public TransformPass<Function> {
                                 /*allow innerloop*/ true,
                                 /*only addrec*/ true,
                                 /*estimate block size*/ false,
+                                /*need sub-loop*/ needSubLoop,
                                 /*ret*/ &bodyInfo))
                 continue;
             // func.dump(std::cerr, Noop{});

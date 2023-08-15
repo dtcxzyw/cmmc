@@ -35,15 +35,14 @@ main:
 	blez $t0, label10
 	nop
 	move $t0, $v0
-	li $t1, 1
 label2:
-	mult $t0, $t1
-	mflo $t1
-	addiu $t0, $t0, -1
-	li $t2, 1
-	bne $t0, $t2, label2
+	addiu $v0, $v0, -1
+	mult $t0, $v0
+	mflo $t0
+	li $t1, 1
+	bne $v0, $t1, label2
 	nop
-	move $a0, $t1
+	move $a0, $t0
 	b label5
 	nop
 label10:

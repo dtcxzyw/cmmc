@@ -323,6 +323,7 @@ std::shared_ptr<PassManager<Module>> PassManager<Module>::get(OptimizationLevel 
             "ConstexprFuncEval",       //
             "ConstantMerge",           //
             "ConditionalPropagation",  //
+            "GVN",                     //
             "ConstraintReduce",        //
             "SimpleCSE",               //
             "GEPCombine",              //
@@ -348,7 +349,6 @@ std::shared_ptr<PassManager<Module>> PassManager<Module>::get(OptimizationLevel 
             "BlockMerge",               // clean up
             "CombineBranch",            // clean up
             "BlockEliminate",           // clean up
-            "GVN",                      // clean up
             "LoopCanonicalize",         //
             "FinalValueReplacement",    //
             "LoopInterchange",          //

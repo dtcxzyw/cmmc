@@ -4,27 +4,30 @@
 .globl mulw
 mulw:
 	move $t0, $a0
-	move $t2, $a1
-	subu $t1, $a0, $a1
-	bgez $t1, label16
+	move $t1, $a1
+	subu $t2, $a0, $a1
+	bgez $t2, label14
 	nop
-	addiu $t1, $a0, 1
-	subu $t3, $a1, $t1
-	blez $t3, label21
+	addiu $t0, $a0, 1
+	subu $t2, $a1, $t0
+	blez $t2, label20
 	nop
 label3:
-	mult $t1, $t0
-	mflo $t0
-	addiu $t1, $t1, 1
-	subu $t3, $t2, $t1
-	bgtz $t3, label3
+	mult $t0, $a0
+	mflo $v0
+	addiu $t0, $t0, 1
+	subu $t2, $t1, $t0
+	blez $t2, label6
 	nop
-label21:
-	move $v0, $t0
-	b label8
+	move $a0, $v0
+	b label3
 	nop
-label16:
+label14:
 	li $v0, 1
-label8:
+label6:
 	jr $ra
+	nop
+label20:
+	move $v0, $a0
+	b label6
 	nop

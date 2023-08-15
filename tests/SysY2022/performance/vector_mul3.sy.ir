@@ -565,9 +565,9 @@ func @main() -> i32 { NoRecurse Entry } {
     i1 %486 = or i1 %484, i1 %485;
     cbr i1 %486(prob = 0.992308), ^while.body11, ^b7;
   ^while.body11:
-    f32 %487 = phi [^b6, f32 1] [^while.body11, f32 %490];
-    f32 %488 = fdiv f32 %482, f32 %487;
-    f32 %489 = fadd f32 %487, f32 %488;
+    f32 %487 = phi [^b6, f32 %482] [^while.body11, f32 %491];
+    f32 %488 = phi [^b6, f32 1] [^while.body11, f32 %490];
+    f32 %489 = fadd f32 %488, f32 %487;
     f32 %490 = fmul f32 %489, f32 0.5;
     f32 %491 = fdiv f32 %482, f32 %490;
     f32 %492 = fsub f32 %490, f32 %491;

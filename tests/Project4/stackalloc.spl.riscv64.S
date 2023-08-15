@@ -29,19 +29,19 @@ main:
 	sd ra, 0(sp)
 	jal read
 	mv a1, a0
-	ble a0, zero, label2
+	ble a0, zero, label7
 	mv a3, a2
 	mv a4, zero
-label24:
+label3:
 	jal read
 	addiw a4, a4, 1
 	sw a0, 0(a3)
-	ble a1, a4, label2
+	ble a1, a4, label7
 	addi a3, a3, 4
-	j label24
-label2:
+	j label3
+label7:
 	li a0, 1
-	ble a1, a0, label3
+	ble a1, a0, label8
 	addi a4, a2, 4
 	li a5, 1
 	addiw t0, a5, -1
@@ -51,14 +51,14 @@ label2:
 	mv t1, zero
 	addiw a5, a5, 1
 	sw a0, 4(a3)
-	bgt a1, a5, label21
-	j label3
+	bgt a1, a5, label26
+	j label8
 label89:
 	mv t1, zero
 	addiw a5, a5, 1
 	sw a0, 4(a3)
-	ble a1, a5, label3
-label21:
+	ble a1, a5, label8
+label26:
 	addi a4, a4, 4
 	addiw t0, a5, -1
 	lw a0, 0(a4)
@@ -67,7 +67,7 @@ label21:
 label22:
 	lw t2, 0(a3)
 	slt t1, a0, t2
-	beq t1, zero, label88
+	beq t1, zero, label25
 	lw t1, 0(a3)
 	addiw t0, t0, -1
 	sw t1, 4(a3)
@@ -76,24 +76,25 @@ label22:
 	mv t1, zero
 	addiw a5, a5, 1
 	sw a0, 4(a3)
-	bgt a1, a5, label21
-label3:
-	ble a1, zero, label4
+	bgt a1, a5, label26
+label8:
+	ble a1, zero, label9
 	mv a3, zero
-label6:
+	j label11
+label14:
+	addi a2, a2, 4
+label11:
 	lw a0, 0(a2)
 	jal write
 	addiw a3, a3, 1
-	ble a1, a3, label4
-	addi a2, a2, 4
-	j label6
-label4:
+	bgt a1, a3, label14
+label9:
 	mv a0, zero
 	ld ra, 0(sp)
 	addi sp, sp, 408
 	ret
-label88:
+label25:
 	addiw a5, a5, 1
 	sw a0, 4(a3)
-	bgt a1, a5, label21
-	j label3
+	bgt a1, a5, label26
+	j label8

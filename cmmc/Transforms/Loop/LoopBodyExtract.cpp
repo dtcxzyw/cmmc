@@ -78,7 +78,7 @@ static bool matchAddRec(Value* giv, Block* latch, std::unordered_set<Value*>& va
 
 bool extractLoopBody(Function& func, const Loop& loop, const DominateAnalysisResult& dom, const CFGAnalysisResult& cfg,
                      Module& mod, bool independent, const PointerBaseAnalysisResult* pointerBase, bool allowInnermost,
-                     bool allowInnerLoop, bool onlyAddRec, bool estimateBlockSizeForUnroll, LoopBodyInfo* ret) {
+                     bool allowInnerLoop, bool onlyAddRec, bool estimateBlockSizeForUnroll, bool needSubLoop, LoopBodyInfo* ret) {
     if(!allowInnermost && loop.header == loop.latch)
         return false;
 
@@ -99,7 +99,7 @@ bool extractLoopBody(Function& func, const Loop& loop, const DominateAnalysisRes
     // std::cerr << '\n';
 
     std::unordered_set<Block*> body;
-    if(!collectLoopBody(loop.header, loop.latch, dom, cfg, body, allowInnerLoop))
+    if(!collectLoopBody(loop.header, loop.latch, dom, cfg, body, allowInnerLoop, needSubLoop))
         return false;
 
     if(independent) {
@@ -397,6 +397,7 @@ class LoopBodyExtract final : public TransformPass<Function> {
                                         /*allow innerloop*/ false,
                                         /*only addrec*/ false,
                                         /*estimate block size*/ true,
+                                        /*need sub-loop*/ false,
                                         /*ret*/ nullptr);
         }
         return modified;

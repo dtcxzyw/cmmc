@@ -43,8 +43,8 @@ func @main() -> i32 { NoRecurse Entry } {
     i1 %29 = icmp eq i32 %28, i32 1;
     store i32* %13 with i32 0;
     store i32* %14 with i32 %2;
-    store i32* %15 with i32 %1;
-    store i32* %16 with i32 %11;
+    store i32* %15 with i32 %11;
+    store i32* %16 with i32 %1;
     store i1* %17 with i1 %29;
     store i32* %18 with i32 %28;
     i1 %30 = icmp eq i32 %28, i32 2;
@@ -101,19 +101,19 @@ internal func @cmmc_parallel_body_0(i32 %0, i32 %1) -> void { NoRecurse Parallel
   ^b1:
     i32 %28 = phi [^b, i32 %0] [^b14, i32 %107];
     i32 %29 = phi [^b, i32 %22] [^b14, i32 %109];
-    i32 %30 = sub i32 %28, i32 %9;
-    i32 %31 = add i32 %9, i32 %28;
+    i32 %30 = sub i32 %28, i32 %7;
+    i32 %31 = add i32 %7, i32 %28;
     i32* %32 = getelementptr &(i32* %27)[i32 %29];
     ubr ^while.body;
   ^while.body:
     i32 %33 = phi [^b1, i32 0] [^b12, i32 %97];
-    i32 %34 = sub i32 %33, i32 %9;
-    i32 %35 = add i32 %9, i32 %33;
+    i32 %34 = sub i32 %33, i32 %7;
+    i32 %35 = add i32 %7, i32 %33;
     ubr ^while.body1;
   ^while.body1:
     i32 %36 = phi [^while.body, i32 %30] [^b8, i32 %85];
     i32 %37 = phi [^while.body, i32 0] [^b8, i32 %77];
-    i1 %38 = icmp sle i32 %7, i32 %36;
+    i1 %38 = icmp sle i32 %9, i32 %36;
     ubr ^while.body2;
   ^while.body2:
     i32 %39 = phi [^while.body1, i32 %34] [^b6, i32 %78];

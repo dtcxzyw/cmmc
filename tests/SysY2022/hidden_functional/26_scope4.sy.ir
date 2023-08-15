@@ -3,10 +3,10 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
   ^entry:
     ubr ^while.header;
   ^while.header:
-    i32 %0 = phi [^entry, i32 49] [^if.then, i32 %19] [^if.else, i32 %19];
-    i32 %1 = phi [^entry, i32 1352] [^if.then, i32 %28] [^if.else, i32 %35];
-    i32 %2 = phi [^entry, i32 2] [^if.then, i32 %2] [^if.else, i32 %19];
-    i32 %3 = phi [^entry, i32 0] [^if.then, i32 2] [^if.else, i32 %36];
+    i32 %0 = phi [^entry, i32 49] [^if.then, i32 %20] [^if.else, i32 %20];
+    i32 %1 = phi [^entry, i32 1352] [^if.then, i32 %29] [^if.else, i32 %36];
+    i32 %2 = phi [^entry, i32 2] [^if.then, i32 %2] [^if.else, i32 %20];
+    i32 %3 = phi [^entry, i32 0] [^if.then, i32 %19] [^if.else, i32 %19];
     i1 %4 = icmp slt i32 %3, i32 3;
     cbr i1 %4(prob = 0.984615), ^while.header1, ^b;
   ^while.header1:
@@ -24,30 +24,30 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i32 %16 = mul i32 %15, i32 2;
     i32 %17 = add i32 %0, i32 6;
     i1 %18 = icmp eq i32 %3, i32 1;
-    i32 %19 = add i32 %0, i32 13;
+    i32 %19 = add i32 %3, i32 1;
+    i32 %20 = add i32 %0, i32 13;
     cbr i1 %18(prob = 0.5), ^if.then, ^if.else;
   ^b:
     call (i32) -> void @putint(i32 %1);
     ret i32 0;
   ^if.then:
-    i32 %20 = add i32 %14, i32 10;
-    i32 %21 = add i32 %15, i32 %20;
-    i32 %22 = add i32 %16, i32 %21;
-    i32 %23 = add i32 %0, i32 8;
-    i32 %24 = mul i32 %23, i32 2;
-    i32 %25 = add i32 %22, i32 %24;
-    i32 %26 = add i32 %0, i32 10;
-    i32 %27 = mul i32 %26, i32 3;
-    i32 %28 = add i32 %25, i32 %27;
+    i32 %21 = add i32 %14, i32 10;
+    i32 %22 = add i32 %15, i32 %21;
+    i32 %23 = add i32 %16, i32 %22;
+    i32 %24 = add i32 %0, i32 8;
+    i32 %25 = mul i32 %24, i32 2;
+    i32 %26 = add i32 %23, i32 %25;
+    i32 %27 = add i32 %0, i32 10;
+    i32 %28 = mul i32 %27, i32 3;
+    i32 %29 = add i32 %26, i32 %28;
     ubr ^while.header;
   ^if.else:
-    i32 %29 = add i32 %5, i32 %14;
-    i32 %30 = add i32 %16, i32 %29;
-    i32 %31 = mul i32 %17, i32 2;
-    i32 %32 = add i32 %30, i32 %31;
-    i32 %33 = add i32 %0, i32 9;
-    i32 %34 = mul i32 %33, i32 3;
-    i32 %35 = add i32 %32, i32 %34;
-    i32 %36 = add i32 %3, i32 1;
+    i32 %30 = add i32 %5, i32 %14;
+    i32 %31 = add i32 %16, i32 %30;
+    i32 %32 = mul i32 %17, i32 2;
+    i32 %33 = add i32 %31, i32 %32;
+    i32 %34 = add i32 %0, i32 9;
+    i32 %35 = mul i32 %34, i32 3;
+    i32 %36 = add i32 %33, i32 %35;
     ubr ^while.header;
 }

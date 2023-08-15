@@ -110,7 +110,7 @@ class LoopRotate final : public TransformPass<Function> {
                 continue;
 
             std::unordered_set<Block*> body;
-            if(!collectLoopBody(loop.header, loop.latch, dom, cfg, body, true))
+            if(!collectLoopBody(loop.header, loop.latch, dom, cfg, body, true, false))
                 continue;
             // for(auto b : body) {
             //     b->dumpAsTarget(std::cerr);

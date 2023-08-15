@@ -59,6 +59,10 @@ class LoopInterchange final : public TransformPass<Function> {
     static bool matchOuterLoop(Block* body, const CFGAnalysisResult& cfg, const DominateAnalysisResult& dom, Block*& header,
                                Block*& latch, Block*& preHeader, Block*& exit, Value*& initial, Value*& bound, intmax_t& step,
                                Value*& indVar, Value*& next) {
+        // std::cerr << "match ";
+        // body->dumpAsTarget(std::cerr);
+        // std::cerr << '\n';
+
         auto& predBody = cfg.predecessors(body);
         if(predBody.size() != 2)
             return false;
@@ -70,14 +74,18 @@ class LoopInterchange final : public TransformPass<Function> {
 
         if(!(dom.dominate(header, body) && dom.dominate(header, latch)))
             return false;
-        if(!(latch->instructions().size() == 2 && cfg.successors(latch).size() == 1 && cfg.successors(latch).front() == header))
-            return false;
         auto& succHeader = cfg.successors(header);
-        if(succHeader.size() != 2)
+        if(succHeader.size() != 1)
             return false;
-        exit = succHeader.front() == body ? succHeader.back() : succHeader.front();
-        next = latch->instructions().front();
-        if(!add(any(indVar), int_(step))(MatchContext<Value>(next)))
+        auto& succLatch = cfg.successors(latch);
+        if(!(succLatch.size() == 2 && (succLatch.front() == header || succLatch.back() == header)))
+            return false;
+        exit = succLatch.front() == header ? succLatch.back() : succLatch.front();
+        indVar = header->instructions().front();
+        if(!indVar->is<PhiInst>())
+            return false;
+        next = indVar->as<PhiInst>()->incomings().at(latch)->value;
+        if(!add(exactly(indVar), int_(step))(MatchContext<Value>(next)))
             return false;
         if(std::abs(step) > maxStep)
             return false;
@@ -86,17 +94,13 @@ class LoopInterchange final : public TransformPass<Function> {
             return false;
         preHeader = predHeader.front() == latch ? predHeader.back() : predHeader.front();
 
-        if(!indVar->is<PhiInst>())
-            return false;
         auto indVarInst = indVar->as<PhiInst>();
-        if(indVarInst->incomings().at(latch)->value != next)
-            return false;
         initial = indVarInst->incomings().at(preHeader)->value;
 
-        auto terminator = header->getTerminator()->as<BranchInst>();
+        auto terminator = latch->getTerminator()->as<BranchInst>();
         const auto cond = terminator->getOperand(0);
         CompareOp cmp;
-        if(!icmp(cmp, exactly(indVar), any(bound))(MatchContext<Value>{ cond }))
+        if(!icmp(cmp, exactly(next), any(bound))(MatchContext<Value>{ cond }))
             return false;
         if(body == terminator->getFalseTarget()) {
             cmp = getInvertedOp(cmp);
@@ -125,10 +129,17 @@ class LoopInterchange final : public TransformPass<Function> {
             return false;
         if(!isOnlyUsedBy(indVar, { header, body, latch }))
             return false;
-        if(!isOnlyUsedBy(cond, { header }))
+        if(!isOnlyUsedBy(cond, { latch }))
             return false;
-        if(!isOnlyUsedBy(next, { header }))
+        if(!isOnlyUsedBy(next, { header, latch }))
             return false;
+        for(auto& inst : latch->instructions()) {
+            if(&inst == cond || &inst == next)
+                continue;
+            if(inst.isTerminator())
+                continue;
+            return false;
+        }
 
         // FIXME
         if(step != 1)
@@ -216,13 +227,15 @@ class LoopInterchange final : public TransformPass<Function> {
                                      const PointerBaseAnalysisResult& pointerBase, const mir::Target& target) {
         // preheader
         //    |
-        // header <------
-        // |  |         |
-        // e body <-    |
-        //     |   |    |
-        //     -----    |
-        //     |        |
-        //   latch ------
+        // header <-----
+        //    |        |
+        //   body <-   |
+        //    |   |    |
+        //    -----    |
+        //    |        |
+        //  latch ------
+        //    |
+        //  exit
         if(loop.header != loop.latch)
             return false;
 
@@ -250,6 +263,9 @@ class LoopInterchange final : public TransformPass<Function> {
                 } else if(!isNoSideEffectExpr(inst)) {
                     return false;
                 }
+                for(auto user : inst.users())
+                    if(user->getBlock() != loop.header)
+                        return false;
             }
             if(!hasLoadStore)
                 return false;
@@ -347,13 +363,12 @@ class LoopInterchange final : public TransformPass<Function> {
         }
         builder.setCurrentBlock(newOuterHeader);
         builder.makeOp<BranchInst>(newInnerHeader);
+
         builder.setCurrentBlock(newInnerHeader);
         const auto newInnerIndVar = builder.createPhi(outerIndVar->getType());
         newInnerIndVar->addIncoming(newOuterHeader, outerInitial);
-        const auto newInnerCond =
-            builder.makeOp<CompareInst>(InstructionID::ICmp, CompareOp::ICmpSignedLessThan, newInnerIndVar, outerBound);
-        builder.makeOp<BranchInst>(newInnerCond, header->getTerminator()->as<BranchInst>()->getBranchProb(), newInnerBody,
-                                   newOuterLatch);
+        builder.makeOp<BranchInst>(newInnerBody);
+
         builder.setCurrentBlock(newOuterLatch);
         const auto newOuterNext = builder.makeOp<BinaryInst>(InstructionID::Add, newOuterIndVar,
                                                              ConstantInteger::get(newOuterIndVar->getType(), innerStep));
@@ -361,11 +376,16 @@ class LoopInterchange final : public TransformPass<Function> {
         const auto newOuterCond =
             builder.makeOp<CompareInst>(InstructionID::ICmp, CompareOp::ICmpSignedLessThan, newOuterNext, innerBound);
         builder.makeOp<BranchInst>(newOuterCond, body->getTerminator()->as<BranchInst>()->getBranchProb(), newOuterHeader, exit);
+
         builder.setCurrentBlock(newInnerLatch);
         const auto newInnerNext = builder.makeOp<BinaryInst>(InstructionID::Add, newInnerIndVar,
                                                              ConstantInteger::get(newInnerIndVar->getType(), outerStep));
+        const auto newInnerCond =
+            builder.makeOp<CompareInst>(InstructionID::ICmp, CompareOp::ICmpSignedLessThan, newInnerNext, outerBound);
+        builder.makeOp<BranchInst>(newInnerCond, latch->getTerminator()->as<BranchInst>()->getBranchProb(), newInnerHeader,
+                                   newOuterLatch);
         newInnerIndVar->addIncoming(newInnerLatch, newInnerNext);
-        builder.makeOp<BranchInst>(newInnerHeader);
+
         builder.setCurrentBlock(newInnerBody);
 
         std::unordered_map<Value*, Value*> repMap;
@@ -376,12 +396,13 @@ class LoopInterchange final : public TransformPass<Function> {
                 cloneAndReplace(&inst, newInnerBody, header, dom, repMap);
             }
         }
+
         builder.setCurrentBlock(newInnerBody);
         builder.makeOp<BranchInst>(newInnerLatch);
 
         // fix targets and phis
         resetTarget(preHeader->getTerminator()->as<BranchInst>(), header, newOuterHeader);
-        retargetBlock(exit, header, newOuterLatch);
+        retargetBlock(exit, latch, newOuterLatch);
 
         return true;
     }
