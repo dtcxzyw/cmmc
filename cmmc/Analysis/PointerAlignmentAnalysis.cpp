@@ -25,6 +25,7 @@
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Transforms/Util/PatternMatch.hpp>
 #include <cstdint>
+#include <iostream>
 #include <queue>
 #include <unordered_map>
 #include <vector>
@@ -32,6 +33,8 @@
 CMMC_NAMESPACE_BEGIN
 
 PointerAlignmentAnalysisResult PointerAlignmentAnalysis::run(Function& func, AnalysisPassManager& analysis) {
+    // func.dump(std::cerr, Noop{});
+
     auto& scev = analysis.get<SCEVAnalysis>(func);
     auto& range = analysis.get<IntegerRangeAnalysis>(func);
     auto& dom = analysis.get<DominateAnalysis>(func);
@@ -50,6 +53,8 @@ PointerAlignmentAnalysisResult PointerAlignmentAnalysis::run(Function& func, Ana
         auto& val = storage[pointer];
         if(val < newVal) {
             val = newVal;
+            // pointer->dumpAsOperand(std::cerr);
+            // std::cerr << " ==> " << val << "\n";
 
             for(auto user : pointer->users()) {
                 if(user->getType()->isPointer() && user->getBlock()->getFunction() == &func) {
@@ -147,6 +152,10 @@ PointerAlignmentAnalysisResult PointerAlignmentAnalysis::run(Function& func, Ana
                     intmax_t scale = 1;
 
                     const auto idxRange = range.query(idx, dom, u, 5);
+                    // idx->dumpAsOperand(std::cerr);
+                    // std::cerr << " : ";
+                    // idxRange.print(std::cerr);
+
                     const auto mask = (idxRange.knownZeros() + 1);
                     const auto lowBit = (mask & -mask);
                     scale = std::max(scale, static_cast<intmax_t>(lowBit));

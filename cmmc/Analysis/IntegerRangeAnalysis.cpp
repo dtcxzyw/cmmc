@@ -471,14 +471,22 @@ IntegerRangeAnalysisResult IntegerRangeAnalysis::run(Function& func, AnalysisPas
                 }
 
                 if(range.has_value() && users.size() == 1) {
+                    // std::cerr << "next: ";
+                    // users.front()->dumpInst(std::cerr);
+                    // std::cerr << '\n';
+
+                    // range->print(std::cerr);
+
                     Value* phi = inst;
                     intmax_t inc;
                     if(add(exactly(phi), int_(inc))(MatchContext<Value>{ users.front() })) {
                         const auto zeros = inc & -inc;
                         const auto mask = zeros - 1;
-                        if(zeros > 1 && ((range->knownZeros() & mask) == mask)) {
+                        const auto baseMask = ((~range->knownZeros()) & -(~range->knownZeros())) - 1;
+                        const auto commonMask = mask & baseMask;
+                        if(commonMask) {
                             IntegerRange r;
-                            r.setKnownBits(static_cast<uint32_t>(mask), 0);
+                            r.setKnownBits(static_cast<uint32_t>(commonMask), 0);
                             r.sync();
                             update(inst, r);
                         }

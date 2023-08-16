@@ -631,6 +631,136 @@ static bool earlyFoldStore(MIRBasicBlock& block, CodeGenContext& ctx) {
     return modified;
 }
 
+static bool earlyFoldDualWordCopy(MIRFunction& func, CodeGenContext& ctx) {
+    std::unordered_map<MIROperand, uint32_t, MIROperandHasher> useCount;
+    std::unordered_map<MIROperand, MIRInst*, MIROperandHasher> addressDef;
+    for(auto& block : func.blocks()) {
+        for(auto& inst : block->instructions()) {
+            if(inst.opcode() == InstLoad && inst.getOperand(0).type() == OperandType::Int32) {
+                useCount[inst.getOperand(0)] = 0;
+                addressDef[inst.getOperand(1)] = nullptr;
+            }
+            if(inst.opcode() == InstStore && inst.getOperand(1).type() == OperandType::Int32) {
+                addressDef[inst.getOperand(0)] = nullptr;
+            }
+        }
+    }
+    if(useCount.empty())
+        return false;
+    for(auto& block : func.blocks()) {
+        for(auto& inst : block->instructions()) {
+            const auto& instInfo = ctx.instInfo.getInstInfo(inst);
+            for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx)
+                if(instInfo.getOperandFlag(idx) & OperandFlagUse)
+                    if(auto iter = useCount.find(inst.getOperand(idx)); iter != useCount.end())
+                        ++iter->second;
+            if(inst.opcode() == InstAdd) {
+                if(auto iter = addressDef.find(inst.getOperand(0)); iter != addressDef.end())
+                    iter->second = &inst;
+            }
+        }
+    }
+    bool modified = false;
+    for(auto& block : func.blocks()) {
+        std::list<MIRInstList::iterator> window;
+        auto& instrucitions = block->instructions();
+
+        auto getDef = [&](const MIROperand& addr) -> MIRInst* {
+            if(auto iter = addressDef.find(addr); iter != addressDef.end())
+                return iter->second;
+            return nullptr;
+        };
+        auto matchAdjAddr = [&](const MIROperand& base, const MIROperand& nextWord, const MIROperand& baseAlignment,
+                                const MIROperand& nextAlignment) {
+            if(baseAlignment.imm() != 8 || nextAlignment.imm() != 4)
+                return false;
+
+            const auto nextWordAddrInst = getDef(nextWord);
+            if(!nextWordAddrInst)
+                return false;
+            if(nextWordAddrInst->getOperand(1) == base) {
+                auto offset = nextWordAddrInst->getOperand(2);
+                if(offset.isImm() && offset.imm() == 4)
+                    return true;
+            }
+
+            const auto baseAddrInst = getDef(base);
+            if(!baseAddrInst)
+                return false;
+            if(baseAddrInst->getOperand(1) == nextWordAddrInst->getOperand(1)) {
+                const auto offset1 = baseAddrInst->getOperand(2);
+                const auto offset2 = nextWordAddrInst->getOperand(2);
+                if(offset1.isImm() && offset2.isImm() && offset1.imm() + 4 == offset2.imm())
+                    return true;
+            }
+
+            return false;
+        };
+
+        auto tryFold = [&] {
+            assert(window.size() == 4);
+            auto it = window.begin();
+            auto& load1 = **it++;
+            auto& store1 = **it++;
+            const auto load2Iter = *it;
+            auto& load2 = **it++;
+            const auto store2Iter = *it;
+            auto& store2 = **it++;
+            if(!(load1.opcode() == InstLoad && load2.opcode() == InstLoad && store1.opcode() == InstStore &&
+                 store2.opcode() == InstStore))
+                return;
+            if(load1.getOperand(0) == store1.getOperand(1) && load2.getOperand(0) == store2.getOperand(1) &&
+               matchAdjAddr(load1.getOperand(1), load2.getOperand(1), load1.getOperand(2), load2.getOperand(2)) &&
+               matchAdjAddr(store1.getOperand(0), store2.getOperand(0), store1.getOperand(2), store2.getOperand(2))) {
+                const auto val = MIROperand::asVReg(ctx.nextId(), OperandType::Int64);
+                load1.setOperand<0>(val);
+                store1.setOperand<1>(val);
+                instrucitions.erase(load2Iter);
+                instrucitions.erase(store2Iter);
+
+                window.clear();
+                modified = true;
+            }
+        };
+
+        for(MIRInstList::iterator it = instrucitions.begin(), next; it != instrucitions.end(); it = next) {
+            next = std::next(it);
+            auto& inst = *it;
+            const auto& instInfo = ctx.instInfo.getInstInfo(inst);
+            if(requireFlag(instInfo.getInstFlag(), InstFlagCall)) {
+                window.clear();
+                continue;
+            }
+            if(requireFlag(instInfo.getInstFlag(), InstFlagLoad)) {
+                if(inst.opcode() == InstLoad && inst.getOperand(0).type() == OperandType::Int32) {
+                    if(auto iter = useCount.find(inst.getOperand(0)); iter != useCount.end() && iter->second == 1) {
+                        window.push_back(it);
+                        while(window.size() > 4)
+                            window.pop_front();
+                    }
+                    continue;
+                }
+                window.clear();
+                continue;
+            }
+            if(requireFlag(instInfo.getInstFlag(), InstFlagStore)) {
+                if(inst.opcode() == InstStore && inst.getOperand(1).type() == OperandType::Int32) {
+                    window.push_back(it);
+                    while(window.size() > 4)
+                        window.pop_front();
+                    if(window.size() == 4) {
+                        tryFold();
+                    }
+                    continue;
+                }
+                window.clear();
+                continue;
+            }
+        }
+    }
+    return modified;
+}
+
 static bool simplifyOpWithZero(MIRFunction& func, const CodeGenContext&) {
     bool modified = false;
     for(auto& block : func.blocks())
@@ -1005,7 +1135,9 @@ bool RISCVScheduleModel_sifive_u74::peepholeOpt(MIRFunction& func, CodeGenContex
     modified |= simplifyOpWithZero(func, ctx);
     modified |= relaxWInst(func, ctx);
     modified |= removeSExtW(func, ctx);
-    modified |= expandMulWithConstant(func, ctx, queryTuneOpt("max_mul_constant_cost", 2));
+    modified |= expandMulWithConstant(func, ctx, static_cast<uint32_t>(queryTuneOpt("max_mul_constant_cost", 2)));
+    if(ctx.flags.inSSAForm)
+        modified |= earlyFoldDualWordCopy(func, ctx);
     return modified;
 }
 

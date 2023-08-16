@@ -16,6 +16,14 @@ arr:
 .globl x
 x:
 	.zero	8
+.align 8
+.globl src
+src:
+	.zero	16
+.align 8
+.globl dst
+dst:
+	.zero	8
 .text
 .p2align 2
 .globl load
@@ -273,5 +281,29 @@ merge_store:
 	addiu $t1, $t0, %lo(x)
 	sw $a0, %lo(x)($t0)
 	sw $a1, 4($t1)
+	jr $ra
+	nop
+.p2align 2
+.globl copy1
+copy1:
+	lui $t1, %hi(dst)
+	addiu $t0, $t1, %lo(dst)
+	lw $t1, %lo(dst)($t1)
+	lui $t3, %hi(src)
+	addiu $t2, $t3, %lo(src)
+	sw $t1, %lo(src)($t3)
+	lw $t0, 4($t0)
+	sw $t0, 4($t2)
+	jr $ra
+	nop
+.p2align 2
+.globl copy2
+copy2:
+	lui $t1, %hi(src)
+	addiu $t0, $t1, %lo(src)
+	lw $t1, %lo(src)($t1)
+	sw $t1, 8($t0)
+	lw $t1, 4($t0)
+	sw $t1, 12($t0)
 	jr $ra
 	nop

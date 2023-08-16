@@ -54,7 +54,8 @@ void initTune(const std::string_view& name, const std::string_view& target) {
               "loop_unswitch 1 loop_parallel 0 loop_extract 0 loop_unroll 0 dyn_loop_unroll 0 max_constant_hoist_count 4" },
             { "/crypto",
               "loop_unswitch 0 loop_parallel 0 unroll_block_size 8 max_unroll_body_size 128 max_constant_hoist_count 6" },
-            { "/sl", "loop_unswitch 1 loop_parallel 1 unroll_block_size 2 max_unroll_body_size 128 max_constant_hoist_count 3" }
+            { "/sl", "loop_unswitch 1 loop_parallel 1 unroll_block_size 2 max_unroll_body_size 128 max_constant_hoist_count 3" },
+            { "/gameoflife", "loop_parallel 1 unroll_block_size 16 max_unroll_body_size 128 max_constant_hoist_count 6" }
         };
         for(auto& [key, value] : table) {
             if(key.empty())

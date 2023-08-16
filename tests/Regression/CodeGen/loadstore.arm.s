@@ -13,6 +13,14 @@ arr:
 .globl x
 x:
 	.zero	8
+.align 8
+.globl src
+src:
+	.zero	16
+.align 8
+.globl dst
+dst:
+	.zero	8
 .text
 .syntax unified
 .arm
@@ -232,4 +240,26 @@ merge_store:
 	movt r2, #:upper16:x
 	str r0, [r2, #0]
 	str r1, [r2, #4]
+	bx lr
+.p2align 4
+.globl copy1
+copy1:
+	movw r0, #:lower16:dst
+	movt r0, #:upper16:dst
+	movw r1, #:lower16:src
+	movt r1, #:upper16:src
+	ldr r2, [r0, #0]
+	str r2, [r1, #0]
+	ldr r0, [r0, #4]
+	str r0, [r1, #4]
+	bx lr
+.p2align 4
+.globl copy2
+copy2:
+	movw r0, #:lower16:src
+	movt r0, #:upper16:src
+	ldr r1, [r0, #0]
+	str r1, [r0, #8]
+	ldr r1, [r0, #4]
+	str r1, [r0, #12]
 	bx lr
