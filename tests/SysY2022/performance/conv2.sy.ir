@@ -67,60 +67,58 @@ func @main() -> i32 { NoRecurse Entry } {
     store i32* %15 with i32 %1;
     store i32* %16 with i32 %11;
     call (i32, i32, i8*) -> void @cmmcParallelFor(i32 0, i32 %1, i8* %44);
-    ubr ^b4;
+    ubr ^b6;
   ^b1:
     store i32* %18 with i32 0;
     store i32* %19 with i32 %1;
     store i32* %20 with i32 %2;
     store i32* %21 with i32 %11;
     call (i32, i32, i8*) -> void @cmmcParallelFor(i32 0, i32 %1, i8* %45);
-    ubr ^b4;
+    ubr ^b6;
   ^b2:
+    store i32* %35 with i32 0;
+    store i32* %36 with i32 %1;
+    store i32* %37 with i32 %11;
+    store i32* %38 with i32 %2;
+    call (i32, i32, i8*) -> void @cmmcParallelFor(i32 0, i32 %1, i8* %49);
+    ubr ^b6;
+  ^while.body:
+    i32 %51 = phi [^entry, i32 0] [^b8, i32 %54];
+    i32* %52 = getelementptr &([10000 * i32]* %6)[i64 0][i32 %51];
+    i32 %53 = load i32* %52;
+    switch i32 %53, [0, ^b], [1, ^b1], [2, ^b2], [3, ^b3], [4, ^b4], default ^b5;
+  ^b3:
     store i32* %25 with i32 0;
     store i32* %26 with i32 %11;
     store i32* %27 with i32 %2;
     store i32* %28 with i32 %1;
     call (i32, i32, i8*) -> void @cmmcParallelFor(i32 0, i32 %1, i8* %47);
-    ubr ^b4;
-  ^while.body:
-    i32 %51 = phi [^entry, i32 0] [^b6, i32 %63];
-    i32* %52 = getelementptr &([10000 * i32]* %6)[i64 0][i32 %51];
-    i32 %53 = load i32* %52;
-    switch i32 %53, [0, ^b], [1, ^b1], [3, ^b2], [4, ^b3], default ^cond;
-  ^b3:
+    ubr ^b6;
+  ^b4:
     store i32* %30 with i32 0;
     store i32* %31 with i32 %11;
     store i32* %32 with i32 %1;
     store i32* %33 with i32 %2;
     call (i32, i32, i8*) -> void @cmmcParallelFor(i32 0, i32 %1, i8* %48);
-    ubr ^b4;
-  ^cond:
-    i1 %54 = icmp eq i32 %53, i32 2;
-    i32* %55 = select i1 %54 ? i32* %35 : i32* %40;
-    store i32* %55 with i32 0;
-    i32* %56 = select i1 %54 ? i32* %36 : i32* %41;
-    i32 %57 = select i1 %54 ? i32 %1 : i32 %11;
-    store i32* %56 with i32 %57;
-    i32* %58 = select i1 %54 ? i32* %37 : i32* %42;
-    i32 %59 = select i1 %54 ? i32 %11 : i32 %2;
-    store i32* %58 with i32 %59;
-    i32* %60 = select i1 %54 ? i32* %38 : i32* %43;
-    i32 %61 = select i1 %54 ? i32 %2 : i32 %1;
-    store i32* %60 with i32 %61;
-    i8* %62 = select i1 %54 ? i8* %49 : i8* %50;
-    call (i32, i32, i8*) -> void @cmmcParallelFor(i32 0, i32 %1, i8* %62);
-    ubr ^b4;
-  ^b4:
-    cbr i1 %10(prob = 0.984615), ^b5, ^b6;
+    ubr ^b6;
   ^b5:
-    store i32* %23 with i32 %9;
-    call (i32, i32, i8*) -> void @cmmcParallelFor(i32 0, i32 %9, i8* %46);
+    store i32* %40 with i32 0;
+    store i32* %41 with i32 %11;
+    store i32* %42 with i32 %2;
+    store i32* %43 with i32 %1;
+    call (i32, i32, i8*) -> void @cmmcParallelFor(i32 0, i32 %1, i8* %50);
     ubr ^b6;
   ^b6:
-    i32 %63 = add i32 %51, i32 1;
-    i1 %64 = icmp sgt i32 %8, i32 %63;
-    cbr i1 %64(prob = 0.984615), ^while.body, ^b7;
+    cbr i1 %10(prob = 0.984615), ^b7, ^b8;
   ^b7:
+    store i32* %23 with i32 %9;
+    call (i32, i32, i8*) -> void @cmmcParallelFor(i32 0, i32 %9, i8* %46);
+    ubr ^b8;
+  ^b8:
+    i32 %54 = add i32 %51, i32 1;
+    i1 %55 = icmp sgt i32 %8, i32 %54;
+    cbr i1 %55(prob = 0.984615), ^while.body, ^b9;
+  ^b9:
     call (i32) -> void @stoptime(i32 116);
     call (i32, i32*) -> void @putarray(i32 %9, i32* %4);
     ret i32 0;

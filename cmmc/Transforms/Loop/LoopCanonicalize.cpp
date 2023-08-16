@@ -20,12 +20,13 @@
 #include <cmmc/Transforms/Hyperparameters.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <cmmc/Transforms/Util/PatternMatch.hpp>
+#include <cstdint>
 
 CMMC_NAMESPACE_BEGIN
 
 class LoopCanonicalize final : public TransformPass<Function> {
     static bool simplifyIndVar(Block* block, CompareInst* cmp, BranchInst* terminatorBranch, const DominateAnalysisResult& dom) {
-        // addrec (initial, step) + offset < end -> addrec (initial step) + step < end + step - offset
+        // addrec (initial, step) + offset < end -> addrec (initial, step) + step < end + step - offset
         const auto next = cmp->getOperand(0);
         const auto rhs = cmp->getOperand(1);
         Value* v1;
@@ -83,6 +84,44 @@ public:
                 std::swap(terminatorBranch->getTrueTarget(), terminatorBranch->getFalseTarget());
                 cmp->setOp(getInvertedOp(cmp->getOp()));
                 modified = true;
+            }
+
+            if(terminatorBranch->getTrueTarget() != terminatorBranch->getFalseTarget() && cmp->hasExactlyOneUse() &&
+               dom.dominate(terminatorBranch->getTrueTarget(), block) &&
+               (!dom.dominate(terminatorBranch->getFalseTarget(), block) ||
+                dom.dominate(terminatorBranch->getFalseTarget(), terminatorBranch->getTrueTarget()))) {
+                // TODO: check overflow
+                // i <= n -> i < n + 1
+                if(cmp->getOp() == CompareOp::ICmpSignedLessEqual) {
+                    const auto next = cmp->getOperand(0);
+                    PhiInst* indVar;
+                    intmax_t step;
+                    if(add(phi(indVar), int_(step))(MatchContext<Value>{ next })) {
+                        const auto bound = cmp->getOperand(1);
+                        // constant bound will be handled by ArithmeticReduce
+                        if(!bound->isConstant() &&
+                           (!bound->getBlock() ||
+                            (bound->getBlock() != indVar->getBlock() && dom.dominate(bound->getBlock(), indVar->getBlock())))) {
+                            const auto newBound =
+                                make<BinaryInst>(InstructionID::Add, bound, ConstantInteger::get(bound->getType(), 1));
+                            if(bound->getBlock()) {
+                                auto it = std::next(bound->as<Instruction>()->asIterator());
+                                while(it->getInstID() == InstructionID::Phi)
+                                    ++it;
+                                newBound->insertBefore(bound->getBlock(), it);
+                            } else {
+                                for(auto& inst : func.entryBlock()->instructions())
+                                    if(inst.getInstID() != InstructionID::Alloc) {
+                                        newBound->insertBefore(func.entryBlock(), std::next(inst.asIterator()));
+                                        break;
+                                    }
+                            }
+                            cmp->mutableOperands()[1]->resetValue(newBound);
+                            cmp->setOp(CompareOp::ICmpSignedLessThan);
+                            modified = true;
+                        }
+                    }
+                }
             }
 
             modified |= simplifyIndVar(block, cmp, terminatorBranch, dom);

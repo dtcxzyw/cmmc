@@ -17,12 +17,10 @@ pcrel21:
 	auipc a1, %pcrel_hi(j)
 	li a2, 5
 	lw a0, %pcrel_lo(pcrel21)(a1)
-	beq a0, a2, label2
-label3:
-	ret
-label2:
+	bne a0, a2, label3
 	li a0, 1
 pcrel22:
 	auipc a1, %pcrel_hi(result)
 	sw a0, %pcrel_lo(pcrel22)(a1)
-	j label3
+label3:
+	ret

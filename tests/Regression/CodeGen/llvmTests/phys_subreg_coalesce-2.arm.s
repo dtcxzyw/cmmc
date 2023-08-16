@@ -17,7 +17,10 @@ label2:
 	bx lr
 label4:
 	cmp r2, #0
-	beq label16
+	bne label5
+	mov r0, #1
+	b label2
+label5:
 	cmp r2, #2
 	blo label2
 	mov r1, r0
@@ -31,7 +34,4 @@ label6:
 	udiv r1, r1, r3
 	bls label6
 	mov r0, r1
-	b label2
-label16:
-	mov r0, #1
 	b label2

@@ -9,14 +9,14 @@
 main:
 	@ stack usage: CalleeArg[0] Local[40] RegSpill[0] CalleeSaved[0]
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
+	mov r4, #6
 	sub sp, sp, #44
 	mov r1, #3
-	mov r4, #6
+	mov r2, #4
 	mov r8, #0
 	mov r3, #9
-	mov r2, #4
-	mov r0, sp
 	str r2, [sp, #0]
+	mov r0, sp
 	str r1, [sp, #4]
 	mov r1, #2
 	str r3, [sp, #8]
@@ -48,16 +48,11 @@ label2:
 label7:
 	add r6, r0, r5, lsl #2
 	cmp r5, #9
-	bge label54
-	add r7, r0, r5, lsl #2
-	ldr r8, [r7, #0]
-	ldr r7, [r7, #4]
-	ldr r9, [r0, r4, lsl #2]
-	cmp r8, r7
+	blt label11
 	mov r8, #0
-	movwlt r8, #1
-	ldr r10, [r6, r8, lsl #2]
+	ldr r9, [r0, r4, lsl #2]
 	mov r7, r8
+	ldr r10, [r6, r8, lsl #2]
 	cmp r9, r10
 	bgt label12
 	add r5, r5, r8
@@ -71,11 +66,16 @@ label7:
 	blt label7
 	b label12
 .p2align 4
-label54:
-	mov r8, #0
+label11:
+	add r7, r0, r5, lsl #2
+	ldr r8, [r7, #0]
+	ldr r7, [r7, #4]
 	ldr r9, [r0, r4, lsl #2]
-	mov r7, r8
+	cmp r8, r7
+	mov r8, #0
+	movwlt r8, #1
 	ldr r10, [r6, r8, lsl #2]
+	mov r7, r8
 	cmp r9, r10
 	bgt label12
 	add r5, r5, r8
@@ -99,11 +99,20 @@ label13:
 	str r4, [r2, #0]
 	sub r4, r3, #1
 	cmp r3, r1
-	bgt label20
+	bgt label28
+	b label20
 .p2align 4
-label25:
+label110:
+	mov r8, #0
+	ldr r10, [r0, r5, lsl #2]
+	mov r9, r8
+	ldr r8, [r7, r8, lsl #2]
+	cmp r10, r8
+	ble label31
+.p2align 4
+label20:
 	cmp r4, #0
-	ble label126
+	ble label21
 	sub r2, r2, #4
 	mov r3, r4
 	mov r8, #0
@@ -115,30 +124,12 @@ label25:
 	mov r5, r8
 	str r4, [r2, #0]
 	sub r4, r3, #1
-	ble label25
+	ble label20
 .p2align 4
-label20:
+label28:
 	add r7, r0, r6, lsl #2
 	cmp r4, r6
-	bgt label24
-	mov r8, #0
-	ldr r10, [r0, r5, lsl #2]
-	mov r9, r8
-	ldr r8, [r7, r8, lsl #2]
-	cmp r10, r8
-	bgt label25
-	add r6, r6, r9
-	str r8, [r0, r5, lsl #2]
-	lsl r11, r6, #1
-	mov r5, r6
-	str r10, [r7, r9, lsl #2]
-	add r11, r11, #1
-	cmp r3, r11
-	mov r6, r11
-	bgt label20
-	b label25
-.p2align 4
-label24:
+	ble label110
 	add r8, r0, r6, lsl #2
 	ldr r9, [r8, #0]
 	ldr r8, [r8, #4]
@@ -149,7 +140,7 @@ label24:
 	mov r9, r8
 	ldr r8, [r7, r8, lsl #2]
 	cmp r10, r8
-	bgt label25
+	bgt label20
 	add r6, r6, r9
 	str r8, [r0, r5, lsl #2]
 	lsl r11, r6, #1
@@ -158,24 +149,35 @@ label24:
 	add r11, r11, #1
 	cmp r3, r11
 	mov r6, r11
-	bgt label20
-	b label25
-label126:
+	bgt label28
+	b label20
+label21:
 	mov r4, r0
 	mov r8, #0
-	b label28
 .p2align 4
-label31:
-	add r4, r4, #4
-.p2align 4
-label28:
+label22:
 	ldr r0, [r4, #0]
 	bl putint
 	mov r0, #10
 	bl putch
 	add r8, r8, #1
 	cmp r8, #10
-	blt label31
+	bge label25
+	add r4, r4, #4
+	b label22
+.p2align 4
+label31:
+	add r6, r6, r9
+	str r8, [r0, r5, lsl #2]
+	lsl r11, r6, #1
+	mov r5, r6
+	str r10, [r7, r9, lsl #2]
+	add r11, r11, #1
+	cmp r3, r11
+	mov r6, r11
+	bgt label28
+	b label20
+label25:
 	mov r8, #0
 	add sp, sp, #44
 	mov r0, r8

@@ -28,73 +28,75 @@ main:
 	bl getint
 	cmp r0, #0
 	mov r4, r0
-	ble label249
+	ble label250
 	movw r1, #:lower16:A
 	movt r1, #:upper16:A
 	mov r6, #0
 	mov r5, r1
 	mov r7, r1
 	mov r8, #0
-	b label243
+	b label244
 .p2align 4
-label300:
+label294:
 	add r6, r6, #1
 	cmp r4, r6
-	ble label249
+	ble label250
 	movw r0, #8040
 	mov r8, #0
 	add r5, r5, r0
 	mov r7, r5
 .p2align 4
-label243:
+label244:
 	bl getint
 	str r0, [r7, #0]
 	add r0, r8, #1
 	cmp r4, r0
-	ble label300
+	ble label294
 	add r7, r7, #4
 	mov r8, r0
-	b label243
-label249:
+	b label244
+label250:
 	movw r5, #:lower16:B
 	movt r5, #:upper16:B
 	cmp r4, #0
-	ble label250
+	ble label256
 	mov r6, r5
 	mov r7, #0
-	b label280
+	b label252
 .p2align 4
-label283:
+label255:
 	add r6, r6, #4
 	mov r7, r0
 .p2align 4
-label280:
+label252:
 	bl getint
 	str r0, [r6, #0]
 	add r0, r7, #1
 	cmp r4, r0
-	bgt label283
-label250:
+	bgt label255
+label256:
 	mov r0, #59
 	bl _sysy_starttime
-	mov r7, #0
+	cmp r4, #0
 	movw r6, #:lower16:C
 	movt r6, #:upper16:C
-	b label251
+	ble label257
+	mov r7, #0
+	b label258
 .p2align 4
-label345:
+label367:
 	add r0, r0, #1
 	cmp r4, r0
-	ble label394
+	ble label397
 .p2align 4
-label273:
+label281:
 	movw r2, #8040
 	mov r3, #0
 	add r1, r1, r2
 	ldr r8, [r1, #0]
 	mov r2, r1
 	cmp r8, #0
-	beq label270
+	beq label277
 	add r9, r5, r0, lsl #2
 	ldr r10, [r9, #0]
 	ldr r11, [r6, r3, lsl #2]
@@ -102,19 +104,17 @@ label273:
 	cmp r4, r3
 	mla r8, r8, r11, r10
 	str r8, [r9, #0]
-	bgt label271
+	bgt label278
 	add r0, r0, #1
 	cmp r4, r0
-	bgt label273
+	bgt label281
 .p2align 4
-label394:
+label397:
 	add r7, r7, #1
 	cmp r7, #50
-	bge label278
+	bge label257
 .p2align 4
-label251:
-	cmp r4, #0
-	ble label277
+label258:
 	movw r0, #:lower16:cmmc_parallel_body_payload_0
 	movt r0, #:upper16:cmmc_parallel_body_payload_0
 	movw r2, #:lower16:cmmc_parallel_body_0
@@ -130,23 +130,23 @@ label251:
 	mov r3, #0
 	ldr r8, [r1, #0]
 	cmp r8, #0
-	beq label260
+	beq label267
 	add r9, r6, r0, lsl #2
 	ldr r10, [r9, #0]
 	ldr r11, [r5, r3, lsl #2]
 	mla r8, r8, r11, r10
 	str r8, [r9, #0]
 .p2align 4
-label260:
+label267:
 	add r3, r3, #1
 	cmp r4, r3
-	ble label261
+	ble label268
 .p2align 4
-label275:
+label283:
 	add r2, r2, #4
 	ldr r8, [r2, #0]
 	cmp r8, #0
-	beq label260
+	beq label267
 	add r9, r6, r0, lsl #2
 	ldr r10, [r9, #0]
 	ldr r11, [r5, r3, lsl #2]
@@ -154,12 +154,12 @@ label275:
 	cmp r4, r3
 	mla r8, r8, r11, r10
 	str r8, [r9, #0]
-	bgt label275
+	bgt label283
 	add r0, r0, #1
 	cmp r4, r0
-	bgt label262
+	bgt label282
 .p2align 4
-label263:
+label269:
 	movw r0, #:lower16:cmmc_parallel_body_payload_1
 	movt r0, #:upper16:cmmc_parallel_body_payload_1
 	movw r2, #:lower16:cmmc_parallel_body_1
@@ -175,23 +175,18 @@ label263:
 	mov r3, #0
 	ldr r8, [r1, #0]
 	cmp r8, #0
-	beq label270
-	add r9, r5, r0, lsl #2
-	ldr r10, [r9, #0]
-	ldr r11, [r6, r3, lsl #2]
-	mla r8, r8, r11, r10
-	str r8, [r9, #0]
+	bne label276
 .p2align 4
-label270:
+label277:
 	add r3, r3, #1
 	cmp r4, r3
-	ble label345
+	ble label367
 .p2align 4
-label271:
+label278:
 	add r2, r2, #4
 	ldr r8, [r2, #0]
 	cmp r8, #0
-	beq label270
+	beq label277
 	add r9, r5, r0, lsl #2
 	ldr r10, [r9, #0]
 	ldr r11, [r6, r3, lsl #2]
@@ -199,28 +194,28 @@ label271:
 	cmp r4, r3
 	mla r8, r8, r11, r10
 	str r8, [r9, #0]
-	bgt label271
+	bgt label278
 	add r0, r0, #1
 	cmp r4, r0
-	bgt label273
+	bgt label281
 	add r7, r7, #1
 	cmp r7, #50
-	blt label251
-	b label278
+	blt label258
+	b label257
 .p2align 4
-label261:
+label268:
 	add r0, r0, #1
 	cmp r4, r0
-	ble label263
+	ble label269
 .p2align 4
-label262:
+label282:
 	movw r2, #8040
 	mov r3, #0
 	add r1, r1, r2
 	ldr r8, [r1, #0]
 	mov r2, r1
 	cmp r8, #0
-	beq label260
+	beq label267
 	add r9, r6, r0, lsl #2
 	ldr r10, [r9, #0]
 	ldr r11, [r5, r3, lsl #2]
@@ -228,16 +223,20 @@ label262:
 	cmp r4, r3
 	mla r8, r8, r11, r10
 	str r8, [r9, #0]
-	bgt label275
+	bgt label283
 	add r0, r0, #1
 	cmp r4, r0
-	bgt label262
-	b label263
-label277:
-	add r7, r7, #1
-	cmp r7, #50
-	blt label251
-label278:
+	bgt label282
+	b label269
+.p2align 4
+label276:
+	add r9, r5, r0, lsl #2
+	ldr r10, [r9, #0]
+	ldr r11, [r6, r3, lsl #2]
+	mla r8, r8, r11, r10
+	str r8, [r9, #0]
+	b label277
+label257:
 	mov r0, #67
 	bl _sysy_stoptime
 	mov r0, r4
@@ -263,12 +262,8 @@ cmmc_parallel_body_0:
 	cmp r1, r5
 	bge label49
 	add r1, r4, r3, lsl #2
-	b label12
 .p2align 4
-label15:
-	add r1, r1, #64
-.p2align 4
-label12:
+label20:
 	add r3, r3, #16
 	str r0, [r1, #0]
 	cmp r6, r3
@@ -287,43 +282,46 @@ label12:
 	str r0, [r1, #52]
 	str r0, [r1, #56]
 	str r0, [r1, #60]
-	bgt label15
+	ble label86
+	add r1, r1, #64
+	b label20
+label86:
 	mov r1, r3
-label16:
+label11:
 	cmp r5, r1
 	ble label2
 	add r3, r4, r1, lsl #2
-label20:
+	b label15
+label18:
+	add r3, r3, #16
+label15:
 	add r1, r1, #4
 	str r0, [r3, #0]
 	cmp r5, r1
 	str r0, [r3, #4]
 	str r0, [r3, #8]
 	str r0, [r3, #12]
-	ble label86
-	add r3, r3, #16
-	b label20
-label86:
+	bgt label18
 	mov r3, r1
 label2:
 	cmp r2, r3
-	ble label4
+	ble label9
 	add r1, r4, r3, lsl #2
-	b label6
-label9:
+	b label5
+label8:
 	add r1, r1, #4
-label6:
+label5:
 	add r3, r3, #1
 	str r0, [r1, #0]
 	cmp r2, r3
-	bgt label9
-label4:
+	bgt label8
+label9:
 	pop { r4, r5, r6 }
 	bx lr
 label49:
 	mov r1, r3
 	mov r3, r0
-	b label16
+	b label11
 .p2align 4
 cmmc_parallel_body_1:
 	push { r4, r5, r6 }
@@ -334,12 +332,12 @@ cmmc_parallel_body_1:
 	add r0, r0, #3
 	cmp r1, r0
 	mov r0, #0
-	ble label135
+	ble label121
 	add r1, r3, #15
 	sub r5, r2, #3
 	sub r6, r2, #18
 	cmp r1, r5
-	bge label156
+	bge label168
 	add r1, r4, r3, lsl #2
 	b label131
 .p2align 4
@@ -367,38 +365,38 @@ label131:
 	str r0, [r1, #60]
 	bgt label134
 	mov r1, r3
-label122:
+label135:
 	cmp r5, r1
-	ble label135
+	ble label121
 	add r3, r4, r1, lsl #2
-	b label126
-label129:
-	add r3, r3, #16
-label126:
+label139:
 	add r1, r1, #4
 	str r0, [r3, #0]
 	cmp r5, r1
 	str r0, [r3, #4]
 	str r0, [r3, #8]
 	str r0, [r3, #12]
-	bgt label129
-	mov r3, r1
-label135:
-	cmp r2, r3
-	ble label137
-	add r1, r4, r3, lsl #2
+	ble label205
+	add r3, r3, #16
 	b label139
-label142:
+label205:
+	mov r3, r1
+label121:
+	cmp r2, r3
+	ble label128
+	add r1, r4, r3, lsl #2
+	b label124
+label127:
 	add r1, r1, #4
-label139:
+label124:
 	add r3, r3, #1
 	str r0, [r1, #0]
 	cmp r2, r3
-	bgt label142
-label137:
+	bgt label127
+label128:
 	pop { r4, r5, r6 }
 	bx lr
-label156:
+label168:
 	mov r1, r3
 	mov r3, r0
-	b label122
+	b label135

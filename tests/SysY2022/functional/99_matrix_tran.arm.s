@@ -36,39 +36,39 @@ label2:
 	bl putint
 	add r8, r8, #1
 	cmp r8, #3
-	bge label5
+	bge label6
 	add r6, r6, #4
 	b label2
-label5:
+label6:
 	mov r0, #10
 	bl putch
 	mov r6, r7
 	mov r7, r4
-label6:
+label7:
 	vldr s0, [r6, #0]
 	vcvt.s32.f32 s0, s0
 	vmov r0, s0
 	bl putint
 	add r7, r7, #1
 	cmp r7, #3
-	bge label10
+	bge label11
 	add r6, r6, #4
-	b label6
-label10:
+	b label7
+label11:
 	mov r0, #10
 	bl putch
 	mov r6, r4
-label11:
+label12:
 	vldr s0, [r5, #0]
 	vcvt.s32.f32 s0, s0
 	vmov r0, s0
 	bl putint
 	add r6, r6, #1
 	cmp r6, #3
-	bge label15
+	bge label16
 	add r5, r5, #4
-	b label11
-label15:
+	b label12
+label16:
 	mov r0, #10
 	bl putch
 	add sp, sp, #56

@@ -23,23 +23,23 @@ fib:
 	str r0, [sp, #264]
 	ldr r0, [r0, #12]
 	cmp r0, #0
-	beq label5
+	beq label2
 	ldr r0, [sp, #264]
 	ldr r0, [r0, #8]
-label3:
+label6:
 	add sp, sp, #428
 	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
-label5:
+label2:
 	ldr r4, [sp, #268]
 	cmp r4, #3
-	bge label7
+	bge label4
 	mov r1, #1
 	ldr r0, [sp, #264]
 	str r1, [r0, #12]
 	str r1, [r0, #8]
 	mov r0, r1
-	b label3
-label7:
+	b label6
+label4:
 	ldr r4, [sp, #268]
 	add r0, r4, r4, lsr #31
 	and r1, r4, #1
@@ -820,7 +820,7 @@ label7:
 	str r2, [r0, #12]
 	str r1, [r0, #8]
 	mov r0, r1
-	b label3
+	b label6
 .p2align 4
 .globl main
 main:

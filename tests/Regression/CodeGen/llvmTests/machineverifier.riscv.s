@@ -12,9 +12,13 @@ foo:
 pcrel18:
 	auipc a0, %pcrel_hi(g)
 	lw a1, %pcrel_lo(pcrel18)(a0)
-	beq a1, zero, label2
-	addiw a2, a1, 10
-	zext.w a3, a2
-	sw a3, %pcrel_lo(pcrel18)(a0)
+	bne a1, zero, label8
 label2:
 	ret
+label8:
+	addiw a2, a1, 10
+	zext.w a3, a2
+pcrel19:
+	auipc a0, %pcrel_hi(g)
+	sw a3, %pcrel_lo(pcrel19)(a0)
+	j label2

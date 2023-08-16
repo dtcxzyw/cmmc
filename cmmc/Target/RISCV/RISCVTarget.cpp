@@ -290,7 +290,8 @@ public:
         PassManager<Module> modulePassManager;
         auto perFunc = std::make_shared<PassManager<Function>>();
         for(auto& pass : PassRegistry::get().collectFunctionPass({ "CommonBaseOpt", "SCEVGEP2Phi", "DuplicateGEP", "DuplicateCmp",
-                                                                   "SDivWithPowerOf2", "NoSideEffectEliminate", "InstReorder" }))
+                                                                   "SDivWithPowerOf2", "DuplicateGlobal", "NoSideEffectEliminate",
+                                                                   "InstReorder" }))
             perFunc->addPass(pass);
         modulePassManager.addPass(createWrapper(std::move(perFunc)));
         modulePassManager.run(module, analysis);

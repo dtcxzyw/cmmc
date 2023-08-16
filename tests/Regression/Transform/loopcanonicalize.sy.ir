@@ -82,3 +82,10 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
     i1 %52 = icmp sgt i32 %10, i32 %51;
     cbr i1 %52(prob = 0.75), ^for.body3, ^scalar.final1;
 }
+func @test_sle(i32 %n) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = icmp sgt i32 %n, i32 -1;
+    i32 %1 = add i32 %n, i32 1;
+    i32 %2 = select i1 %0 ? i32 %1 : i32 0;
+    ret i32 %2;
+}

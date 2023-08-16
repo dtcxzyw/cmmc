@@ -1,0 +1,18 @@
+func @test(i32* %x, i32 %n, i32 %i) -> void { NoMemoryRead NoRecurse } {
+  ^entry:
+    ubr ^while.header;
+  ^while.header:
+    i32 %0 = phi [^entry, i32 0] [^while.body, i32 %3] [^b1, i32 %3];
+    i1 %1 = icmp sgt i32 %n, i32 %0;
+    cbr i1 %1(prob = 0.984615), ^while.body, ^b;
+  ^while.body:
+    i1 %2 = icmp slt i32 %i, i32 %0;
+    i32 %3 = add i32 %0, i32 1;
+    cbr i1 %2(prob = 0.5), ^while.header, ^b1;
+  ^b:
+    ret;
+  ^b1:
+    i32* %4 = getelementptr &(i32* %x)[i32 %0];
+    store i32* %4 with i32 0;
+    ubr ^while.header;
+}

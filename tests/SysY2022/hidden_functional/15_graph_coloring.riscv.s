@@ -16,29 +16,44 @@ graphColoring:
 	sd s4, 40(sp)
 	bne a2, s3, label32
 	mv a5, zero
-label5:
-	bge a5, s3, label8
+label3:
+	bge a5, s3, label6
 	addiw a1, a5, 1
 	mv a4, a1
 	sh2add a2, a1, s0
 	sh2add a3, a1, a0
-	j label15
-label57:
+	j label13
+label18:
 	addiw a4, a4, 1
 	addi a3, a3, 4
 	addi a2, a2, 4
-label15:
+label13:
 	li t0, 3
 	bgt a4, t0, label52
 	lw t0, 0(a3)
-	beq t0, zero, label57
+	beq t0, zero, label18
 	sh2add t1, a5, s0
 	lw t0, 0(a2)
 	lw t2, 0(t1)
-	bne t0, t2, label57
-label66:
+	beq t0, t2, label69
+	j label18
+label32:
+	li s4, 1
+label23:
+	bge s4, s3, label69
+	sh2add a1, s2, s0
+	addiw a2, s2, 1
+	sw s4, 0(a1)
+	li a1, 3
+	mv a0, s1
+	mv a3, s0
+	jal graphColoring
+	beq a0, zero, label81
+	li a0, 1
+	j label21
+label69:
 	mv a0, zero
-label2:
+label21:
 	ld ra, 0(sp)
 	ld s1, 8(sp)
 	ld s2, 16(sp)
@@ -47,45 +62,31 @@ label2:
 	ld s4, 40(sp)
 	addi sp, sp, 48
 	ret
-label32:
-	li s4, 1
-label23:
-	bge s4, s3, label66
-	sh2add a1, s2, s0
-	addiw a2, s2, 1
-	sw s4, 0(a1)
-	li a1, 3
-	mv a0, s1
-	mv a3, s0
-	jal graphColoring
-	bne a0, zero, label82
-	sh2add a1, s2, s0
-	addiw s4, s4, 1
-	sw zero, 0(a1)
-	j label23
-label8:
+label6:
 	mv s1, zero
-	j label9
-label12:
+	j label7
+label10:
 	addi s0, s0, 4
-label9:
+label7:
 	lw a0, 0(s0)
 	jal putint
 	li a0, 32
 	jal putch
 	addiw s1, s1, 1
-	blt s1, s3, label12
+	blt s1, s3, label10
 	li a0, 10
 	jal putch
 	li a0, 1
-	j label2
-label82:
-	li a0, 1
-	j label2
+	j label21
 label52:
 	addi a0, a0, 16
 	mv a5, a1
-	j label5
+	j label3
+label81:
+	sh2add a1, s2, s0
+	addiw s4, s4, 1
+	sw zero, 0(a1)
+	j label23
 .p2align 2
 .globl main
 main:

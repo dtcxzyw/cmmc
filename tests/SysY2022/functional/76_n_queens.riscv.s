@@ -25,10 +25,10 @@ f:
 	addiw a0, a0, 1
 	mv s1, a2
 	sd s6, 24(sp)
-	sd s5, 32(sp)
-	sd s0, 40(sp)
+	sd s4, 32(sp)
+	sd s5, 40(sp)
+	sd s0, 48(sp)
 	li s0, 1
-	sd s4, 48(sp)
 	sd s3, 56(sp)
 	sd s7, 64(sp)
 	sd s8, 72(sp)
@@ -37,25 +37,25 @@ f:
 	sd s10, 96(sp)
 	sd a1, 112(sp)
 pcrel153:
-	auipc a1, %pcrel_hi(row)
+	auipc a1, %pcrel_hi(ans)
 	lw a3, 0(a2)
-pcrel154:
-	auipc a2, %pcrel_hi(ans)
+	addi s6, a1, %pcrel_lo(pcrel153)
 	sd a0, 104(sp)
-	addi s5, a2, %pcrel_lo(pcrel154)
-	addi a0, a1, %pcrel_lo(pcrel153)
-pcrel155:
-	auipc a2, %pcrel_hi(line1)
-pcrel156:
+pcrel154:
 	auipc a1, %pcrel_hi(line2)
-	addi s4, a2, %pcrel_lo(pcrel155)
-	addi s6, a1, %pcrel_lo(pcrel156)
+pcrel155:
+	auipc a0, %pcrel_hi(line1)
+	addi s5, a1, %pcrel_lo(pcrel154)
+	addi s4, a0, %pcrel_lo(pcrel155)
 	ble a3, zero, label2
-	addi s3, a0, 4
+pcrel156:
+	auipc a1, %pcrel_hi(row)
 	mv s7, s0
+	addi a0, a1, %pcrel_lo(pcrel156)
+	addi s3, a0, 4
 	lw a0, 0(s3)
 	bne a0, s0, label8
-	lw a0, 0(s1)
+	lw a0, 0(a2)
 	addiw s7, s0, 1
 	bge a0, s7, label23
 	j label2
@@ -84,7 +84,7 @@ label9:
 	lw a0, 0(s1)
 	addw a4, s2, a0
 	subw a3, a4, s7
-	sh2add a2, a3, s6
+	sh2add a2, a3, s5
 	lw a1, 0(a2)
 	beq a1, zero, label10
 	addiw s7, s7, 1
@@ -92,7 +92,7 @@ label9:
 	j label2
 .p2align 2
 label10:
-	sh2add a1, s2, s5
+	sh2add a1, s2, s6
 	sw s7, 0(a1)
 	beq s2, a0, label14
 	lw s11, 0(s1)
@@ -103,7 +103,7 @@ label11:
 	sw s0, 0(s3)
 	subw a0, a1, s7
 	sw s0, 0(s9)
-	sh2add a2, a0, s6
+	sh2add a2, a0, s5
 	sw s0, 0(a2)
 	ld a0, 104(sp)
 	ld a1, 112(sp)
@@ -112,21 +112,21 @@ label11:
 	sw zero, 0(s3)
 	sw zero, 0(s9)
 	lw a0, 0(s1)
-	addw a1, s2, a0
-	subw a2, a1, s7
+	addw a2, s2, a0
+	subw a1, a2, s7
 	addiw s7, s7, 1
-	sh2add a3, a2, s6
+	sh2add a3, a1, s5
 	sw zero, 0(a3)
 	bge a0, s7, label23
 	j label2
 .p2align 2
 label14:
 	ld a1, 112(sp)
-	addi s9, s5, 4
+	addi s9, s6, 4
 	mv s10, s0
-	lw a2, 0(a1)
-	addi a0, a2, 1
-	sw a0, 0(a1)
+	lw a0, 0(a1)
+	addi a2, a0, 1
+	sw a2, 0(a1)
 	lw s11, 0(s1)
 	bgt s0, s11, label11
 .p2align 2
@@ -151,9 +151,9 @@ label2:
 	ld s2, 8(sp)
 	ld s1, 16(sp)
 	ld s6, 24(sp)
-	ld s5, 32(sp)
-	ld s0, 40(sp)
-	ld s4, 48(sp)
+	ld s4, 32(sp)
+	ld s5, 40(sp)
+	ld s0, 48(sp)
 	ld s3, 56(sp)
 	ld s7, 64(sp)
 	ld s8, 72(sp)

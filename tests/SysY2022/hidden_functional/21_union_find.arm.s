@@ -214,17 +214,17 @@ label159:
 	bgt label162
 label163:
 	cmp r8, #0
-	ble label168
+	ble label164
 	mov r9, #0
-	b label164
+	b label199
 .p2align 4
-label167:
+label201:
 	str r2, [r5, r0, lsl #2]
 	add r9, r9, #1
 	cmp r8, r9
-	ble label168
+	ble label164
 .p2align 4
-label164:
+label199:
 	bl getint
 	mov r10, r0
 	bl getint
@@ -235,26 +235,26 @@ label164:
 	mov r0, r3
 	bl find
 	cmp r2, r0
-	bne label167
+	bne label201
 	add r9, r9, #1
 	cmp r8, r9
-	bgt label164
-label168:
+	bgt label199
+label164:
 	cmp r4, #0
-	ble label306
+	ble label291
 	cmp r4, #3
-	ble label309
+	ble label294
 	cmp r6, #15
-	ble label328
+	ble label313
 	mov r0, r5
 	mov r1, #0
 	mov r2, r1
-	b label184
+	b label178
 .p2align 4
-label188:
+label182:
 	add r0, r0, #64
 .p2align 4
-label184:
+label178:
 	ldr r3, [r0, #0]
 	add r9, r1, #1
 	ldr r8, [r0, #4]
@@ -352,20 +352,16 @@ label184:
 	clz r3, r3
 	lsr r3, r3, #5
 	add r2, r2, r3
-	bgt label188
+	bgt label182
 	mov r7, r1
 	mov r3, r2
 	mov r0, r1
-label189:
+label183:
 	cmp r6, r7
-	ble label432
+	ble label417
 	add r0, r5, r7, lsl #2
 	mov r1, r7
-	b label195
-label199:
-	add r0, r0, #16
-	mov r1, r2
-label195:
+label189:
 	ldr r2, [r0, #0]
 	add r8, r1, #1
 	ldr r7, [r0, #4]
@@ -391,18 +387,19 @@ label195:
 	add r3, r2, r3
 	add r2, r1, #4
 	cmp r6, r2
-	bgt label199
+	ble label446
+	add r0, r0, #16
+	mov r1, r2
+	b label189
+label446:
 	mov r1, r3
 	mov r0, r2
 	mov r2, r3
-label172:
+label166:
 	cmp r4, r0
-	ble label313
+	ble label298
 	add r1, r5, r0, lsl #2
-	b label177
-label181:
-	add r1, r1, #4
-label177:
+label171:
 	ldr r3, [r1, #0]
 	sub r3, r0, r3
 	add r0, r0, #1
@@ -410,36 +407,39 @@ label177:
 	cmp r4, r0
 	lsr r3, r3, #5
 	add r2, r2, r3
-	bgt label181
+	ble label309
+	add r1, r1, #4
+	b label171
+label309:
 	mov r0, r2
-label169:
+label197:
 	bl putint
 	mov r0, #0
 	pop { r4, r5, r6, r7, r8, r9, r10, pc }
-label306:
+label291:
 	mov r0, #0
-	b label169
+	b label197
 label218:
 	mov r2, #0
 	mov r1, r2
 	b label143
-label313:
+label298:
 	mov r0, r1
-	b label169
-label432:
+	b label197
+label417:
 	mov r1, r2
-	b label172
-label328:
+	b label166
+label313:
 	mov r7, #0
 	mov r2, r7
 	mov r3, r7
 	mov r0, r7
-	b label189
-label309:
+	b label183
+label294:
 	mov r2, #0
 	mov r1, r2
 	mov r0, r2
-	b label172
+	b label166
 label215:
 	mov r0, #0
 	b label156

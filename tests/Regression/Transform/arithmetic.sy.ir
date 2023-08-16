@@ -925,3 +925,9 @@ func @srem_power_of_two(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect
     i32 %0 = and i32 %x, i32 15;
     ret i32 %0;
 }
+func @zext_plus_one_eq_one(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = icmp slt i32 %x, i32 2;
+    i32 %1 = zext i1 %0 to i32;
+    ret i32 %1;
+}

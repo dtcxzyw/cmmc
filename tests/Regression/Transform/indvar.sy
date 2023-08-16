@@ -1,0 +1,11 @@
+void test(int x[], int n, int i) {
+    int j = 0;
+    while(j < n) {
+        if (i < j){
+            j = j + 1;
+            continue;
+        }
+        x[j] = 0;
+        j = j + 1;
+    }
+}

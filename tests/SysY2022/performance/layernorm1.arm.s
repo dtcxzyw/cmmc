@@ -23,72 +23,70 @@ mean:
 .p2align 4
 .globl main
 main:
-	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
+	push { r4, r5, r6, r7, r8, r9, lr }
 	vpush { s16 }
-	mov r11, #0
+	mov r9, #0
 	movw r5, #:lower16:var
 	movt r5, #:upper16:var
-	movw r7, #:lower16:mean
-	movt r7, #:upper16:mean
-	movw r8, #:lower16:cmmc_parallel_body_1
-	movt r8, #:upper16:cmmc_parallel_body_1
-	movw r6, #:lower16:cmmc_parallel_body_0
-	movt r6, #:upper16:cmmc_parallel_body_0
-	movw r10, #:lower16:cmmc_parallel_body_payload_0
-	movt r10, #:upper16:cmmc_parallel_body_payload_0
+	movw r6, #:lower16:mean
+	movt r6, #:upper16:mean
+	movw r8, #:lower16:cmmc_parallel_body_payload_1
+	movt r8, #:upper16:cmmc_parallel_body_payload_1
 	movw r4, #:lower16:a
 	movt r4, #:upper16:a
-	mov r9, r4
-label579:
-	cmp r11, #1000
-	bge label586
-	mov r0, r9
+	mov r7, r4
+label583:
+	cmp r9, #1000
+	bge label588
+	mov r0, r7
 	bl getfarray
 	cmp r0, #1000
-	bne label582
-	add r11, r11, #1
-	add r9, r9, #4000
-	b label579
-label586:
+	bne label617
+	add r9, r9, #1
+	add r7, r7, #4000
+	b label583
+label588:
 	mov r0, #42
 	bl _sysy_starttime
-	mov r9, #0
-	vmov s16, r9
-	b label587
-label775:
-	add r9, r9, #1
-	cmp r9, #100
-	bge label1111
+	mov r7, #0
+	vmov s16, r7
+	b label589
+label601:
+	add r7, r7, #1
+	cmp r7, #100
+	bge label784
 	vmov.f32 s16, s2
-label587:
-	str r7, [r10, #0]
-	mov r0, #0
+label589:
+	movw r0, #:lower16:cmmc_parallel_body_payload_0
+	movt r0, #:upper16:cmmc_parallel_body_payload_0
+	movw r2, #:lower16:cmmc_parallel_body_0
+	movt r2, #:upper16:cmmc_parallel_body_0
 	mov r1, #1000
-	mov r2, r6
+	str r6, [r0, #0]
+	mov r0, #0
 	bl cmmcParallelFor
 	mov r1, #1000
-	movw r0, #:lower16:cmmc_parallel_body_payload_1
-	movt r0, #:upper16:cmmc_parallel_body_payload_1
-	str r5, [r0, #0]
-	str r7, [r0, #4]
-	mov r2, r8
 	mov r0, #0
+	str r5, [r8, #0]
+	movw r2, #:lower16:cmmc_parallel_body_1
+	movt r2, #:upper16:cmmc_parallel_body_1
+	str r6, [r8, #4]
 	bl cmmcParallelFor
 	vmov.f32 s2, s16
 	mov r2, #0
-	mov r1, r7
+	mov r1, r6
 	add r0, r5, r2, lsl #2
-	vldr s1, [r7, #0]
+	vldr s1, [r6, #0]
 	mov r3, #0
 	vldr s0, [r0, #0]
 	mov r0, #4000
 	mla r0, r2, r0, r4
-	b label594
+	b label596
 .p2align 4
-label614:
+label616:
 	add r0, r0, #64
 .p2align 4
-label594:
+label596:
 	vldr s3, [r0, #0]
 	add r3, r3, #16
 	cmp r3, #992
@@ -171,7 +169,7 @@ label594:
 	vdiv.f32 s3, s3, s0
 	vstr s3, [r0, #60]
 	vadd.f32 s2, s2, s3
-	blt label614
+	blt label616
 	vldr s3, [r0, #64]
 	add r2, r2, #1
 	cmp r2, #1000
@@ -214,7 +212,7 @@ label594:
 	vdiv.f32 s0, s1, s0
 	vstr s0, [r0, #92]
 	vadd.f32 s2, s2, s0
-	bge label775
+	bge label601
 	add r1, r1, #4
 	add r0, r5, r2, lsl #2
 	mov r3, #0
@@ -222,27 +220,27 @@ label594:
 	vldr s0, [r0, #0]
 	mov r0, #4000
 	mla r0, r2, r0, r4
-	b label594
-label611:
+	b label596
+label612:
 	mov r0, #95
 	bl _sysy_stoptime
 	vmov.f32 s0, s16
 	bl putfloat
 	mov r0, #0
-label582:
+label617:
 	vpop { s16 }
-	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
-label1111:
+	pop { r4, r5, r6, r7, r8, r9, pc }
+label784:
 	mov r1, #0
 	vmov.f32 s0, s2
 	mov r0, r4
 	mov r2, #0
-	b label606
+	b label607
 .p2align 4
-label613:
+label614:
 	add r0, r0, #256
 .p2align 4
-label606:
+label607:
 	vldr s1, [r0, #0]
 	add r2, r2, #64
 	cmp r2, #960
@@ -373,7 +371,7 @@ label606:
 	vadd.f32 s0, s0, s1
 	vldr s1, [r0, #252]
 	vadd.f32 s0, s0, s1
-	blt label613
+	blt label614
 	vldr s1, [r0, #256]
 	add r1, r1, #1
 	cmp r1, #1000
@@ -456,20 +454,20 @@ label606:
 	vadd.f32 s0, s0, s1
 	vldr s1, [r0, #412]
 	vadd.f32 s16, s0, s1
-	bge label611
+	bge label612
 	add r4, r4, #4000
 	vmov.f32 s0, s16
 	mov r2, #0
 	mov r0, r4
-	b label606
+	b label607
 .p2align 4
 cmmc_parallel_body_0:
 	push { r4, r5, r6, r7 }
-	movw r5, #0
-	movt r5, #17530
 	movw r4, #:lower16:a
 	movt r4, #:upper16:a
 	mov r6, r0
+	movw r5, #0
+	movt r5, #17530
 	mov r2, r1
 	movw r1, #:lower16:cmmc_parallel_body_payload_0
 	movt r1, #:upper16:cmmc_parallel_body_payload_0
@@ -715,9 +713,9 @@ label12:
 .p2align 4
 cmmc_parallel_body_1:
 	push { r4, r5, r6, r7, r8 }
+	mov r6, r0
 	movw r5, #:lower16:a
 	movt r5, #:upper16:a
-	mov r6, r0
 	mov r2, r1
 	movw r1, #:lower16:cmmc_parallel_body_payload_1
 	movt r1, #:upper16:cmmc_parallel_body_payload_1
@@ -732,12 +730,24 @@ cmmc_parallel_body_1:
 	mov r8, #0
 	mla r7, r6, r7, r5
 	vmov s1, r8
-	b label364
+	b label365
+.p2align 4
+label574:
+	add r7, r4, r6, lsl #2
+	add r6, r6, #1
+	vstr s1, [r7, #0]
+	cmp r2, r6
+	ble label380
 .p2align 4
 label379:
-	add r7, r7, #64
+	add r3, r3, #4
+	mov r7, #4000
+	mov r8, #0
+	vldr s0, [r3, #0]
+	mla r7, r6, r7, r5
+	vmov s1, r8
 .p2align 4
-label364:
+label365:
 	vldr s2, [r7, #0]
 	add r8, r8, #16
 	cmp r8, #992
@@ -804,7 +814,11 @@ label364:
 	vsub.f32 s2, s2, s0
 	vmul.f32 s2, s2, s2
 	vadd.f32 s1, s1, s2
-	blt label379
+	bge label370
+	add r7, r7, #64
+	b label365
+.p2align 4
+label370:
 	vldr s2, [r7, #64]
 	vsub.f32 s2, s2, s0
 	vmul.f32 s2, s2, s2
@@ -856,15 +870,15 @@ label364:
 	vabs.f32 s5, s5
 	vcmp.f32 s5, s6
 	vmrs APSR_nzcv, FPSCR
-	bgt label373
+	bgt label375
 	add r7, r4, r6, lsl #2
 	add r6, r6, #1
 	vstr s1, [r7, #0]
 	cmp r2, r6
-	bgt label377
-	b label378
+	bgt label379
+	b label380
 .p2align 4
-label374:
+label376:
 	vadd.f32 s2, s1, s3
 	vmov s4, r1
 	vmov s6, r0
@@ -876,12 +890,12 @@ label374:
 	vabs.f32 s5, s5
 	vcmp.f32 s5, s6
 	vmrs APSR_nzcv, FPSCR
-	ble label571
+	ble label574
 .p2align 4
-label373:
+label375:
 	vcmp.f32 s4, s0
 	vmrs APSR_nzcv, FPSCR
-	bgt label374
+	bgt label376
 	vadd.f32 s3, s1, s2
 	vmov s4, r1
 	vmov s6, r0
@@ -893,29 +907,12 @@ label373:
 	vabs.f32 s5, s5
 	vcmp.f32 s5, s6
 	vmrs APSR_nzcv, FPSCR
-	bgt label373
+	bgt label375
 	add r7, r4, r6, lsl #2
 	add r6, r6, #1
 	vstr s1, [r7, #0]
 	cmp r2, r6
-	bgt label377
-	b label378
-.p2align 4
-label571:
-	add r7, r4, r6, lsl #2
-	add r6, r6, #1
-	vstr s1, [r7, #0]
-	cmp r2, r6
-	ble label378
-.p2align 4
-label377:
-	add r3, r3, #4
-	mov r7, #4000
-	mov r8, #0
-	vldr s0, [r3, #0]
-	mla r7, r6, r7, r5
-	vmov s1, r8
-	b label364
-label378:
+	bgt label379
+label380:
 	pop { r4, r5, r6, r7, r8 }
 	bx lr

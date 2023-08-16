@@ -23,50 +23,51 @@ cmmc_parallel_body_payload_3:
 .p2align 4
 .globl main
 main:
-	push { r4, r5, r6, r7, r8, lr }
-	mov r8, #0
+	push { r4, r5, r6, r7, lr }
+	mov r7, #0
+	movw r6, #:lower16:cmmc_parallel_body_payload_2
+	movt r6, #:upper16:cmmc_parallel_body_payload_2
 	movw r4, #:lower16:c
 	movt r4, #:upper16:c
-	movw r7, #:lower16:cmmc_parallel_body_payload_2
-	movt r7, #:upper16:cmmc_parallel_body_payload_2
-	movw r6, #:lower16:cmmc_parallel_body_2
-	movt r6, #:upper16:cmmc_parallel_body_2
 	movw r5, #:lower16:a
 	movt r5, #:upper16:a
-label1029:
-	cmp r8, #1000
-	bge label1032
+	sub sp, sp, #4
+label1032:
+	cmp r7, #1000
+	bge label1039
 	mov r0, r5
 	bl getarray
 	cmp r0, #1000
-	bne label1060
-	add r8, r8, #1
+	bne label1037
+	add r7, r7, #1
 	add r5, r5, #4000
-	b label1029
+	b label1032
 .p2align 4
-label1057:
+label1065:
 	add r4, r4, #4000
 .p2align 4
-label1052:
-	str r8, [r6, #0]
+label1060:
+	str r7, [r5, #0]
+	movw r2, #:lower16:cmmc_parallel_body_3
+	movt r2, #:upper16:cmmc_parallel_body_3
 	mov r0, #0
 	mov r1, #1000
-	str r8, [r6, #4]
-	str r4, [r6, #8]
-	mov r2, r5
+	str r7, [r5, #4]
+	str r4, [r5, #8]
 	bl cmmcParallelFor
-	ldr r8, [r6, #0]
-	add r7, r7, #1
-	cmp r7, #1000
-	blt label1057
+	ldr r7, [r5, #0]
+	add r6, r6, #1
+	cmp r6, #1000
+	blt label1065
 	mov r0, #92
 	bl _sysy_stoptime
-	mov r0, r8
+	mov r0, r7
 	bl putint
 	mov r0, #0
-label1060:
-	pop { r4, r5, r6, r7, r8, pc }
-label1032:
+label1037:
+	add sp, sp, #4
+	pop { r4, r5, r6, r7, pc }
+label1039:
 	mov r0, #23
 	bl _sysy_starttime
 	mov r1, #1000
@@ -79,14 +80,14 @@ label1032:
 	movw r2, #:lower16:cmmc_parallel_body_1
 	movt r2, #:upper16:cmmc_parallel_body_1
 	bl cmmcParallelFor
-	mov r8, #0
+	mov r7, #0
 	mov r5, r4
 	mov r0, r4
 	mov r1, #0
 	mvn r2, #-2147483648
-	b label1036
+	b label1043
 .p2align 4
-label1041:
+label1048:
 	ldr r3, [r0, #256]
 	mov r1, r2
 	cmp r2, r3
@@ -206,24 +207,25 @@ label1041:
 	cmp r1, r2
 	movge r1, r2
 	ldr r2, [r0, #412]
-	str r5, [r7, #0]
+	str r5, [r6, #0]
 	mov r0, r1
 	cmp r1, r2
 	mov r1, #1000
 	movge r0, r2
-	str r0, [r7, #4]
-	mov r2, r6
+	movw r2, #:lower16:cmmc_parallel_body_2
+	movt r2, #:upper16:cmmc_parallel_body_2
+	str r0, [r6, #4]
 	mov r0, #0
 	bl cmmcParallelFor
-	add r8, r8, #1
-	cmp r8, #1000
-	bge label1042
+	add r7, r7, #1
+	cmp r7, #1000
+	bge label1408
 	add r5, r5, #4000
 	mov r1, #0
 	mvn r2, #-2147483648
 	mov r0, r5
 .p2align 4
-label1036:
+label1043:
 	ldr r3, [r0, #0]
 	add r1, r1, #64
 	cmp r2, r3
@@ -418,20 +420,20 @@ label1036:
 	cmp r2, r3
 	movge r2, r3
 	cmp r1, #960
-	bge label1041
+	bge label1048
 	add r0, r0, #256
-	b label1036
-label1042:
+	b label1043
+label1408:
 	mov r2, r4
 	mov r0, #0
 	mov r1, r4
 	mov r5, #0
-	b label1046
+	b label1054
 .p2align 4
-label1049:
+label1057:
 	add r1, r1, #64
 .p2align 4
-label1046:
+label1054:
 	mov r3, #4000
 	mla r3, r5, r3, r4
 	add r5, r5, #16
@@ -510,7 +512,7 @@ label1046:
 	ldr r6, [r6, r0, lsl #2]
 	rsb r6, r6, #0
 	str r6, [r1, #60]
-	blt label1049
+	blt label1057
 	add r5, r3, #64000
 	ldr r5, [r5, r0, lsl #2]
 	rsb r5, r5, #0
@@ -559,19 +561,17 @@ label1046:
 	cmp r0, #1000
 	rsb r3, r3, #0
 	str r3, [r1, #92]
-	bge label1051
+	bge label1059
 	add r2, r2, #4000
 	mov r5, #0
 	mov r1, r2
-	b label1046
-label1051:
-	movw r6, #:lower16:cmmc_parallel_body_payload_3
-	movt r6, #:upper16:cmmc_parallel_body_payload_3
-	movw r5, #:lower16:cmmc_parallel_body_3
-	movt r5, #:upper16:cmmc_parallel_body_3
-	mov r7, #0
-	mov r8, r7
-	b label1052
+	b label1054
+label1059:
+	movw r5, #:lower16:cmmc_parallel_body_payload_3
+	movt r5, #:upper16:cmmc_parallel_body_payload_3
+	mov r6, #0
+	mov r7, r6
+	b label1060
 .p2align 4
 cmmc_parallel_body_0:
 	push { r4, r5, r6, r7, r8, r9 }
@@ -587,7 +587,7 @@ cmmc_parallel_body_0:
 	mov r8, #0
 	b label5
 .p2align 4
-label9:
+label8:
 	add r8, r2, #256000
 	ldr r8, [r8, r0, lsl #2]
 	str r8, [r1, #256]
@@ -788,7 +788,7 @@ label9:
 	add r0, r0, #1
 	cmp r7, r0
 	str r2, [r1, #412]
-	ble label11
+	ble label10
 	add r6, r6, #4000
 	mov r8, #0
 	mov r1, r6
@@ -1090,10 +1090,10 @@ label5:
 	add r9, r2, r9
 	ldr r9, [r9, r0, lsl #2]
 	str r9, [r1, #252]
-	bge label9
+	bge label8
 	add r1, r1, #256
 	b label5
-label11:
+label10:
 	pop { r4, r5, r6, r7, r8, r9 }
 	bx lr
 .p2align 4
@@ -1115,13 +1115,13 @@ cmmc_parallel_body_1:
 	mov r1, r2
 	mov r6, #0
 	mov r7, r6
-	b label664
+	b label665
 .p2align 4
-label669:
-	add r8, r5, #64000
-	ldr r6, [r1, #64]
-	ldr r8, [r8, r0, lsl #2]
-	mla r6, r6, r8, r7
+label670:
+	add r6, r5, #64000
+	ldr r8, [r1, #64]
+	ldr r6, [r6, r0, lsl #2]
+	mla r6, r8, r6, r7
 	ldr r8, [r1, #68]
 	movw r7, #2464
 	movt r7, #1
@@ -1134,12 +1134,12 @@ label669:
 	ldr r7, [r1, #72]
 	ldr r8, [r8, r0, lsl #2]
 	mla r6, r7, r8, r6
+	ldr r8, [r1, #76]
 	movw r7, #10464
 	movt r7, #1
-	add r8, r5, r7
-	ldr r7, [r1, #76]
-	ldr r8, [r8, r0, lsl #2]
-	mla r6, r7, r8, r6
+	add r7, r5, r7
+	ldr r7, [r7, r0, lsl #2]
+	mla r6, r8, r7, r6
 	ldr r8, [r1, #80]
 	movw r7, #14464
 	movt r7, #1
@@ -1167,22 +1167,22 @@ label669:
 	cmp r0, #1000
 	mla r1, r1, r5, r6
 	str r1, [r4, #0]
-	bge label670
+	bge label671
 	add r4, r4, #4
 	mov r1, r2
 	mov r6, #0
 	mov r7, r6
 .p2align 4
-label664:
+label665:
 	mov r5, #4000
 	movw r8, #:lower16:b
 	movt r8, #:upper16:b
 	mla r5, r6, r5, r8
-	ldr r8, [r1, #0]
 	add r6, r6, #16
+	ldr r8, [r1, #0]
 	cmp r6, #992
-	add r10, r5, #4000
 	ldr r9, [r5, r0, lsl #2]
+	add r10, r5, #4000
 	ldr r11, [r1, #4]
 	ldr r10, [r10, r0, lsl #2]
 	mul r10, r11, r10
@@ -1191,30 +1191,30 @@ label664:
 	add r9, r5, #8000
 	ldr r9, [r9, r0, lsl #2]
 	mla r8, r10, r9, r8
+	ldr r10, [r1, #12]
 	movw r9, #12000
-	add r10, r5, r9
-	ldr r9, [r1, #12]
-	ldr r10, [r10, r0, lsl #2]
-	mla r8, r9, r10, r8
-	ldr r9, [r1, #16]
-	add r10, r5, #16000
-	ldr r10, [r10, r0, lsl #2]
-	mla r8, r9, r10, r8
+	add r9, r5, r9
+	ldr r9, [r9, r0, lsl #2]
+	mla r8, r10, r9, r8
+	ldr r10, [r1, #16]
+	add r9, r5, #16000
+	ldr r9, [r9, r0, lsl #2]
+	mla r8, r10, r9, r8
+	ldr r10, [r1, #20]
 	movw r9, #20000
-	add r10, r5, r9
-	ldr r9, [r1, #20]
-	ldr r10, [r10, r0, lsl #2]
-	mla r8, r9, r10, r8
+	add r9, r5, r9
+	ldr r9, [r9, r0, lsl #2]
+	mla r8, r10, r9, r8
 	ldr r10, [r1, #24]
 	movw r9, #24000
 	add r9, r5, r9
 	ldr r9, [r9, r0, lsl #2]
 	mla r8, r10, r9, r8
+	ldr r10, [r1, #28]
 	movw r9, #28000
-	add r10, r5, r9
-	ldr r9, [r1, #28]
-	ldr r10, [r10, r0, lsl #2]
-	mla r8, r9, r10, r8
+	add r9, r5, r9
+	ldr r9, [r9, r0, lsl #2]
+	mla r8, r10, r9, r8
 	ldr r10, [r1, #32]
 	add r9, r5, #32000
 	ldr r9, [r9, r0, lsl #2]
@@ -1229,21 +1229,21 @@ label664:
 	ldr r9, [r1, #40]
 	ldr r10, [r10, r0, lsl #2]
 	mla r8, r9, r10, r8
-	ldr r10, [r1, #44]
 	movw r9, #44000
-	add r9, r5, r9
-	ldr r9, [r9, r0, lsl #2]
-	mla r8, r10, r9, r8
+	add r10, r5, r9
+	ldr r9, [r1, #44]
+	ldr r10, [r10, r0, lsl #2]
+	mla r8, r9, r10, r8
 	movw r9, #48000
 	add r10, r5, r9
 	ldr r9, [r1, #48]
 	ldr r10, [r10, r0, lsl #2]
 	mla r8, r9, r10, r8
+	ldr r10, [r1, #52]
 	movw r9, #52000
-	add r10, r5, r9
-	ldr r9, [r1, #52]
-	ldr r10, [r10, r0, lsl #2]
-	mla r8, r9, r10, r8
+	add r9, r5, r9
+	ldr r9, [r9, r0, lsl #2]
+	mla r8, r10, r9, r8
 	movw r9, #56000
 	add r10, r5, r9
 	ldr r9, [r1, #56]
@@ -1255,15 +1255,15 @@ label664:
 	ldr r10, [r10, r0, lsl #2]
 	mla r8, r9, r10, r8
 	add r7, r7, r8
-	bge label669
+	bge label670
 	add r1, r1, #64
-	b label664
+	b label665
 .p2align 4
-label670:
+label671:
 	add r3, r3, #1
 	ldr r1, [sp, #4]
 	cmp r1, r3
-	ble label672
+	ble label673
 	ldr r4, [sp, #0]
 	mov r5, #4000
 	movw r0, #:lower16:a
@@ -1275,8 +1275,8 @@ label670:
 	add r4, r4, #4000
 	mov r1, r2
 	str r4, [sp, #0]
-	b label664
-label672:
+	b label665
+label673:
 	add sp, sp, #8
 	pop { r4, r5, r6, r7, r8, r9, r10, r11 }
 	bx lr
@@ -1291,19 +1291,15 @@ cmmc_parallel_body_2:
 	movt r0, #:upper16:cmmc_parallel_body_payload_2
 	ldr r3, [r0, #0]
 	ldr r0, [r0, #4]
-	ble label928
+	ble label931
 	add r1, r6, #15
 	sub r4, r2, #3
 	sub r5, r2, #18
 	cmp r1, r4
-	bge label979
+	bge label982
 	add r1, r3, r6, lsl #2
-	b label938
 .p2align 4
-label941:
-	add r1, r1, #64
-.p2align 4
-label938:
+label949:
 	str r0, [r1, #0]
 	add r6, r6, #16
 	str r0, [r1, #4]
@@ -1322,43 +1318,46 @@ label938:
 	str r0, [r1, #52]
 	str r0, [r1, #56]
 	str r0, [r1, #60]
-	bgt label941
+	ble label1019
+	add r1, r1, #64
+	b label949
+label1019:
 	mov r1, r6
-label942:
+label940:
 	cmp r4, r1
-	ble label928
+	ble label931
 	add r5, r3, r1, lsl #2
-label946:
+	b label944
+label947:
+	add r5, r5, #16
+label944:
 	str r0, [r5, #0]
 	add r1, r1, #4
 	str r0, [r5, #4]
 	cmp r4, r1
 	str r0, [r5, #8]
 	str r0, [r5, #12]
-	ble label1016
-	add r5, r5, #16
-	b label946
-label1016:
+	bgt label947
 	mov r6, r1
-label928:
-	cmp r2, r6
-	ble label935
-	add r1, r3, r6, lsl #2
-	b label931
-label934:
-	add r1, r1, #4
 label931:
+	cmp r2, r6
+	ble label938
+	add r1, r3, r6, lsl #2
+	b label934
+label937:
+	add r1, r1, #4
+label934:
 	add r6, r6, #1
 	str r0, [r1, #0]
 	cmp r2, r6
-	bgt label934
-label935:
+	bgt label937
+label938:
 	pop { r4, r5, r6 }
 	bx lr
-label979:
+label982:
 	mov r1, r6
 	mov r6, #0
-	b label942
+	b label940
 .p2align 4
 cmmc_parallel_body_3:
 	push { r4, r5, r6, r7, r8, lr }
@@ -1368,20 +1367,20 @@ cmmc_parallel_body_3:
 	movw r0, #:lower16:cmmc_parallel_body_payload_3
 	movt r0, #:upper16:cmmc_parallel_body_payload_3
 	ldr r3, [r0, #8]
-	ble label1646
+	ble label1649
 	add r2, r6, #15
 	sub r4, r1, #3
 	sub r5, r1, #18
 	cmp r2, r4
-	bge label1653
+	bge label1656
 	add r2, r3, r6, lsl #2
 	mov r7, #0
-	b label1621
+	b label1624
 .p2align 4
-label1625:
+label1628:
 	add r2, r2, #64
 .p2align 4
-label1621:
+label1624:
 	ldr r8, [r2, #0]
 	add r6, r6, #16
 	cmp r5, r6
@@ -1416,18 +1415,18 @@ label1621:
 	add r7, r7, r8
 	ldr r8, [r2, #60]
 	add r7, r7, r8
-	bgt label1625
+	bgt label1628
 	mov r5, r6
 	mov r8, r7
-label1606:
+label1609:
 	cmp r4, r5
-	ble label1657
+	ble label1660
 	add r2, r3, r5, lsl #2
 	mov r6, r8
-	b label1615
-label1619:
+	b label1618
+label1622:
 	add r2, r2, #16
-label1615:
+label1618:
 	ldr r7, [r2, #0]
 	add r5, r5, #4
 	cmp r4, r5
@@ -1438,42 +1437,42 @@ label1615:
 	add r6, r6, r7
 	ldr r7, [r2, #12]
 	add r6, r6, r7
-	bgt label1619
+	bgt label1622
 	mov r2, r6
 	mov r4, r6
 	mov r6, r5
-label1626:
+label1629:
 	cmp r1, r6
-	ble label1735
+	ble label1738
 	add r2, r3, r6, lsl #2
 	mov r3, r4
-	b label1633
-label1637:
+	b label1636
+label1640:
 	add r2, r2, #4
-label1633:
+label1636:
 	ldr r4, [r2, #0]
 	add r6, r6, #1
 	cmp r1, r6
 	add r3, r3, r4
-	bgt label1637
+	bgt label1640
 	mov r1, r3
-label1630:
+label1633:
 	bl cmmcReduceAddI32
 	pop { r4, r5, r6, r7, r8, pc }
-label1657:
+label1660:
 	mov r2, r7
 	mov r4, r7
-	b label1626
-label1653:
+	b label1629
+label1656:
 	mov r5, r6
 	mov r8, #0
 	mov r6, r8
 	mov r7, r8
-	b label1606
-label1735:
+	b label1609
+label1738:
 	mov r1, r2
-	b label1630
-label1646:
+	b label1633
+label1649:
 	mov r4, #0
 	mov r2, r4
-	b label1626
+	b label1629

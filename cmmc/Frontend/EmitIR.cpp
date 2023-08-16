@@ -1719,7 +1719,7 @@ void ArrayInitializer::shapeAwareEmitDynamic(EmitContext& ctx, Value* storage, c
             const auto beg = getAddress(lastNotAssigned);
             const auto ptr = ctx.makeOp<PtrCastInst>(beg, ptrType);
             assert(totalSize % memsetAtomicSize == 0);
-            const auto size = ConstantInteger::get(ctx.getIndexType(), totalSize / memsetAtomicSize);
+            const auto size = ConstantInteger::get(IntegerType::get(32), totalSize / memsetAtomicSize);
             ctx.makeOp<FunctionCallInst>(memsetFunc, std::vector<Value*>{ ptr, size });
         }
         return end;
@@ -1893,8 +1893,8 @@ Function* EmitContext::getMemset(const Type* type) {
         if(global->getSymbol() == symbol)
             return global->as<Function>();
     const auto bitWidth = static_cast<uint32_t>(type->getFixedSize()) * 8;
-    auto funcType =
-        make<FunctionType>(VoidType::get(), Vector<const Type*>{ PointerType::get(IntegerType::get(bitWidth)), getIndexType() });
+    const auto i32 = IntegerType::get(32);
+    auto funcType = make<FunctionType>(VoidType::get(), Vector<const Type*>{ PointerType::get(IntegerType::get(bitWidth)), i32 });
     auto func = make<Function>(symbol, funcType, Intrinsic::memset);
     mModule->add(func);
     func->attr().addAttr(FunctionAttribute::NoMemoryRead).addAttr(FunctionAttribute::NoRecurse);

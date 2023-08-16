@@ -168,32 +168,32 @@ label96:
 	vcvt.f32.s32 s16, s0
 	vmov s0, r6
 	vcvt.f32.s32 s17, s0
-	ble label108
+	ble label100
 	mov r9, #0
-	b label100
+	b label110
 .p2align 4
-label107:
+label117:
 	add r10, r10, #4
 	mov r11, r0
 .p2align 4
-label104:
+label114:
 	bl getint
 	str r0, [r10, #0]
 	add r0, r11, #1
 	cmp r4, r0
-	bgt label107
-label102:
+	bgt label117
+label112:
 	add r9, r9, #1
 	cmp r5, r9
-	ble label108
-label100:
+	ble label100
+label110:
 	cmp r4, #0
-	ble label102
+	ble label112
 	mul r0, r4, r9
 	mov r11, #0
 	add r10, r7, r0, lsl #2
-	b label104
-label108:
+	b label114
+label100:
 	movw r0, #4059
 	movt r0, #16329
 	movw r1, #4059
@@ -206,8 +206,8 @@ label108:
 	vmov s3, r0
 	mov r0, #0
 	vadd.f32 s0, s19, s0
-	vcmp.f32 s0, s3
 	vdiv.f32 s1, s0, s3
+	vcmp.f32 s0, s3
 	vmrs APSR_nzcv, FPSCR
 	movwgt r0, #1
 	vcmp.f32 s0, s4
@@ -229,14 +229,14 @@ label108:
 	vsub.f32 s1, s0, s3
 	vmrs APSR_nzcv, FPSCR
 	vmovgt.f32 s0, s1
-	vadd.f32 s1, s0, s3
 	vcmp.f32 s0, s6
+	vadd.f32 s1, s0, s3
 	vmrs APSR_nzcv, FPSCR
 	vmovmi.f32 s0, s1
 	bl my_sin_impl
-	vcmp.f32 s19, s3
 	mov r0, #0
 	mov r1, #0
+	vcmp.f32 s19, s3
 	vmov.f32 s1, s19
 	vmov.f32 s18, s0
 	vmrs APSR_nzcv, FPSCR
@@ -281,38 +281,38 @@ label108:
 	mov r0, #10
 	bl putch
 	cmp r5, #0
-	ble label219
+	ble label201
 	mov r9, #0
-	b label109
-label111:
+	b label101
+label103:
 	mov r0, #10
 	bl putch
 	add r9, r9, #1
 	cmp r5, r9
-	ble label219
-label109:
+	ble label201
+label101:
 	sub r0, r9, r8
 	cmp r4, #0
 	vmov s0, r0
 	vcvt.f32.s32 s0, s0
 	vmul.f32 s21, s0, s18
 	vmul.f32 s20, s0, s19
-	ble label111
+	ble label103
 	mov r10, #0
-	b label112
+	b label104
 .p2align 4
-label248:
+label230:
 	mov r0, #0
 .p2align 4
-label116:
+label108:
 	bl putint
 	mov r0, #32
 	bl putch
 	add r10, r10, #1
 	cmp r4, r10
-	ble label111
+	ble label103
 .p2align 4
-label112:
+label104:
 	sub r0, r10, r6
 	mov r1, #0
 	mov r3, #0
@@ -333,13 +333,13 @@ label112:
 	cmp r2, #0
 	movwlt r3, #1
 	orrs r1, r1, r3
-	bne label248
+	bne label230
 	cmp r5, r2
-	ble label248
+	ble label230
 	mul r1, r4, r2
 	add r0, r7, r0, lsl #2
 	ldr r0, [r0, r1, lsl #2]
-	b label116
-label219:
+	b label108
+label201:
 	mov r0, #0
 	b label118

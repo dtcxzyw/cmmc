@@ -47,7 +47,10 @@ main:
 	ldrsb r0, [r1, #0]
 	ldrb r0, [r1, #0]
 	rsb r2, r0, #0
-	beq label26
+	bne label26
+	mov r0, #0
+	b label2
+label26:
 	movw r0, #:lower16:b
 	movt r0, #:upper16:b
 	ldr r0, [r0, #0]
@@ -62,6 +65,3 @@ label2:
 	strb r0, [r1, #0]
 	mov r0, #0
 	bx lr
-label26:
-	mov r0, #0
-	b label2

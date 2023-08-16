@@ -20,12 +20,10 @@ test:
 	movt r0, #:upper16:j
 	ldr r0, [r0, #0]
 	cmp r0, #5
-	beq label2
-label3:
-	bx lr
-label2:
+	bne label3
 	movw r0, #:lower16:result
 	movt r0, #:upper16:result
 	mov r1, #1
 	str r1, [r0, #0]
-	b label3
+label3:
+	bx lr

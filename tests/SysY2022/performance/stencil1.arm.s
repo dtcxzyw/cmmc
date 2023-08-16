@@ -212,9 +212,9 @@ cmmc_parallel_body_1:
 	cmp r1, r5
 	movw r0, #:lower16:image_out
 	movt r0, #:upper16:image_out
-	ble label190
+	ble label191
 .p2align 4
-label188:
+label189:
 	lsl r5, r4, #10
 	ldr r6, [r2, r5, lsl #2]
 	str r6, [r0, r5, lsl #2]
@@ -248,11 +248,11 @@ label188:
 	sub r5, r5, #1
 	ldr r6, [r2, r5, lsl #2]
 	str r6, [r0, r5, lsl #2]
-	bgt label188
-label190:
+	bgt label189
+label191:
 	cmp r1, r4
-	ble label194
-label192:
+	ble label195
+label193:
 	lsl r3, r4, #10
 	add r4, r4, #1
 	ldr r5, [r2, r3, lsl #2]
@@ -262,8 +262,8 @@ label192:
 	sub r3, r3, #1
 	ldr r5, [r2, r3, lsl #2]
 	str r5, [r0, r3, lsl #2]
-	bgt label192
-label194:
+	bgt label193
+label195:
 	pop { r4, r5, r6, r7 }
 	bx lr
 .p2align 4
@@ -281,10 +281,10 @@ cmmc_parallel_body_2:
 	mov r7, r0
 	add r0, r0, #3
 	cmp r1, r0
-	ble label299
+	ble label300
 	add r0, r6, r7, lsl #2
 .p2align 4
-label295:
+label296:
 	add r8, r3, r7, lsl #2
 	ldr r9, [r0, #0]
 	add r10, r0, r2
@@ -316,14 +316,14 @@ label295:
 	add r9, r0, r9
 	ldr r9, [r9, #0]
 	str r9, [r8, #0]
-	ble label299
+	ble label300
 	add r0, r0, #16
-	b label295
-label299:
+	b label296
+label300:
 	cmp r1, r7
-	ble label306
+	ble label307
 	add r0, r6, r7, lsl #2
-label302:
+label303:
 	add r4, r3, r7, lsl #2
 	ldr r5, [r0, #0]
 	add r7, r7, #1
@@ -333,9 +333,9 @@ label302:
 	add r4, r4, r2
 	ldr r5, [r5, #0]
 	str r5, [r4, #0]
-	ble label306
+	ble label307
 	add r0, r0, #4
-	b label302
-label306:
+	b label303
+label307:
 	pop { r4, r5, r6, r7, r8, r9, r10 }
 	bx lr

@@ -18,7 +18,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i32 %6 = phi [^for.body1, i32 0] [^for.body2, i32 %7] [^b, i32 %7];
     i32 %7 = add i32 %6, i32 1;
     i1 %8 = icmp eq i32 %7, i32 5;
-    cbr i1 %8(prob = 0.49), ^for.body2, ^b;
+    cbr i1 %8(prob = 0.5), ^for.body2, ^b;
   ^b:
     i1 %9 = icmp slt i32 %7, i32 10;
     cbr i1 %9(prob = 0.5), ^for.body2, ^b1;

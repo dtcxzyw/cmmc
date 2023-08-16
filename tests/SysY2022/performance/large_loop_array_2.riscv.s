@@ -25,14 +25,14 @@ main:
 	# stack usage: CalleeArg[0] Local[0] RegSpill[16] CalleeSaved[116]
 	addi sp, sp, -144
 	sd ra, 0(sp)
-	sd s3, 8(sp)
-	fsw f8, 16(sp)
-	sd s10, 24(sp)
-	fsw f9, 32(sp)
-	sd s4, 40(sp)
-	fsw f18, 48(sp)
-	sd s6, 56(sp)
-	sd s7, 64(sp)
+	sd s7, 8(sp)
+	sd s3, 16(sp)
+	fsw f8, 24(sp)
+	sd s10, 32(sp)
+	fsw f9, 40(sp)
+	sd s4, 48(sp)
+	fsw f18, 56(sp)
+	sd s6, 64(sp)
 	sd s1, 72(sp)
 	sd s8, 80(sp)
 	sd s5, 88(sp)
@@ -45,35 +45,35 @@ main:
 	mv s11, a0
 	li a0, 22
 	jal _sysy_starttime
-	lui a2, 419430
-	li s9, 3
-	mv s10, zero
-	fmv.w.x f18, zero
-pcrel311:
-	auipc a1, %pcrel_hi(x)
 pcrel312:
-	auipc s8, %pcrel_hi(cmmc_parallel_body_payload_0)
+	auipc a2, %pcrel_hi(cmmc_parallel_body_0)
 pcrel313:
-	auipc a0, %pcrel_hi(y)
+	auipc a1, %pcrel_hi(y)
 	lui s4, 260096
-	addiw s6, a2, 1639
-	fmv.s f8, f18
-	addi s2, a1, %pcrel_lo(pcrel311)
-	addi s1, s8, %pcrel_lo(pcrel312)
-	ld s11, 128(sp)
-	addi s0, a0, %pcrel_lo(pcrel313)
-	fmv.w.x f9, s4
 pcrel314:
-	auipc a1, %pcrel_hi(__cmmc_fp_constant_pool)
-	addiw a3, s11, -3
+	auipc a0, %pcrel_hi(x)
 pcrel315:
-	auipc a0, %pcrel_hi(cmmc_parallel_body_0)
-	addi s3, a1, %pcrel_lo(pcrel314)
-	addi s7, a0, %pcrel_lo(pcrel315)
+	auipc s8, %pcrel_hi(cmmc_parallel_body_payload_0)
+	mv s10, zero
+	li s9, 3
+	fmv.w.x f18, zero
+	ld s11, 128(sp)
+	addi s7, a2, %pcrel_lo(pcrel312)
+	addi s0, a1, %pcrel_lo(pcrel313)
+	fmv.w.x f9, s4
+	addi s2, a0, %pcrel_lo(pcrel314)
+	addi s1, s8, %pcrel_lo(pcrel315)
+	fmv.s f8, f18
+	addiw a3, s11, -3
+	lui a2, 419430
+pcrel316:
+	auipc a1, %pcrel_hi(__cmmc_fp_constant_pool)
 	mv a0, zero
+	addiw s6, a2, 1639
+	addi s3, a1, %pcrel_lo(pcrel316)
 	sd a3, 136(sp)
-	lui a3, 122
-	addiw s5, a3, 288
+	lui a1, 122
+	addiw s5, a1, 288
 	j label92
 .p2align 2
 label187:
@@ -90,27 +90,27 @@ label92:
 	fadd.s f10, f9, f11
 	add a3, t0, a2
 	fmv.s f9, f12
-	sh2add a5, a3, a3
-	slliw a4, a5, 1
-	subw a2, s10, a4
+	sh2add a4, a3, a3
+	slliw a5, a4, 1
+	subw a2, s10, a5
 	sltu a1, zero, a2
-	bne a1, zero, label274
+	bne a1, zero, label275
 	fmv.s f9, f10
 .p2align 2
-label274:
+label275:
 	flw f12, 4(s3)
 	fmv.w.x f11, zero
 	fadd.s f10, f18, f12
 	fmv.s f18, f11
-	bne a1, zero, label276
+	bne a1, zero, label277
 	fmv.s f18, f10
 .p2align 2
-label276:
+label277:
 	ld s11, 128(sp)
-	ble s11, a0, label153
-pcrel316:
+	ble s11, a0, label152
+pcrel317:
 	auipc s8, %pcrel_hi(cmmc_parallel_body_payload_0)
-	sw a0, %pcrel_lo(pcrel316)(s8)
+	sw a0, %pcrel_lo(pcrel317)(s8)
 	sd s2, 8(s1)
 	fsw f18, 16(s1)
 	sd s0, 24(s1)
@@ -134,21 +134,21 @@ label113:
 	sh2add a3, a2, s0
 	flw f12, 0(a1)
 	addiw a2, a2, 4
-	flw f13, 0(a3)
-	flw f14, 4(a1)
-	fmul.s f15, f12, f13
-	flw f12, 4(a3)
-	flw f13, 8(a1)
+	flw f14, 0(a3)
+	flw f13, 4(a1)
+	fmul.s f15, f12, f14
+	flw f14, 4(a3)
+	flw f12, 8(a1)
+	fmul.s f0, f13, f14
 	fadd.s f11, f10, f15
-	fmul.s f15, f14, f12
-	flw f14, 8(a3)
-	flw f12, 12(a1)
-	fadd.s f10, f11, f15
-	fmul.s f15, f13, f14
-	flw f13, 12(a3)
+	flw f15, 8(a3)
+	flw f13, 12(a1)
+	fmul.s f14, f12, f15
+	flw f12, 12(a3)
+	fadd.s f10, f11, f0
 	ld a3, 136(sp)
-	fmul.s f14, f12, f13
-	fadd.s f11, f10, f15
+	fadd.s f11, f10, f14
+	fmul.s f14, f13, f12
 	fadd.s f10, f11, f14
 	ble a3, a2, label218
 	addi a1, a1, 16
@@ -157,7 +157,7 @@ label113:
 label218:
 	fmv.s f11, f10
 	ld s11, 128(sp)
-	ble s11, a2, label299
+	ble s11, a2, label300
 .p2align 2
 label106:
 	sh2add a1, a2, s2
@@ -186,7 +186,7 @@ label168:
 	blt s10, s5, label92
 	j label120
 .p2align 2
-label153:
+label152:
 	ld s11, 128(sp)
 	bgt s11, zero, label101
 	fmv.w.x f10, zero
@@ -209,14 +209,14 @@ label120:
 	mv a0, zero
 label121:
 	ld ra, 0(sp)
-	ld s3, 8(sp)
-	flw f8, 16(sp)
-	ld s10, 24(sp)
-	flw f9, 32(sp)
-	ld s4, 40(sp)
-	flw f18, 48(sp)
-	ld s6, 56(sp)
-	ld s7, 64(sp)
+	ld s7, 8(sp)
+	ld s3, 16(sp)
+	flw f8, 24(sp)
+	ld s10, 32(sp)
+	flw f9, 40(sp)
+	ld s4, 48(sp)
+	flw f18, 56(sp)
+	ld s6, 64(sp)
 	ld s1, 72(sp)
 	ld s8, 80(sp)
 	ld s5, 88(sp)
@@ -232,7 +232,7 @@ label123:
 	li a0, 1
 	j label121
 .p2align 2
-label299:
+label300:
 	fadd.s f8, f8, f10
 	addiw s10, s10, 1
 	blt s10, s5, label92

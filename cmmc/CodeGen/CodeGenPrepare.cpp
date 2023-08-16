@@ -141,6 +141,39 @@ public:
 
 CMMC_TRANSFORM_PASS(DuplicateCmp);
 
+class DuplicateGlobal final : public TransformPass<Function> {
+public:
+    bool run(Function& func, AnalysisPassManager&) const override {
+        bool modified = false;
+        for(auto block : func.blocks()) {
+            for(auto& inst : block->instructions()) {
+                // Rematerializing the global address is cheaper than spill & reload.
+                // TODO
+                if(!inst.hasExactlyOneUse())
+                    continue;
+                if(inst.getInstID() != InstructionID::PtrCast && inst.getInstID() != InstructionID::FunctionPtr)
+                    continue;
+                if(!inst.getOperand(0)->isGlobal())
+                    continue;
+                const auto user = *inst.users().begin();
+                if(user->getBlock() == block)
+                    continue;
+                const auto newInst = inst.clone();
+                newInst->insertBefore(user->getBlock(), user->asIterator());
+                inst.replaceWith(newInst);
+            }
+        }
+
+        return modified;
+    }
+
+    [[nodiscard]] std::string_view name() const noexcept override {
+        return "DuplicateGlobal"sv;
+    }
+};
+
+CMMC_TRANSFORM_PASS(DuplicateGlobal);
+
 class SDivWithPowerOf2 final : public TransformPass<Function> {
 public:
     bool run(Function& func, AnalysisPassManager& analysis) const override {

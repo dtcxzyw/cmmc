@@ -15,6 +15,7 @@
 #include <cmath>
 #include <cmmc/Analysis/DominateAnalysis.hpp>
 #include <cmmc/IR/Instruction.hpp>
+#include <cmmc/Support/Tune.hpp>
 #include <cmmc/Transforms/Hyperparameters.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <cmmc/Transforms/Util/PatternMatch.hpp>
@@ -25,6 +26,8 @@ CMMC_NAMESPACE_BEGIN
 class ProbPrediction final : public TransformPass<Function> {
 public:
     bool run(Function& func, AnalysisPassManager& analysis) const override {
+        if(!queryTuneOpt("prob_predict", 0))
+            return false;
         CMMC_UNUSED(analysis);
         // auto& dom = analysis.get<DominateAnalysis>(func);
         bool modified = false;

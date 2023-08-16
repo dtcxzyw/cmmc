@@ -34,7 +34,7 @@ pcrel303:
 .p2align 2
 label2:
 	sd zero, 0(a0)
-	addi a3, a3, 64
+	addiw a3, a3, 64
 	sd zero, 8(a0)
 	sd zero, 16(a0)
 	sd zero, 24(a0)

@@ -37,7 +37,21 @@ hanoi:
 	li s6, 1
 	sd s1, 48(sp)
 	sd s4, 56(sp)
-	beq a0, s6, label16
+	bne a0, s6, label16
+	mv a0, s2
+label2:
+	jal write
+	ld ra, 0(sp)
+	ld s3, 8(sp)
+	ld s5, 16(sp)
+	ld s0, 24(sp)
+	ld s2, 32(sp)
+	ld s6, 40(sp)
+	ld s1, 48(sp)
+	ld s4, 56(sp)
+	addi sp, sp, 64
+	ret
+label16:
 	mv s0, a1
 	mv s1, a2
 label4:
@@ -58,21 +72,6 @@ label4:
 	mv s0, s1
 	mv s1, a1
 	j label4
-label2:
-	jal write
-	ld ra, 0(sp)
-	ld s3, 8(sp)
-	ld s5, 16(sp)
-	ld s0, 24(sp)
-	ld s2, 32(sp)
-	ld s6, 40(sp)
-	ld s1, 48(sp)
-	ld s4, 56(sp)
-	addi sp, sp, 64
-	ret
-label16:
-	mv a0, s2
-	j label2
 .globl main
 main:
 	addi sp, sp, -8

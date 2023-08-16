@@ -4,14 +4,14 @@
 .p2align 2
 .globl foo
 foo:
-	beq a0, zero, label8
+	bne a0, zero, label8
+	mv a0, zero
+label2:
+	ret
+label8:
 	mv a1, zero
 label4:
 	addiw a1, a1, 1
 	bne a0, a1, label4
 	mv a0, a1
-label2:
-	ret
-label8:
-	mv a0, zero
 	j label2

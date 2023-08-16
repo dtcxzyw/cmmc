@@ -16,10 +16,12 @@ test:
 pcrel19:
 	auipc a1, %pcrel_hi(i)
 	lw a0, %pcrel_lo(pcrel19)(a1)
-	beq a0, zero, label2
+	bne a0, zero, label8
+label2:
+	ret
+label8:
 	li a0, 1
 pcrel20:
 	auipc a1, %pcrel_hi(result)
 	sw a0, %pcrel_lo(pcrel20)(a1)
-label2:
-	ret
+	j label2

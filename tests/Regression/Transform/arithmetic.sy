@@ -531,3 +531,7 @@ int srem_power_of_two(int x) {
     x %= 16;
     return x < 0 ? x + 16 : x;
 }
+int zext_plus_one_eq_one(int x) {
+    int y = x > 1;
+    return y + 1 == 1;
+}

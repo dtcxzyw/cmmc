@@ -592,7 +592,11 @@ std::pair<intptr_t, std::vector<std::pair<size_t, Value*>>> GetElementPtrInst::g
     std::vector<std::pair<size_t, Value*>> offsets;
     const auto addOffset = [&](intptr_t offset, Value* index) {
         if(index->isConstant()) {
-            constantOffset += offset * static_cast<intptr_t>(index->as<ConstantInteger>()->getSignExtended());
+            if(index->is<ConstantInteger>())
+                constantOffset += offset * static_cast<intptr_t>(index->as<ConstantInteger>()->getSignExtended());
+            else {
+                // undefined
+            }
         } else {
             offsets.emplace_back(offset, index);
         }

@@ -83,14 +83,13 @@ delete:
 	beq label81
 	ldr r0, [r2, r5, lsl #2]
 	cmp r1, r0
-	ble label84
-label83:
+	ble label86
 	add r7, r6, r5, lsl #2
 	ldr r0, [r7, #0]
 	bl delete
 	str r0, [r7, #0]
-	mov r0, r4
 	str r5, [r6, r4, lsl #2]
+	mov r0, r4
 	b label126
 label132:
 	mvn r0, #0
@@ -123,32 +122,18 @@ label95:
 	beq label126
 	mov r0, r5
 	b label97
-label84:
+label86:
 	movw r7, #:lower16:left_child
 	movt r7, #:upper16:left_child
 	cmp r1, r0
-	blt label85
-	ldr r1, [r7, r5, lsl #2]
-	cmn r1, #1
-	bne label87
-	ldr r0, [r6, r5, lsl #2]
-	mvn r1, #0
-	cmn r0, #1
-	moveq r0, r1
-	str r0, [r6, r4, lsl #2]
-	mov r0, r4
-	b label126
-label114:
-	movw r8, #:lower16:left_child
-	movt r8, #:upper16:left_child
-	cmp r1, r0
-	bge label116
-	add r6, r8, r5, lsl #2
-	ldr r0, [r6, #0]
+	bge label88
+label87:
+	add r7, r7, r5, lsl #2
+	ldr r0, [r7, #0]
 	bl delete
-	str r0, [r6, #0]
+	str r0, [r7, #0]
 	mov r0, r4
-	str r5, [r7, r4, lsl #2]
+	str r5, [r6, r4, lsl #2]
 	b label126
 label236:
 	mov r0, r1
@@ -160,19 +145,35 @@ label97:
 	str r1, [r2, r4, lsl #2]
 	ldr r0, [r2, r5, lsl #2]
 	cmp r1, r0
-	bgt label83
+	bgt label110
 	movw r7, #:lower16:left_child
 	movt r7, #:upper16:left_child
-	bge label104
-label85:
-	add r7, r7, r5, lsl #2
-	ldr r0, [r7, #0]
-	bl delete
-	str r0, [r7, #0]
+	blt label87
+	ldr r1, [r7, r5, lsl #2]
+	cmn r1, #1
+	beq label93
+	ldr r0, [r6, r5, lsl #2]
+	cmn r0, #1
+	beq label189
+	mov r1, r0
+	b label106
+label88:
+	ldr r1, [r7, r5, lsl #2]
+	cmn r1, #1
+	bne label89
+label93:
+	ldr r0, [r6, r5, lsl #2]
+	mvn r1, #0
+	cmn r0, #1
+	moveq r0, r1
+	str r0, [r6, r4, lsl #2]
 	mov r0, r4
-	str r5, [r6, r4, lsl #2]
 	b label126
-label116:
+label114:
+	movw r8, #:lower16:left_child
+	movt r8, #:upper16:left_child
+	cmp r1, r0
+	blt label115
 	ldr r1, [r8, r5, lsl #2]
 	cmn r1, #1
 	bne label117
@@ -183,11 +184,11 @@ label116:
 	str r0, [r7, r4, lsl #2]
 	mov r0, r4
 	b label126
-label87:
+label89:
 	ldr r0, [r6, r5, lsl #2]
 	cmn r0, #1
-	bne label186
-label187:
+	bne label188
+label189:
 	str r1, [r6, r4, lsl #2]
 	mov r0, r4
 	b label126
@@ -197,15 +198,15 @@ label117:
 	beq label341
 	mov r1, r0
 	b label118
-label186:
+label188:
 	mov r1, r0
-label88:
+label90:
 	ldr r3, [r7, r1, lsl #2]
 	cmn r3, #1
-	beq label90
+	beq label92
 	mov r1, r3
-	b label88
-label90:
+	b label90
+label92:
 	ldr r1, [r2, r1, lsl #2]
 	str r1, [r2, r5, lsl #2]
 	bl delete
@@ -213,20 +214,6 @@ label90:
 	mov r0, r4
 	str r5, [r6, r4, lsl #2]
 	b label126
-label104:
-	ldr r1, [r7, r5, lsl #2]
-	cmn r1, #1
-	beq label109
-	ldr r0, [r6, r5, lsl #2]
-	cmn r0, #1
-	beq label187
-	mov r1, r0
-label106:
-	ldr r3, [r7, r1, lsl #2]
-	cmn r3, #1
-	beq label90
-	mov r1, r3
-	b label106
 label348:
 	mov r1, r3
 label118:
@@ -240,21 +227,36 @@ label118:
 	mov r0, r4
 	str r5, [r7, r4, lsl #2]
 	b label126
-label341:
-	str r1, [r7, r4, lsl #2]
+label281:
+	mov r1, r3
+label106:
+	ldr r3, [r7, r1, lsl #2]
+	cmn r3, #1
+	bne label281
+	b label92
+label110:
+	add r7, r6, r5, lsl #2
+	ldr r0, [r7, #0]
+	bl delete
+	str r0, [r7, #0]
 	mov r0, r4
-	b label126
-label109:
-	ldr r0, [r6, r5, lsl #2]
-	mvn r1, #0
-	cmn r0, #1
-	moveq r0, r1
-	str r0, [r6, r4, lsl #2]
-	mov r0, r4
+	str r5, [r6, r4, lsl #2]
 	b label126
 label81:
 	mvn r0, #0
 	str r0, [r6, r4, lsl #2]
+	mov r0, r4
+	b label126
+label115:
+	add r6, r8, r5, lsl #2
+	ldr r0, [r6, #0]
+	bl delete
+	str r0, [r6, #0]
+	mov r0, r4
+	str r5, [r7, r4, lsl #2]
+	b label126
+label341:
+	str r1, [r7, r4, lsl #2]
 	mov r0, r4
 	b label126
 label111:
@@ -272,9 +274,9 @@ label125:
 inorder:
 	push { r4, lr }
 	cmn r0, #1
-	beq label465
+	beq label463
 	mov r4, r0
-label463:
+label461:
 	movw r0, #:lower16:left_child
 	movt r0, #:upper16:left_child
 	ldr r0, [r0, r4, lsl #2]
@@ -289,8 +291,8 @@ label463:
 	movt r0, #:upper16:right_child
 	ldr r4, [r0, r4, lsl #2]
 	cmn r4, #1
-	bne label463
-label465:
+	bne label461
+label463:
 	pop { r4, pc }
 .p2align 4
 .globl main
@@ -302,7 +304,7 @@ main:
 	bl getint
 	cmp r0, #0
 	mov r5, r0
-	beq label495
+	beq label493
 	bl getint
 	cmp r5, #1
 	movw r1, #:lower16:value
@@ -317,10 +319,10 @@ main:
 	str r0, [r1, #0]
 	mov r0, #1
 	str r0, [sp, #0]
-	ble label499
+	ble label497
 	mov r6, #1
 .p2align 4
-label497:
+label495:
 	bl getint
 	mov r2, r4
 	mov r1, r0
@@ -328,8 +330,8 @@ label497:
 	bl insert
 	add r6, r6, #1
 	cmp r5, r6
-	bgt label497
-label499:
+	bgt label495
+label497:
 	mov r0, #0
 	bl inorder
 	mov r0, #10
@@ -337,30 +339,30 @@ label499:
 	bl getint
 	cmp r0, #0
 	mov r4, r0
-	ble label532
+	ble label530
 	mov r5, #0
 	mov r6, r5
-	b label500
+	b label498
 .p2align 4
-label540:
+label538:
 	mov r6, r0
 .p2align 4
-label500:
+label498:
 	bl getint
 	mov r1, r0
 	mov r0, r6
 	bl delete
 	add r5, r5, #1
 	cmp r4, r5
-	bgt label540
-label503:
+	bgt label538
+label501:
 	bl inorder
 	mov r0, #10
 	bl putch
-label495:
+label493:
 	mov r0, #0
 	add sp, sp, #8
 	pop { r4, r5, r6, pc }
-label532:
+label530:
 	mov r0, #0
-	b label503
+	b label501

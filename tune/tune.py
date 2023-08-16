@@ -48,7 +48,7 @@ def parse_performance(stderr: str):
 
 cache = dict()
 stage = 0
-max_stages = 5
+max_stages = 6
 fixed = ""
 
 def objective_func(trail: optuna.Trial):
@@ -70,6 +70,8 @@ def objective_func(trail: optuna.Trial):
         opt.add_select("max_unroll_body_size", [8, 16, 24, 32, 48, 64, 96, 128])
     if stage == 4:
         opt.add_param("max_constant_hoist_count", 0, 16)
+    if stage == 5:
+        opt.add_pass("prob_predict")
     # opt.add_param("duplication_threshold", 2, 20)
     # opt.add_param("duplication_iterations", 0, 20)
     # opt.add_param("branch_limit", 0, 1000)

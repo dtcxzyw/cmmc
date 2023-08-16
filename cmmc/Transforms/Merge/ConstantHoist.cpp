@@ -150,6 +150,9 @@ public:
             std::vector<ConstantPair> pairs;
             if(!isEqual(trueTarget, falseTarget, pairs))
                 continue;
+            constexpr uint32_t maxHoistCount = 2U;
+            if(pairs.size() >= maxHoistCount)
+                continue;
 
             modified = true;
             const auto cond = branch->getOperand(0);

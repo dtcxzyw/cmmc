@@ -26,7 +26,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i1 %18 = icmp eq i32 %3, i32 1;
     i32 %19 = add i32 %3, i32 1;
     i32 %20 = add i32 %0, i32 13;
-    cbr i1 %18(prob = 0.49), ^if.then, ^if.else;
+    cbr i1 %18(prob = 0.5), ^if.then, ^if.else;
   ^b:
     call (i32) -> void @putint(i32 %1);
     ret i32 0;

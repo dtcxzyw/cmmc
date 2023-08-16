@@ -224,7 +224,9 @@ bool Function::verify(std::ostream& out) const {
         for(auto& inst : block->instructions()) {
             if(inst.getInstID() == InstructionID::Phi) {
                 if(stopPhi) {
-                    out << "Phi nodes should be in the front of instructions." << std::endl;
+                    out << "Phi nodes should be in the front of instructions.\n";
+                    inst.dumpInst(out);
+                    out << '\n';
                     return false;
                 }
                 const auto phi = inst.as<PhiInst>();

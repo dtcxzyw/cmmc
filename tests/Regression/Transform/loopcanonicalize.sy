@@ -19,3 +19,8 @@ int main() {
         sum += i;
     return sum;
 }
+int test_sle(int n) {
+    int i = 0;
+    while(i <= n) ++i;
+    return i;
+}

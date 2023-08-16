@@ -1235,6 +1235,29 @@ class ArithmeticReduce final : public TransformPass<Function> {
             if(sub(capture(cint_(-1), v1), any(v2))(matchCtx))
                 return builder.makeOp<BinaryInst>(InstructionID::Xor, v2, v1);
 
+            if(icmp(cmp, add(zext(boolean(v1)), cint_(1)), cint_(1))(matchCtx)) {
+                switch(cmp) {
+                    case CompareOp::ICmpEqual:
+                        return makeNot(v1);
+                    case CompareOp::ICmpNotEqual:
+                        return v1;
+                    case CompareOp::ICmpSignedLessThan:
+                    case CompareOp::ICmpUnsignedLessThan:
+                        return builder.getFalse();
+                    case CompareOp::ICmpSignedLessEqual:
+                    case CompareOp::ICmpUnsignedLessEqual:
+                        return makeNot(v1);
+                    case CompareOp::ICmpSignedGreaterThan:
+                    case CompareOp::ICmpUnsignedGreaterThan:
+                        return v1;
+                    case CompareOp::ICmpSignedGreaterEqual:
+                    case CompareOp::ICmpUnsignedGreaterEqual:
+                        return builder.getTrue();
+                    default:
+                        reportUnreachable(CMMC_LOCATION());
+                }
+            }
+
             return nullptr;
         });
         return ret || modified;

@@ -1374,7 +1374,7 @@ func @main() -> i32 { NoRecurse Entry } {
     ubr ^b20;
   ^if.else8:
     i1 %648 = icmp eq i32 %641, i32 2;
-    cbr i1 %648(prob = 0.49), ^if.then11, ^if.else9;
+    cbr i1 %648(prob = 0.5), ^if.then11, ^if.else9;
   ^if.then11:
     i32 %649 = load i32* %32;
     i32 %650 = sdiv i32 %642, i32 3;

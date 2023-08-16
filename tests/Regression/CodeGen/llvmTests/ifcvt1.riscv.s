@@ -4,10 +4,10 @@
 .p2align 2
 .globl t1
 t1:
-	beq a0, zero, label2
+	bne a0, zero, label9
+	addiw a0, a1, -1
+	j label3
+label9:
 	addiw a0, a1, 1
 label3:
 	ret
-label2:
-	addiw a0, a1, -1
-	j label3

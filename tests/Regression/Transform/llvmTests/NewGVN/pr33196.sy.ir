@@ -8,7 +8,7 @@ func @main() -> i32 { NoRecurse } {
     i32 %5 = strunc i32 %3 to i32;
     i32* %6 = ptrcast i32* @a to i32*;
     i32* %7 = ptrcast i32* @b to i32*;
-    cbr i1 %4(prob = 0.49), ^block3, ^block2;
+    cbr i1 %4(prob = 0.5), ^block3, ^block2;
   ^block2:
     i32 %8 = phi [^entry, i32 0] [^block3, i32 %9];
     ubr ^block3;
@@ -25,7 +25,7 @@ func @main() -> i32 { NoRecurse } {
     store i32* %7 with i32 0;
     store i32* %6 with i32 %17;
     i1 %18 = icmp eq i32 %16, i32 0;
-    cbr i1 %18(prob = 0.49), ^if.then, ^block2;
+    cbr i1 %18(prob = 0.5), ^if.then, ^block2;
   ^if.then:
     ret i32 0;
 }
