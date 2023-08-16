@@ -705,6 +705,11 @@
       "parent": "97cc72f856cc319dc4b12d569da66b09a1abf5ea",
       "time": "2023-07-06 19:29:20 +0800"
     },
+    "881addb84bdadca54ffd19dcd89c06c8b7a214c6": {
+      "message": "feat(codegen): optimize memcpy on riscv",
+      "parent": "cbc83f84bb390badbd8e9661c791a95645f03b12",
+      "time": "2023-08-17 00:09:24 +0800"
+    },
     "88e5c2a45608223637111a6b705862f1e355bb26": {
       "message": "feat(transform): fold -1 - x into ~x",
       "parent": "13e4309bf0119dcbfff341a7f0c4bb1fa1658786",
@@ -1281,5 +1286,5 @@
       "time": "2023-07-06 01:05:50 +0800"
     }
   },
-  "head": "cbc83f84bb390badbd8e9661c791a95645f03b12"
+  "head": "881addb84bdadca54ffd19dcd89c06c8b7a214c6"
 }
