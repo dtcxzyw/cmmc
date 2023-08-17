@@ -443,6 +443,10 @@ label171:
 label434:
 	mv a0, a2
 	j label174
+label220:
+	mv a2, zero
+	mv a1, zero
+	j label150
 label330:
 	mv a3, zero
 	mv a4, zero
@@ -460,7 +464,3 @@ label311:
 label217:
 	mv a0, zero
 	j label158
-label220:
-	mv a2, zero
-	mv a1, zero
-	j label150

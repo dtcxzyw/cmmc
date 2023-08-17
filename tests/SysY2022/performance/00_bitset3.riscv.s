@@ -22,14 +22,14 @@ main:
 	li a0, 56
 	jal _sysy_starttime
 	lui t1, 281475
-pcrel166:
+pcrel167:
 	auipc a2, %pcrel_hi(a)
 	lui a3, 4878
 	lui a0, 4876
 	lui a5, 244141
 	li a4, 1
 	lui t2, 73
-	addi s0, a2, %pcrel_lo(pcrel166)
+	addi s0, a2, %pcrel_lo(pcrel167)
 	addiw a1, a0, -865
 	addiw a2, a3, 725
 	addiw a0, a5, -1529

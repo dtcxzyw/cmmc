@@ -224,7 +224,7 @@ main:
 	sd zero, 112(sp)
 	jal getint
 	mv s0, a0
-pcrel736:
+pcrel737:
 	auipc a1, %pcrel_hi(dp)
 	mv t6, zero
 	mv t5, zero
@@ -233,7 +233,7 @@ pcrel736:
 	mv t2, zero
 	li t0, -1
 	lui a0, 40
-	addi a3, a1, %pcrel_lo(pcrel736)
+	addi a3, a1, %pcrel_lo(pcrel737)
 	addiw a4, a0, -544
 	li a1, 567
 	li a0, -1
@@ -243,11 +243,10 @@ pcrel736:
 	addiw t4, a1, -1600
 	j label211
 .p2align 2
-label389:
-	addiw t2, t2, 1
-	bge t2, a2, label729
+label217:
+	addiw t3, t3, 1
+	bge t3, a2, label389
 	mv t6, zero
-	mv t3, zero
 .p2align 2
 label211:
 	mul a1, t2, a4
@@ -323,9 +322,13 @@ label211:
 	sd a1, 488(a0)
 	sd a1, 496(a0)
 	blt t6, a2, label211
-	addiw t3, t3, 1
-	bge t3, a2, label389
+	j label217
+.p2align 2
+label389:
+	addiw t2, t2, 1
+	bge t2, a2, label729
 	mv t6, zero
+	mv t3, zero
 	j label211
 .p2align 2
 label729:

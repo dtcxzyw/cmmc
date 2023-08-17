@@ -391,17 +391,17 @@ main:
 	mv s1, a0
 	beq a0, zero, label560
 	jal getint
-pcrel615:
+pcrel617:
 	auipc a3, %pcrel_hi(left_child)
 	li a1, -1
-pcrel616:
+pcrel618:
 	auipc a2, %pcrel_hi(value)
-	sw a0, %pcrel_lo(pcrel616)(a2)
+	sw a0, %pcrel_lo(pcrel618)(a2)
 	li a0, 1
-pcrel617:
+pcrel619:
 	auipc a2, %pcrel_hi(right_child)
-	sw a1, %pcrel_lo(pcrel615)(a3)
-	sw a1, %pcrel_lo(pcrel617)(a2)
+	sw a1, %pcrel_lo(pcrel617)(a3)
+	sw a1, %pcrel_lo(pcrel619)(a2)
 	sw a0, 32(sp)
 	ble s1, a0, label554
 	li s2, 1
@@ -414,6 +414,19 @@ label552:
 	jal insert
 	addiw s2, s2, 1
 	bgt s1, s2, label552
+	j label554
+label558:
+	jal inorder
+	li a0, 10
+	jal putch
+label560:
+	mv a0, zero
+	ld ra, 0(sp)
+	ld s0, 8(sp)
+	ld s1, 16(sp)
+	ld s2, 24(sp)
+	addi sp, sp, 40
+	ret
 label554:
 	mv a0, zero
 	jal inorder
@@ -436,18 +449,7 @@ label555:
 	jal delete
 	addiw s1, s1, 1
 	bgt s0, s1, label596
-label558:
-	jal inorder
-	li a0, 10
-	jal putch
-label560:
-	mv a0, zero
-	ld ra, 0(sp)
-	ld s0, 8(sp)
-	ld s1, 16(sp)
-	ld s2, 24(sp)
-	addi sp, sp, 40
-	ret
+	j label558
 label588:
 	mv a0, zero
 	j label558

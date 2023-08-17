@@ -50,9 +50,7 @@ label2:
 	bgt t0, t1, label8
 	li a5, 1
 	bgt a1, a5, label10
-	addiw a3, a3, 1
-	blt a3, a4, label2
-	j label101
+	j label98
 .p2align 2
 label8:
 	sw t0, 4(a0)
@@ -67,8 +65,7 @@ label10:
 	bgt t0, t1, label8
 	addiw a5, a5, 1
 	bgt a1, a5, label10
-	addiw a3, a3, 1
-	blt a3, a4, label2
+	j label102
 label101:
 	mv s1, a2
 	mv s2, zero
@@ -91,7 +88,16 @@ label13:
 	ld s2, 24(sp)
 	addi sp, sp, 72
 	ret
+.p2align 2
+label102:
+	addiw a3, a3, 1
+	blt a3, a4, label2
+	j label101
 label11:
+	addiw a3, a3, 1
+	blt a3, a4, label2
+	j label101
+label98:
 	addiw a3, a3, 1
 	blt a3, a4, label2
 	j label101

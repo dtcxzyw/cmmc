@@ -9,11 +9,11 @@ a:
 .globl main
 main:
 	addi sp, sp, -32
-pcrel112:
+pcrel114:
 	auipc a1, %pcrel_hi(a)
 	sd ra, 0(sp)
 	sd s0, 8(sp)
-	addi s0, a1, %pcrel_lo(pcrel112)
+	addi s0, a1, %pcrel_lo(pcrel114)
 	sd s1, 16(sp)
 	sd s2, 24(sp)
 	mv a0, s0

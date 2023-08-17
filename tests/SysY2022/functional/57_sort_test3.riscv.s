@@ -57,10 +57,7 @@ label17:
 	ble a4, s2, label4
 	lw t0, 0(a5)
 	bgt a1, t0, label17
-label16:
-	sw t0, 0(a3)
-	addiw a4, a4, -1
-	j label4
+	j label16
 .p2align 2
 label18:
 	lw a5, 0(a3)
@@ -253,6 +250,10 @@ label63:
 	addiw a0, s6, 1
 	bgt s5, a0, label43
 	j label42
+label16:
+	sw t0, 0(a3)
+	addiw a4, a4, -1
+	j label4
 label347:
 	sw t0, 0(a3)
 	addiw a4, a4, -1
@@ -301,20 +302,20 @@ main:
 	mv a0, t1
 	jal QuickSort
 	li s0, 10
-	bge a0, s0, label386
+	bge a0, s0, label394
 	sh2add s1, a0, t1
 	mv s2, a0
 .p2align 2
-label382:
+label390:
 	lw a0, 0(s1)
 	jal putint
 	mv a0, s0
 	jal putch
 	addiw s2, s2, 1
-	bge s2, s0, label386
+	bge s2, s0, label394
 	addi s1, s1, 4
-	j label382
-label386:
+	j label390
+label394:
 	mv a0, zero
 	ld ra, 0(sp)
 	ld s0, 8(sp)

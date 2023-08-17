@@ -15,11 +15,11 @@ a3:
 .globl main
 main:
 	addi sp, sp, -64
-pcrel905:
+pcrel910:
 	auipc a1, %pcrel_hi(a1)
-pcrel906:
+pcrel911:
 	auipc a0, %pcrel_hi(a3)
-pcrel907:
+pcrel912:
 	auipc a2, %pcrel_hi(a2)
 	li a4, 7
 	li a5, 6
@@ -30,14 +30,14 @@ pcrel907:
 	mv t3, zero
 	sd ra, 0(sp)
 	sd s0, 8(sp)
-	addi s0, a1, %pcrel_lo(pcrel905)
+	addi s0, a1, %pcrel_lo(pcrel910)
 	sd s5, 16(sp)
 	li a1, 10
 	sd s2, 24(sp)
-	addi s2, a0, %pcrel_lo(pcrel906)
+	addi s2, a0, %pcrel_lo(pcrel911)
 	sd s1, 32(sp)
 	mv a0, s0
-	addi s1, a2, %pcrel_lo(pcrel907)
+	addi s1, a2, %pcrel_lo(pcrel912)
 	sd s6, 40(sp)
 	li a2, 9
 	sd s3, 48(sp)
@@ -656,15 +656,7 @@ label42:
 	li a4, 625
 	slli a3, a4, 4
 	blt a2, a3, label42
-.p2align 2
-label41:
-	mv a0, s5
-	jal putint
-	li a1, 625
-	addiw s4, s4, 1
-	slli a0, a1, 4
-	blt s4, a0, label32
-	j label31
+	j label41
 .p2align 2
 label45:
 	lw a1, 0(s3)
@@ -682,6 +674,15 @@ label45:
 	mulw a3, a1, a2
 	li a1, 625
 	subw s5, a0, a3
+	slli a0, a1, 4
+	blt s4, a0, label32
+	j label31
+.p2align 2
+label41:
+	mv a0, s5
+	jal putint
+	li a1, 625
+	addiw s4, s4, 1
 	slli a0, a1, 4
 	blt s4, a0, label32
 label31:

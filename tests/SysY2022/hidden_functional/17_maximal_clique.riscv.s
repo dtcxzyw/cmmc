@@ -31,10 +31,10 @@ maxCliques:
 	sd s10, 96(sp)
 	sd a0, 104(sp)
 	sd a1, 136(sp)
-pcrel360:
+pcrel371:
 	auipc a1, %pcrel_hi(graph)
 	lw a3, 0(a2)
-	addi s2, a1, %pcrel_lo(pcrel360)
+	addi s2, a1, %pcrel_lo(pcrel371)
 	addiw a2, a0, 1
 	sd a2, 112(sp)
 	addiw a2, a0, 2
@@ -139,10 +139,6 @@ label33:
 label14:
 	addi a0, a0, 4
 	j label7
-label127:
-	addiw s4, s4, 1
-	lw a0, 0(s3)
-	ble s4, a0, label4
 label336:
 	mv a0, s5
 label2:
@@ -165,10 +161,7 @@ label32:
 	addi a0, a0, 4
 	ld a2, 120(sp)
 	bgt a2, a1, label28
-label140:
-	li a0, 1
-	bne a0, zero, label37
-	j label165
+	j label140
 label262:
 	ld a0, 104(sp)
 	addiw s4, s4, 1
@@ -177,7 +170,9 @@ label262:
 	max s5, s7, a1
 	ble s4, a0, label4
 	j label336
-label37:
+label140:
+	li a0, 1
+	beq a0, zero, label165
 	lw a0, 0(s3)
 	ble a0, zero, label170
 	li s8, 1
@@ -217,15 +212,7 @@ label73:
 	addiw s8, s8, 1
 	lw a0, 0(s3)
 	ble s8, a0, label38
-label186:
-	ld a2, 112(sp)
-	max a0, a2, s7
-	max s7, s9, a0
-label78:
-	addiw s6, s6, 1
-	lw a0, 0(s3)
-	ble s6, a0, label22
-	j label262
+	j label186
 label48:
 	lw a0, 0(s3)
 	ble a0, zero, label191
@@ -260,17 +247,16 @@ label64:
 	addiw s10, s10, 1
 	lw a0, 0(s3)
 	ble s10, a0, label49
-label228:
-	ld a2, 120(sp)
-	max a0, a2, s9
-	max s9, s11, a0
-	j label46
-.p2align 2
-label251:
-	addiw a4, a4, 1
-	addi a3, a3, 4
-	ld a2, 128(sp)
-	bgt a2, a4, label73
+	j label228
+label186:
+	ld a2, 112(sp)
+	max a0, a2, s7
+	max s7, s9, a0
+label78:
+	addiw s6, s6, 1
+	lw a0, 0(s3)
+	ble s6, a0, label22
+	j label262
 label240:
 	addi a0, a0, 4
 	j label41
@@ -281,12 +267,6 @@ label197:
 	li a0, 1
 	bne a0, zero, label66
 	j label64
-.p2align 2
-label216:
-	addiw a3, a3, 1
-	addi a2, a2, 4
-	bgt s0, a3, label60
-	j label59
 label132:
 	mv s7, zero
 	ld a0, 104(sp)
@@ -296,6 +276,17 @@ label132:
 	lw a0, 0(s3)
 	ble s4, a0, label4
 	j label336
+label228:
+	ld a2, 120(sp)
+	max a0, a2, s9
+	max s9, s11, a0
+	j label46
+.p2align 2
+label216:
+	addiw a3, a3, 1
+	addi a2, a2, 4
+	bgt s0, a3, label60
+	j label59
 label66:
 	mv a0, s0
 	mv a1, s1
@@ -308,21 +299,33 @@ label66:
 	lw a0, 0(s3)
 	ble s10, a0, label49
 	j label228
+label95:
+	mv a0, zero
+	j label2
+.p2align 2
+label251:
+	addiw a4, a4, 1
+	addi a3, a3, 4
+	ld a2, 128(sp)
+	bgt a2, a4, label73
+	j label240
 label170:
 	mv s9, zero
 	ld a2, 112(sp)
 	max a0, a2, s7
 	max s7, zero, a0
 	j label78
+label127:
+	addiw s4, s4, 1
+	lw a0, 0(s3)
+	ble s4, a0, label4
+	j label336
 label191:
 	mv s11, zero
 	ld a2, 120(sp)
 	max a0, a2, s9
 	max s9, zero, a0
 	j label46
-label95:
-	mv a0, zero
-	j label2
 .p2align 2
 .globl main
 main:
@@ -359,38 +362,38 @@ main:
 	sw a0, 200(sp)
 	jal getint
 	li s0, 1
-pcrel619:
+pcrel630:
 	auipc a1, %pcrel_hi(graph)
 	addiw s6, a0, -3
 	mv s3, a0
-	addi s4, a1, %pcrel_lo(pcrel619)
-pcrel620:
+	addi s4, a1, %pcrel_lo(pcrel630)
+pcrel631:
 	auipc a0, %pcrel_hi(edges)
-	addi s5, a0, %pcrel_lo(pcrel620)
-	ble s3, zero, label380
+	addi s5, a0, %pcrel_lo(pcrel631)
+	ble s3, zero, label391
 	mv s7, s5
 	mv s8, zero
 .p2align 2
-label363:
+label374:
 	jal getint
 	sw a0, 0(s7)
 	jal getint
 	addiw s8, s8, 1
 	sw a0, 4(s7)
-	ble s3, s8, label367
+	ble s3, s8, label378
 	addi s7, s7, 8
-	j label363
-label367:
+	j label374
+label378:
 	li a0, 3
-	ble s3, a0, label437
+	ble s3, a0, label448
 	mv a0, s5
 	mv a1, zero
-	j label369
+	j label380
 .p2align 2
-label372:
+label383:
 	addi a0, a0, 32
 .p2align 2
-label369:
+label380:
 	lw a2, 0(a0)
 	addiw a1, a1, 4
 	lw a3, 4(a0)
@@ -440,14 +443,14 @@ label369:
 	sh3add t0, a4, s4
 	sh2add t1, a2, t0
 	sw s0, 0(t1)
-	bgt s6, a1, label372
-label373:
-	ble s3, a1, label380
+	bgt s6, a1, label383
+label384:
+	ble s3, a1, label391
 	sh3add a0, a1, s5
-	j label376
-label379:
+	j label387
+label390:
 	addi a0, a0, 8
-label376:
+label387:
 	lw a2, 0(a0)
 	addiw a1, a1, 1
 	lw a3, 4(a0)
@@ -461,8 +464,8 @@ label376:
 	sh3add a5, t1, s4
 	sh2add a4, a2, a5
 	sw s0, 0(a4)
-	bgt s3, a1, label379
-label380:
+	bgt s3, a1, label390
+label391:
 	mv a0, s0
 	mv a1, s2
 	mv a2, s1
@@ -481,6 +484,6 @@ label380:
 	ld s8, 72(sp)
 	addi sp, sp, 208
 	ret
-label437:
+label448:
 	mv a1, zero
-	j label373
+	j label384

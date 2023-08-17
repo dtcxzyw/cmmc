@@ -142,7 +142,7 @@ label11:
 	blt t0, t1, label9
 	addiw a5, a5, 1
 	blt a5, a1, label11
-	blt a2, a3, label13
+	j label258
 label14:
 	lw s9, 152(sp)
 	lw s8, 156(sp)
@@ -272,6 +272,10 @@ label15:
 	ld s11, 96(sp)
 	addi sp, sp, 344
 	ret
+.p2align 2
+label258:
+	blt a2, a3, label13
+	j label14
 label12:
 	blt a2, a3, label13
 	j label14

@@ -25,10 +25,10 @@ main:
 	sd s5, 56(sp)
 	sd s4, 64(sp)
 	jal getint
-pcrel515:
+pcrel522:
 	auipc a1, %pcrel_hi(a)
 	mv s6, a0
-	addi s7, a1, %pcrel_lo(pcrel515)
+	addi s7, a1, %pcrel_lo(pcrel522)
 	mv a0, s7
 	jal getarray
 	mv s1, a0
@@ -36,18 +36,18 @@ pcrel515:
 	jal _sysy_starttime
 	li s5, 13
 	li s4, 11
-pcrel516:
+pcrel523:
 	auipc a0, %pcrel_hi(matrix)
 	addiw s3, s1, -18
 	addiw s2, s1, -3
-	addi s0, a0, %pcrel_lo(pcrel516)
+	addi s0, a0, %pcrel_lo(pcrel523)
 	ble s6, zero, label139
-pcrel517:
+pcrel524:
 	auipc a0, %pcrel_hi(cmmc_parallel_body_payload_0)
-pcrel518:
+pcrel525:
 	auipc a3, %pcrel_hi(cmmc_parallel_body_0)
-	sw s6, %pcrel_lo(pcrel517)(a0)
-	addi a2, a3, %pcrel_lo(pcrel518)
+	sw s6, %pcrel_lo(pcrel524)(a0)
+	addi a2, a3, %pcrel_lo(pcrel525)
 	mv a1, s6
 	mv a0, zero
 	jal cmmcParallelFor
@@ -59,9 +59,7 @@ label140:
 	bgt a2, zero, label143
 	j label155
 .p2align 2
-label491:
-	addiw a1, a1, 1
-	bgt a2, a1, label154
+label497:
 	addiw a5, a5, 1
 	ble s1, a5, label156
 .p2align 2
@@ -78,9 +76,7 @@ label143:
 	mv t1, s0
 	mv t3, zero
 	bgt a0, zero, label150
-	li a1, 1
-	bgt a2, a1, label154
-	j label490
+	j label232
 .p2align 2
 label151:
 	addi t1, t1, 4
@@ -106,11 +102,7 @@ label154:
 	sh2add a3, a1, s0
 	mv t1, t0
 	bgt a0, zero, label150
-	addiw a1, a1, 1
-	bgt a2, a1, label154
-label490:
-	addiw a5, a5, 1
-	bgt s1, a5, label209
+	j label498
 label156:
 	li a0, 3
 	ble s1, a0, label259
@@ -315,25 +307,26 @@ label199:
 	ld s4, 64(sp)
 	addi sp, sp, 72
 	ret
-.p2align 2
-label499:
-	addiw a5, a5, 1
-	bgt s1, a5, label209
-	j label156
 label139:
 	mv a4, s7
 	mv a5, zero
 	j label140
+.p2align 2
+label491:
+	addiw a1, a1, 1
+	bgt a2, a1, label154
+	j label497
 label421:
 	mv a3, a1
 	j label199
-label267:
-	mv a0, t0
-	mv a1, t3
-	mv a3, t2
-	mv a5, t3
-	mv a4, t0
-	j label193
+.p2align 2
+label498:
+	addiw a1, a1, 1
+	bgt a2, a1, label154
+label490:
+	addiw a5, a5, 1
+	bgt s1, a5, label209
+	j label156
 label263:
 	mv a3, zero
 	li a1, 1
@@ -351,6 +344,22 @@ label259:
 	mv a4, zero
 	mv a1, zero
 	j label193
+.p2align 2
+label499:
+	addiw a5, a5, 1
+	bgt s1, a5, label209
+	j label156
+label267:
+	mv a0, t0
+	mv a1, t3
+	mv a3, t2
+	mv a5, t3
+	mv a4, t0
+	j label193
+label232:
+	addiw a1, a1, 1
+	bgt a2, a1, label154
+	j label490
 .p2align 2
 cmmc_parallel_body_0:
 	mv a2, a0

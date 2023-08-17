@@ -33,31 +33,31 @@ main:
 	sd s4, 48(sp)
 	jal _sysy_starttime
 	lui a3, 24
-pcrel1055:
+pcrel1095:
 	auipc a0, %pcrel_hi(cmmc_parallel_body_payload_0)
-pcrel1056:
+pcrel1096:
 	auipc a1, %pcrel_hi(vectorA)
-	addi s1, a1, %pcrel_lo(pcrel1056)
-pcrel1057:
+	addi s1, a1, %pcrel_lo(pcrel1096)
+pcrel1097:
 	auipc a1, %pcrel_hi(cmmc_parallel_body_0)
-	sd s1, %pcrel_lo(pcrel1055)(a0)
-	addi a2, a1, %pcrel_lo(pcrel1057)
+	sd s1, %pcrel_lo(pcrel1095)(a0)
+	addi a2, a1, %pcrel_lo(pcrel1097)
 	mv a0, zero
 	addiw a1, a3, 1696
 	jal cmmcParallelFor
 	lui s3, 258048
 	mv a2, zero
 	lui a4, 24
-pcrel1058:
+pcrel1098:
 	auipc a3, %pcrel_hi(Vectortm)
-pcrel1059:
+pcrel1099:
 	auipc a0, %pcrel_hi(vectorB)
-	addi a1, a3, %pcrel_lo(pcrel1058)
-	addi s0, a0, %pcrel_lo(pcrel1059)
-pcrel1060:
+	addi a1, a3, %pcrel_lo(pcrel1098)
+	addi s0, a0, %pcrel_lo(pcrel1099)
+pcrel1100:
 	auipc a3, %pcrel_hi(__cmmc_fp_constant_pool)
 	addiw a0, a4, 1693
-	addi s2, a3, %pcrel_lo(pcrel1060)
+	addi s2, a3, %pcrel_lo(pcrel1100)
 	j label110
 .p2align 2
 label981:
@@ -74,15 +74,7 @@ label110:
 	lui t1, 24
 	addiw t0, t1, 1696
 	blt zero, t0, label117
-	fsw f10, 0(a1)
-	lui t0, 24
-	addiw a5, t0, 1696
-	blt a3, a5, label237
-	mv a4, s0
-	mv a5, zero
-	addiw t0, t1, 1696
-	blt zero, t0, label220
-	j label143
+	j label251
 .p2align 2
 label277:
 	lui a5, 24
@@ -186,6 +178,113 @@ label123:
 	bge t1, t2, label277
 	addi t0, t0, 4
 	j label123
+.p2align 2
+label256:
+	fmv.w.x f12, zero
+	fmv.s f11, f10
+	fmv.s f10, f12
+	lui t1, 24
+	addiw t0, t1, 1696
+	blt t4, t0, label122
+	lui a5, 24
+	lui t0, 24
+	fsw f12, 0(a4)
+	addiw t4, a5, 1696
+	addiw a5, t0, 1696
+	blt a3, a5, label237
+	j label975
+label184:
+	li a0, 76
+	jal _sysy_stoptime
+	mv a0, zero
+	fmv.w.x f10, zero
+	j label185
+.p2align 2
+label189:
+	addi s1, s1, 64
+.p2align 2
+label185:
+	sh2add a1, a0, s0
+	flw f12, 0(s1)
+	lui a2, 24
+	addiw a0, a0, 16
+	flw f14, 0(a1)
+	flw f13, 4(s1)
+	fmul.s f15, f12, f14
+	flw f14, 4(a1)
+	flw f12, 8(s1)
+	flw f0, 8(a1)
+	fadd.s f11, f10, f15
+	fmul.s f15, f13, f14
+	flw f13, 12(s1)
+	fmul.s f14, f12, f0
+	fadd.s f10, f11, f15
+	flw f15, 12(a1)
+	flw f12, 16(s1)
+	fadd.s f11, f10, f14
+	fmul.s f14, f13, f15
+	flw f13, 16(a1)
+	fmul.s f15, f12, f13
+	fadd.s f10, f11, f14
+	flw f14, 20(s1)
+	flw f12, 20(a1)
+	flw f13, 24(s1)
+	fadd.s f11, f10, f15
+	fmul.s f15, f14, f12
+	flw f14, 24(a1)
+	flw f12, 28(s1)
+	fadd.s f10, f11, f15
+	fmul.s f15, f13, f14
+	flw f14, 28(a1)
+	flw f13, 32(s1)
+	fmul.s f0, f12, f14
+	fadd.s f11, f10, f15
+	flw f15, 32(a1)
+	flw f14, 36(s1)
+	fadd.s f10, f11, f0
+	fmul.s f11, f13, f15
+	flw f15, 36(a1)
+	flw f13, 40(s1)
+	fadd.s f12, f10, f11
+	fmul.s f10, f14, f15
+	flw f14, 40(a1)
+	fmul.s f0, f13, f14
+	fadd.s f11, f12, f10
+	flw f12, 44(s1)
+	flw f15, 44(a1)
+	flw f13, 48(s1)
+	fmul.s f14, f12, f15
+	fadd.s f10, f11, f0
+	flw f15, 48(a1)
+	fmul.s f12, f13, f15
+	fadd.s f11, f10, f14
+	flw f14, 52(s1)
+	flw f15, 52(a1)
+	flw f13, 56(s1)
+	fadd.s f10, f11, f12
+	fmul.s f11, f14, f15
+	flw f15, 56(a1)
+	flw f14, 60(s1)
+	fadd.s f12, f10, f11
+	fmul.s f10, f13, f15
+	flw f13, 60(a1)
+	addiw a1, a2, 1696
+	fadd.s f11, f12, f10
+	fmul.s f12, f14, f13
+	fadd.s f10, f11, f12
+	blt a0, a1, label189
+	j label545
+.p2align 2
+label976:
+	fmv.w.x f10, zero
+	mv a4, s0
+	mv a5, zero
+	mv t4, zero
+	li a3, 1
+	lui t1, 24
+	addiw t0, t1, 1696
+	blt zero, t0, label220
+	j label1011
 .p2align 2
 label768:
 	lui a5, 24
@@ -293,28 +392,6 @@ label226:
 	addi t0, t0, 4
 	j label226
 .p2align 2
-label256:
-	fmv.w.x f12, zero
-	fmv.s f11, f10
-	fmv.s f10, f12
-	lui t1, 24
-	addiw t0, t1, 1696
-	blt t4, t0, label122
-	lui a5, 24
-	lui t0, 24
-	fsw f12, 0(a4)
-	addiw t4, a5, 1696
-	addiw a5, t0, 1696
-	blt a3, a5, label237
-	fmv.w.x f10, zero
-	mv a4, s0
-	mv a5, zero
-	mv t4, zero
-	li a3, 1
-	addiw t0, t1, 1696
-	blt zero, t0, label220
-	j label143
-.p2align 2
 label747:
 	fmv.w.x f11, zero
 	fmv.s f12, f10
@@ -328,18 +405,147 @@ label747:
 	addiw t4, a5, 1696
 	addiw a5, t0, 1696
 	blt a3, a5, label146
+	j label990
+label545:
+	fmv.w.x f11, zero
+	mv a0, zero
+	j label191
+.p2align 2
+label195:
+	addi s0, s0, 64
+.p2align 2
+label191:
+	flw f13, 0(s0)
+	addiw a0, a0, 16
+	lui a2, 24
+	flw f14, 4(s0)
+	fmul.s f15, f13, f13
+	addiw a1, a2, 1696
+	fmul.s f1, f14, f14
+	fadd.s f12, f11, f15
+	flw f15, 8(s0)
+	flw f14, 12(s0)
+	fmul.s f0, f15, f15
+	fadd.s f13, f12, f1
+	fmul.s f1, f14, f14
+	fadd.s f11, f13, f0
+	flw f13, 16(s0)
+	flw f14, 20(s0)
+	fmul.s f15, f13, f13
+	fmul.s f0, f14, f14
+	flw f13, 24(s0)
+	fadd.s f12, f11, f1
+	flw f14, 28(s0)
+	fadd.s f11, f12, f15
+	fmul.s f15, f13, f13
+	fadd.s f12, f11, f0
+	fmul.s f0, f14, f14
+	fadd.s f11, f12, f15
+	flw f15, 32(s0)
+	flw f14, 36(s0)
+	fmul.s f1, f15, f15
+	fadd.s f13, f11, f0
+	fmul.s f0, f14, f14
+	fadd.s f12, f13, f1
+	flw f13, 40(s0)
+	flw f14, 44(s0)
+	fmul.s f15, f13, f13
+	flw f13, 48(s0)
+	fadd.s f11, f12, f0
+	fmul.s f0, f14, f14
+	flw f14, 52(s0)
+	fadd.s f12, f11, f15
+	fmul.s f15, f13, f13
+	flw f13, 56(s0)
+	fadd.s f11, f12, f0
+	fmul.s f0, f14, f14
+	flw f14, 60(s0)
+	fadd.s f12, f11, f15
+	fmul.s f15, f13, f13
+	fmul.s f13, f14, f14
+	fadd.s f11, f12, f0
+	fadd.s f12, f11, f15
+	fadd.s f11, f12, f13
+	blt a0, a1, label195
+	fdiv.s f10, f10, f11
+	lui a0, 260096
+	flw f13, 0(s2)
+	fmv.w.x f12, a0
+	fsub.s f11, f12, f10
+	flw f12, 4(s2)
+	flt.s a0, f13, f11
+	flt.s a1, f11, f12
+	or a2, a0, a1
+	beq a2, zero, label632
+	lui a0, 260096
+	fmv.s f12, f10
+	fmv.w.x f11, a0
+.p2align 2
+label197:
+	fadd.s f14, f11, f12
+	fmv.w.x f15, s3
+	fmul.s f11, f14, f15
+	flw f14, 0(s2)
+	flw f15, 4(s2)
+	fdiv.s f12, f10, f11
+	fsub.s f13, f11, f12
+	flt.s a2, f13, f15
+	flt.s a0, f14, f13
+	or a1, a0, a2
+	bne a1, zero, label197
+label200:
+	lui a0, 260096
+	flw f13, 0(s2)
+	fmv.w.x f12, a0
+	fsub.s f10, f11, f12
+	flw f11, 4(s2)
+	fle.s a1, f10, f13
+	fle.s a2, f11, f10
+	and a0, a1, a2
+	jal putint
+	li a0, 10
+	jal putch
+	ld ra, 0(sp)
+	mv a0, zero
+	ld s1, 8(sp)
+	ld s0, 16(sp)
+	ld s5, 24(sp)
+	ld s3, 32(sp)
+	ld s2, 40(sp)
+	ld s4, 48(sp)
+	addi sp, sp, 56
+	ret
+.p2align 2
+label977:
+	lui a5, 24
+	lui t0, 24
+	fsw f10, 0(a4)
+	addiw t4, a5, 1696
+	addiw a5, t0, 1696
+	blt a3, a5, label237
+	j label994
+.p2align 2
+label975:
+	fmv.w.x f10, zero
+	mv a4, s0
+	mv a5, zero
+	mv t4, zero
+	li a3, 1
+	lui t1, 24
+	addiw t0, t1, 1696
+	blt zero, t0, label220
+	j label143
+.p2align 2
+label991:
 	fmv.w.x f10, zero
 	mv a4, a1
 	mv a5, zero
 	mv t4, zero
 	li a3, 1
+	lui t1, 24
 	addiw t0, t1, 1696
 	blt zero, t0, label203
-	fsw f10, 0(a1)
-	lui t0, 24
-	addiw a5, t0, 1696
-	blt a3, a5, label202
-	j label156
+	j label1006
 .p2align 2
 label219:
 	addi t0, t0, 4
@@ -457,11 +663,31 @@ label673:
 	addiw t4, a5, 1696
 	addiw a5, t0, 1696
 	blt a3, a5, label202
+	j label1003
+.p2align 2
+label994:
+	fmv.w.x f10, zero
+	mv a4, s0
+	mv a5, zero
+	mv t4, zero
+	li a3, 1
+	lui t1, 24
+	addiw t0, t1, 1696
+	blt zero, t0, label220
+	j label1012
+.p2align 2
+label1006:
+	fsw f10, 0(a4)
+	lui t0, 24
+	addiw a5, t0, 1696
+	blt a3, a5, label202
+label156:
 	fmv.w.x f10, zero
 	mv a4, s1
 	mv a5, zero
 	mv t4, zero
 	li a3, 1
+	lui t1, 24
 	addiw t0, t1, 1696
 	blt zero, t0, label162
 	j label356
@@ -585,169 +811,40 @@ label361:
 	addiw t4, a5, 1696
 	addiw a5, t0, 1696
 	blt a3, a5, label182
-	addiw a2, a2, 1
-	li a3, 1000
-	blt a2, a3, label110
-	j label184
-.p2align 2
-label982:
-	lui a5, 24
-	lui t0, 24
+	j label980
+label356:
 	fsw f10, 0(a4)
-	addiw t4, a5, 1696
+	lui t0, 24
 	addiw a5, t0, 1696
 	blt a3, a5, label182
+label979:
 	addiw a2, a2, 1
 	li a3, 1000
 	blt a2, a3, label110
 	j label184
-.p2align 2
-label977:
-	lui a5, 24
-	lui t0, 24
+label1012:
 	fsw f10, 0(a4)
-	addiw t4, a5, 1696
-	addiw a5, t0, 1696
-	blt a3, a5, label237
-	fmv.w.x f10, zero
-	mv a4, s0
-	mv a5, zero
-	mv t4, zero
-	li a3, 1
-	lui t1, 24
-	addiw t0, t1, 1696
-	blt zero, t0, label220
-	fsw f10, 0(s0)
 	lui t0, 24
 	addiw a5, t0, 1696
 	blt a3, a5, label146
 	j label339
-.p2align 2
-label987:
-	lui a5, 24
-	lui t0, 24
-	fsw f10, 0(a4)
-	addiw t4, a5, 1696
-	addiw a5, t0, 1696
-	blt a3, a5, label202
-	fmv.w.x f10, zero
-	mv a4, s1
-	mv a5, zero
-	mv t4, zero
-	li a3, 1
-	lui t1, 24
-	addiw t0, t1, 1696
-	blt zero, t0, label162
-	fsw f10, 0(s1)
-	lui t0, 24
-	addiw a5, t0, 1696
-	blt a3, a5, label182
-	j label979
-.p2align 2
-label992:
-	lui a5, 24
-	lui t0, 24
-	fsw f10, 0(a4)
-	addiw t4, a5, 1696
-	addiw a5, t0, 1696
-	blt a3, a5, label146
-	fmv.w.x f10, zero
-	mv a4, a1
-	mv a5, zero
-	mv t4, zero
-	li a3, 1
-	lui t1, 24
-	addiw t0, t1, 1696
-	blt zero, t0, label203
-	fsw f10, 0(a1)
-	lui t0, 24
-	addiw a5, t0, 1696
-	blt a3, a5, label202
-	j label156
 .p2align 2
 label984:
 	fsw f10, 0(a4)
 	lui t0, 24
 	addiw a5, t0, 1696
 	blt a3, a5, label182
+	j label1001
+.p2align 2
+label980:
 	addiw a2, a2, 1
 	li a3, 1000
 	blt a2, a3, label110
 	j label184
-.p2align 2
-label993:
-	fsw f10, 0(a4)
-	lui t0, 24
-	addiw a5, t0, 1696
-	blt a3, a5, label237
-	fmv.w.x f10, zero
-	mv a4, s0
-	mv a5, zero
-	mv t4, zero
-	li a3, 1
-	lui t1, 24
-	addiw t0, t1, 1696
-	blt zero, t0, label220
-label143:
-	fsw f10, 0(a4)
-	lui t0, 24
-	addiw a5, t0, 1696
-	blt a3, a5, label146
-	j label339
-.p2align 2
-label985:
-	fsw f10, 0(a4)
-	lui t0, 24
-	addiw a5, t0, 1696
-	blt a3, a5, label202
-	fmv.w.x f10, zero
-	mv a4, s1
-	mv a5, zero
-	mv t4, zero
-	li a3, 1
-	lui t1, 24
-	addiw t0, t1, 1696
-	blt zero, t0, label162
-label356:
-	fsw f10, 0(a4)
-	lui t0, 24
-	addiw a5, t0, 1696
-	blt a3, a5, label182
-	j label979
-.p2align 2
-label978:
-	fsw f10, 0(a4)
-	lui t0, 24
-	addiw a5, t0, 1696
-	blt a3, a5, label146
-	fmv.w.x f10, zero
-	mv a4, a1
-	mv a5, zero
-	mv t4, zero
-	li a3, 1
-	lui t1, 24
-	addiw t0, t1, 1696
-	blt zero, t0, label203
-label153:
-	fsw f10, 0(a4)
-	lui t0, 24
-	addiw a5, t0, 1696
-	blt a3, a5, label202
-	j label156
-.p2align 2
-label976:
-	fmv.w.x f10, zero
-	mv a4, s0
-	mv a5, zero
-	mv t4, zero
-	li a3, 1
-	lui t1, 24
-	addiw t0, t1, 1696
-	blt zero, t0, label220
-	fsw f10, 0(s0)
-	lui t0, 24
-	addiw a5, t0, 1696
-	blt a3, a5, label146
+label632:
+	lui a3, 260096
+	fmv.w.x f11, a3
+	j label200
 label339:
 	fmv.w.x f10, zero
 	mv a4, a1
@@ -759,39 +856,20 @@ label339:
 	blt zero, t0, label203
 	j label153
 .p2align 2
-label989:
-	fmv.w.x f10, zero
-	mv a4, s1
-	mv a5, zero
-	mv t4, zero
-	li a3, 1
-	lui t1, 24
-	addiw t0, t1, 1696
-	blt zero, t0, label162
-	fsw f10, 0(s1)
-	lui t0, 24
-	addiw a5, t0, 1696
-	blt a3, a5, label182
-label979:
+label1001:
 	addiw a2, a2, 1
 	li a3, 1000
 	blt a2, a3, label110
 	j label184
 .p2align 2
-label991:
-	fmv.w.x f10, zero
-	mv a4, a1
-	mv a5, zero
-	mv t4, zero
-	li a3, 1
-	lui t1, 24
-	addiw t0, t1, 1696
-	blt zero, t0, label203
-	fsw f10, 0(a1)
+label978:
+	fsw f10, 0(a4)
 	lui t0, 24
 	addiw a5, t0, 1696
-	blt a3, a5, label202
-label156:
+	blt a3, a5, label146
+	j label996
+.p2align 2
+label1003:
 	fmv.w.x f10, zero
 	mv a4, s1
 	mv a5, zero
@@ -801,198 +879,191 @@ label156:
 	addiw t0, t1, 1696
 	blt zero, t0, label162
 	j label356
-label184:
-	li a0, 76
-	jal _sysy_stoptime
-	mv a0, zero
+label153:
+	fsw f10, 0(a4)
+	lui t0, 24
+	addiw a5, t0, 1696
+	blt a3, a5, label202
+	j label156
+.p2align 2
+label996:
 	fmv.w.x f10, zero
-	j label185
+	mv a4, a1
+	mv a5, zero
+	mv t4, zero
+	li a3, 1
+	lui t1, 24
+	addiw t0, t1, 1696
+	blt zero, t0, label203
+	j label153
 .p2align 2
-label189:
-	addi s1, s1, 64
+label1011:
+	fsw f10, 0(a4)
+	lui t0, 24
+	addiw a5, t0, 1696
+	blt a3, a5, label146
+	j label339
 .p2align 2
-label185:
-	sh2add a1, a0, s0
-	flw f12, 0(s1)
-	lui a2, 24
-	addiw a0, a0, 16
-	flw f14, 0(a1)
-	flw f13, 4(s1)
-	fmul.s f15, f12, f14
-	flw f14, 4(a1)
-	flw f12, 8(s1)
-	flw f0, 8(a1)
-	fadd.s f11, f10, f15
-	fmul.s f15, f13, f14
-	flw f13, 12(s1)
-	fmul.s f14, f12, f0
-	fadd.s f10, f11, f15
-	flw f15, 12(a1)
-	flw f12, 16(s1)
-	fadd.s f11, f10, f14
-	fmul.s f14, f13, f15
-	flw f13, 16(a1)
-	fmul.s f15, f12, f13
-	fadd.s f10, f11, f14
-	flw f14, 20(s1)
-	flw f12, 20(a1)
-	flw f13, 24(s1)
-	fadd.s f11, f10, f15
-	fmul.s f15, f14, f12
-	flw f14, 24(a1)
-	flw f12, 28(s1)
-	fadd.s f10, f11, f15
-	fmul.s f15, f13, f14
-	flw f14, 28(a1)
-	flw f13, 32(s1)
-	fmul.s f0, f12, f14
-	fadd.s f11, f10, f15
-	flw f15, 32(a1)
-	flw f14, 36(s1)
-	fadd.s f10, f11, f0
-	fmul.s f11, f13, f15
-	flw f15, 36(a1)
-	flw f13, 40(s1)
-	fadd.s f12, f10, f11
-	fmul.s f10, f14, f15
-	flw f14, 40(a1)
-	fmul.s f0, f13, f14
-	fadd.s f11, f12, f10
-	flw f12, 44(s1)
-	flw f15, 44(a1)
-	flw f13, 48(s1)
-	fmul.s f14, f12, f15
-	fadd.s f10, f11, f0
-	flw f15, 48(a1)
-	fmul.s f12, f13, f15
-	fadd.s f11, f10, f14
-	flw f14, 52(s1)
-	flw f15, 52(a1)
-	flw f13, 56(s1)
-	fadd.s f10, f11, f12
-	fmul.s f11, f14, f15
-	flw f15, 56(a1)
-	flw f14, 60(s1)
-	fadd.s f12, f10, f11
-	fmul.s f10, f13, f15
-	flw f13, 60(a1)
-	addiw a1, a2, 1696
-	fadd.s f11, f12, f10
-	fmul.s f12, f14, f13
-	fadd.s f10, f11, f12
-	blt a0, a1, label189
-	fmv.w.x f11, zero
-	mv a0, zero
-	j label191
+label985:
+	fsw f10, 0(a4)
+	lui t0, 24
+	addiw a5, t0, 1696
+	blt a3, a5, label202
+	j label1002
 .p2align 2
-label195:
-	addi s0, s0, 64
+label982:
+	lui a5, 24
+	lui t0, 24
+	fsw f10, 0(a4)
+	addiw t4, a5, 1696
+	addiw a5, t0, 1696
+	blt a3, a5, label182
+	j label1000
 .p2align 2
-label191:
-	flw f13, 0(s0)
-	addiw a0, a0, 16
-	lui a2, 24
-	flw f14, 4(s0)
-	fmul.s f15, f13, f13
-	addiw a1, a2, 1696
-	fmul.s f1, f14, f14
-	fadd.s f12, f11, f15
-	flw f15, 8(s0)
-	flw f14, 12(s0)
-	fmul.s f0, f15, f15
-	fadd.s f13, f12, f1
-	fmul.s f1, f14, f14
-	fadd.s f11, f13, f0
-	flw f13, 16(s0)
-	flw f14, 20(s0)
-	fmul.s f15, f13, f13
-	fmul.s f0, f14, f14
-	flw f13, 24(s0)
-	fadd.s f12, f11, f1
-	flw f14, 28(s0)
-	fadd.s f11, f12, f15
-	fmul.s f15, f13, f13
-	fadd.s f12, f11, f0
-	fmul.s f0, f14, f14
-	fadd.s f11, f12, f15
-	flw f15, 32(s0)
-	flw f14, 36(s0)
-	fmul.s f1, f15, f15
-	fadd.s f13, f11, f0
-	fmul.s f0, f14, f14
-	fadd.s f12, f13, f1
-	flw f13, 40(s0)
-	flw f14, 44(s0)
-	fmul.s f15, f13, f13
-	flw f13, 48(s0)
-	fadd.s f11, f12, f0
-	fmul.s f0, f14, f14
-	flw f14, 52(s0)
-	fadd.s f12, f11, f15
-	fmul.s f15, f13, f13
-	flw f13, 56(s0)
-	fadd.s f11, f12, f0
-	fmul.s f0, f14, f14
-	flw f14, 60(s0)
-	fadd.s f12, f11, f15
-	fmul.s f15, f13, f13
-	fmul.s f13, f14, f14
-	fadd.s f11, f12, f0
-	fadd.s f12, f11, f15
-	fadd.s f11, f12, f13
-	blt a0, a1, label195
-	fdiv.s f10, f10, f11
-	lui a0, 260096
-	flw f13, 0(s2)
-	fmv.w.x f12, a0
-	fsub.s f11, f12, f10
-	flw f12, 4(s2)
-	flt.s a0, f13, f11
-	flt.s a1, f11, f12
-	or a2, a0, a1
-	beq a2, zero, label632
-	lui a0, 260096
-	fmv.s f12, f10
-	fmv.w.x f11, a0
+label992:
+	lui a5, 24
+	lui t0, 24
+	fsw f10, 0(a4)
+	addiw t4, a5, 1696
+	addiw a5, t0, 1696
+	blt a3, a5, label146
+	j label1007
 .p2align 2
-label197:
-	fadd.s f14, f11, f12
-	fmv.w.x f15, s3
-	fmul.s f11, f14, f15
-	flw f14, 0(s2)
-	flw f15, 4(s2)
-	fdiv.s f12, f10, f11
-	fsub.s f13, f11, f12
-	flt.s a2, f13, f15
-	flt.s a0, f14, f13
-	or a1, a0, a2
-	bne a1, zero, label197
-label200:
-	lui a0, 260096
-	flw f13, 0(s2)
-	fmv.w.x f12, a0
-	fsub.s f10, f11, f12
-	flw f11, 4(s2)
-	fle.s a1, f10, f13
-	fle.s a2, f11, f10
-	and a0, a1, a2
-	jal putint
-	li a0, 10
-	jal putch
-	ld ra, 0(sp)
-	mv a0, zero
-	ld s1, 8(sp)
-	ld s0, 16(sp)
-	ld s5, 24(sp)
-	ld s3, 32(sp)
-	ld s2, 40(sp)
-	ld s4, 48(sp)
-	addi sp, sp, 56
-	ret
-label632:
-	lui a3, 260096
-	fmv.w.x f11, a3
-	j label200
+label251:
+	fsw f10, 0(a4)
+	lui t0, 24
+	addiw a5, t0, 1696
+	blt a3, a5, label237
+	j label974
+.p2align 2
+label1002:
+	fmv.w.x f10, zero
+	mv a4, s1
+	mv a5, zero
+	mv t4, zero
+	li a3, 1
+	lui t1, 24
+	addiw t0, t1, 1696
+	blt zero, t0, label162
+	j label356
+.p2align 2
+label1000:
+	addiw a2, a2, 1
+	li a3, 1000
+	blt a2, a3, label110
+	j label184
+.p2align 2
+label1007:
+	fmv.w.x f10, zero
+	mv a4, a1
+	mv a5, zero
+	mv t4, zero
+	li a3, 1
+	lui t1, 24
+	addiw t0, t1, 1696
+	blt zero, t0, label203
+	j label1020
+label974:
+	fmv.w.x f10, zero
+	mv a4, s0
+	mv a5, zero
+	mv t4, zero
+	li a3, 1
+	lui t1, 24
+	addiw t0, t1, 1696
+	blt zero, t0, label220
+	j label143
+.p2align 2
+label993:
+	fsw f10, 0(a4)
+	lui t0, 24
+	addiw a5, t0, 1696
+	blt a3, a5, label237
+	j label1008
+label1020:
+	fsw f10, 0(a4)
+	lui t0, 24
+	addiw a5, t0, 1696
+	blt a3, a5, label202
+	j label156
+label143:
+	fsw f10, 0(a4)
+	lui t0, 24
+	addiw a5, t0, 1696
+	blt a3, a5, label146
+	j label339
+.p2align 2
+label1008:
+	fmv.w.x f10, zero
+	mv a4, s0
+	mv a5, zero
+	mv t4, zero
+	li a3, 1
+	lui t1, 24
+	addiw t0, t1, 1696
+	blt zero, t0, label220
+	j label143
+.p2align 2
+label989:
+	fmv.w.x f10, zero
+	mv a4, s1
+	mv a5, zero
+	mv t4, zero
+	li a3, 1
+	lui t1, 24
+	addiw t0, t1, 1696
+	blt zero, t0, label162
+	j label1017
+.p2align 2
+label987:
+	lui a5, 24
+	lui t0, 24
+	fsw f10, 0(a4)
+	addiw t4, a5, 1696
+	addiw a5, t0, 1696
+	blt a3, a5, label202
+	j label1004
+.p2align 2
+label990:
+	fmv.w.x f10, zero
+	mv a4, a1
+	mv a5, zero
+	mv t4, zero
+	li a3, 1
+	lui t1, 24
+	addiw t0, t1, 1696
+	blt zero, t0, label203
+	j label1005
+.p2align 2
+label1017:
+	fsw f10, 0(a4)
+	lui t0, 24
+	addiw a5, t0, 1696
+	blt a3, a5, label182
+	j label979
+.p2align 2
+label1004:
+	fmv.w.x f10, zero
+	mv a4, s1
+	mv a5, zero
+	mv t4, zero
+	li a3, 1
+	lui t1, 24
+	addiw t0, t1, 1696
+	blt zero, t0, label162
+	j label1026
+label1005:
+	fsw f10, 0(a4)
+	lui t0, 24
+	addiw a5, t0, 1696
+	blt a3, a5, label202
+	j label156
+label1026:
+	fsw f10, 0(a4)
+	lui t0, 24
+	addiw a5, t0, 1696
+	blt a3, a5, label182
+	j label979
 .p2align 2
 cmmc_parallel_body_0:
 	mv a3, a0

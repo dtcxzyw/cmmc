@@ -26,10 +26,10 @@ main:
 	sd s8, 88(sp)
 	sd s11, 96(sp)
 	jal getint
-pcrel337:
+pcrel341:
 	auipc a2, %pcrel_hi(dp)
 	mv s9, a0
-	addi s10, a2, %pcrel_lo(pcrel337)
+	addi s10, a2, %pcrel_lo(pcrel341)
 	li a0, 140
 	mul a1, s9, a0
 	add s2, s10, a1
@@ -41,9 +41,9 @@ pcrel337:
 	addiw s1, a0, 1
 	addiw s3, a0, -17
 	mv s5, a0
-pcrel338:
+pcrel342:
 	auipc a0, %pcrel_hi(t)
-	addi s7, a0, %pcrel_lo(pcrel338)
+	addi s7, a0, %pcrel_lo(pcrel342)
 	ble s9, zero, label26
 	addi s9, s10, 140
 	mv s11, s4
@@ -259,15 +259,18 @@ label322:
 	addiw a2, a2, 1
 	bgt s6, a2, label11
 	j label26
-label187:
-	mv a3, zero
-	mv a2, zero
-	mv a1, zero
-	j label28
 label209:
 	mv a1, a2
 	mv a3, a2
 	mv a2, a0
+	j label28
+label183:
+	mv a0, zero
+	j label59
+label187:
+	mv a3, zero
+	mv a2, zero
+	mv a1, zero
 	j label28
 label205:
 	mv a3, zero
@@ -275,6 +278,3 @@ label205:
 	mv a2, zero
 	mv a0, zero
 	j label39
-label183:
-	mv a0, zero
-	j label59

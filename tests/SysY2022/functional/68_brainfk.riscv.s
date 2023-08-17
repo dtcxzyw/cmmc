@@ -31,10 +31,10 @@ main:
 	li s2, 60
 	li s1, 62
 	li s6, 46
-pcrel209:
+pcrel214:
 	auipc s8, %pcrel_hi(program)
 	mv s7, a0
-	addi s0, s8, %pcrel_lo(pcrel209)
+	addi s0, s8, %pcrel_lo(pcrel214)
 	ble a0, zero, label37
 	mv s9, s0
 	mv s10, zero
@@ -47,12 +47,12 @@ label2:
 	bgt s7, s10, label2
 label5:
 	sw zero, 0(s9)
-pcrel210:
+pcrel215:
 	auipc a1, %pcrel_hi(tape)
-pcrel211:
+pcrel216:
 	auipc s8, %pcrel_hi(program)
-	lw a0, %pcrel_lo(pcrel211)(s8)
-	addi s7, a1, %pcrel_lo(pcrel210)
+	lw a0, %pcrel_lo(pcrel216)(s8)
+	addi s7, a1, %pcrel_lo(pcrel215)
 	beq a0, zero, label32
 	mv s8, zero
 	mv s9, zero
@@ -152,6 +152,9 @@ label32:
 	ld s10, 88(sp)
 	addi sp, sp, 96
 	ret
+label37:
+	mv s9, s0
+	j label5
 .p2align 2
 label15:
 	addiw s8, s8, -1
@@ -160,6 +163,3 @@ label15:
 	lw a1, 0(a0)
 	bne a1, zero, label7
 	j label32
-label37:
-	mv s9, s0
-	j label5

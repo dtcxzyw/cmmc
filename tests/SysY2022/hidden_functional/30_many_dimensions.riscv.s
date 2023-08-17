@@ -14,10 +14,10 @@ main:
 	lui a2, 128
 	sd ra, 0(sp)
 	sd s4, 8(sp)
-pcrel517:
+pcrel519:
 	auipc s4, %pcrel_hi(array)
 	sd s3, 16(sp)
-	addi s3, s4, %pcrel_lo(pcrel517)
+	addi s3, s4, %pcrel_lo(pcrel519)
 	sd s2, 24(sp)
 	mv a1, s3
 	lui s2, 256
@@ -89,7 +89,9 @@ label6:
 	mv s5, zero
 	j label7
 .p2align 2
-label169:
+label26:
+	addiw s0, s0, 1
+	bge s0, a0, label168
 	mv s6, zero
 .p2align 2
 label7:
@@ -145,8 +147,9 @@ label7:
 	add.uw s11, s9, s8
 	sd s11, 24(s7)
 	blt s6, a0, label7
-	addiw s0, s0, 1
-	blt s0, a0, label169
+	j label26
+.p2align 2
+label168:
 	addiw a7, a7, 1
 	bge a7, a0, label439
 	mv s6, zero

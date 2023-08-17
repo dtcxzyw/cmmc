@@ -12,6 +12,7 @@
     limitations under the License.
 */
 
+#include "cmmc/Transforms/Hyperparameters.hpp"
 #include <algorithm>
 #include <cassert>
 #include <cmmc/CodeGen/InstInfo.hpp>
@@ -121,6 +122,12 @@ static BlockSeq solvePettisHansen(const std::vector<uint32_t>& weights, const st
             continue;
         }
         graph[u].push_back(v);
+
+        // break loop -> exit
+        constexpr double coldBranchFreqThreshold = 1.0 / static_cast<double>(estimatedLoopTripCount) + 1e-5;
+        if(prob < coldBranchFreqThreshold)
+            continue;
+
         auto& [pv, cv] = chains[v];
         if(findFa(v) != v) {
             if(dumpCFG)

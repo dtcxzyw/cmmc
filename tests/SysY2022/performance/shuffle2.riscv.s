@@ -46,57 +46,57 @@ main:
 	sd s2, 32(sp)
 	sd s0, 40(sp)
 	jal getint
-pcrel262:
+pcrel268:
 	auipc a1, %pcrel_hi(keys)
-pcrel263:
+pcrel269:
 	auipc s3, %pcrel_hi(hashmod)
-	addi s4, a1, %pcrel_lo(pcrel262)
-	sw a0, %pcrel_lo(pcrel263)(s3)
+	addi s4, a1, %pcrel_lo(pcrel268)
+	sw a0, %pcrel_lo(pcrel269)(s3)
 	mv a0, s4
 	jal getarray
-pcrel264:
+pcrel270:
 	auipc a1, %pcrel_hi(values)
 	mv s1, a0
-	addi s2, a1, %pcrel_lo(pcrel264)
+	addi s2, a1, %pcrel_lo(pcrel270)
 	mv a0, s2
 	jal getarray
-pcrel265:
+pcrel271:
 	auipc a1, %pcrel_hi(requests)
-	addi a0, a1, %pcrel_lo(pcrel265)
+	addi a0, a1, %pcrel_lo(pcrel271)
 	jal getarray
 	mv s0, a0
 	li a0, 78
 	jal _sysy_starttime
-pcrel266:
+pcrel272:
 	auipc a3, %pcrel_hi(head)
-pcrel267:
-	auipc t0, %pcrel_hi(nextvalue)
-pcrel268:
+pcrel273:
 	auipc a0, %pcrel_hi(key)
-	addi a1, a3, %pcrel_lo(pcrel266)
-	addi a2, a0, %pcrel_lo(pcrel268)
-pcrel269:
+pcrel274:
+	auipc t0, %pcrel_hi(nextvalue)
+	addi a1, a3, %pcrel_lo(pcrel272)
+	addi a2, a0, %pcrel_lo(pcrel273)
+pcrel275:
 	auipc a3, %pcrel_hi(value)
-pcrel270:
+pcrel276:
 	auipc a0, %pcrel_hi(next)
-	addi a4, a3, %pcrel_lo(pcrel269)
-	addi a5, a0, %pcrel_lo(pcrel270)
-	addi a3, t0, %pcrel_lo(pcrel267)
+	addi a4, a3, %pcrel_lo(pcrel275)
+	addi a5, a0, %pcrel_lo(pcrel276)
+	addi a3, t0, %pcrel_lo(pcrel274)
 	mv a0, s4
 	mv t0, zero
 	lw t3, 0(s4)
 	li t1, 1
 	lw t2, 0(s2)
-	lw a6, %pcrel_lo(pcrel263)(s3)
+	lw a6, %pcrel_lo(pcrel269)(s3)
 	remw t4, t3, a6
 	sh2add t6, t4, a1
 	lw t5, 0(t6)
-	beq t5, zero, label121
+	beq t5, zero, label124
 	mv t6, t5
-	bne t5, zero, label124
-	j label127
+	bne t5, zero, label127
+	j label130
 .p2align 2
-label121:
+label124:
 	sh2add t5, t4, a1
 	addiw t0, t0, 1
 	sh2add t6, t1, a2
@@ -108,27 +108,27 @@ label121:
 	sh2add t2, t1, a3
 	sw zero, 0(t3)
 	sw zero, 0(t2)
-	ble s1, t0, label130
+	ble s1, t0, label133
 .p2align 2
-label129:
+label132:
 	addi a0, a0, 4
 	sh2add t5, t0, s2
 	addiw t1, t1, 1
 	lw t3, 0(a0)
 	lw t2, 0(t5)
-pcrel271:
+pcrel277:
 	auipc s3, %pcrel_hi(hashmod)
-	lw a6, %pcrel_lo(pcrel271)(s3)
+	lw a6, %pcrel_lo(pcrel277)(s3)
 	remw t4, t3, a6
 	sh2add t6, t4, a1
 	lw t5, 0(t6)
-	beq t5, zero, label121
+	beq t5, zero, label124
 	mv t6, t5
 .p2align 2
-label124:
+label127:
 	sh2add a7, t6, a2
 	lw a6, 0(a7)
-	bne t3, a6, label185
+	bne t3, a6, label188
 	sh2add t3, t6, a3
 	addiw t0, t0, 1
 	sh2add a6, t1, a3
@@ -137,9 +137,9 @@ label124:
 	sw t4, 0(a6)
 	sw t1, 0(t3)
 	sw t2, 0(t5)
-	bgt s1, t0, label129
-	j label130
-label127:
+	bgt s1, t0, label132
+	j label133
+label130:
 	sh2add a6, t1, a5
 	sh2add t6, t4, a1
 	sw t5, 0(a6)
@@ -151,20 +151,20 @@ label127:
 	sw t2, 0(t4)
 	sw zero, 0(t3)
 	addiw t0, t0, 1
-	bgt s1, t0, label129
-label130:
+	bgt s1, t0, label132
+label133:
 	auipc a0, %pcrel_hi(cmmc_parallel_body_payload_0)
-pcrel272:
+pcrel278:
 	auipc a3, %pcrel_hi(cmmc_parallel_body_0)
-	sw s0, %pcrel_lo(label130)(a0)
-	addi a2, a3, %pcrel_lo(pcrel272)
+	sw s0, %pcrel_lo(label133)(a0)
+	addi a2, a3, %pcrel_lo(pcrel278)
 	mv a1, s0
 	mv a0, zero
 	jal cmmcParallelFor
 	li a0, 90
-pcrel273:
+pcrel279:
 	auipc a1, %pcrel_hi(ans)
-	addi s1, a1, %pcrel_lo(pcrel273)
+	addi s1, a1, %pcrel_lo(pcrel279)
 	jal _sysy_stoptime
 	mv a0, s0
 	mv a1, s1
@@ -179,57 +179,58 @@ pcrel273:
 	addi sp, sp, 48
 	ret
 .p2align 2
-label185:
+label188:
 	sh2add a6, t6, a5
 	lw t6, 0(a6)
-	bne t6, zero, label124
-	j label127
+	bne t6, zero, label127
+	j label130
 .p2align 2
 cmmc_parallel_body_0:
 	mv a2, a1
-pcrel107:
+pcrel110:
 	auipc a5, %pcrel_hi(requests)
 	mv t3, a0
-pcrel108:
-	auipc t0, %pcrel_hi(key)
-pcrel109:
-	auipc t1, %pcrel_hi(head)
-pcrel110:
-	auipc t2, %pcrel_hi(ans)
 pcrel111:
-	auipc t4, %pcrel_hi(next)
-	addi a4, a5, %pcrel_lo(pcrel107)
+	auipc t0, %pcrel_hi(key)
 pcrel112:
+	auipc t1, %pcrel_hi(head)
+pcrel113:
+	auipc t2, %pcrel_hi(ans)
+pcrel114:
+	auipc t4, %pcrel_hi(next)
+	addi a4, a5, %pcrel_lo(pcrel110)
+pcrel115:
 	auipc a5, %pcrel_hi(nextvalue)
 	sh2add a3, a0, a4
-	addi a1, a5, %pcrel_lo(pcrel112)
-pcrel113:
+	addi a1, a5, %pcrel_lo(pcrel115)
+pcrel116:
 	auipc a4, %pcrel_hi(value)
-	addi a5, t1, %pcrel_lo(pcrel109)
-	addi a0, a4, %pcrel_lo(pcrel113)
-	addi t1, t4, %pcrel_lo(pcrel111)
-	addi a4, t0, %pcrel_lo(pcrel108)
-	addi t0, t2, %pcrel_lo(pcrel110)
-pcrel114:
+	addi a5, t1, %pcrel_lo(pcrel112)
+	addi a0, a4, %pcrel_lo(pcrel116)
+	addi t1, t4, %pcrel_lo(pcrel114)
+	addi a4, t0, %pcrel_lo(pcrel111)
+	addi t0, t2, %pcrel_lo(pcrel113)
+pcrel117:
 	auipc t2, %pcrel_hi(hashmod)
-	lw t4, %pcrel_lo(pcrel114)(t2)
+	lw t4, %pcrel_lo(pcrel117)(t2)
 	lw t5, 0(a3)
 	remw a6, t5, t4
 	sh2add t6, a6, a5
 	lw t4, 0(t6)
 	bne t4, zero, label7
-label33:
-	mv t5, zero
+	j label33
+.p2align 2
+label57:
 	sh2add t6, t3, t0
 	addiw t3, t3, 1
-	sw zero, 0(t6)
+	sw t5, 0(t6)
 	ble a2, t3, label15
 .p2align 2
 label14:
 	addi a3, a3, 4
-pcrel115:
+pcrel118:
 	auipc t2, %pcrel_hi(hashmod)
-	lw t4, %pcrel_lo(pcrel115)(t2)
+	lw t4, %pcrel_lo(pcrel118)(t2)
 	lw t5, 0(a3)
 	remw a6, t5, t4
 	sh2add t6, a6, a5
@@ -249,9 +250,12 @@ label8:
 	lw t4, 0(t6)
 	addw t5, t5, a7
 	bne t4, zero, label8
+	j label57
+label33:
+	mv t5, zero
 	sh2add t6, t3, t0
 	addiw t3, t3, 1
-	sw t5, 0(t6)
+	sw zero, 0(t6)
 	bgt a2, t3, label14
 label15:
 	ret

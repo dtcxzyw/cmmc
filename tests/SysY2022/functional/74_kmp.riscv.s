@@ -15,18 +15,18 @@ dst:
 .globl main
 main:
 	addi sp, sp, -56
-pcrel141:
+pcrel143:
 	auipc a0, %pcrel_hi(dst)
 	sd ra, 0(sp)
 	sd s1, 8(sp)
-	addi s1, a0, %pcrel_lo(pcrel141)
+	addi s1, a0, %pcrel_lo(pcrel143)
 	sd s5, 16(sp)
-pcrel142:
+pcrel144:
 	auipc s5, %pcrel_hi(next)
 	sd s0, 24(sp)
 	li s0, -1
 	sd s2, 32(sp)
-	addi s2, s5, %pcrel_lo(pcrel142)
+	addi s2, s5, %pcrel_lo(pcrel144)
 	sd s4, 40(sp)
 	mv s4, s1
 	sd s3, 48(sp)
@@ -35,10 +35,10 @@ label2:
 	li a1, 10
 	sw a0, 0(s4)
 	bne a0, a1, label37
-pcrel143:
+pcrel145:
 	auipc a0, %pcrel_hi(src)
 	sw zero, 0(s4)
-	addi s3, a0, %pcrel_lo(pcrel143)
+	addi s3, a0, %pcrel_lo(pcrel145)
 	mv s4, s3
 	j label5
 label44:
@@ -54,9 +54,9 @@ label5:
 	mv a3, s2
 	mv a2, s1
 	mv a4, s0
-pcrel144:
+pcrel146:
 	auipc s5, %pcrel_hi(next)
-	sw s0, %pcrel_lo(pcrel144)(s5)
+	sw s0, %pcrel_lo(pcrel146)(s5)
 	lw a5, 0(s1)
 	bne a5, zero, label25
 	j label14
@@ -122,12 +122,12 @@ label19:
 	ld s3, 48(sp)
 	addi sp, sp, 56
 	ret
-label56:
-	mv a0, s0
-	j label19
 label37:
 	addi s4, s4, 4
 	j label2
 label24:
 	addi s3, s3, 4
 	j label15
+label56:
+	mv a0, s0
+	j label19

@@ -248,17 +248,17 @@ main:
 	sd s10, 88(sp)
 	sd s11, 96(sp)
 	jal getch
-pcrel1293:
+pcrel1297:
 	auipc a3, %pcrel_hi(next)
-pcrel1294:
+pcrel1298:
 	auipc a5, %pcrel_hi(to)
 	li s0, 10
-pcrel1295:
+pcrel1299:
 	auipc a2, %pcrel_hi(vis)
 	addiw a1, a0, -48
-	addi t0, a3, %pcrel_lo(pcrel1293)
-	addi a4, a2, %pcrel_lo(pcrel1295)
-	addi a2, a5, %pcrel_lo(pcrel1294)
+	addi t0, a3, %pcrel_lo(pcrel1297)
+	addi a4, a2, %pcrel_lo(pcrel1299)
+	addi a2, a5, %pcrel_lo(pcrel1298)
 	sd a4, 104(sp)
 	sd a2, 112(sp)
 	li a2, 9
@@ -775,23 +775,22 @@ label739:
 	bgt s3, a3, label438
 	bgt s2, zero, label450
 	j label455
-label840:
-	mv s9, zero
-	addiw a2, a0, -48
-	bltu a2, s0, label854
 label1252:
 	mv s11, zero
 	mv a1, zero
 	mv a0, zero
 	bne s9, zero, label1226
 	j label1225
+label840:
+	mv s9, zero
+	addiw a2, a0, -48
+	bltu a2, s0, label854
+	j label1252
 label688:
 	mv s9, zero
 	addiw a2, a0, -48
 	bltu a2, s0, label702
-label1245:
-	mv s10, zero
-	j label423
+	j label1245
 label411:
 	mv a0, zero
 	ld ra, 0(sp)
@@ -821,15 +820,18 @@ label817:
 label822:
 	mv s10, zero
 	j label471
+label1245:
+	mv s10, zero
+	j label423
 label526:
 	mv s5, zero
 	j label398
-label505:
-	mv s3, zero
-	j label393
 label539:
 	mv s7, zero
 	j label404
 label492:
 	mv s1, zero
 	j label387
+label505:
+	mv s3, zero
+	j label393
