@@ -1270,6 +1270,11 @@
       "parent": "98d40c9aa973da4a6748299c716e7cc0401bcfb5",
       "time": "2023-07-11 06:09:00 +0800"
     },
+    "f79a27b39a185d8cc3a37518ead3fd2489c20bed": {
+      "message": "feat(codegen): merge load word",
+      "parent": "f5d89132f40f72d6078af58a0593d0b8f820cdcb",
+      "time": "2023-08-17 23:40:59 +0800"
+    },
     "f7fedcc421dd981ecd4141d5231898ac7c728745": {
       "message": "fix(codegen): fix tac target",
       "parent": "3c2bee74de01139effa5d0e131d8f1505eb12d6f",
@@ -1306,5 +1311,5 @@
       "time": "2023-07-06 01:05:50 +0800"
     }
   },
-  "head": "f5d89132f40f72d6078af58a0593d0b8f820cdcb"
+  "head": "f79a27b39a185d8cc3a37518ead3fd2489c20bed"
 }
