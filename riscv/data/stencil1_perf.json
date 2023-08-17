@@ -1189,6 +1189,23 @@
         "task-clock:u": 356.4
       }
     ],
+    "8cc54d51e1f7ac41a5ff71e3b7ba40a7cf32a3bf": [
+      {
+        "sysy_time": 0.005556
+      },
+      {
+        "sysy_time": 0.005515
+      },
+      {
+        "sysy_time": 0.005483
+      },
+      {
+        "sysy_time": 0.005648
+      },
+      {
+        "sysy_time": 0.005603
+      }
+    ],
     "94f8356dfee136d4257a21bba074d2aa79f29134": [
       {
         "branch-instructions": 543405,
