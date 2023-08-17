@@ -12,7 +12,6 @@
     limitations under the License.
 */
 
-#include "cmmc/Transforms/Hyperparameters.hpp"
 #include <algorithm>
 #include <cassert>
 #include <cmmc/CodeGen/InstInfo.hpp>
@@ -23,6 +22,7 @@
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/Graph.hpp>
 #include <cmmc/Support/Options.hpp>
+#include <cmmc/Transforms/Hyperparameters.hpp>
 #include <cstdint>
 #include <iostream>
 #include <limits>
