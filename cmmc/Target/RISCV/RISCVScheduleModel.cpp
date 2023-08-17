@@ -631,7 +631,7 @@ static bool earlyFoldStore(MIRBasicBlock& block, CodeGenContext& ctx) {
     return modified;
 }
 
-static bool earlyFoldDualWordCopy(MIRFunction& func, CodeGenContext& ctx) {
+static bool earlyFoldDoubleWordCopy(MIRFunction& func, CodeGenContext& ctx) {
     std::unordered_map<MIROperand, uint32_t, MIROperandHasher> useCount;
     std::unordered_map<MIROperand, MIRInst*, MIROperandHasher> addressDef;
     for(auto& block : func.blocks()) {
@@ -1137,7 +1137,7 @@ bool RISCVScheduleModel_sifive_u74::peepholeOpt(MIRFunction& func, CodeGenContex
     modified |= removeSExtW(func, ctx);
     modified |= expandMulWithConstant(func, ctx, static_cast<uint32_t>(queryTuneOpt("max_mul_constant_cost", 2)));
     if(ctx.flags.inSSAForm)
-        modified |= earlyFoldDualWordCopy(func, ctx);
+        modified |= earlyFoldDoubleWordCopy(func, ctx);
     return modified;
 }
 

@@ -1,19 +1,19 @@
 .arch armv7ve
 .data
 .bss
-.align 8
+.p2align 3
 temp:
 	.zero	8388608
-.align 8
+.p2align 3
 w:
 	.zero	8388608
-.align 8
+.p2align 3
 dst:
 	.zero	8388608
-.align 8
+.p2align 3
 cmmc_parallel_body_payload_0:
 	.zero	4
-.align 8
+.p2align 3
 cmmc_parallel_body_payload_1:
 	.zero	4
 .text

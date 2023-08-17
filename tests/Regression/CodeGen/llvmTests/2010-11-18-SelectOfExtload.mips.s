@@ -1,10 +1,8 @@
 .data
 .bss
-.align 1
 .globl u
 u:
 	.zero	1
-.align 1
 .globl s
 s:
 	.zero	1

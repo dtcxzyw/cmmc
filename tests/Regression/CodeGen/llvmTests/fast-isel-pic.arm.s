@@ -1,12 +1,12 @@
 .arch armv7ve
 .data
 .data
-.align 4
+.p2align 2
 .globl g
 g:
 	.4byte	0
 .bss
-.align 4
+.p2align 2
 .globl i
 i:
 	.zero	4

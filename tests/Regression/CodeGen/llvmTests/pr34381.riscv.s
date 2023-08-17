@@ -1,23 +1,20 @@
 .attribute arch, "rv64i2p1_m2p0_a2p1_f2p2_d2p2_c2p0_zicsr2p0_zifencei2p0_zba1p0_zbb1p0"
 .data
 .bss
-.align 4
+.p2align 2
 .globl var_21
 var_21:
 	.zero	4
-.align 1
 .globl var_29
 var_29:
 	.zero	1
-.align 4
+.p2align 2
 .globl var_390
 var_390:
 	.zero	4
-.align 1
 .globl var_11
 var_11:
 	.zero	1
-.align 1
 .globl var_370
 var_370:
 	.zero	1

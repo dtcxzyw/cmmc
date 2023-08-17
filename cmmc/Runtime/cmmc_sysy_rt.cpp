@@ -66,7 +66,7 @@ namespace {
 
         Futex ready, done;
     };
-    std::array<Worker, maxThreads> workers;  // NOLINT
+    Worker workers[maxThreads];  // NOLINT
 
     static_assert(std::atomic_uint32_t::is_always_lock_free);
     static_assert(std::atomic_int32_t::is_always_lock_free);
@@ -122,17 +122,17 @@ using Time = int64_t;
 struct ParallelForEntry final {
     CmmcForLoop func;
     uint32_t size;
-    bool valid = false;
-    uint32_t hitCount = 0;
+    bool valid;
+    uint32_t hitCount;
     static constexpr uint32_t sampleThreshold = 100;
     static constexpr uint32_t sampleCount = 20;
     static constexpr uint32_t stopSampleThreshold = sampleThreshold + 3 * sampleCount;
     Time times[3];  // 1T 2T 4T
-    uint32_t bestThreads = 0;
+    uint32_t bestThreads;
 };
 constexpr uint32_t entryCount = 16;
-static std::array<ParallelForEntry, entryCount> parallelCache;  // NOLINT
-static uint32_t lookupPtr = 0;                                  // NOLINT
+static ParallelForEntry parallelCache[entryCount];  // NOLINT
+static uint32_t lookupPtr;                          // NOLINT
 static ParallelForEntry& selectEntry(CmmcForLoop func, uint32_t size) {
     for(uint32_t i = 0; i < entryCount; ++i, ++lookupPtr) {
         if(lookupPtr == entryCount)

@@ -1,13 +1,13 @@
 .arch armv7ve
 .data
 .bss
-.align 8
+.p2align 3
 next:
 	.zero	16384
-.align 8
+.p2align 3
 src:
 	.zero	16384
-.align 8
+.p2align 3
 dst:
 	.zero	16384
 .text

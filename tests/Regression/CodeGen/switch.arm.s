@@ -1,7 +1,7 @@
 .arch armv7ve
 .data
 .section .rodata
-.align 8
+.p2align 3
 __cmmc_jumptable10:
 	.word	label7-__cmmc_jumptable10
 	.word	label6-__cmmc_jumptable10

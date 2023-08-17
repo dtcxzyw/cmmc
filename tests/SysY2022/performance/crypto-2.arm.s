@@ -1,7 +1,7 @@
 .arch armv7ve
 .data
 .bss
-.align 8
+.p2align 3
 buffer:
 	.zero	131072
 .text

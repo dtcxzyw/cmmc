@@ -1,7 +1,7 @@
 .arch armv7ve
 .data
 .bss
-.align 8
+.p2align 3
 fa:
 	.zero	400020
 .text

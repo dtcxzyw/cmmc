@@ -1,7 +1,7 @@
 .arch armv7ve
 .data
 .data
-.align 2
+.p2align 1
 .globl X
 X:
 	.byte	0

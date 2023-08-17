@@ -1,19 +1,19 @@
 .arch armv7ve
 .data
 .bss
-.align 8
+.p2align 3
 f:
 	.zero	800400
-.align 8
+.p2align 3
 dep:
 	.zero	40020
-.align 8
+.p2align 3
 to:
 	.zero	40020
-.align 8
+.p2align 3
 next:
 	.zero	40020
-.align 8
+.p2align 3
 head:
 	.zero	40020
 .text

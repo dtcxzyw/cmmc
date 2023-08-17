@@ -1,7 +1,7 @@
 .attribute arch, "rv64i2p1_m2p0_a2p1_f2p2_d2p2_c2p0_zicsr2p0_zifencei2p0_zba1p0_zbb1p0"
 .data
 .section .rodata
-.align 4
+.p2align 2
 __cmmc_fp_constant_pool:
 	.4byte	1079613850
 .text

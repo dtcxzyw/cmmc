@@ -1,10 +1,10 @@
 .data
 .data
-.align 4
+.p2align 2
 .globl Y
 Y:
 	.4byte	0
-.align 4
+.p2align 2
 .globl X
 X:
 	.4byte	0

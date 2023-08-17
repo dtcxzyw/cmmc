@@ -1,37 +1,37 @@
 .arch armv7ve
 .data
 .bss
-.align 4
+.p2align 2
 hashmod:
 	.zero	4
-.align 8
+.p2align 3
 head:
 	.zero	40000000
-.align 8
+.p2align 3
 next:
 	.zero	40000000
-.align 8
+.p2align 3
 nextvalue:
 	.zero	40000000
-.align 8
+.p2align 3
 key:
 	.zero	40000000
-.align 8
+.p2align 3
 value:
 	.zero	40000000
-.align 8
+.p2align 3
 keys:
 	.zero	40000000
-.align 8
+.p2align 3
 values:
 	.zero	40000000
-.align 8
+.p2align 3
 requests:
 	.zero	40000000
-.align 8
+.p2align 3
 ans:
 	.zero	40000000
-.align 8
+.p2align 3
 cmmc_parallel_body_payload_0:
 	.zero	4
 .text

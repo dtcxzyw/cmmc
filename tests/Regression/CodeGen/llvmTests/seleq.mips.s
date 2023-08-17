@@ -1,38 +1,38 @@
 .data
 .data
-.align 4
+.p2align 2
 .globl t
 t:
 	.4byte	10
-.align 4
+.p2align 2
 .globl f
 f:
 	.4byte	199
-.align 4
+.p2align 2
 .globl a
 a:
 	.4byte	1
-.align 4
+.p2align 2
 .globl b
 b:
 	.4byte	10
-.align 4
+.p2align 2
 .globl c
 c:
 	.4byte	1
-.align 4
+.p2align 2
 .globl z1
 z1:
 	.4byte	0
-.align 4
+.p2align 2
 .globl z2
 z2:
 	.4byte	0
-.align 4
+.p2align 2
 .globl z3
 z3:
 	.4byte	0
-.align 4
+.p2align 2
 .globl z4
 z4:
 	.4byte	0

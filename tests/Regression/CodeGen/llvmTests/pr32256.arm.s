@@ -1,7 +1,6 @@
 .arch armv7ve
 .data
 .bss
-.align 1
 .globl c
 c:
 	.zero	1

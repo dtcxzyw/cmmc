@@ -218,7 +218,7 @@ public:
             .branchLimit = static_cast<uint32_t>(queryTuneOpt("branch_limit", 400)),
             .disableSelectionOpt = true,
             .branchPredictionWarmupThreshold = static_cast<uint32_t>(queryTuneOpt("branch_prediction_warmup_threshold", 2)),
-            .maxConstantHoistCount = static_cast<uint32_t>(queryTuneOpt("max_constant_hoist_count", 12)),
+            .maxConstantHoistCount = static_cast<uint32_t>(queryTuneOpt("max_constant_hoist_count", 8)),
         };
 
         return defaultHeuristic;

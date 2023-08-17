@@ -1,16 +1,16 @@
 .attribute arch, "rv64i2p1_m2p0_a2p1_f2p2_d2p2_c2p0_zicsr2p0_zifencei2p0_zba1p0_zbb1p0"
 .data
 .bss
-.align 8
+.p2align 3
 u:
 	.zero	4020
-.align 8
+.p2align 3
 v:
 	.zero	4020
-.align 8
+.p2align 3
 c:
 	.zero	4020
-.align 8
+.p2align 3
 fa:
 	.zero	4020
 .text
@@ -170,10 +170,10 @@ label85:
 main:
 	# stack usage: CalleeArg[0] Local[0] RegSpill[8] CalleeSaved[104]
 	addi sp, sp, -112
-pcrel515:
+pcrel511:
 	auipc a0, %pcrel_hi(fa)
 	sd ra, 0(sp)
-	addi a5, a0, %pcrel_lo(pcrel515)
+	addi a5, a0, %pcrel_lo(pcrel511)
 	sd s0, 8(sp)
 	li s0, 10
 	sd s5, 16(sp)
@@ -207,10 +207,10 @@ label146:
 	mv s4, zero
 	j label204
 .p2align 2
-label469:
+label465:
 	mv a1, s4
 .p2align 2
-label470:
+label466:
 	bleu a2, s1, label385
 	mv s3, a0
 	mv s4, a1
@@ -219,8 +219,8 @@ label204:
 	jal getch
 	li a1, 1
 	addiw a2, a0, -48
-	beq s3, s2, label470
-	j label469
+	beq s3, s2, label466
+	j label465
 label385:
 	mv s4, a0
 	mv s3, a1
@@ -242,17 +242,17 @@ label201:
 label151:
 	subw a0, zero, s5
 	mv s7, a0
-	bne s3, zero, label456
+	bne s3, zero, label452
 	mv s7, s5
-label456:
+label452:
 	auipc a0, %pcrel_hi(u)
-pcrel516:
+pcrel512:
 	auipc a1, %pcrel_hi(v)
-	addi s3, a0, %pcrel_lo(label456)
-	addi s4, a1, %pcrel_lo(pcrel516)
-pcrel517:
+	addi s3, a0, %pcrel_lo(label452)
+	addi s4, a1, %pcrel_lo(pcrel512)
+pcrel513:
 	auipc a0, %pcrel_hi(c)
-	addi s5, a0, %pcrel_lo(pcrel517)
+	addi s5, a0, %pcrel_lo(pcrel513)
 	ble s7, zero, label240
 	mv s6, s3
 	mv s8, zero
@@ -261,9 +261,9 @@ label299:
 	mv s11, zero
 	mv a1, zero
 	mv a0, zero
-	bne s9, zero, label462
+	bne s9, zero, label458
 .p2align 2
-label462:
+label458:
 	sh2add a1, s8, s5
 	addiw s8, s8, 1
 	sw a0, 0(a1)
@@ -280,7 +280,7 @@ label154:
 	mv s10, zero
 	j label188
 .p2align 2
-label468:
+label464:
 	bleu a2, s1, label343
 	mv s9, a0
 	mv s10, a1
@@ -289,9 +289,9 @@ label188:
 	jal getch
 	li a1, 1
 	addiw a2, a0, -48
-	beq s9, s2, label468
+	beq s9, s2, label464
 	mv a1, s10
-	j label468
+	j label464
 .p2align 2
 label343:
 	mv s10, a0
@@ -316,12 +316,12 @@ label160:
 	bltu a1, s0, label261
 	subw a0, zero, s11
 	mv a1, a0
-	bne s9, zero, label458
+	bne s9, zero, label454
 .p2align 2
-label485:
+label481:
 	mv a1, s11
 .p2align 2
-label458:
+label454:
 	sw a1, 0(s6)
 	jal getch
 	addiw a1, a0, -48
@@ -330,10 +330,10 @@ label458:
 	mv s10, zero
 	j label185
 .p2align 2
-label465:
+label461:
 	mv a1, s10
 .p2align 2
-label466:
+label462:
 	bleu a2, s1, label335
 	mv s9, a0
 	mv s10, a1
@@ -342,8 +342,8 @@ label185:
 	jal getch
 	li a1, 1
 	addiw a2, a0, -48
-	beq s9, s2, label466
-	j label465
+	beq s9, s2, label462
+	j label461
 .p2align 2
 label335:
 	mv s10, a0
@@ -368,12 +368,12 @@ label168:
 label283:
 	subw a0, zero, s11
 	mv a1, a0
-	bne s9, zero, label460
+	bne s9, zero, label456
 .p2align 2
-label486:
+label482:
 	mv a1, s11
 .p2align 2
-label460:
+label456:
 	sh2add a2, s8, s4
 	sw a1, 0(a2)
 	jal getch
@@ -383,7 +383,7 @@ label460:
 	mv s10, zero
 	j label182
 .p2align 2
-label464:
+label460:
 	bleu a2, s1, label327
 	mv s9, a0
 	mv s10, a1
@@ -392,9 +392,9 @@ label182:
 	jal getch
 	li a1, 1
 	addiw a2, a0, -48
-	beq s9, s2, label464
+	beq s9, s2, label460
 	mv a1, s10
-	j label464
+	j label460
 .p2align 2
 label327:
 	mv s10, a0
@@ -419,7 +419,7 @@ label176:
 	bltu a1, s0, label309
 	subw a1, zero, s11
 	mv a0, a1
-	bne s9, zero, label462
+	bne s9, zero, label458
 	mv a0, s11
 	sh2add a1, s8, s5
 	addiw s8, s8, 1
@@ -476,14 +476,14 @@ label251:
 	mv s11, zero
 	mv a0, zero
 	mv a1, zero
-	bne s9, zero, label458
-	j label485
+	bne s9, zero, label454
+	j label481
 label274:
 	mv s11, zero
 	mv a0, zero
 	mv a1, zero
-	bne s9, zero, label460
-	j label486
+	bne s9, zero, label456
+	j label482
 label198:
 	mv a0, a2
 	ld ra, 0(sp)

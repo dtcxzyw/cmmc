@@ -1,7 +1,7 @@
 .arch armv7ve
 .data
 .section .rodata
-.align 8
+.p2align 3
 __HELLO:
 	.4byte	87
 	.4byte	101
@@ -32,7 +32,7 @@ __HELLO:
 	.4byte	33
 	.4byte	10
 	.zero	288
-.align 8
+.p2align 3
 N4__mE___:
 	.4byte	83
 	.4byte	97
@@ -102,7 +102,7 @@ N4__mE___:
 	.4byte	109
 	.4byte	105
 	.zero	144
-.align 8
+.p2align 3
 saY_HeI10_To:
 	.4byte	32
 	.4byte	115

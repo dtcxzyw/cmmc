@@ -1,24 +1,24 @@
 .attribute arch, "rv64i2p1_m2p0_a2p1_f2p2_d2p2_c2p0_zicsr2p0_zifencei2p0_zba1p0_zbb1p0"
 .data
 .section .rodata
-.align 4
+.p2align 2
 __cmmc_fp_constant_pool:
 	.4byte	1008981770
 	.4byte	981668463
 .bss
-.align 8
+.p2align 3
 a:
 	.zero	4000000
-.align 8
+.p2align 3
 cmmc_parallel_body_payload_0:
 	.zero	8
-.align 8
+.p2align 3
 cmmc_parallel_body_payload_1:
 	.zero	16
-.align 8
+.p2align 3
 var:
 	.zero	4000
-.align 8
+.p2align 3
 mean:
 	.zero	4000
 .text
@@ -26,27 +26,27 @@ mean:
 .globl main
 main:
 	addi sp, sp, -104
-pcrel1175:
+pcrel1173:
 	auipc a0, %pcrel_hi(a)
-pcrel1176:
+pcrel1174:
 	auipc a1, %pcrel_hi(var)
 	sd ra, 0(sp)
 	sd s4, 8(sp)
-	addi s4, a0, %pcrel_lo(pcrel1175)
+	addi s4, a0, %pcrel_lo(pcrel1173)
 	sd s7, 16(sp)
-pcrel1177:
+pcrel1175:
 	auipc a0, %pcrel_hi(mean)
-pcrel1178:
+pcrel1176:
 	auipc s7, %pcrel_hi(cmmc_parallel_body_payload_1)
 	sd s8, 24(sp)
-	addi s8, s7, %pcrel_lo(pcrel1178)
+	addi s8, s7, %pcrel_lo(pcrel1176)
 	sd s6, 32(sp)
-	addi s6, a0, %pcrel_lo(pcrel1177)
+	addi s6, a0, %pcrel_lo(pcrel1175)
 	sd s1, 40(sp)
 	li a0, 125
 	sd s5, 48(sp)
 	slli s1, a0, 5
-	addi s5, a1, %pcrel_lo(pcrel1176)
+	addi s5, a1, %pcrel_lo(pcrel1174)
 	sd s0, 56(sp)
 	li s0, 1000
 	sd s9, 64(sp)
@@ -75,24 +75,24 @@ label606:
 label796:
 	addiw s9, s9, 1
 	li a0, 100
-	bge s9, a0, label1170
+	bge s9, a0, label1168
 	fmv.s f8, f12
 label607:
 	auipc a0, %pcrel_hi(cmmc_parallel_body_payload_0)
-pcrel1179:
+pcrel1177:
 	auipc a3, %pcrel_hi(cmmc_parallel_body_0)
 	sd s6, %pcrel_lo(label607)(a0)
-	addi a2, a3, %pcrel_lo(pcrel1179)
+	addi a2, a3, %pcrel_lo(pcrel1177)
 	mv a1, s0
 	mv a0, zero
 	jal cmmcParallelFor
 	mv a0, zero
-pcrel1180:
+pcrel1178:
 	auipc a3, %pcrel_hi(cmmc_parallel_body_1)
-pcrel1181:
+pcrel1179:
 	auipc s7, %pcrel_hi(cmmc_parallel_body_payload_1)
-	sd s5, %pcrel_lo(pcrel1181)(s7)
-	addi a2, a3, %pcrel_lo(pcrel1180)
+	sd s5, %pcrel_lo(pcrel1179)(s7)
+	addi a2, a3, %pcrel_lo(pcrel1178)
 	sd s6, 8(s8)
 	mv a1, s0
 	jal cmmcParallelFor
@@ -264,7 +264,7 @@ label635:
 	flw f8, 96(sp)
 	addi sp, sp, 104
 	ret
-label1170:
+label1168:
 	mv a1, zero
 	fmv.s f10, f12
 	mv a0, s4

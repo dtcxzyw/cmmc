@@ -1,11 +1,11 @@
 .data
 .data
-.align 4
+.p2align 2
 .globl touch
 touch:
 	.4byte	0
 .section .rodata
-.align 4
+.p2align 2
 __cmmc_fp_constant_pool:
 	.4byte	1065353216
 .text

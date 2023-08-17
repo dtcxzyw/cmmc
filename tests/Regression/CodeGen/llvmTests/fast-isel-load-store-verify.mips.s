@@ -1,15 +1,14 @@
 .data
 .data
-.align 1
 .globl a
 a:
 	.byte	1
-.align 2
+.p2align 1
 .globl b
 b:
 	.byte	2
 	.byte	0
-.align 4
+.p2align 2
 .globl c
 c:
 	.4byte	4

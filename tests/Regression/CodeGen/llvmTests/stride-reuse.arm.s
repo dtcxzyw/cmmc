@@ -1,15 +1,15 @@
 .arch armv7ve
 .data
 .bss
-.align 8
+.p2align 3
 .globl B
 B:
 	.zero	4000
-.align 8
+.p2align 3
 .globl A
 A:
 	.zero	4000
-.align 8
+.p2align 3
 .globl P
 P:
 	.zero	4000

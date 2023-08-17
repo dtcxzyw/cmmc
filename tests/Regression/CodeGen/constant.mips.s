@@ -1,10 +1,10 @@
 .data
 .section .rodata
-.align 4
+.p2align 2
 __cmmc_fp_constant_pool:
 	.4byte	1082130432
 .bss
-.align 8
+.p2align 3
 .globl x
 x:
 	.zero	40

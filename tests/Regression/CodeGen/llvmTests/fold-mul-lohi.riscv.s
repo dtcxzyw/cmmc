@@ -1,15 +1,15 @@
 .attribute arch, "rv64i2p1_m2p0_a2p1_f2p2_d2p2_c2p0_zicsr2p0_zifencei2p0_zba1p0_zbb1p0"
 .data
 .bss
-.align 8
+.p2align 3
 .globl B
 B:
 	.zero	1000
-.align 8
+.p2align 3
 .globl A
 A:
 	.zero	1000
-.align 8
+.p2align 3
 .globl P
 P:
 	.zero	1000

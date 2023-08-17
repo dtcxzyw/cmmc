@@ -1,16 +1,16 @@
 .arch armv7ve
 .data
 .bss
-.align 8
+.p2align 3
 u:
 	.zero	4020
-.align 8
+.p2align 3
 v:
 	.zero	4020
-.align 8
+.p2align 3
 c:
 	.zero	4020
-.align 8
+.p2align 3
 fa:
 	.zero	4020
 .text

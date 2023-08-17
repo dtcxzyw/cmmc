@@ -32,7 +32,7 @@ label206:
 	bne a0, zero, label8
 	mv a1, t1
 	addiw t0, t0, 1
-	bge t0, a3, label958
+	bge t0, a3, label957
 .p2align 2
 label2:
 	addiw t1, a1, 1
@@ -41,7 +41,7 @@ label2:
 	mv a1, t1
 	addiw t0, t0, 1
 	blt t0, a3, label2
-label958:
+label957:
 	mv t0, zero
 	j label70
 label126:
@@ -77,7 +77,7 @@ label70:
 	blt t0, a4, label622
 	sw zero, 12(sp)
 	lw t2, 8(sp)
-	beq t2, zero, label961
+	beq t2, zero, label960
 .p2align 2
 label626:
 	mv a1, t1
@@ -100,13 +100,13 @@ label444:
 	mv t2, a0
 	bne a0, zero, label448
 	addiw t1, a1, 4
-	bge t0, a4, label945
+	bge t0, a4, label944
 .p2align 2
 label622:
 	mv t2, a0
 	bne a0, zero, label626
 	addiw t2, a1, 6
-	bge t0, a5, label946
+	bge t0, a5, label945
 label631:
 	mv a1, t2
 	addiw t0, t0, 1
@@ -121,44 +121,44 @@ label220:
 	mv a1, t1
 	addiw t0, t0, 1
 	blt t0, a3, label2
-	j label958
-label961:
+	j label957
+label960:
 	addiw t2, a1, 6
 	blt t0, a5, label631
-label946:
+label945:
 	sw zero, 16(sp)
 	lw t1, 12(sp)
 	beq t1, zero, label126
 label638:
 	mv a1, t2
 	j label75
-label945:
+label944:
 	sw zero, 12(sp)
 	lw t2, 8(sp)
 	bne t2, zero, label626
 	addiw t2, a1, 6
 	blt t0, a5, label631
-	j label946
+	j label945
 label11:
 	addiw t1, a1, 3
 	bge t0, a5, label225
 	mv a1, t1
 	addiw t0, t0, 1
 	blt t0, a3, label2
-	j label958
+	j label957
 label225:
 	sw a0, 16(sp)
 	lw t2, 12(sp)
-	beq t2, zero, label942
+	beq t2, zero, label941
 	addiw t1, a1, 4
 	li t2, 4
 	bge t0, t2, label14
-label942:
+label941:
 	mv a1, t1
 label68:
 	addiw t0, t0, 1
 	blt t0, a3, label2
-	j label958
+	j label957
 label216:
 	sw a0, 12(sp)
 	lw t2, 8(sp)
@@ -262,14 +262,14 @@ label118:
 label14:
 	sw a0, 20(sp)
 	lw t2, 16(sp)
-	beq t2, zero, label942
+	beq t2, zero, label941
 	addiw t1, a1, 5
 	li t2, 5
-	blt t0, t2, label942
+	blt t0, t2, label941
 	sw a0, 24(sp)
 	lw t2, 20(sp)
 	bne t2, zero, label17
-	j label942
+	j label941
 label89:
 	lw a5, 60(sp)
 	addiw a2, a1, 9
@@ -321,28 +321,28 @@ label131:
 label17:
 	addiw t1, a1, 6
 	li t2, 6
-	blt t0, t2, label942
+	blt t0, t2, label941
 	sw a0, 28(sp)
 	lw t2, 24(sp)
-	beq t2, zero, label942
+	beq t2, zero, label941
 	addiw t1, a1, 7
 	li t2, 7
-	blt t0, t2, label942
+	blt t0, t2, label941
 	sw a0, 32(sp)
 	lw t2, 28(sp)
-	beq t2, zero, label942
+	beq t2, zero, label941
 	addiw t1, a1, 8
 	li t2, 8
-	blt t0, t2, label942
+	blt t0, t2, label941
 	sw a0, 36(sp)
 	lw t2, 32(sp)
-	beq t2, zero, label942
+	beq t2, zero, label941
 	addiw t1, a1, 9
 	li t2, 9
-	blt t0, t2, label942
+	blt t0, t2, label941
 	sw a0, 40(sp)
 	lw t2, 36(sp)
-	beq t2, zero, label942
+	beq t2, zero, label941
 	addiw t1, a1, 10
 	li t3, 10
 	blt t0, t3, label310
@@ -435,7 +435,7 @@ label175:
 label310:
 	mv t2, zero
 label27:
-	beq t2, zero, label942
+	beq t2, zero, label941
 	addiw t1, a1, 11
 	li t3, 11
 	blt t0, t3, label322
@@ -445,7 +445,7 @@ label27:
 label322:
 	mv t2, zero
 label31:
-	beq t2, zero, label942
+	beq t2, zero, label941
 	addiw t1, a1, 12
 	li t3, 12
 	blt t0, t3, label334
@@ -455,49 +455,49 @@ label31:
 label334:
 	mv t2, zero
 label35:
-	beq t2, zero, label942
+	beq t2, zero, label941
 	addiw t1, a1, 13
 	li t3, 13
 	blt t0, t3, label346
 	sw a0, 56(sp)
 	lw t2, 52(sp)
 label38:
-	beq t2, zero, label942
+	beq t2, zero, label941
 	addiw t1, a1, 14
 	li t3, 14
 	blt t0, t3, label355
 	sw a0, 60(sp)
 	lw t2, 56(sp)
 label41:
-	beq t2, zero, label942
+	beq t2, zero, label941
 	addiw t1, a1, 15
 	li t3, 15
 	blt t0, t3, label364
 	sw a0, 64(sp)
 	lw t2, 60(sp)
 label45:
-	beq t2, zero, label942
+	beq t2, zero, label941
 	addiw t1, a1, 16
 	li t3, 16
 	blt t0, t3, label376
 	sw a0, 68(sp)
 	lw t2, 64(sp)
 label48:
-	beq t2, zero, label942
+	beq t2, zero, label941
 	addiw t1, a1, 17
 	li t3, 17
 	blt t0, t3, label385
 	sw a0, 72(sp)
 	lw t2, 68(sp)
 label51:
-	beq t2, zero, label942
+	beq t2, zero, label941
 	addiw t1, a1, 18
 	li t3, 18
 	blt t0, t3, label394
 	sw a0, 76(sp)
 	lw t2, 72(sp)
 label55:
-	beq t2, zero, label942
+	beq t2, zero, label941
 	addiw t1, a1, 19
 	li t3, 19
 	bge t0, t3, label405
@@ -507,7 +507,7 @@ label405:
 	sw a0, 80(sp)
 	lw t2, 76(sp)
 label58:
-	beq t2, zero, label942
+	beq t2, zero, label941
 	addiw a1, a1, 20
 	blt t0, a3, label68
 	sw a0, 84(sp)

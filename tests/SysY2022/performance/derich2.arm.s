@@ -1,28 +1,28 @@
 .arch armv7ve
 .data
 .bss
-.align 8
+.p2align 3
 imgIn:
 	.zero	552960
-.align 8
+.p2align 3
 imgOut:
 	.zero	552960
-.align 8
+.p2align 3
 my_y1:
 	.zero	552960
-.align 8
+.p2align 3
 my_y2:
 	.zero	552960
-.align 8
+.p2align 3
 cmmc_parallel_body_payload_0:
 	.zero	24
-.align 8
+.p2align 3
 cmmc_parallel_body_payload_1:
 	.zero	24
-.align 8
+.p2align 3
 cmmc_parallel_body_payload_2:
 	.zero	8
-.align 8
+.p2align 3
 cmmc_parallel_body_payload_3:
 	.zero	8
 .text

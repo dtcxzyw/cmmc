@@ -1,37 +1,37 @@
 .attribute arch, "rv64i2p1_m2p0_a2p1_f2p2_d2p2_c2p0_zicsr2p0_zifencei2p0_zba1p0_zbb1p0"
 .data
 .bss
-.align 4
+.p2align 2
 hashmod:
 	.zero	4
-.align 8
+.p2align 3
 head:
 	.zero	40000000
-.align 8
+.p2align 3
 next:
 	.zero	40000000
-.align 8
+.p2align 3
 nextvalue:
 	.zero	40000000
-.align 8
+.p2align 3
 key:
 	.zero	40000000
-.align 8
+.p2align 3
 value:
 	.zero	40000000
-.align 8
+.p2align 3
 keys:
 	.zero	40000000
-.align 8
+.p2align 3
 values:
 	.zero	40000000
-.align 8
+.p2align 3
 requests:
 	.zero	40000000
-.align 8
+.p2align 3
 ans:
 	.zero	40000000
-.align 8
+.p2align 3
 cmmc_parallel_body_payload_0:
 	.zero	4
 .text

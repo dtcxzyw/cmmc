@@ -1,22 +1,22 @@
 .arch armv7ve
 .data
 .bss
-.align 8
+.p2align 3
 sheet1:
 	.zero	1000000
-.align 8
+.p2align 3
 sheet2:
 	.zero	1000000
-.align 4
+.p2align 2
 width:
 	.zero	4
-.align 8
+.p2align 3
 cmmc_parallel_body_payload_0:
 	.zero	4
-.align 8
+.p2align 3
 cmmc_parallel_body_payload_1:
 	.zero	4
-.align 8
+.p2align 3
 cmmc_parallel_body_payload_2:
 	.zero	4
 .text

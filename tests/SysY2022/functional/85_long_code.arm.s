@@ -1,7 +1,7 @@
 .arch armv7ve
 .data
 .bss
-.align 8
+.p2align 3
 count:
 	.zero	4000
 .text

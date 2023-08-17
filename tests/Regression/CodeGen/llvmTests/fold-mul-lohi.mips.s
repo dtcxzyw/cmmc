@@ -1,14 +1,14 @@
 .data
 .bss
-.align 8
+.p2align 3
 .globl B
 B:
 	.zero	1000
-.align 8
+.p2align 3
 .globl A
 A:
 	.zero	1000
-.align 8
+.p2align 3
 .globl P
 P:
 	.zero	1000

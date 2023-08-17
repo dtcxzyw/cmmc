@@ -1,10 +1,10 @@
 .data
 .data
-.align 4
+.p2align 2
 .globl src
 src:
 	.4byte	0
-.align 4
+.p2align 2
 .globl dst
 dst:
 	.4byte	0

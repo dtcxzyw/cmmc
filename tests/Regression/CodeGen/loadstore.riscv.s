@@ -1,23 +1,23 @@
 .attribute arch, "rv64i2p1_m2p0_a2p1_f2p2_d2p2_c2p0_zicsr2p0_zifencei2p0_zba1p0_zbb1p0"
 .data
 .bss
-.align 4
+.p2align 2
 .globl y
 y:
 	.zero	4
-.align 8
+.p2align 3
 .globl arr
 arr:
 	.zero	400
-.align 8
+.p2align 3
 .globl x
 x:
 	.zero	8
-.align 8
+.p2align 3
 .globl src
 src:
 	.zero	16
-.align 8
+.p2align 3
 .globl dst
 dst:
 	.zero	8

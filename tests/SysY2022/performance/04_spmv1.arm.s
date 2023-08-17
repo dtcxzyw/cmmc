@@ -1,25 +1,25 @@
 .arch armv7ve
 .data
 .bss
-.align 8
+.p2align 3
 x:
 	.zero	400040
-.align 8
+.p2align 3
 y:
 	.zero	12000000
-.align 8
+.p2align 3
 v:
 	.zero	12000000
-.align 8
+.p2align 3
 a:
 	.zero	400040
-.align 8
+.p2align 3
 b:
 	.zero	400040
-.align 8
+.p2align 3
 cmmc_parallel_body_payload_0:
 	.zero	4
-.align 8
+.p2align 3
 cmmc_parallel_body_payload_1:
 	.zero	4
 .text

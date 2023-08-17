@@ -1,7 +1,7 @@
 .attribute arch, "rv64i2p1_m2p0_a2p1_f2p2_d2p2_c2p0_zicsr2p0_zifencei2p0_zba1p0_zbb1p0"
 .data
 .bss
-.align 8
+.p2align 3
 a:
 	.zero	3600
 .text
@@ -263,59 +263,62 @@ label145:
 main:
 	# stack usage: CalleeArg[0] Local[48] RegSpill[0] CalleeSaved[104]
 	addi sp, sp, -152
-	li a3, -1
-	li a2, 1
-	zext.w a1, a3
+	li a2, -1
 	sd ra, 0(sp)
-	sd s9, 8(sp)
-	li s9, 1
-	sd s2, 16(sp)
-	zext.w a0, s9
-	slli s2, a2, 32
-	sd s4, 24(sp)
-	sd s10, 32(sp)
-	mv s10, zero
-	sd s11, 40(sp)
-	mv s11, zero
-	sd s0, 48(sp)
-	li s0, 2
-	sd s5, 56(sp)
-	li s5, 11
-	sd s1, 64(sp)
-	li s1, 3
-	sd s6, 72(sp)
-	sd s3, 80(sp)
-	li s3, 28
-	sd s7, 88(sp)
-	sd s8, 96(sp)
-	sd a0, 104(sp)
-	sub a0, zero, s2
+	zext.w a0, a2
+	sd s2, 8(sp)
+	addi s2, sp, 144
+	sd s4, 16(sp)
+	addi s4, sp, 148
+	sd s5, 24(sp)
+	addi s5, sp, 104
+	sd s0, 32(sp)
+	li s0, 1
+	sd s1, 40(sp)
+	zext.w a1, s0
+	sd s6, 48(sp)
+	mv s6, zero
+	sd s3, 56(sp)
+	sd s8, 64(sp)
+	mv s8, zero
+	sd s7, 72(sp)
+	sd s10, 80(sp)
+	sd s11, 88(sp)
+	sd s9, 96(sp)
 	sd a1, 112(sp)
-	sd s2, 120(sp)
-	sd a0, 128(sp)
-pcrel1039:
+	li a1, 1
+	sd a0, 120(sp)
+	slli s1, a1, 32
+	sub a0, zero, s1
+	sd s1, 128(sp)
+	sd a0, 136(sp)
+pcrel1035:
 	auipc a0, %pcrel_hi(a)
-	sw zero, 140(sp)
-	addi s4, a0, %pcrel_lo(pcrel1039)
-	sw zero, 136(sp)
+	sw zero, 148(sp)
+	addi s3, a0, %pcrel_lo(pcrel1035)
+	sw zero, 144(sp)
 	j label334
 .p2align 2
+label1016:
+	mv s6, s10
+	mv s8, s11
+.p2align 2
 label344:
-	addi a3, sp, 104
-	addi a4, sp, 148
-	addi a5, sp, 144
-	addi a6, sp, 140
-	addi a7, sp, 136
-	li s9, 1
-	mv a0, s11
-	mv a1, s10
-	mv a2, s9
+	addi a3, sp, 112
+	addi a4, sp, 108
+	mv a0, s8
+	mv a1, s6
+	mv a2, s0
+	mv a5, s5
+	mv a6, s4
+	mv a7, s2
 	jal search
 	mv a1, a0
-	blt a0, s5, label1006
+	li a2, 11
+	blt a0, a2, label1002
 	li a1, -1
 .p2align 2
-label1006:
+label1002:
 	mv a0, a1
 	jal putint
 	li a0, 10
@@ -323,12 +326,12 @@ label1006:
 .p2align 2
 label334:
 	jal getint
-	sw a0, 148(sp)
-	mv s6, a0
+	sw a0, 108(sp)
+	mv s7, a0
 	jal getint
-	sw a0, 144(sp)
-	beq s6, zero, label337
-	mv a0, s4
+	sw a0, 104(sp)
+	beq s7, zero, label337
+	mv a0, s3
 	mv a2, zero
 	j label339
 .p2align 2
@@ -336,8 +339,9 @@ label342:
 	addi a0, a0, 480
 .p2align 2
 label339:
-	ori a1, s2, 1
+	ori a1, s1, 1
 	addiw a2, a2, 4
+	li a3, 28
 	sd a1, 0(a0)
 	sd a1, 8(a0)
 	sd a1, 16(a0)
@@ -398,7 +402,7 @@ label339:
 	sd a1, 456(a0)
 	sd a1, 464(a0)
 	sd a1, 472(a0)
-	blt a2, s3, label342
+	blt a2, a3, label342
 	sd a1, 480(a0)
 	sd a1, 488(a0)
 	sd a1, 496(a0)
@@ -429,91 +433,89 @@ label339:
 	sd a1, 696(a0)
 	sd a1, 704(a0)
 	sd a1, 712(a0)
-	lw a2, 144(sp)
+	lw a2, 104(sp)
 	ble a2, zero, label344
-	addi s7, s4, 120
-	li s9, 1
-	mv s6, s9
-	lw a0, 148(sp)
+	addi s7, s3, 120
+	mv s10, s6
+	mv s11, s8
+	mv s6, s0
+	lw a0, 108(sp)
 	bgt a0, zero, label353
-	addiw s6, s9, 1
-	lw a0, 144(sp)
+	addiw s6, s0, 1
+	lw a0, 104(sp)
 	ble s6, a0, label368
-	j label344
+	j label1016
 .p2align 2
 label598:
-	bne a0, s1, label1021
-	sw s6, 140(sp)
-	mv a0, s11
-	sw s9, 136(sp)
+	li a1, 3
+	bne a0, a1, label1017
+	sw s6, 148(sp)
+	sw s9, 144(sp)
 	addiw s9, s9, 1
-	lw a1, 148(sp)
-	bgt s9, a1, label608
+	lw a0, 108(sp)
+	bgt s9, a0, label608
 .p2align 2
 label364:
 	addi s8, s8, 4
-	mv s11, a0
 .p2align 2
 label354:
 	jal getint
+	li a1, 2
 	sw a0, 0(s8)
-	bne a0, s0, label598
+	bne a0, a1, label598
 	mv s10, s9
-	mv a0, s6
-	lw a1, 148(sp)
-	addiw s9, s9, 1
-	ble s9, a1, label364
 	mv s11, s6
+	lw a0, 108(sp)
+	addiw s9, s9, 1
+	ble s9, a0, label364
 	addiw s6, s6, 1
-	lw a0, 144(sp)
-	bgt s6, a0, label344
+	lw a0, 104(sp)
+	bgt s6, a0, label1016
 .p2align 2
 label368:
 	addi s7, s7, 120
-	lw a0, 148(sp)
-	ble a0, zero, label1025
+	lw a0, 108(sp)
+	ble a0, zero, label1021
 .p2align 2
 label353:
 	addi s8, s7, 4
-	li s9, 1
+	mv s9, s0
 	j label354
 .p2align 2
-label1021:
-	mv a0, s11
+label1017:
 	addiw s9, s9, 1
-	lw a1, 148(sp)
-	ble s9, a1, label364
+	lw a0, 108(sp)
+	ble s9, a0, label364
 	addiw s6, s6, 1
-	lw a0, 144(sp)
+	lw a0, 104(sp)
 	ble s6, a0, label368
-	j label344
+	j label1016
 .p2align 2
 label608:
-	mv s11, a0
 	addiw s6, s6, 1
-	lw a0, 144(sp)
+	lw a0, 104(sp)
 	ble s6, a0, label368
-	j label344
+	j label1016
 label337:
 	mv a0, zero
 	ld ra, 0(sp)
-	ld s9, 8(sp)
-	ld s2, 16(sp)
-	ld s4, 24(sp)
-	ld s10, 32(sp)
-	ld s11, 40(sp)
-	ld s0, 48(sp)
-	ld s5, 56(sp)
-	ld s1, 64(sp)
-	ld s6, 72(sp)
-	ld s3, 80(sp)
-	ld s7, 88(sp)
-	ld s8, 96(sp)
+	ld s2, 8(sp)
+	ld s4, 16(sp)
+	ld s5, 24(sp)
+	ld s0, 32(sp)
+	ld s1, 40(sp)
+	ld s6, 48(sp)
+	ld s3, 56(sp)
+	ld s8, 64(sp)
+	ld s7, 72(sp)
+	ld s10, 80(sp)
+	ld s11, 88(sp)
+	ld s9, 96(sp)
 	addi sp, sp, 152
 	ret
 .p2align 2
-label1025:
+label1021:
 	addiw s6, s6, 1
-	lw a0, 144(sp)
+	lw a0, 104(sp)
 	ble s6, a0, label368
-	j label344
+	j label1016

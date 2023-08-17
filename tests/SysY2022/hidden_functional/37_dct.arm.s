@@ -1,13 +1,13 @@
 .arch armv7ve
 .data
 .bss
-.align 8
+.p2align 3
 test_block:
 	.zero	256
-.align 8
+.p2align 3
 test_dct:
 	.zero	256
-.align 8
+.p2align 3
 test_idct:
 	.zero	256
 .text

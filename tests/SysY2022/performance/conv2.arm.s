@@ -1,7 +1,7 @@
 .arch armv7ve
 .data
 .section .rodata
-.align 8
+.p2align 3
 __cmmc_jumptable1312:
 	.word	label1287-__cmmc_jumptable1312
 	.word	label1286-__cmmc_jumptable1312
@@ -9,34 +9,34 @@ __cmmc_jumptable1312:
 	.word	label1284-__cmmc_jumptable1312
 	.word	label1283-__cmmc_jumptable1312
 .bss
-.align 8
+.p2align 3
 a:
 	.zero	40000000
-.align 8
+.p2align 3
 b:
 	.zero	40000000
-.align 8
+.p2align 3
 kernelid:
 	.zero	40000
-.align 8
+.p2align 3
 cmmc_parallel_body_payload_0:
 	.zero	16
-.align 8
+.p2align 3
 cmmc_parallel_body_payload_1:
 	.zero	4
-.align 8
+.p2align 3
 cmmc_parallel_body_payload_2:
 	.zero	16
-.align 8
+.p2align 3
 cmmc_parallel_body_payload_3:
 	.zero	16
-.align 8
+.p2align 3
 cmmc_parallel_body_payload_4:
 	.zero	16
-.align 8
+.p2align 3
 cmmc_parallel_body_payload_5:
 	.zero	16
-.align 8
+.p2align 3
 cmmc_parallel_body_payload_6:
 	.zero	16
 .text

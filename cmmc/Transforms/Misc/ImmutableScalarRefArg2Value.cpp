@@ -101,7 +101,7 @@ public:
         }
 
         for(auto [func, type] : wrappers) {
-            const auto wrapperFunc = make<Function>(String::get(std::string(func->getSymbol().prefix()) + "_wrapper"), type);
+            const auto wrapperFunc = make<Function>(String::get(std::string(func->getSymbol().prefix()) + "_cmmc_wrapper"), type);
             wrapperFunc->setLinkage(Linkage::Internal);
             std::vector<Value*> args;
             auto& argTypes = type->getArgTypes();

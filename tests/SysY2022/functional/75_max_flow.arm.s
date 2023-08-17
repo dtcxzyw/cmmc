@@ -1,13 +1,13 @@
 .arch armv7ve
 .data
 .bss
-.align 8
+.p2align 3
 to:
 	.zero	400
-.align 8
+.p2align 3
 cap:
 	.zero	400
-.align 8
+.p2align 3
 rev:
 	.zero	400
 .text

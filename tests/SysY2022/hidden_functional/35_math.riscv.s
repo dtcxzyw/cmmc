@@ -1,7 +1,7 @@
 .attribute arch, "rv64i2p1_m2p0_a2p1_f2p2_d2p2_c2p0_zicsr2p0_zifencei2p0_zba1p0_zbb1p0"
 .data
 .section .rodata
-.align 4
+.p2align 2
 __cmmc_fp_constant_pool:
 	.4byte	981668463
 	.4byte	1076754516
@@ -670,13 +670,13 @@ main:
 	fsw f18, 68(sp)
 	fsw f9, 72(sp)
 	jal getint
-pcrel751:
+pcrel747:
 	auipc a1, %pcrel_hi(__cmmc_fp_constant_pool)
 	lui s3, 265216
 	lui s2, 264192
 	lui s1, 258048
 	lui s0, 260096
-	addi s4, a1, %pcrel_lo(pcrel751)
+	addi s4, a1, %pcrel_lo(pcrel747)
 	beq a0, zero, label619
 	mv s5, a0
 	j label603
@@ -743,14 +743,14 @@ label603:
 	fmul.s f13, f12, f8
 	andi a1, a0, 1
 	fmv.s f11, f13
-	bne a1, zero, label733
+	bne a1, zero, label729
 	fmv.s f11, f12
 .p2align 2
-label733:
-	srliw a1, a0, 31
+label729:
+	srliw a2, a0, 31
 	fmul.s f10, f10, f10
-	add a2, a0, a1
-	sraiw a0, a2, 1
+	add a1, a0, a2
+	sraiw a0, a1, 1
 	beq a0, zero, label609
 .p2align 2
 label637:
@@ -758,12 +758,12 @@ label637:
 	fmul.s f13, f11, f10
 	andi a1, a0, 1
 	fmv.s f11, f13
-	bne a1, zero, label733
+	bne a1, zero, label729
 	fmv.s f11, f12
-	srliw a1, a0, 31
+	srliw a2, a0, 31
 	fmul.s f10, f10, f10
-	add a2, a0, a1
-	sraiw a0, a2, 1
+	add a1, a0, a2
+	sraiw a0, a1, 1
 	bne a0, zero, label637
 .p2align 2
 label609:
@@ -814,9 +814,9 @@ label610:
 	li a0, 32
 	jal putch
 	fmv.w.x f10, zero
-	flt.s a0, f10, f9
-	and a1, s6, a0
-	bne a1, zero, label616
+	flt.s a1, f10, f9
+	and a0, s6, a1
+	bne a0, zero, label616
 	li a0, 45
 	jal putch
 	j label611

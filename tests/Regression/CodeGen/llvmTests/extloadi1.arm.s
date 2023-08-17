@@ -1,7 +1,7 @@
 .arch armv7ve
 .data
 .bss
-.align 4
+.p2align 2
 .globl handler_installed_6144_b
 handler_installed_6144_b:
 	.zero	4

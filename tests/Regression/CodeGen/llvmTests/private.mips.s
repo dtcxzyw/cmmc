@@ -1,6 +1,6 @@
 .data
 .data
-.align 4
+.p2align 2
 .globl baz
 baz:
 	.4byte	4

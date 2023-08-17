@@ -1,13 +1,13 @@
 .arch armv7ve
 .data
 .bss
-.align 8
+.p2align 3
 value:
 	.zero	40000
-.align 8
+.p2align 3
 left_child:
 	.zero	40000
-.align 8
+.p2align 3
 right_child:
 	.zero	40000
 .text

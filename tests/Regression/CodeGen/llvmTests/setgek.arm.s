@@ -1,19 +1,19 @@
 .arch armv7ve
 .data
 .data
-.align 4
+.p2align 2
 .globl k
 k:
 	.4byte	10
-.align 4
+.p2align 2
 .globl r1
 r1:
 	.4byte	0
-.align 4
+.p2align 2
 .globl r2
 r2:
 	.4byte	0
-.align 4
+.p2align 2
 .globl r3
 r3:
 	.4byte	0

@@ -1,10 +1,10 @@
 .arch armv7ve
 .data
 .bss
-.align 8
+.p2align 3
 graph:
 	.zero	3600
-.align 8
+.p2align 3
 edges:
 	.zero	4800
 .text

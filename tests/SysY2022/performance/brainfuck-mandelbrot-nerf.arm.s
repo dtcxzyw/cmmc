@@ -1,19 +1,19 @@
 .arch armv7ve
 .data
 .bss
-.align 8
+.p2align 3
 program:
 	.zero	262144
-.align 8
+.p2align 3
 tape:
 	.zero	262144
-.align 8
+.p2align 3
 input:
 	.zero	262144
-.align 8
+.p2align 3
 output:
 	.zero	262144
-.align 8
+.p2align 3
 return_a:
 	.zero	2048
 .text

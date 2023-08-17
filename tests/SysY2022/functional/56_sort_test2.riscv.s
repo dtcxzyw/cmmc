@@ -8,7 +8,7 @@ main:
 	addi sp, sp, -72
 	li a4, 3
 	li a5, 2
-	li t0, 8
+	li t0, 5
 	addi a0, sp, 32
 	slli a2, a4, 32
 	sd ra, 0(sp)
@@ -17,7 +17,6 @@ main:
 	sd s0, 8(sp)
 	slli a2, a5, 32
 	li s0, 10
-	li a5, 5
 	addi a4, a2, 9
 	sd s1, 16(sp)
 	li a2, 1
@@ -26,12 +25,13 @@ main:
 	li a3, 1
 	sd a4, 40(sp)
 	slli a4, a2, 32
-	slli a2, a5, 32
+	slli a2, t0, 32
 	sd a4, 48(sp)
-	slli a5, t0, 32
-	addi a4, a2, 6
-	addi a2, a5, 7
-	sd a4, 56(sp)
+	li t0, 8
+	addi a5, a2, 6
+	slli a4, t0, 32
+	sd a5, 56(sp)
+	addi a2, a4, 7
 	sd a2, 64(sp)
 	addiw a5, a3, -1
 	lw a4, 0(a1)

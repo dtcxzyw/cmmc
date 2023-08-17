@@ -1,7 +1,7 @@
 .attribute arch, "rv64i2p1_m2p0_a2p1_f2p2_d2p2_c2p0_zicsr2p0_zifencei2p0_zba1p0_zbb1p0"
 .data
 .bss
-.align 8
+.p2align 3
 dp:
 	.zero	52907904
 .text
@@ -224,28 +224,28 @@ main:
 	sd zero, 112(sp)
 	jal getint
 	mv s0, a0
-pcrel737:
+pcrel736:
 	auipc a1, %pcrel_hi(dp)
-	li t0, -1
 	mv t6, zero
 	mv t5, zero
-	li a6, -1
 	mv t3, zero
-	mv t2, zero
 	li a2, 18
-	li a0, 567
-	addi a3, a1, %pcrel_lo(pcrel737)
-	slli t1, a6, 32
-	slli a5, a0, 4
-	lui a1, 40
-	lui a0, 718
-	addiw a4, a1, -544
-	addiw t4, a0, -1600
+	mv t2, zero
+	li t0, -1
+	lui a0, 40
+	addi a3, a1, %pcrel_lo(pcrel736)
+	addiw a4, a0, -544
+	li a1, 567
+	li a0, -1
+	slli a5, a1, 4
+	slli t1, a0, 32
+	lui a1, 718
+	addiw t4, a1, -1600
 	j label211
 .p2align 2
 label389:
 	addiw t2, t2, 1
-	bge t2, a2, label730
+	bge t2, a2, label729
 	mv t6, zero
 	mv t3, zero
 .p2align 2
@@ -328,7 +328,7 @@ label211:
 	mv t6, zero
 	j label211
 .p2align 2
-label730:
+label729:
 	addiw t5, t5, 1
 	bge t5, a2, label220
 	add a3, a3, t4

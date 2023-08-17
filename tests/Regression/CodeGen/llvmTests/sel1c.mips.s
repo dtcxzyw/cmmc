@@ -1,14 +1,14 @@
 .data
 .data
-.align 4
+.p2align 2
 .globl i
 i:
 	.4byte	1
-.align 4
+.p2align 2
 .globl j
 j:
 	.4byte	2
-.align 4
+.p2align 2
 .globl k
 k:
 	.4byte	0

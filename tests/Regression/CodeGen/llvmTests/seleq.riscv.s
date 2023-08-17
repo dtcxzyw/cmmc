@@ -1,39 +1,39 @@
 .attribute arch, "rv64i2p1_m2p0_a2p1_f2p2_d2p2_c2p0_zicsr2p0_zifencei2p0_zba1p0_zbb1p0"
 .data
 .data
-.align 4
+.p2align 2
 .globl t
 t:
 	.4byte	10
-.align 4
+.p2align 2
 .globl f
 f:
 	.4byte	199
-.align 4
+.p2align 2
 .globl a
 a:
 	.4byte	1
-.align 4
+.p2align 2
 .globl b
 b:
 	.4byte	10
-.align 4
+.p2align 2
 .globl c
 c:
 	.4byte	1
-.align 4
+.p2align 2
 .globl z1
 z1:
 	.4byte	0
-.align 4
+.p2align 2
 .globl z2
 z2:
 	.4byte	0
-.align 4
+.p2align 2
 .globl z3
 z3:
 	.4byte	0
-.align 4
+.p2align 2
 .globl z4
 z4:
 	.4byte	0

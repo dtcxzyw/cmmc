@@ -43,8 +43,10 @@ void dumpAssembly(std::ostream& out, const CodeGenContext& ctx, const MIRModule&
     out << ".data\n"sv;
     emitData();
     const auto dumpSymbol = [&](const MIRGlobal& global) {
-        if(!global.reloc->isFunc())
-            out << ".align " << global.alignment << std::endl;
+        if(!global.reloc->isFunc()) {
+            if(global.alignment > 1)
+                out << ".p2align " << ilog2(global.alignment) << std::endl;
+        }
         auto symbol = global.reloc->symbol();
         if(global.linkage == Linkage::Global)
             out << ".globl "sv << symbol << '\n';

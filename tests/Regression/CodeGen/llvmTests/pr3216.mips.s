@@ -1,6 +1,5 @@
 .data
 .data
-.align 1
 .globl foo
 foo:
 	.byte	127

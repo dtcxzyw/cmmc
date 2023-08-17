@@ -1,79 +1,73 @@
 .attribute arch, "rv64i2p1_m2p0_a2p1_f2p2_d2p2_c2p0_zicsr2p0_zifencei2p0_zba1p0_zbb1p0"
 .data
 .bss
-.align 8
+.p2align 3
 A:
 	.zero	16160400
-.align 8
+.p2align 3
 B:
 	.zero	8040
-.align 8
+.p2align 3
 C:
 	.zero	8040
-.align 8
+.p2align 3
 cmmc_parallel_body_payload_0:
 	.zero	4
-.align 8
+.p2align 3
 cmmc_parallel_body_payload_1:
 	.zero	4
-.align 8
+.p2align 3
 cmmc_parallel_body_payload_2:
 	.zero	4
-.align 8
+.p2align 3
 cmmc_parallel_body_payload_3:
 	.zero	4
 .text
 .p2align 2
 .globl main
 main:
-	# stack usage: CalleeArg[0] Local[0] RegSpill[24] CalleeSaved[104]
-	addi sp, sp, -128
+	# stack usage: CalleeArg[0] Local[0] RegSpill[8] CalleeSaved[104]
+	addi sp, sp, -112
 	sd ra, 0(sp)
 	sd s11, 8(sp)
 	sd s0, 16(sp)
 	sd s5, 24(sp)
 	sd s1, 32(sp)
 	sd s6, 40(sp)
-	sd s8, 48(sp)
-	sd s2, 56(sp)
-	sd s3, 64(sp)
+	sd s2, 48(sp)
+	sd s3, 56(sp)
+	sd s8, 64(sp)
 	sd s4, 72(sp)
 	sd s7, 80(sp)
 	sd s9, 88(sp)
 	sd s10, 96(sp)
 	jal getint
-pcrel524:
-	auipc s4, %pcrel_hi(cmmc_parallel_body_payload_1)
-	li s2, 50
+pcrel520:
+	auipc s6, %pcrel_hi(cmmc_parallel_body_payload_1)
 	mv s11, a0
-pcrel525:
-	auipc s5, %pcrel_hi(cmmc_parallel_body_payload_2)
-pcrel526:
-	auipc s3, %pcrel_hi(cmmc_parallel_body_payload_0)
-pcrel527:
-	auipc s6, %pcrel_hi(cmmc_parallel_body_payload_3)
-pcrel528:
-	auipc a3, %pcrel_hi(cmmc_parallel_body_0)
-pcrel529:
-	auipc a1, %pcrel_hi(cmmc_parallel_body_1)
 	sd a0, 104(sp)
-	addi a2, a3, %pcrel_lo(pcrel528)
-pcrel530:
-	auipc a0, %pcrel_hi(cmmc_parallel_body_2)
-	sd a2, 112(sp)
-	addi s0, a0, %pcrel_lo(pcrel530)
-	addi a2, a1, %pcrel_lo(pcrel529)
+pcrel521:
+	auipc s5, %pcrel_hi(cmmc_parallel_body_payload_0)
+	li s4, 50
+pcrel522:
+	auipc a1, %pcrel_hi(cmmc_parallel_body_0)
+pcrel523:
+	auipc a2, %pcrel_hi(cmmc_parallel_body_3)
+pcrel524:
+	auipc a0, %pcrel_hi(cmmc_parallel_body_1)
+	addi s0, a1, %pcrel_lo(pcrel522)
+	addi s3, a2, %pcrel_lo(pcrel523)
+	addi s1, a0, %pcrel_lo(pcrel524)
+pcrel525:
+	auipc a1, %pcrel_hi(cmmc_parallel_body_2)
 	li a0, 1005
-pcrel531:
-	auipc a1, %pcrel_hi(cmmc_parallel_body_3)
+	addi s2, a1, %pcrel_lo(pcrel525)
 	slli s8, a0, 3
-	sd a2, 120(sp)
-	addi s1, a1, %pcrel_lo(pcrel531)
 	ble s11, zero, label389
-pcrel532:
+pcrel526:
 	auipc a0, %pcrel_hi(A)
 	mv s9, zero
-	addi s7, a0, %pcrel_lo(pcrel532)
+	addi s7, a0, %pcrel_lo(pcrel526)
 	mv s10, s7
 	mv s11, zero
 	j label405
@@ -98,10 +92,10 @@ label405:
 label389:
 	ld s11, 104(sp)
 	ble s11, zero, label390
-pcrel533:
+pcrel527:
 	auipc a1, %pcrel_hi(B)
 	mv s8, zero
-	addi s7, a1, %pcrel_lo(pcrel533)
+	addi s7, a1, %pcrel_lo(pcrel527)
 .p2align 2
 label397:
 	jal getint
@@ -116,45 +110,45 @@ label390:
 	li a0, 59
 	jal _sysy_starttime
 	mv s8, zero
-pcrel534:
+pcrel528:
 	auipc a1, %pcrel_hi(C)
-	addi s7, a1, %pcrel_lo(pcrel534)
+	addi s7, a1, %pcrel_lo(pcrel528)
 .p2align 2
 label391:
 	ld s11, 104(sp)
 	ble s11, zero, label394
 	mv a0, zero
-pcrel535:
-	auipc s3, %pcrel_hi(cmmc_parallel_body_payload_0)
-	sw s11, %pcrel_lo(pcrel535)(s3)
-	ld a2, 112(sp)
-	mv a1, s11
-	jal cmmcParallelFor
-	mv a0, zero
-pcrel536:
-	auipc s4, %pcrel_hi(cmmc_parallel_body_payload_1)
-	sw s11, %pcrel_lo(pcrel536)(s4)
-	ld a2, 120(sp)
-	mv a1, s11
-	jal cmmcParallelFor
-	mv a0, zero
-pcrel537:
-	auipc s5, %pcrel_hi(cmmc_parallel_body_payload_2)
-	sw s11, %pcrel_lo(pcrel537)(s5)
+pcrel529:
+	auipc s5, %pcrel_hi(cmmc_parallel_body_payload_0)
+	sw s11, %pcrel_lo(pcrel529)(s5)
 	mv a1, s11
 	mv a2, s0
 	jal cmmcParallelFor
 	mv a0, zero
-pcrel538:
-	auipc s6, %pcrel_hi(cmmc_parallel_body_payload_3)
-	sw s11, %pcrel_lo(pcrel538)(s6)
+pcrel530:
+	auipc s6, %pcrel_hi(cmmc_parallel_body_payload_1)
+	sw s11, %pcrel_lo(pcrel530)(s6)
 	mv a1, s11
 	mv a2, s1
+	jal cmmcParallelFor
+	mv a0, zero
+pcrel531:
+	auipc a3, %pcrel_hi(cmmc_parallel_body_payload_2)
+	sw s11, %pcrel_lo(pcrel531)(a3)
+	mv a1, s11
+	mv a2, s2
+	jal cmmcParallelFor
+	mv a0, zero
+pcrel532:
+	auipc a3, %pcrel_hi(cmmc_parallel_body_payload_3)
+	sw s11, %pcrel_lo(pcrel532)(a3)
+	mv a1, s11
+	mv a2, s3
 	jal cmmcParallelFor
 .p2align 2
 label394:
 	addiw s8, s8, 1
-	blt s8, s2, label391
+	blt s8, s4, label391
 	li a0, 67
 	jal _sysy_stoptime
 	ld s11, 104(sp)
@@ -168,14 +162,14 @@ label394:
 	ld s5, 24(sp)
 	ld s1, 32(sp)
 	ld s6, 40(sp)
-	ld s8, 48(sp)
-	ld s2, 56(sp)
-	ld s3, 64(sp)
+	ld s2, 48(sp)
+	ld s3, 56(sp)
+	ld s8, 64(sp)
 	ld s4, 72(sp)
 	ld s7, 80(sp)
 	ld s9, 88(sp)
 	ld s10, 96(sp)
-	addi sp, sp, 128
+	addi sp, sp, 112
 	ret
 .p2align 2
 cmmc_parallel_body_0:

@@ -1,22 +1,22 @@
 .data
 .data
-.align 4
+.p2align 2
 .globl i
 i:
 	.4byte	4294967291
-.align 4
+.p2align 2
 .globl j
 j:
 	.4byte	10
-.align 4
+.p2align 2
 .globl k
 k:
 	.4byte	4294967291
-.align 4
+.p2align 2
 .globl result1
 result1:
 	.4byte	0
-.align 4
+.p2align 2
 .globl result2
 result2:
 	.4byte	1

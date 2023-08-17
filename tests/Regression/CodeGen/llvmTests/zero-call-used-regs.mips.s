@@ -1,6 +1,6 @@
 .data
 .data
-.align 4
+.p2align 2
 .globl result
 result:
 	.4byte	0

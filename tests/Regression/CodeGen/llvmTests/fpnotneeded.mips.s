@@ -1,15 +1,15 @@
 .data
 .data
-.align 4
+.p2align 2
 .globl i
 i:
 	.4byte	1
-.align 4
+.p2align 2
 .globl f
 f:
 	.4byte	1065353216
 .section .rodata
-.align 4
+.p2align 2
 __cmmc_fp_constant_pool:
 	.4byte	1073741824
 	.4byte	1065353216

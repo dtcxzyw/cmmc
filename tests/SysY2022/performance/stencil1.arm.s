@@ -1,10 +1,10 @@
 .arch armv7ve
 .data
 .bss
-.align 8
+.p2align 3
 image_in:
 	.zero	4194304
-.align 8
+.p2align 3
 image_out:
 	.zero	4194304
 .text

@@ -1,16 +1,16 @@
 .arch armv7ve
 .data
 .bss
-.align 8
+.p2align 3
 to:
 	.zero	20020
-.align 8
+.p2align 3
 next:
 	.zero	20020
-.align 8
+.p2align 3
 head:
 	.zero	4020
-.align 8
+.p2align 3
 vis:
 	.zero	4020
 .text

@@ -1,11 +1,11 @@
 .arch armv7ve
 .data
 .data
-.align 4
+.p2align 2
 global:
 	.4byte	0
 .bss
-.align 8
+.p2align 3
 cmmc_parallel_body_payload_0:
 	.zero	4
 .text

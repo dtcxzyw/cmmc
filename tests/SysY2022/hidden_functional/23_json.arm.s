@@ -1,7 +1,7 @@
 .arch armv7ve
 .data
 .section .rodata
-.align 8
+.p2align 3
 __cmmc_jumptable194:
 	.word	label103-__cmmc_jumptable194
 	.word	label19-__cmmc_jumptable194
@@ -12,7 +12,7 @@ __cmmc_jumptable194:
 	.word	label63-__cmmc_jumptable194
 	.word	label12-__cmmc_jumptable194
 .bss
-.align 8
+.p2align 3
 buffer:
 	.zero	200000000
 .text

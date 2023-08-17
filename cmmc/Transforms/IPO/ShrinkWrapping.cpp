@@ -30,7 +30,7 @@ CMMC_NAMESPACE_BEGIN
 
 class ShrinkWrapping final : public TransformPass<Function> {
     static Function* cloneFunc(Function& func) {
-        auto newFunc = make<Function>(String::get(std::string(func.getSymbol().prefix()) + "_inline_wrapped"),
+        auto newFunc = make<Function>(String::get(std::string(func.getSymbol().prefix()) + "_cmmc_inline_wrapped"),
                                       func.getType()->as<FunctionType>());
         newFunc->setLinkage(Linkage::Internal);
 

@@ -1,16 +1,16 @@
 .arch armv7ve
 .data
 .bss
-.align 8
+.p2align 3
 ans:
 	.zero	200
-.align 8
+.p2align 3
 row:
 	.zero	200
-.align 8
+.p2align 3
 line1:
 	.zero	200
-.align 8
+.p2align 3
 line2:
 	.zero	400
 .text
