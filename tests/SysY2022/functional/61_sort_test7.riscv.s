@@ -34,11 +34,11 @@ merge_sort:
 	addw a1, s0, a1
 	srliw a2, a1, 31
 	add a3, a1, a2
-pcrel1090:
+pcrel1086:
 	auipc a1, %pcrel_hi(buf)
 	sraiw s4, a3, 1
-	addi a4, a1, %pcrel_lo(pcrel1090)
-	addi s7, s4, -3
+	addi a4, a1, %pcrel_lo(pcrel1086)
+	addiw s7, s4, -3
 	slt s8, s0, s4
 	addi s1, a4, 400
 	sd a4, 112(sp)
@@ -58,7 +58,7 @@ label4:
 	mv a0, s11
 	mv a1, s10
 	jal merge_sort
-	addi a0, s11, -3
+	addiw a0, s11, -3
 	slt a1, s11, s10
 	slt a4, s4, s11
 	and a2, a4, a1
@@ -350,7 +350,7 @@ label159:
 	mv a1, s4
 	jal merge_sort
 	addiw a0, s4, -18
-	addi a1, s9, -3
+	addiw a1, s9, -3
 	slt t1, s0, s9
 	slt t0, s9, s4
 	and a2, t0, t1
@@ -720,10 +720,13 @@ label140:
 label497:
 	mv a0, a2
 	j label106
-label905:
-	mv t1, a3
-	mv a3, zero
-	j label220
+label368:
+	mv a0, s0
+	mv s0, zero
+	j label55
+label880:
+	mv a0, a2
+	j label198
 label820:
 	mv a1, s0
 	mv a2, zero
@@ -731,6 +734,10 @@ label820:
 label801:
 	mv a0, s0
 	j label198
+label905:
+	mv t1, a3
+	mv a3, zero
+	j label220
 label601:
 	mv a0, a1
 	j label140
@@ -738,26 +745,10 @@ label597:
 	mv a2, s4
 	mv a1, zero
 	j label127
-label592:
-	mv a0, s4
-	j label140
 label502:
 	mv t0, a2
 	mv a2, zero
 	j label96
-label880:
-	mv a0, a2
-	j label198
-label724:
-	mv a5, s0
-	mv a2, s9
-	mv a3, s0
-	j label172
-label494:
-	mv a5, s4
-	mv a3, s11
-	mv a2, s4
-	j label83
 label274:
 	mv a0, a1
 	mv a1, zero
@@ -768,19 +759,28 @@ label266:
 	mv a2, s4
 	mv a1, s0
 	j label6
-label368:
-	mv a0, s0
-	mv s0, zero
-	j label55
+label592:
+	mv a0, s4
+	j label140
+label494:
+	mv a5, s4
+	mv a3, s11
+	mv a2, s4
+	j label83
+label724:
+	mv a5, s0
+	mv a2, s9
+	mv a3, s0
+	j label172
 .p2align 2
 .globl main
 main:
 	addi sp, sp, -16
-pcrel1098:
+pcrel1094:
 	auipc a1, %pcrel_hi(buf)
 	sd ra, 0(sp)
 	sd s0, 8(sp)
-	addi s0, a1, %pcrel_lo(pcrel1098)
+	addi s0, a1, %pcrel_lo(pcrel1094)
 	mv a0, s0
 	jal getarray
 	mv t5, a0

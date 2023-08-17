@@ -597,7 +597,9 @@ label484:
 	mv s7, zero
 	addiw a2, a0, -48
 	bltu a2, s0, label498
-	j label664
+label664:
+	mv s9, zero
+	j label229
 label395:
 	mv s7, a0
 	mv s6, zero
@@ -627,25 +629,22 @@ label461:
 label466:
 	mv s8, zero
 	j label218
-label664:
-	mv s9, zero
-	j label229
-label307:
-	li a4, 1
-	mv a3, zero
-	j label169
-label280:
-	mv s9, zero
-	j label160
-label242:
-	mv s4, zero
-	j label146
 label255:
 	mv s6, zero
 	j label152
 label275:
 	mv s4, zero
 	j label154
+label280:
+	mv s9, zero
+	j label160
+label242:
+	mv s4, zero
+	j label146
+label307:
+	li a4, 1
+	mv a3, zero
+	j label169
 label303:
 	li a0, 1
 	j label177

@@ -472,15 +472,15 @@ power:
 	mv s0, a0
 	sd s1, 16(sp)
 	mv s1, a1
-	bne a1, zero, label763
+	bne a1, zero, label761
 	li a0, 1
-label761:
+label759:
 	ld ra, 0(sp)
 	ld s0, 8(sp)
 	ld s1, 16(sp)
 	addi sp, sp, 24
 	ret
-label763:
+label761:
 	srliw a2, s1, 31
 	mv a0, s0
 	add a3, s1, a2
@@ -492,10 +492,10 @@ label763:
 	lui a3, 524288
 	addiw a2, a3, 1
 	and a1, s1, a2
-	bne a1, a4, label761
+	bne a1, a4, label759
 	mv a1, s0
 	jal multiply
-	j label761
+	j label759
 .p2align 2
 fft:
 	addi sp, sp, -72
@@ -518,16 +518,62 @@ fft:
 	sd s7, 64(sp)
 	beq a2, s6, label563
 	srliw a0, a2, 31
-pcrel759:
+pcrel757:
 	auipc a3, %pcrel_hi(temp)
 	add a1, a2, a0
-	addi a0, a3, %pcrel_lo(pcrel759)
+	addi a0, a3, %pcrel_lo(pcrel757)
 	sraiw s3, a1, 1
 	addiw a1, a2, -3
 	sh2add a4, s3, a0
 	ble a2, zero, label583
 	mv a3, zero
 	j label565
+.p2align 2
+label696:
+	mv t3, a0
+.p2align 2
+label585:
+	addw a1, s2, t2
+	sh2add t4, a1, t1
+	sh2add t5, a1, s1
+	lw t6, 0(t5)
+	lw a1, 0(t4)
+	mv a0, t3
+	jal multiply
+	addw a1, t6, a0
+	mul a2, a1, s5
+	srli t0, a2, 63
+	srai a3, a2, 58
+	add a5, t0, a3
+	subw a3, t6, a0
+	mulw a4, a5, s4
+	subw a2, a1, a4
+	addw a1, a3, s4
+	sw a2, 0(t5)
+	mul a2, a1, s5
+	srli a4, a2, 63
+	srai a0, a2, 58
+	add a3, a4, a0
+	mulw a5, a3, s4
+	subw a2, a1, a5
+	sw a2, 0(t4)
+	mv a0, t3
+	mv a1, s0
+	jal multiply
+	addiw t2, t2, 1
+	bgt s3, t2, label696
+label563:
+	ld ra, 0(sp)
+	ld s1, 8(sp)
+	ld s6, 16(sp)
+	ld s2, 24(sp)
+	ld s0, 32(sp)
+	ld s5, 40(sp)
+	ld s4, 48(sp)
+	ld s3, 56(sp)
+	ld s7, 64(sp)
+	addi sp, sp, 72
+	ret
 .p2align 2
 label567:
 	sh2add t3, t0, s1
@@ -550,19 +596,6 @@ label565:
 	lw a5, 0(t2)
 	sw a5, 0(t3)
 	bgt a2, a3, label565
-	j label569
-label563:
-	ld ra, 0(sp)
-	ld s1, 8(sp)
-	ld s6, 16(sp)
-	ld s2, 24(sp)
-	ld s0, 32(sp)
-	ld s5, 40(sp)
-	ld s4, 48(sp)
-	ld s3, 56(sp)
-	ld s7, 64(sp)
-	addi sp, sp, 72
-	ret
 label569:
 	li a4, 3
 	ble a2, a4, label624
@@ -623,41 +656,6 @@ label583:
 	mv t2, zero
 	mv t3, s6
 	j label585
-.p2align 2
-label696:
-	mv t3, a0
-.p2align 2
-label585:
-	addw a1, s2, t2
-	sh2add t4, a1, t1
-	sh2add t5, a1, s1
-	lw t6, 0(t5)
-	lw a1, 0(t4)
-	mv a0, t3
-	jal multiply
-	addw a1, t6, a0
-	mul a2, a1, s5
-	srli t0, a2, 63
-	srai a3, a2, 58
-	add a5, t0, a3
-	subw a3, t6, a0
-	mulw a4, a5, s4
-	subw a2, a1, a4
-	addw a1, a3, s4
-	sw a2, 0(t5)
-	mul a2, a1, s5
-	srli a4, a2, 63
-	srai a0, a2, 58
-	add a3, a4, a0
-	mulw a5, a3, s4
-	subw a2, a1, a5
-	sw a2, 0(t4)
-	mv a0, t3
-	mv a1, s0
-	jal multiply
-	addiw t2, t2, 1
-	bgt s3, t2, label696
-	j label563
 label624:
 	mv a5, zero
 	j label570
@@ -665,21 +663,21 @@ label624:
 .globl main
 main:
 	addi sp, sp, -48
-pcrel875:
+pcrel873:
 	auipc a1, %pcrel_hi(a)
 	sd ra, 0(sp)
 	sd s0, 8(sp)
-	addi s0, a1, %pcrel_lo(pcrel875)
+	addi s0, a1, %pcrel_lo(pcrel873)
 	sd s3, 16(sp)
 	sd s2, 24(sp)
 	sd s4, 32(sp)
 	sd s1, 40(sp)
 	mv a0, s0
 	jal getarray
-pcrel876:
+pcrel874:
 	auipc a1, %pcrel_hi(b)
 	mv s3, a0
-	addi s2, a1, %pcrel_lo(pcrel876)
+	addi s2, a1, %pcrel_lo(pcrel874)
 	mv a0, s2
 	jal getarray
 	mv s4, a0
@@ -688,13 +686,13 @@ pcrel876:
 	li a6, 1
 	addiw a1, s3, -1
 	addw s1, s4, a1
-	ble s1, a6, label794
+	ble s1, a6, label792
 .p2align 2
-label792:
+label790:
 	slliw a0, a6, 1
 	mv a6, a0
-	bgt s1, a0, label792
-label794:
+	bgt s1, a0, label790
+label792:
 	lui a2, 243712
 	li a0, 3
 	divw a7, a2, a6
@@ -711,21 +709,21 @@ label794:
 	mv a2, a6
 	mv a3, s3
 	jal fft
-	ble a6, zero, label796
+	ble a6, zero, label794
 	mv t1, s0
 	mv t2, zero
 .p2align 2
-label804:
+label802:
 	sh2add a2, t2, s2
 	lw a0, 0(t1)
 	lw a1, 0(a2)
 	jal multiply
 	addiw t2, t2, 1
 	sw a0, 0(t1)
-	ble a6, t2, label796
+	ble a6, t2, label794
 	addi t1, t1, 4
-	j label804
-label796:
+	j label802
+label794:
 	lui a2, 243712
 	li a0, 3
 	subw a1, a2, a7
@@ -735,7 +733,7 @@ label796:
 	mv a0, s0
 	mv a2, a6
 	jal fft
-	ble a6, zero, label797
+	ble a6, zero, label795
 	mv a0, a6
 	lui a2, 243712
 	addiw a1, a2, -1
@@ -743,19 +741,19 @@ label796:
 	mv t3, zero
 	mv t2, s0
 	mv t1, a0
-	j label799
+	j label797
 .p2align 2
-label802:
+label800:
 	addi t2, t2, 4
 .p2align 2
-label799:
+label797:
 	lw a0, 0(t2)
 	mv a1, t1
 	jal multiply
 	addiw t3, t3, 1
 	sw a0, 0(t2)
-	bgt a6, t3, label802
-label797:
+	bgt a6, t3, label800
+label795:
 	li a0, 79
 	jal _sysy_stoptime
 	mv a0, s1

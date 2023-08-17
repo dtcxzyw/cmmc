@@ -155,14 +155,14 @@ main:
 	lui s6, 269312
 	lui s5, 263168
 	lui s4, 258048
-pcrel455:
+pcrel454:
 	auipc a0, %pcrel_hi(__cmmc_fp_constant_pool)
 	lui s1, 262144
 	lui s2, 264192
 	mv s8, zero
 	lui s3, 253952
 	mv s10, zero
-	addi s0, a0, %pcrel_lo(pcrel455)
+	addi s0, a0, %pcrel_lo(pcrel454)
 	lui a0, 4878
 	addiw s7, a0, -158
 	j label103
@@ -443,7 +443,12 @@ label123:
 	flt.s a4, f11, f12
 	and a2, a1, a4
 	bne a2, zero, label122
-	j label442
+	fmv.w.x f14, zero
+	addiw a3, a3, 1
+	li a0, 24
+	fadd.s f1, f1, f14
+	blt a3, a0, label109
+	j label126
 .p2align 2
 label113:
 	flw f11, 8(s0)
@@ -462,14 +467,6 @@ label113:
 	j label415
 .p2align 2
 label234:
-	fmv.w.x f14, zero
-	addiw a3, a3, 1
-	li a0, 24
-	fadd.s f1, f1, f14
-	blt a3, a0, label109
-	j label126
-.p2align 2
-label442:
 	fmv.w.x f14, zero
 	addiw a3, a3, 1
 	li a0, 24

@@ -631,6 +631,74 @@ static bool earlyFoldStore(MIRBasicBlock& block, CodeGenContext& ctx) {
     return modified;
 }
 
+static bool earlyFoldLoad(MIRBasicBlock& block, CodeGenContext& ctx) {
+    bool modified = false;
+    auto prevLoad = block.instructions().end();
+    std::unordered_map<MIROperand, MIROperand, MIROperandHasher> addressMap;
+    for(auto iter = block.instructions().begin(); iter != block.instructions().end(); ++iter) {
+        auto isLoadWord = [&](const MIRInst& inst, uint32_t alignmentReq) {
+            assert(inst.opcode() == LW);
+            const auto alignment = inst.getOperand(3).imm();
+            return alignment >= alignmentReq;
+        };
+
+        auto& inst = *iter;
+        if(inst.opcode() != LW) {
+            if(inst.opcode() == ADDI && inst.getOperand(2).isReloc())
+                addressMap.emplace(inst.getOperand(0), MIROperand::asReloc(inst.getOperand(2).reloc()));
+            auto& info = ctx.instInfo.getInstInfo(inst);
+            if(requireOneFlag(info.getInstFlag(), InstFlagSideEffect))
+                prevLoad = block.instructions().end();
+            continue;
+        }
+
+        if(prevLoad == block.instructions().end()) {
+            prevLoad = iter;
+            continue;
+        }
+
+        auto prevIter = prevLoad;
+        auto& prevInst = *prevLoad;
+        prevLoad = iter;
+
+        if(isLoadWord(prevInst, 8) && isLoadWord(inst, 4)) {
+            auto prevBase = prevInst.getOperand(2);
+            intmax_t prevOffset;
+            if(prevInst.getOperand(1).isImm()) {
+                prevOffset = prevInst.getOperand(1).imm();
+            } else {
+                prevBase = MIROperand::asReloc(prevInst.getOperand(1).reloc());
+                prevOffset = 0;
+            }
+
+            auto base = inst.getOperand(2);
+            if(prevBase != base) {
+                if(auto it = addressMap.find(base); it != addressMap.end())
+                    base = it->second;
+                if(prevBase != base)
+                    continue;
+            }
+            if(!inst.getOperand(1).isImm())
+                continue;
+            const auto offset = inst.getOperand(1).imm();
+            if(prevOffset + 4 != offset)
+                continue;
+
+            const auto val64 = MIROperand::asVReg(ctx.nextId(), OperandType::Int64);
+            // FIXME: endianness
+            const auto word1 = prevInst.getOperand(0);  // low
+            const auto word2 = inst.getOperand(0);      // high
+            prevInst.setOpcode(LD).setOperand<0>(val64);
+            block.instructions().insert(std::next(prevIter), MIRInst{ SEXT_W }.setOperand<0>(word1).setOperand<1>(val64));
+            inst = MIRInst{ SRAI }.setOperand<0>(word2).setOperand<1>(val64).setOperand<2>(
+                MIROperand::asImm(32, OperandType::Int64));
+            prevLoad = block.instructions().end();
+            modified = true;
+        }
+    }
+    return modified;
+}
+
 static bool earlyFoldDoubleWordCopy(MIRFunction& func, CodeGenContext& ctx) {
     std::unordered_map<MIROperand, uint32_t, MIROperandHasher> useCount;
     std::unordered_map<MIROperand, MIRInst*, MIROperandHasher> addressDef;
@@ -896,8 +964,8 @@ static bool simplifyOpWithZero(MIRFunction& func, const CodeGenContext&) {
         }
     return modified;
 }
-static bool isWProvider(uint32_t opcode) {
-    switch(opcode) {
+static bool isWProvider(const MIRInst& inst) {
+    switch(inst.opcode()) {
         case ADDIW:
         case ADDW:
         case SUBW:
@@ -918,6 +986,9 @@ static bool isWProvider(uint32_t opcode) {
         case LB:
         case LoadImm12:
             return true;
+        case SRLI:
+        case SRAI:
+            return inst.getOperand(2).imm() >= 32;
         default:
             return false;
     }
@@ -925,7 +996,9 @@ static bool isWProvider(uint32_t opcode) {
 static bool relaxWInst(MIRFunction& func, const CodeGenContext& ctx) {
     if(!ctx.flags.inSSAForm)
         return false;
-    std::unordered_map<MIRInst*, std::vector<MIRInst*>> users;
+    // func.dump(std::cerr, ctx);
+
+    // treat inputs as signed 32-bit integers
     auto isWUser = [](uint32_t opcode) {
         switch(opcode) {
             case ADDIW:
@@ -954,6 +1027,7 @@ static bool relaxWInst(MIRFunction& func, const CodeGenContext& ctx) {
         }
     };
 
+    // instructions should be relaxed
     auto isInterestWInst = [](uint32_t opcode) {
         switch(opcode) {
             case ADDIW:
@@ -966,6 +1040,7 @@ static bool relaxWInst(MIRFunction& func, const CodeGenContext& ctx) {
                 return false;
         }
     };
+    // need signed 32-bit inputs
     auto needWProvider = [](uint32_t opcode) {
         switch(opcode) {
             case ADDIW:
@@ -983,46 +1058,75 @@ static bool relaxWInst(MIRFunction& func, const CodeGenContext& ctx) {
         }
     };
 
+    std::unordered_map<MIRInst*, std::vector<MIRInst*>> users;
+    for(auto& block : func.blocks())
+        for(auto& inst : block->instructions())
+            if(isInterestWInst(inst.opcode()))
+                users[&inst];  // touch
+    if(users.empty())
+        return false;
+
+    std::unordered_map<MIROperand, std::vector<MIRInst*>, MIROperandHasher> defs;
     for(auto& block : func.blocks()) {
-        std::unordered_map<MIROperand, MIRInst*, MIROperandHasher> defs;
+        for(auto& inst : block->instructions()) {
+            auto& instInfo = ctx.instInfo.getInstInfo(inst);
+            for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx)
+                if(instInfo.getOperandFlag(idx) & OperandFlagDef) {
+                    defs[inst.getOperand(idx)].push_back(&inst);
+                    break;
+                }
+        }
+    }
+
+    for(auto& block : func.blocks()) {
         for(auto& inst : block->instructions()) {
             auto& instInfo = ctx.instInfo.getInstInfo(inst);
             for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx)
                 if(instInfo.getOperandFlag(idx) & OperandFlagUse) {
                     const auto def = defs.find(inst.getOperand(idx));
                     if(def != defs.cend()) {
-                        const auto userIter = users.find(def->second);
-                        if(userIter != users.end())
-                            userIter->second.push_back(&inst);
+                        for(auto defInst : def->second) {
+                            const auto userIter = users.find(defInst);
+                            if(userIter != users.end())
+                                userIter->second.push_back(&inst);
+                        }
                     }
                 }
-            for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx)
-                if(instInfo.getOperandFlag(idx) & OperandFlagDef) {
-                    defs[inst.getOperand(idx)] = &inst;
-                    break;
-                }
-            if(isInterestWInst(inst.opcode())) {
-                bool allWOperand = true;
-                if(needWProvider(inst.opcode())) {
-                    for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx)
-                        if(instInfo.getOperandFlag(idx) & OperandFlagUse) {
-                            const auto def = defs.find(inst.getOperand(idx));
-                            if(def != defs.cend()) {
-                                if(isWProvider(def->second->opcode()))
-                                    continue;
+        }
+    }
+
+    std::unordered_set<MIRInst*> noRelax;
+    for(auto& [u, userList] : users) {
+        auto& inst = *u;
+        auto& instInfo = ctx.instInfo.getInstInfo(inst);
+        if(isInterestWInst(inst.opcode())) {
+            bool allWOperand = true;
+            if(needWProvider(inst.opcode())) {
+                for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx)
+                    if(instInfo.getOperandFlag(idx) & OperandFlagUse) {
+                        const auto def = defs.find(inst.getOperand(idx));
+                        bool valid = true;
+                        if(def != defs.cend()) {
+                            for(auto defInst : def->second) {
+                                if(!isWProvider(*defInst)) {
+                                    valid = false;
+                                    break;
+                                }
                             }
+                        } else
+                            valid = false;
+                        if(!valid) {
                             allWOperand = false;
                             break;
                         }
-                }
-                if(allWOperand)
-                    users[&inst];  // touch
+                    }
             }
+            if(!allWOperand)
+                noRelax.emplace(u);
         }
     }
 
     bool modified = false;
-    std::unordered_set<MIRInst*> noRelax;
     for(auto& [u, userList] : users) {
         if(noRelax.count(u))
             continue;
@@ -1035,7 +1139,6 @@ static bool relaxWInst(MIRFunction& func, const CodeGenContext& ctx) {
             }
         }
 
-        // TODO: relax sext.w if its input is a signed 32-bit integer.
         if(allWUser) {
             RISCVInst relaxed;
             switch(u->opcode()) {
@@ -1082,6 +1185,10 @@ static bool relaxWInst(MIRFunction& func, const CodeGenContext& ctx) {
                     noRelax.insert(user);
         }
     }
+    // if(modified) {
+    //     std::cerr << "modified\n";
+    //     func.dump(std::cerr, ctx);
+    // }
     return modified;
 }
 
@@ -1093,7 +1200,7 @@ static bool removeSExtW(MIRFunction& func, const CodeGenContext& ctx) {
             if(inst.opcode() == SEXT_W) {
                 const auto& src = inst.getOperand(1);
                 if(auto iter = defs.find(src); iter != defs.cend()) {
-                    if(isWProvider(iter->second->opcode())) {
+                    if(isWProvider(*iter->second)) {
                         inst.setOpcode(MoveGPR);
                         modified = true;
                     }
@@ -1123,6 +1230,7 @@ bool RISCVScheduleModel_sifive_u74::peepholeOpt(MIRFunction& func, CodeGenContex
             if(!ctx.flags.inSSAForm)
                 modified |= largeImmMaterialize(*block);
             modified |= earlyFoldStore(*block, ctx);
+            modified |= earlyFoldLoad(*block, ctx);
         }
     }
     if(ctx.flags.postSA) {

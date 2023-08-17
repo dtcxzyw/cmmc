@@ -42,7 +42,7 @@ label7:
 	addiw t1, a2, 13
 	addiw t0, a4, 1
 	bne a4, a1, label31
-	addiw a4, t2, 10
+	addi a4, t2, 10
 	addiw t2, a2, 8
 	addw t5, t3, a4
 	addiw t3, a2, 10

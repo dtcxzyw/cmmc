@@ -33,19 +33,19 @@ main:
 	sd a0, 104(sp)
 	jal getint
 	li s4, 3
-pcrel299:
+pcrel285:
 	auipc a1, %pcrel_hi(a)
 	addiw s2, a0, -3
 	li s1, 400
 	sd a0, 112(sp)
 	mv t2, a0
-	addi s6, a1, %pcrel_lo(pcrel299)
-pcrel300:
+	addi s6, a1, %pcrel_lo(pcrel285)
+pcrel286:
 	auipc a0, %pcrel_hi(b)
-pcrel301:
+pcrel287:
 	auipc a1, %pcrel_hi(res)
-	addi s0, a0, %pcrel_lo(pcrel300)
-	addi s5, a1, %pcrel_lo(pcrel301)
+	addi s0, a0, %pcrel_lo(pcrel286)
+	addi s5, a1, %pcrel_lo(pcrel287)
 	ld a0, 104(sp)
 	ble a0, zero, label13
 	mv s3, s6
@@ -54,7 +54,16 @@ pcrel301:
 	bgt t2, zero, label6
 	j label11
 .p2align 2
-label89:
+label10:
+	addi s8, s8, 4
+	mv s9, a1
+.p2align 2
+label7:
+	jal getint
+	addiw a1, s9, 1
+	sw a0, 0(s8)
+	ld t2, 112(sp)
+	bgt t2, a1, label10
 	addiw s7, s7, 1
 	ld a0, 104(sp)
 	ble a0, s7, label13
@@ -68,18 +77,6 @@ label6:
 	mv s8, s3
 	mv s9, zero
 	j label7
-.p2align 2
-label10:
-	addi s8, s8, 4
-	mv s9, a1
-.p2align 2
-label7:
-	jal getint
-	addiw a1, s9, 1
-	sw a0, 0(s8)
-	ld t2, 112(sp)
-	bgt t2, a1, label10
-	j label89
 label13:
 	jal getint
 	mv s8, a0
@@ -91,7 +88,14 @@ label13:
 	bgt a0, zero, label62
 	j label67
 .p2align 2
-label208:
+label66:
+	addi s10, s10, 4
+.p2align 2
+label63:
+	jal getint
+	addiw s11, s11, 1
+	sw a0, 0(s10)
+	bgt s3, s11, label66
 	addiw s9, s9, 1
 	ble s8, s9, label14
 .p2align 2
@@ -103,16 +107,6 @@ label62:
 	mv s10, s7
 	mv s11, zero
 	j label63
-.p2align 2
-label66:
-	addi s10, s10, 4
-.p2align 2
-label63:
-	jal getint
-	addiw s11, s11, 1
-	sw a0, 0(s10)
-	bgt s3, s11, label66
-	j label208
 label14:
 	ld a0, 104(sp)
 	ble a0, zero, label57
@@ -139,7 +133,9 @@ label19:
 	mv a0, zero
 	ld t2, 112(sp)
 	bgt t2, zero, label25
-	j label23
+	li a0, 1
+	bgt s3, a0, label24
+	j label119
 .p2align 2
 label176:
 	sw t1, 0(a4)
@@ -216,6 +212,14 @@ label125:
 	addiw a0, a0, 1
 	bgt s3, a0, label24
 	j label119
+.p2align 2
+label253:
+	sw t1, 0(a4)
+	addiw a0, a0, 1
+	bgt s3, a0, label24
+	addiw a3, a3, 1
+	ld a0, 104(sp)
+	bgt a0, a3, label56
 label250:
 	mv s0, zero
 	bgt s3, zero, label49
@@ -268,16 +272,7 @@ label67:
 	addiw s9, s9, 1
 	bgt s8, s9, label68
 	j label14
-label23:
-	addiw a0, a0, 1
-	bgt s3, a0, label24
-	j label119
 label44:
-	addiw a3, a3, 1
-	ld a0, 104(sp)
-	bgt a0, a3, label56
-	j label250
-label119:
 	addiw a3, a3, 1
 	ld a0, 104(sp)
 	bgt a0, a3, label56
@@ -286,12 +281,7 @@ label119:
 label251:
 	addiw a0, a0, 1
 	bgt s3, a0, label24
-	j label119
-.p2align 2
-label253:
-	sw t1, 0(a4)
-	addiw a0, a0, 1
-	bgt s3, a0, label24
+label119:
 	addiw a3, a3, 1
 	ld a0, 104(sp)
 	bgt a0, a3, label56

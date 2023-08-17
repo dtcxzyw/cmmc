@@ -22,8 +22,8 @@ main:
 	jal getint
 	mv s2, a0
 	jal getint
-	mv s6, zero
 	li s5, 10
+	mv s6, zero
 	mv s3, a0
 .p2align 2
 label2:
@@ -40,115 +40,120 @@ label6:
 	beq s2, zero, label7
 	remw a2, a2, s2
 label7:
-	lw t0, 64(sp)
-	lw a5, 68(sp)
-	lw a3, 72(sp)
-	sltu t4, zero, a3
-	lw a1, 76(sp)
-	lw t1, 80(sp)
-	sltiu t3, a1, 1
-	lw a4, 84(sp)
-	and t2, t3, t4
+	ld a1, 64(sp)
+	ld t0, 72(sp)
+	srai a4, a1, 32
+	sext.w a5, a1
+	sext.w a3, t0
+	ld t3, 80(sp)
+	srai a1, t0, 32
+	sltu t5, zero, a3
+	sext.w t1, t3
+	srai t0, t3, 32
+	sltiu t4, a1, 1
+	and t2, t4, t5
 	mv t4, zero
-	beq a4, zero, label152
+	beq t0, zero, label157
 	mv t4, t1
-label152:
+label157:
 	mv t3, t2
-	bne a5, zero, label154
+	bne a4, zero, label159
 	mv t3, t4
-label154:
-	lw t2, 88(sp)
-	mv t5, t3
+label159:
+	ld t5, 88(sp)
+	mv a6, t3
+	sext.w t2, t5
 	addw t4, t3, t2
-	beq t2, zero, label156
-	mv t5, t4
-label156:
-	addiw t4, t5, 1
+	beq t2, zero, label161
+	mv a6, t4
+label161:
+	addiw t4, a6, 1
 	addw t3, s3, a2
 	sltiu t6, s3, 1
-	mv t5, a2
-	bne t6, zero, label158
-	mv t5, t3
-label158:
-	addiw a6, t5, 1
-	lw t3, 92(sp)
+	mv a7, a2
+	bne t6, zero, label163
+	mv a7, t3
+label163:
+	addiw a6, a7, 1
+	srai t3, t5, 32
 	beq t3, zero, label79
 	remw a2, t4, t3
 label9:
-	lw t5, 96(sp)
-	mv s4, t5
-	lw t4, 100(sp)
+	ld a7, 96(sp)
+	srai t4, a7, 32
+	sext.w t5, a7
 	sltiu s5, t4, 1
+	mv s4, t5
 	addw a7, t5, s5
-	bne t4, zero, label160
+	bne t4, zero, label165
 	mv s4, a7
-label160:
-	addiw a7, s4, 1
-	mv s6, a7
-	subw s5, a7, s0
-	bne a0, zero, label162
+label165:
+	addiw s5, s4, 1
 	mv s6, s5
-label162:
+	subw a7, s5, s0
+	bne a0, zero, label167
+	mv s6, a7
+label167:
 	mulw s4, a2, s6
-	mv a7, t0
-	bne a6, zero, label164
+	mv a7, a5
+	bne a6, zero, label169
 	mv a7, s4
-label164:
-	sltiu a2, s2, 1
-	mv a6, a2
-	addw s4, s3, a2
-	bne t6, zero, label166
-	mv a6, s4
-label166:
-	addiw a2, a6, 1
-	beq a2, zero, label12
-	remw s1, s1, a2
+label169:
+	sltiu s5, s2, 1
+	mv a2, s5
+	addw a6, s3, s5
+	bne t6, zero, label171
+	mv a2, a6
+label171:
+	addiw t6, a2, 1
+	beq t6, zero, label12
+	remw s1, s1, t6
 label12:
 	addw a2, a7, s1
 	mv a6, a7
-	beq s1, zero, label168
+	beq s1, zero, label173
 	mv a6, a2
-label168:
+label173:
 	addiw t6, a6, 1
-	subw a2, t0, a5
-	mv a6, t0
-	beq a5, zero, label170
+	subw a2, a5, a4
+	mv a6, a5
+	beq a4, zero, label175
 	mv a6, a2
-label170:
+label175:
 	mulw a2, t6, a6
 	beq a3, zero, label14
 	remw a2, a2, a3
 label14:
-	subw a3, t1, a4
-	mv a5, t1
-	beq a4, zero, label172
-	mv a5, a3
-label172:
-	addiw a3, a5, 1
+	subw a3, t1, t0
+	mv a4, t1
+	beq t0, zero, label177
+	mv a4, a3
+label177:
+	addiw a3, a4, 1
 	bne t2, zero, label16
 label17:
 	sltiu t0, t5, 1
-	mv a5, t3
-	subw a4, t3, t0
-	bne t5, zero, label174
-	mv a5, a4
-label174:
-	mulw a3, a3, a5
+	mv a4, t3
+	subw a5, t3, t0
+	bne t5, zero, label179
+	mv a4, a5
+label179:
+	mulw a3, a3, a4
 	beq t4, zero, label19
 	subw a4, zero, t4
 	remw a3, a3, a4
 label19:
 	addw a4, s0, a3
 	mv a5, a3
-	bne a0, zero, label176
+	bne a0, zero, label181
 	mv a5, a4
-label176:
+label181:
 	addiw a0, a5, 1
 	mv a3, a1
 	subw a4, a1, a0
-	beq a0, zero, label178
+	beq a0, zero, label183
 	mv a3, a4
-label178:
+label183:
 	mulw a0, a2, a3
 	ld ra, 0(sp)
 	ld s4, 8(sp)

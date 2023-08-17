@@ -136,12 +136,12 @@ main:
 	sd s3, 32(sp)
 	sd s4, 40(sp)
 	sd a0, 48(sp)
-pcrel169:
+pcrel168:
 	auipc a0, %pcrel_hi(__HELLO)
 	sd zero, 56(sp)
-	addi s2, a0, %pcrel_lo(pcrel169)
+	addi s2, a0, %pcrel_lo(pcrel168)
 	sw zero, 64(sp)
-	lw a1, %pcrel_lo(pcrel169)(a0)
+	lw a1, %pcrel_lo(pcrel168)(a0)
 	beq a1, zero, label41
 .p2align 2
 label3:

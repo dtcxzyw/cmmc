@@ -170,10 +170,10 @@ label85:
 main:
 	# stack usage: CalleeArg[0] Local[0] RegSpill[8] CalleeSaved[104]
 	addi sp, sp, -112
-pcrel514:
+pcrel511:
 	auipc a0, %pcrel_hi(fa)
 	sd ra, 0(sp)
-	addi a5, a0, %pcrel_lo(pcrel514)
+	addi a5, a0, %pcrel_lo(pcrel511)
 	sd s0, 8(sp)
 	li s0, 10
 	sd s5, 16(sp)
@@ -246,13 +246,13 @@ label151:
 	mv s7, s5
 label452:
 	auipc a0, %pcrel_hi(u)
-pcrel515:
+pcrel512:
 	auipc a1, %pcrel_hi(v)
 	addi s3, a0, %pcrel_lo(label452)
-	addi s4, a1, %pcrel_lo(pcrel515)
-pcrel516:
+	addi s4, a1, %pcrel_lo(pcrel512)
+pcrel513:
 	auipc a0, %pcrel_hi(c)
-	addi s5, a0, %pcrel_lo(pcrel516)
+	addi s5, a0, %pcrel_lo(pcrel513)
 	ble s7, zero, label240
 	mv s6, s3
 	mv s8, zero
@@ -417,7 +417,14 @@ label176:
 	addi a2, a3, -48
 	addw s11, s10, a2
 	bltu a1, s0, label309
-	j label308
+	subw a1, zero, s11
+	mv a0, a1
+	bne s9, zero, label458
+	mv a0, s11
+	sh2add a1, s8, s5
+	addiw s8, s8, 1
+	sw s11, 0(a1)
+	bgt s7, s8, label181
 label240:
 	mv a2, zero
 	mv a3, zero
@@ -447,17 +454,6 @@ label199:
 	sw t0, 0(a1)
 	blt a3, zero, label199
 	j label198
-.p2align 2
-label308:
-	subw a1, zero, s11
-	mv a0, a1
-	bne s9, zero, label458
-	mv a0, s11
-	sh2add a1, s8, s5
-	addiw s8, s8, 1
-	sw s11, 0(a1)
-	bgt s7, s8, label181
-	j label240
 label246:
 	mv s10, a0
 	mv s9, zero

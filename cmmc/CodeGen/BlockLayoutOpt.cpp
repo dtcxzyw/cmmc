@@ -124,9 +124,9 @@ static BlockSeq solvePettisHansen(const std::vector<uint32_t>& weights, const st
         graph[u].push_back(v);
 
         // break loop -> exit
-        constexpr double coldBranchFreqThreshold = 1.0 / static_cast<double>(estimatedLoopTripCount) + 1e-5;
-        if(prob < coldBranchFreqThreshold)
-            continue;
+        // constexpr double coldBranchFreqThreshold = 1.0 / static_cast<double>(estimatedLoopTripCount) + 1e-5;
+        // if(prob < coldBranchFreqThreshold)
+        //     continue;
 
         auto& [pv, cv] = chains[v];
         if(findFa(v) != v) {

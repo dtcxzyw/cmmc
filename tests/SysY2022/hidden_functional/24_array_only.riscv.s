@@ -87,7 +87,7 @@ label83:
 	lw a1, 56(sp)
 	addiw a0, s0, -1
 	slliw a1, a1, 1
-	beq a0, zero, label151
+	beq a0, zero, label152
 .p2align 2
 label23:
 	addiw a0, a0, -1
@@ -116,10 +116,11 @@ label36:
 	slliw a0, a0, 1
 	bne a1, zero, label36
 label34:
-	lw s5, 56(sp)
-	lw a1, 60(sp)
+	ld a1, 56(sp)
+	srai a2, a1, 32
+	sext.w s5, a1
 	addw s2, a0, s5
-	bne s2, a1, label3
+	bne s2, a2, label3
 label39:
 	li a0, 10
 	jal putch
@@ -134,7 +135,7 @@ label39:
 	addi sp, sp, 64
 	ret
 .p2align 2
-label151:
+label152:
 	subw s5, a1, s1
 	sw s5, 56(sp)
 	blt s4, s3, label6

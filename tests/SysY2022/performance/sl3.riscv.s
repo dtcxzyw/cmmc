@@ -28,27 +28,27 @@ main:
 	li a0, 13
 	jal _sysy_starttime
 	li a1, 75
-pcrel476:
+pcrel468:
 	auipc a0, %pcrel_hi(x)
 	addiw s0, s5, -1
 	slli s2, a1, 5
-	addi s4, a0, %pcrel_lo(pcrel476)
+	addi s4, a0, %pcrel_lo(pcrel468)
 	sub s3, zero, s2
 	lui a0, 352
 	addiw s6, a0, -1792
-	ble s5, zero, label337
-pcrel477:
+	ble s5, zero, label329
+pcrel469:
 	auipc a0, %pcrel_hi(cmmc_parallel_body_payload_0)
-pcrel478:
+pcrel470:
 	auipc a3, %pcrel_hi(cmmc_parallel_body_0)
-	sw s5, %pcrel_lo(pcrel477)(a0)
-	addi a2, a3, %pcrel_lo(pcrel478)
+	sw s5, %pcrel_lo(pcrel469)(a0)
+	addi a2, a3, %pcrel_lo(pcrel470)
 	mv a1, s5
 	mv a0, zero
 	jal cmmcParallelFor
-label337:
+label329:
 	li a0, 1
-	ble s0, a0, label368
+	ble s0, a0, label360
 	add t0, s4, s6
 	mv a4, s4
 	li t1, 1
@@ -64,12 +64,12 @@ label337:
 	li t4, 1
 	addi t3, a3, 4
 	add a3, a0, s2
-	j label349
+	j label341
 .p2align 2
-label356:
+label348:
 	addi t3, t3, 4
 .p2align 2
-label349:
+label341:
 	sh2add a6, t4, a1
 	lw t6, 0(t3)
 	sh2add a7, t4, a2
@@ -88,8 +88,8 @@ label349:
 	addw a7, t6, s7
 	divw a6, a7, s1
 	sw a6, 0(t5)
-	bgt s0, t4, label356
-	ble s0, t2, label419
+	bgt s0, t4, label348
+	ble s0, t2, label411
 	add a0, a0, s2
 	mul t4, t2, s2
 	add a2, a0, s3
@@ -99,10 +99,10 @@ label349:
 	li t4, 1
 	addi t3, a3, 4
 	add a3, a0, s2
-	j label349
+	j label341
 .p2align 2
-label419:
-	ble s0, t1, label471
+label411:
+	ble s0, t1, label463
 	add a0, t0, s6
 	mv a4, t0
 	addiw t1, t1, 1
@@ -118,11 +118,11 @@ label419:
 	li t4, 1
 	addi t3, a3, 4
 	add a3, a0, s2
-	j label349
-label471:
+	j label341
+label463:
 	mv s0, t0
 	mv s1, t2
-label338:
+label330:
 	li a0, 53
 	jal _sysy_stoptime
 	mv a0, s5
@@ -154,22 +154,22 @@ label338:
 	ld s7, 64(sp)
 	addi sp, sp, 72
 	ret
-label368:
+label360:
 	mv s0, s4
 	li s1, 1
-	j label338
+	j label330
 .p2align 2
 cmmc_parallel_body_0:
 	mv t4, a0
 	mv a3, a1
-pcrel335:
+pcrel327:
 	auipc a2, %pcrel_hi(cmmc_parallel_body_payload_0)
 	li a5, 75
 	lui t0, 352
 	li t1, 1
 	li a1, 1
 	addiw a4, t0, -1792
-	lw a0, %pcrel_lo(pcrel335)(a2)
+	lw a0, %pcrel_lo(pcrel327)(a2)
 	slli a2, a5, 5
 	slli a5, t1, 32
 	bgt a0, zero, label3
@@ -220,7 +220,9 @@ label67:
 	bgt a0, t4, label68
 	addiw t2, t2, 1
 	bgt a0, t2, label67
-	j label310
+	addiw t0, t0, 1
+	bgt a3, t0, label66
+	j label2
 label4:
 	addiw t0, a0, -3
 	addiw t1, a0, -18
@@ -316,11 +318,6 @@ label309:
 	addiw t2, t2, 1
 	bgt a0, t2, label67
 	j label65
-.p2align 2
-label310:
-	addiw t0, t0, 1
-	bgt a3, t0, label66
-	j label2
 label88:
 	mul t3, t4, a4
 	mv t6, zero
@@ -371,7 +368,10 @@ label48:
 label44:
 	addiw t4, t4, 1
 	bgt a0, t4, label47
-	j label45
+label45:
+	addiw t2, t2, 1
+	bgt a3, t2, label46
+	j label2
 .p2align 2
 label303:
 	bgt a0, t6, label48
@@ -394,7 +394,3 @@ label46:
 	sd a6, 8(t1)
 	bgt t0, t6, label53
 	j label43
-label45:
-	addiw t2, t2, 1
-	bgt a3, t2, label46
-	j label2

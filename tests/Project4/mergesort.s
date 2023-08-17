@@ -353,17 +353,6 @@ label148:
 	nop
 	b label312
 	nop
-label311:
-	sll $t4, $t3, 2
-	addu $t4, $s0, $t4
-	lw $t4, 0($t4)
-	sw $t4, 0($t0)
-	addiu $t3, $t3, 1
-	addiu $t1, $t1, 1
-	bne $s3, $t1, label20
-	nop
-	b label309
-	nop
 label186:
 	sll $t4, $t3, 2
 	addu $t4, $s0, $t4
@@ -375,6 +364,17 @@ label186:
 	nop
 	b label312
 	nop
+label311:
+	sll $t4, $t3, 2
+	addu $t4, $s0, $t4
+	lw $t4, 0($t4)
+	sw $t4, 0($t0)
+	addiu $t3, $t3, 1
+	addiu $t1, $t1, 1
+	bne $s3, $t1, label20
+	nop
+	b label309
+	nop
 .globl main
 main:
 	# stack usage: CalleeArg[0] Local[800] RegSpill[0] CalleeSaved[4]
@@ -385,42 +385,42 @@ main:
 	jal read
 	nop
 	move $t6, $v0
-	blez $v0, label348
+	blez $v0, label341
 	nop
 	move $t0, $t7
 	move $t1, $zero
-label344:
+label337:
 	jal read
 	nop
 	sw $v0, 0($t0)
 	addiu $t1, $t1, 1
 	subu $t2, $t6, $t1
-	blez $t2, label348
+	blez $t2, label341
 	nop
 	addiu $t0, $t0, 4
-	b label344
+	b label337
 	nop
-label348:
+label341:
 	move $a0, $t7
 	move $a2, $zero
 	move $a3, $t6
 	jal merge
 	nop
-	blez $t6, label354
+	blez $t6, label347
 	nop
 	move $t0, $zero
-label350:
+label343:
 	lw $a0, 0($t7)
 	jal write
 	nop
 	addiu $t0, $t0, 1
 	subu $t1, $t6, $t0
-	blez $t1, label354
+	blez $t1, label347
 	nop
 	addiu $t7, $t7, 4
-	b label350
+	b label343
 	nop
-label354:
+label347:
 	move $v0, $zero
 	lw $ra, 16($sp)
 	addiu $sp, $sp, 824

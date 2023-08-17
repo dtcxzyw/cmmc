@@ -105,7 +105,7 @@ InstInfo:
     Flag: [Terminator, NoFallthrough]
   ## 2.6 Load and Store Instructions
   Load:
-    Format: $Mnemonic:Template $Rd:GPR[Def], $Imm:Imm12[Metadata]($Rs1:BaseLike[Use])
+    Format: "$Mnemonic:Template $Rd:GPR[Def], $Imm:Imm12[Metadata]($Rs1:BaseLike[Use]) # $Alignment:Align[Metadata]"
     Flag: [Load]
   InstanceLoad:
     Template: Load
@@ -222,7 +222,7 @@ InstInfo:
 
   ## 11.5 Single-Precision Load and Store Instructions
   FLW:
-    Format: flw $Rd:FPR[Def], $Imm:Imm12[Metadata]($Rs1:BaseLike[Use])
+    Format: "flw $Rd:FPR[Def], $Imm:Imm12[Metadata]($Rs1:BaseLike[Use]) # $Alignment:Align[Metadata]"
     Flag: [Load]
   FSW:
     Format: "fsw $Rs2:FPR[Use], $Imm:Imm12[Metadata]($Rs1:BaseLike[Use]) # $Alignment:Align[Metadata]"
@@ -1646,6 +1646,7 @@ InstSelection:
       InstLoad:
         Dst: $Dst
         Addr: $Addr
+        Alignment: $Alignment
         $Predicate: selectAddrOffset($Addr, ctx, [$Base], [$Offset])
     Replace:
       Load:
@@ -1654,6 +1655,7 @@ InstSelection:
         Rd: $Dst
         Rs1: $Base
         Imm: $Offset
+        Alignment: $Alignment
 
   - Pattern:
       InstZExt:
@@ -1662,6 +1664,7 @@ InstSelection:
           InstLoad:
             Dst: $Val
             Addr: $Addr
+            Alignment: $Alignment
             $Predicate: ctx.isSafeToUse($Addr, $Val) && selectAddrOffset($Addr, ctx, [$Base], [$Offset])
     Replace:
       Load:
@@ -1670,6 +1673,7 @@ InstSelection:
         Rd: $Dst
         Rs1: $Base
         Imm: $Offset
+        Alignment: $Alignment
 
   - Pattern:
       InstStore:

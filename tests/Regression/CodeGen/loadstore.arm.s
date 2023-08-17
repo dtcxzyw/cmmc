@@ -263,3 +263,12 @@ copy2:
 	ldr r1, [r0, #4]
 	str r1, [r0, #12]
 	bx lr
+.p2align 4
+.globl merge_load
+merge_load:
+	movw r0, #:lower16:x
+	movt r0, #:upper16:x
+	ldr r1, [r0, #0]
+	ldr r0, [r0, #4]
+	add r0, r1, r0
+	bx lr

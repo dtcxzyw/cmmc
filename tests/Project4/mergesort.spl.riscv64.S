@@ -270,14 +270,6 @@ label148:
 	sw a4, 0(a0)
 	bne s1, a1, label34
 	j label309
-label308:
-	sh2add a5, a3, s0
-	addiw a1, a1, 1
-	addiw a3, a3, 1
-	lw a4, 0(a5)
-	sw a4, 0(a0)
-	bne s3, a1, label20
-	j label306
 label186:
 	sh2add a5, a3, s0
 	addiw a1, a1, 1
@@ -286,6 +278,14 @@ label186:
 	sw a4, 0(a0)
 	bne s1, a1, label34
 	j label309
+label308:
+	sh2add a5, a3, s0
+	addiw a1, a1, 1
+	addiw a3, a3, 1
+	lw a4, 0(a5)
+	sw a4, 0(a0)
+	bne s3, a1, label20
+	j label306
 .globl main
 main:
 	# stack usage: CalleeArg[0] Local[800] RegSpill[0] CalleeSaved[8]
@@ -295,32 +295,32 @@ main:
 	sd ra, 0(sp)
 	jal read
 	mv t2, a0
-	ble a0, zero, label345
+	ble a0, zero, label338
 	mv a1, t3
 	mv a2, zero
-label341:
+label334:
 	jal read
 	addiw a2, a2, 1
 	sw a0, 0(a1)
-	ble t2, a2, label345
+	ble t2, a2, label338
 	addi a1, a1, 4
-	j label341
-label345:
+	j label334
+label338:
 	mv a0, t3
 	mv a2, zero
 	mv a1, a4
 	mv a3, t2
 	jal merge
-	ble t2, zero, label351
+	ble t2, zero, label344
 	mv a1, zero
-label347:
+label340:
 	lw a0, 0(t3)
 	jal write
 	addiw a1, a1, 1
-	ble t2, a1, label351
+	ble t2, a1, label344
 	addi t3, t3, 4
-	j label347
-label351:
+	j label340
+label344:
 	mv a0, zero
 	ld ra, 0(sp)
 	addi sp, sp, 808

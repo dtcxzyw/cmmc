@@ -54,21 +54,19 @@ label2:
 	or a2, a3, a5
 	or a1, a2, a4
 	bne a1, zero, label2
-pcrel486:
+pcrel479:
 	auipc a1, %pcrel_hi(input)
-pcrel487:
+pcrel480:
 	auipc a2, %pcrel_hi(program)
-	addi s7, a1, %pcrel_lo(pcrel486)
-	addi s6, a2, %pcrel_lo(pcrel487)
+	addi s7, a1, %pcrel_lo(pcrel479)
+	addi s6, a2, %pcrel_lo(pcrel480)
 	beq a0, s9, label87
 	mv s10, s6
 	mv s11, zero
 	sw a0, 0(s6)
 	j label66
 .p2align 2
-label67:
-	addiw s11, s11, 1
-	beq a0, s9, label318
+label68:
 	addi s10, s10, 4
 	sw a0, 0(s10)
 .p2align 2
@@ -83,8 +81,8 @@ label66:
 	or a2, a3, a5
 	or a1, a2, a4
 	bne a1, zero, label66
-	j label67
-label318:
+	addiw s11, s11, 1
+	bne a0, s9, label68
 	mv s8, s11
 label4:
 	jal getch
@@ -95,9 +93,9 @@ label12:
 	li a0, 116
 	jal _sysy_starttime
 	mv a2, zero
-pcrel488:
+pcrel481:
 	auipc a3, %pcrel_hi(return_a)
-	addi a0, a3, %pcrel_lo(pcrel488)
+	addi a0, a3, %pcrel_lo(pcrel481)
 	mv a1, a0
 .p2align 2
 label14:
@@ -140,10 +138,10 @@ label14:
 	j label14
 label17:
 	auipc a2, %pcrel_hi(tape)
-pcrel489:
+pcrel482:
 	auipc a3, %pcrel_hi(output)
 	addi a1, a2, %pcrel_lo(label17)
-	addi s10, a3, %pcrel_lo(pcrel489)
+	addi s10, a3, %pcrel_lo(pcrel482)
 	ble s8, zero, label183
 	mv a2, zero
 	mv t0, zero
@@ -166,7 +164,40 @@ label18:
 	addiw a4, a4, 1
 	addiw t0, t0, 1
 	bgt s8, t0, label18
-	j label461
+label461:
+	mv s0, a2
+label52:
+	li a0, 118
+	jal _sysy_stoptime
+	ble s0, zero, label59
+	mv s1, zero
+	j label55
+.p2align 2
+label58:
+	addi s10, s10, 4
+.p2align 2
+label55:
+	lw a0, 0(s10)
+	jal putch
+	addiw s1, s1, 1
+	bgt s0, s1, label58
+label59:
+	mv a0, zero
+	ld ra, 0(sp)
+	ld s0, 8(sp)
+	ld s5, 16(sp)
+	ld s8, 24(sp)
+	ld s1, 32(sp)
+	ld s6, 40(sp)
+	ld s9, 48(sp)
+	ld s2, 56(sp)
+	ld s3, 64(sp)
+	ld s4, 72(sp)
+	ld s7, 80(sp)
+	ld s10, 88(sp)
+	ld s11, 96(sp)
+	addi sp, sp, 104
+	ret
 .p2align 2
 label190:
 	beq t1, s3, label45
@@ -213,41 +244,8 @@ label40:
 	addi t3, t4, 1
 	subw t2, t3, t6
 	bgt t2, zero, label40
-	j label274
-label461:
-	mv s0, a2
-label52:
-	li a0, 118
-	jal _sysy_stoptime
-	ble s0, zero, label59
-	mv s1, zero
-	j label55
-.p2align 2
-label58:
-	addi s10, s10, 4
-.p2align 2
-label55:
-	lw a0, 0(s10)
-	jal putch
-	addiw s1, s1, 1
-	bgt s0, s1, label58
-label59:
-	mv a0, zero
-	ld ra, 0(sp)
-	ld s0, 8(sp)
-	ld s5, 16(sp)
-	ld s8, 24(sp)
-	ld s1, 32(sp)
-	ld s6, 40(sp)
-	ld s9, 48(sp)
-	ld s2, 56(sp)
-	ld s3, 64(sp)
-	ld s4, 72(sp)
-	ld s7, 80(sp)
-	ld s10, 88(sp)
-	ld s11, 96(sp)
-	addi sp, sp, 104
-	ret
+	mv t0, t1
+	j label46
 label30:
 	sh2add t3, a4, a1
 	addiw t1, a3, -1
@@ -279,9 +277,6 @@ label34:
 	sh2add t1, a4, a1
 	sw zero, 0(t1)
 	j label46
-label183:
-	mv s0, zero
-	j label52
 .p2align 2
 label44:
 	sh2add t1, a4, a1
@@ -291,6 +286,13 @@ label44:
 	sw t2, 0(t1)
 	bgt s8, t0, label18
 	j label461
+label37:
+	sh2add t2, a4, a1
+	sh2add t3, a2, s10
+	lw t1, 0(t2)
+	addiw a2, a2, 1
+	sw t1, 0(t3)
+	j label46
 label235:
 	sh2add t2, a5, s7
 	sh2add t3, a4, a1
@@ -301,16 +303,9 @@ label235:
 label220:
 	mv a3, t1
 	j label46
-label274:
-	mv t0, t1
-	j label46
+label183:
+	mv s0, zero
+	j label52
 label87:
 	mv s8, zero
 	j label4
-label37:
-	sh2add t2, a4, a1
-	sh2add t3, a2, s10
-	lw t1, 0(t2)
-	addiw a2, a2, 1
-	sw t1, 0(t3)
-	j label46

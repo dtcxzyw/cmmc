@@ -120,10 +120,10 @@ pcrel104:
 .globl memset_impl
 memset_impl:
 	ble a0, zero, label128
-pcrel226:
+pcrel227:
 	auipc a1, %pcrel_hi(arr)
 	li a2, 3
-	addi a3, a1, %pcrel_lo(pcrel226)
+	addi a3, a1, %pcrel_lo(pcrel227)
 	ble a0, a2, label137
 	addiw a4, a0, -3
 	addiw a5, a0, -18
@@ -131,12 +131,8 @@ pcrel226:
 	ble a4, t0, label143
 	mv a1, a3
 	mv a2, zero
-	j label109
 .p2align 2
-label112:
-	addi a1, a1, 64
-.p2align 2
-label109:
+label117:
 	addiw a2, a2, 16
 	sd zero, 0(a1)
 	sd zero, 8(a1)
@@ -146,19 +142,22 @@ label109:
 	sd zero, 40(a1)
 	sd zero, 48(a1)
 	sd zero, 56(a1)
-	bgt a5, a2, label112
-	mv a1, a2
-label113:
-	ble a4, a1, label168
-	sh2add a2, a1, a3
+	ble a5, a2, label178
+	addi a1, a1, 64
 	j label117
-label120:
+label178:
+	mv a1, a2
+label108:
+	ble a4, a1, label147
+	sh2add a2, a1, a3
+	j label112
+label115:
 	addi a2, a2, 16
-label117:
+label112:
 	addiw a1, a1, 4
 	sd zero, 0(a2)
 	sd zero, 8(a2)
-	bgt a4, a1, label120
+	bgt a4, a1, label115
 label121:
 	ble a0, a1, label128
 	sh2add a2, a1, a3
@@ -177,21 +176,21 @@ label137:
 label143:
 	mv a1, zero
 	mv a2, zero
-	j label113
-label168:
+	j label108
+label147:
 	mv a1, a2
 	j label121
 .p2align 2
 .globl fused_store
 fused_store:
-pcrel294:
+pcrel295:
 	auipc a1, %pcrel_hi(arr)
 	li a3, 1
 	li a4, 3
-	addi a0, a1, %pcrel_lo(pcrel294)
+	addi a0, a1, %pcrel_lo(pcrel295)
 	slli a2, a3, 32
 	slli a3, a4, 32
-	sd a2, %pcrel_lo(pcrel294)(a1)
+	sd a2, %pcrel_lo(pcrel295)(a1)
 	li a4, 5
 	addi a2, a3, 2
 	slli a1, a4, 32
@@ -222,28 +221,37 @@ pcrel294:
 .p2align 2
 .globl merge_store
 merge_store:
-pcrel306:
+pcrel307:
 	auipc a2, %pcrel_hi(x)
 	slli a3, a1, 32
 	add.uw a4, a0, a3
-	sd a4, %pcrel_lo(pcrel306)(a2)
+	sd a4, %pcrel_lo(pcrel307)(a2)
 	ret
 .p2align 2
 .globl copy1
 copy1:
-pcrel323:
-	auipc a1, %pcrel_hi(dst)
 pcrel324:
+	auipc a1, %pcrel_hi(dst)
+pcrel325:
 	auipc a2, %pcrel_hi(src)
-	ld a0, %pcrel_lo(pcrel323)(a1)
-	sd a0, %pcrel_lo(pcrel324)(a2)
+	ld a0, %pcrel_lo(pcrel324)(a1)
+	sd a0, %pcrel_lo(pcrel325)(a2)
 	ret
 .p2align 2
 .globl copy2
 copy2:
-pcrel337:
+pcrel338:
 	auipc a0, %pcrel_hi(src)
-	ld a2, %pcrel_lo(pcrel337)(a0)
-	addi a1, a0, %pcrel_lo(pcrel337)
+	ld a2, %pcrel_lo(pcrel338)(a0)
+	addi a1, a0, %pcrel_lo(pcrel338)
 	sd a2, 8(a1)
+	ret
+.p2align 2
+.globl merge_load
+merge_load:
+pcrel350:
+	auipc a3, %pcrel_hi(x)
+	ld a1, %pcrel_lo(pcrel350)(a3)
+	srai a2, a1, 32
+	addw a0, a1, a2
 	ret

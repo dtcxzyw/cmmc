@@ -183,23 +183,14 @@ label104:
 	sraiw s4, a0, 1
 	add a0, s0, a1
 	fcvt.s.w f8, s4
-pcrel339:
+pcrel338:
 	auipc a1, %pcrel_hi(image)
 	sraiw s2, a0, 1
-	addi s3, a1, %pcrel_lo(pcrel339)
+	addi s3, a1, %pcrel_lo(pcrel338)
 	fcvt.s.w f9, s2
 	ble s1, zero, label108
 	mv s6, zero
 	j label118
-label120:
-	addiw s6, s6, 1
-	ble s1, s6, label108
-label118:
-	ble s0, zero, label120
-	mulw a0, s0, s6
-	mv s8, zero
-	sh2add s7, a0, s3
-	j label122
 .p2align 2
 label125:
 	addi s7, s7, 4
@@ -209,7 +200,15 @@ label122:
 	addiw s8, s8, 1
 	sw a0, 0(s7)
 	bgt s0, s8, label125
-	j label120
+label120:
+	addiw s6, s6, 1
+	ble s1, s6, label108
+label118:
+	ble s0, zero, label120
+	mulw a0, s0, s6
+	mv s8, zero
+	sh2add s7, a0, s3
+	j label122
 label108:
 	auipc a1, %pcrel_hi(__cmmc_fp_constant_pool)
 	addi a0, a1, %pcrel_lo(label108)

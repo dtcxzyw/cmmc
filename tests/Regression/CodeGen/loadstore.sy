@@ -65,3 +65,6 @@ void copy2() {
     src[2] = src[0];
     src[3] = src[1];
 }
+int merge_load() {
+    return x[0] + x[1];
+}

@@ -43,29 +43,29 @@ main:
 	mv s2, a0
 	li a0, 22
 	jal _sysy_starttime
-pcrel314:
+pcrel309:
 	auipc a2, %pcrel_hi(cmmc_parallel_body_0)
 	addiw s1, s2, -3
-pcrel315:
+pcrel310:
 	auipc a1, %pcrel_hi(y)
 	lui s6, 260096
-pcrel316:
+pcrel311:
 	auipc a0, %pcrel_hi(x)
-pcrel317:
+pcrel312:
 	auipc s9, %pcrel_hi(cmmc_parallel_body_payload_0)
 	mv s11, zero
 	li s10, 3
 	fmv.w.x f18, zero
-	addi s8, a2, %pcrel_lo(pcrel314)
-	addi s0, a1, %pcrel_lo(pcrel315)
+	addi s8, a2, %pcrel_lo(pcrel309)
+	addi s0, a1, %pcrel_lo(pcrel310)
 	fmv.w.x f9, s6
-	addi s4, a0, %pcrel_lo(pcrel316)
-	addi s3, s9, %pcrel_lo(pcrel317)
+	addi s4, a0, %pcrel_lo(pcrel311)
+	addi s3, s9, %pcrel_lo(pcrel312)
 	fmv.s f8, f18
-pcrel318:
+pcrel313:
 	auipc a1, %pcrel_hi(__cmmc_fp_constant_pool)
 	mv a0, zero
-	addi s5, a1, %pcrel_lo(pcrel318)
+	addi s5, a1, %pcrel_lo(pcrel313)
 	lui a1, 122
 	addiw s7, a1, 288
 	j label92
@@ -103,9 +103,9 @@ label274:
 .p2align 2
 label276:
 	ble s2, a0, label152
-pcrel319:
+pcrel314:
 	auipc s9, %pcrel_hi(cmmc_parallel_body_payload_0)
-	sw a0, %pcrel_lo(pcrel319)(s9)
+	sw a0, %pcrel_lo(pcrel314)(s9)
 	sd s4, 8(s3)
 	fsw f18, 16(s3)
 	sd s0, 24(s3)
@@ -173,6 +173,14 @@ label168:
 	fadd.s f8, f8, f10
 	addiw s11, s11, 1
 	blt s11, s7, label92
+	j label120
+.p2align 2
+label152:
+	bgt s2, zero, label101
+	fmv.w.x f10, zero
+	addiw s11, s11, 1
+	fadd.s f8, f8, f10
+	blt s11, s7, label92
 label120:
 	flw f12, 8(s5)
 	li a0, 39
@@ -212,20 +220,9 @@ label123:
 	li a0, 1
 	j label121
 .p2align 2
-label152:
-	bgt s2, zero, label101
-	j label293
-.p2align 2
 label297:
 	fadd.s f8, f8, f10
 	addiw s11, s11, 1
-	blt s11, s7, label92
-	j label120
-.p2align 2
-label293:
-	fmv.w.x f10, zero
-	addiw s11, s11, 1
-	fadd.s f8, f8, f10
 	blt s11, s7, label92
 	j label120
 .p2align 2

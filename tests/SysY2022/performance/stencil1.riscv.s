@@ -81,7 +81,7 @@ pcrel202:
 	j label2
 .p2align 2
 label8:
-	slliw a4, s3, 3
+	slli a4, s3, 3
 	lw a3, 20(t4)
 	subw a5, a4, a7
 	subw t5, a5, s2

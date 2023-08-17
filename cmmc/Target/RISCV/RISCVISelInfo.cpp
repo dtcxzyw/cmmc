@@ -1017,12 +1017,15 @@ void RISCVISelInfo::legalizeInstWithStackOperand(const InstLegalizeContext& ctx,
             inst.setOpcode(isOperandGPR(inst.getOperand(0)) ? SD : FSW)
                 .setOperand<2>(base)
                 .setOperand<1>(imm)
-                .setOperand<3>(getAlign(8));
+                .setOperand<3>(getAlign(isOperandGPR(inst.getOperand(0)) ? 8 : 4));
             break;
         }
         case InstLoadRegFromStack: {
             assert(checkOpIdx(1));
-            inst.setOpcode(isOperandGPR(inst.getOperand(0)) ? LD : FLW).setOperand<2>(base).setOperand<1>(imm);
+            inst.setOpcode(isOperandGPR(inst.getOperand(0)) ? LD : FLW)
+                .setOperand<2>(base)
+                .setOperand<1>(imm)
+                .setOperand<3>(getAlign(isOperandGPR(inst.getOperand(0)) ? 8 : 4));
             break;
         }
         case SD:
@@ -1163,7 +1166,7 @@ void RISCVISelInfo::lowerIndirectJump(MIRJumpTable* jumpTable, const MIROperand&
     const auto offsetPtr = ctx.newVReg(ctx.getPtrType());
     ctx.emitInst(MIRInst{ InstAdd }.setOperand<0>(offsetPtr).setOperand<1>(tablePtr).setOperand<2>(byteOffset));
     const auto offsetVal = ctx.newVReg(OperandType::Int32);
-    ctx.emitInst(MIRInst{ InstLoad }.setOperand<0>(offsetVal).setOperand<1>(offsetPtr));
+    ctx.emitInst(MIRInst{ InstLoad }.setOperand<0>(offsetVal).setOperand<1>(offsetPtr).setOperand<2>(getAlign(4)));
     const auto targetAddress = ctx.newVReg(ctx.getPtrType());
     ctx.emitInst(MIRInst{ InstAdd }.setOperand<0>(targetAddress).setOperand<1>(tablePtr).setOperand<2>(offsetVal));
     ctx.emitInst(MIRInst{ JR }.setOperand<0>(targetAddress).setOperand<1>(MIROperand::asReloc(jumpTable)));

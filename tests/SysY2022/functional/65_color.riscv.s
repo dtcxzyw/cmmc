@@ -223,30 +223,31 @@ main:
 	sd zero, 104(sp)
 	sd zero, 112(sp)
 	jal getint
-	mv s0, a0
-pcrel737:
+pcrel738:
 	auipc a1, %pcrel_hi(dp)
+	mv s0, a0
+	li a2, 18
 	mv t6, zero
 	mv t5, zero
-	mv t3, zero
-	li a2, 18
 	mv t2, zero
 	li t0, -1
-	lui a0, 40
-	addi a3, a1, %pcrel_lo(pcrel737)
-	addiw a4, a0, -544
-	li a1, 567
+	mv t3, zero
+	addi a3, a1, %pcrel_lo(pcrel738)
+	li a0, 567
+	lui a1, 40
+	slli a5, a0, 4
+	addiw a4, a1, -544
 	li a0, -1
-	slli a5, a1, 4
-	slli t1, a0, 32
 	lui a1, 718
+	slli t1, a0, 32
 	addiw t4, a1, -1600
 	j label211
 .p2align 2
-label217:
-	addiw t3, t3, 1
-	bge t3, a2, label389
+label389:
+	addiw t2, t2, 1
+	bge t2, a2, label731
 	mv t6, zero
+	mv t3, zero
 .p2align 2
 label211:
 	mul a1, t2, a4
@@ -322,16 +323,12 @@ label211:
 	sd a1, 488(a0)
 	sd a1, 496(a0)
 	blt t6, a2, label211
-	j label217
-.p2align 2
-label389:
-	addiw t2, t2, 1
-	bge t2, a2, label729
+	addiw t3, t3, 1
+	bge t3, a2, label389
 	mv t6, zero
-	mv t3, zero
 	j label211
 .p2align 2
-label729:
+label731:
 	addiw t5, t5, 1
 	bge t5, a2, label220
 	add a3, a3, t4
@@ -353,11 +350,13 @@ label221:
 	bgt s0, s2, label221
 label223:
 	lw a0, 44(sp)
+	ld a4, 48(sp)
+	ld a5, 56(sp)
+	srai a2, a4, 32
+	sext.w a1, a4
+	sext.w a3, a5
+	srai a4, a5, 32
 	mv a5, zero
-	lw a1, 48(sp)
-	lw a2, 52(sp)
-	lw a3, 56(sp)
-	lw a4, 60(sp)
 	jal dfs
 	mv s0, a0
 	jal putint

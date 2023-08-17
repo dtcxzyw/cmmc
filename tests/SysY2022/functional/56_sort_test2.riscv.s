@@ -38,7 +38,10 @@ main:
 	sh2add a2, a5, a0
 	bge a5, zero, label19
 	mv t0, zero
-	j label41
+	sw a4, 4(a2)
+	addiw a3, a3, 1
+	blt a3, s0, label12
+	j label101
 .p2align 2
 label19:
 	lw t1, 0(a2)
@@ -87,11 +90,6 @@ label14:
 	addi sp, sp, 72
 	ret
 label103:
-	sw a4, 4(a2)
-	addiw a3, a3, 1
-	blt a3, s0, label12
-	j label101
-label41:
 	sw a4, 4(a2)
 	addiw a3, a3, 1
 	blt a3, s0, label12

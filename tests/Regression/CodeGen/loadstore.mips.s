@@ -307,3 +307,13 @@ copy2:
 	sw $t1, 12($t0)
 	jr $ra
 	nop
+.p2align 2
+.globl merge_load
+merge_load:
+	lui $t1, %hi(x)
+	addiu $t0, $t1, %lo(x)
+	lw $t1, %lo(x)($t1)
+	lw $t0, 4($t0)
+	addu $v0, $t1, $t0
+	jr $ra
+	nop

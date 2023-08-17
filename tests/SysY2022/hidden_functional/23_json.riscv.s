@@ -192,7 +192,7 @@ label129:
 	j label129
 label60:
 	xori a3, a0, 92
-	addiw a4, a1, 1
+	addi a4, a1, 1
 	sltiu a2, a3, 1
 	addw a0, a2, a4
 	sw a0, 0(s1)
@@ -344,7 +344,7 @@ label65:
 	lw a2, 16(a1)
 	li a3, 101
 	bne a2, a3, label188
-	addiw a1, a0, 5
+	addi a1, a0, 5
 	li a0, 1
 	sw a1, 0(s1)
 	j label7
