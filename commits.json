@@ -320,6 +320,11 @@
       "parent": "d52bedd212f655f50fa633157a04c7baff395853",
       "time": "2023-08-02 22:59:25 +0800"
     },
+    "4232235554294a38befd489b5b987dd364d2dcff": {
+      "message": "feat(codegen): break the edge loop -> exit",
+      "parent": "8cc54d51e1f7ac41a5ff71e3b7ba40a7cf32a3bf",
+      "time": "2023-08-17 21:14:50 +0800"
+    },
     "42f0f63db35a6dc8f0f94b3dd0925fd814d46889": {
       "message": "feat(transform): add func cache",
       "parent": "e7cd8719f78bec7d1916df3c060ff95f0c04246b",
@@ -1291,5 +1296,5 @@
       "time": "2023-07-06 01:05:50 +0800"
     }
   },
-  "head": "8cc54d51e1f7ac41a5ff71e3b7ba40a7cf32a3bf"
+  "head": "4232235554294a38befd489b5b987dd364d2dcff"
 }
