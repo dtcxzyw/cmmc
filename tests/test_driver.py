@@ -456,7 +456,7 @@ def sysy_cmmc_compile_only(src, target):
 def sysy_gcc_native_perf(src, target, i):
     output = get_output_path(src)
     subprocess.run(gcc_ref_command + ['-o', output, '-include', sysy_header, os.path.join(tests_path, 'SysY2022/perf/runtime.c'), src], check=True)
-    time_used = run_executable(['taskset', '-c', '2,3', output], src, f'gcc_native_{target}')
+    time_used = run_executable(['taskset', '-c', '0,1,2,3', output], src, f'gcc_native_{target}')
     collect_perf_data(src, f'{target}_gcc', i, time_used)
 
 
@@ -467,7 +467,7 @@ def sysy_cmmc_native_perf(src, target, i):
     fake_src = os.path.join(tests_path, 'SysY2022', testname) + '.sy'
 
     link_executable(src, target, output, runtime=os.path.join(tests_path, f'SysY2022/perf/runtime.{target}.c'))
-    time_used = run_executable(['taskset', '-c', '2,3', output], fake_src, f"cmmc_native_{target}")
+    time_used = run_executable(['taskset', '-c', '0,1,2,3', output], fake_src, f"cmmc_native_{target}")
     collect_perf_data(fake_src, target, i, time_used)
 
 
