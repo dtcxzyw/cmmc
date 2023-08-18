@@ -148,6 +148,8 @@ bool extractLoopBody(Function& func, const Loop& loop, const DominateAnalysisRes
             break;
     if(giv) {
         for(auto inst : { giv, giv->as<PhiInst>()->incomings().at(loop.latch)->value }) {
+            if(!inst->isInstruction())
+                continue;
             for(auto user : inst->as<Instruction>()->users()) {
                 if(!body.count(user->getBlock())) {
                     givUsedByOuter = true;
@@ -190,7 +192,6 @@ bool extractLoopBody(Function& func, const Loop& loop, const DominateAnalysisRes
         }
         // std::cerr << "matched\n";
     }
-    // TODO
     std::unordered_set<Value*> allowedToBeUsedByOuter;
     allowedToBeUsedByOuter.insert(loop.inductionVar);
     allowedToBeUsedByOuter.insert(loop.next);
@@ -437,6 +438,8 @@ bool extractLoopBody(Function& func, const Loop& loop, const DominateAnalysisRes
 
     for(auto val : allowedToBeUsedByOuter) {
         if(val == loop.inductionVar || val == giv)
+            continue;
+        if(!val->isInstruction())
             continue;
         const auto tracked = val->as<TrackableValue>();
         Value* rep = val == loop.next ? next : call;

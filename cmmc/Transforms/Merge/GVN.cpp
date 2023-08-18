@@ -25,6 +25,7 @@
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
 #include <cstdint>
+#include <iostream>
 #include <unordered_map>
 #include <unordered_set>
 #include <utility>
@@ -208,12 +209,19 @@ public:
                     continue;
 
                 const auto inst = base->clone();
-                for(auto& operand : inst->mutableOperands())
-                    operand->resetValue(operandMap.at(getNumber(operand->value)));
+                for(auto& operand : inst->mutableOperands()) {
+                    if(operand->value->isInstruction()) {
+                        const auto operandId = getNumber(operand->value);
+                        const auto rhs = operandMap.at(operandId);
+                        if(rhs)
+                            operand->resetValue(rhs);
+                    }
+                }
                 inst->insertBefore(block, std::prev(block->instructions().end()));
                 replaceInst = inst;
             }
 
+            assert(replaceInst);
             operandMap[id] = replaceInst;
 
             // Don't do GVN for comparison instructions if targeting TAC

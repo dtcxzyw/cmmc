@@ -42,121 +42,120 @@ main:
 	sd s9, 88(sp)
 	sd s10, 96(sp)
 	jal getint
-pcrel520:
-	auipc s6, %pcrel_hi(cmmc_parallel_body_payload_1)
-	mv s11, a0
-	sd a0, 104(sp)
 pcrel521:
-	auipc s5, %pcrel_hi(cmmc_parallel_body_payload_0)
-	li s4, 50
+	auipc s6, %pcrel_hi(cmmc_parallel_body_payload_1)
 pcrel522:
-	auipc a1, %pcrel_hi(cmmc_parallel_body_0)
+	auipc s5, %pcrel_hi(cmmc_parallel_body_payload_0)
+	mv s11, a0
 pcrel523:
-	auipc a2, %pcrel_hi(cmmc_parallel_body_3)
+	auipc a1, %pcrel_hi(cmmc_parallel_body_0)
+	li s4, 50
+	addi s0, a1, %pcrel_lo(pcrel523)
+	sd a0, 104(sp)
 pcrel524:
-	auipc a0, %pcrel_hi(cmmc_parallel_body_1)
-	addi s0, a1, %pcrel_lo(pcrel522)
-	addi s3, a2, %pcrel_lo(pcrel523)
-	addi s1, a0, %pcrel_lo(pcrel524)
-pcrel525:
 	auipc a1, %pcrel_hi(cmmc_parallel_body_2)
-	li a0, 1005
-	addi s2, a1, %pcrel_lo(pcrel525)
-	slli s8, a0, 3
-	ble s11, zero, label389
+pcrel525:
+	auipc a0, %pcrel_hi(cmmc_parallel_body_1)
+	addi s2, a1, %pcrel_lo(pcrel524)
+	addi s1, a0, %pcrel_lo(pcrel525)
+	li a1, 1005
 pcrel526:
+	auipc a0, %pcrel_hi(cmmc_parallel_body_3)
+	slli s8, a1, 3
+	addi s3, a0, %pcrel_lo(pcrel526)
+	ble s11, zero, label399
+pcrel527:
 	auipc a0, %pcrel_hi(A)
 	mv s9, zero
-	addi s7, a0, %pcrel_lo(pcrel526)
+	addi s7, a0, %pcrel_lo(pcrel527)
 	mv s10, s7
 	mv s11, zero
-	j label405
+	j label393
 .p2align 2
-label459:
+label421:
 	addiw s9, s9, 1
 	ld s11, 104(sp)
-	ble s11, s9, label389
+	ble s11, s9, label399
 	add s7, s7, s8
 	mv s11, zero
 	mv s10, s7
 .p2align 2
-label405:
+label393:
 	jal getint
 	addiw a1, s11, 1
 	sw a0, 0(s10)
 	ld s11, 104(sp)
-	ble s11, a1, label459
+	ble s11, a1, label421
 	addi s10, s10, 4
 	mv s11, a1
-	j label405
-label389:
+	j label393
+label399:
 	ld s11, 104(sp)
-	ble s11, zero, label390
-pcrel527:
-	auipc a1, %pcrel_hi(B)
+	ble s11, zero, label405
+pcrel528:
+	auipc a0, %pcrel_hi(B)
 	mv s8, zero
-	addi s7, a1, %pcrel_lo(pcrel527)
+	addi s7, a0, %pcrel_lo(pcrel528)
 .p2align 2
-label397:
+label401:
 	jal getint
 	addiw a1, s8, 1
 	sw a0, 0(s7)
 	ld s11, 104(sp)
-	ble s11, a1, label390
+	ble s11, a1, label405
 	addi s7, s7, 4
 	mv s8, a1
-	j label397
-label390:
+	j label401
+label405:
 	li a0, 59
 	jal _sysy_starttime
 	mv s8, zero
-pcrel528:
-	auipc a1, %pcrel_hi(C)
-	addi s7, a1, %pcrel_lo(pcrel528)
-.p2align 2
-label391:
-	ld s11, 104(sp)
-	ble s11, zero, label394
-	mv a0, zero
 pcrel529:
+	auipc a1, %pcrel_hi(C)
+	addi s7, a1, %pcrel_lo(pcrel529)
+.p2align 2
+label406:
+	ld s11, 104(sp)
+	ble s11, zero, label408
+	mv a0, zero
+pcrel530:
 	auipc s5, %pcrel_hi(cmmc_parallel_body_payload_0)
-	sw s11, %pcrel_lo(pcrel529)(s5)
+	sw s11, %pcrel_lo(pcrel530)(s5)
 	mv a1, s11
 	mv a2, s0
 	jal cmmcParallelFor
 	mv a0, zero
-pcrel530:
+pcrel531:
 	auipc s6, %pcrel_hi(cmmc_parallel_body_payload_1)
-	sw s11, %pcrel_lo(pcrel530)(s6)
+	sw s11, %pcrel_lo(pcrel531)(s6)
 	mv a1, s11
 	mv a2, s1
 	jal cmmcParallelFor
 	mv a0, zero
-pcrel531:
+pcrel532:
 	auipc a3, %pcrel_hi(cmmc_parallel_body_payload_2)
-	sw s11, %pcrel_lo(pcrel531)(a3)
+	sw s11, %pcrel_lo(pcrel532)(a3)
 	mv a1, s11
 	mv a2, s2
 	jal cmmcParallelFor
 	mv a0, zero
-pcrel532:
+pcrel533:
 	auipc a3, %pcrel_hi(cmmc_parallel_body_payload_3)
-	sw s11, %pcrel_lo(pcrel532)(a3)
+	sw s11, %pcrel_lo(pcrel533)(a3)
 	mv a1, s11
 	mv a2, s3
 	jal cmmcParallelFor
-.p2align 2
-label394:
 	addiw s8, s8, 1
-	blt s8, s4, label391
+	blt s8, s4, label406
+label409:
 	li a0, 67
 	jal _sysy_stoptime
 	ld s11, 104(sp)
 	mv a0, s11
 	mv a1, s7
 	jal putarray
-	mv a0, zero
 	ld ra, 0(sp)
+	mv a0, zero
 	ld s11, 8(sp)
 	ld s0, 16(sp)
 	ld s5, 24(sp)
@@ -171,6 +170,10 @@ label394:
 	ld s10, 96(sp)
 	addi sp, sp, 112
 	ret
+label408:
+	addiw s8, s8, 1
+	blt s8, s4, label406
+	j label409
 .p2align 2
 cmmc_parallel_body_0:
 	mv a2, a0
@@ -338,16 +341,16 @@ label205:
 	addi a5, a5, 16
 	j label205
 label209:
-	ble a1, a2, label216
+	ble a1, a2, label211
 	sh2add a0, a2, a3
-	j label212
-label215:
+	j label213
+label216:
 	addi a0, a0, 4
-label212:
+label213:
 	addiw a2, a2, 1
 	sw zero, 0(a0)
-	bgt a1, a2, label215
-label216:
+	bgt a1, a2, label216
+label211:
 	ret
 label230:
 	mv a0, a2

@@ -511,8 +511,8 @@ func @main() -> i32 { NoRecurse Entry } {
     i1 %176 = icmp neq i32 %54, i32 0;
     cbr i1 %176(prob = 0.984615), ^while.body6, ^b2;
   ^while.body6:
-    i32 %177 = phi [^while.body5, i32 0] [^while.body6, i32 %177] [^b9, i32 %303];
-    i32 %178 = phi [^while.body5, i32 %54] [^while.body6, i32 %178] [^b9, i32 %304];
+    i32 %177 = phi [^while.body5, i32 %54] [^while.body6, i32 %177] [^b9, i32 %304];
+    i32 %178 = phi [^while.body5, i32 0] [^while.body6, i32 %178] [^b9, i32 %303];
     i32 %179 = call () -> i32 @getch();
     i1 %180 = icmp neq i32 %179, i32 81;
     i1 %181 = icmp neq i32 %179, i32 85;
@@ -646,22 +646,22 @@ func @main() -> i32 { NoRecurse Entry } {
     i1 %277 = icmp neq i32 %265, i32 0;
     i32 %278 = neg i32 %276;
     i32 %279 = select i1 %277 ? i32 %278 : i32 %276;
-    i32* %280 = getelementptr &([5005 * i32]* %4)[i64 0][i32 %177];
+    i32* %280 = getelementptr &([5005 * i32]* %4)[i64 0][i32 %178];
     store i32* %280 with i32 %279;
     i32* %281 = getelementptr &([1005 * i32]* %55)[i64 0][i32 %243];
     i32 %282 = load i32* %281;
-    i32* %283 = getelementptr &([5005 * i32]* %5)[i64 0][i32 %177];
+    i32* %283 = getelementptr &([5005 * i32]* %5)[i64 0][i32 %178];
     store i32* %283 with i32 %282;
     i32* %284 = getelementptr &([1005 * i32]* %55)[i64 0][i32 %279];
-    store i32* %281 with i32 %177;
+    store i32* %281 with i32 %178;
     i32* %285 = getelementptr &(i32* %280)[i64 1];
     store i32* %285 with i32 %243;
     i32 %286 = load i32* %284;
     i32* %287 = getelementptr &(i32* %283)[i64 1];
     store i32* %287 with i32 %286;
-    i32 %288 = add i32 %177, i32 1;
+    i32 %288 = add i32 %178, i32 1;
     store i32* %284 with i32 %288;
-    i32 %289 = add i32 %177, i32 2;
+    i32 %289 = add i32 %178, i32 2;
     ubr ^b9;
   ^b7:
     i32 %290 = phi [^251, i32 0] [^while.body13, i32 %275];
@@ -687,8 +687,8 @@ func @main() -> i32 { NoRecurse Entry } {
   ^super.header:
     cbr i1 %34(prob = 0.941176), ^super.header1, ^scalar.header;
   ^b9:
-    i32 %303 = phi [^b6, i32 %289] [^b8, i32 %177];
-    i32 %304 = add i32 %178, i32 -1;
+    i32 %303 = phi [^b6, i32 %289] [^b8, i32 %178];
+    i32 %304 = add i32 %177, i32 -1;
     i1 %305 = icmp neq i32 %304, i32 0;
     cbr i1 %305(prob = 0.984615), ^while.body6, ^b2;
   ^super.header1:

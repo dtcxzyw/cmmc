@@ -253,7 +253,7 @@ class ConstraintReduce final : public TransformPass<Function> {
                     if(ltMat[i][j] == 2)
                         relations.lessThan = KnownRelation::True;
                     else if(ltMat[j][i] == 1)
-                        relations.greaterThan = KnownRelation::False;
+                        relations.lessThan = KnownRelation::False;
                     if(ltMat[j][i] == 2)
                         relations.greaterThan = KnownRelation::True;
                     else if(ltMat[i][j] == 1)
@@ -424,12 +424,12 @@ public:
 
                     if(r.minSignedValue() != std::numeric_limits<int32_t>::min()) {
                         if(++additionalFact <= maxAdditionalFacts)
-                            addToSet(condSet, &inst, ConstantInteger::get(i32, r.minSignedValue()),
+                            addToSet(condSet, &inst, getImm(r.minSignedValue()),
                                      KnownRelations{ KnownRelation::Unknown, KnownRelation::False, KnownRelation::Unknown });
                     }
                     if(r.maxSignedValue() != std::numeric_limits<int32_t>::max()) {
                         if(++additionalFact <= maxAdditionalFacts)
-                            addToSet(condSet, &inst, ConstantInteger::get(i32, r.maxSignedValue()),
+                            addToSet(condSet, &inst, getImm(r.maxSignedValue()),
                                      KnownRelations{ KnownRelation::Unknown, KnownRelation::Unknown, KnownRelation::False });
                     }
                 }
@@ -535,6 +535,13 @@ public:
             for(auto& [src, edge] : edges[block]) {
                 auto& set = edgeSet[src];
                 for(auto [cond, val] : edge) {
+                    // src->dumpAsTarget(std::cerr);
+                    // std::cerr << " -> ";
+                    // block->dumpAsTarget(std::cerr);
+                    // std::cerr << " : ";
+                    // cond->dumpAsOperand(std::cerr);
+                    // std::cerr << ' ' << val << '\n';
+
                     addToSet(
                         set, cond, trueVal,
                         { val ? KnownRelation::True : KnownRelation::False, KnownRelation::Unknown, KnownRelation::Unknown });
@@ -879,6 +886,11 @@ public:
                 }
             }
         }
+
+        // if(modified) {
+        //     func.dumpCFG(std::cerr);
+        //     func.dump(std::cerr, Noop{});
+        // }
 
         return modified;
     }

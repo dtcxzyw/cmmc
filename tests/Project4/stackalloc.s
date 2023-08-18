@@ -60,49 +60,49 @@ label7:
 	addu $t4, $t1, $t3
 	lw $t3, 0($t2)
 	addiu $t7, $t6, 1
-	bgtz $t7, label15
+	bgtz $t7, label20
 	nop
 	move $t7, $zero
 	addiu $t5, $t5, 1
 	sw $t3, 4($t4)
 	subu $t3, $t0, $t5
-	bgtz $t3, label19
+	bgtz $t3, label18
 	nop
 	b label21
 	nop
-label96:
+label95:
 	move $t7, $zero
 	addiu $t5, $t5, 1
 	sw $t3, 4($t4)
 	subu $t3, $t0, $t5
 	blez $t3, label21
 	nop
-label19:
+label18:
 	addiu $t2, $t2, 4
 	addiu $t6, $t5, -1
 	sll $t3, $t6, 2
 	addu $t4, $t1, $t3
 	lw $t3, 0($t2)
 	addiu $t7, $t6, 1
-	blez $t7, label96
+	blez $t7, label95
 	nop
-label15:
+label20:
 	lw $t7, 0($t4)
 	slt $t7, $t3, $t7
-	beq $t7, $zero, label18
+	beq $t7, $zero, label94
 	nop
 	lw $t7, 0($t4)
 	sw $t7, 4($t4)
 	addiu $t6, $t6, -1
 	addiu $t4, $t4, -4
 	addiu $t7, $t6, 1
-	bgtz $t7, label15
+	bgtz $t7, label20
 	nop
 	move $t7, $zero
 	addiu $t5, $t5, 1
 	sw $t3, 4($t4)
 	subu $t3, $t0, $t5
-	bgtz $t3, label19
+	bgtz $t3, label18
 	nop
 label21:
 	blez $t0, label22
@@ -126,11 +126,11 @@ label22:
 	addiu $sp, $sp, 424
 	jr $ra
 	nop
-label18:
+label94:
 	addiu $t5, $t5, 1
 	sw $t3, 4($t4)
 	subu $t3, $t0, $t5
-	bgtz $t3, label19
+	bgtz $t3, label18
 	nop
 	b label21
 	nop

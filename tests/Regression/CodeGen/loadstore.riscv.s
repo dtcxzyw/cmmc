@@ -128,11 +128,15 @@ pcrel227:
 	addiw a4, a0, -3
 	addiw a5, a0, -18
 	li t0, 15
-	ble a4, t0, label143
+	ble a4, t0, label155
 	mv a1, a3
 	mv a2, zero
+	j label116
 .p2align 2
-label117:
+label119:
+	addi a1, a1, 64
+.p2align 2
+label116:
 	addiw a2, a2, 16
 	sd zero, 0(a1)
 	sd zero, 8(a1)
@@ -142,44 +146,40 @@ label117:
 	sd zero, 40(a1)
 	sd zero, 48(a1)
 	sd zero, 56(a1)
-	ble a5, a2, label178
-	addi a1, a1, 64
-	j label117
-label178:
+	bgt a5, a2, label119
 	mv a1, a2
-label108:
-	ble a4, a1, label147
+label120:
+	ble a4, a1, label180
 	sh2add a2, a1, a3
-	j label112
-label115:
-	addi a2, a2, 16
-label112:
+label124:
 	addiw a1, a1, 4
 	sd zero, 0(a2)
 	sd zero, 8(a2)
-	bgt a4, a1, label115
-label121:
+	ble a4, a1, label107
+	addi a2, a2, 16
+	j label124
+label107:
 	ble a0, a1, label128
 	sh2add a2, a1, a3
-	j label124
-label127:
+	j label110
+label113:
 	addi a2, a2, 4
-label124:
+label110:
 	addiw a1, a1, 1
 	sw zero, 0(a2)
-	bgt a0, a1, label127
+	bgt a0, a1, label113
 label128:
 	ret
 label137:
 	mv a1, zero
-	j label121
-label143:
+	j label107
+label155:
 	mv a1, zero
 	mv a2, zero
-	j label108
-label147:
+	j label120
+label180:
 	mv a1, a2
-	j label121
+	j label107
 .p2align 2
 .globl fused_store
 fused_store:

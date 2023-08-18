@@ -65,16 +65,28 @@ class FinalValueReplacement final : public TransformPass<Function> {
 
     static bool replaceOuterUse(const Loop& loop, TrackableValue* trackable, Value* rep, intmax_t offset) {
         bool modified = false;
+
         for(auto iter = trackable->users().begin(); iter != trackable->users().end();) {
             const auto nextIter = std::next(iter);
             const auto userBlock = iter.ref()->user->getBlock();
 
             if(userBlock != loop.header) {
                 if(offset) {
-                    const auto offsetVal = ConstantInteger::get(rep->getType(), offset);
-                    const auto val = make<BinaryInst>(InstructionID::Add, rep, offsetVal);
-                    val->insertBefore(userBlock, iter.ref()->user->asIterator());
-                    iter.ref()->resetValue(val);
+                    if(rep->is<ConstantInteger>()) {
+                        const auto val = rep->as<ConstantInteger>()->getSignExtended();
+                        const auto offsetVal = ConstantInteger::get(rep->getType(), val + offset);
+                        iter.ref()->resetValue(offsetVal);
+                        rep = offsetVal;
+                        offset = 0;
+                    } else {
+                        // FIXME: create new blocks/create add inst after rep
+                        if(iter.ref()->user->getInstID() != InstructionID::Phi) {
+                            const auto offsetVal = ConstantInteger::get(rep->getType(), offset);
+                            const auto val = make<BinaryInst>(InstructionID::Add, rep, offsetVal);
+                            val->insertBefore(userBlock, iter.ref()->user->asIterator());
+                            iter.ref()->resetValue(val);
+                        }
+                    }
                 } else {
                     iter.ref()->resetValue(rep);
                 }

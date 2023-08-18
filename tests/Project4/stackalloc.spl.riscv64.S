@@ -41,60 +41,60 @@ label3:
 	j label3
 label7:
 	li a0, 1
-	ble a1, a0, label8
+	ble a1, a0, label21
 	addi a4, a2, 4
 	li a5, 1
 	addiw t0, a5, -1
 	lw a0, 0(a4)
 	sh2add a3, t0, a2
-	bge t0, zero, label22
+	bge t0, zero, label20
 	mv t1, zero
 	addiw a5, a5, 1
 	sw a0, 4(a3)
-	bgt a1, a5, label26
-	j label8
-label89:
+	bgt a1, a5, label18
+	j label21
+label88:
 	mv t1, zero
 	addiw a5, a5, 1
 	sw a0, 4(a3)
-	ble a1, a5, label8
-label26:
+	ble a1, a5, label21
+label18:
 	addi a4, a4, 4
 	addiw t0, a5, -1
 	lw a0, 0(a4)
 	sh2add a3, t0, a2
-	blt t0, zero, label89
-label22:
+	blt t0, zero, label88
+label20:
 	lw t2, 0(a3)
 	slt t1, a0, t2
-	beq t1, zero, label25
+	beq t1, zero, label87
 	lw t1, 0(a3)
 	addiw t0, t0, -1
 	sw t1, 4(a3)
 	addi a3, a3, -4
-	bge t0, zero, label22
+	bge t0, zero, label20
 	mv t1, zero
 	addiw a5, a5, 1
 	sw a0, 4(a3)
-	bgt a1, a5, label26
-label8:
-	ble a1, zero, label9
+	bgt a1, a5, label18
+label21:
+	ble a1, zero, label22
 	mv a3, zero
-	j label11
-label14:
+	j label24
+label27:
 	addi a2, a2, 4
-label11:
+label24:
 	lw a0, 0(a2)
 	jal write
 	addiw a3, a3, 1
-	bgt a1, a3, label14
-label9:
+	bgt a1, a3, label27
+label22:
 	mv a0, zero
 	ld ra, 0(sp)
 	addi sp, sp, 408
 	ret
-label25:
+label87:
 	addiw a5, a5, 1
 	sw a0, 4(a3)
-	bgt a1, a5, label26
-	j label8
+	bgt a1, a5, label18
+	j label21

@@ -143,7 +143,7 @@ class LoopRotate final : public TransformPass<Function> {
             }
             // reset target
             Block* indirectBlock = nullptr;
-            if(cfg.predecessors(exiting).size() != 1) {
+            if(cfg.predecessors(exiting).size() != 1 || exiting->instructions().front()->getInstID() == InstructionID::Phi) {
                 indirectBlock = make<Block>(&func);
                 resetTarget(loop.header->getTerminator()->as<BranchInst>(), exiting, indirectBlock);
             }
@@ -261,10 +261,38 @@ class LoopRotate final : public TransformPass<Function> {
         return modified;
     }
 
+    static bool cleanupPhi(Function& func) {
+        bool modified = false;
+
+        for(auto block : func.blocks()) {
+            auto& insts = block->instructions();
+            for(auto it = insts.begin(); it != insts.end();) {
+                auto next = std::next(it);
+                auto& inst = *it;
+                if(inst.getInstID() == InstructionID::Phi) {
+                    const auto phi = inst.as<PhiInst>();
+                    if(phi->incomings().size() == 1) {
+                        inst.replaceWith(phi->incomings().begin()->second->value);
+                        insts.erase(inst.asNode());
+                    }
+                } else
+                    break;
+                it = next;
+            }
+        }
+
+        return modified;
+    }
+
 public:
     bool run(Function& func, AnalysisPassManager& analysis) const override {
         bool modified = false;
+        modified |= cleanupPhi(func);
         while(runImpl(func, analysis)) {
+            // if(!func.verify(std::cerr))
+            //     reportUnreachable(CMMC_LOCATION());
+
+            cleanupPhi(func);
             modified = true;
             analysis.invalidateFunc(func);
         }

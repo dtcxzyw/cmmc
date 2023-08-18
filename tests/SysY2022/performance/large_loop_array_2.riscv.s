@@ -189,16 +189,16 @@ label120:
 	fle.s a2, f12, f10
 	or s0, a1, a2
 	jal _sysy_stoptime
-	bne s0, zero, label124
+	bne s0, zero, label122
 	li a0, 1
 	jal putint
 	li a0, 1
-	j label121
-label124:
+	j label123
+label122:
 	mv a0, zero
 	jal putint
 	mv a0, zero
-label121:
+label123:
 	ld ra, 0(sp)
 	ld s8, 8(sp)
 	flw f8, 16(sp)

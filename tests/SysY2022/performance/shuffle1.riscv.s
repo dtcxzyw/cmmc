@@ -223,9 +223,9 @@ label33:
 	sh2add t6, t3, t0
 	addiw t3, t3, 1
 	sw zero, 0(t6)
-	ble a2, t3, label15
+	ble a2, t3, label14
 .p2align 2
-label14:
+label15:
 	addi a3, a3, 4
 pcrel115:
 	auipc t2, %pcrel_hi(hashmod)
@@ -252,8 +252,8 @@ label8:
 	sh2add t6, t3, t0
 	addiw t3, t3, 1
 	sw t5, 0(t6)
-	bgt a2, t3, label14
-label15:
+	bgt a2, t3, label15
+label14:
 	ret
 .p2align 2
 label42:

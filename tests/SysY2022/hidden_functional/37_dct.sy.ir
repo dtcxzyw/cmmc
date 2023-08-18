@@ -73,8 +73,8 @@ func @main() -> i32 { NoRecurse Entry } {
     i1 %6 = icmp sgt i32 %0, i32 0;
     i1 %7 = icmp sgt i32 %1, i32 0;
     i1 %8 = icmp sgt i32 %1, i32 4;
-    i1 %9 = icmp sgt i32 %0, i32 4;
-    i32 %10 = add i32 %1, i32 -18;
+    i32 %9 = add i32 %1, i32 -18;
+    i1 %10 = icmp sgt i32 %0, i32 4;
     i32 %11 = add i32 %0, i32 -18;
     [8 * [8 * f32]]* %12 = ptrcast [8 * [8 * f32]]* @test_block to [8 * [8 * f32]]*;
     cbr i1 %6(prob = 0.984615), ^while.body, ^b;
@@ -221,7 +221,7 @@ func @main() -> i32 { NoRecurse Entry } {
     f32 %103 = fmul f32 %102, f32 %80;
     cbr i1 %100(prob = 0.5), ^if.then1, ^b10;
   ^super.header:
-    cbr i1 %9(prob = 0.941176), ^super.header1, ^scalar.header;
+    cbr i1 %10(prob = 0.941176), ^super.header1, ^scalar.header;
   ^b9:
     cbr i1 %27(prob = 0.984615), ^prebody1, ^b11;
   ^while.body10:
@@ -493,7 +493,7 @@ func @main() -> i32 { NoRecurse Entry } {
     f32 %322 = fmul f32 %321, f32 0.5;
     f32 %323 = fadd f32 %319, f32 %322;
     i32 %324 = add i32 %259, i32 16;
-    i1 %325 = icmp sgt i32 %10, i32 %324;
+    i1 %325 = icmp sgt i32 %9, i32 %324;
     cbr i1 %325(prob = 0.941176), ^while.body16, ^scalar.header3;
   ^scalar.final2:
     f32 %326 = phi [^scalar.header2, f32 %226] [^while.body17, f32 %346];
