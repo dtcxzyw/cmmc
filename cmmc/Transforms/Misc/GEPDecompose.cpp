@@ -35,14 +35,17 @@ class GEPDecompose final : public TransformPass<Function> {
         return false;
     }
 
-    static bool decompose(Value* val, Value*& base, Value*& off, const DominateAnalysisResult& dom) {
+    static bool decompose(Value* val, Value*& base, Value*& off, Instruction& inst, const DominateAnalysisResult& dom) {
         MatchContext<Value> matchCtx{ val };
-        Value *v1, *v2;  //, *v3, *v4;
-        // if(oneUse(add(capture(mul(any(v1), any(v2)), v3), any(v4)))() && !v4->isConstant()) {
-        //     v3 = base;
-        //     v4 = off;
-        //     return true;
-        // }
+        Value *v1, *v2;
+        intmax_t i1, i2;
+        if(oneUse(mul(oneUse(add(any(v1), int_(i1))), capture(int_(i2), v2)))(matchCtx)) {
+            const auto mul = make<BinaryInst>(InstructionID::Mul, v1, v2);
+            mul->insertBefore(inst.getBlock(), inst.asIterator());
+            base = mul;
+            off = ConstantInteger::get(val->getType(), i1 * i2);
+            return true;
+        }
         if(add(any(v1), any(v2))(matchCtx)) {
             if(v1->getBlock() && v2->getBlock() && v1->getBlock() != v2->getBlock()) {
                 if(dom.dominate(v1->getBlock(), v2->getBlock())) {
@@ -77,7 +80,7 @@ class GEPDecompose final : public TransformPass<Function> {
                 continue;
             const auto lastIdx = inst.arguments().back();
             Value *base, *off;
-            if(decompose(lastIdx, base, off, dom)) {
+            if(decompose(lastIdx, base, off, inst, dom)) {
                 const auto commonBase = inst.clone();
                 commonBase->insertBefore(&block, inst.asIterator());
                 commonBase->mutableOperands()[commonBase->mutableOperands().size() - 2]->resetValue(base);
