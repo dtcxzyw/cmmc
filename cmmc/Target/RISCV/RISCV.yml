@@ -941,49 +941,102 @@ InstSelection:
         Rs1: $Lhs
         Rs2: $Rhs
 
-  - Pattern:
-      InstSDiv:
-        Dst: $Dst
-        Lhs: $Lhs
-        Rhs: $Rhs
-        $Predicate: isOperandI32($Dst) && isOperandIReg($Lhs) && isOperandI32($Rhs) && ($Rhs).isImm() && ($Rhs).imm() == 2
-    Replace:
-      SRAIW:
-        Rd: $Dst
-        Rs1:
-          ADD:
-            Rd: getVReg64As(ctx, $Dst)
-            Rs1: $Lhs
-            Rs2:
-              SRLIW:
-                Rd: getVRegAs(ctx, $Dst)
-                Rs1: $Lhs
-                Imm: MIROperand::asImm(31, OperandType::Int32)
-        Imm: MIROperand::asImm(1, OperandType::Int32)
+  # - Pattern:
+  #     InstSDiv:
+  #       Dst: $Dst
+  #       Lhs: $Lhs
+  #       Rhs: $Rhs
+  #       $Predicate: isOperandI32($Dst) && isOperandIReg($Lhs) && isOperandI32($Rhs) && ($Rhs).isImm() && ($Rhs).imm() == 2
+  #   Replace:
+  #     SRAIW:
+  #       Rd: $Dst
+  #       Rs1:
+  #         ADD:
+  #           Rd: getVReg64As(ctx, $Dst)
+  #           Rs1: $Lhs
+  #           Rs2:
+  #             SRLIW:
+  #               Rd: getVRegAs(ctx, $Dst)
+  #               Rs1: $Lhs
+  #               Imm: MIROperand::asImm(31, OperandType::Int32)
+  #       Imm: MIROperand::asImm(1, OperandType::Int32)
 
+  # - Pattern:
+  #     InstSDiv:
+  #       Dst: $Dst
+  #       Lhs: $Lhs
+  #       Rhs: $Rhs
+  #       $Predicate: isOperandI32($Dst) && isOperandIReg($Lhs) && selectSDiv32ByPowerOf2($Rhs, [$Shift])
+  #   Replace:
+  #     SRAIW:
+  #       Rd: $Dst
+  #       Rs1:
+  #         ADD:
+  #           Rd: getVReg64As(ctx, $Dst)
+  #           Rs1: $Lhs
+  #           Rs2:
+  #             SRLI:
+  #               Rd: getVReg64As(ctx, $Dst)
+  #               Rs1:
+  #                 SLLI:
+  #                   Rd: getVReg64As(ctx, $Dst)
+  #                   Rs1: $Lhs
+  #                   Imm: MIROperand::asImm(1, OperandType::Int32)
+  #               Imm: MIROperand::asImm(64 - ($Shift).imm(), OperandType::Int32)
+  #       Imm: $Shift
+
+  # Signed Division with power-of-2 using SFB
+  # https://alive2.llvm.org/ce/z/CMZLjd
   - Pattern:
       InstSDiv:
         Dst: $Dst
         Lhs: $Lhs
         Rhs: $Rhs
-        $Predicate: isOperandI32($Dst) && isOperandIReg($Lhs) && selectSDiv32ByPowerOf2($Rhs, [$Shift])
+        $Predicate: isOperandI32($Dst) && isOperandIReg($Lhs) && isOperandI32($Rhs) && selectSDiv32ByPowerOf2($Rhs, [$Shift]) && selectAddImm32(ctx, ($Rhs).imm() - 1, [$AddRhs], [$Op])
     Replace:
       SRAIW:
         Rd: $Dst
         Rs1:
-          ADD:
-            Rd: getVReg64As(ctx, $Dst)
+          Select_GPR_Arith:
+            Rd: getVRegAs(ctx, $Dst)
             Rs1: $Lhs
-            Rs2:
-              SRLI:
-                Rd: getVReg64As(ctx, $Dst)
-                Rs1:
-                  SLLI:
-                    Rd: getVReg64As(ctx, $Dst)
-                    Rs1: $Lhs
-                    Imm: MIROperand::asImm(1, OperandType::Int32)
-                Imm: MIROperand::asImm(64 - ($Shift).imm(), OperandType::Int32)
+            Rs2: $AddRhs
+            Lhs: $Lhs
+            Rhs: getZero($Dst)
+            CC: MIROperand::asImm(CompareOp::ICmpSignedLessThan, OperandType::Int32)
+            Op: $Op
         Imm: $Shift
+
+  # - Pattern:
+  #     InstSDiv:
+  #       Dst: $Dst
+  #       Lhs: $Lhs
+  #       Rhs:
+  #         InstShl:
+  #           Lhs: $One
+  #           Rhs: $Shift
+  #       $Predicate: isOperandI32($Dst) && isOperandIReg($Lhs) && isOne($One)
+  #   Replace:
+  #     SRAW:
+  #       Rd: $Dst
+  #       Rs1:
+  #         ADD:
+  #           Rd: getVReg64As(ctx, $Dst)
+  #           Rs1: $Lhs
+  #           Rs2:
+  #             SRL:
+  #               Rd: getVReg64As(ctx, $Dst)
+  #               Rs1:
+  #                 SLLI:
+  #                   Rd: getVReg64As(ctx, $Dst)
+  #                   Rs1: $Lhs
+  #                   Imm: MIROperand::asImm(1, OperandType::Int32)
+  #               Rs2:
+  #                 InstSub:
+  #                   Dst: getVRegAs(ctx, $Dst)
+  #                   Lhs: MIROperand::asImm(64, OperandType::Int32)
+  #                   Rhs: $Shift
+  #       Rs2: $Shift
 
   - Pattern:
       InstSDiv:
@@ -991,6 +1044,7 @@ InstSelection:
         Lhs: $Lhs
         Rhs:
           InstShl:
+            Dst: $ShlRes
             Lhs: $One
             Rhs: $Shift
         $Predicate: isOperandI32($Dst) && isOperandIReg($Lhs) && isOne($One)
@@ -998,22 +1052,18 @@ InstSelection:
       SRAW:
         Rd: $Dst
         Rs1:
-          ADD:
-            Rd: getVReg64As(ctx, $Dst)
+          Select_GPR_Arith:
+            Rd: getVRegAs(ctx, $Dst)
             Rs1: $Lhs
             Rs2:
-              SRL:
-                Rd: getVReg64As(ctx, $Dst)
-                Rs1:
-                  SLLI:
-                    Rd: getVReg64As(ctx, $Dst)
-                    Rs1: $Lhs
-                    Imm: MIROperand::asImm(1, OperandType::Int32)
-                Rs2:
-                  InstSub:
-                    Dst: getVRegAs(ctx, $Dst)
-                    Lhs: MIROperand::asImm(64, OperandType::Int32)
-                    Rhs: $Shift
+              ADDIW:
+                Rd: getVRegAs(ctx, $Dst)
+                Rs1: $ShlRes
+                Imm: MIROperand::asImm(-1, OperandType::Int32)
+            Lhs: $Lhs
+            Rhs: getZero($Dst)
+            CC: MIROperand::asImm(CompareOp::ICmpSignedLessThan, OperandType::Int32)
+            Op: MIROperand::asImm(ADDW, OperandType::Special)
         Rs2: $Shift
 
   - Pattern:

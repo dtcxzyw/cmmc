@@ -17,8 +17,8 @@ compare_r_eq:
 	subw a4, zero, a1
 	li a2, 42
 	zext.w a3, a4
-	beq a0, a3, label23
+	beq a0, a3, label22
 	li a2, 24
-label23:
+label22:
 	zext.w a0, a2
 	ret

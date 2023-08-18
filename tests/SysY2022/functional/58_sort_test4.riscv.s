@@ -37,9 +37,8 @@ main:
 	li t0, 10
 	blt a1, t0, label5
 	j label47
-.p2align 2
-label107:
-	beq a2, t2, label192
+label94:
+	beq a2, t2, label24
 .p2align 2
 label32:
 	sh2add t0, t2, a0
@@ -69,7 +68,6 @@ label5:
 	lw t5, 0(t0)
 	bgt t4, t5, label176
 	mv t3, a2
-.p2align 2
 label176:
 	sh2add a6, t3, a0
 	addiw t6, t1, 1
@@ -78,7 +76,6 @@ label176:
 	lw t5, 4(t0)
 	bgt t4, t5, label178
 	mv t2, t3
-.p2align 2
 label178:
 	sh2add t6, t2, a0
 	addiw a6, t1, 2
@@ -86,10 +83,7 @@ label178:
 	mv t3, a6
 	lw t5, 8(t0)
 	bgt t4, t5, label180
-.p2align 2
-label179:
 	mv t3, t2
-.p2align 2
 label180:
 	sh2add t6, t3, a0
 	addiw a6, t1, 3
@@ -98,10 +92,11 @@ label180:
 	lw t5, 12(t0)
 	bgt t4, t5, label182
 	mv t2, t3
-.p2align 2
 label182:
 	addiw t1, t1, 4
 	bge t1, a5, label89
+.p2align 2
+label11:
 	addi t0, t0, 16
 	sh2add t6, t2, a0
 	mv t3, t1
@@ -122,10 +117,16 @@ label182:
 	mv t3, a6
 	lw t5, 8(t0)
 	bgt t4, t5, label180
-	j label179
-.p2align 2
-label89:
 	mv t3, t2
+	sh2add t6, t2, a0
+	addiw a6, t1, 3
+	lw t4, 0(t6)
+	mv t2, a6
+	lw t5, 12(t0)
+	bgt t4, t5, label182
+	mv t2, t3
+	addiw t1, t1, 4
+	blt t1, a5, label11
 	li t0, 10
 	bge t1, t0, label94
 .p2align 2
@@ -137,7 +138,6 @@ label16:
 	lw t5, 0(t0)
 	bgt t4, t5, label184
 	mv t2, t3
-.p2align 2
 label184:
 	addiw t1, t1, 1
 	li t3, 10
@@ -156,11 +156,29 @@ label21:
 	li t3, 10
 	blt t1, t3, label21
 	bne a2, t2, label32
-label192:
 	blt a1, a4, label31
+	j label196
+label24:
+	blt a1, a4, label31
+	j label196
+label107:
+	bne a2, t2, label32
+	blt a1, a4, label31
+	j label196
+label52:
+	mv t3, a2
+	mv t1, a1
+	mv t2, zero
+	li t0, 10
+	blt a1, t0, label16
+	j label94
 label196:
 	mv s0, a0
 	mv s1, zero
+	j label26
+.p2align 2
+label30:
+	addi s0, s0, 4
 .p2align 2
 label26:
 	lw a0, 0(s0)
@@ -169,27 +187,17 @@ label26:
 	jal putch
 	li a0, 10
 	addiw s1, s1, 1
-	bge s1, a0, label29
-	addi s0, s0, 4
-	j label26
-label94:
-	bne a2, t2, label32
-label24:
-	blt a1, a4, label31
-	j label196
-label29:
+	blt s1, a0, label30
 	mv a0, zero
 	ld ra, 0(sp)
 	ld s0, 8(sp)
 	ld s1, 16(sp)
 	addi sp, sp, 64
 	ret
-label52:
-	mv t3, a2
-	mv t1, a1
-	mv t2, zero
+label89:
+	mv t3, t2
 	li t0, 10
-	blt a1, t0, label16
+	blt t1, t0, label16
 	j label94
 label47:
 	mv t2, a2

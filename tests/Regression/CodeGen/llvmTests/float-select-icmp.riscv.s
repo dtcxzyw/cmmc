@@ -11,23 +11,23 @@ label10:
 .p2align 2
 .globl select_icmp_ne
 select_icmp_ne:
-	bne a0, a1, label21
+	bne a0, a1, label20
 	fmv.s f10, f11
-label21:
+label20:
 	ret
 .p2align 2
 .globl select_icmp_sge
 select_icmp_sge:
-	bge a0, a1, label34
+	bge a0, a1, label32
 	fmv.s f10, f11
-label34:
+label32:
 	ret
 .p2align 2
 .globl select_icmp_sgt
 select_icmp_sgt:
-	bgt a0, a1, label46
+	bgt a0, a1, label43
 	fmv.s f10, f11
-label46:
+label43:
 	ret
 .p2align 2
 .globl select_icmp_sgt_zero
@@ -36,23 +36,23 @@ select_icmp_sgt_zero:
 	lui a1, 260096
 	fmv.w.x f12, a1
 	fmv.s f10, f11
-	bgt a0, zero, label57
+	bgt a0, zero, label53
 	fmv.s f10, f12
-label57:
+label53:
 	ret
 .p2align 2
 .globl select_icmp_sle
 select_icmp_sle:
-	ble a0, a1, label70
+	ble a0, a1, label65
 	fmv.s f10, f11
-label70:
+label65:
 	ret
 .p2align 2
 .globl select_icmp_slt
 select_icmp_slt:
-	blt a0, a1, label82
+	blt a0, a1, label76
 	fmv.s f10, f11
-label82:
+label76:
 	ret
 .p2align 2
 .globl select_icmp_slt_one
@@ -62,35 +62,35 @@ select_icmp_slt_one:
 	li a1, 1
 	fmv.w.x f12, a2
 	fmv.s f10, f12
-	blt a0, a1, label94
+	blt a0, a1, label87
 	fmv.s f10, f11
-label94:
+label87:
 	ret
 .p2align 2
 .globl select_icmp_uge
 select_icmp_uge:
-	bgeu a0, a1, label105
+	bgeu a0, a1, label97
 	fmv.s f10, f11
-label105:
+label97:
 	ret
 .p2align 2
 .globl select_icmp_ugt
 select_icmp_ugt:
-	bgtu a0, a1, label115
+	bgtu a0, a1, label106
 	fmv.s f10, f11
-label115:
+label106:
 	ret
 .p2align 2
 .globl select_icmp_ule
 select_icmp_ule:
-	bleu a0, a1, label126
+	bleu a0, a1, label116
 	fmv.s f10, f11
-label126:
+label116:
 	ret
 .p2align 2
 .globl select_icmp_ult
 select_icmp_ult:
-	bltu a0, a1, label136
+	bltu a0, a1, label125
 	fmv.s f10, f11
-label136:
+label125:
 	ret

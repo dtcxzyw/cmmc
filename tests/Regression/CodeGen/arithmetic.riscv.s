@@ -103,17 +103,20 @@ mul_reg:
 .p2align 2
 .globl div2
 div2:
-	srliw a1, a0, 31
-	add a2, a0, a1
-	sraiw a0, a2, 1
+	mv a1, a0
+	bge a0, zero, label74
+	addiw a1, a0, 1
+label74:
+	sraiw a0, a1, 1
 	ret
 .p2align 2
 .globl div4
 div4:
-	slli a1, a0, 1
-	srli a2, a1, 62
-	add a3, a0, a2
-	sraiw a0, a3, 2
+	mv a1, a0
+	bge a0, zero, label80
+	addiw a1, a0, 3
+label80:
+	sraiw a0, a1, 2
 	ret
 .p2align 2
 .globl div3
@@ -162,12 +165,14 @@ divNeg30:
 .p2align 2
 .globl div_shl
 div_shl:
-	slli a2, a0, 1
-	li t0, 64
-	subw a3, t0, a1
-	srl a5, a2, a3
-	add a4, a0, a5
-	sraw a0, a4, a1
+	li a5, 1
+	mv a2, a0
+	sllw a4, a5, a1
+	addiw a3, a4, -1
+	bge a0, zero, label127
+	addw a2, a0, a3
+label127:
+	sraw a0, a2, a1
 	ret
 .p2align 2
 .globl div_reg
@@ -194,10 +199,12 @@ mod_reg:
 .p2align 2
 .globl mod2
 mod2:
-	srliw a1, a0, 31
-	add a2, a0, a1
-	andi a3, a2, -2
-	subw a0, a0, a3
+	mv a1, a0
+	bge a0, zero, label156
+	addiw a1, a0, 1
+label156:
+	andi a2, a1, -2
+	subw a0, a0, a2
 	ret
 .p2align 2
 .globl mod30
@@ -375,9 +382,9 @@ fp_imm0:
 .p2align 2
 .globl fp_imm1
 fp_imm1:
-pcrel279:
+pcrel280:
 	auipc a1, %pcrel_hi(__cmmc_fp_constant_pool)
-	addi a0, a1, %pcrel_lo(pcrel279)
+	addi a0, a1, %pcrel_lo(pcrel280)
 	flw f10, 0(a0)
 	ret
 .p2align 2

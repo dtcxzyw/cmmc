@@ -43,29 +43,29 @@ main:
 	mv s2, a0
 	li a0, 22
 	jal _sysy_starttime
-pcrel309:
+pcrel306:
 	auipc a2, %pcrel_hi(cmmc_parallel_body_0)
 	addiw s1, s2, -3
-pcrel310:
+pcrel307:
 	auipc a1, %pcrel_hi(y)
 	lui s6, 260096
-pcrel311:
+pcrel308:
 	auipc a0, %pcrel_hi(x)
-pcrel312:
+pcrel309:
 	auipc s9, %pcrel_hi(cmmc_parallel_body_payload_0)
 	mv s11, zero
 	li s10, 3
 	fmv.w.x f18, zero
-	addi s8, a2, %pcrel_lo(pcrel309)
-	addi s0, a1, %pcrel_lo(pcrel310)
+	addi s8, a2, %pcrel_lo(pcrel306)
+	addi s0, a1, %pcrel_lo(pcrel307)
 	fmv.w.x f9, s6
-	addi s4, a0, %pcrel_lo(pcrel311)
-	addi s3, s9, %pcrel_lo(pcrel312)
+	addi s4, a0, %pcrel_lo(pcrel308)
+	addi s3, s9, %pcrel_lo(pcrel309)
 	fmv.s f8, f18
-pcrel313:
+pcrel310:
 	auipc a1, %pcrel_hi(__cmmc_fp_constant_pool)
 	mv a0, zero
-	addi s5, a1, %pcrel_lo(pcrel313)
+	addi s5, a1, %pcrel_lo(pcrel310)
 	lui a1, 122
 	addiw s7, a1, 288
 	j label92
@@ -92,7 +92,6 @@ label92:
 	sltu a1, zero, a2
 	bne a1, zero, label274
 	fmv.s f9, f10
-.p2align 2
 label274:
 	flw f12, 4(s5)
 	fmv.w.x f11, zero
@@ -100,12 +99,11 @@ label274:
 	fmv.s f18, f11
 	bne a1, zero, label276
 	fmv.s f18, f10
-.p2align 2
 label276:
 	ble s2, a0, label152
-pcrel314:
+pcrel311:
 	auipc s9, %pcrel_hi(cmmc_parallel_body_payload_0)
-	sw a0, %pcrel_lo(pcrel314)(s9)
+	sw a0, %pcrel_lo(pcrel311)(s9)
 	sd s4, 8(s3)
 	fsw f18, 16(s3)
 	sd s0, 24(s3)
@@ -122,6 +120,10 @@ label101:
 	fmv.w.x f10, zero
 	mv a1, s4
 	mv a2, zero
+	j label113
+.p2align 2
+label117:
+	addi a1, a1, 16
 .p2align 2
 label113:
 	sh2add a3, a2, s0
@@ -142,11 +144,7 @@ label113:
 	fadd.s f11, f10, f14
 	fmul.s f14, f12, f13
 	fadd.s f10, f11, f14
-	ble s1, a2, label218
-	addi a1, a1, 16
-	j label113
-.p2align 2
-label218:
+	bgt s1, a2, label117
 	fmv.s f11, f10
 	ble s2, a2, label297
 .p2align 2
@@ -191,7 +189,12 @@ label120:
 	fle.s a2, f12, f10
 	or s0, a1, a2
 	jal _sysy_stoptime
-	beq s0, zero, label123
+	bne s0, zero, label124
+	li a0, 1
+	jal putint
+	li a0, 1
+	j label121
+label124:
 	mv a0, zero
 	jal putint
 	mv a0, zero
@@ -214,11 +217,6 @@ label121:
 	ld s10, 120(sp)
 	addi sp, sp, 128
 	ret
-label123:
-	li a0, 1
-	jal putint
-	li a0, 1
-	j label121
 .p2align 2
 label297:
 	fadd.s f8, f8, f10

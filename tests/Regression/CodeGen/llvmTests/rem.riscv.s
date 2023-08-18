@@ -20,11 +20,12 @@ test1:
 .p2align 2
 .globl test2
 test2:
-	slli a3, a0, 1
-	srli a1, a3, 56
-	add a2, a0, a1
-	andi a4, a2, -256
-	subw a3, a0, a4
+	mv a1, a0
+	bge a0, zero, label28
+	addiw a1, a0, 255
+label28:
+	andi a2, a1, -256
+	subw a3, a0, a2
 	zext.w a0, a3
 	ret
 .p2align 2

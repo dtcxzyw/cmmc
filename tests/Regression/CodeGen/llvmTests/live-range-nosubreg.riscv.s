@@ -21,29 +21,29 @@ b:
 .p2align 2
 .globl main
 main:
-pcrel53:
+pcrel52:
 	auipc a0, %pcrel_hi(a)
-pcrel54:
+pcrel53:
 	auipc a5, %pcrel_hi(c)
-	lh a1, %pcrel_lo(pcrel53)(a0)
+	lh a1, %pcrel_lo(pcrel52)(a0)
 	zext.h a4, a1
 	addiw a3, a4, 1
-	lw a4, %pcrel_lo(pcrel54)(a5)
+	lw a4, %pcrel_lo(pcrel53)(a5)
 	zext.h a2, a3
 	mv a3, a2
 	beq a4, zero, label50
 	mv a3, a1
 label50:
 	zext.h a4, a3
-pcrel55:
+pcrel54:
 	auipc a1, %pcrel_hi(d)
 	addiw a2, a4, -1
 	zext.h a3, a2
 	zext.h a5, a2
-pcrel56:
+pcrel55:
 	auipc a0, %pcrel_hi(a)
-	sh a5, %pcrel_lo(pcrel56)(a0)
-	lb a0, %pcrel_lo(pcrel55)(a1)
+	sh a5, %pcrel_lo(pcrel55)(a0)
+	lb a0, %pcrel_lo(pcrel54)(a1)
 	andi a4, a0, 255
 	subw a2, zero, a4
 	bne a3, zero, label26
@@ -60,7 +60,7 @@ label2:
 	mv a0, zero
 	or a5, a3, t0
 	andi a4, a5, 255
-pcrel57:
+pcrel56:
 	auipc a1, %pcrel_hi(d)
-	sb a4, %pcrel_lo(pcrel57)(a1)
+	sb a4, %pcrel_lo(pcrel56)(a1)
 	ret

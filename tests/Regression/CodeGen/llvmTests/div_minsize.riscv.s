@@ -4,11 +4,12 @@
 .p2align 2
 .globl testsize1
 testsize1:
-	slli a1, a0, 1
-	srli a2, a1, 59
-	add a3, a0, a2
-	sraiw a4, a3, 5
-	zext.w a0, a4
+	mv a1, a0
+	bge a0, zero, label8
+	addiw a1, a0, 31
+label8:
+	sraiw a2, a1, 5
+	zext.w a0, a2
 	ret
 .p2align 2
 .globl testsize2

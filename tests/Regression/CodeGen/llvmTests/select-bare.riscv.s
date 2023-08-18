@@ -13,7 +13,7 @@ label8:
 .p2align 2
 .globl bare_select_float
 bare_select_float:
-	bne a0, zero, label17
+	bne a0, zero, label16
 	fmv.s f10, f11
-label17:
+label16:
 	ret

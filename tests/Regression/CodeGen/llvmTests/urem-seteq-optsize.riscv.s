@@ -18,8 +18,8 @@ test_optsize:
 	li a3, 5
 	li a1, 42
 	remuw a2, a0, a3
-	beq a2, zero, label19
+	beq a2, zero, label18
 	li a1, -10
-label19:
+label18:
 	zext.w a0, a1
 	ret

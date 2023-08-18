@@ -23,9 +23,9 @@ select_const_int_easy:
 .globl select_const_int_harder
 select_const_int_harder:
 	li a1, 6
-	bne a0, zero, label23
+	bne a0, zero, label22
 	li a1, 38
-label23:
+label22:
 	zext.w a0, a1
 	ret
 .p2align 2
@@ -40,9 +40,9 @@ select_const_int_one_away:
 .globl select_const_int_pow2_zero
 select_const_int_pow2_zero:
 	li a1, 4
-	bne a0, zero, label38
+	bne a0, zero, label36
 	mv a1, zero
-label38:
+label36:
 	zext.w a0, a1
 	ret
 .p2align 2
@@ -112,9 +112,9 @@ select_sge_zero_negone:
 select_sgt_negative_one_constant1_constant2:
 	li a2, -1
 	li a1, 7
-	bgt a0, a2, label113
+	bgt a0, a2, label110
 	li a1, -3
-label113:
+label110:
 	zext.w a0, a1
 	ret
 .p2align 2
@@ -136,9 +136,9 @@ select_sle_zero_negone:
 .globl select_slt_zero_constant1_constant2
 select_slt_zero_constant1_constant2:
 	li a1, 7
-	blt a0, zero, label141
+	blt a0, zero, label137
 	li a1, -3
-label141:
+label137:
 	zext.w a0, a1
 	ret
 .p2align 2

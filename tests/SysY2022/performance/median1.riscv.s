@@ -21,14 +21,16 @@ pcrel112:
 	mv s1, a0
 	li a0, 59
 	jal _sysy_starttime
-	mv a2, zero
-	srliw a0, s1, 31
-	addiw a1, s1, -1
-	add a3, s1, a0
+	mv a0, s1
+	addiw a2, s1, -1
+	bge s1, zero, label99
+	addiw a0, s1, 1
+label99:
+	sraiw s2, a0, 1
+	mv a1, zero
 	mv a0, s0
-	sraiw s2, a3, 1
 	lw a3, 0(s0)
-	addiw a4, a1, 1
+	addiw a4, a2, 1
 	mv a5, zero
 	j label8
 label17:
@@ -38,19 +40,19 @@ label17:
 	sw t1, 0(a0)
 	sw a3, 0(a4)
 	bge s2, a5, label18
-	mv a1, a5
+	mv a2, a5
 	addiw a4, a5, 1
 	lw a3, 0(a0)
-	mv a5, a2
+	mv a5, a1
 .p2align 2
 label8:
 	ble a4, a5, label11
 .p2align 2
 label22:
 	addiw a4, a4, -1
-	sh2add t0, a4, s0
-	lw t1, 0(t0)
-	ble a3, t1, label8
+	sh2add t1, a4, s0
+	lw t0, 0(t1)
+	ble a3, t0, label8
 	bgt a4, a5, label14
 	j label15
 .p2align 2
@@ -74,14 +76,7 @@ label15:
 	bgt a4, a5, label22
 	j label11
 label18:
-	ble s2, a5, label20
-	addiw a2, a5, 1
-	addi a0, t0, 4
-	addiw a4, a1, 1
-	mv a5, a2
-	lw a3, 0(a0)
-	j label8
-label20:
+	bgt s2, a5, label19
 	li a0, 61
 	jal _sysy_stoptime
 	mv a0, s1
@@ -89,14 +84,22 @@ label20:
 	jal putarray
 	sh2add a0, s2, s0
 	lw a1, 0(a0)
+	mv a2, a1
+	bge a1, zero, label101
+	addiw a2, a1, 255
+label101:
+	andi a3, a2, -256
 	ld ra, 0(sp)
-	slli a5, a1, 1
+	subw a0, a1, a3
 	ld s0, 8(sp)
-	srli a4, a5, 56
 	ld s1, 16(sp)
-	add a3, a1, a4
 	ld s2, 24(sp)
-	andi a2, a3, -256
 	addi sp, sp, 32
-	subw a0, a1, a2
 	ret
+label19:
+	addiw a1, a5, 1
+	addi a0, t0, 4
+	addiw a4, a2, 1
+	mv a5, a1
+	lw a3, 0(a0)
+	j label8

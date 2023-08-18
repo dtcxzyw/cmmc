@@ -17,18 +17,18 @@ k:
 .p2align 2
 .globl t
 t:
-pcrel23:
+pcrel22:
 	auipc a1, %pcrel_hi(i)
-pcrel24:
+pcrel23:
 	auipc a3, %pcrel_hi(j)
-	lw a0, %pcrel_lo(pcrel23)(a1)
+	lw a0, %pcrel_lo(pcrel22)(a1)
 	li a1, 1
-	lw a2, %pcrel_lo(pcrel24)(a3)
+	lw a2, %pcrel_lo(pcrel23)(a3)
 	bne a0, a2, label21
 	li a1, 3
 label21:
 	zext.w a0, a1
-pcrel25:
+pcrel24:
 	auipc a2, %pcrel_hi(k)
-	sw a0, %pcrel_lo(pcrel25)(a2)
+	sw a0, %pcrel_lo(pcrel24)(a2)
 	ret

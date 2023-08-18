@@ -28,21 +28,21 @@ main:
 	li a0, 13
 	jal _sysy_starttime
 	li a1, 75
-pcrel468:
+pcrel469:
 	auipc a0, %pcrel_hi(x)
 	addiw s0, s5, -1
 	slli s2, a1, 5
-	addi s4, a0, %pcrel_lo(pcrel468)
+	addi s4, a0, %pcrel_lo(pcrel469)
 	sub s3, zero, s2
 	lui a0, 352
 	addiw s6, a0, -1792
 	ble s5, zero, label329
-pcrel469:
-	auipc a0, %pcrel_hi(cmmc_parallel_body_payload_0)
 pcrel470:
+	auipc a0, %pcrel_hi(cmmc_parallel_body_payload_0)
+pcrel471:
 	auipc a3, %pcrel_hi(cmmc_parallel_body_0)
-	sw s5, %pcrel_lo(pcrel469)(a0)
-	addi a2, a3, %pcrel_lo(pcrel470)
+	sw s5, %pcrel_lo(pcrel470)(a0)
+	addi a2, a3, %pcrel_lo(pcrel471)
 	mv a1, s5
 	mv a0, zero
 	jal cmmcParallelFor
@@ -74,20 +74,20 @@ label341:
 	lw t6, 0(t3)
 	sh2add a7, t4, a2
 	lw s7, 0(a6)
-	lw a6, 0(a7)
 	addw t5, t6, s7
-	sh2add s7, t4, a3
-	addw t6, t5, a6
-	lw a7, 0(s7)
+	lw t6, 0(a7)
+	sh2add a7, t4, a3
+	addw a6, t5, t6
+	lw s7, 0(a7)
 	sh2add t5, t4, a0
-	addw a6, t6, a7
+	addw t6, a6, s7
 	addiw t4, t4, 1
 	lw a7, -4(t5)
 	lw s7, 4(t5)
-	addw t6, a6, a7
-	addw a7, t6, s7
-	divw a6, a7, s1
-	sw a6, 0(t5)
+	addw a6, t6, a7
+	addw a7, a6, s7
+	divw t6, a7, s1
+	sw t6, 0(t5)
 	bgt s0, t4, label348
 	ble s0, t2, label411
 	add a0, a0, s2
@@ -102,7 +102,7 @@ label341:
 	j label341
 .p2align 2
 label411:
-	ble s0, t1, label463
+	ble s0, t1, label464
 	add a0, t0, s6
 	mv a4, t0
 	addiw t1, t1, 1
@@ -119,7 +119,7 @@ label411:
 	addi t3, a3, 4
 	add a3, a0, s2
 	j label341
-label463:
+label464:
 	mv s0, t0
 	mv s1, t2
 label330:
@@ -128,14 +128,16 @@ label330:
 	mv a0, s5
 	mv a1, s4
 	jal putarray
-	srliw a0, s5, 31
-	add a1, s5, a0
 	mv a0, s5
-	sraiw a2, a1, 1
-	mul a4, a2, s2
-	mul a5, a2, s6
-	add a3, s4, a5
-	add a1, a3, a4
+	bge s5, zero, label454
+	addiw a0, s5, 1
+label454:
+	sraiw a2, a0, 1
+	mv a0, s5
+	mul a5, a2, s2
+	mul a4, a2, s6
+	add a3, s4, a4
+	add a1, a3, a5
 	jal putarray
 	mv a0, s5
 	addiw a3, s1, -1

@@ -5,19 +5,22 @@
 .globl f0
 f0:
 	sext.h a1, a0
-	srliw a2, a1, 31
-	add a3, a1, a2
-	sraiw a4, a3, 1
-	zext.h a0, a4
+	mv a2, a1
+	bge a1, zero, label9
+	addiw a2, a1, 1
+label9:
+	sraiw a1, a2, 1
+	zext.h a0, a1
 	ret
 .p2align 2
 .globl f1
 f1:
-	slli a1, a0, 1
-	srli a2, a1, 62
-	add a3, a0, a2
-	sraiw a4, a3, 2
-	zext.w a0, a4
+	mv a1, a0
+	bge a0, zero, label17
+	addiw a1, a0, 3
+label17:
+	sraiw a2, a1, 2
+	zext.w a0, a2
 	ret
 .p2align 2
 .globl f2
@@ -33,27 +36,31 @@ f2:
 .p2align 2
 .globl f3
 f3:
-	slli a1, a0, 1
-	srli a2, a1, 56
-	add a3, a0, a2
-	sraiw a4, a3, 8
-	zext.w a0, a4
+	mv a1, a0
+	bge a0, zero, label36
+	addiw a1, a0, 255
+label36:
+	sraiw a2, a1, 8
+	zext.w a0, a2
 	ret
 .p2align 2
 .globl f4
 f4:
 	sext.h a1, a0
-	srliw a2, a1, 31
-	add a3, a1, a2
-	sraiw a4, a3, 1
-	zext.h a0, a4
+	mv a2, a1
+	bge a1, zero, label45
+	addiw a2, a1, 1
+label45:
+	sraiw a1, a2, 1
+	zext.h a0, a1
 	ret
 .p2align 2
 .globl f5
 f5:
-	slli a1, a0, 1
-	srli a2, a1, 62
-	add a3, a0, a2
-	sraiw a4, a3, 2
-	zext.w a0, a4
+	mv a1, a0
+	bge a0, zero, label53
+	addiw a1, a0, 3
+label53:
+	sraiw a2, a1, 2
+	zext.w a0, a2
 	ret

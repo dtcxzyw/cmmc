@@ -4,27 +4,30 @@
 .p2align 2
 .globl test1
 test1:
-	slli a1, a0, 1
-	srli a2, a1, 60
-	add a3, a0, a2
-	sraiw a4, a3, 4
-	zext.w a0, a4
+	mv a1, a0
+	bge a0, zero, label8
+	addiw a1, a0, 15
+label8:
+	sraiw a2, a1, 4
+	zext.w a0, a2
 	ret
 .p2align 2
 .globl test2
 test2:
-	slli a1, a0, 1
-	srli a2, a1, 60
-	add a3, a0, a2
-	sraiw a4, a3, 4
-	zext.w a0, a4
+	mv a1, a0
+	bge a0, zero, label16
+	addiw a1, a0, 15
+label16:
+	sraiw a2, a1, 4
+	zext.w a0, a2
 	ret
 .p2align 2
 .globl test3
 test3:
-	slli a1, a0, 1
-	srli a2, a1, 60
-	add a3, a0, a2
-	sraiw a4, a3, 4
-	zext.w a0, a4
+	mv a1, a0
+	bge a0, zero, label24
+	addiw a1, a0, 15
+label24:
+	sraiw a2, a1, 4
+	zext.w a0, a2
 	ret

@@ -18,9 +18,9 @@ label10:
 .globl my_fmax
 my_fmax:
 	flt.s a0, f11, f10
-	bne a0, zero, label18
+	bne a0, zero, label17
 	fmv.s f10, f11
-label18:
+label17:
 	ret
 .p2align 2
 .globl my_trunc

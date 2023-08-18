@@ -14,9 +14,9 @@ label7:
 .globl pass_vector_bool
 pass_vector_bool:
 	li a1, 66
-	bne a0, zero, label15
+	bne a0, zero, label14
 	mv a1, zero
-label15:
+label14:
 	zext.w a0, a1
 	ret
 .p2align 2

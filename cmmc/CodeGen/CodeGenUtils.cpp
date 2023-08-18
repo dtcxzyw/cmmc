@@ -93,12 +93,32 @@ void dumpAssembly(std::ostream& out, const CodeGenContext& ctx, const MIRModule&
             if(func.blocks().empty())
                 continue;
 
+            MIRBasicBlock* lastBlock = nullptr;
+            auto isSFB = [&](MIRBasicBlock* block) {
+                if(lastBlock == nullptr)
+                    return false;
+                auto& inst = lastBlock->instructions();
+                if(inst.size() < 2)
+                    return false;
+                auto& lastInst = inst.back();
+                auto& lastInstInfo = ctx.instInfo.getInstInfo(lastInst);
+                if(requireOneFlag(lastInstInfo.getInstFlag(), InstFlagSideEffect))
+                    return false;
+                auto& branchInst = *std::next(inst.rbegin());
+                double prob;
+                MIRBasicBlock* target;
+                if(ctx.instInfo.matchConditionalBranch(branchInst, target, prob))
+                    return target == block;
+                return false;
+            };
             for(auto& block : func.blocks()) {
                 auto isPCRelLabel = [](const std::string_view& label) { return label == "pcrel"; };
-                if(emitAlignment && !isPCRelLabel(block->symbol().prefix()) &&
+                if(emitAlignment && !isPCRelLabel(block->symbol().prefix()) && !isSFB(block.get()) &&
                    (&block == &func.blocks().front() || block->getTripCount() >= primaryPathThreshold / 2.0)) {
                     out << ".p2align " << p2Align << '\n';
                 }
+                lastBlock = block.get();
+
                 if(&block != &func.blocks().front()) {
                     block->dumpAsTarget(out);
                     out << ":\n";

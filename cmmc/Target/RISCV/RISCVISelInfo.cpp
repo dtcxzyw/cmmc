@@ -466,6 +466,18 @@ static bool selectSFBArith(ISelContext& ctx, const MIROperand& trueV, const MIRO
     return true;
 }
 
+static bool selectAddImm32(ISelContext& ctx, intmax_t val, MIROperand& rhs, MIROperand& op) {
+    if(isSignedImm<12>(val)) {
+        rhs = MIROperand::asImm(val, OperandType::Int32);
+        op = MIROperand::asImm(ADDIW, OperandType::Special);
+    } else {
+        rhs = MIROperand::asVReg(ctx.getCodeGenCtx().nextId(), OperandType::Int32);
+        ctx.newInst(InstLoadImm).setOperand<0>(rhs).setOperand<1>(MIROperand::asImm(val, OperandType::Int32));
+        op = MIROperand::asImm(ADDW, OperandType::Special);
+    }
+    return true;
+}
+
 CMMC_TARGET_NAMESPACE_END
 
 #include <RISCV/ISelInfoImpl.hpp>
@@ -795,6 +807,7 @@ static void emitImm(MIRInstList& instructions, MIRInstList::iterator iter, const
 }
 
 void RISCVISelInfo::preRALegalizeInst(const InstLegalizeContext& ctx) const {
+    constexpr auto sfbProb = 0.001;  // hint for block layout
     switch(ctx.inst.opcode()) {
         case Select_GPR_GPR:
         case Select_FPR_GPR: {
@@ -807,7 +820,6 @@ void RISCVISelInfo::preRALegalizeInst(const InstLegalizeContext& ctx) const {
             const auto moveCode = ctx.inst.opcode() == Select_GPR_GPR ? MoveGPR : FMV_S;
 
             auto& curInstructions = ctx.instructions;
-            constexpr auto prob = defaultSelectProb;
 
             auto prevBlock = (*ctx.blockIter)->get();
             const auto insertPoint = std::next(*ctx.blockIter);
@@ -833,7 +845,7 @@ void RISCVISelInfo::preRALegalizeInst(const InstLegalizeContext& ctx) const {
                                                     .setOperand<0>(lhs)
                                                     .setOperand<1>(rhs)
                                                     .setOperand<2>(MIROperand::asReloc(nextBlock))
-                                                    .setOperand<3>(MIROperand::asProb(prob)));
+                                                    .setOperand<3>(MIROperand::asProb(sfbProb)));
             if(falseV.isImm()) {
                 emitImm(falseBlock->instructions(), falseBlock->instructions().end(), dst, falseV);
             } else {
@@ -855,7 +867,6 @@ void RISCVISelInfo::preRALegalizeInst(const InstLegalizeContext& ctx) const {
             constexpr auto moveCode = MoveGPR;
 
             auto& curInstructions = ctx.instructions;
-            constexpr auto prob = defaultSelectProb;
 
             auto prevBlock = (*ctx.blockIter)->get();
             const auto insertPoint = std::next(*ctx.blockIter);
@@ -878,7 +889,7 @@ void RISCVISelInfo::preRALegalizeInst(const InstLegalizeContext& ctx) const {
                                                     .setOperand<0>(lhs == rs1 && !isZero(lhs) ? dst : lhs)
                                                     .setOperand<1>(rhs == rs1 && !isZero(rhs) ? dst : rhs)
                                                     .setOperand<2>(MIROperand::asReloc(nextBlock))
-                                                    .setOperand<3>(MIROperand::asProb(1.0 - prob)));
+                                                    .setOperand<3>(MIROperand::asProb(sfbProb)));
             trueBlock->instructions().push_back(
                 MIRInst{ static_cast<uint32_t>(op.imm()) }.setOperand<0>(dst).setOperand<1>(dst).setOperand<2>(rs2));
             trueBlock->instructions().push_back(MIRInst{ J }.setOperand<0>(MIROperand::asReloc(nextBlock)));

@@ -30,6 +30,9 @@ pcrel142:
 	sd s4, 40(sp)
 	mv s4, s1
 	sd s3, 48(sp)
+	j label2
+label37:
+	addi s4, s4, 4
 label2:
 	jal getch
 	li a1, 10
@@ -40,14 +43,14 @@ pcrel143:
 	sw zero, 0(s4)
 	addi s3, a0, %pcrel_lo(pcrel143)
 	mv s4, s3
-	j label5
-label44:
-	addi s4, s4, 4
 label5:
 	jal getch
 	li a1, 10
 	sw a0, 0(s4)
-	bne a0, a1, label44
+	beq a0, a1, label7
+	addi s4, s4, 4
+	j label5
+label7:
 	sw zero, 0(s4)
 	addi a0, s2, -4
 	addi a1, s1, -4
@@ -85,7 +88,13 @@ label14:
 	mv a1, zero
 	mv a0, zero
 	j label15
-label125:
+label22:
+	sh2add a4, a1, s2
+	mv a1, zero
+	lw a3, 0(a4)
+	xori a5, a3, -1
+	sltiu a2, a5, 1
+	bne a2, zero, label126
 	mv a1, a3
 label126:
 	addw a0, a0, a2
@@ -95,19 +104,13 @@ label15:
 	beq a2, zero, label56
 	sh2add a3, a1, s1
 	lw a4, 0(a3)
-	beq a2, a4, label23
-	sh2add a4, a1, s2
-	mv a1, zero
-	lw a3, 0(a4)
-	xori a5, a3, -1
-	sltiu a2, a5, 1
-	bne a2, zero, label126
-	j label125
-label23:
+	bne a2, a4, label22
 	lw a2, 4(a3)
 	addiw a1, a1, 1
 	addiw a0, a0, 1
-	bne a2, zero, label24
+	beq a2, zero, label19
+	addi s3, s3, 4
+	j label15
 label19:
 	jal putint
 	li a0, 10
@@ -125,9 +128,3 @@ label19:
 label56:
 	mv a0, s0
 	j label19
-label37:
-	addi s4, s4, 4
-	j label2
-label24:
-	addi s3, s3, 4
-	j label15

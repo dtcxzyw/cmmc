@@ -27,10 +27,10 @@ search:
 	sd s11, 96(sp)
 	sd a3, 160(sp)
 	sd a0, 152(sp)
-pcrel332:
+pcrel334:
 	auipc a0, %pcrel_hi(a)
 	sd a1, 144(sp)
-	addi a3, a0, %pcrel_lo(pcrel332)
+	addi a3, a0, %pcrel_lo(pcrel334)
 	li a1, 10
 	sd a2, 136(sp)
 	sd a6, 128(sp)
@@ -119,12 +119,15 @@ label21:
 	li a1, 10
 	ld a2, 136(sp)
 	addiw a3, a2, 1
-	bgt a3, a1, label145
-	ld a3, 160(sp)
-	lui s9, 262144
-	mv s10, zero
-	mv s5, a3
-	j label27
+	ble a3, a1, label144
+	lui a0, 262144
+	sh2add a2, s4, s3
+	addi s0, s0, 8
+	addiw a1, a0, 1
+	sw s1, 0(a2)
+	mv a0, s6
+	min s2, s2, a1
+	j label5
 label70:
 	lui a0, 262144
 label2:
@@ -143,6 +146,18 @@ label2:
 	ld s11, 96(sp)
 	addi sp, sp, 176
 	ret
+label57:
+	lui a0, 262144
+	li a1, 10
+	bgt s2, a1, label2
+	mv a0, s2
+	j label2
+label144:
+	ld a3, 160(sp)
+	lui s9, 262144
+	mv s10, zero
+	mv s5, a3
+	j label27
 label38:
 	addiw s10, s10, 1
 	li a4, 2
@@ -160,10 +175,6 @@ label27:
 	mv a1, s8
 	mv a3, zero
 	j label32
-label50:
-	ld a7, 104(sp)
-	lw a4, 0(a7)
-	beq a1, a4, label37
 label49:
 	lw a4, 0(s5)
 	addiw a3, a3, 1
@@ -179,16 +190,24 @@ label32:
 	beq a4, s1, label37
 	ld a6, 128(sp)
 	lw a4, 0(a6)
-	beq a2, a4, label50
-	j label49
+	bne a2, a4, label49
+	ld a7, 104(sp)
+	lw a4, 0(a7)
+	bne a1, a4, label49
 label37:
 	ld a6, 128(sp)
 	lw a4, 0(a6)
 	bne a2, a4, label38
 	ld a7, 104(sp)
 	lw a4, 0(a7)
-	beq a1, a4, label208
-	j label38
+	bne a1, a4, label38
+	addiw a1, s1, 1
+	sh2add a2, s4, s3
+	addi s0, s0, 8
+	mv a0, s6
+	min s2, s2, a1
+	sw s1, 0(a2)
+	j label5
 label40:
 	beq a2, zero, label39
 	ld a5, 112(sp)
@@ -222,12 +241,6 @@ label40:
 	sw s1, 0(s11)
 	min s9, s9, a1
 	j label27
-label57:
-	lui a0, 262144
-	li a1, 10
-	bgt s2, a1, label2
-	mv a0, s2
-	j label2
 label51:
 	lui a0, 262144
 	li a1, 10
@@ -240,23 +253,6 @@ label52:
 	mv a0, s6
 	min s2, s2, a1
 	sw s1, 0(a2)
-	j label5
-label208:
-	addiw a1, s1, 1
-	sh2add a2, s4, s3
-	addi s0, s0, 8
-	mv a0, s6
-	min s2, s2, a1
-	sw s1, 0(a2)
-	j label5
-label145:
-	lui a0, 262144
-	sh2add a2, s4, s3
-	addi s0, s0, 8
-	addiw a1, a0, 1
-	sw s1, 0(a2)
-	mv a0, s6
-	min s2, s2, a1
 	j label5
 .p2align 2
 .globl main
@@ -292,18 +288,18 @@ main:
 	sub a0, zero, s1
 	sd s1, 128(sp)
 	sd a0, 136(sp)
-pcrel1035:
+pcrel1037:
 	auipc a0, %pcrel_hi(a)
 	sw zero, 148(sp)
-	addi s3, a0, %pcrel_lo(pcrel1035)
+	addi s3, a0, %pcrel_lo(pcrel1037)
 	sw zero, 144(sp)
-	j label334
+	j label336
 .p2align 2
-label1016:
+label1018:
 	mv s6, s10
 	mv s8, s11
 .p2align 2
-label344:
+label346:
 	addi a3, sp, 112
 	addi a4, sp, 108
 	mv a0, s8
@@ -315,30 +311,29 @@ label344:
 	jal search
 	mv a1, a0
 	li a2, 11
-	blt a0, a2, label1002
+	blt a0, a2, label1004
 	li a1, -1
-.p2align 2
-label1002:
+label1004:
 	mv a0, a1
 	jal putint
 	li a0, 10
 	jal putch
 .p2align 2
-label334:
+label336:
 	jal getint
 	sw a0, 108(sp)
 	mv s7, a0
 	jal getint
 	sw a0, 104(sp)
-	beq s7, zero, label337
+	beq s7, zero, label339
 	mv a0, s3
 	mv a2, zero
-	j label339
+	j label341
 .p2align 2
-label342:
+label344:
 	addi a0, a0, 480
 .p2align 2
-label339:
+label341:
 	ori a1, s1, 1
 	addiw a2, a2, 4
 	li a3, 28
@@ -402,7 +397,7 @@ label339:
 	sd a1, 456(a0)
 	sd a1, 464(a0)
 	sd a1, 472(a0)
-	blt a2, a3, label342
+	blt a2, a3, label344
 	sd a1, 480(a0)
 	sd a1, 488(a0)
 	sd a1, 496(a0)
@@ -434,69 +429,69 @@ label339:
 	sd a1, 704(a0)
 	sd a1, 712(a0)
 	lw a2, 104(sp)
-	ble a2, zero, label344
+	ble a2, zero, label346
 	addi s7, s3, 120
 	mv s10, s6
 	mv s11, s8
 	mv s6, s0
 	lw a0, 108(sp)
-	bgt a0, zero, label353
+	bgt a0, zero, label355
 	addiw s6, s0, 1
 	lw a0, 104(sp)
-	ble s6, a0, label368
-	j label1016
+	ble s6, a0, label370
+	j label1018
 .p2align 2
-label598:
+label600:
 	li a1, 3
-	bne a0, a1, label1017
+	bne a0, a1, label1019
 	sw s6, 148(sp)
 	sw s9, 144(sp)
 	addiw s9, s9, 1
 	lw a0, 108(sp)
-	bgt s9, a0, label608
+	bgt s9, a0, label610
 .p2align 2
-label364:
+label366:
 	addi s8, s8, 4
 .p2align 2
-label354:
+label356:
 	jal getint
 	li a1, 2
 	sw a0, 0(s8)
-	bne a0, a1, label598
+	bne a0, a1, label600
 	mv s10, s9
 	mv s11, s6
 	lw a0, 108(sp)
 	addiw s9, s9, 1
-	ble s9, a0, label364
+	ble s9, a0, label366
 	addiw s6, s6, 1
 	lw a0, 104(sp)
-	bgt s6, a0, label1016
+	bgt s6, a0, label1018
 .p2align 2
-label368:
+label370:
 	addi s7, s7, 120
 	lw a0, 108(sp)
-	ble a0, zero, label1021
+	ble a0, zero, label1023
 .p2align 2
-label353:
+label355:
 	addi s8, s7, 4
 	mv s9, s0
-	j label354
+	j label356
 .p2align 2
-label1017:
+label1019:
 	addiw s9, s9, 1
 	lw a0, 108(sp)
-	ble s9, a0, label364
+	ble s9, a0, label366
 	addiw s6, s6, 1
 	lw a0, 104(sp)
-	ble s6, a0, label368
-	j label1016
+	ble s6, a0, label370
+	j label1018
 .p2align 2
-label608:
+label610:
 	addiw s6, s6, 1
 	lw a0, 104(sp)
-	ble s6, a0, label368
-	j label1016
-label337:
+	ble s6, a0, label370
+	j label1018
+label339:
 	mv a0, zero
 	ld ra, 0(sp)
 	ld s2, 8(sp)
@@ -514,8 +509,8 @@ label337:
 	addi sp, sp, 152
 	ret
 .p2align 2
-label1021:
+label1023:
 	addiw s6, s6, 1
 	lw a0, 104(sp)
-	ble s6, a0, label368
-	j label1016
+	ble s6, a0, label370
+	j label1018

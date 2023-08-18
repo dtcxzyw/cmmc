@@ -13,3 +13,18 @@ int test4(int x, int y) {
 int test5(int x) {
     return x < 0 ? x + 1000000007 : x;
 }
+int test6(int x) {
+    return x % 256;
+}
+int test7(int x) {
+    return x / 131072;
+}
+int test8(int x, int y) {
+    return x / (1 << y);
+}
+int test9(int x) {
+    return x / 2;
+}
+int test10(int x) {
+    return x % 2;
+}

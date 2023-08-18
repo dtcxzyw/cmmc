@@ -136,12 +136,12 @@ main:
 	sd s3, 32(sp)
 	sd s4, 40(sp)
 	sd a0, 48(sp)
-pcrel168:
+pcrel165:
 	auipc a0, %pcrel_hi(__HELLO)
 	sd zero, 56(sp)
-	addi s2, a0, %pcrel_lo(pcrel168)
+	addi s2, a0, %pcrel_lo(pcrel165)
 	sw zero, 64(sp)
-	lw a1, %pcrel_lo(pcrel168)(a0)
+	lw a1, %pcrel_lo(pcrel165)(a0)
 	beq a1, zero, label41
 .p2align 2
 label3:
@@ -162,42 +162,25 @@ label6:
 	srli a3, a1, 63
 	srli a2, a1, 32
 	add a0, a3, a2
-	bne a0, s2, label8
-label28:
-	slliw a2, s1, 4
-	addw a1, a2, s1
-	addiw a0, a1, 23
-	slli a4, a0, 1
-	srli a2, a4, 59
-	add a1, a0, a2
-	andi a3, a1, -32
-	subw s1, a0, a3
-	bne s1, zero, label6
-	mv a0, zero
-	ld ra, 0(sp)
-	ld s0, 8(sp)
-	ld s2, 16(sp)
-	ld s1, 24(sp)
-	ld s3, 32(sp)
-	ld s4, 40(sp)
-	addi sp, sp, 72
-	ret
-label8:
+	beq a0, s2, label28
+pcrel166:
 	auipc a2, %pcrel_hi(N4__mE___)
 	li a3, 200
-	addi s3, a2, %pcrel_lo(label8)
+	addi s3, a2, %pcrel_lo(pcrel166)
 	mul a1, a0, a3
 	add s4, s3, a1
 	lw a2, 0(s4)
-	beq a2, zero, label13
+	bne a2, zero, label10
+	j label13
+.p2align 2
+label12:
+	addi s4, s4, 4
 .p2align 2
 label10:
 	lw a0, 0(s4)
 	jal putch
 	lw a1, 4(s4)
-	beq a1, zero, label13
-	addi s4, s4, 4
-	j label10
+	bne a1, zero, label12
 label13:
 	auipc a0, %pcrel_hi(saY_HeI10_To)
 	lw a1, %pcrel_lo(label13)(a0)
@@ -211,20 +194,42 @@ label25:
 	beq a1, zero, label14
 	addi s4, s4, 4
 	j label25
+label28:
+	slliw a3, s1, 4
+	addw a2, a3, s1
+	addiw a0, a2, 23
+	mv a1, a0
+	bge a0, zero, label152
+	addiw a1, a0, 31
+label152:
+	andi a2, a1, -32
+	subw s1, a0, a2
+	bne s1, zero, label6
+	mv a0, zero
+	ld ra, 0(sp)
+	ld s0, 8(sp)
+	ld s2, 16(sp)
+	ld s1, 24(sp)
+	ld s3, 32(sp)
+	ld s4, 40(sp)
+	addi sp, sp, 72
+	ret
 label14:
 	li a2, 200
 	mul a0, s2, a2
 	add s2, s3, a0
 	lw a1, 0(s2)
-	beq a1, zero, label15
+	bne a1, zero, label21
+	j label15
+.p2align 2
+label23:
+	addi s2, s2, 4
 .p2align 2
 label21:
 	lw a0, 0(s2)
 	jal putch
 	lw a1, 4(s2)
-	beq a1, zero, label15
-	addi s2, s2, 4
-	j label21
+	bne a1, zero, label23
 label15:
 	lw a0, 48(sp)
 	beq a0, zero, label28

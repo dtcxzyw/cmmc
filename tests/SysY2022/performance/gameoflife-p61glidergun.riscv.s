@@ -40,9 +40,9 @@ main:
 	sd s11, 96(sp)
 	jal getint
 	mv s7, a0
-pcrel630:
+pcrel631:
 	auipc a0, %pcrel_hi(width)
-	sw s7, %pcrel_lo(pcrel630)(a0)
+	sw s7, %pcrel_lo(pcrel631)(a0)
 	jal getint
 	slt s3, zero, a0
 	addiw a1, a0, 1
@@ -52,19 +52,19 @@ pcrel630:
 	jal getint
 	mv s8, a0
 	jal getch
-pcrel631:
-	auipc s4, %pcrel_hi(cmmc_parallel_body_payload_1)
 pcrel632:
-	auipc a0, %pcrel_hi(cmmc_parallel_body_1)
+	auipc s4, %pcrel_hi(cmmc_parallel_body_payload_1)
 pcrel633:
-	auipc s5, %pcrel_hi(cmmc_parallel_body_payload_2)
+	auipc a0, %pcrel_hi(cmmc_parallel_body_1)
 pcrel634:
-	auipc a1, %pcrel_hi(sheet1)
-	addi s0, a0, %pcrel_lo(pcrel632)
-	addi s2, a1, %pcrel_lo(pcrel634)
+	auipc s5, %pcrel_hi(cmmc_parallel_body_payload_2)
 pcrel635:
+	auipc a1, %pcrel_hi(sheet1)
+	addi s0, a0, %pcrel_lo(pcrel633)
+	addi s2, a1, %pcrel_lo(pcrel635)
+pcrel636:
 	auipc a1, %pcrel_hi(cmmc_parallel_body_2)
-	addi s1, a1, %pcrel_lo(pcrel635)
+	addi s1, a1, %pcrel_lo(pcrel636)
 	ble s6, zero, label436
 	addi s9, s2, 2000
 	mv a1, s7
@@ -89,10 +89,10 @@ label429:
 	ld s6, 112(sp)
 	addiw s10, s10, 1
 	blt s6, s10, label436
-pcrel636:
+pcrel637:
 	auipc a0, %pcrel_hi(width)
 	addi s9, s9, 2000
-	lw a1, %pcrel_lo(pcrel636)(a0)
+	lw a1, %pcrel_lo(pcrel637)(a0)
 	ble a1, zero, label429
 .p2align 2
 label431:
@@ -108,17 +108,16 @@ label436:
 	ble s8, zero, label501
 	li s7, 1
 	mv a0, s7
-	beq s7, s7, label442
-	ld s6, 112(sp)
-	bgt s6, zero, label441
-	j label508
+	bne s7, s7, label440
 .p2align 2
-label443:
+label442:
+	ld s6, 112(sp)
+	ble s6, zero, label515
 	ld a1, 104(sp)
 	li s7, 1
-pcrel637:
+pcrel638:
 	auipc s5, %pcrel_hi(cmmc_parallel_body_payload_2)
-	sw a1, %pcrel_lo(pcrel637)(s5)
+	sw a1, %pcrel_lo(pcrel638)(s5)
 	mv a0, s7
 	mv a2, s1
 	jal cmmcParallelFor
@@ -131,24 +130,16 @@ label444:
 label525:
 	mv a0, s7
 	li s7, 1
-	bne a0, s7, label611
-.p2align 2
-label442:
-	ld s6, 112(sp)
-	bgt s6, zero, label443
-	li s7, 2
-	j label444
-.p2align 2
-label611:
+	beq a0, s7, label442
 	ld s6, 112(sp)
 	ble s6, zero, label508
 .p2align 2
 label441:
 	ld a1, 104(sp)
 	li s7, 1
-pcrel638:
+pcrel639:
 	auipc s4, %pcrel_hi(cmmc_parallel_body_payload_1)
-	sw a1, %pcrel_lo(pcrel638)(s4)
+	sw a1, %pcrel_lo(pcrel639)(s4)
 	mv a0, s7
 	mv a2, s0
 	jal cmmcParallelFor
@@ -167,9 +158,9 @@ label448:
 	addi s1, s2, 2000
 	li s7, 1
 	mv s2, s7
-pcrel639:
+pcrel640:
 	auipc a0, %pcrel_hi(width)
-	lw a1, %pcrel_lo(pcrel639)(a0)
+	lw a1, %pcrel_lo(pcrel640)(a0)
 	addiw s0, a1, 1
 	bgt a1, zero, label456
 .p2align 2
@@ -180,9 +171,9 @@ label454:
 	addiw s2, s2, 1
 	ble a1, s2, label449
 	addi s1, s1, 2000
-pcrel640:
+pcrel641:
 	auipc a0, %pcrel_hi(width)
-	lw a1, %pcrel_lo(pcrel640)(a0)
+	lw a1, %pcrel_lo(pcrel641)(a0)
 	addiw s0, a1, 1
 	ble a1, zero, label454
 .p2align 2
@@ -224,12 +215,16 @@ label449:
 	ld s11, 96(sp)
 	addi sp, sp, 120
 	ret
+label440:
+	ld s6, 112(sp)
+	bgt s6, zero, label441
+	j label508
 label461:
 	auipc a0, %pcrel_hi(cmmc_parallel_body_payload_0)
-pcrel641:
+pcrel642:
 	auipc a3, %pcrel_hi(cmmc_parallel_body_0)
 	li s7, 1
-	addi a2, a3, %pcrel_lo(pcrel641)
+	addi a2, a3, %pcrel_lo(pcrel642)
 	ld a1, 104(sp)
 	sw a1, %pcrel_lo(label461)(a0)
 	mv a0, s7
@@ -241,6 +236,9 @@ label508:
 label501:
 	li s7, 1
 	j label446
+label515:
+	li s7, 2
+	j label444
 .p2align 2
 cmmc_parallel_body_0:
 	addi sp, sp, -24

@@ -177,17 +177,21 @@ label104:
 	jal getint
 	li a1, 255
 	bne a0, a1, label133
-	srliw a1, s1, 31
-	add a0, s1, a1
-	srliw a1, s0, 31
-	sraiw s4, a0, 1
-	add a0, s0, a1
+	mv a1, s1
+	bge s1, zero, label298
+	addiw a1, s1, 1
+label298:
+	sraiw s4, a1, 1
+	mv a0, s0
 	fcvt.s.w f8, s4
+	bge s0, zero, label300
+	addiw a0, s0, 1
+label300:
+	sraiw s2, a0, 1
 pcrel338:
 	auipc a1, %pcrel_hi(image)
-	sraiw s2, a0, 1
-	addi s3, a1, %pcrel_lo(pcrel338)
 	fcvt.s.w f9, s2
+	addi s3, a1, %pcrel_lo(pcrel338)
 	ble s1, zero, label108
 	mv s6, zero
 	j label118
@@ -225,49 +229,49 @@ label108:
 	or a2, a1, a3
 	fsub.s f12, f10, f13
 	fmv.s f11, f12
-	bne a2, zero, label300
+	bne a2, zero, label302
 	fmv.s f11, f10
-label300:
+label302:
 	flw f2, 16(a0)
 	fsub.s f10, f11, f0
 	flt.s a1, f2, f11
 	fmv.s f12, f10
-	bne a1, zero, label302
+	bne a1, zero, label304
 	fmv.s f12, f11
-label302:
+label304:
 	flw f3, 20(a0)
 	fadd.s f11, f12, f0
 	flt.s a1, f12, f3
 	fmv.s f10, f11
-	bne a1, zero, label304
+	bne a1, zero, label306
 	fmv.s f10, f12
-label304:
+label306:
 	jal my_sin_impl
 	flt.s a2, f19, f1
 	fmv.s f18, f10
+	flt.s a1, f0, f19
 	fdiv.s f11, f19, f0
 	fcvt.w.s a0, f11, rtz
 	fcvt.s.w f12, a0
-	flt.s a0, f0, f19
+	or a0, a1, a2
 	fmul.s f10, f12, f0
-	or a1, a0, a2
 	fsub.s f11, f19, f10
 	fmv.s f10, f11
-	bne a1, zero, label306
+	bne a0, zero, label308
 	fmv.s f10, f19
-label306:
+label308:
 	flt.s a0, f2, f10
 	fsub.s f12, f10, f0
 	fmv.s f11, f12
-	bne a0, zero, label308
+	bne a0, zero, label310
 	fmv.s f11, f10
-label308:
+label310:
 	flt.s a0, f11, f3
 	fadd.s f12, f11, f0
 	fmv.s f10, f12
-	bne a0, zero, label310
+	bne a0, zero, label312
 	fmv.s f10, f11
-label310:
+label312:
 	jal my_sin_impl
 	mv a0, s5
 	fmv.s f19, f10

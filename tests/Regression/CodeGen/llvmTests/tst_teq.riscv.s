@@ -16,8 +16,8 @@ label8:
 g:
 	xori a2, a0, 255
 	li a1, 20
-	beq a2, zero, label17
+	beq a2, zero, label16
 	li a1, 10
-label17:
+label16:
 	zext.w a0, a1
 	ret

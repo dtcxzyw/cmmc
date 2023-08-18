@@ -44,3 +44,44 @@ test5:
 	move $v0, $a0
 	jr $ra
 	nop
+.p2align 2
+.globl test6
+test6:
+	li $t0, 256
+	div $zero, $a0, $t0
+	mfhi $v0
+	jr $ra
+	nop
+.p2align 2
+.globl test7
+test7:
+	li $t0, 131072
+	div $zero, $a0, $t0
+	mflo $v0
+	jr $ra
+	nop
+.p2align 2
+.globl test8
+test8:
+	li $t0, 1
+	sllv $t0, $t0, $a1
+	div $zero, $a0, $t0
+	mflo $v0
+	jr $ra
+	nop
+.p2align 2
+.globl test9
+test9:
+	li $t0, 2
+	div $zero, $a0, $t0
+	mflo $v0
+	jr $ra
+	nop
+.p2align 2
+.globl test10
+test10:
+	li $t0, 2
+	div $zero, $a0, $t0
+	mfhi $v0
+	jr $ra
+	nop

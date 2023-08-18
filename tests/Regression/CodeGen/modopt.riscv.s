@@ -75,19 +75,21 @@ test3:
 .p2align 2
 .globl test4
 test4:
-	srliw a1, a0, 31
-	add a2, a0, a1
-	andi a3, a2, -2
-	subw a4, a0, a3
-	sh1add a0, a0, a4
+	mv a1, a0
+	bge a0, zero, label95
+	addiw a1, a0, 1
+label95:
+	andi a2, a1, -2
+	subw a3, a0, a2
+	sh1add a0, a0, a3
 	ret
 .p2align 2
 .globl test5
 test5:
-	bgt a0, zero, label104
+	bgt a0, zero, label102
 	mv a0, zero
-	j label99
-label104:
+	j label97
+label102:
 	addi a3, a0, -1
 	lui a4, 16
 	mul a2, a0, a3
@@ -95,15 +97,15 @@ label104:
 	srli a1, a2, 1
 	rem a2, a1, a3
 	sext.w a0, a2
-label99:
+label97:
 	ret
 .p2align 2
 .globl test6
 test6:
-	bgt a0, zero, label122
+	bgt a0, zero, label120
 	mv a0, zero
-	j label117
-label122:
+	j label115
+label120:
 	addi a3, a0, -1
 	lui a4, 16
 	mul a2, a0, a3
@@ -111,5 +113,5 @@ label122:
 	srli a1, a2, 1
 	rem a2, a1, a3
 	sext.w a0, a2
-label117:
+label115:
 	ret

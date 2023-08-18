@@ -42,8 +42,8 @@ label6:
 label7:
 	ld a1, 64(sp)
 	ld t0, 72(sp)
-	srai a4, a1, 32
-	sext.w a5, a1
+	srai a5, a1, 32
+	sext.w a4, a1
 	sext.w a3, t0
 	ld t3, 80(sp)
 	srai a1, t0, 32
@@ -57,7 +57,7 @@ label7:
 	mv t4, t1
 label157:
 	mv t3, t2
-	bne a4, zero, label159
+	bne a5, zero, label159
 	mv t3, t4
 label159:
 	ld t5, 88(sp)
@@ -83,25 +83,25 @@ label9:
 	srai t4, a7, 32
 	sext.w t5, a7
 	sltiu s5, t4, 1
-	mv s4, t5
-	addw a7, t5, s5
+	mv a7, t5
+	addw s4, t5, s5
 	bne t4, zero, label165
-	mv s4, a7
-label165:
-	addiw s5, s4, 1
-	mv s6, s5
-	subw a7, s5, s0
-	bne a0, zero, label167
-	mv s6, a7
-label167:
-	mulw s4, a2, s6
-	mv a7, a5
-	bne a6, zero, label169
 	mv a7, s4
+label165:
+	addiw s6, a7, 1
+	mv s4, s6
+	subw s5, s6, s0
+	bne a0, zero, label167
+	mv s4, s5
+label167:
+	mulw s6, a2, s4
+	mv a7, a4
+	bne a6, zero, label169
+	mv a7, s6
 label169:
-	sltiu s5, s2, 1
-	mv a2, s5
-	addw a6, s3, s5
+	sltiu s4, s2, 1
+	mv a2, s4
+	addw a6, s3, s4
 	bne t6, zero, label171
 	mv a2, a6
 label171:
@@ -109,16 +109,16 @@ label171:
 	beq t6, zero, label12
 	remw s1, s1, t6
 label12:
-	addw a2, a7, s1
-	mv a6, a7
+	addw t6, a7, s1
+	mv a2, a7
 	beq s1, zero, label173
-	mv a6, a2
+	mv a2, t6
 label173:
-	addiw t6, a6, 1
-	subw a2, a5, a4
-	mv a6, a5
-	beq a4, zero, label175
-	mv a6, a2
+	addiw t6, a2, 1
+	subw a7, a4, a5
+	mv a6, a4
+	beq a5, zero, label175
+	mv a6, a7
 label175:
 	mulw a2, t6, a6
 	beq a3, zero, label14
@@ -130,7 +130,9 @@ label14:
 	mv a4, a3
 label177:
 	addiw a3, a4, 1
-	bne t2, zero, label16
+	beq t2, zero, label17
+	subw a4, zero, t2
+	remw a3, a3, a4
 label17:
 	sltiu t0, t5, 1
 	mv a4, t3
@@ -143,16 +145,16 @@ label179:
 	subw a4, zero, t4
 	remw a3, a3, a4
 label19:
-	addw a4, s0, a3
-	mv a5, a3
+	addw a5, s0, a3
+	mv a4, a3
 	bne a0, zero, label181
-	mv a5, a4
+	mv a4, a5
 label181:
-	addiw a0, a5, 1
+	addiw a0, a4, 1
 	mv a3, a1
-	subw a4, a1, a0
+	subw a5, a1, a0
 	beq a0, zero, label183
-	mv a3, a4
+	mv a3, a5
 label183:
 	mulw a0, a2, a3
 	ld ra, 0(sp)
@@ -165,10 +167,6 @@ label183:
 	ld s3, 56(sp)
 	addi sp, sp, 104
 	ret
-label16:
-	subw a4, zero, t2
-	remw a3, a3, a4
-	j label17
 label79:
 	mv a2, t4
 	j label9
