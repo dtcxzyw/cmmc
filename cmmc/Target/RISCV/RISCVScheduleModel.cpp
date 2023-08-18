@@ -547,6 +547,7 @@ static bool foldStoreZero(MIRFunction& func, MIRBasicBlock& block, const CodeGen
             }
             inst.setOpcode(SD);
             inst.setOperand<1>(prevInst.getOperand(1));
+            inst.setOperand<2>(prevInst.getOperand(2));
             inst.setOperand<3>(prevInst.getOperand(3));
             block.instructions().erase(prevIter);
             prevStore = block.instructions().end();

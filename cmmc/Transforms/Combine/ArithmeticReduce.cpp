@@ -373,14 +373,12 @@ class ArithmeticReduce final : public TransformPass<Function> {
             // ->
             // sub x + 1, (zext cond)
             if(target.isNativeSupported(InstructionID::SExt) &&
-               ((select(any(v1), int_(i1), int_(i2))(matchCtx) && i1 + 1 == i2) ||
-                (select(any(v1), any(v2), add(any(v3), cuint_(1)))(matchCtx) && v2 == v3)) &&
+               (select(any(v1), any(v2), add(exactly(v2), cuint_(1)))(matchCtx)) &&
                v2->getType()->getFixedSize() >= sizeof(int32_t)) {
                 auto val = v1;
                 const auto base = inst->getOperand(2);
                 const auto targetType = base->getType();
-                if(!targetType->isBoolean())
-                    val = builder.makeOp<CastInst>(InstructionID::ZExt, targetType, val);
+                val = builder.makeOp<CastInst>(InstructionID::ZExt, targetType, val);
                 return builder.makeOp<BinaryInst>(InstructionID::Sub, base, val);
             }
 
@@ -958,7 +956,8 @@ class ArithmeticReduce final : public TransformPass<Function> {
                                                   makeIntLike(v1->getType()->as<IntegerType>()->getBitwidth() - 1, v1));
             }
             // select x, c1, c1+/-1 -> add c1/c2, (zext x)
-            if(select(any(v1), capture(int_(i1), v2), capture(int_(i2), v3))(matchCtx) && !inst->getType()->isBoolean()) {
+            if(select(any(v1), capture(int_(i1), v2), capture(int_(i2), v3))(matchCtx) && !inst->getType()->isBoolean() &&
+               inst->getType()->getFixedSize() >= sizeof(int32_t)) {
                 if(i2 == i1 + 1) {
                     auto zext = builder.makeOp<CastInst>(InstructionID::ZExt, inst->getType(), v1);
                     return builder.makeOp<BinaryInst>(InstructionID::Sub, v3, zext);

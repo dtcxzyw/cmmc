@@ -76,7 +76,8 @@ def generate():
     src = src.replace('#include "csmith.h"', header)
     src = src.replace('int print_hash_value = 0;', 'int print_hash_value = 1;')
     src = src.replace('long', 'int32_t')
-    #if target != 'llvm':
+    # if target != 'llvm':
+    #     src = src.replace('uint', 'int')
     src = src.replace('#define NO_LONGLONG', '')
     src = src.replace('0xFFFFFFFFUL', '0xFFFFFFFFU')
     src = src.replace('printf("index = [%d]\\n", ', 'putdim(')
@@ -109,7 +110,7 @@ def build_and_run(file_asm, file_exec, ref_output):
         ' -o {} {} {}'.format(file_exec, runtime, file_asm)
     if os.system(command) != 0:
         return False
-    return True
+    # return True
     try:
         out = subprocess.run(
                 qemu_command + [file_exec], capture_output=True, text=True, timeout=prog_timeout)
@@ -180,7 +181,8 @@ def csmith_test(i):
         except subprocess.TimeoutExpired:
             os.remove(file_c)
             os.remove(file_ref)
-            os.remove(file_asm)
+            if os.path.exists(file_asm):
+                os.remove(file_asm)
             # skip this test
             return None
     

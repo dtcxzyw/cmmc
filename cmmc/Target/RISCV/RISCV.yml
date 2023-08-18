@@ -677,6 +677,8 @@ InstSelection:
         Rs1: $Lhs
         Rs2: $Rhs
 
+  # FIXME: legalization is not correct for ori/xori
+  # Example: xor i32 %x, i32 -1 should be sext_w (xori i32 %x, i32 -1)
   - Pattern:
       $Template:
         Dst: $Dst
