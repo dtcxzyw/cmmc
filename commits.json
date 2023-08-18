@@ -215,6 +215,11 @@
       "parent": "9c5da85a06ef97bc6d4700a1dc515d848cb16063",
       "time": "2023-07-06 20:56:42 +0800"
     },
+    "3237d8982347228c0b4be2f4ff444fc7c6c1fc91": {
+      "message": "fix(transform): fix loop rotation",
+      "parent": "a25390d79359b398f575e0fd0050fb0e0410e125",
+      "time": "2023-08-19 01:24:38 +0800"
+    },
     "330d08bc3362040b0b07f22319057a3ed8378fa2": {
       "message": "feat(codegen): optimize test of value in constant set",
       "parent": "3975bb1ca684ff43afb5ece896f5c4c9d6e6857a",
@@ -1331,5 +1336,5 @@
       "time": "2023-07-06 01:05:50 +0800"
     }
   },
-  "head": "a25390d79359b398f575e0fd0050fb0e0410e125"
+  "head": "3237d8982347228c0b4be2f4ff444fc7c6c1fc91"
 }
