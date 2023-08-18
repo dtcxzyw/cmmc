@@ -32,6 +32,7 @@ class ShrinkWrapping final : public TransformPass<Function> {
     static Function* cloneFunc(Function& func) {
         auto newFunc = make<Function>(String::get(std::string(func.getSymbol().prefix()) + "_cmmc_inline_wrapped"),
                                       func.getType()->as<FunctionType>());
+        newFunc->attr().addAttr(FunctionAttribute::InlineWrapped);
         newFunc->setLinkage(Linkage::Internal);
 
         std::unordered_map<Value*, Value*> replaceMap;

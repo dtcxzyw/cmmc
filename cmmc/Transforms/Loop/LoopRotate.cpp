@@ -212,11 +212,26 @@ class LoopRotate final : public TransformPass<Function> {
             for(auto& inst : loop.header->instructions()) {
                 bool usedByOuter = false;
                 auto& users = inst.users();
-                for(auto user : users) {
+                for(auto it = users.begin(); it != users.end(); ++it) {
+                    auto ref = it.ref();
+                    auto user = ref->user;
                     const auto block = user->getBlock();
-                    if(!body.count(block)) {
-                        usedByOuter = true;
-                        break;
+                    if(block == loop.header && user->getInstID() == InstructionID::Phi) {
+                        for(auto& [pred, val] : user->as<PhiInst>()->incomings()) {
+                            if(val != ref)
+                                continue;
+                            if(!body.count(pred)) {
+                                usedByOuter = true;
+                                break;
+                            }
+                        }
+                        if(usedByOuter)
+                            break;
+                    } else {
+                        if(!body.count(block)) {
+                            usedByOuter = true;
+                            break;
+                        }
                     }
                 }
 
@@ -227,9 +242,21 @@ class LoopRotate final : public TransformPass<Function> {
 
                 for(auto iter = users.begin(); iter != users.end();) {
                     const auto next = std::next(iter);
-                    const auto block = iter.ref()->user->getBlock();
+                    auto ref = iter.ref();
+                    const auto user = ref->user;
+                    const auto block = user->getBlock();
+
                     if(!body.count(block)) {
-                        iter.ref()->resetValue(phi);
+                        ref->resetValue(phi);
+                    } else if(block == loop.header && user->getInstID() == InstructionID::Phi) {
+                        for(auto& [pred, val] : user->as<PhiInst>()->incomings()) {
+                            if(val != ref)
+                                continue;
+                            if(!body.count(pred)) {
+                                ref->resetValue(phi);
+                                break;
+                            }
+                        }
                     }
                     iter = next;
                 }
@@ -293,6 +320,7 @@ public:
             //     reportUnreachable(CMMC_LOCATION());
 
             cleanupPhi(func);
+            // func.dumpCFG(std::cerr);
             modified = true;
             analysis.invalidateFunc(func);
         }

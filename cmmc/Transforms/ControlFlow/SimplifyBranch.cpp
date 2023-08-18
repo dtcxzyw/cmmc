@@ -56,13 +56,14 @@ public:
             if(!uint_(constCond)(matchCtx))
                 continue;
             auto branch = terminator->as<BranchInst>();
-            auto& trueTarget = branch->getTrueTarget();
-            auto& falseTarget = branch->getFalseTarget();
+            auto trueTarget = branch->getTrueTarget();
+            auto falseTarget = branch->getFalseTarget();
             auto& insts = block->instructions();
             insts.pop_back();
             const auto inst = make<BranchInst>(constCond ? trueTarget : falseTarget);
             inst->insertBefore(block, insts.end());
-            removePhi(block, !constCond ? trueTarget : falseTarget);
+            if(trueTarget != falseTarget)
+                removePhi(block, !constCond ? trueTarget : falseTarget);
             modified = true;
         }
         return modified;

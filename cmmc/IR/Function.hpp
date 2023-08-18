@@ -35,6 +35,7 @@ enum class FunctionAttribute {
     LoopBody = 1 << 9,
     ParallelBody = 1 << 10,
     AlignedParallelBody = 1 << 11,
+    InlineWrapped = 1 << 12,
 };
 
 enum class CallingConvention { C, Fast };

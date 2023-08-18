@@ -27,6 +27,7 @@ def parse_performance(stderr: str):
             used = float(perf[0][:-1]) * 3600 + float(perf[1][:-1]) * 60 + \
                    float(perf[2][:-1]) + float(perf[3][:-2]) * 1e-6
             return used
+    print(stderr)
     return 1e10
 
 def run(test_case: str):

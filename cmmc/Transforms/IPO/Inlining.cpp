@@ -194,7 +194,7 @@ class FuncInlining final : public TransformPass<Function> {
 
 public:
     bool run(Function& func, AnalysisPassManager&) const override {
-        if(func.getSymbol().prefix().find("_cmmc_inline_wrapped") != std::string_view::npos) {
+        if(func.attr().hasAttr(FunctionAttribute::InlineWrapped)) {
             return false;
         }
 
