@@ -345,6 +345,11 @@
       "parent": "f522f542d1411c95904e0a8510703ae8ad0b085a",
       "time": "2023-07-30 00:18:19 +0800"
     },
+    "445040d854d3a05cdb052f6f4ed36fe9f4b67205": {
+      "message": "ci: disable parallel building",
+      "parent": "c609c9c94b871ad0cd8b45782bcfcf9c25fe7924",
+      "time": "2023-08-18 18:29:22 +0800"
+    },
     "44b16c8abb617d0b7e4d6e519c88f9b46f248b7b": {
       "message": "refactor(codegen): rename for style",
       "parent": "11b5dd1333286ce15e75aad7dda613c2d560d589",
@@ -1321,5 +1326,5 @@
       "time": "2023-07-06 01:05:50 +0800"
     }
   },
-  "head": "c609c9c94b871ad0cd8b45782bcfcf9c25fe7924"
+  "head": "445040d854d3a05cdb052f6f4ed36fe9f4b67205"
 }
