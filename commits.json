@@ -140,6 +140,11 @@
       "parent": "359ba93c2bef3d49fe84792d782098eeeae6ec07",
       "time": "2023-08-06 02:03:42 +0800"
     },
+    "1c28adc732125c3b95d00c0f294a734aacd3df6a": {
+      "message": "feat(transform): decompose (x+c1)*c2 for GEP",
+      "parent": "f79a27b39a185d8cc3a37518ead3fd2489c20bed",
+      "time": "2023-08-18 15:47:01 +0800"
+    },
     "1c8acc1c21e3b23e27da33f663e1f7c2e06fbb42": {
       "message": "feat(codegen): opt tail dup",
       "parent": "7772c5ac1efaeddccba4acf809de06b868b6c670",
@@ -1311,5 +1316,5 @@
       "time": "2023-07-06 01:05:50 +0800"
     }
   },
-  "head": "f79a27b39a185d8cc3a37518ead3fd2489c20bed"
+  "head": "1c28adc732125c3b95d00c0f294a734aacd3df6a"
 }
