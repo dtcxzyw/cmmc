@@ -1040,6 +1040,11 @@
       "parent": "1c28adc732125c3b95d00c0f294a734aacd3df6a",
       "time": "2023-08-18 17:48:21 +0800"
     },
+    "c72c11ebecd910695ce782b13bc1a3eb972d695d": {
+      "message": "feat(transform): simplify indvar",
+      "parent": "1a14df9e1aecca7ae48bef8536020f920d7aaca1",
+      "time": "2023-08-20 02:28:59 +0800"
+    },
     "c7b77d54e6c9906b6b0cd6452c17311b8bb8cf99": {
       "message": "fix(codegen): fix block layout opt",
       "parent": "e46e2b118091eda5eca2c29ea8eae8a2fee0892b",
@@ -1346,5 +1351,5 @@
       "time": "2023-07-06 01:05:50 +0800"
     }
   },
-  "head": "1a14df9e1aecca7ae48bef8536020f920d7aaca1"
+  "head": "c72c11ebecd910695ce782b13bc1a3eb972d695d"
 }
