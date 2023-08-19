@@ -48,7 +48,7 @@ def parse_performance(stderr: str):
 
 cache = dict()
 stage = 0
-max_stages = 6
+max_stages = 1
 fixed = ""
 
 def objective_func(trail: optuna.Trial):

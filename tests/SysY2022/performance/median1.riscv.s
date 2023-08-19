@@ -21,62 +21,66 @@ pcrel112:
 	mv s1, a0
 	li a0, 59
 	jal _sysy_starttime
-	mv a0, s1
-	addiw a2, s1, -1
+	mv a2, s1
+	addiw a1, s1, -1
 	bge s1, zero, label99
-	addiw a0, s1, 1
+	addiw a2, s1, 1
 label99:
-	sraiw s2, a0, 1
-	mv a1, zero
-	mv a0, s0
+	sraiw s2, a2, 1
+	mv a0, zero
+	mv a2, s0
 	lw a3, 0(s0)
-	addiw a4, a2, 1
+	addiw a4, a1, 1
 	mv a5, zero
 	j label8
-label17:
-	sw a3, 0(a0)
+.p2align 2
+label18:
+	sw a3, 0(a2)
 	sh2add a4, a5, s0
 	lw t1, 0(a4)
-	sw t1, 0(a0)
+	sw t1, 0(a2)
 	sw a3, 0(a4)
-	bge s2, a5, label18
-	mv a2, a5
+	bge s2, a5, label19
+	mv a1, a5
 	addiw a4, a5, 1
-	lw a3, 0(a0)
-	mv a5, a1
+	lw a3, 0(a2)
+	mv a5, a0
 .p2align 2
 label8:
-	ble a4, a5, label11
-.p2align 2
-label22:
-	addiw a4, a4, -1
-	sh2add t1, a4, s0
-	lw t0, 0(t1)
-	ble a3, t0, label8
-	bgt a4, a5, label14
-	j label15
+	ble a4, a5, label12
 .p2align 2
 label11:
-	ble a4, a5, label15
+	addiw a4, a4, -1
+	sh2add t0, a4, s0
+	lw t1, 0(t0)
+	ble a3, t1, label8
 .p2align 2
-label14:
+label12:
+	ble a4, a5, label16
 	addiw a5, a5, 1
 	sh2add t1, a5, s0
 	lw t0, 0(t1)
-	bgt a3, t0, label11
+	bgt a3, t0, label12
 .p2align 2
-label15:
+label16:
 	sh2add t0, a5, s0
-	beq a4, a5, label17
+	beq a4, a5, label18
 	sh2add t2, a4, s0
 	lw t1, 0(t0)
 	lw t3, 0(t2)
 	sw t3, 0(t0)
 	sw t1, 0(t2)
-	bgt a4, a5, label22
-	j label11
-label18:
-	bgt s2, a5, label19
+	bgt a4, a5, label11
+	j label12
+label19:
+	ble s2, a5, label21
+	addiw a0, a5, 1
+	addi a2, t0, 4
+	addiw a4, a1, 1
+	mv a5, a0
+	lw a3, 0(a2)
+	j label8
+label21:
 	li a0, 61
 	jal _sysy_stoptime
 	mv a0, s1
@@ -96,10 +100,3 @@ label101:
 	ld s2, 24(sp)
 	addi sp, sp, 32
 	ret
-label19:
-	addiw a1, a5, 1
-	addi a0, t0, 4
-	addiw a4, a2, 1
-	mv a5, a1
-	lw a3, 0(a0)
-	j label8

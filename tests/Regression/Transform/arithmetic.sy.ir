@@ -440,11 +440,10 @@ func @foo92(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless N
 }
 func @foo93(i32 %x, i32 %y, i32 %z) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i1 %0 = icmp slt i32 %x, i32 %y;
-    i1 %1 = icmp sgt i32 %y, i32 %z;
-    i1 %2 = and i1 %0, i1 %1;
-    i32 %3 = zext i1 %2 to i32;
-    ret i32 %3;
+    i32 %0 = smax i32 %x, i32 %z;
+    i1 %1 = icmp sgt i32 %y, i32 %0;
+    i32 %2 = zext i1 %1 to i32;
+    ret i32 %2;
 }
 func @foo94(i32 %x, i32 %y, i32 %z) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:

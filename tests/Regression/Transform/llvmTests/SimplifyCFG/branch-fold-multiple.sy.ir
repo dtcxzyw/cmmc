@@ -34,15 +34,14 @@ func @test2(i32 %var0, i32 %var1, i32 %var2, i32 %var3) -> i32 { NoMemoryRead No
     i1 %3 = icmp sgt i32 %2, i32 0;
     cbr i1 %3(prob = 0.5), ^b, ^if.else1;
   ^b:
-    i32 %4 = phi [^entry, i32 0] [^if.else, i32 0] [^if.else1, i32 %10];
+    i32 %4 = phi [^entry, i32 0] [^if.else, i32 0] [^if.else1, i32 %9];
     ret i32 %4;
   ^if.else1:
     i32 %5 = strunc i32 %var2 to i32;
-    i1 %6 = icmp slt i32 %5, i32 1;
-    i32 %7 = strunc i32 %var3 to i32;
+    i32 %6 = strunc i32 %var3 to i32;
+    i32 %7 = smax i32 %5, i32 %6;
     i1 %8 = icmp slt i32 %7, i32 1;
-    i1 %9 = and i1 %6, i1 %8;
-    i32 %10 = zext i1 %9 to i32;
+    i32 %9 = zext i1 %8 to i32;
     ubr ^b;
 }
 func @test3(i32 %var0, i32 %var1, i32 %var2, i32 %var3) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
@@ -60,14 +59,13 @@ func @test3(i32 %var0, i32 %var1, i32 %var2, i32 %var3) -> i32 { NoMemoryRead No
     i1 %8 = icmp sgt i32 %7, i32 0;
     cbr i1 %8(prob = 0.5), ^b, ^if.else1;
   ^b:
-    i32 %9 = phi [^entry, i32 0] [^if.else, i32 0] [^if.else1, i32 %15];
+    i32 %9 = phi [^entry, i32 0] [^if.else, i32 0] [^if.else1, i32 %14];
     ret i32 %9;
   ^if.else1:
     i32 %10 = strunc i32 %var2 to i32;
-    i1 %11 = icmp slt i32 %10, i32 1;
-    i32 %12 = strunc i32 %var3 to i32;
+    i32 %11 = strunc i32 %var3 to i32;
+    i32 %12 = smax i32 %10, i32 %11;
     i1 %13 = icmp slt i32 %12, i32 1;
-    i1 %14 = and i1 %11, i1 %13;
-    i32 %15 = zext i1 %14 to i32;
+    i32 %14 = zext i1 %13 to i32;
     ubr ^b;
 }

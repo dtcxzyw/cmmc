@@ -24,6 +24,7 @@
 #include <cmmc/IR/Function.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/IR/Type.hpp>
+#include <cmmc/IR/Value.hpp>
 #include <cmmc/Support/Bits.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
@@ -1262,6 +1263,67 @@ class ArithmeticReduce final : public TransformPass<Function> {
                     default:
                         reportUnreachable(CMMC_LOCATION());
                 }
+            }
+
+            if(target.isNativeSupported(InstructionID::SMax) && target.isNativeSupported(InstructionID::SMin) &&
+               and_(oneUse(icmp(cmp1, any(v1), any(v2))), oneUse(icmp(cmp2, any(v3), any(v4))))(matchCtx)) {
+                auto addOffset = [&](Value* val, intmax_t offset) {
+                    return builder.makeOp<BinaryInst>(InstructionID::Add, val, makeIntLike(offset, val));
+                };
+                auto getDir = [&](CompareOp op) {
+                    switch(op) {
+                        case CompareOp::ICmpSignedLessThan:
+                        case CompareOp::ICmpSignedLessEqual:
+                            return 1;
+                        case CompareOp::ICmpSignedGreaterThan:
+                        case CompareOp::ICmpSignedGreaterEqual:
+                            return 2;
+                        default:
+                            return 0;
+                    }
+                };
+                auto legalize = [&](CompareOp& op, Value*& val) {
+                    switch(op) {
+                        case CompareOp::ICmpSignedLessEqual: {
+                            op = CompareOp::ICmpSignedLessThan;
+                            val = addOffset(val, 1);
+                            break;
+                        }
+                        case CompareOp::ICmpSignedGreaterEqual: {
+                            op = CompareOp::ICmpSignedLessThan;
+                            val = addOffset(val, -1);
+                            break;
+                        }
+                        default:
+                            break;
+                    }
+                };
+                auto matchCompare = [&](CompareOp cmpA, Value* x1, Value* y1, CompareOp cmpB, Value* x2, Value* y2) -> Value* {
+                    if(x1 != x2)
+                        return nullptr;
+                    const auto dirA = getDir(cmpA);
+                    const auto dirB = getDir(cmpB);
+                    if(!(dirA && dirB && dirA == dirB))
+                        return nullptr;
+
+                    // TODO: check overflow
+                    if(cmpA != cmpB) {
+                        legalize(cmpA, y1);
+                        legalize(cmpB, y2);
+                    }
+                    assert(cmpA == cmpB);
+                    const auto base = builder.makeOp<BinaryInst>(dirA == 1 ? InstructionID::SMin : InstructionID::SMax, y1, y2);
+                    return builder.makeOp<CompareInst>(InstructionID::ICmp, cmpA, x1, base);
+                };
+
+                if(auto val = matchCompare(cmp1, v1, v2, cmp2, v3, v4))
+                    return val;
+                if(auto val = matchCompare(cmp1, v1, v2, getReversedOp(cmp2), v4, v3))
+                    return val;
+                if(auto val = matchCompare(getReversedOp(cmp1), v2, v1, cmp2, v3, v4))
+                    return val;
+                if(auto val = matchCompare(getReversedOp(cmp1), v2, v1, getReversedOp(cmp2), v4, v3))
+                    return val;
             }
 
             return nullptr;

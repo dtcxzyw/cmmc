@@ -350,6 +350,7 @@ std::shared_ptr<PassManager<Module>> PassManager<Module>::get(OptimizationLevel 
             "CombineBranch",            // clean up
             "BlockEliminate",           // clean up
             "LoopCanonicalize",         //
+            "IndVarSimplify",           //
             "FinalValueReplacement",    //
             "LoopInterchange",          //
             "LoopStrengthReduction",    //

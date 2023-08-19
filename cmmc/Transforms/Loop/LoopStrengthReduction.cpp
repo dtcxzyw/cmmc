@@ -23,6 +23,7 @@
 #include <cmmc/IR/IRBuilder.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/Support/Bits.hpp>
+#include <cmmc/Support/Options.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <cmmc/Transforms/Util/PatternMatch.hpp>
 #include <cstdint>
@@ -30,6 +31,8 @@
 #include <iterator>
 
 CMMC_NAMESPACE_BEGIN
+
+extern Flag enableParallel;
 
 class LoopStrengthReduction final : public TransformPass<Function> {
     static Value* buildAddRec(const Type* type, PhiInst* refPhiInst, SCEV* scevExpr, Block* block,
@@ -67,8 +70,8 @@ class LoopStrengthReduction final : public TransformPass<Function> {
 
     static constexpr uint32_t maxPhiCount = 9;
 
-    static bool tryExpandSCEV(const SCEVAnalysisResult& scev, const DominateAnalysisResult& dom, Block* block,
-                              Instruction& inst) {
+    static bool tryExpandSCEV(const SCEVAnalysisResult& scev, const DominateAnalysisResult& dom, Block* block, Instruction& inst,
+                              bool beforeLoopParallel) {
         if(inst.getInstID() == InstructionID::Add || inst.getInstID() == InstructionID::Phi)
             return false;
         Value* v1;
@@ -105,6 +108,9 @@ class LoopStrengthReduction final : public TransformPass<Function> {
             auto refPhiInst = refPhi->as<PhiInst>();
             // FIXME
             if(refPhiInst->incomings().size() != 2)
+                return false;
+            // Don't create too many phis
+            if(beforeLoopParallel && scevExpr->operands.size() > 2)
                 return false;
 
             const auto val = buildAddRec(inst.getType(), refPhiInst, scevExpr, block, inst.asIterator(), 0);
@@ -206,7 +212,8 @@ public:
                    inst.users().useCount() < 4)
                     continue;
 
-                if(tryExpandSCEV(scev, dom, block, inst)) {
+                if(tryExpandSCEV(scev, dom, block, inst,
+                                 enableParallel.get() && !func.attr().hasAttr(FunctionAttribute::ParallelBody))) {
                     modified = true;
                     continue;
                 }
