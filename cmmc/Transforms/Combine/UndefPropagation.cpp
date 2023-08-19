@@ -25,23 +25,24 @@ CMMC_NAMESPACE_BEGIN
 class UndefPropagation final : public TransformPass<Function> {
 public:
     bool run(Function& func, AnalysisPassManager& analysis) const override {
-        const auto& target = analysis.module().getTarget();
+        CMMC_UNUSED(analysis);
+        // const auto& target = analysis.module().getTarget();
         bool modified = false;
 
         for(auto block : func.blocks()) {
             for(auto& inst : block->instructions()) {
-                if(inst.getInstID() == InstructionID::ConditionalBranch && inst.getOperand(0)->isUndefined()) {
-                    const auto terminator = block->getTerminator()->as<BranchInst>();
-                    block->instructions().pop_back();
-                    IRBuilder builder{ target, block };
-                    // builder.makeOp<UnreachableInst>();
-                    const auto& trueTarget = terminator->getTrueTarget();
-                    const auto& falseTarget = terminator->getFalseTarget();
-                    // select a target
-                    builder.makeOp<BranchInst>(terminator->getBranchProb() < 0.5 ? trueTarget : falseTarget);
-                    modified = true;
-                    break;
-                }
+                // if(inst.getInstID() == InstructionID::ConditionalBranch && inst.getOperand(0)->isUndefined()) {
+                //     const auto terminator = block->getTerminator()->as<BranchInst>();
+                //     block->instructions().pop_back();
+                //     IRBuilder builder{ target, block };
+                //     // builder.makeOp<UnreachableInst>();
+                //     const auto& trueTarget = terminator->getTrueTarget();
+                //     const auto& falseTarget = terminator->getFalseTarget();
+                //     // select a target
+                //     builder.makeOp<BranchInst>(terminator->getBranchProb() < 0.5 ? trueTarget : falseTarget);
+                //     modified = true;
+                //     break;
+                // }
                 if(inst.getInstID() != InstructionID::Call && inst.getInstID() != InstructionID::Phi && inst.canbeOperand()) {
                     if(inst.getInstID() == InstructionID::Select) {
                         if(inst.getOperand(0)->isUndefined()) {

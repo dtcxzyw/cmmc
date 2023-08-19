@@ -1035,7 +1035,7 @@ static bool relaxWInst(MIRFunction& func, const CodeGenContext& ctx) {
             case SEXT_W:
             case SLLIW:
             case SRAIW:
-            case SRLIW:
+                // case SRLIW:
                 return true;
             default:
                 return false;
@@ -1158,24 +1158,25 @@ static bool relaxWInst(MIRFunction& func, const CodeGenContext& ctx) {
                 case SEXT_W:
                     relaxed = MoveGPR;
                     break;
+                // Is illegal for SRLW -> SRL
                 case SLLIW:
                     relaxed = SLLI;
                     break;
                 case SRAIW:
                     relaxed = SRAI;
                     break;
-                case SRLIW:
-                    relaxed = SRLI;
-                    break;
+                // case SRLIW:
+                //     relaxed = SRLI;
+                //     break;
                 case SLLW:
                     relaxed = SLL;
                     break;
                 case SRAW:
                     relaxed = SRA;
                     break;
-                case SRLW:
-                    relaxed = SRL;
-                    break;
+                // case SRLW:
+                //     relaxed = SRL;
+                //     break;
                 default:
                     reportUnreachable(CMMC_LOCATION());
             }

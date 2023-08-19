@@ -944,7 +944,7 @@ static void lower(SelectInst* inst, LoweringContext& ctx) {
     // select x < 0, y, 0 -> (x >>> (bitwidth - 1)) & y
     if(target.isNativeSupported(InstructionID::And) && target.isNativeSupported(InstructionID::AShr) &&
        select(icmp(cmp, any(v1), cint_(0)), any(v2), cint_(0))(MatchContext<Value>(inst)) &&
-       cmp == CompareOp::ICmpSignedLessThan) {
+       cmp == CompareOp::ICmpSignedLessThan && inst->getType()->getFixedSize() >= sizeof(int32_t)) {
         const auto mask = ctx.newVReg(inst->getType());
         const auto val = ctx.mapOperand(v1);
         const auto trueV = ctx.mapOperand(v2);

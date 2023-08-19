@@ -63,12 +63,12 @@ pcrel48:
 pcrel49:
 	auipc a4, %pcrel_hi(m)
 	lw a1, %pcrel_lo(pcrel47)(a2)
-	srli a0, a1, 4
+	srliw a0, a1, 4
 	sw a0, %pcrel_lo(pcrel48)(a3)
 	mv a0, zero
 pcrel50:
 	auipc a3, %pcrel_hi(n)
 	lw a2, %pcrel_lo(pcrel49)(a4)
-	srli a1, a2, 10
+	srliw a1, a2, 10
 	sw a1, %pcrel_lo(pcrel50)(a3)
 	ret

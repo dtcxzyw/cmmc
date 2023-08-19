@@ -475,22 +475,22 @@ class LoopBodyExtract final : public TransformPass<Function> {
         auto& loopInfo = analysis.get<LoopAnalysis>(func);
         auto& dom = analysis.get<DominateAnalysis>(func);
         auto& cfg = analysis.get<CFGAnalysis>(func);
-
-        bool modified = false;
         for(auto& loop : loopInfo.loops) {
-            modified |= extractLoopBody(func, loop, dom, cfg, analysis.module(),
-                                        /*independent*/ false,
-                                        /*pointer base*/ nullptr,
-                                        /*allow innermost*/ false,
-                                        /*allow innerloop*/ false,
-                                        /*only addrec*/ false,
-                                        /*estimate block size*/ true,
-                                        /*need sub-loop*/ false,
-                                        /*convert reduce to atomic*/ false,
-                                        /*duplicate cmp*/ false,
-                                        /*ret*/ nullptr);
+            if(extractLoopBody(func, loop, dom, cfg, analysis.module(),
+                               /*independent*/ false,
+                               /*pointer base*/ nullptr,
+                               /*allow innermost*/ false,
+                               /*allow innerloop*/ false,
+                               /*only addrec*/ false,
+                               /*estimate block size*/ true,
+                               /*need sub-loop*/ false,
+                               /*convert reduce to atomic*/ false,
+                               /*duplicate cmp*/ false,
+                               /*ret*/ nullptr)) {
+                return true;
+            }
         }
-        return modified;
+        return false;
     }
 
 public:

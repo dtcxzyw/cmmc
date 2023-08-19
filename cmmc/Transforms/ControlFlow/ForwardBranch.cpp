@@ -74,15 +74,31 @@ class ForwardBranch final : public TransformPass<Function> {
         if(target == directTarget)
             return false;
 
-        for(auto& inst : directTarget->instructions()) {
-            if(inst.getInstID() == InstructionID::Phi) {
-                auto phiInst = inst.as<PhiInst>();
-                auto val = phiInst->incomings().at(target)->value;
-                if(val->getBlock() == target)
-                    val = val->as<PhiInst>()->incomings().at(block)->value;
-                phiInst->addIncoming(block, val);
-            } else
-                break;
+        if(directTarget->instructions().front()->is<PhiInst>() &&
+           directTarget->instructions().front()->as<PhiInst>()->incomings().count(block)) {
+            // verify existing phi
+            for(auto& inst : directTarget->instructions()) {
+                if(inst.getInstID() == InstructionID::Phi) {
+                    auto phiInst = inst.as<PhiInst>();
+                    auto val = phiInst->incomings().at(target)->value;
+                    if(val->getBlock() == target)
+                        val = val->as<PhiInst>()->incomings().at(block)->value;
+                    if(phiInst->incomings().at(block)->value != val)
+                        return false;
+                } else
+                    break;
+            }
+        } else {
+            for(auto& inst : directTarget->instructions()) {
+                if(inst.getInstID() == InstructionID::Phi) {
+                    auto phiInst = inst.as<PhiInst>();
+                    auto val = phiInst->incomings().at(target)->value;
+                    if(val->getBlock() == target)
+                        val = val->as<PhiInst>()->incomings().at(block)->value;
+                    phiInst->addIncoming(block, val);
+                } else
+                    break;
+            }
         }
 
         target = directTarget;
