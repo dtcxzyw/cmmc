@@ -380,6 +380,11 @@
       "parent": "87086b928542a06962fd01d27cb2f028c9ade88a",
       "time": "2023-07-15 23:32:24 +0800"
     },
+    "454f0dd77820f428dd8ad9e772b850b33fdc2e2a": {
+      "message": "feat(transform): simplify ind var",
+      "parent": "c72c11ebecd910695ce782b13bc1a3eb972d695d",
+      "time": "2023-08-20 09:43:41 +0800"
+    },
     "464e8e1230c6a1aa3473ad0935c5b4bcc78ef76a": {
       "message": "ci: add risc-v perf test",
       "parent": "358d96c9221178bd343c4e1d41e2c314c51b75fa",
@@ -1351,5 +1356,5 @@
       "time": "2023-07-06 01:05:50 +0800"
     }
   },
-  "head": "c72c11ebecd910695ce782b13bc1a3eb972d695d"
+  "head": "454f0dd77820f428dd8ad9e772b850b33fdc2e2a"
 }
