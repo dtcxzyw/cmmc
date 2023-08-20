@@ -51,17 +51,17 @@ pcrel800:
 	mv s8, a0
 	jal getch
 pcrel801:
-	auipc a0, %pcrel_hi(cmmc_parallel_body_2)
+	auipc s4, %pcrel_hi(cmmc_parallel_body_payload_1)
 pcrel802:
 	auipc s5, %pcrel_hi(cmmc_parallel_body_payload_2)
 pcrel803:
 	auipc a1, %pcrel_hi(cmmc_parallel_body_1)
 pcrel804:
-	auipc s4, %pcrel_hi(cmmc_parallel_body_payload_1)
+	auipc a0, %pcrel_hi(cmmc_parallel_body_2)
 pcrel805:
 	auipc a2, %pcrel_hi(sheet1)
-	addi s2, a0, %pcrel_lo(pcrel801)
 	addi s1, a1, %pcrel_lo(pcrel803)
+	addi s2, a0, %pcrel_lo(pcrel804)
 	addi s3, a2, %pcrel_lo(pcrel805)
 	ble s0, zero, label600
 	addi s9, s3, 2000
@@ -518,7 +518,7 @@ pcrel494:
 	addi a4, t0, %pcrel_lo(pcrel493)
 	addiw a1, a2, 1
 	li t0, 2000
-	ble a2, zero, label404
+	ble a2, zero, label414
 	mulw a2, a0, t0
 	mv t1, a0
 	add a4, a4, a2
@@ -526,48 +526,48 @@ pcrel494:
 	addi a0, a4, 4
 	add a2, a5, t2
 	li t2, 1
-	j label409
+	j label408
 .p2align 2
 label469:
 	addiw t1, t1, 1
-	ble a3, t1, label404
+	ble a3, t1, label414
 	addi a4, a4, 2000
 	mulw t2, t1, t0
 	addi a0, a4, 4
 	add a2, a5, t2
 	li t2, 1
 .p2align 2
-label409:
-	lw t5, -2004(a0)
+label408:
+	lw t3, -2004(a0)
 	lw t6, -2000(a0)
 	lw a6, -1996(a0)
-	addw t3, t5, t6
-	lw t6, -4(a0)
-	addw t4, t3, a6
+	addw t5, t3, t6
+	lw a7, -4(a0)
+	addw t4, t5, a6
 	lw a6, 4(a0)
-	addw t5, t4, t6
-	lw t6, 1996(a0)
-	addw t3, t5, a6
-	lw a6, 2000(a0)
-	addw t4, t3, t6
-	lw t6, 2004(a0)
-	addw t5, t4, a6
-	lw a6, 0(a0)
-	addw t3, t5, t6
-	xori t6, a6, 1
-	xori t4, t3, 2
-	xori a6, t3, 3
-	or a7, t4, t6
+	addw t6, t4, a7
+	lw t5, 1996(a0)
+	addw t3, t6, a6
+	lw a7, 2000(a0)
+	addw t4, t3, t5
+	lw a6, 2004(a0)
+	addw t6, t4, a7
+	lw a7, 0(a0)
+	addw t3, t6, a6
+	xori a6, a7, 1
+	xori t5, t3, 2
+	xori a7, t3, 3
+	or t6, t5, a6
 	sh2add t3, t2, a2
-	sltiu t6, a6, 1
-	sltiu t5, a7, 1
+	sltiu a6, a7, 1
+	sltiu t4, t6, 1
 	addiw t2, t2, 1
-	or t4, t5, t6
-	sw t4, 0(t3)
+	or t5, t4, a6
+	sw t5, 0(t3)
 	ble a1, t2, label469
 	addi a0, a0, 4
-	j label409
-label404:
+	j label408
+label414:
 	ret
 .p2align 2
 cmmc_parallel_body_2:

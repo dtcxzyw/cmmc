@@ -34,6 +34,7 @@
 #include <cstring>
 #include <iostream>
 #include <limits>
+#include <type_traits>
 #include <unordered_map>
 
 CMMC_NAMESPACE_BEGIN
@@ -85,7 +86,7 @@ class ArithmeticReduce final : public TransformPass<Function> {
 
             Value *v1, *v2, *v3, *v4;
             intmax_t i1, i2;
-            double f1;
+            double f1, f2;
             // a + 0 -> a
             if(add(any(v1), cint_(0))(matchCtx))
                 return v1;
@@ -1324,6 +1325,32 @@ class ArithmeticReduce final : public TransformPass<Function> {
                     return val;
                 if(auto val = matchCompare(getReversedOp(cmp1), v2, v1, getReversedOp(cmp2), v4, v3))
                     return val;
+            }
+
+            // TODO: handle nan
+            // x <= f1 || x >= f2
+            if(or_(fcmp(cmp1, any(v1), fp_(f1)), fcmp(cmp2, exactly(v1), fp_(f2)))(matchCtx)) {
+                if(cmp1 > cmp2) {
+                    std::swap(cmp1, cmp2);
+                    std::swap(f1, f2);
+                }
+                if(cmp1 == CompareOp::FCmpOrderedLessEqual && cmp2 == CompareOp::FCmpOrderedGreaterEqual) {
+                    if(f1 >= f2)
+                        return builder.getTrue();
+                }
+                if(cmp1 == CompareOp::FCmpOrderedLessEqual && cmp2 == CompareOp::FCmpOrderedGreaterThan) {
+                    if(f1 >= f2)
+                        return builder.getTrue();
+                }
+                if(cmp1 == CompareOp::FCmpOrderedLessThan && cmp2 == CompareOp::FCmpOrderedGreaterEqual) {
+                    if(f1 >= f2)
+                        return builder.getTrue();
+                }
+                if(cmp1 == CompareOp::FCmpOrderedLessThan && cmp2 == CompareOp::FCmpOrderedGreaterThan) {
+                    if(f1 > f2)
+                        return builder.getTrue();
+                    // TODO: f1 == f2 -> x une f1
+                }
             }
 
             return nullptr;

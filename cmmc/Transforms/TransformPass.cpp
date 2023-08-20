@@ -408,8 +408,12 @@ std::shared_ptr<PassManager<Module>> PassManager<Module>::get(OptimizationLevel 
         for(const auto& pass : passesSource.collectFunctionPass({
                 // "CompareCombine",         //
                 "GVN",                      //
+                "ArithmeticReduce",         // clean up
                 "NoSideEffectEliminate",    // clean up
                 "ConstantPropagation",      // clean up
+                "SimplifyBranch",           // clean up
+                "BlockEliminate",           // clean up
+                "SimpleStoreEliminate",     // clean up
                 "LoopInvariantCodeMotion",  // clean up
                 "LoopEliminate",            // clean up
                 "FinalValueReplacement",    // clean up
