@@ -19,11 +19,15 @@
 #include <cmmc/IR/Function.hpp>
 #include <cmmc/IR/GlobalVariable.hpp>
 #include <cmmc/IR/Instruction.hpp>
+#include <cmmc/IR/Module.hpp>
 #include <cmmc/IR/Type.hpp>
 #include <cmmc/IR/Value.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
+#include <cstdint>
+#include <iostream>
 #include <queue>
 #include <string_view>
+#include <unordered_map>
 #include <unordered_set>
 
 CMMC_NAMESPACE_BEGIN
@@ -136,11 +140,94 @@ class GlobalVarAttrInfer final : public TransformPass<Module> {
         return !todo.empty();
     }
 
+    static bool setInitOnce(Module& module, AnalysisPassManager& analysis) {
+        std::unordered_map<GlobalVariable*, uint32_t> todo;
+        for(auto global : module.globals()) {
+            if(global->is<GlobalVariable>()) {
+                const auto gv = global->as<GlobalVariable>();
+                if(!gv->attr().hasAttr(GlobalVariableAttribute::InitOnce) && gv->getLinkage() == Linkage::Internal &&
+                   gv->getType()->as<PointerType>()->getPointee()->isPrimitive()) {
+                    todo.emplace(gv, 0U);
+                }
+            }
+        }
+
+        if(todo.empty())
+            return false;
+
+        auto update = [&](Value* ptr, uint32_t count) {
+            if(ptr->isGlobal())
+                return;
+            if(auto it = todo.find(ptr->as<GlobalVariable>()); it != todo.end()) {
+                it->second += count;
+                if(it->second > 1) {
+                    todo.erase(it);
+                }
+            }
+        };
+
+        [[maybe_unused]] auto reportFail = [](Instruction& inst, Value* base) {
+            inst.dumpInst(std::cerr);
+            std::cerr << " failed\n";
+            if(base) {
+                std::cerr << "base: ";
+                base->dumpAsOperand(std::cerr);
+                std::cerr << '\n';
+            } else
+                std::cerr << "base is null\n";
+        };
+
+        for(auto global : module.globals()) {
+            if(!global->isFunction())
+                continue;
+            const auto func = global->as<Function>();
+            if(!func->blocks().empty()) {
+                auto& pointerBase = analysis.get<PointerBaseAnalysis>(*func);
+
+                for(auto block : func->blocks())
+                    for(auto& inst : block->instructions()) {
+                        switch(inst.getInstID()) {
+                            case InstructionID::Store: {
+                                auto base = pointerBase.lookup(inst.getOperand(0));
+                                if(base && (base->isGlobal() || base->is<StackAllocInst>()))
+                                    update(base, 1);
+                                else {
+                                    // reportFail(inst, base);
+                                    return false;
+                                }
+                                break;
+                            }
+                            case InstructionID::AtomicAdd: {
+                                auto base = pointerBase.lookup(inst.getOperand(0));
+                                if(base && (base->isGlobal() || base->is<StackAllocInst>()))
+                                    update(base, 2);
+                                else {
+                                    // reportFail(inst, base);
+                                    return false;
+                                }
+                                break;
+                            }
+                            default:
+                                break;
+                        }
+                    }
+            }
+        }
+
+        if(todo.empty())
+            return false;
+
+        for(auto gv : todo)
+            gv.first->attr().addAttr(GlobalVariableAttribute::InitOnce);
+        return true;
+    }
+
 public:
     bool run(Module& module, AnalysisPassManager& analysis) const override {
         bool modified = false;
         modified |= setReadOnly(module, analysis);
         modified |= setFlexible(module, analysis);
+        modified |= setInitOnce(module, analysis);
         return modified;
     }
 

@@ -15,9 +15,11 @@
 #include <algorithm>
 #include <cmmc/Analysis/BlockTripCountEstimation.hpp>
 #include <cmmc/Analysis/DominateAnalysis.hpp>
+#include <cmmc/Analysis/PointerBaseAnalysis.hpp>
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/Function.hpp>
+#include <cmmc/IR/GlobalVariable.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Transforms/Hyperparameters.hpp>
@@ -34,9 +36,20 @@
 CMMC_NAMESPACE_BEGIN
 
 class CodeMove final : public TransformPass<Function> {
+    // FIXME: move to LICM
+    static bool isUniform(Function& func, Instruction& inst, const PointerBaseAnalysisResult& pointerBase) {
+        if(!func.attr().hasAttr(FunctionAttribute::ParallelBody))
+            return false;
+        if(inst.getInstID() != InstructionID::Load)
+            return false;
+        const auto base = pointerBase.lookup(inst.getOperand(0));
+        return base && base->isGlobal() && base->as<GlobalVariable>()->attr().hasAttr(GlobalVariableAttribute::InitOnce);
+    }
+
 public:
     bool run(Function& func, AnalysisPassManager& analysis) const override {
         const auto& blockTripCount = analysis.get<BlockTripCountEstimation>(func);
+        const auto& pointerBase = analysis.get<PointerBaseAnalysis>(func);
         if(!blockTripCount.isAvailable())
             return false;
 
@@ -57,7 +70,7 @@ public:
             std::unordered_set<Value*> moveOutSet;
 
             for(auto& inst : block->instructions()) {
-                if(!isMovableExpr(inst, true))
+                if(!isMovableExpr(inst, true) && !isUniform(func, inst, pointerBase))
                     continue;
 
                 // don't touch not natively supported instructions as GVN does

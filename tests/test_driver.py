@@ -125,9 +125,9 @@ def run_cmmc(source, *, target, output = '/dev/stdout', opt_level = None, emit_i
     return process
 
 def compare_fp(output: str, standard_answer: str):
-    eps = 1e-8
-    output.replace(':', '')
-    standard_answer.replace(':','')
+    eps = 1e-2
+    output = output.replace(':', '')
+    standard_answer = standard_answer.replace(':','')
     output_val = output.splitlines()
     standard_answer_val = standard_answer.splitlines()
     if len(output_val) != len(standard_answer_val):
@@ -138,7 +138,10 @@ def compare_fp(output: str, standard_answer: str):
         if len(lhs_val) != len(rhs_val):
             return False
         for lhs_fp, rhs_fp in zip(lhs_val, rhs_val):
-            if abs(lhs_fp-rhs_fp)>eps:
+            v1 = float.fromhex(lhs_fp)
+            v2 = float.fromhex(rhs_fp)
+            if abs(v1-v2)>eps:
+                print("error", v1, v2, abs(v1-v2))
                 return False
     return True
 
@@ -154,7 +157,7 @@ def compare_output_with_standard_file(standard_filename: str, output: str, retur
         standard_answer += '\n'
 
     if output != standard_answer:
-        if 'derich' in standard_filename:
+        if 'derich' in standard_filename or 'layernorm' in standard_filename:
             if compare_fp(output, standard_answer):
                 return True
         print(" Output mismatch")

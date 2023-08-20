@@ -284,6 +284,7 @@ std::shared_ptr<PassManager<Module>> PassManager<Module>::get(OptimizationLevel 
 
     auto globalOpt = std::make_shared<PassManager<Module>>();
     for(auto& pass : passesSource.collectModulePass({
+            "GlobalEliminate",           //
             "GlobalVarAttrInfer",        //
             "StoreOnlyGlobalEliminate",  //
             "GlobalEliminate",           //
@@ -541,6 +542,8 @@ std::shared_ptr<PassManager<Module>> PassManager<Module>::get(OptimizationLevel 
         root->addPass(
             std::make_shared<FunctionPassWrapper>(std::make_shared<IterationPassWrapper>(std::move(unrollBase), 16, false)));
         root->addPass(std::make_shared<FunctionPassWrapper>(perFuncWithInline));
+        root->addPass(globalOpt);
+        root->addPass(std::make_shared<FunctionPassWrapper>(perFunc));
     }
 
     {

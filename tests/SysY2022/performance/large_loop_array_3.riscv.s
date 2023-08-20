@@ -43,57 +43,57 @@ main:
 	mv s2, a0
 	li a0, 22
 	jal _sysy_starttime
-pcrel305:
+pcrel308:
 	auipc a2, %pcrel_hi(cmmc_parallel_body_0)
 	addiw s1, s2, -3
-pcrel306:
-	auipc a1, %pcrel_hi(y)
 	lui s6, 260096
-pcrel307:
+pcrel309:
 	auipc a0, %pcrel_hi(x)
-pcrel308:
+pcrel310:
 	auipc s9, %pcrel_hi(cmmc_parallel_body_payload_0)
-	mv s11, zero
 	li s10, 3
 	fmv.w.x f18, zero
-	addi s8, a2, %pcrel_lo(pcrel305)
-	addi s0, a1, %pcrel_lo(pcrel306)
+	mv s11, zero
+pcrel311:
+	auipc a1, %pcrel_hi(y)
+	addi s8, a2, %pcrel_lo(pcrel308)
 	fmv.w.x f9, s6
-	addi s4, a0, %pcrel_lo(pcrel307)
-	addi s3, s9, %pcrel_lo(pcrel308)
+	addi s4, a0, %pcrel_lo(pcrel309)
+	addi s3, s9, %pcrel_lo(pcrel310)
 	fmv.s f8, f18
-pcrel309:
-	auipc a1, %pcrel_hi(__cmmc_fp_constant_pool)
+	addi s0, a1, %pcrel_lo(pcrel311)
 	mv a0, zero
-	addi s5, a1, %pcrel_lo(pcrel309)
+pcrel312:
+	auipc a1, %pcrel_hi(__cmmc_fp_constant_pool)
+	addi s5, a1, %pcrel_lo(pcrel312)
 	lui a1, 24
 	addiw s7, a1, 1696
 	j label92
 .p2align 2
-label111:
+label117:
 	addi a1, a1, 4
 .p2align 2
-label107:
+label113:
 	sh2add a3, a2, s0
 	flw f11, 0(a1)
 	addiw a2, a2, 1
 	flw f12, 0(a3)
 	fmadd.s f10, f11, f12, f10
-	bgt s2, a2, label111
+	bgt s2, a2, label117
 	fadd.s f8, f8, f10
 	addiw s11, s11, 1
 	bge s11, s7, label120
 .p2align 2
 label92:
 	lui a4, 419430
-	fmv.w.x f11, s6
-	flw f12, 0(s5)
+	fmv.w.x f12, s6
+	flw f11, 0(s5)
 	addiw a3, a4, 1639
 	mul a1, s11, a3
-	fadd.s f10, f9, f12
+	fadd.s f10, f9, f11
 	srli t0, a1, 63
 	srai a2, a1, 34
-	fmv.s f9, f11
+	fmv.s f9, f12
 	add a3, t0, a2
 	sh2add a4, a3, a3
 	slliw a5, a4, 1
@@ -110,9 +110,9 @@ label274:
 	fmv.s f18, f10
 label276:
 	ble s2, a0, label152
-pcrel310:
+pcrel313:
 	auipc s9, %pcrel_hi(cmmc_parallel_body_payload_0)
-	sw a0, %pcrel_lo(pcrel310)(s9)
+	sw a0, %pcrel_lo(pcrel313)(s9)
 	sd s4, 8(s3)
 	fsw f18, 16(s3)
 	sd s0, 24(s3)
@@ -129,12 +129,8 @@ label101:
 	fmv.w.x f10, zero
 	mv a1, s4
 	mv a2, zero
-	j label113
 .p2align 2
-label117:
-	addi a1, a1, 16
-.p2align 2
-label113:
+label103:
 	sh2add a3, a2, s0
 	flw f12, 0(a1)
 	addiw a2, a2, 4
@@ -149,20 +145,24 @@ label113:
 	flw f13, 12(a3)
 	fmadd.s f11, f14, f15, f10
 	fmadd.s f10, f12, f13, f11
-	bgt s1, a2, label117
-	fmv.s f11, f10
-	ble s2, a2, label297
+	ble s1, a2, label200
+	addi a1, a1, 16
+	j label103
 .p2align 2
-label106:
+label200:
+	fmv.s f11, f10
+	ble s2, a2, label296
+.p2align 2
+label112:
 	sh2add a1, a2, s4
 	fmv.s f10, f11
-	j label107
+	j label113
 .p2align 2
 label168:
 	fmv.w.x f10, zero
 	mv a2, zero
 	fmv.s f11, f10
-	bgt s2, zero, label106
+	bgt s2, zero, label112
 	fadd.s f8, f8, f10
 	addiw s11, s11, 1
 	blt s11, s7, label92
@@ -184,16 +184,16 @@ label120:
 	fle.s a2, f12, f10
 	or s0, a1, a2
 	jal _sysy_stoptime
-	bne s0, zero, label122
+	bne s0, zero, label124
 	li a0, 1
 	jal putint
 	li a0, 1
-	j label123
-label122:
+	j label121
+label124:
 	mv a0, zero
 	jal putint
 	mv a0, zero
-label123:
+label121:
 	ld ra, 0(sp)
 	ld s8, 8(sp)
 	flw f8, 16(sp)
@@ -213,7 +213,7 @@ label123:
 	addi sp, sp, 128
 	ret
 .p2align 2
-label297:
+label296:
 	fadd.s f8, f8, f10
 	addiw s11, s11, 1
 	blt s11, s7, label92

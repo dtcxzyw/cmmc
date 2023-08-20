@@ -246,9 +246,9 @@ label13:
 	ld t6, 328(sp)
 	ld a7, 376(sp)
 	mulw t5, a6, t4
-	ld a6, 368(sp)
 	li t4, -42
 	addw t1, t2, t5
+	ld a6, 368(sp)
 	mulw t5, t6, t3
 	ld t6, 360(sp)
 	li t3, 87
@@ -523,9 +523,9 @@ label13:
 	addw t5, a3, a7
 	ld a6, 80(sp)
 	subw a3, t6, t0
+	ld t6, 112(sp)
 	subw t0, zero, a6
 	addw a7, t5, a3
-	ld t6, 112(sp)
 	li a6, -70
 	addw a3, a7, t0
 	li a7, 75
@@ -836,8 +836,8 @@ label13:
 	sh3add t0, a7, a7
 	mulw t1, t6, t3
 	li a7, 107
-	ld t6, 256(sp)
 	sh2add t3, a6, a6
+	ld t6, 256(sp)
 	addw a5, a3, t1
 	ld a6, 312(sp)
 	li t1, 104

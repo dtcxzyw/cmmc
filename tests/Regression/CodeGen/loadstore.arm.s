@@ -127,15 +127,11 @@ memset_impl:
 	sub r5, r2, #3
 	sub r6, r2, #18
 	cmp r5, #15
-	ble label150
+	ble label138
 	mov r1, r3
 	mov r4, r0
-	b label119
 .p2align 4
-label122:
-	add r1, r1, #64
-.p2align 4
-label119:
+label112:
 	add r4, r4, #16
 	str r0, [r1, #0]
 	cmp r6, r4
@@ -154,48 +150,51 @@ label119:
 	str r0, [r1, #52]
 	str r0, [r1, #56]
 	str r0, [r1, #60]
-	bgt label122
+	ble label173
+	add r1, r1, #64
+	b label112
+label173:
 	mov r1, r4
-label110:
+label103:
 	cmp r5, r1
-	ble label154
+	ble label142
 	add r4, r3, r1, lsl #2
-	b label114
-label117:
+	b label107
+label110:
 	add r4, r4, #16
-label114:
+label107:
 	add r1, r1, #4
 	str r0, [r4, #0]
 	cmp r5, r1
 	str r0, [r4, #4]
 	str r0, [r4, #8]
 	str r0, [r4, #12]
-	bgt label117
-label102:
+	bgt label110
+label116:
 	cmp r2, r1
 	ble label123
 	add r3, r3, r1, lsl #2
-	b label105
-label108:
+	b label119
+label122:
 	add r3, r3, #4
-label105:
+label119:
 	add r1, r1, #1
 	str r0, [r3, #0]
 	cmp r2, r1
-	bgt label108
+	bgt label122
 label123:
 	pop { r4, r5, r6 }
 	bx lr
 label132:
 	mov r1, r0
-	b label102
-label150:
+	b label116
+label138:
 	mov r1, r0
 	mov r4, r0
-	b label110
-label154:
+	b label103
+label142:
 	mov r1, r4
-	b label102
+	b label116
 .p2align 4
 .globl fused_store
 fused_store:

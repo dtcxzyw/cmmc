@@ -54,12 +54,12 @@ label2:
 	or a3, a2, a5
 	or a1, a3, a4
 	bne a1, zero, label2
-pcrel483:
-	auipc a2, %pcrel_hi(input)
-pcrel484:
-	auipc a1, %pcrel_hi(program)
-	addi s7, a2, %pcrel_lo(pcrel483)
-	addi s6, a1, %pcrel_lo(pcrel484)
+pcrel481:
+	auipc a1, %pcrel_hi(input)
+pcrel482:
+	auipc a2, %pcrel_hi(program)
+	addi s7, a1, %pcrel_lo(pcrel481)
+	addi s6, a2, %pcrel_lo(pcrel482)
 	beq a0, s9, label87
 	mv s10, s6
 	mv s11, zero
@@ -69,12 +69,12 @@ label9:
 	jal getch
 	addiw a1, a0, -35
 	slti a5, a1, 0
-	sll a3, s0, a1
-	and a4, a3, s8
-	sltiu a2, a4, 1
+	sll a2, s0, a1
+	and a4, a2, s8
+	sltiu a3, a4, 1
 	slt a4, s1, a0
-	or a3, a2, a5
-	or a1, a3, a4
+	or a2, a3, a5
+	or a1, a2, a4
 	bne a1, zero, label9
 	addiw s11, s11, 1
 	beq a0, s9, label105
@@ -92,9 +92,9 @@ label14:
 	li a0, 116
 	jal _sysy_starttime
 	mv a2, zero
-pcrel485:
+pcrel483:
 	auipc a3, %pcrel_hi(return_a)
-	addi a0, a3, %pcrel_lo(pcrel485)
+	addi a0, a3, %pcrel_lo(pcrel483)
 	mv a1, a0
 .p2align 2
 label16:
@@ -137,10 +137,10 @@ label16:
 	j label16
 label20:
 	auipc a3, %pcrel_hi(tape)
-pcrel486:
+pcrel484:
 	auipc a2, %pcrel_hi(output)
 	addi a1, a3, %pcrel_lo(label20)
-	addi s10, a2, %pcrel_lo(pcrel486)
+	addi s10, a2, %pcrel_lo(pcrel484)
 	ble s8, zero, label190
 	mv a2, zero
 	mv t0, zero
@@ -163,12 +163,13 @@ label21:
 	beq t1, s5, label31
 	li t2, 91
 	beq t1, t2, label42
-	bne t1, s1, label36
+	bne t1, s1, label34
 	sh2add t3, a4, a1
 	addiw t1, a3, -1
 	lw t2, 0(t3)
-	bne t2, zero, label230
-	mv a3, t1
+	beq t2, zero, label257
+	sh2add t1, a3, a0
+	lw t0, -4(t1)
 	j label49
 .p2align 2
 label48:
@@ -219,9 +220,9 @@ label42:
 	addiw a3, a3, 1
 	sw t0, 0(t1)
 	j label49
-label36:
+label34:
 	li t2, 46
-	bne t1, t2, label38
+	bne t1, t2, label36
 	sh2add t2, a4, a1
 	sh2add t3, a2, s10
 	lw t1, 0(t2)
@@ -236,19 +237,19 @@ label44:
 	addiw t1, t1, 1
 	sh2add t3, t1, s6
 	lw t0, 0(t3)
-	xori t5, t0, 93
-	sltiu t4, t5, 1
 	xori t5, t0, 91
-	subw t6, t2, t4
+	xori t4, t0, 93
+	sltiu t6, t4, 1
 	sltu t4, zero, t5
-	addi t3, t6, 1
+	subw a6, t2, t6
+	addi t3, a6, 1
 	subw t2, t3, t4
 	bgt t2, zero, label44
 	mv t0, t1
 	j label49
-label38:
+label36:
 	li t2, 44
-	beq t1, t2, label39
+	beq t1, t2, label37
 	j label49
 label63:
 	jal getint
@@ -268,17 +269,13 @@ label65:
 	sw a0, 0(s10)
 	bgt s9, s11, label68
 	j label14
-label39:
-	bgt s9, a5, label40
-	sh2add t1, a4, a1
-	sw zero, 0(t1)
-	j label49
-label40:
-	sh2add t2, a5, s7
-	sh2add t3, a4, a1
+label37:
+	ble s9, a5, label39
+	sh2add t3, a5, s7
+	sh2add t2, a4, a1
 	addiw a5, a5, 1
-	lw t1, 0(t2)
-	sw t1, 0(t3)
+	lw t1, 0(t3)
+	sw t1, 0(t2)
 	j label49
 .p2align 2
 label47:
@@ -297,12 +294,15 @@ label31:
 	sw t2, 0(t1)
 	bgt s8, t0, label21
 	j label461
+label257:
+	mv a3, t1
+	j label49
 label190:
 	mv s0, zero
 	j label55
-label230:
-	sh2add t1, a3, a0
-	lw t0, -4(t1)
+label39:
+	sh2add t1, a4, a1
+	sw zero, 0(t1)
 	j label49
 label87:
 	mv s8, zero

@@ -26,27 +26,27 @@ mean:
 .globl main
 main:
 	addi sp, sp, -104
-pcrel1172:
+pcrel1171:
 	auipc a0, %pcrel_hi(a)
-pcrel1173:
+pcrel1172:
 	auipc a1, %pcrel_hi(var)
 	sd ra, 0(sp)
 	sd s4, 8(sp)
-	addi s4, a0, %pcrel_lo(pcrel1172)
+	addi s4, a0, %pcrel_lo(pcrel1171)
 	sd s7, 16(sp)
-pcrel1174:
+pcrel1173:
 	auipc a0, %pcrel_hi(mean)
-pcrel1175:
+pcrel1174:
 	auipc s7, %pcrel_hi(cmmc_parallel_body_payload_1)
 	sd s8, 24(sp)
-	addi s8, s7, %pcrel_lo(pcrel1175)
+	addi s8, s7, %pcrel_lo(pcrel1174)
 	sd s6, 32(sp)
-	addi s6, a0, %pcrel_lo(pcrel1174)
+	addi s6, a0, %pcrel_lo(pcrel1173)
 	sd s1, 40(sp)
 	li a0, 125
 	sd s5, 48(sp)
 	slli s1, a0, 5
-	addi s5, a1, %pcrel_lo(pcrel1173)
+	addi s5, a1, %pcrel_lo(pcrel1172)
 	sd s0, 56(sp)
 	li s0, 1000
 	sd s9, 64(sp)
@@ -58,41 +58,41 @@ pcrel1175:
 	sd s2, 88(sp)
 	li s2, 960
 	fsw f8, 96(sp)
-label601:
-	bge s10, s0, label608
+label600:
+	bge s10, s0, label607
 	mv a0, s9
 	jal getfarray
-	bne a0, s0, label604
+	bne a0, s0, label605
 	addiw s10, s10, 1
 	add s9, s9, s1
-	j label601
-label608:
+	j label600
+label607:
 	li a0, 42
 	jal _sysy_starttime
 	mv s9, zero
 	fmv.w.x f8, zero
-	j label609
-label621:
+	j label608
+label620:
 	addiw s9, s9, 1
 	li a0, 100
-	bge s9, a0, label801
+	bge s9, a0, label800
 	fmv.s f8, f12
-label609:
+label608:
 	auipc a0, %pcrel_hi(cmmc_parallel_body_payload_0)
-pcrel1176:
+pcrel1175:
 	auipc a3, %pcrel_hi(cmmc_parallel_body_0)
-	sd s6, %pcrel_lo(label609)(a0)
-	addi a2, a3, %pcrel_lo(pcrel1176)
+	sd s6, %pcrel_lo(label608)(a0)
+	addi a2, a3, %pcrel_lo(pcrel1175)
 	mv a1, s0
 	mv a0, zero
 	jal cmmcParallelFor
 	mv a0, zero
-pcrel1177:
+pcrel1176:
 	auipc a3, %pcrel_hi(cmmc_parallel_body_1)
-pcrel1178:
+pcrel1177:
 	auipc s7, %pcrel_hi(cmmc_parallel_body_payload_1)
-	sd s5, %pcrel_lo(pcrel1178)(s7)
-	addi a2, a3, %pcrel_lo(pcrel1177)
+	sd s5, %pcrel_lo(pcrel1177)(s7)
+	addi a2, a3, %pcrel_lo(pcrel1176)
 	sd s6, 8(s8)
 	mv a1, s0
 	jal cmmcParallelFor
@@ -104,12 +104,12 @@ pcrel1178:
 	mv a3, zero
 	flw f11, 0(s5)
 	mv a0, s4
-	j label616
+	j label615
 .p2align 2
-label636:
+label635:
 	addi a0, a0, 64
 .p2align 2
-label616:
+label615:
 	flw f14, 0(a0)
 	addiw a3, a3, 16
 	fsub.s f15, f14, f10
@@ -191,7 +191,7 @@ label616:
 	fdiv.s f14, f0, f11
 	fsw f14, 60(a0)
 	fadd.s f12, f13, f14
-	blt a3, s3, label636
+	blt a3, s3, label635
 	flw f13, 64(a0)
 	addiw a2, a2, 1
 	fsub.s f15, f13, f10
@@ -233,7 +233,7 @@ label616:
 	fdiv.s f14, f15, f11
 	fsw f14, 92(a0)
 	fadd.s f12, f13, f14
-	bge a2, s0, label621
+	bge a2, s0, label620
 	addi a1, a1, 4
 	sh2add a0, a2, s5
 	mul a4, a2, s1
@@ -241,14 +241,14 @@ label616:
 	flw f10, 0(a1)
 	flw f11, 0(a0)
 	add a0, s4, a4
-	j label616
-label632:
+	j label615
+label631:
 	li a0, 95
 	jal _sysy_stoptime
 	fmv.s f10, f8
 	jal putfloat
 	mv a0, zero
-label604:
+label605:
 	ld ra, 0(sp)
 	ld s4, 8(sp)
 	ld s7, 16(sp)
@@ -264,17 +264,17 @@ label604:
 	flw f8, 96(sp)
 	addi sp, sp, 104
 	ret
-label801:
+label800:
 	mv a1, zero
 	fmv.s f10, f12
 	mv a0, s4
 	mv a2, zero
-	j label627
+	j label626
 .p2align 2
-label634:
+label633:
 	addi a0, a0, 256
 .p2align 2
-label627:
+label626:
 	flw f14, 0(a0)
 	addiw a2, a2, 64
 	flw f13, 4(a0)
@@ -404,7 +404,7 @@ label627:
 	flw f13, 252(a0)
 	fadd.s f11, f12, f14
 	fadd.s f10, f11, f13
-	blt a2, s2, label634
+	blt a2, s2, label633
 	flw f13, 256(a0)
 	addiw a1, a1, 1
 	flw f15, 260(a0)
@@ -486,12 +486,12 @@ label627:
 	flw f12, 412(a0)
 	fadd.s f10, f11, f13
 	fadd.s f8, f10, f12
-	bge a1, s0, label632
+	bge a1, s0, label631
 	add s4, s4, s1
 	fmv.s f10, f8
 	mv a2, zero
 	mv a0, s4
-	j label627
+	j label626
 .p2align 2
 cmmc_parallel_body_0:
 	mv a2, a1
@@ -743,23 +743,23 @@ label12:
 .p2align 2
 cmmc_parallel_body_1:
 	mv a3, a1
-pcrel597:
+pcrel596:
 	auipc a2, %pcrel_hi(cmmc_parallel_body_payload_1)
 	mv t3, a0
-pcrel598:
+pcrel597:
 	auipc t2, %pcrel_hi(a)
 	lui t1, 280480
 	li t4, 125
-	ld a5, %pcrel_lo(pcrel597)(a2)
-	addi t0, a2, %pcrel_lo(pcrel597)
-pcrel599:
+	ld a5, %pcrel_lo(pcrel596)(a2)
+	addi t0, a2, %pcrel_lo(pcrel596)
+pcrel598:
 	auipc a2, %pcrel_hi(__cmmc_fp_constant_pool)
 	ld a1, 8(t0)
-	addi t0, t2, %pcrel_lo(pcrel598)
+	addi t0, t2, %pcrel_lo(pcrel597)
 	sh2add a4, a0, a1
 	slli t2, t4, 5
 	lui a1, 258048
-	addi a0, a2, %pcrel_lo(pcrel599)
+	addi a0, a2, %pcrel_lo(pcrel598)
 	li a2, 992
 	mul t5, t3, t2
 	flw f10, 0(a4)
@@ -866,7 +866,7 @@ label371:
 	bgt a3, t3, label384
 	j label385
 .p2align 2
-label381:
+label382:
 	fadd.s f15, f11, f13
 	fmv.s f12, f11
 	flw f1, 4(a0)
@@ -877,11 +877,11 @@ label381:
 	fsub.s f0, f14, f10
 	fabs.s f15, f0
 	flt.s t4, f1, f15
-	beq t4, zero, label590
+	beq t4, zero, label591
 .p2align 2
 label380:
 	flt.s t4, f10, f14
-	bne t4, zero, label381
+	bne t4, zero, label382
 	fadd.s f15, f11, f12
 	fmv.s f13, f11
 	flw f1, 4(a0)
@@ -899,7 +899,7 @@ label380:
 	bgt a3, t3, label384
 	j label385
 .p2align 2
-label590:
+label591:
 	sh2add t4, t3, a5
 	addiw t3, t3, 1
 	fsw f11, 0(t4)

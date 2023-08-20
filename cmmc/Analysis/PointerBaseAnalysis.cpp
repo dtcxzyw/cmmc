@@ -127,6 +127,10 @@ PointerBaseAnalysisResult PointerBaseAnalysis::run(Function& func, AnalysisPassM
                     graph[inst.lastOperand()].push_back(&inst);
                     degree[&inst] = 1;
                     break;
+                case InstructionID::PtrAdd:
+                    graph[inst.getOperand(0)].push_back(&inst);
+                    degree[&inst] = 1;
+                    break;
                 case InstructionID::Select:
                     graph[inst.getOperand(1)].push_back(&inst);
                     graph[inst.getOperand(2)].push_back(&inst);
@@ -195,6 +199,9 @@ PointerBaseAnalysisResult PointerBaseAnalysis::run(Function& func, AnalysisPassM
             case InstructionID::GetElementPtr:
             case InstructionID::PtrCast:
                 setStorage(inst, storage.at(inst->lastOperand()));
+                break;
+            case InstructionID::PtrAdd:
+                setStorage(inst, storage.at(inst->getOperand(0)));
                 break;
             case InstructionID::Select: {
                 Value* src1 = storage.at(inst->getOperand(1));

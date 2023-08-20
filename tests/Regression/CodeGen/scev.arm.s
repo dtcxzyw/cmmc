@@ -9,21 +9,17 @@
 foo4:
 	push { r4, r5, r6 }
 	cmp r1, #0
-	ble label24
+	ble label2
 	cmp r1, #3
 	ble label32
 	sub r3, r1, #3
 	sub r5, r1, #18
 	cmp r3, #15
-	ble label51
+	ble label38
 	mov r2, r0
 	mov r4, #0
-	b label12
 .p2align 4
-label15:
-	add r2, r2, #64
-.p2align 4
-label12:
+label14:
 	lsl r6, r4, #2
 	str r6, [r2, #0]
 	add r6, r4, #1
@@ -73,14 +69,20 @@ label12:
 	lsl r6, r6, #2
 	cmp r5, r4
 	str r6, [r2, #60]
-	bgt label15
+	ble label111
+	add r2, r2, #64
+	b label14
+label111:
 	mov r5, r4
-label16:
+label5:
 	cmp r3, r5
-	ble label107
+	ble label42
 	add r2, r0, r5, lsl #2
 	mov r4, r5
-label20:
+	b label9
+label12:
+	add r2, r2, #16
+label9:
 	lsl r5, r4, #2
 	str r5, [r2, #0]
 	add r5, r4, #1
@@ -94,31 +96,29 @@ label20:
 	lsl r5, r5, #2
 	cmp r3, r4
 	str r5, [r2, #12]
-	ble label107
-	add r2, r2, #16
-	b label20
-label107:
+	bgt label12
+label42:
 	mov r2, r4
-label3:
+label18:
 	cmp r1, r2
-	ble label24
+	ble label2
 	add r0, r0, r2, lsl #2
-	b label6
-label9:
+	b label21
+label24:
 	add r0, r0, #4
-label6:
+label21:
 	lsl r3, r2, #2
 	add r2, r2, #1
 	str r3, [r0, #0]
 	cmp r1, r2
-	bgt label9
-label24:
+	bgt label24
+label2:
 	pop { r4, r5, r6 }
 	bx lr
-label51:
+label38:
 	mov r5, #0
 	mov r4, r5
-	b label16
+	b label5
 label32:
 	mov r2, #0
-	b label3
+	b label18

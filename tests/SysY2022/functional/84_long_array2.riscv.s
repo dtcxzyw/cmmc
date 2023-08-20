@@ -2,9 +2,6 @@
 .data
 .bss
 .p2align 3
-a:
-	.zero	16384
-.p2align 3
 c:
 	.zero	16384
 .text
@@ -12,16 +9,16 @@ c:
 .globl main
 main:
 	addi sp, sp, -16
-pcrel303:
+pcrel291:
 	auipc a2, %pcrel_hi(c)
 	li a4, 2
 	sd ra, 0(sp)
 	slli a1, a4, 32
 	sd s0, 8(sp)
 	addi a3, a1, 1
-	addi s0, a2, %pcrel_lo(pcrel303)
+	addi s0, a2, %pcrel_lo(pcrel291)
 	li a1, 3
-	sd a3, %pcrel_lo(pcrel303)(a2)
+	sd a3, %pcrel_lo(pcrel291)(a2)
 	addi a0, s0, 24
 	li a3, 4
 	sd zero, 8(s0)
@@ -71,12 +68,7 @@ label2:
 	j label2
 label6:
 	sd zero, 256(a0)
-pcrel304:
-	auipc a5, %pcrel_hi(a)
-	li a4, 125
-	addi a2, a5, %pcrel_lo(pcrel304)
 	sd zero, 264(a0)
-	slli a3, a4, 5
 	sd zero, 272(a0)
 	sd zero, 280(a0)
 	sd zero, 288(a0)
@@ -104,14 +96,6 @@ pcrel304:
 	sd zero, 464(a0)
 	sd zero, 472(a0)
 	sd zero, 480(a0)
-	slli a0, a3, 2
-	sw a3, 20(a2)
-	addi a4, a0, 380
-	add a5, a2, a0
-	add a3, a2, a4
-	sw a1, 0(a5)
-	li a5, 7
-	sw a5, 0(a3)
 	mv a0, a1
 	jal putint
 	li a0, 10

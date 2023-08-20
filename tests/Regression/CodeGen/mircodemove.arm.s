@@ -12,17 +12,17 @@ test:
 	movt r3, #21845
 	cmp r1, #0
 	mov r2, r0
-	ble label15
+	ble label2
 	sub r4, r1, #3
 	cmp r1, #3
 	ble label24
 	mov r5, #0
-	b label4
+	b label5
 .p2align 4
-label7:
+label8:
 	add r0, r0, #16
 .p2align 4
-label4:
+label5:
 	ldr r6, [r0, #0]
 	add r5, r5, #4
 	cmp r4, r5
@@ -41,26 +41,26 @@ label4:
 	smmul r6, r6, r3
 	add r6, r6, r6, lsr #31
 	str r6, [r0, #12]
-	bgt label7
-label8:
+	bgt label8
+label9:
 	cmp r1, r5
-	ble label15
+	ble label2
 	add r0, r2, r5, lsl #2
 	mov r2, r5
-	b label11
-label14:
+	b label12
+label15:
 	add r0, r0, #4
-label11:
+label12:
 	ldr r4, [r0, #0]
 	add r2, r2, #1
 	cmp r1, r2
 	smmul r4, r4, r3
 	add r4, r4, r4, lsr #31
 	str r4, [r0, #0]
-	bgt label14
-label15:
+	bgt label15
+label2:
 	pop { r4, r5, r6 }
 	bx lr
 label24:
 	mov r5, #0
-	b label8
+	b label9

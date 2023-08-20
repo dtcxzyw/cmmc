@@ -18,10 +18,10 @@ main:
 	jal getint
 	mv s2, a0
 	jal getint
-pcrel129:
+pcrel131:
 	auipc a1, %pcrel_hi(array)
 	mv s1, a0
-	addi s0, a1, %pcrel_lo(pcrel129)
+	addi s0, a1, %pcrel_lo(pcrel131)
 	ble s2, zero, label2
 	mv s3, s0
 	mv s4, zero
@@ -47,38 +47,52 @@ label6:
 	mv a5, a0
 	mv a4, a0
 	lw t0, 0(a2)
-	bge a3, t0, label29
+	bge a3, t0, label15
 	addiw a4, a0, 1
-	bgt a1, a4, label28
-	j label91
+	bgt a1, a4, label18
+	j label121
 .p2align 2
-label29:
-	sh2add t1, a5, s0
+label122:
 	addiw a4, a4, 1
+	ble a1, a4, label121
+.p2align 2
+label18:
+	addi a2, a2, 4
+	lw t0, 0(a2)
+	blt a3, t0, label122
+.p2align 2
+label15:
+	sh2add t1, a5, s0
 	addiw a5, a5, 1
 	lw t2, 0(t1)
 	sw t2, 0(a2)
 	sw t0, 0(t1)
-	ble a1, a4, label91
-.p2align 2
-label28:
-	addi a2, a2, 4
-	lw t0, 0(a2)
-	bge a3, t0, label29
 	addiw a4, a4, 1
-	bgt a1, a4, label28
-	j label91
+	bgt a1, a4, label18
+label121:
+	mv s2, a5
+label19:
+	sh2add a2, s2, s0
+	sh2add a4, a1, s0
+	lw a3, 0(a2)
+	lw a5, 0(a4)
+	sw a5, 0(a2)
+	sw a3, 0(a4)
+	bne s1, s2, label21
+	ble s2, zero, label8
+	mv s1, zero
+	j label26
 .p2align 2
-label20:
+label29:
 	addi s0, s0, 4
 .p2align 2
-label17:
+label26:
 	lw a0, 0(s0)
 	jal putint
 	li a0, 32
 	jal putch
 	addiw s1, s1, 1
-	bgt s2, s1, label20
+	bgt s2, s1, label29
 label8:
 	mv a0, zero
 	ld ra, 0(sp)
@@ -89,26 +103,13 @@ label8:
 	ld s4, 40(sp)
 	addi sp, sp, 48
 	ret
-label91:
-	mv s2, a5
-label10:
-	sh2add a2, s2, s0
-	sh2add a4, a1, s0
-	lw a3, 0(a2)
-	lw a5, 0(a4)
-	sw a5, 0(a2)
-	sw a3, 0(a4)
-	beq s1, s2, label15
-	blt s1, s2, label14
+label21:
+	blt s1, s2, label23
 	addiw a0, s2, 1
-	j label6
-label15:
-	ble s2, zero, label8
-	mv s1, zero
-	j label17
-label14:
-	addiw a1, s2, -1
 	j label6
 label52:
 	mv s2, a0
-	j label10
+	j label19
+label23:
+	addiw a1, s2, -1
+	j label6

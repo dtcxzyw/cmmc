@@ -34,6 +34,7 @@ void GlobalVariable::dump(std::ostream& out, const HighlightSelector& selector) 
 
         HANDLE_ATTR(ReadOnly);
         HANDLE_ATTR(Flexible);
+        HANDLE_ATTR(InitOnce);
 
 #undef HANDLE_ATTR
         out << '}';

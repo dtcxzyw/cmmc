@@ -712,40 +712,22 @@ pcrel1211:
 	beq a0, s3, label1129
 	mv s2, s0
 	mv s4, zero
-	j label1117
+	j label1100
 .p2align 2
-label1122:
+label1105:
 	addi s2, s2, 4
 	mv s4, a1
 .p2align 2
-label1117:
+label1100:
 	sw a0, 0(s2)
 	jal getch
 	addiw a1, s4, 1
-	bne a0, s3, label1122
+	bne a0, s3, label1105
 	lw a0, 48(sp)
 	mv t2, a1
-label1102:
-	ble t2, a0, label1104
-	lw a1, 48(sp)
-	sh2add a2, a1, s0
-	lw a0, 0(a2)
-	xori a4, a0, 9
-	xori a5, a0, 32
-	sltiu t0, a4, 1
-	sltiu a3, a5, 1
-	xori a5, a0, 10
-	or a2, a3, t0
-	sltiu a4, a5, 1
-	xori t0, a0, 13
-	sltiu a3, t0, 1
-	or a5, a4, a3
-	or a0, a2, a5
-	beq a0, zero, label1104
-	addiw a0, a1, 1
-	sw a0, 48(sp)
-	j label1102
-label1104:
+label1109:
+	bgt t2, a0, label1111
+label1113:
 	mv a0, zero
 	mv a1, s0
 	mv a2, t2
@@ -753,45 +735,47 @@ label1104:
 	jal detect_item
 	mv a1, a0
 	lw a0, 48(sp)
-label1105:
-	ble t2, a0, label1109
+label1114:
+	ble t2, a0, label1118
 	lw a0, 48(sp)
-	sh2add a3, a0, s0
-	lw a2, 0(a3)
-	xori t3, a2, 13
+	sh2add a5, a0, s0
+	lw a2, 0(a5)
+	xori t0, a2, 10
 	xori a5, a2, 9
-	xori t1, a2, 32
-	sltiu t0, a5, 1
+	xori a3, a2, 32
+	sltiu t1, a5, 1
+	sltiu a4, a3, 1
+	sltiu a5, t0, 1
+	or a3, a4, t1
+	xori t1, a2, 13
 	sltiu a4, t1, 1
-	xori t1, a2, 10
-	or a3, a4, t0
-	sltiu a5, t1, 1
-	sltiu a4, t3, 1
 	or t0, a5, a4
 	or a2, a3, t0
-	beq a2, zero, label1109
+	beq a2, zero, label1118
 	addiw a0, a0, 1
 	sw a0, 48(sp)
-	j label1105
-label1109:
-	beq a1, zero, label1110
-	li a0, 111
-	jal putch
-	li a0, 107
-	jal putch
-	li a0, 10
-	jal putch
-	mv a0, zero
+	j label1114
 label1111:
-	ld ra, 0(sp)
-	ld s1, 8(sp)
-	ld s0, 16(sp)
-	ld s3, 24(sp)
-	ld s2, 32(sp)
-	ld s4, 40(sp)
-	addi sp, sp, 56
-	ret
-label1110:
+	lw a0, 48(sp)
+	sh2add a2, a0, s0
+	lw a1, 0(a2)
+	xori a4, a1, 9
+	xori t0, a1, 32
+	sltiu a5, a4, 1
+	sltiu a3, t0, 1
+	xori t0, a1, 10
+	or a2, a3, a5
+	sltiu a4, t0, 1
+	xori a5, a1, 13
+	sltiu t1, a5, 1
+	or a3, a4, t1
+	or a1, a2, a3
+	beq a1, zero, label1113
+	addiw a0, a0, 1
+	sw a0, 48(sp)
+	j label1109
+label1118:
+	bne a1, zero, label1122
 	li a0, 110
 	jal putch
 	li a0, 111
@@ -807,8 +791,25 @@ label1110:
 	li a0, 10
 	jal putch
 	li a0, 1
-	j label1111
+label1120:
+	ld ra, 0(sp)
+	ld s1, 8(sp)
+	ld s0, 16(sp)
+	ld s3, 24(sp)
+	ld s2, 32(sp)
+	ld s4, 40(sp)
+	addi sp, sp, 56
+	ret
 label1129:
 	mv a0, zero
 	mv t2, zero
-	j label1102
+	j label1109
+label1122:
+	li a0, 111
+	jal putch
+	li a0, 107
+	jal putch
+	li a0, 10
+	jal putch
+	mv a0, zero
+	j label1120
