@@ -1303,6 +1303,36 @@
         "task-clock:u": 0.76
       }
     ],
+    "69e8d3f8f1deca11b1ed87d8925a50299b3e09bd": [
+      {
+        "cycles:u": 18171,
+        "inst_retired:u": 1147,
+        "instructions:u": 2250,
+        "sysy_time": 0.00194,
+        "task-clock:u": 0.14
+      },
+      {
+        "sysy_time": 0.001961
+      },
+      {
+        "cycles:u": 16879,
+        "inst_retired:u": 1147,
+        "instructions:u": 2250,
+        "sysy_time": 0.001968,
+        "task-clock:u": 0.14
+      },
+      {
+        "sysy_time": 0.001943
+      },
+      {
+        "cycles:u": 47695,
+        "inst_retired:u": 2277,
+        "inst_spec:u": 1531,
+        "instructions:u": 2422,
+        "sysy_time": 0.001956,
+        "task-clock:u": 0.18
+      }
+    ],
     "6d44124a80e777712e32d41c7e9e197da7e0edd5": [
       {
         "sysy_time": 0.001972
