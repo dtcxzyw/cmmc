@@ -570,6 +570,11 @@
       "parent": "7501d07d092337845cfebf755d1c0414e9cc3318",
       "time": "2023-07-22 12:05:03 +0800"
     },
+    "69e8d3f8f1deca11b1ed87d8925a50299b3e09bd": {
+      "message": "test: update ref",
+      "parent": "217eabb18c0c1df2d8e68cbdb12476525d87dcd8",
+      "time": "2023-08-20 14:43:29 +0800"
+    },
     "6a8343af9aa9121e470323c549778720072f0b19": {
       "message": "feat(transform): introduce range info into constraint reduce",
       "parent": "dbb1591ab79e9718b0364472a585d7063d3c167e",
@@ -1371,5 +1376,5 @@
       "time": "2023-07-06 01:05:50 +0800"
     }
   },
-  "head": "217eabb18c0c1df2d8e68cbdb12476525d87dcd8"
+  "head": "69e8d3f8f1deca11b1ed87d8925a50299b3e09bd"
 }
