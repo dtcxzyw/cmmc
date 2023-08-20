@@ -600,6 +600,11 @@
       "parent": "e15d2533f26a57059fbb95edf8f811865c3d1a3f",
       "time": "2023-07-11 19:45:20 +0800"
     },
+    "72792d14427719f4643ea86d025e77fa09a105a2": {
+      "message": "feat(transform): add initonce flag",
+      "parent": "454f0dd77820f428dd8ad9e772b850b33fdc2e2a",
+      "time": "2023-08-20 11:00:09 +0800"
+    },
     "72dd6f694d06ea99ad98ba6b78a9a5cc3c897bce": {
       "message": "feat(codegen): rematerialize constants",
       "parent": "73bc1f3a969291c1b5079930367b0ac5802186a6",
@@ -1356,5 +1361,5 @@
       "time": "2023-07-06 01:05:50 +0800"
     }
   },
-  "head": "454f0dd77820f428dd8ad9e772b850b33fdc2e2a"
+  "head": "72792d14427719f4643ea86d025e77fa09a105a2"
 }
