@@ -7,23 +7,25 @@ internal [50 * i32]* @line1, align 8 { Flexible };
 internal [100 * i32]* @line2, align 8 { Flexible };
 internal func @f(i32 %step, i32* %0, i32* %1) -> void {
   ^entry:
-    [50 * i32]* %2 = ptrcast [50 * i32]* @ans to [50 * i32]*;
-    i32* %3 = getelementptr &([50 * i32]* %2)[i64 0][i32 %step];
-    i32 %4 = load i32* %1;
-    i1 %5 = icmp sgt i32 %4, i32 0;
+    i32 %2 = load i32* %1;
+    i1 %3 = icmp sgt i32 %2, i32 0;
+    cbr i1 %3(prob = 0.984615), ^succ, ^b;
+  ^succ:
+    [50 * i32]* %4 = ptrcast [50 * i32]* @ans to [50 * i32]*;
+    i32* %5 = getelementptr &([50 * i32]* %4)[i64 0][i32 %step];
     i32 %6 = add i32 %step, i32 1;
     [50 * i32]* %7 = ptrcast [50 * i32]* @row to [50 * i32]*;
     [50 * i32]* %8 = ptrcast [50 * i32]* @line1 to [50 * i32]*;
     [100 * i32]* %9 = ptrcast [100 * i32]* @line2 to [100 * i32]*;
-    cbr i1 %5(prob = 0.984615), ^while.body, ^b;
+    ubr ^while.body;
+  ^b:
+    ret;
   ^while.body:
-    i32 %10 = phi [^entry, i32 1] [^b3, i32 %26];
+    i32 %10 = phi [^succ, i32 1] [^b3, i32 %26];
     i32* %11 = getelementptr &([50 * i32]* %7)[i64 0][i32 %10];
     i32 %12 = load i32* %11;
     i1 %13 = icmp neq i32 %12, i32 1;
     cbr i1 %13(prob = 0.5), ^b1, ^indirect;
-  ^b:
-    ret;
   ^indirect:
     i32 %14 = load i32* %1;
     ubr ^b3;
@@ -47,7 +49,7 @@ internal func @f(i32 %step, i32* %0, i32* %1) -> void {
     i1 %27 = icmp sge i32 %25, i32 %26;
     cbr i1 %27(prob = 0.984615), ^while.body, ^b;
   ^if.then:
-    store i32* %3 with i32 %10;
+    store i32* %5 with i32 %10;
     i1 %28 = icmp eq i32 %step, i32 %19;
     cbr i1 %28(prob = 0.5), ^if.then1, ^indirect1;
   ^if.then1:
@@ -81,7 +83,7 @@ internal func @f(i32 %step, i32* %0, i32* %1) -> void {
     i1 %42 = icmp sle i32 %40, i32 %41;
     cbr i1 %42(prob = 0.984615), ^while.body1, ^b4;
   ^while.body1:
-    i32* %43 = getelementptr &([50 * i32]* %2)[i64 0][i32 %40];
+    i32* %43 = getelementptr &([50 * i32]* %4)[i64 0][i32 %40];
     i32 %44 = load i32* %43;
     call (i32) -> void @putint(i32 %44);
     i1 %45 = icmp eq i32 %40, i32 %41;

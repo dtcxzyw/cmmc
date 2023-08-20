@@ -213,36 +213,36 @@ internal [2097152 * i32]* @b, align 8;
 internal func @fft(i32* %arr, i32 %begin_pos, i32 %n, i32 %w) -> void {
   ^entry:
     i1 %0 = icmp eq i32 %n, i32 1;
-    cbr i1 %0(prob = 0.5), ^b1, ^b;
-  ^b:
+    cbr i1 %0(prob = 0.5), ^b, ^succ;
+  ^succ:
     i32 %1 = sdiv i32 %n, i32 2;
     [2097152 * i32]* %2 = ptrcast [2097152 * i32]* @temp to [2097152 * i32]*;
     i32* %3 = getelementptr &([2097152 * i32]* %2)[i64 0][i32 %1];
     i32 %4 = add i32 %n, i32 -3;
     i1 %5 = icmp sgt i32 %n, i32 0;
-    cbr i1 %5(prob = 0.984615), ^b2, ^b3;
-  ^b1:
+    cbr i1 %5(prob = 0.984615), ^b1, ^b2;
+  ^b:
     ret;
-  ^b2:
-    i32 %6 = phi [^b, i32 0] [^b4, i32 %20];
+  ^b1:
+    i32 %6 = phi [^succ, i32 0] [^b3, i32 %20];
     i32 %7 = add i32 %begin_pos, i32 %6;
     i32* %8 = getelementptr &(i32* %arr)[i32 %7];
     i32 %9 = and i32 %6, i32 1;
     i1 %10 = icmp eq i32 %9, i32 0;
     i32 %11 = sdiv i32 %6, i32 2;
     cbr i1 %10(prob = 0.5), ^if.then, ^if.else;
-  ^b3:
+  ^b2:
     i32 %12 = call (i32, i32) -> i32 @multiply(i32 %w, i32 %w);
     call (i32*, i32, i32, i32) -> void @fft(i32* %arr, i32 %begin_pos, i32 %1, i32 %12);
     i32 %13 = add i32 %begin_pos, i32 %1;
     call (i32*, i32, i32, i32) -> void @fft(i32* %arr, i32 %13, i32 %1, i32 %12);
     i1 %14 = icmp sgt i32 %1, i32 0;
-    cbr i1 %14(prob = 0.984615), ^prebody, ^b1;
+    cbr i1 %14(prob = 0.984615), ^prebody, ^b;
   ^if.then:
     i32* %15 = getelementptr &([2097152 * i32]* %2)[i64 0][i32 %11];
     i32 %16 = load i32* %8;
     store i32* %15 with i32 %16;
-    ubr ^b4;
+    ubr ^b3;
   ^prebody:
     i32* %17 = getelementptr &(i32* %arr)[i32 %1];
     ubr ^while.body;
@@ -250,11 +250,11 @@ internal func @fft(i32* %arr, i32 %begin_pos, i32 %n, i32 %w) -> void {
     i32* %18 = getelementptr &(i32* %3)[i32 %11];
     i32 %19 = load i32* %8;
     store i32* %18 with i32 %19;
-    ubr ^b4;
-  ^b4:
+    ubr ^b3;
+  ^b3:
     i32 %20 = add i32 %6, i32 1;
     i1 %21 = icmp sgt i32 %n, i32 %20;
-    cbr i1 %21(prob = 0.984615), ^b2, ^b5;
+    cbr i1 %21(prob = 0.984615), ^b1, ^b4;
   ^while.body:
     i32 %22 = phi [^prebody, i32 0] [^while.body, i32 %36];
     i32 %23 = phi [^prebody, i32 1] [^while.body, i32 %35];
@@ -274,8 +274,8 @@ internal func @fft(i32* %arr, i32 %begin_pos, i32 %n, i32 %w) -> void {
     i32 %35 = call (i32, i32) -> i32 @multiply(i32 %23, i32 %w);
     i32 %36 = add i32 %22, i32 1;
     i1 %37 = icmp sgt i32 %1, i32 %36;
-    cbr i1 %37(prob = 0.984615), ^while.body, ^b1;
-  ^b5:
+    cbr i1 %37(prob = 0.984615), ^while.body, ^b;
+  ^b4:
     i32* %38 = getelementptr &([2097152 * i32]* %2)[i64 0][i64 0];
     i1 %39 = icmp sgt i32 %n, i32 3;
     cbr i1 %39(prob = 0.941176), ^prebody1, ^scalar.header;
@@ -286,9 +286,9 @@ internal func @fft(i32* %arr, i32 %begin_pos, i32 %n, i32 %w) -> void {
     i32* %43 = getelementptr &(i32* %41)[i64 2];
     ubr ^while.body1;
   ^scalar.header:
-    i32 %44 = phi [^b5, i32 0] [^while.body1, i32 %60];
+    i32 %44 = phi [^b4, i32 0] [^while.body1, i32 %60];
     i1 %45 = icmp sgt i32 %n, i32 %44;
-    cbr i1 %45(prob = 0.75), ^while.body2, ^b3;
+    cbr i1 %45(prob = 0.75), ^while.body2, ^b2;
   ^while.body1:
     i32 %46 = phi [^prebody1, i32 0] [^while.body1, i32 %60];
     i32 %47 = add i32 %begin_pos, i32 %46;
@@ -320,7 +320,7 @@ internal func @fft(i32* %arr, i32 %begin_pos, i32 %n, i32 %w) -> void {
     store i32* %64 with i32 %66;
     i32 %67 = add i32 %62, i32 1;
     i1 %68 = icmp sgt i32 %n, i32 %67;
-    cbr i1 %68(prob = 0.75), ^while.body2, ^b3;
+    cbr i1 %68(prob = 0.75), ^while.body2, ^b2;
 }
 func @main() -> i32 { NoRecurse Entry } {
   ^entry:

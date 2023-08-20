@@ -241,7 +241,9 @@ void FunctionDefinition::emit(EmitContext& ctx) {
                 if(retType->isVoid() && !callInfo.passingRetValByPointer) {
                     ctx.makeOp<ReturnInst>();
                 } else {
-                    ctx.makeOp<UnreachableInst>();
+                    // ctx.makeOp<UnreachableInst>();
+                    const auto undefValue = make<UndefinedValue>(retType);
+                    ctx.makeOp<ReturnInst>(undefValue);
                 }
             }
         }

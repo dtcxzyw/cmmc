@@ -363,6 +363,7 @@ std::shared_ptr<PassManager<Module>> PassManager<Module>::get(OptimizationLevel 
             "LICMMemory",               //
             "LoopInvariantCodeMotion",  //
             // Control flow
+            "EarlyShrinkWrapping",  //
             "Branch2Select",        //
             "MergeBranch",          //
             "SimplifyBranch",       //
@@ -572,7 +573,10 @@ std::shared_ptr<PassManager<Module>> PassManager<Module>::get(OptimizationLevel 
         for(auto& pass : passesSource.collectFunctionPass({ "DumpCFG" }))
             root->addPass(std::make_shared<FunctionPassWrapper>(pass));
     }
-    for(auto& pass : passesSource.collectFunctionPass({ "InstReorder" }))
+    for(auto& pass : passesSource.collectFunctionPass({
+            "InstReorder",
+            "EarlyShrinkWrapping",
+        }))
         root->addPass(std::make_shared<FunctionPassWrapper>(pass));
     return root;
 }
