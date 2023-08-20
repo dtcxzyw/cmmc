@@ -21,7 +21,12 @@
 
 CMMC_NAMESPACE_BEGIN
 
-enum class GlobalVariableAttribute { ReadOnly = 1 << 0, Flexible = 1 << 1, InitOnce = 1 << 2 };
+enum class GlobalVariableAttribute {
+    ReadOnly = 1 << 0,
+    Flexible = 1 << 1,
+    InitOnce = 1 << 2,
+    Transposed = 1 << 3,
+};
 
 class GlobalVariable final : public GlobalValue {
     ConstantValue* mStaticInitializedValue{ nullptr };

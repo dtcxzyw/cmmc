@@ -22,6 +22,7 @@
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/Options.hpp>
+#include <cmmc/Support/StringFlyWeight.hpp>
 #include <cmmc/Support/Tune.hpp>
 #include <cmmc/Target/RISCV/RISCV.hpp>
 #include <cstdint>
@@ -257,7 +258,16 @@ public:
             // out << ".option arch rv64gc_zba_zbb\n";
             out << R"(.attribute arch, "rv64i2p1_m2p0_a2p1_f2p2_d2p2_c2p0_zicsr2p0_zifencei2p0_zba1p0_zbb1p0")" << '\n';
         }
-        if(runtime == RuntimeType::SysYRuntime) {
+        auto useSysYRuntime = [&] {
+            for(auto& global : module.globals()) {
+                const auto symbol = global->reloc->symbol();
+                if(symbol == String::get("cmmcParallelFor") || symbol == String::get("cmmcCacheLookup") ||
+                   symbol == String::get("cmmcAddRec3SRem") || symbol == String::get("cmmcReduceAddI32"))
+                    return true;
+            }
+            return false;
+        };
+        if(runtime == RuntimeType::SysYRuntime && useSysYRuntime()) {
             out << builtinSysYRuntime;
         }
 

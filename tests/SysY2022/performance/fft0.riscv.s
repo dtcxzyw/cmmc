@@ -481,15 +481,15 @@ power:
 	mv s0, a0
 	sd s1, 16(sp)
 	mv s1, a1
-	bne a1, zero, label758
+	bne a1, zero, label760
 	li a0, 1
-label760:
+label758:
 	ld ra, 0(sp)
 	ld s0, 8(sp)
 	ld s1, 16(sp)
 	addi sp, sp, 24
 	ret
-label758:
+label760:
 	mv a2, s1
 	bge s1, zero, label782
 	addiw a2, s1, 1
@@ -503,10 +503,10 @@ label782:
 	lui a3, 524288
 	addiw a2, a3, 1
 	and a1, s1, a2
-	bne a1, a4, label760
+	bne a1, a4, label758
 	mv a1, s0
 	jal multiply
-	j label760
+	j label758
 .p2align 2
 fft:
 	addi sp, sp, -72

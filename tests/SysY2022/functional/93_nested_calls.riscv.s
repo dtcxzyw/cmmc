@@ -30,16 +30,16 @@ label2:
 	jal getint
 	addiw s6, s6, 1
 	sw a0, 0(s4)
-	bge s6, s5, label5
+	bge s6, s5, label6
 	addi s4, s4, 4
 	j label2
-label5:
+label6:
 	sltiu a0, s0, 1
 	sltu a1, zero, s1
 	and a2, a0, a1
-	beq s2, zero, label6
+	beq s2, zero, label7
 	remw a2, a2, s2
-label6:
+label7:
 	ld a1, 64(sp)
 	ld t0, 72(sp)
 	srai a5, a1, 32
@@ -76,12 +76,9 @@ label161:
 label163:
 	addiw a6, a7, 1
 	srai t3, t5, 32
-	bne t3, zero, label22
-	mv a2, t4
-	j label8
-label22:
+	beq t3, zero, label79
 	remw a2, t4, t3
-label8:
+label9:
 	ld a7, 96(sp)
 	srai t4, a7, 32
 	sext.w t5, a7
@@ -97,10 +94,10 @@ label165:
 	bne a0, zero, label167
 	mv s4, s5
 label167:
-	mulw s5, a2, s4
+	mulw s6, a2, s4
 	mv a7, a4
 	bne a6, zero, label169
-	mv a7, s5
+	mv a7, s6
 label169:
 	sltiu s4, s2, 1
 	mv a2, s4
@@ -109,9 +106,9 @@ label169:
 	mv a2, a6
 label171:
 	addiw t6, a2, 1
-	beq t6, zero, label11
+	beq t6, zero, label12
 	remw s1, s1, t6
-label11:
+label12:
 	addw t6, a7, s1
 	mv a2, a7
 	beq s1, zero, label173
@@ -124,19 +121,19 @@ label173:
 	mv a6, a7
 label175:
 	mulw a2, t6, a6
-	beq a3, zero, label13
+	beq a3, zero, label14
 	remw a2, a2, a3
-label13:
+label14:
 	subw a3, t1, t0
 	mv a4, t1
 	beq t0, zero, label177
 	mv a4, a3
 label177:
 	addiw a3, a4, 1
-	beq t2, zero, label16
+	beq t2, zero, label17
 	subw a4, zero, t2
 	remw a3, a3, a4
-label16:
+label17:
 	sltiu t0, t5, 1
 	mv a4, t3
 	subw a5, t3, t0
@@ -144,10 +141,10 @@ label16:
 	mv a4, a5
 label179:
 	mulw a3, a3, a4
-	beq t4, zero, label18
+	beq t4, zero, label19
 	subw a4, zero, t4
 	remw a3, a3, a4
-label18:
+label19:
 	addw a5, s0, a3
 	mv a4, a3
 	bne a0, zero, label181
@@ -170,3 +167,6 @@ label183:
 	ld s3, 56(sp)
 	addi sp, sp, 104
 	ret
+label79:
+	mv a2, t4
+	j label9

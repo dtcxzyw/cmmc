@@ -289,6 +289,7 @@ std::shared_ptr<PassManager<Module>> PassManager<Module>::get(OptimizationLevel 
             "StoreOnlyGlobalEliminate",  //
             "GlobalEliminate",           //
             "DeadArgEliminate",          //
+            "Relayout",                  //
         }))
         globalOpt->addPass(pass);
 
@@ -413,6 +414,7 @@ std::shared_ptr<PassManager<Module>> PassManager<Module>::get(OptimizationLevel 
                 "LoopEliminate",            // clean up
                 "FinalValueReplacement",    // clean up
                 "SCCEliminate",             // clean up
+                "RelayoutFuncLevel",        // clean up
                 "LoopParallel",             //
                 "LoopUnroll",               //
                 "BlockMerge",               // clean up

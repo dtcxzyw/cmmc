@@ -14,11 +14,11 @@ exgcd:
 	sd s2, 32(sp)
 	mv s2, a3
 	sd s4, 40(sp)
-	bne a1, zero, label3
+	bne a1, zero, label6
 	li a2, 1
 	mv a1, zero
 	sw a2, 0(s3)
-label9:
+label3:
 	sw a1, 0(s2)
 	ld ra, 0(sp)
 	ld s0, 8(sp)
@@ -28,9 +28,9 @@ label9:
 	ld s4, 40(sp)
 	addi sp, sp, 48
 	ret
-label3:
+label6:
 	remw s4, s0, s1
-	bne s4, zero, label8
+	bne s4, zero, label11
 	li a2, 1
 	mv a0, s1
 	sw a2, 0(s3)
@@ -42,8 +42,8 @@ label3:
 	lw a4, 0(s2)
 	mulw a5, a3, a4
 	subw a1, a2, a5
-	j label9
-label8:
+	j label3
+label11:
 	remw a1, s1, s4
 	mv a0, s4
 	mv a2, s3
@@ -64,7 +64,7 @@ label8:
 	lw a4, 0(s2)
 	mulw a5, a3, a4
 	subw a1, a2, a5
-	j label9
+	j label3
 .p2align 2
 .globl main
 main:
