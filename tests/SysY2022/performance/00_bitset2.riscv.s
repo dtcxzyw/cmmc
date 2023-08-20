@@ -21,19 +21,19 @@ main:
 	li a0, 56
 	jal _sysy_starttime
 	lui t2, 281475
+pcrel158:
+	auipc a2, %pcrel_hi(a)
+	lui a5, 244141
+	lui a0, 4876
 	lui a3, 4878
 	li a4, 1
 	lui t1, 73
-	lui a5, 244141
-	lui a0, 4876
-pcrel162:
-	auipc a2, %pcrel_hi(a)
+	addi s0, a2, %pcrel_lo(pcrel158)
 	addiw a1, a0, -865
-	addi s0, a2, %pcrel_lo(pcrel162)
-	addiw a0, a5, -1529
 	addiw a2, a3, 725
-	addiw a5, t1, 992
+	addiw a0, a5, -1529
 	lui a3, 524288
+	addiw a5, t1, 992
 	addiw t0, a3, 1
 	addiw a3, t2, -103
 	ble s1, zero, label8
@@ -46,80 +46,80 @@ label5:
 	xori s3, t3, 1
 	mv a7, t6
 	or s1, s2, s3
-	beq s1, zero, label149
+	beq s1, zero, label146
 	mv a7, zero
-label149:
+label146:
 	and s3, a6, t0
 	mv a6, a7
 	xori s2, s3, 1
 	or s1, t3, s2
-	bne s1, zero, label151
+	bne s1, zero, label148
 	subw a6, a7, t6
-label151:
-	addw t3, t5, a6
-	sh2add t6, t4, s0
-	sw t3, 0(t6)
+label148:
+	addw t5, t5, a6
+	sh2add t3, t4, s0
+	sw t5, 0(t3)
 	ble t1, zero, label8
 .p2align 2
 label2:
 	mulw t5, t2, a1
 	addw t2, t5, a2
 	mul t3, t2, a3
-	srli t6, t3, 63
+	srli a6, t3, 63
 	srai t4, t3, 60
-	add a6, t6, t4
-	mulw t5, a6, a0
+	add t6, a6, t4
+	mulw t5, t6, a0
 	subw t3, t2, t5
 	mv t4, t3
-	bge t3, zero, label139
+	bge t3, zero, label136
 	addw t4, t3, a0
-label139:
+label136:
 	mulw t6, t4, a1
 	addw t3, t6, a2
 	mul t2, t3, a3
-	srli a6, t2, 63
+	srli t6, t2, 63
 	srai t5, t2, 60
-	add a7, a6, t5
-	mulw t6, a7, a0
-	subw t5, t3, t6
-	mv t2, t5
-	bge t5, zero, label141
-	addw t2, t5, a0
-label141:
+	add a6, t6, t5
+	mulw a7, a6, a0
+	subw t6, t3, a7
+	mv t2, t6
+	bge t6, zero, label138
+	addw t2, t6, a0
+label138:
 	andi t3, t2, 1
 	lui a7, 458130
+	lui s1, 559241
 	addiw a6, a7, -635
 	mul t5, t4, a6
 	srli a6, t5, 63
 	srai t6, t5, 49
-	lui t5, 559241
-	add s1, a6, t6
-	addiw t6, t5, -1911
-	mulw a7, s1, a5
-	subw a6, t4, a7
+	add a7, a6, t6
+	addiw t6, s1, -1911
+	mulw t5, a7, a5
+	subw a6, t4, t5
 	mul a7, a6, t6
 	srli t4, a7, 32
 	add t5, t4, a6
-	srliw s1, t5, 31
+	srliw a7, t5, 31
 	sraiw t6, t5, 4
-	add t4, s1, t6
+	add t4, a7, t6
 	slliw t6, t4, 4
-	sh2add a7, t4, s0
+	sh2add s1, t4, s0
 	subw s2, t6, t4
+	lw t5, 0(s1)
 	slli s1, s2, 1
-	lw t5, 0(a7)
 	subw a7, a6, s1
 	mv s1, t5
 	sllw t6, a4, a7
 	addiw a6, t6, -1
-	bge t5, zero, label145
+	bge t5, zero, label142
 	addw s1, t5, a6
-label145:
+label142:
 	sraw a6, s1, a7
 	mv s2, a6
-	bge a6, zero, label147
+	bge a6, zero, label144
 	addiw s2, a6, 1
-label147:
+label144:
 	andi s1, s2, -2
 	addiw t1, t1, -1
 	subw a7, a6, s1

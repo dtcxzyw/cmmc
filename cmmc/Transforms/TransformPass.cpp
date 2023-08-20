@@ -533,6 +533,7 @@ std::shared_ptr<PassManager<Module>> PassManager<Module>::get(OptimizationLevel 
         root->addPass(std::make_shared<FunctionPassWrapper>(perFuncWithInline));
         auto unrollBase = std::make_shared<PassManager<Function>>();
         for(const auto& pass : passesSource.collectFunctionPass({
+                "TailStoreMerge",     //
                 "DynamicLoopUnroll",  //
                 "BlockMerge",         // clean up
                 "BlockEliminate",     // clean up
