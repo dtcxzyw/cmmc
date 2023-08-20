@@ -2040,6 +2040,63 @@
         "task-clock:u": 1412.21
       }
     ],
+    "72792d14427719f4643ea86d025e77fa09a105a2": [
+      {
+        "branch-load-misses:u": 1203952,
+        "branch-loads:u": 1005780117,
+        "cycles:u": 2309563978,
+        "iTLB-load-misses:u": 137,
+        "inst_retired:u": 4689290955,
+        "inst_spec:u": 4717471191,
+        "instructions:u": 4689355275,
+        "sysy_time": 1.653217,
+        "task-clock:u": 1549.08
+      },
+      {
+        "branch-load-misses:u": 1192750,
+        "branch-loads:u": 1005837620,
+        "cycles:u": 2309340154,
+        "iTLB-load-misses:u": 59,
+        "inst_retired:u": 4689596756,
+        "inst_spec:u": 4717496482,
+        "instructions:u": 4689661979,
+        "sysy_time": 1.548772,
+        "task-clock:u": 1544.38
+      },
+      {
+        "branch-load-misses:u": 1179028,
+        "branch-loads:u": 1005653752,
+        "cycles:u": 2308607227,
+        "iTLB-load-misses:u": 26,
+        "inst_retired:u": 4688683980,
+        "inst_spec:u": 4716332770,
+        "instructions:u": 4688749192,
+        "sysy_time": 1.543918,
+        "task-clock:u": 1541.83
+      },
+      {
+        "branch-load-misses:u": 1183427,
+        "branch-loads:u": 1005733487,
+        "cycles:u": 2308858120,
+        "iTLB-load-misses:u": 27,
+        "inst_retired:u": 4689077319,
+        "inst_spec:u": 4716817167,
+        "instructions:u": 4689144581,
+        "sysy_time": 1.544848,
+        "task-clock:u": 1542.24
+      },
+      {
+        "branch-load-misses:u": 1202859,
+        "branch-loads:u": 1005791775,
+        "cycles:u": 2309457787,
+        "iTLB-load-misses:u": 52,
+        "inst_retired:u": 4689360756,
+        "inst_spec:u": 4717427913,
+        "instructions:u": 4689424265,
+        "sysy_time": 1.553273,
+        "task-clock:u": 1543.22
+      }
+    ],
     "7501d07d092337845cfebf755d1c0414e9cc3318": [
       {
         "branch-load-misses:u": 1100908,
