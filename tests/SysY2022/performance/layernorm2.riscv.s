@@ -772,110 +772,86 @@ label386:
 	addi t4, t4, 64
 .p2align 2
 label371:
-	flw f14, 0(t4)
+	flw f13, 0(t4)
 	addiw t5, t5, 16
-	fsub.s f13, f14, f10
-	flw f14, 4(t4)
-	fmul.s f15, f13, f13
-	fsub.s f13, f14, f10
-	flw f14, 8(t4)
-	fadd.s f12, f11, f15
-	fmul.s f15, f13, f13
-	fsub.s f13, f14, f10
-	flw f14, 12(t4)
-	fadd.s f11, f12, f15
-	fmul.s f15, f13, f13
-	fsub.s f13, f14, f10
-	flw f14, 16(t4)
-	fadd.s f12, f11, f15
-	fmul.s f15, f13, f13
-	fsub.s f13, f14, f10
-	flw f14, 20(t4)
-	fadd.s f11, f12, f15
-	fmul.s f15, f13, f13
-	fsub.s f13, f14, f10
-	fadd.s f12, f11, f15
-	fmul.s f0, f13, f13
-	flw f15, 24(t4)
-	fsub.s f14, f15, f10
-	flw f15, 28(t4)
-	fadd.s f11, f12, f0
-	fmul.s f12, f14, f14
-	fsub.s f14, f15, f10
-	flw f15, 32(t4)
-	fadd.s f13, f11, f12
-	fmul.s f11, f14, f14
-	fsub.s f14, f15, f10
-	flw f15, 36(t4)
-	fadd.s f12, f13, f11
-	fmul.s f0, f14, f14
+	flw f15, 4(t4)
+	fsub.s f14, f13, f10
+	flw f1, 8(t4)
 	fsub.s f13, f15, f10
+	flw f0, 12(t4)
+	fsub.s f15, f0, f10
+	fmadd.s f12, f14, f14, f11
+	fsub.s f14, f1, f10
+	flw f1, 16(t4)
+	fmadd.s f11, f13, f13, f12
+	fmadd.s f13, f14, f14, f11
+	fsub.s f14, f1, f10
+	fmadd.s f12, f15, f15, f13
+	flw f15, 20(t4)
+	fsub.s f13, f15, f10
+	fmadd.s f11, f14, f14, f12
+	flw f14, 24(t4)
+	flw f0, 28(t4)
+	fsub.s f15, f14, f10
+	flw f1, 32(t4)
+	fsub.s f14, f0, f10
+	fmadd.s f12, f13, f13, f11
+	flw f0, 36(t4)
+	fmadd.s f11, f15, f15, f12
+	fsub.s f15, f1, f10
+	fmadd.s f13, f14, f14, f11
+	fsub.s f14, f0, f10
+	fmadd.s f12, f15, f15, f13
 	flw f15, 40(t4)
-	fsub.s f14, f15, f10
-	fadd.s f11, f12, f0
-	flw f15, 44(t4)
-	fmul.s f0, f13, f13
-	fadd.s f12, f11, f0
-	fmul.s f11, f14, f14
-	fsub.s f14, f15, f10
-	flw f15, 48(t4)
-	fadd.s f13, f12, f11
-	fmul.s f12, f14, f14
-	fsub.s f14, f15, f10
-	flw f15, 52(t4)
-	fadd.s f11, f13, f12
-	fmul.s f0, f14, f14
+	flw f0, 44(t4)
 	fsub.s f13, f15, f10
+	flw f1, 48(t4)
+	fmadd.s f11, f14, f14, f12
+	fsub.s f15, f1, f10
+	fsub.s f14, f0, f10
+	fmadd.s f12, f13, f13, f11
+	fmadd.s f13, f14, f14, f12
+	flw f14, 52(t4)
+	fsub.s f12, f14, f10
+	fmadd.s f11, f15, f15, f13
 	flw f15, 56(t4)
-	fadd.s f12, f11, f0
-	fmul.s f14, f13, f13
-	fsub.s f13, f15, f10
-	flw f15, 60(t4)
-	fadd.s f11, f12, f14
-	fmul.s f14, f13, f13
-	fsub.s f13, f15, f10
-	fadd.s f12, f11, f14
-	fmul.s f14, f13, f13
-	fadd.s f11, f12, f14
+	flw f0, 60(t4)
+	fsub.s f14, f15, f10
+	fsub.s f15, f0, f10
+	fmadd.s f13, f12, f12, f11
+	fmadd.s f12, f14, f14, f13
+	fmadd.s f11, f15, f15, f12
 	blt t5, a2, label386
-	flw f14, 64(t4)
+	flw f13, 64(t4)
 	flw f15, 68(t4)
-	fsub.s f13, f14, f10
-	fsub.s f14, f15, f10
-	flw f15, 72(t4)
-	fmul.s f0, f13, f13
-	fadd.s f12, f11, f0
-	fmul.s f11, f14, f14
-	fsub.s f14, f15, f10
-	flw f15, 76(t4)
-	fadd.s f13, f12, f11
-	fmul.s f12, f14, f14
-	fsub.s f14, f15, f10
-	flw f15, 80(t4)
-	fadd.s f11, f13, f12
-	fmul.s f0, f14, f14
+	fsub.s f14, f13, f10
+	flw f0, 72(t4)
 	fsub.s f13, f15, f10
+	flw f1, 76(t4)
+	fsub.s f15, f1, f10
+	fmadd.s f12, f14, f14, f11
+	fsub.s f14, f0, f10
+	flw f0, 80(t4)
+	fmadd.s f11, f13, f13, f12
+	fmadd.s f13, f14, f14, f11
+	fsub.s f14, f0, f10
+	fmadd.s f12, f15, f15, f13
 	flw f15, 84(t4)
-	fadd.s f12, f11, f0
-	fmul.s f14, f13, f13
 	fsub.s f13, f15, f10
-	flw f15, 88(t4)
-	fadd.s f11, f12, f14
-	fmul.s f14, f13, f13
-	fsub.s f13, f15, f10
-	flw f15, 92(t4)
-	fadd.s f12, f11, f14
-	fmul.s f14, f13, f13
-	fsub.s f13, f15, f10
-	flw f15, 0(a0)
-	fadd.s f11, f12, f14
-	fmul.s f0, f13, f13
-	fmv.w.x f14, t1
-	fadd.s f12, f11, f0
-	fdiv.s f13, f12, f14
+	fmadd.s f11, f14, f14, f12
+	flw f14, 88(t4)
+	flw f0, 92(t4)
+	fsub.s f15, f14, f10
+	fsub.s f14, f0, f10
+	fmadd.s f12, f13, f13, f11
+	flw f0, 0(a0)
+	fmadd.s f11, f15, f15, f12
+	fmv.w.x f15, t1
+	fmadd.s f13, f14, f14, f11
 	fmv.w.x f14, a1
-	fadd.s f10, f13, f15
+	fdiv.s f12, f13, f15
 	fmv.w.x f13, zero
+	fadd.s f10, f12, f0
 	fmv.s f12, f10
 	fmul.s f11, f10, f14
 	fmul.s f14, f11, f11

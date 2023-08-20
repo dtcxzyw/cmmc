@@ -69,7 +69,7 @@ class IndVarSimplify final : public TransformPass<Function> {
         for(auto& inst : block->instructions()) {
             if(inst.isTerminator())
                 continue;
-            if(!isNoSideEffectExpr(inst)) {
+            if(!isNoSideEffectExpr(inst) || inst.getInstID() == InstructionID::Load) {
                 return false;
             }
         }

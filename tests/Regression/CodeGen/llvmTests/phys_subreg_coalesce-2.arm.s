@@ -27,11 +27,14 @@ label5:
 	mov r3, #1
 label6:
 	sub r4, r0, r3
-	add r3, r3, #1
 	mul r1, r1, r4
-	sub r4, r2, #1
-	cmp r3, r4
-	udiv r1, r1, r3
-	bls label6
+	add r4, r3, #1
+	add r3, r3, #2
+	udiv r1, r1, r4
+	cmp r2, r3
+	blo label29
+	mov r3, r4
+	b label6
+label29:
 	mov r0, r1
 	b label2

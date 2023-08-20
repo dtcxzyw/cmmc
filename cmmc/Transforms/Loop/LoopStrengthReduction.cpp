@@ -32,7 +32,7 @@
 
 CMMC_NAMESPACE_BEGIN
 
-extern Flag enableParallel;
+extern Flag enableAggressive;
 
 class LoopStrengthReduction final : public TransformPass<Function> {
     static Value* buildAddRec(const Type* type, PhiInst* refPhiInst, SCEV* scevExpr, Block* block,
@@ -213,7 +213,7 @@ public:
                     continue;
 
                 if(tryExpandSCEV(scev, dom, block, inst,
-                                 enableParallel.get() && !func.attr().hasAttr(FunctionAttribute::ParallelBody))) {
+                                 enableAggressive.get() && !func.attr().hasAttr(FunctionAttribute::ParallelBody))) {
                     modified = true;
                     continue;
                 }

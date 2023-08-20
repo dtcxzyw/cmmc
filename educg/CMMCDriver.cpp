@@ -45,7 +45,7 @@ static_assert(!Config::debug);
 Flag strictMode;               // NOLINT
 IntegerOpt optimizationLevel;  // NOLINT
 extern Flag hideSymbol;
-extern Flag enableParallel;
+extern Flag enableAggressive;
 namespace mir {
     extern StringOpt targetName;  // NOLINT
 }
@@ -95,7 +95,7 @@ int main(int argc, char** argv) {
         std::string outputPath = argv[3];
         const auto opt = argc == 6;  // with -O1
         if(opt)
-            enableParallel.handle("true");  // only enable parallel for performance testcases
+            enableAggressive.handle("true");  // only enable parallel for performance testcases
         Module module;
         const auto target = mir::TargetRegistry::get().selectTarget();
         module.setTarget(target.get());

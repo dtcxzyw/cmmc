@@ -78,8 +78,7 @@ label107:
 	flw f11, 0(a1)
 	addiw a2, a2, 1
 	flw f12, 0(a3)
-	fmul.s f13, f11, f12
-	fadd.s f10, f10, f13
+	fmadd.s f10, f11, f12, f10
 	bgt s2, a2, label111
 	fadd.s f8, f8, f10
 	addiw s11, s11, 1
@@ -87,14 +86,14 @@ label107:
 .p2align 2
 label92:
 	lui a4, 419430
-	fmv.w.x f12, s6
-	flw f11, 0(s5)
+	fmv.w.x f11, s6
+	flw f12, 0(s5)
 	addiw a3, a4, 1639
 	mul a1, s11, a3
-	fadd.s f10, f9, f11
+	fadd.s f10, f9, f12
 	srli t0, a1, 63
 	srai a2, a1, 34
-	fmv.s f9, f12
+	fmv.s f9, f11
 	add a3, t0, a2
 	sh2add a4, a3, a3
 	slliw a5, a4, 1
@@ -137,23 +136,19 @@ label117:
 .p2align 2
 label113:
 	sh2add a3, a2, s0
-	flw f13, 0(a1)
+	flw f12, 0(a1)
 	addiw a2, a2, 4
 	flw f14, 0(a3)
-	flw f12, 4(a1)
-	fmul.s f15, f13, f14
-	flw f14, 4(a3)
-	flw f13, 8(a1)
-	fmul.s f0, f12, f14
-	fadd.s f11, f10, f15
+	flw f13, 4(a1)
+	fmadd.s f11, f12, f14, f10
+	flw f0, 4(a3)
+	flw f14, 8(a1)
 	flw f15, 8(a3)
 	flw f12, 12(a1)
-	fmul.s f14, f13, f15
+	fmadd.s f10, f13, f0, f11
 	flw f13, 12(a3)
-	fadd.s f10, f11, f0
-	fadd.s f11, f10, f14
-	fmul.s f14, f12, f13
-	fadd.s f10, f11, f14
+	fmadd.s f11, f14, f15, f10
+	fmadd.s f10, f12, f13, f11
 	bgt s1, a2, label117
 	fmv.s f11, f10
 	ble s2, a2, label297

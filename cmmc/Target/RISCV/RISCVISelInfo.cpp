@@ -20,6 +20,7 @@
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/Support/Bits.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
+#include <cmmc/Support/Options.hpp>
 #include <cmmc/Target/RISCV/RISCV.hpp>
 #include <cmmc/Transforms/Hyperparameters.hpp>
 #include <cstdint>
@@ -27,7 +28,15 @@
 #include <iostream>
 #include <type_traits>
 
+CMMC_NAMESPACE_BEGIN
+extern Flag enableAggressive;
+CMMC_NAMESPACE_END
+
 CMMC_TARGET_NAMESPACE_BEGIN
+
+[[maybe_unused]] static bool isAggressiveOptEnabled() {
+    return enableAggressive.get();
+}
 
 static bool isZero(const MIROperand& operand) {
     if(operand.isReg() && operand.reg() == RISCV::X0)
@@ -713,19 +722,21 @@ static bool legalizeInst(MIRInst& inst, ISelContext& ctx) {
             imm2reg(cond);
             break;
         }
-        // case InstFAdd: {
-        //     auto& lhs = inst.getOperand(1);
-        //     auto& rhs = inst.getOperand(2);
-        //     auto isFMul = [&](const MIROperand& val) {
-        //         auto def = ctx.lookupDef(val);
-        //         return def && def->opcode() == InstFMul;
-        //     };
-        //     if(isFMul(rhs) && !isFMul(lhs)) {
-        //         std::swap(lhs, rhs);
-        //         modified = true;
-        //     }
-        //     break;
-        // }
+        case InstFAdd: {
+            if(isAggressiveOptEnabled()) {
+                auto& lhs = inst.getOperand(1);
+                auto& rhs = inst.getOperand(2);
+                auto isFMul = [&](const MIROperand& val) {
+                    auto def = ctx.lookupDef(val);
+                    return def && def->opcode() == InstFMul;
+                };
+                if(isFMul(rhs) && !isFMul(lhs)) {
+                    std::swap(lhs, rhs);
+                    modified = true;
+                }
+            }
+            break;
+        }
         default:
             break;
     }

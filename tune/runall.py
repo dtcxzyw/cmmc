@@ -18,7 +18,7 @@ ssh.connect(hostname=host)
 sftp = ssh.open_sftp()
 
 def generate_build_cmd(test_case):
-    return [cmmc_bin, '-O', '3','-H','-o','/dev/stdout','-t','riscv','--enable-parallel', test_case]
+    return [cmmc_bin, '-O', '3','-H','-o','/dev/stdout','-t','riscv','--enable-aggressive', test_case]
 
 def parse_performance(stderr: str):
     for line in stderr.splitlines():

@@ -29,14 +29,15 @@ label20:
 label6:
 	subu $t1, $a0, $t0
 	mult $v0, $t1
-	mflo $t1
-	addiu $t0, $t0, 1
-	divu $zero, $t1, $t0
+	mflo $t2
+	addiu $t1, $t0, 1
+	divu $zero, $t2, $t1
 	mflo $v0
-	addiu $t1, $a1, -1
-	sltu $t1, $t1, $t0
-	xori $t1, $t1, 1
-	bne $t1, $zero, label6
+	addiu $t0, $t0, 2
+	sltu $t0, $a1, $t0
+	xori $t0, $t0, 1
+	beq $t0, $zero, label2
 	nop
-	b label2
+	move $t0, $t1
+	b label6
 	nop

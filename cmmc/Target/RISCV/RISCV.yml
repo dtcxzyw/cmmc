@@ -1778,21 +1778,22 @@ InstSelection:
         Rd: $Dst
         Rs1: $Src
 
-  # - Pattern:
-  #     InstFAdd:
-  #       Dst: $Dst
-  #       Lhs:
-  #         InstFMul:
-  #           Dst: $MulDst
-  #           Lhs: $X
-  #           Rhs: $Y
-  #       Rhs: $Z
-  #   Replace:
-  #     FMADD_S:
-  #       Rd: $Dst
-  #       Rs1: $X
-  #       Rs2: $Y
-  #       Rs3: $Z
+  - Pattern:
+      InstFAdd:
+        Dst: $Dst
+        Lhs:
+          InstFMul:
+            Dst: $MulDst
+            Lhs: $X
+            Rhs: $Y
+        Rhs: $Z
+        $Predicate: isAggressiveOptEnabled()
+    Replace:
+      FMADD_S:
+        Rd: $Dst
+        Rs1: $X
+        Rs2: $Y
+        Rs3: $Z
 
   - Pattern:
       $Template:

@@ -19,11 +19,14 @@ label5:
 	mv a1, a0
 	li a3, 1
 label6:
-	subw a5, a0, a3
-	addiw a3, a3, 1
-	mulw a4, a1, a5
-	addiw a5, a2, -1
-	divuw a1, a4, a3
-	bleu a3, a5, label6
+	subw t0, a0, a3
+	addiw a4, a3, 1
+	mulw a5, a1, t0
+	addiw t0, a3, 2
+	divuw a1, a5, a4
+	bltu a2, t0, label29
+	mv a3, a4
+	j label6
+label29:
 	mv a0, a1
 	j label2

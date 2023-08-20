@@ -24,7 +24,7 @@ class TuneOpt:
         self.str = ""
         self.trail = trail
     def generate_build_cmd(self):
-        return [cmmc_bin, '-O', '3','-H','-o','/dev/stdout','-t','riscv','--enable-parallel','--tune={}'.format(self.str), test_case]
+        return [cmmc_bin, '-O', '3','-H','-o','/dev/stdout','-t','riscv','--enable-aggressive','--tune={}'.format(self.str), test_case]
     def key(self):
         return self.str
     def add_pass(self, name):

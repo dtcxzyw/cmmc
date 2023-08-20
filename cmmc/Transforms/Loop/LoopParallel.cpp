@@ -43,11 +43,11 @@
 
 CMMC_NAMESPACE_BEGIN
 
-Flag enableParallel;
+Flag enableAggressive;
 
 CMMC_INIT_OPTIONS_BEGIN
 
-enableParallel.withDefault(false).setName("enable-parallel", 'E').setDesc("enable parallel");
+enableAggressive.withDefault(false).setName("enable-aggressive", 'E').setDesc("enable aggressive optimizations");
 
 CMMC_INIT_OPTIONS_END
 
@@ -367,7 +367,7 @@ public:
         // FIXME
         if(!func.attr().hasAttr(FunctionAttribute::Entry))
             return false;
-        if(!enableParallel.get())
+        if(!enableAggressive.get())
             return false;
         if(!queryTuneOpt("loop_parallel", 1))
             return false;

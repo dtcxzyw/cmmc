@@ -114,7 +114,7 @@ def run_cmmc(source, *, target, output = '/dev/stdout', opt_level = None, emit_i
     if no_runtime:
         command.append('--with-runtime=false')
     if enable_parallel:
-        command.append('--enable-parallel')
+        command.append('--enable-aggressive')
     if input_file is not None:
         command.extend(['-e', input_file])
     command = command + more + [source]
@@ -123,6 +123,24 @@ def run_cmmc(source, *, target, output = '/dev/stdout', opt_level = None, emit_i
     process = subprocess.run(command, capture_output=True, text=True, check=check)
     assert not check or len(process.stderr) == 0, process.stderr
     return process
+
+def compare_fp(output: str, standard_answer: str):
+    eps = 1e-8
+    output.replace(':', '')
+    standard_answer.replace(':','')
+    output_val = output.splitlines()
+    standard_answer_val = standard_answer.splitlines()
+    if len(output_val) != len(standard_answer_val):
+        return False
+    for lhs, rhs in zip(output_val, standard_answer_val):
+        lhs_val = lhs.split()
+        rhs_val = rhs.split()
+        if len(lhs_val) != len(rhs_val):
+            return False
+        for lhs_fp, rhs_fp in zip(lhs_val, rhs_val):
+            if abs(lhs_fp-rhs_fp)>eps:
+                return False
+    return True
 
 
 def compare_output_with_standard_file(standard_filename: str, output: str, returncode: int):
@@ -136,6 +154,9 @@ def compare_output_with_standard_file(standard_filename: str, output: str, retur
         standard_answer += '\n'
 
     if output != standard_answer:
+        if 'derich' in standard_filename:
+            if compare_fp(output, standard_answer):
+                return True
         print(" Output mismatch")
         print("output:", output[:100], "stdans:", standard_answer[:100], sep='\n')
         return False

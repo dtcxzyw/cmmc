@@ -37,7 +37,7 @@
 CMMC_NAMESPACE_BEGIN
 
 // FIXME: use enable unswitch
-extern Flag enableParallel;  // NOLINT
+extern Flag enableAggressive;  // NOLINT
 
 class LoopUnswitch final : public TransformPass<Function> {
     static std::optional<bool> inferCondition(Value* src, Value* dst) {
@@ -271,7 +271,7 @@ class LoopUnswitch final : public TransformPass<Function> {
 
 public:
     bool run(Function& func, AnalysisPassManager& analysis) const override {
-        if(!enableParallel.get())
+        if(!enableAggressive.get())
             return false;
         if(!queryTuneOpt("loop_unswitch", 1))
             return false;

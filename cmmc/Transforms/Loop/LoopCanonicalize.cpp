@@ -33,6 +33,9 @@ class LoopCanonicalize final : public TransformPass<Function> {
         intmax_t i1, i2;
         if(!(add(any(v1), int_(i1))(MatchContext<Value>{ next }) && std::abs(i1) < maxStep))
             return false;
+        if(cmp->getOp() != CompareOp::ICmpSignedLessThan && cmp->getOp() != CompareOp::ICmpSignedLessEqual &&
+           cmp->getOp() != CompareOp::ICmpSignedGreaterThan && cmp->getOp() != CompareOp::ICmpSignedGreaterEqual)
+            return false;
 
         if(!v1->is<PhiInst>())
             return false;
