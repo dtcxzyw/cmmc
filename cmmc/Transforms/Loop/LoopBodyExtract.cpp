@@ -55,8 +55,9 @@ static bool matchAddRec(Value* giv, Block* latch, std::unordered_set<Value*>& va
                     continue;
                 }
                 PhiInst* base;
-                if(!add(phi(base), any(v2))(MatchContext<Value>{ val->value }) &&
-                   !fadd(phi(base), any(v2))(MatchContext<Value>{ val->value }))
+                if(!add(phi(base), any(v2))(MatchContext<Value>{ val->value })
+                   // && !fadd(phi(base), any(v2))(MatchContext<Value>{ val->value })
+                )
                     return false;
                 if(!matchAddRec(base, pred, values))
                     return false;
@@ -67,8 +68,9 @@ static bool matchAddRec(Value* giv, Block* latch, std::unordered_set<Value*>& va
             values.insert(givNext);
             return true;
         }
-        if(add(exactly(giv), any(v2))(MatchContext<Value>{ givNext }) ||
-           fadd(exactly(giv), any(v2))(MatchContext<Value>{ givNext })) {
+        if(add(exactly(giv), any(v2))(MatchContext<Value>{ givNext })
+           // || fadd(exactly(giv), any(v2))(MatchContext<Value>{ givNext })
+        ) {
             values.insert(giv);
             values.insert(givNext);
             return true;
@@ -189,12 +191,14 @@ bool extractLoopBody(Function& func, const Loop& loop, const DominateAnalysisRes
                 if(v2->getBlock() && (v2->getBlock() == loop.header || !dom.dominate(v2->getBlock(), loop.header)))
                     return false;
                 givAddRecInnerStep = v2;
-            } else if(fadd(exactly(giv), any(v2))(MatchContext<Value>{ givNext })) {
-                // scev addrec
-                if(v2->getBlock() && (v2->getBlock() == loop.header || !dom.dominate(v2->getBlock(), loop.header)))
-                    return false;
-                givAddRecInnerStep = v2;
-            } else
+            }
+            // else if(fadd(exactly(giv), any(v2))(MatchContext<Value>{ givNext })) {
+            //     // scev addrec
+            //     if(v2->getBlock() && (v2->getBlock() == loop.header || !dom.dominate(v2->getBlock(), loop.header)))
+            //         return false;
+            //     givAddRecInnerStep = v2;
+            // }
+            else
                 return false;
         }
         // std::cerr << "matched\n";
