@@ -44,9 +44,13 @@ class IndVarSimplify final : public TransformPass<Function> {
                 if(!add(exactly(indVar), int_(step))(MatchContext<Value>{ val->value }))
                     return false;
                 if(dir) {
+                    if(step <= 0)
+                        return false;
                     if(step <= maxInc)
                         continue;
                 } else {
+                    if(step >= 0)
+                        return false;
                     if(step >= -maxInc)
                         continue;
                 }
