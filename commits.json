@@ -1080,6 +1080,11 @@
       "parent": "1a14df9e1aecca7ae48bef8536020f920d7aaca1",
       "time": "2023-08-20 02:28:59 +0800"
     },
+    "c7b254e41ea27853b2c058de06738284288704ef": {
+      "message": "fix(transform): fix fcmp folding",
+      "parent": "648819ea5bd2191f06fc9091cd71d147fd32da7c",
+      "time": "2023-08-21 10:36:01 +0800"
+    },
     "c7b77d54e6c9906b6b0cd6452c17311b8bb8cf99": {
       "message": "fix(codegen): fix block layout opt",
       "parent": "e46e2b118091eda5eca2c29ea8eae8a2fee0892b",
@@ -1386,5 +1391,5 @@
       "time": "2023-07-06 01:05:50 +0800"
     }
   },
-  "head": "648819ea5bd2191f06fc9091cd71d147fd32da7c"
+  "head": "c7b254e41ea27853b2c058de06738284288704ef"
 }
