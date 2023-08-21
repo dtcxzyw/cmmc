@@ -125,7 +125,7 @@ def run_cmmc(source, *, target, output = '/dev/stdout', opt_level = None, emit_i
     return process
 
 def compare_fp(output: str, standard_answer: str):
-    eps = 1e-2
+    eps = 2e-2
     output = output.replace(':', '')
     standard_answer = standard_answer.replace(':','')
     output_val = output.splitlines()

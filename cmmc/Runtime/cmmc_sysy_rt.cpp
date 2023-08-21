@@ -304,4 +304,9 @@ int32_t cmmcAddRec3SRem(int32_t x, int32_t rem) {
 void cmmcReduceAddI32(std::atomic_int32_t& x, int32_t val) {
     x += val;
 }
+void cmmcReduceAddF32(std::atomic<float>& x, float val) {
+    float base = x.load();
+    while(!x.compare_exchange_weak(base, base + val))
+        ;
+}
 }

@@ -78,6 +78,19 @@ class LoopParallel final : public TransformPass<Function> {
         mod.add(func);
         return func;
     }
+    static Function* lookupReduceAddF32(Module& mod) {
+        for(auto global : mod.globals())
+            if(global->getSymbol() == "cmmcReduceAddF32")
+                return global->as<Function>();
+        const auto f32 = FloatingPointType::get(true);
+        const auto f32ptr = PointerType::get(f32);
+        const auto reduceType = make<FunctionType>(VoidType::get(), Vector<const Type*>{ f32ptr, f32 });
+        const auto func = make<Function>(String::get("cmmcReduceAddF32"), reduceType);
+        func->attr().addAttr(FunctionAttribute::NoRecurse);
+        func->setLinkage(Linkage::Internal);
+        mod.add(func);
+        return func;
+    }
 
     static bool isConstant(Value* val) {
         if(val->isConstant() || val->isGlobal())
@@ -208,6 +221,7 @@ class LoopParallel final : public TransformPass<Function> {
             size_t maxAlignment = 0;
             Value* givOffset = nullptr;
             const auto i32 = IntegerType::get(32);
+            const auto f32 = FloatingPointType::get(true);
             std::unordered_set<Value*> insertedParam;
             auto addArgument = [&](Value* param) {
                 if(param == bodyInfo.indvar)
@@ -286,18 +300,35 @@ class LoopParallel final : public TransformPass<Function> {
             indVar->insertBefore(subLoop, subLoop->instructions().end());
             if(giv) {
                 giv->insertBefore(subLoop, subLoop->instructions().end());
-                if(bodyInfo.recUsedByInner) {
-                    const auto ptr = builder.makeOp<PtrAddInst>(payloadStorage, givOffset, PointerType::get(i32));
-                    const auto initial = builder.makeOp<LoadInst>(ptr);
-                    const auto step = bodyInfo.recInnerStep;
-                    const auto offset = builder.makeOp<BinaryInst>(InstructionID::Mul, beg, step);
-                    builder.setInsertPoint(entry, offset->asIterator());
-                    remapArgument(offset->mutableOperands().back().get());
-                    builder.setCurrentBlock(entry);
-                    const auto realInitial = builder.makeOp<BinaryInst>(InstructionID::Add, initial, offset);
-                    giv->addIncoming(entry, realInitial);
+                if(giv->getType()->isSame(i32)) {
+                    if(bodyInfo.recUsedByInner) {
+                        const auto ptr = builder.makeOp<PtrAddInst>(payloadStorage, givOffset, PointerType::get(i32));
+                        const auto initial = builder.makeOp<LoadInst>(ptr);
+                        const auto step = bodyInfo.recInnerStep;
+                        const auto offset = builder.makeOp<BinaryInst>(InstructionID::Mul, beg, step);
+                        builder.setInsertPoint(entry, offset->asIterator());
+                        remapArgument(offset->mutableOperands().back().get());
+                        builder.setCurrentBlock(entry);
+                        const auto realInitial = builder.makeOp<BinaryInst>(InstructionID::Add, initial, offset);
+                        giv->addIncoming(entry, realInitial);
+                    } else
+                        giv->addIncoming(entry, ConstantInteger::get(i32, 0));
+                } else if(giv->getType()->isSame(f32)) {
+                    if(bodyInfo.recUsedByInner) {
+                        const auto ptr = builder.makeOp<PtrAddInst>(payloadStorage, givOffset, PointerType::get(f32));
+                        const auto initial = builder.makeOp<LoadInst>(ptr);
+                        const auto step = bodyInfo.recInnerStep;
+                        const auto offset = builder.makeOp<BinaryInst>(
+                            InstructionID::FMul, builder.makeOp<CastInst>(InstructionID::S2F, step->getType(), beg), step);
+                        builder.setInsertPoint(entry, offset->asIterator());
+                        remapArgument(offset->mutableOperands().back().get());
+                        builder.setCurrentBlock(entry);
+                        const auto realInitial = builder.makeOp<BinaryInst>(InstructionID::FAdd, initial, offset);
+                        giv->addIncoming(entry, realInitial);
+                    } else
+                        giv->addIncoming(entry, make<ConstantFloatingPoint>(f32, 0.0));
                 } else
-                    giv->addIncoming(entry, ConstantInteger::get(i32, 0));
+                    reportUnreachable(CMMC_LOCATION());
                 giv->addIncoming(subLoop, bodyExec);
             }
             builder.makeOp<BranchInst>(subLoop);
@@ -310,20 +341,26 @@ class LoopParallel final : public TransformPass<Function> {
             builder.makeOp<BranchInst>(cond, defaultLoopProb, subLoop, exit);
             builder.setCurrentBlock(exit);
             if(giv && bodyInfo.recUsedByOuter) {
-                const auto ptr = builder.makeOp<PtrAddInst>(payloadStorage, givOffset, PointerType::get(i32));
-                if(mod.getTarget().isNativeSupported(InstructionID::AtomicAdd)) {
-                    builder.makeOp<AtomicAddInst>(ptr, bodyExec);
-                } else {
-                    Function* reduceAddI32 = lookupReduceAddI32(mod);
-                    builder.makeOp<FunctionCallInst>(reduceAddI32, std::vector<Value*>{ ptr, bodyExec });
-                }
+                const auto ptr = builder.makeOp<PtrAddInst>(payloadStorage, givOffset, PointerType::get(giv->getType()));
+                if(giv->getType()->isSame(i32)) {
+                    if(mod.getTarget().isNativeSupported(InstructionID::AtomicAdd)) {
+                        builder.makeOp<AtomicAddInst>(ptr, bodyExec);
+                    } else {
+                        Function* reduceAddI32 = lookupReduceAddI32(mod);
+                        builder.makeOp<FunctionCallInst>(reduceAddI32, std::vector<Value*>{ ptr, bodyExec });
+                    }
+                } else if(giv->getType()->isSame(f32)) {
+                    Function* reduceAddF32 = lookupReduceAddF32(mod);
+                    builder.makeOp<FunctionCallInst>(reduceAddF32, std::vector<Value*>{ ptr, bodyExec });
+                } else
+                    reportUnreachable(CMMC_LOCATION());
             }
             builder.makeOp<ReturnInst>();
 
             builder.setInsertPoint(bodyInfo.loop, bodyInfo.recNext);
             Value* givPtr = nullptr;
             if(giv && (bodyInfo.recUsedByOuter || bodyInfo.recUsedByInner)) {
-                givPtr = builder.makeOp<PtrAddInst>(payloadStorage, givOffset, PointerType::get(i32));
+                givPtr = builder.makeOp<PtrAddInst>(payloadStorage, givOffset, PointerType::get(giv->getType()));
                 builder.makeOp<StoreInst>(givPtr, bodyInfo.rec);
             }
             for(auto [k, v] : payload) {

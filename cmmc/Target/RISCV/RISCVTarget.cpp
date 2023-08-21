@@ -262,7 +262,8 @@ public:
             for(auto& global : module.globals()) {
                 const auto symbol = global->reloc->symbol();
                 if(symbol == String::get("cmmcParallelFor") || symbol == String::get("cmmcCacheLookup") ||
-                   symbol == String::get("cmmcAddRec3SRem") || symbol == String::get("cmmcReduceAddI32"))
+                   symbol == String::get("cmmcAddRec3SRem") || symbol == String::get("cmmcReduceAddI32") ||
+                   symbol == String::get("cmmcReduceAddF32"))
                     return true;
             }
             return false;
