@@ -49,6 +49,33 @@
         "sysy_time": 0.011293
       }
     ],
+    "0c25b30538d6417babd9ae034c1b9a5adc7e626f": [
+      {
+        "sysy_time": 0.010532
+      },
+      {
+        "branch-instructions": 1570439,
+        "branch-misses": 24070,
+        "cycles": 5098779,
+        "instructions": 5250539,
+        "sysy_time": 0.010539,
+        "task-clock": 3.44
+      },
+      {
+        "sysy_time": 0.010517
+      },
+      {
+        "branch-instructions": 1674023,
+        "branch-misses": 22587,
+        "cycles": 5388484,
+        "instructions": 5577306,
+        "sysy_time": 0.010725,
+        "task-clock": 3.63
+      },
+      {
+        "sysy_time": 0.010482
+      }
+    ],
     "0e074d4a00394405947f6ffe832756d20f133681": [
       {
         "sysy_time": 0.010435
