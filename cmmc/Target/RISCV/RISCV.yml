@@ -1787,9 +1787,66 @@ InstSelection:
             Lhs: $X
             Rhs: $Y
         Rhs: $Z
-        $Predicate: isAggressiveOptEnabled()
+        $Predicate: isAggressiveOptEnabled() && ctx.hasOneUse($MulDst)
     Replace:
       FMADD_S:
+        Rd: $Dst
+        Rs1: $X
+        Rs2: $Y
+        Rs3: $Z
+
+  - Pattern:
+      InstFSub:
+        Dst: $Dst
+        Lhs:
+          InstFMul:
+            Dst: $MulDst
+            Lhs: $X
+            Rhs: $Y
+        Rhs: $Z
+        $Predicate: isAggressiveOptEnabled() && ctx.hasOneUse($MulDst)
+    Replace:
+      FMSUB_S:
+        Rd: $Dst
+        Rs1: $X
+        Rs2: $Y
+        Rs3: $Z
+
+  - Pattern:
+      InstFAdd:
+        Dst: $Dst
+        Lhs:
+          InstFNeg:
+            Dst: $NegDst
+            Src:
+              InstFMul:
+                Dst: $MulDst
+                Lhs: $X
+                Rhs: $Y
+        Rhs: $Z
+        $Predicate: isAggressiveOptEnabled() && ctx.hasOneUse($MulDst) && ctx.hasOneUse($NegDst)
+    Replace:
+      FNMSUB_S:
+        Rd: $Dst
+        Rs1: $X
+        Rs2: $Y
+        Rs3: $Z
+
+  - Pattern:
+      InstFSub:
+        Dst: $Dst
+        Lhs:
+          InstFNeg:
+            Dst: $NegDst
+            Src:
+              InstFMul:
+                Dst: $MulDst
+                Lhs: $X
+                Rhs: $Y
+        Rhs: $Z
+        $Predicate: isAggressiveOptEnabled() && ctx.hasOneUse($MulDst) && ctx.hasOneUse($NegDst)
+    Replace:
+      FNMADD_S:
         Rd: $Dst
         Rs1: $X
         Rs2: $Y

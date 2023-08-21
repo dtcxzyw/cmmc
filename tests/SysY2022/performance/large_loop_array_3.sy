@@ -37,13 +37,6 @@ int main() {
 	i = i + 1;
     }
     stoptime();
-    if ((total - 18338022147751936.000000) <=0.000001 || (total - 18338022147751936.000000) >= -0.000001) {
-        putint(0);
-	return 0;
-    }
-    else {
-        putint(1);
-	return 1;
-    }
-
+    putfloat(total);
+    return 0;
 }

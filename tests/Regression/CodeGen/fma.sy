@@ -4,3 +4,12 @@ float fmadd1(float x, float y, float z) {
 float fmadd2(float x, float y, float z) {
     return z + x * y;
 }
+float fmsub(float x, float y, float z) {
+    return x * y - z;
+}
+float fnmadd(float x, float y, float z) {
+    return - (x * y) - z;
+}
+float fnmsub(float x, float y, float z) {
+    return - (x * y) + z;
+}

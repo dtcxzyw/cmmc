@@ -1327,28 +1327,30 @@ class ArithmeticReduce final : public TransformPass<Function> {
                     return val;
             }
 
-            // TODO: handle nan
             // x <= f1 || x >= f2
             if(or_(fcmp(cmp1, any(v1), fp_(f1)), fcmp(cmp2, exactly(v1), fp_(f2)))(matchCtx)) {
                 if(cmp1 > cmp2) {
                     std::swap(cmp1, cmp2);
                     std::swap(f1, f2);
                 }
+                auto isNotNan = [&](Value* v) {
+                    return builder.makeOp<CompareInst>(InstructionID::FCmp, CompareOp::FCmpOrderedEqual, v, v);
+                };
                 if(cmp1 == CompareOp::FCmpOrderedLessEqual && cmp2 == CompareOp::FCmpOrderedGreaterEqual) {
                     if(f1 >= f2)
-                        return builder.getTrue();
+                        return isNotNan(v1);
                 }
                 if(cmp1 == CompareOp::FCmpOrderedLessEqual && cmp2 == CompareOp::FCmpOrderedGreaterThan) {
                     if(f1 >= f2)
-                        return builder.getTrue();
+                        return isNotNan(v1);
                 }
                 if(cmp1 == CompareOp::FCmpOrderedLessThan && cmp2 == CompareOp::FCmpOrderedGreaterEqual) {
                     if(f1 >= f2)
-                        return builder.getTrue();
+                        return isNotNan(v1);
                 }
                 if(cmp1 == CompareOp::FCmpOrderedLessThan && cmp2 == CompareOp::FCmpOrderedGreaterThan) {
                     if(f1 > f2)
-                        return builder.getTrue();
+                        return isNotNan(v1);
                     // TODO: f1 == f2 -> x une f1
                 }
             }
