@@ -1,6 +1,7 @@
 * text eol=lf
 irsim -text
 *.jar -text
+*.pdf -text
 *.in filter=lfs diff=lfs merge=lfs
 
 # Generated files for reference
