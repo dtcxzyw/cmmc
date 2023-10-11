@@ -655,6 +655,11 @@
       "parent": "7c8732a9ebf8b074b17f37b704c835f331beb655",
       "time": "2023-07-21 14:07:44 +0800"
     },
+    "75aa6687236d3f26564916f3189302ef16221643": {
+      "message": "docs: update slides",
+      "parent": "c13e3b71a29656969f80eeac2bd92041695a7f7c",
+      "time": "2023-10-11 15:15:59 +0800"
+    },
     "7723c3f8edd1fa9c76bcbdca70e504aecd661775": {
       "message": "ci: update format of `commits.json`",
       "parent": "ba3bf9379f25db9a5b510a6b3522bbf8ea4b7cb1",
@@ -1411,5 +1416,5 @@
       "time": "2023-07-06 01:05:50 +0800"
     }
   },
-  "head": "c13e3b71a29656969f80eeac2bd92041695a7f7c"
+  "head": "75aa6687236d3f26564916f3189302ef16221643"
 }
