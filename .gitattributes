@@ -2,6 +2,7 @@
 irsim -text
 *.jar -text
 *.pdf -text
+*.png -text
 *.in filter=lfs diff=lfs merge=lfs
 
 # Generated files for reference

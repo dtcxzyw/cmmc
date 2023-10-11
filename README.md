@@ -1,6 +1,18 @@
 # cmmc
 An unofficial reference implementation of the C Minus Minus Compiler
 
+## Slides
+
+[Report for the competition](docs/CMMC-SUSTech-slides-v3.pdf)
+
+[Seminar report for the BOSC compiler team](docs/Compilers Three Easy Pieces.pdf)
+
+## Result
+
+![img](docs/preliminary.png)
+
+![img](docs/final.png)
+
 ## Alternatives
 
 ### Compiler2022
