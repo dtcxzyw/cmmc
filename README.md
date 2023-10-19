@@ -9,9 +9,9 @@ An unofficial reference implementation of the C Minus Minus Compiler
 
 ## Result
 
-![img](docs/preliminary.png)
+![img](docs/img/preliminary.png)
 
-![img](docs/final.png)
+![img](docs/img/final.png)
 
 ## Alternatives
 
