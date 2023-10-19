@@ -5,7 +5,7 @@ An unofficial reference implementation of the C Minus Minus Compiler
 
 [Report for the competition](docs/CMMC-SUSTech-slides-v3.pdf)
 
-[Seminar report for the BOSC compiler team](docs/Compilers Three Easy Pieces.pdf)
+[Seminar report for the BOSC compiler team](docs/Compilers+Three+Easy+Pieces.pdf)
 
 ## Result
 
